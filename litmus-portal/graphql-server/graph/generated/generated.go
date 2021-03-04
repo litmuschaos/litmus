@@ -218,6 +218,7 @@ type ComplexityRoot struct {
 		UpdateChaosWorkflow func(childComplexity int, input *model.ChaosWorkFlowInput) int
 		UpdateDashboard     func(childComplexity int, dashboard *model.UpdataDBInput) int
 		UpdateDataSource    func(childComplexity int, datasource model.DSInput) int
+		UpdateGitOps        func(childComplexity int, config model.GitConfig) int
 		UpdateMyHub         func(childComplexity int, myhubInput model.UpdateMyHub, projectID string) int
 		UpdatePanel         func(childComplexity int, panelInput []*model.Panel) int
 		UpdateUser          func(childComplexity int, user model.UpdateUserInput) int
@@ -501,6 +502,7 @@ type MutationResolver interface {
 	GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error)
 	EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
+	UpdateGitOps(ctx context.Context, config model.GitConfig) (bool, error)
 	CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error)
 	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (string, error)
 	UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error)
@@ -1542,6 +1544,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateDataSource(childComplexity, args["datasource"].(model.DSInput)), true
+
+	case "Mutation.updateGitOps":
+		if e.complexity.Mutation.UpdateGitOps == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGitOps_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGitOps(childComplexity, args["config"].(model.GitConfig)), true
 
 	case "Mutation.updateMyHub":
 		if e.complexity.Mutation.UpdateMyHub == nil {
@@ -3664,8 +3678,7 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
@@ -3706,8 +3719,7 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
-    @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
 
@@ -3724,6 +3736,8 @@ type Mutation {
   enableGitOps(config: GitConfig!): Boolean! @authorized
 
   disableGitOps(project_id: String!): Boolean! @authorized
+
+  updateGitOps(config: GitConfig!): Boolean! @authorized
 
   # Analytics
 
@@ -4204,6 +4218,20 @@ func (ec *executionContext) field_Mutation_updateDataSource_args(ctx context.Con
 		}
 	}
 	args["datasource"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGitOps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.GitConfig
+	if tmp, ok := rawArgs["config"]; ok {
+		arg0, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["config"] = arg0
 	return args, nil
 }
 
@@ -9110,6 +9138,67 @@ func (ec *executionContext) _Mutation_disableGitOps(ctx context.Context, field g
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().DisableGitOps(rctx, args["project_id"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateGitOps(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateGitOps_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateGitOps(rctx, args["config"].(model.GitConfig))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -19320,6 +19409,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "disableGitOps":
 			out.Values[i] = ec._Mutation_disableGitOps(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateGitOps":
+			out.Values[i] = ec._Mutation_updateGitOps(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

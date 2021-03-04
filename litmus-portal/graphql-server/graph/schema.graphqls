@@ -279,8 +279,7 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
@@ -321,8 +320,7 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
-    @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
 
@@ -339,6 +337,8 @@ type Mutation {
   enableGitOps(config: GitConfig!): Boolean! @authorized
 
   disableGitOps(project_id: String!): Boolean! @authorized
+
+  updateGitOps(config: GitConfig!): Boolean! @authorized
 
   # Analytics
 
