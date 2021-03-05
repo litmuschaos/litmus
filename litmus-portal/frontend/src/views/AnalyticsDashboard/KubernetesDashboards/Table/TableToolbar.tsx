@@ -192,7 +192,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <MenuItem value="All">All</MenuItem>
           {dataSourceTypes.map((dataSourceType: string) => (
-            <MenuItem value={dataSourceType}>{dataSourceType}</MenuItem>
+            <MenuItem
+              key={`${dataSourceType}-KubernetesDashboard-TableToolbar`}
+              value={dataSourceType}
+            >
+              {dataSourceType}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

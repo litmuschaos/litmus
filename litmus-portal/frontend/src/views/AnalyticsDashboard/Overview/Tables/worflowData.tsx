@@ -80,6 +80,8 @@ const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
                     <TableCell align="right">
                       <IconButton
                         className={classes.seeAllBtn}
+                        disableRipple
+                        disableFocusRipple
                         onClick={() =>
                           history.push(
                             `/workflows/analytics/${schedule.workflow_id}`

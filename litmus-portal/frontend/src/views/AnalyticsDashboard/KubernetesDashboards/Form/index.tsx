@@ -346,7 +346,10 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
           <div className={classes.inputDivInformationContent}>
             {dashboardDetails.panelGroupMap.map(
               (panelGroup: PanelGroupMap, index: number) => (
-                <div className={classes.panelGroup}>
+                <div
+                  key={`${panelGroup.groupName}-kubernetesDashboard-form`}
+                  className={classes.panelGroup}
+                >
                   <div className={classes.panelGroupHead}>
                     <Typography
                       variant="body1"

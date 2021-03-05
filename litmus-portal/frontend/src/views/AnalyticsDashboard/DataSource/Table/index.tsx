@@ -118,7 +118,7 @@ const DataSourceTable: React.FC = () => {
   const payload: ListDataSourceResponse[] = data
     ? !data.ListDataSource
       ? []
-      : data?.ListDataSource.filter((ds: ListDataSourceResponse) => {
+      : data.ListDataSource.filter((ds: ListDataSourceResponse) => {
           return filter.searchTokens.every(
             (s: string) =>
               ds.ds_name.toLowerCase().includes(s) ||

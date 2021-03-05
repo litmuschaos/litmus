@@ -108,7 +108,7 @@ const DashboardPage: React.FC = () => {
       selectedDashboardInformation.dashboardKey
     ) {
       const availableDashboards: ListDashboardResponse[] = dashboards
-        ? dashboards?.ListDashboard.filter((data) => {
+        ? dashboards.ListDashboard.filter((data) => {
             return data.cluster_id === selectedDashboardInformation.agentID;
           })
         : [];

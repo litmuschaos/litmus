@@ -275,7 +275,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                             </Typography>
                           </TableCell>
                         </TableRow>
-                      ) : payload && payload.length ? (
+                      ) : payload.length ? (
                         payload
                           .slice(0)
                           .slice(
