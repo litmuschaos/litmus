@@ -1,20 +1,20 @@
 import {
-  Paper,
   CardContent,
-  Typography,
   IconButton,
   Menu,
   MenuItem,
+  Paper,
+  Typography,
 } from '@material-ui/core';
-import React from 'react';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { useTranslation } from 'react-i18next';
 import moment from 'moment';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../components/Button/ButtonFilled';
-import useStyles from './styles';
+import Loader from '../../components/Loader';
 import { HubDetails } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
-import Loader from '../../components/Loader';
+import useStyles from './styles';
 
 interface customMyHubCardProp {
   hub: HubDetails;
@@ -141,8 +141,8 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
           src={`./icons/${
             hub.HubName === 'Chaos Hub'
               ? 'myhub-litmus.svg'
-              : hub.HubName === 'Kubera Chaos Hub'
-              ? 'kubera-chaos-hub.svg'
+              : hub.HubName === 'Litmus Chaos Hub'
+              ? 'LitmusLogo.svg'
               : 'my-hub-charts.svg'
           }`}
           className={classes.hubImage}

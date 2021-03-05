@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'none',
     paddingLeft: theme.spacing(1.5),
   },
-  dashboardTable: {
+  dataSourceTable: {
     marginTop: theme.spacing(10),
   },
 }));

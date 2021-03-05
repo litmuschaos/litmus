@@ -30,8 +30,7 @@ const AnalyticsQuickActionCard: React.FC = () => {
       src: './icons/docs.svg',
       alt: 'docs',
       onClick: () =>
-        (window.location.href =
-          'https://kubera-docs.mayadata.io/en/free-pro-team@latest/kubera-chaos'),
+        (window.location.href = 'https://docs.litmuschaos.io/docs/getstarted'),
       text: t('quickActionCard.readDocs'),
     },
   ];

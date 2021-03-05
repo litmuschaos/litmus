@@ -45,7 +45,7 @@ const AnalyticsDashboard = () => {
           onChange={handleChange}
           TabIndicatorProps={{
             style: {
-              backgroundColor: theme.palette.secondary.dark,
+              backgroundColor: theme.palette.primary.main,
             },
           }}
           variant="fullWidth"
@@ -72,9 +72,9 @@ const AnalyticsDashboard = () => {
         <WorkflowComparisonTable />
       </TabPanel>
       <TabPanel value={analyticsTabValue} index={2}>
-        <DataSourceTable />
-        <div className={classes.dashboardTable}>
-          <DashboardTable />
+        <DashboardTable />
+        <div className={classes.dataSourceTable}>
+          <DataSourceTable />
         </div>
       </TabPanel>
     </Scaffold>

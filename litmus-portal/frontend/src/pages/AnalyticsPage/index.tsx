@@ -96,7 +96,7 @@ const AnalyticsPage: React.FC = () => {
     WORKFLOW_LIST_DETAILS,
     {
       variables: { projectID: selectedProjectID, workflowIDs: [] },
-      pollInterval: 50,
+      pollInterval: 100,
     }
   );
 
