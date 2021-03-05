@@ -46,7 +46,7 @@ function tabProps(index: any) {
 
 const Settings: React.FC = () => {
   const classes = useStyles();
-
+  console.log('settings');
   const settingsTabValue = useSelector(
     (state: RootState) => state.tabNumber.settings
   );

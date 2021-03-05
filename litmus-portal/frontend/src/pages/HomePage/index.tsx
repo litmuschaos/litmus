@@ -90,7 +90,9 @@ const HomePage: React.FC = () => {
           project.members.forEach((member: Member) => {
             if (member.user_id === userID && member.role === 'Owner') {
               console.log(project);
+              const id = project.id;
               isOwnerOfProject = true;
+              history.push(`/home/${id}`);
             }
           });
         });
