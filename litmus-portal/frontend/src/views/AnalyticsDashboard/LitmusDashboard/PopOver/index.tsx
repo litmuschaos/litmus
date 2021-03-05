@@ -42,7 +42,7 @@ const PopOver: React.FC<PopOverProps> = ({
         <div className={classes.date}>
           <Typography className={classes.testDate}>
             <Avatar className={`${classes.miniIcons} ${classes.dateIcon}`}>
-              <img src="./icons/calenderAnalytics.svg" alt="Calender" />
+              <img src="/icons/calenderAnalytics.svg" alt="Calender" />
             </Avatar>
             Tests date: {formatDate(testDate).date} <br />
             Tests time: {formatDate(testDate).time}

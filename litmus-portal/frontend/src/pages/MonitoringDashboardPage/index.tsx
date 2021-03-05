@@ -171,7 +171,13 @@ const DashboardPage: React.FC = () => {
           </div>
           <Typography variant="h3" className={classes.weightedFont}>
             {selectedDashboardInformation.agentName} /{' '}
-            {selectedDashboardInformation.name}
+            <Typography
+              variant="h3"
+              display="inline"
+              className={classes.italic}
+            >
+              {selectedDashboardInformation.name}
+            </Typography>
             <IconButton
               aria-label="more"
               aria-controls="long-menu"

@@ -23,7 +23,7 @@ import {
   validateTextEmpty,
   validateTimeInSeconds,
 } from '../../../../utils/validate';
-import useStyles from './styles';
+import useStyles, { StyledCheckbox } from './styles';
 
 interface ConfigurePrometheusProps {
   configure: boolean;
@@ -256,7 +256,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
           <div className={classes.inputDivCheckBox}>
             <FormControlLabel
               control={
-                <Checkbox
+                <StyledCheckbox
                   color="primary"
                   checked={dataSourceDetails.noAuth}
                   onChange={handleAuthChange}
@@ -268,7 +268,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             <FormControlLabel
               className={classes.basicAuth}
               control={
-                <Checkbox
+                <StyledCheckbox
                   color="primary"
                   checked={dataSourceDetails.basicAuth}
                   onChange={handleAuthChange}

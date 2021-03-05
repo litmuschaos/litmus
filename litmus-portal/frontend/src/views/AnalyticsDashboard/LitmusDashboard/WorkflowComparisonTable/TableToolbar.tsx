@@ -228,7 +228,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           <ButtonOutlined onClick={handleExport} disabled={false}>
             <div className={classes.export}>
               <Avatar className={classes.exportIcon}>
-                <DescriptionOutlinedIcon htmlColor={palette.secondary.dark} />
+                <DescriptionOutlinedIcon htmlColor={palette.primary.main} />
               </Avatar>
               <Typography className={classes.dateRangeDefault} display="inline">
                 {t('analytics.exportPDF')}

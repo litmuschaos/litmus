@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   selectText: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(0.4),
   },
@@ -97,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
   typographyScores: {
     fontWeight: 500,
     fontSize: '0.75rem',
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.text.primary,
   },
 
   typographyScoresResult: {

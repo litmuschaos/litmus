@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
   input: {
     '&:-webkit-autofill': {
-      WebkitTextFillColor: theme.palette.text.secondary,
+      WebkitTextFillColor: theme.palette.text.primary,
       WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
     },
   },
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
     '& td': {
       borderBottom: `1px solid ${theme.palette.border.main}`,
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 
   tableHead: {
     opacity: 0.7,
-    color: 'red',
+    color: theme.palette.text.primary,
   },
 
   dashboardName: {
@@ -146,7 +146,7 @@ const useStyles = makeStyles((theme) => ({
   displayDate: {
     marginLeft: theme.spacing(1),
     width: '100%',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
   },
 
   selectDate: {
@@ -180,15 +180,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   selectText: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(0.4),
   },
 
   menuItem: {
-    '&:hover': {
-      background: theme.palette.secondary.dark,
-    },
     width: '10rem',
     height: '2.5rem',
   },

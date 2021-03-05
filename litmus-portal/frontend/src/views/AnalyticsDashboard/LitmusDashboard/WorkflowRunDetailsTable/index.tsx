@@ -317,7 +317,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                       display="inline"
                     >
                       {resilienceScore < 30 ? (
-                        <strong style={{ color: `${palette.secondary.dark}` }}>
+                        <strong style={{ color: `${palette.error.dark}` }}>
                           {resilienceScore}%
                         </strong>
                       ) : resilienceScore > 30 && resilienceScore <= 60 ? (
@@ -325,7 +325,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                           {resilienceScore}%
                         </strong>
                       ) : resilienceScore > 60 ? (
-                        <strong style={{ color: `${palette.primary.dark}` }}>
+                        <strong style={{ color: `${palette.secondary.dark}` }}>
                           {resilienceScore}%
                         </strong>
                       ) : (

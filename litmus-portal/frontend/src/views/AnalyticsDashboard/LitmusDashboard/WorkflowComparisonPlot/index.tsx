@@ -253,7 +253,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       line: {
         shape: 'spline',
         dash: 'dash',
-        color: palette.secondary.dark,
+        color: palette.primary.main,
         width: 3,
       },
       name: 'AVG Workflows',
@@ -333,8 +333,6 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         label: 'default',
       },
     ],
-    bgcolor: palette.background.paper,
-    activecolor: palette.status.pending.background,
   };
 
   const processLayout = () => {
@@ -430,7 +428,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         <FormControl
           variant="outlined"
           className={classes.formControl}
-          color="secondary"
+          color="primary"
           focused
         >
           <InputLabel

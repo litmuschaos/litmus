@@ -89,7 +89,7 @@ const TableData: React.FC<TableDataProps> = ({
             }
             className={classes.buttonSeeAnalytics}
           >
-            <ExpandMoreTwoToneIcon htmlColor="white" />
+            <ExpandMoreTwoToneIcon htmlColor="black" />
           </IconButton>
         </Typography>
       </StyledTableCell>

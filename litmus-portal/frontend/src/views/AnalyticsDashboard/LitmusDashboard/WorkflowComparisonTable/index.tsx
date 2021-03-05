@@ -631,7 +631,7 @@ const WorkflowComparisonTable = () => {
                 className={classes.buttonBack}
               >
                 <ExpandMoreTwoToneIcon
-                  htmlColor={palette.secondary.dark}
+                  htmlColor={palette.primary.main}
                   className={classes.buttonBackStyle}
                 />
               </IconButton>
