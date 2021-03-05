@@ -70,4 +70,23 @@ const parsed = (yaml: string) => {
   }
 };
 
+export const getWorkflowParameter = (parameterString: string) => {
+  return parameterString
+    .substring(1, parameterString.length - 1)
+    .replace(/^\s+|\s+$/gm, '')
+    .split('.')[2];
+};
+
+export const generateChaosQuery = (
+  chaosQueryStringTemplate: string,
+  engineName: string,
+  namespace: string
+) => {
+  const queryStringWithEngineName: string = chaosQueryStringTemplate.replaceAll(
+    '#{}',
+    engineName
+  );
+  return queryStringWithEngineName.replaceAll('*{}', namespace);
+};
+
 export default parsed;

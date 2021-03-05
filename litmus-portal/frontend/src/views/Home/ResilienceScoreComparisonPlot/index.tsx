@@ -4,6 +4,7 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  OutlinedInput,
   Select,
   Tooltip,
 } from '@material-ui/core';
@@ -17,7 +18,7 @@ import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
 import Score from './Score';
-import useStyles from './style';
+import useStyles, { useOutlinedInputStyles } from './style';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -34,6 +35,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
+  const outlinedInputClasses = useOutlinedInputStyles();
   const { t } = useTranslation();
   const tabs = useActions(TabActions);
   const [currentGranularity, setCurrentGranularity] = React.useState<{
@@ -201,6 +203,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       width: 610,
       xaxis: {
         showgrid: true,
+        gridcolor: palette.border.main,
         showline: false,
         showticklabels: true,
         linecolor: palette.border.main,
@@ -211,7 +214,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.text.disabled,
+          color: palette.text.hint,
         },
         mirror: true,
         rangeselector: selectorOptions as any,
@@ -219,6 +222,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       },
       yaxis: {
         showgrid: true,
+        gridcolor: palette.border.main,
         zeroline: false,
         showline: false,
         showticklabels: true,
@@ -230,7 +234,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.text.disabled,
+          color: palette.text.hint,
         },
         mirror: true,
         tickmode: 'array',
@@ -250,15 +254,17 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: palette.text.disabled,
+        color: palette.text.hint,
       },
+      paper_bgcolor: palette.background.paper,
+      plot_bgcolor: palette.background.paper,
     };
     setPlotLayout(layout);
   };
 
   const redirect = () => {
-    tabs.changeWorkflowsTabs(3);
-    history.push('/workflows');
+    tabs.changeAnalyticsDashboardTabs(1);
+    history.push('/analytics');
   };
 
   useEffect(() => {
@@ -291,7 +297,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         >
           <InputLabel
             htmlFor="outlined-selection-granularity"
-            className={classes.root}
+            className={classes.selectText}
           >
             {t('home.resilienceScoreComparisonOptions.granularity')}
           </InputLabel>
@@ -303,7 +309,8 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
               name: 'name',
               id: 'outlined-selection-granularity',
             }}
-            className={classes.root}
+            className={classes.selectText}
+            input={<OutlinedInput classes={outlinedInputClasses} />}
           >
             <MenuItem value="Hourly">
               {t('home.resilienceScoreComparisonOptions.option1')}
