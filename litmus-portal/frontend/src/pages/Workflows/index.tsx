@@ -13,7 +13,6 @@ import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
@@ -79,10 +78,6 @@ const Workflows = () => {
             label={`${t('workflows.templates')}`}
             data-cy="templates"
           />
-          <StyledTab
-            label={`${t('workflows.analytics')}`}
-            data-cy="analyticsWorkflow"
-          />
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
@@ -93,9 +88,6 @@ const Workflows = () => {
       </TabPanel>
       <TabPanel value={workflowTabValue} index={2}>
         <Templates />
-      </TabPanel>
-      <TabPanel value={workflowTabValue} index={3}>
-        <WorkflowComparisonTable />
       </TabPanel>
     </Scaffold>
   );

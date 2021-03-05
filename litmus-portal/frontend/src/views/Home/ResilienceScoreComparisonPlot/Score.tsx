@@ -1,9 +1,9 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
 import { Tooltip } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import useStyles from './style';
 import ColouredProgressBar from '../../../components/ProgressBar/ColouredProgressBar';
+import useStyles from './style';
 
 interface ScoreProps {
   score: number;

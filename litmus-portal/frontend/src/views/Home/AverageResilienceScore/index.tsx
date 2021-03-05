@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
@@ -56,7 +56,7 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
         </div>
         <Box className={classes.progressLabel}>
           <img
-            src="/icons/avgResilience.png"
+            src="./icons/avgResilience.png"
             alt="Progress Icon"
             className={classes.progressIcon}
             data-cy="progressIcon"

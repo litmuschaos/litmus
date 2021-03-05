@@ -226,7 +226,7 @@ const HomePage: React.FC = () => {
                     </div>
                   </div>
                   <div className={classes.quickActionDiv}>
-                    <QuickActionCard />
+                    <QuickActionCard analyticsHome={false} nonAdmin />
                   </div>
                 </div>
               ) : (

@@ -30,7 +30,7 @@ welcomeModal:
 
 sidebar:
   title: Litmus
-  version: 'Version: 1.13'
+  version: "Version: 1.13"
 
 header:
   notificationDropdown:
@@ -46,6 +46,10 @@ quickActionCard:
   quickSurvey: Take a quick survey
   readDocs: Read the Litmus docs
   readAPIDocs: Read the Litmus Portal API docs
+  addDataSource: Add a Data Source
+  addAgent: Add an agent
+  connectNewAgent: Connect a new agent
+  scheduleWorkflow: Schedule a workflow
 
 customWorkflowCard:
   customWorkflow: Create your own workflow
@@ -77,7 +81,7 @@ home:
   analytics:
     heading: How busy is the Litmus Project?
     moreInfo: See more
-  comingSoon: Coming soon!
+  comingSoon: Coming soon !
   resilienceScore: Resilience score
   recentActivity: Recent activity
   resilienceScoreComparisonOptions:
@@ -86,6 +90,14 @@ home:
     option3: Monthly
     granularity: Granularity
   recentActivityEmpty: No recent activity.
+  NonAdmin:
+    noAgent: No LitmusChaos Agent has been discovered on any cluster.
+    agentDeployInfo: To configure your workflow you need to deploy an agent. Click on “Deploy your first Agent” to continue.
+    chaosAgent: Deploy LitmusChaos agent on your Kubernetes clusters.
+    agents: Agents
+    chaosAgentInfo: Cloud native chaos engineering can be setup on this cluster using LitmusChaos
+    deployFirst: Deploy your first Agent
+    toProjects: To projects
 
 login:
   heading: Welcome to <strong>Litmus!</strong>
@@ -95,14 +107,14 @@ login:
   passwordForgot: Don’t remember your password?
 
 schedule:
-  heading: 'Schedule a workflow'
-  headingDesc: 'Click on test to see detailed log of your workflow'
-  headingText: 'Schedule details:'
-  description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  heading: "Schedule a workflow"
+  headingDesc: "Click on test to see detailed log of your workflow"
+  headingText: "Schedule details:"
+  description: "Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you."
+  save: "Save Changes"
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
+  scheduleAfterSometime: "Choose the minutes, hours, or days when you want to start workflow"
   scheduleSpecificTime: Schedule at a specific time
   scheduleFuture: Select date and time to start workflow in future
   scheduleRecurring: Recurring Schedule
@@ -110,7 +122,7 @@ schedule:
   after: After
   at: at
   At: At
-  scheduleOn: 'On'
+  scheduleOn: "On"
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new workflow on this project.
   contact: Contact portal administrator to upgrade your permission.
@@ -122,25 +134,25 @@ schedule:
   backBtn: Go Back
 
 workflowUnderground:
-  heading: 'Click on Info to see details of your workflow'
+  heading: "Click on Info to see details of your workflow"
 
 community:
-  title: 'Community'
-  heading: 'Litmus Insights'
-  headingDesc: 'Stats for the Litmus community'
-  analyticDesc: 'Periodic growth of Litmus'
-  statsHeading: 'Litmus users around the world:'
+  title: "Community"
+  heading: "Litmus Insights"
+  headingDesc: "Stats for the Litmus community"
+  analyticDesc: "Periodic growth of Litmus"
+  statsHeading: "Litmus users around the world:"
   litmusChaos: Litmuschaos
   follow: Follow
 
 analytics:
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
-  comingSoon: Analytics Coming Soon!
-  waitingMessage: Waiting for workflow to start running!
-  chaosStartWaitingMessage: Waiting for chaos experiments to start!
-  highestScore: 'Highest Score:'
-  lowestScore: 'Lowest Score:'
+  comingSoon: Analytics Coming Soon !
+  waitingMessage: Waiting for workflow to start running !
+  chaosCompleteWaitingMessage: Waiting for chaos experiment to finish !
+  highestScore: "Highest Score:"
+  lowestScore: "Lowest Score:"
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
   targetCluster: Target cluster
@@ -157,6 +169,84 @@ analytics:
     tableHead4: Resulting Points
     tableHead5: Last run
     close: Close
+
+analyticsDashboard:
+  heading: Analytics
+  overview: Overview
+  workflowClusterDashboard:
+    title: Dashboard
+    tab1: Hourly
+    tab2: Daily
+    tab3: Monthly
+    tab4: Yearly
+    worflowSchedulesTitle: Workflow Schedules
+    clusterCountTitle: Clusters
+    timeSelectionMessage: Overview of latest
+    timeSelection0: Hour
+    timeSelection1: Day
+    timeSelection2: Month
+    scheduleWorkflowMessage: Schedule my first workflow
+  seeAll: See All
+  seeDetails: See Details
+  seeAnalytics: See Analytics
+  workflowStats:
+    title: Workflow stats
+    workflowPassed: Passed
+    workflowRunning: Running
+    workflowFailed: Failed
+  workflowScheduleTable:
+    title: Workflow Schedules
+    noRecordMessage: No workflow has been schedule
+  kubernetesDashboardTable:
+    title: Application Dashboard
+    noRecordMessage: No dashboard has been configured
+  workflowDashboard: Workflow Dashboards
+  overviewTabdataSourceTable: Connected Data Sources
+  applicationDashboard: Application Dashboards
+  connectedDataSources: Connected Data Sources
+  datasource: Data source
+  dataSourceTable:
+    tableHead1: Status
+    tableHead2: Data Source Name
+    tableHead3: Data Source Type
+    tableHead4: Last Configured
+    addDataSource: Add a Data Source
+    loading: Loading available data sources
+    noRecords: No data source available
+    fetchError: Unable to fetch data
+  dashboardTable:
+    tableHead1: Dashboard Name
+    tableHead2: Agent Name
+    tableHead3: Dashboard Type
+    tableHead4: Data Source Type
+    tableHead5: Last viewed
+    addDashboard: Add a Dashboard
+  glowCard:
+    title-0: Set it up
+    heading-0: Add a Data Source
+    title-1: Let's start!
+    heading-1: Configure a new chaos interleaved dashboard
+  scheduleWorkflowCard:
+    mainHeading-0: Schedule your
+    mainHeading-1: Workflow
+    mainHeading-2: now
+    subHeading: Worflow dashboards are available once the workflows are run
+    description: Create complex chaos workflow, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability workflows and compliance reports
+    buttonText: Schedule a workflow
+  configureBanner:
+    case-0:
+      heading: No data source is configured yet for any agent
+      description: To configure your first Kubernetes dashboard you need to connect a data source. Select "Add a data source" to connect.
+    case-1:
+      heading: Data sources has been added, now configure a dashboard
+      description: To configure your first Kubernets dashboard use the connect Data sources of this project
+  timeText:
+    lastRun: Last run
+    ago: ago
+    seconds: seconds
+    minutes: minutes
+    hours: hours
+    few: few
 
 error:
   whoops: Whoops!
@@ -185,6 +275,17 @@ chaosWorkflows:
   browseSchedule:
     regularityOnce: Once
     showExperiment: Show Experiment
+
+analyticsDashboardViews:
+  kubernetesDashboard:
+    form:
+      dashboardPanels: Dashboard Panels
+    table:
+      seeAnalytics: See Analytics
+      configure: Configure
+      noRecords: No dashboard available
+      loading: Loading available dashboards
+      error: Unable to fetch data
 
 settings:
   accountsTab:
@@ -363,7 +464,7 @@ settings:
     disconnect: Are you sure you want to disconnect?
     save: Save Locally
     repo: Git Repository
-    desc: '* Any existing or active workflows saved locally will not be synced into the git repository'
+    desc: "* Any existing or active workflows saved locally will not be synced into the git repository"
     connect: Connect
     branch: Branch
     URL: Git URL
@@ -595,7 +696,7 @@ workflows:
 #########################################
 
 internetIssues:
-  fetchData: 'Fetching the data...'
+  fetchData: "Fetching the data..."
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
@@ -605,7 +706,7 @@ myhub:
   title: My Hubs
   connectTarget: Connect the target
   viewMyHub: View My Hub
-  error: '[Error: could not connect]'
+  error: "[Error: could not connect]"
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
