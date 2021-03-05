@@ -141,5 +141,27 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   checked: {},
+  createIcon: {
+    width: '0.9375rem',
+    height: '0.9375rem',
+    marginRight: theme.spacing(1),
+  },
+  editBtn: {
+    marginTop: theme.spacing(2.5),
+  },
+  editText: {
+    marginTop: theme.spacing(-0.25),
+  },
+  editHeader: {
+    fontSize: '1.5rem',
+    marginBottom: theme.spacing(2.5),
+  },
+  editDescription: {
+    fontSize: '1rem',
+    marginBottom: theme.spacing(2.5),
+  },
+  cancelBtn: {
+    marginRight: theme.spacing(2.5),
+  },
 }));
 export default useStyles;

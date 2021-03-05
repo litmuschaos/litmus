@@ -469,6 +469,11 @@ settings:
     branch: Branch
     URL: Git URL
     setting: Back to settings
+    editHeader: Are you sure you want to edit the GitOps configuration?
+    editDescription: This will affect all the workflows. Few of the workflows may not work as expected.
+    edit: Edit
+    cancel: Cancel
+    proceed: Yes, proceed
 
 workflowDetailsView:
   argoWorkflow:
@@ -487,6 +492,7 @@ workflowDetailsView:
       endTime: End Time
       duration: Duration
       namespace: Namespace
+      finished: To be finished
     nodeDetails:
       curr: Currently Running Nodes
       exec: Executed Nodes
