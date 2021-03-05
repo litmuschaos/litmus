@@ -312,7 +312,7 @@ const DashboardTable: React.FC = () => {
                       </Typography>
                     </TableCell>
                   </TableRow>
-                ) : payload.length >= 0 ? (
+                ) : payload.length > 0 ? (
                   payload
                     .slice(0)
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
