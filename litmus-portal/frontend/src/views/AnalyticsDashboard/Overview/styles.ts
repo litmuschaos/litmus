@@ -116,7 +116,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingRight: theme.spacing(5),
   },
   seeAllBtn: {
+    backgroundColor: 'transparent !important',
+    cursor: 'pointer',
     display: 'flex',
+    marginRight: theme.spacing(2),
   },
 
   seeAllText: {
@@ -131,7 +134,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   tableRow: {
     display: 'flex',
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
     justifyContent: 'space-between',
     padding: theme.spacing(1, 0),
     borderBottom: `1rem solid ${theme.palette.cards.header}`,

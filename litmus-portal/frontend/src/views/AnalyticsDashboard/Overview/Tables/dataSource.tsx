@@ -101,6 +101,8 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
                   <TableCell align="right">
                     <IconButton
                       className={classes.seeAllBtn}
+                      disableRipple
+                      disableFocusRipple
                       onClick={() => {
                         dataSource.selectDataSource({
                           selectedDataSourceID: singleDataSource.ds_id,

@@ -383,6 +383,8 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                     <TableCell align="right">
                       <IconButton
                         className={classes.seeAllBtn}
+                        disableRipple
+                        disableFocusRipple
                         onClick={() => {
                           onDashboardLoadRoutine(dashboard).then(() => {
                             dataSource.selectDataSource({
