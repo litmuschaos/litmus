@@ -109,12 +109,14 @@ const Overview: React.FC = () => {
     <div className={classes.root}>
       <div className={classes.overviewGraphs}>
         <div className={classes.leftBannerTable}>
-          {(filteredDashboardData.length <= 0 &&
+          {(filteredDashboardData &&
+            filteredDashboardData.length === 0 &&
             filteredDataSourceData.length === 0 && (
               <OverviewConfigureBanner variant="0" />
             )) ||
-            (filteredDataSourceData.length > 0 &&
-              filteredDashboardData.length <= 0 && (
+            (filteredDashboardData &&
+              filteredDataSourceData.length > 0 &&
+              filteredDashboardData.length === 0 && (
                 <OverviewConfigureBanner variant="1" />
               ))}
           <TableDataSource dataSourceList={filteredDataSourceData} />
@@ -131,16 +133,14 @@ const Overview: React.FC = () => {
         <div className={classes.rightGlowCardQuickAction}>
           {(filteredDataSourceData.length === 0 ||
             !filteredDashboardData ||
-            (filteredDataSourceData && filteredDashboardData.length === 0)) && (
+            (filteredDashboardData && filteredDashboardData.length === 0)) && (
             <div className={classes.parentWrapper}>
               <div className={classes.overviewGlowCard}>
                 {filteredDataSourceData.length === 0 && (
                   <OverviewGlowCard variant="dataSource" />
                 )}
                 {filteredDataSourceData.length > 0 &&
-                  (!filteredDashboardData ||
-                    (filteredDashboardData &&
-                      filteredDashboardData.length === 0)) && (
+                  filteredDashboardData.length === 0 && (
                     <OverviewGlowCard variant="dashboard" />
                   )}
               </div>

@@ -171,7 +171,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <MenuItem value="All">All</MenuItem>
           {tests.map((testName: string) => (
-            <MenuItem value={testName}>{testName}</MenuItem>
+            <MenuItem
+              key={`${testName}-workflowRunDetailsTable`}
+              value={testName}
+            >
+              {testName}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

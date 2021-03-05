@@ -171,7 +171,7 @@ const WorkflowComparisonTable = () => {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+  const handleClick = (name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
 
@@ -759,9 +759,9 @@ const WorkflowComparisonTable = () => {
                           return (
                             <TableRow
                               hover
-                              onClick={(event) => {
+                              onClick={() => {
                                 if (compare === false) {
-                                  handleClick(event, data.workflow_id);
+                                  handleClick(data.workflow_id);
                                 }
                               }}
                               role="checkbox"
