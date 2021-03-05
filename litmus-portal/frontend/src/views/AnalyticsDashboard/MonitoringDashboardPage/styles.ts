@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     paddingTop: theme.spacing(2.5),
   },
-  singleGraph: { width: '25rem', height: '25rem' },
+  singleGraph: { width: '30rem', height: '25rem' },
 }));
 
 export const Accordion = withStyles({

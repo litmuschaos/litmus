@@ -174,7 +174,8 @@ const PanelContent: React.FC<PanelResponse> = ({
             legendTableHeight={120}
             openSeries={filterUndefinedData(seriesData)}
             showPoints={false}
-            showTips={false}
+            showLegendTable
+            showTips
             margin={{ left: 50, right: 20, top: 20, bottom: 10 }}
           />
         </div>

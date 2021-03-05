@@ -139,13 +139,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     '& td': {
       padding: theme.spacing(0, 1.5),
       borderBottom: `none`,
-      width: 'max-content',
       alignSelf: 'baseline',
     },
   },
   tableRowHeader: {
-    minWidth: '8rem',
-    maxWidht: '30%',
+    width: '35%',
   },
 
   dataRowName: {
