@@ -157,6 +157,12 @@ export const ENABLE_GITOPS = gql`
   }
 `;
 
+export const UPDATE_GITOPS = gql`
+  mutation updateGitOps($gitConfig: GitConfig!) {
+    updateGitOps(config: $gitConfig)
+  }
+`;
+
 export const DISABLE_GITOPS = gql`
   mutation disableGitOPs($data: String!) {
     disableGitOps(project_id: $data)
