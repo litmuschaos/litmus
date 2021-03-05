@@ -462,12 +462,11 @@ const WorkflowComparisonTable = () => {
         const contentDataURL = canvas.toDataURL('image/png');
         const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
         const position = -54;
-        doc.setFillColor(10, 24, 24, 0.9);
-        doc.rect(0, 0, 220, 300, 'F');
+        doc.setFillColor(255, 255, 255);
         doc.setFontSize(10);
-        doc.setTextColor(255, 255, 255);
-        doc.setDrawColor(255, 255, 255);
-        doc.text('Kubera Chaos Report Version: Tech Preview', 10, 10);
+        doc.setTextColor(0, 0, 0);
+        doc.setDrawColor(0, 0, 0);
+        doc.text('Litmus Portal Report Version: 1.3.x', 10, 10);
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
         doc.text(
@@ -489,7 +488,7 @@ const WorkflowComparisonTable = () => {
         );
         doc.text(totalValidWorkflowRunsCount.toString(), 105, 25);
         const img = new Image();
-        img.src = './icons/kubera-chaos-logo.png';
+        img.src = '/icons/LitmusLogo.png';
         doc.addImage(img, 'png', 165, 10, 30, 12.5);
         doc.line(0, 33, 300, 33);
         doc.setLineWidth(5.0);
@@ -509,22 +508,24 @@ const WorkflowComparisonTable = () => {
             styles: {
               overflow: 'linebreak',
               font: 'Ubuntu',
-              lineColor: [255, 255, 255],
+              lineColor: [0, 0, 0],
             },
             bodyStyles: {
               valign: 'top',
-              fillColor: [28, 33, 38],
-              textColor: [255, 255, 255],
+              fillColor: [245, 246, 255],
+              textColor: [0, 0, 0],
               lineWidth: 0.05,
             },
-            tableLineColor: [255, 255, 255],
+            tableLineColor: [0, 0, 0],
             tableLineWidth: 0.05,
             headStyles: {
-              fillColor: [28, 33, 38],
-              textColor: [255, 255, 255],
+              fillColor: [245, 246, 255],
+              textColor: [0, 0, 0],
+              lineWidth: 0.05,
+              lineColor: [0, 0, 0],
             },
             alternateRowStyles: {
-              fillColor: [28, 33, 38],
+              fillColor: [245, 246, 255],
             },
             theme: 'striped',
             showHead: 'firstPage',
@@ -533,16 +534,15 @@ const WorkflowComparisonTable = () => {
           console.log(err);
         }
         doc.addPage();
-        doc.rect(0, 0, 220, 300, 'F');
         doc.addImage(
           contentDataURL,
           'PNG',
           2,
-          showAll ? position : -47,
+          showAll ? position : -55,
           imgWidth,
           imgHeight
         );
-        doc.save('kubera-chaos-analytics.pdf'); // Generated PDF
+        doc.save('litmus-portal-analytics.pdf'); // Generated PDF
       });
     }
   };
