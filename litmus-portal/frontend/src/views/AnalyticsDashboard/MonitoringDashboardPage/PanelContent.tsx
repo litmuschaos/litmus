@@ -128,7 +128,7 @@ const PanelContent: React.FC<PanelResponse> = ({
     seriesData = prometheusData.GetPromQuery[0].legends.map((elem, index) => ({
       metricName: elem[0] ?? 'test',
       data: prometheusData.GetPromQuery[0].tsvs[index].map((dataPoint) => ({
-        date: parseInt(dataPoint.timestamp ?? '0', 10),
+        date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
         value: parseFloat(dataPoint.value ?? '0.0'),
       })),
       baseColor: lineGraph[index % lineGraph.length],
