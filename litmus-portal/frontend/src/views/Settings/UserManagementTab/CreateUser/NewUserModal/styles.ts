@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: theme.spacing(7),
   },
   // styles for text
   text: {
@@ -38,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'center',
+    padding: theme.spacing(7, 0),
   },
   typoSub: {
     fontSize: '1rem',

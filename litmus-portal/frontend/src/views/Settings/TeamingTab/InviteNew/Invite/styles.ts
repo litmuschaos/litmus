@@ -35,6 +35,10 @@ const useStyles = makeStyles((theme) => ({
   },
   firstCol: {
     display: 'flex',
+    alignItems: 'center',
+    '& span:first-child': {
+      color: theme.palette.common.black,
+    },
   },
   detail: {
     display: 'flex',
