@@ -1,27 +1,34 @@
-import { useQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { CreateWorkflowCard } from '../../components/CreateWorkflowCard';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
-import WelcomeModal from '../../components/WelcomeModal';
 import Scaffold from '../../containers/layouts/Scaffold';
-import { GET_USER } from '../../graphql';
+import { GET_USER, LIST_PROJECTS } from '../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
+  Member,
+  Projects,
 } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
-import { getUserDetailsFromJwt } from '../../utils/auth';
+import { getUserDetailsFromJwt, getUserId } from '../../utils/auth';
+import WelcomeModal from '../../views/Home/WelcomeModal';
 import useStyles from './style';
 
+interface ParamType {
+  projectID: string;
+}
+
 const HomePage: React.FC = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const userData = getUserDetailsFromJwt();
   const classes = useStyles();
@@ -38,9 +45,60 @@ const HomePage: React.FC = () => {
 
   const name: string = data?.getUser.name ?? '';
 
+  const userID = getUserId();
+  const { projectID } = useParams<ParamType>();
+
+  // console.log('Header Mounted');
+
+  const [listProjects] = useLazyQuery<Projects>(LIST_PROJECTS, {
+    onCompleted: (data) => {
+      let isOwnerOfProject = false;
+      if (data?.listProjects) {
+        data?.listProjects.map((project) => {
+          project.members.forEach((member: Member) => {
+            if (member.user_id === userID && member.role === 'Owner') {
+              const id = project.id;
+              // history.push('/home');
+              history.push(`/home/${id}`);
+              /* if (projectID === 'projectID') {
+                const path = generatePath('/home/:projectID', {
+                  projectID: id,
+                });
+                history.replace(path);
+              } */
+            }
+          });
+        });
+        // if (!isOwnerOfProject) setIsOpen(true);
+      }
+    },
+    fetchPolicy: 'no-cache',
+  });
+
   const handleModal = () => {
+    console.log('before isopen');
     setIsOpen(false);
+    console.log('after isopen');
+    listProjects();
   };
+
+  useQuery<Projects>(LIST_PROJECTS, {
+    onCompleted: (data) => {
+      let isOwnerOfProject = false;
+      if (data?.listProjects) {
+        data?.listProjects.map((project) => {
+          project.members.forEach((member: Member) => {
+            if (member.user_id === userID && member.role === 'Owner') {
+              console.log(project);
+              isOwnerOfProject = true;
+            }
+          });
+        });
+        if (!isOwnerOfProject) setIsOpen(true);
+      }
+    },
+    fetchPolicy: 'no-cache',
+  });
 
   const [dataPresent, setDataPresent] = useState<boolean>(true);
 
@@ -48,10 +106,10 @@ const HomePage: React.FC = () => {
     <div>
       <Scaffold>
         {isOpen && !loading ? (
-            <WelcomeModal handleIsOpen={handleModal} />
-          ) : (
-            <></>
-          )}
+          <WelcomeModal handleIsOpen={handleModal} />
+        ) : (
+          <></>
+        )}
         <div className={classes.rootContainer}>
           <div className={classes.root}>
             <Typography variant="h3" className={classes.userName}>

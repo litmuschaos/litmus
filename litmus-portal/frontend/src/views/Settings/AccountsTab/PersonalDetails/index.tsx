@@ -159,7 +159,7 @@ const PersonalDetails: React.FC = () => {
               <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
             }
           >
-            {error.length ? (
+            {!error.length ? (
               <div className={classes.errDiv}>
                 {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
                 <div className={classes.textError}>

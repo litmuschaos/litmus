@@ -51,7 +51,7 @@ const LoginPage = () => {
         } else {
           setUserDetails(data.access_token);
           setIsLoading(false);
-          window.location.assign("/projectID/home");
+          window.location.assign('/home/projectID');
         }
       })
       .catch((err) => {

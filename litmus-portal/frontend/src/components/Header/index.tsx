@@ -2,24 +2,20 @@ import { useQuery } from '@apollo/client';
 import { Box, Divider } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
-import { GET_USER, LIST_PROJECTS } from '../../graphql';
+import { useLocation } from 'react-router-dom';
+import { GET_USER } from '../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
-  Member,
   Project,
-  Projects,
 } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
-import configureStore, { history } from '../../redux/configureStore';
+import configureStore from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { getUserId } from '../../utils/auth';
 import CustomBreadCrumbs from '../BreadCrumbs';
-import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
 
 interface SelectedProjectDetails {
@@ -92,12 +88,12 @@ const Header: React.FC = () => {
   //   });
   // };
 
-  const userID = getUserId();
+  /*  const userID = getUserId();
   const { projectID } = useParams<ParamType>();
 
-  console.log('Header Mounted');
+  console.log('Header Mounted'); */
 
-  useQuery<Projects>(LIST_PROJECTS, {
+  /*  useQuery<Projects>(LIST_PROJECTS, {
     onCompleted: (data) => {
       if (data?.listProjects) {
         data?.listProjects.map((project) => {
@@ -112,7 +108,7 @@ const Header: React.FC = () => {
     },
     fetchPolicy: 'no-cache',
   });
-
+ */
   // useEffect(() => {
   //   setSelectedProjectDetails({
   //     selectedProjectID: userData.selectedProjectID,

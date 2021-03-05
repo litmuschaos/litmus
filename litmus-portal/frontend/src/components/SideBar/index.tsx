@@ -90,10 +90,11 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="home"
           handleClick={() => {
-            const path = generatePath('/:projectID/home', {
+            history.push(`/home/${projectID}`);
+            /* const path = generatePath('/:projectID/home', {
               projectID,
             });
-            history.replace(path);
+            history.replace(path); */
           }}
           label="Home"
           selected={pathName === ''}
@@ -161,10 +162,12 @@ const SideBar: React.FC = () => {
           <CustomisedListItem
             key="settings"
             handleClick={() => {
-              const path = generatePath('/:projectID/settings', {
+              // history.push('/settings');
+              history.push(`/settings/${projectID}`);
+              /*  const path = generatePath('/settings/:projectID', {
                 projectID,
               });
-              history.replace(path);
+              history.replace(path); */
             }}
             label="Settings"
             selected={pathName === 'settings'}

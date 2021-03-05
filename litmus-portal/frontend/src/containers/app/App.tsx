@@ -65,7 +65,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
     return (
       <div className={classes.content}>
         <Switch>
-          <Route exact path="/:projectID/home" component={HomePage} />
+          <Route exact path="/home/:projectID" component={HomePage} />
           <Route
             exact
             path="/api-doc"
@@ -80,7 +80,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
   return (
     <div className={classes.content}>
       <Switch>
-        <Route exact path="/:projectID/home" component={HomePage} />
+        <Route exact path="/home/:projectID" component={HomePage} />
         <Route exact path="/:projectID/workflows" component={Workflows} />
         <Route
           exact
@@ -152,7 +152,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           component={CreateCustomWorkflow}
         />
         {isOwner ? (
-          <Route path="/:projectID/settings" component={Settings} />
+          <Route path="/settings/:projectID" component={Settings} />
         ) : (
           <Redirect to="/" />
         )}
