@@ -175,7 +175,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <MenuItem value="All">All</MenuItem>
           {dashboardTypes.map((dashboardType: string) => (
-            <MenuItem value={dashboardType}>{dashboardType}</MenuItem>
+            <MenuItem
+              key={`${dashboardType}-kubernetesDashboard-toolbar`}
+              value={dashboardType}
+            >
+              {dashboardType}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

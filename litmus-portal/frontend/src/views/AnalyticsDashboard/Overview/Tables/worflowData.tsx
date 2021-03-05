@@ -36,7 +36,7 @@ const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
             <Typography variant="h4" className={classes.weightedHeading}>
               {t('analyticsDashboard.workflowScheduleTable.title')}
             </Typography>
-            {scheduleWorkflowList && scheduleWorkflowList.length > 3 ? (
+            {scheduleWorkflowList.length > 3 ? (
               <IconButton
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
