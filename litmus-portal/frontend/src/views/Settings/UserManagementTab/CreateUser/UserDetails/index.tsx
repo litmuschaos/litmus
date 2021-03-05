@@ -117,7 +117,9 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               <InputField
                 helperText={
                   validateStartEmptySpacing(userValue)
-                    ? 'Should not start with an empty space'
+                    ? t(
+                        'settings.userManagementTab.createUser.userDetails.validationEmptySpace'
+                      )
                     : ''
                 }
                 label={t(

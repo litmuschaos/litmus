@@ -50,7 +50,6 @@ quickActionCard:
 customWorkflowCard:
   customWorkflow: Create your own workflow
   infraChaos: Infra-Chaos
-  
 
 workflowStepper:
   continueError: To continue, please check the error in code.
@@ -327,6 +326,7 @@ settings:
           fullName: Full Name
           email: Email Address
           username: Username
+        validationEmptySpace: Should not start with an empty space
       chooseAvatarModal:
         title: Change your Avatar
         info: You can now use your new password to login to your account
