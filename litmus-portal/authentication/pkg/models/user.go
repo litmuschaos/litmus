@@ -45,6 +45,7 @@ const (
 var DefaultUser = &UserCredentials{
 	UserName: types.DefaultUserName,
 	Password: types.DefaultUserPassword,
+	Role:     RoleAdmin,
 }
 
 //PublicUserInfo displays the information of the user that is publicly available
@@ -93,6 +94,11 @@ func (u *UserCredentials) GetID() string {
 // GetUserName user username
 func (u *UserCredentials) GetUserName() string {
 	return u.UserName
+}
+
+// GetRole role
+func (u *UserCredentials) GetRole() Role {
+	return u.Role
 }
 
 // GetPassword user password
@@ -147,7 +153,7 @@ func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 		UserName:  u.GetUserName(),
 		Email:     u.GetEmail(),
 		ID:        u.GetID(),
-		Role:      RoleAdmin,
+		Role:      u.GetRole(),
 		LoggedIn:  u.GetLoggedIn(),
 		CreatedAt: u.GetCreatedAt(),
 		UpdatedAt: u.GetUpdatedAt(),
@@ -164,6 +170,10 @@ func (uinfo *PublicUserInfo) GetUserName() string {
 // GetName user username
 func (uinfo *PublicUserInfo) GetName() string {
 	return uinfo.Name
+}
+
+func (uinfo *PublicUserInfo) GetRole() Role {
+	return uinfo.Role
 }
 
 // GetEmail user email
@@ -201,7 +211,7 @@ func (uinfo *PublicUserInfo) GetState() State {
 	return uinfo.State
 }
 
-// GetType returns auth type
+// GetType returns auth typeName
 func (s *SocialAuth) GetType() string {
 	return s.Type
 }

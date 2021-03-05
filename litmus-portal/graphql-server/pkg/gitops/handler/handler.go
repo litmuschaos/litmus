@@ -30,7 +30,10 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
 )
 
-const timeout = time.Second * 5
+const (
+	timeout  = time.Second * 5
+	tempPath = "/tmp/gitops_test/"
+)
 
 var (
 	gitLock           = gitops.NewGitLock()
@@ -54,7 +57,7 @@ func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, err
 	log.Print("Enabling Gitops")
 	gitDB := dbSchemaGitOps.GetGitConfigDB(config)
 
-	commit, err := gitops.SetupGitOps(gitops.GitUserFromContext(ctx), gitDB)
+	commit, err := gitops.SetupGitOps(gitops.GitUserFromContext(ctx), gitops.GetGitOpsConfig(gitDB))
 	if err != nil {
 		return false, errors.New("Failed to setup GitOps : " + err.Error())
 	}
@@ -87,7 +90,7 @@ func DisableGitOpsHandler(ctx context.Context, projectID string) (bool, error) {
 	return true, nil
 }
 
-// GetGitOpsDetailsHandler
+// GetGitOpsDetailsHandler returns the current gitops config for the requested project
 func GetGitOpsDetailsHandler(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
@@ -121,6 +124,51 @@ func GetGitOpsDetailsHandler(ctx context.Context, projectID string) (*model.GitC
 		resp.SSHPrivateKey = config.SSHPrivateKey
 	}
 	return &resp, nil
+}
+
+// UpdateGitOpsDetailsHandler updates an exiting gitops config for a project
+func UpdateGitOpsDetailsHandler(ctx context.Context, config model.GitConfig) (bool, error) {
+	gitLock.Lock(config.ProjectID, nil)
+	defer gitLock.Unlock(config.ProjectID, nil)
+
+	gitLock.Lock(config.RepoURL, &config.Branch)
+	defer gitLock.Unlock(config.RepoURL, &config.Branch)
+
+	existingConfig, err := dbOperationsGitOps.GetGitConfig(ctx, config.ProjectID)
+	if err != nil {
+		return false, errors.New("Cannot get Git Config from DB : " + err.Error())
+	}
+	if existingConfig == nil {
+		return false, errors.New("GitOps Disabled ")
+	}
+
+	log.Print("Enabling Gitops")
+	gitDB := dbSchemaGitOps.GetGitConfigDB(config)
+
+	gitConfig := gitops.GetGitOpsConfig(gitDB)
+	originalPath := gitConfig.LocalPath
+	gitConfig.LocalPath = tempPath + gitConfig.ProjectID
+	commit, err := gitops.SetupGitOps(gitops.GitUserFromContext(ctx), gitConfig)
+	if err != nil {
+		return false, errors.New("Failed to setup GitOps : " + err.Error())
+	}
+	gitDB.LatestCommit = commit
+
+	err = dbOperationsGitOps.ReplaceGitConfig(ctx, bson.D{{"project_id", config.ProjectID}}, &gitDB)
+	if err != nil {
+		return false, errors.New("Failed to enable GitOps in DB : " + err.Error())
+	}
+
+	err = os.RemoveAll(originalPath)
+	if err != nil {
+		return false, errors.New("Cannot remove existing repo : " + err.Error())
+	}
+	err = os.Rename(gitConfig.LocalPath, originalPath)
+	if err != nil {
+		return false, errors.New("Cannot copy new repo : " + err.Error())
+	}
+
+	return true, nil
 }
 
 // GitOpsNotificationHandler sends workflow run request(single run workflow only) to agent on gitops notification

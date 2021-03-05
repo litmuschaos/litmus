@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -117,16 +118,30 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 	if err != nil {
 		return err
 	}
-	if exists {
-		return nil
-	}
 
-	// create project dir and add config if not already present
-	err = os.MkdirAll(projectPath, 0755)
-	if err != nil {
-		return err
+	gitInfo := map[string]string{"projectID": c.ProjectID, "revision": "1"}
+	if exists {
+		data, err := ioutil.ReadFile(projectPath + "/.info")
+		if err != nil {
+			return errors.New("can't read existing git info file " + err.Error())
+		}
+		err = json.Unmarshal(data, &gitInfo)
+		if err != nil {
+			return errors.New("can't read existing git info file " + err.Error())
+		}
+		newRev, err := strconv.Atoi(gitInfo["revision"])
+		if err != nil {
+			return errors.New("can't read existing git info file[failed to parse revision] " + err.Error())
+		}
+		gitInfo["revision"] = strconv.Itoa(newRev + 1)
+	} else {
+		// create project dir and add config if not already present
+		err = os.MkdirAll(projectPath, 0755)
+		if err != nil {
+			return err
+		}
 	}
-	data, err := json.Marshal(map[string]string{"projectID": c.ProjectID})
+	data, err := json.Marshal(gitInfo)
 	if err != nil {
 		return err
 	}
@@ -146,8 +161,10 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 // GitClone clones the repo
 func (c GitConfig) GitClone() (*git.Repository, error) {
 	// clean the local path
-	os.RemoveAll(c.LocalPath)
-
+	err := os.RemoveAll(c.LocalPath)
+	if err != nil {
+		return nil, err
+	}
 	auth, err := c.getAuthMethod()
 	if err != nil {
 		return nil, err
@@ -441,8 +458,7 @@ func (c GitConfig) GetLatestCommitHash() (string, error) {
 }
 
 // SetupGitOps clones and sets up the repo for gitops and returns the LatestCommit
-func SetupGitOps(user GitUser, config dbSchemaGitOps.GitConfigDB) (string, error) {
-	gitConfig := GetGitOpsConfig(config)
+func SetupGitOps(user GitUser, gitConfig GitConfig) (string, error) {
 	err := gitConfig.setupGitRepo(user)
 	if err != nil {
 		return "", err
