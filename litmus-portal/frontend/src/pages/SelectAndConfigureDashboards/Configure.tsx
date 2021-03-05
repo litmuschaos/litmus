@@ -149,66 +149,61 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
               : (workflowYaml as CronWorkflowYaml).spec.workflowSpec.templates
             ).forEach((template: Template) => {
               if (template.inputs && template.inputs.artifacts) {
-                (template.inputs.artifacts ?? []).forEach(
-                  (artifact: Artifact) => {
-                    const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
-                    if (parsedEmbeddedYaml.kind === 'ChaosEngine') {
-                      let engineNamespace: string = '';
-                      if (
-                        typeof parsedEmbeddedYaml.metadata.namespace ===
-                        'string'
-                      ) {
-                        engineNamespace = (parsedEmbeddedYaml.metadata
-                          .namespace as string).substring(
-                          1,
-                          (parsedEmbeddedYaml.metadata.namespace as string)
-                            .length - 1
-                        );
-                      } else {
-                        engineNamespace = Object.keys(
-                          parsedEmbeddedYaml.metadata.namespace
-                        )[0];
-                      }
-                      if (validateWorkflowParameter(engineNamespace)) {
-                        engineNamespace = getWorkflowParameter(engineNamespace);
-                        parametersMap.forEach(
-                          (parameterKeyValue: Parameter) => {
-                            if (parameterKeyValue.name === engineNamespace) {
-                              engineNamespace = parameterKeyValue.value;
-                            }
-                          }
-                        );
-                      } else {
-                        engineNamespace = parsedEmbeddedYaml.metadata.namespace;
-                      }
-                      let matchIndex: number = -1;
-                      const check: number = chaosEngineNamesAndNamespacesMap.filter(
-                        (data, index) => {
-                          if (
-                            data.engineName ===
-                              parsedEmbeddedYaml.metadata.name &&
-                            data.engineNamespace === engineNamespace
-                          ) {
-                            matchIndex = index;
-                            return true;
-                          }
-                          return false;
+                template.inputs.artifacts.forEach((artifact: Artifact) => {
+                  const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
+                  if (parsedEmbeddedYaml.kind === 'ChaosEngine') {
+                    let engineNamespace: string = '';
+                    if (
+                      typeof parsedEmbeddedYaml.metadata.namespace === 'string'
+                    ) {
+                      engineNamespace = (parsedEmbeddedYaml.metadata
+                        .namespace as string).substring(
+                        1,
+                        (parsedEmbeddedYaml.metadata.namespace as string)
+                          .length - 1
+                      );
+                    } else {
+                      engineNamespace = Object.keys(
+                        parsedEmbeddedYaml.metadata.namespace
+                      )[0];
+                    }
+                    if (validateWorkflowParameter(engineNamespace)) {
+                      engineNamespace = getWorkflowParameter(engineNamespace);
+                      parametersMap.forEach((parameterKeyValue: Parameter) => {
+                        if (parameterKeyValue.name === engineNamespace) {
+                          engineNamespace = parameterKeyValue.value;
                         }
-                      ).length;
-                      if (check === 0) {
-                        chaosEngineNamesAndNamespacesMap.push({
-                          engineName: parsedEmbeddedYaml.metadata.name,
-                          engineNamespace,
-                          workflowName: workflowYaml.metadata.name,
-                        });
-                      } else {
-                        chaosEngineNamesAndNamespacesMap[
-                          matchIndex
-                        ].workflowName = `${chaosEngineNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                      });
+                    } else {
+                      engineNamespace = parsedEmbeddedYaml.metadata.namespace;
+                    }
+                    let matchIndex: number = -1;
+                    const check: number = chaosEngineNamesAndNamespacesMap.filter(
+                      (data, index) => {
+                        if (
+                          data.engineName ===
+                            parsedEmbeddedYaml.metadata.name &&
+                          data.engineNamespace === engineNamespace
+                        ) {
+                          matchIndex = index;
+                          return true;
+                        }
+                        return false;
                       }
+                    ).length;
+                    if (check === 0) {
+                      chaosEngineNamesAndNamespacesMap.push({
+                        engineName: parsedEmbeddedYaml.metadata.name,
+                        engineNamespace,
+                        workflowName: workflowYaml.metadata.name,
+                      });
+                    } else {
+                      chaosEngineNamesAndNamespacesMap[
+                        matchIndex
+                      ].workflowName = `${chaosEngineNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
                     }
                   }
-                );
+                });
               }
             });
           }
