@@ -34,7 +34,7 @@ const AnalyticsScheduleWorkflowCard: React.FC = () => {
   return (
     <div className={classes.banner}>
       <ThreeTierCard
-        isDisabled={!(agentList && agentList?.getCluster.length > 0)}
+        isDisabled={!(agentList && agentList.getCluster.length > 0)}
         mainHeading={[
           t('analyticsDashboard.scheduleWorkflowCard.mainHeading-0'),
           t('analyticsDashboard.scheduleWorkflowCard.mainHeading-1'),

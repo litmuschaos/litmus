@@ -149,7 +149,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             : (workflowYaml as CronWorkflowYaml).spec.workflowSpec.templates
           ).forEach((template: Template) => {
             if (template.inputs) {
-              template.inputs?.artifacts.forEach((artifact: Artifact) => {
+              template.inputs.artifacts.forEach((artifact: Artifact) => {
                 const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
                 if (parsedEmbeddedYaml.kind === 'ChaosEngine') {
                   let engineNamespace: string = '';

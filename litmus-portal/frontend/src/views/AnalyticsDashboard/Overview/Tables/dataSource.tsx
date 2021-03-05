@@ -58,66 +58,65 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
           </div>
 
           <Table className={classes.tableStyling}>
-            {dataSourceList &&
-              dataSourceList.slice(0, 3).map((singleDataSource) => (
-                <TableRow
-                  key={singleDataSource.ds_id}
-                  className={classes.tableRow}
-                >
-                  <TableCell scope="row" className={classes.tableRowHeader}>
-                    <div className={classes.dataSourceTableHeader}>
-                      {singleDataSource.health_status === 'Active' ? (
-                        <LightPills
-                          variant="success"
-                          label={singleDataSource.health_status}
-                        />
-                      ) : singleDataSource.health_status === 'Not Ready' ? (
-                        <LightPills
-                          variant="warning"
-                          label={singleDataSource.health_status}
-                        />
-                      ) : (
-                        <LightPills
-                          variant="danger"
-                          label={singleDataSource.health_status}
-                        />
-                      )}
-                      <Typography className={classes.dataRowName}>
-                        {singleDataSource.ds_name}
-                      </Typography>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Typography className={classes.dateText}>
-                      {t('analyticsDashboard.timeText.lastRun')}:{' '}
-                      {GetTimeDiff(
-                        currentTime / 1000,
-                        parseInt(singleDataSource.updated_at, 10),
-                        t
-                      )}{' '}
-                      {t('analyticsDashboard.timeText.ago')}
+            {dataSourceList.slice(0, 3).map((singleDataSource) => (
+              <TableRow
+                key={singleDataSource.ds_id}
+                className={classes.tableRow}
+              >
+                <TableCell scope="row" className={classes.tableRowHeader}>
+                  <div className={classes.dataSourceTableHeader}>
+                    {singleDataSource.health_status === 'Active' ? (
+                      <LightPills
+                        variant="success"
+                        label={singleDataSource.health_status}
+                      />
+                    ) : singleDataSource.health_status === 'Not Ready' ? (
+                      <LightPills
+                        variant="warning"
+                        label={singleDataSource.health_status}
+                      />
+                    ) : (
+                      <LightPills
+                        variant="danger"
+                        label={singleDataSource.health_status}
+                      />
+                    )}
+                    <Typography className={classes.dataRowName}>
+                      {singleDataSource.ds_name}
                     </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      className={classes.seeAllBtn}
-                      disableRipple
-                      disableFocusRipple
-                      onClick={() => {
-                        dataSource.selectDataSource({
-                          selectedDataSourceID: singleDataSource.ds_id,
-                          selectedDataSourceName: singleDataSource.ds_name,
-                        });
-                        history.push('/analytics/datasource/configure');
-                      }}
-                    >
-                      <Typography className={classes.seeAllText}>
-                        {t('analyticsDashboard.seeDetails')}
-                      </Typography>
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Typography className={classes.dateText}>
+                    {t('analyticsDashboard.timeText.lastRun')}:{' '}
+                    {GetTimeDiff(
+                      currentTime / 1000,
+                      parseInt(singleDataSource.updated_at, 10),
+                      t
+                    )}{' '}
+                    {t('analyticsDashboard.timeText.ago')}
+                  </Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    className={classes.seeAllBtn}
+                    disableRipple
+                    disableFocusRipple
+                    onClick={() => {
+                      dataSource.selectDataSource({
+                        selectedDataSourceID: singleDataSource.ds_id,
+                        selectedDataSourceName: singleDataSource.ds_name,
+                      });
+                      history.push('/analytics/datasource/configure');
+                    }}
+                  >
+                    <Typography className={classes.seeAllText}>
+                      {t('analyticsDashboard.seeDetails')}
+                    </Typography>
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
           </Table>
         </Paper>
       ) : (

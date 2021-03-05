@@ -254,7 +254,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
               >
                 {(dataSourceList?.ListDataSource ?? []).map(
                   (dataSource: ListDataSourceResponse) => (
-                    <MenuItem value={dataSource.ds_id}>
+                    <MenuItem key={dataSource.ds_id} value={dataSource.ds_id}>
                       {dataSource.ds_name}
                     </MenuItem>
                   )
@@ -300,7 +300,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
                   );
                 })
                 .map((agent: Cluster) => (
-                  <MenuItem value={agent.cluster_id}>
+                  <MenuItem key={agent.cluster_id} value={agent.cluster_id}>
                     {agent.cluster_name}
                   </MenuItem>
                 ))}

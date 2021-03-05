@@ -150,7 +150,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
             ).forEach((template: Template) => {
               if (template.inputs) {
                 // TODO it will crash on create configurer new dashboard
-                (template.inputs?.artifacts ?? []).forEach(
+                (template.inputs.artifacts ?? []).forEach(
                   (artifact: Artifact) => {
                     const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
                     if (parsedEmbeddedYaml.kind === 'ChaosEngine') {

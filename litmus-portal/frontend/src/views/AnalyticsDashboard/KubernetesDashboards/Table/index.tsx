@@ -131,7 +131,7 @@ const DashboardTable: React.FC = () => {
   const payload: ListDashboardResponse[] = data
     ? !data.ListDashboard
       ? []
-      : data?.ListDashboard.filter((db: ListDashboardResponse) => {
+      : data.ListDashboard.filter((db: ListDashboardResponse) => {
           return filter.searchTokens.every(
             (s: string) =>
               db.db_name.toLowerCase().includes(s) ||
@@ -312,7 +312,7 @@ const DashboardTable: React.FC = () => {
                       </Typography>
                     </TableCell>
                   </TableRow>
-                ) : payload && payload.length ? (
+                ) : payload.length ? (
                   payload
                     .slice(0)
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

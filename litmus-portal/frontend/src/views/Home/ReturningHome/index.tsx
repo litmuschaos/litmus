@@ -122,7 +122,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     };
     const workflowRunsPerWeek: number[] = [];
     if (data && data.ListWorkflow && data.ListWorkflow.length) {
-      const sortedWorkflowsData = data?.ListWorkflow.slice().sort(
+      const sortedWorkflowsData = data.ListWorkflow.slice().sort(
         (a: Workflow, b: Workflow) => {
           const x = parseInt(a.created_at, 10);
           const y = parseInt(b.created_at, 10);

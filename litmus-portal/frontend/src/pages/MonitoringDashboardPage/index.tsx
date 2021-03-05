@@ -137,7 +137,7 @@ const DashboardPage: React.FC = () => {
         selectedDashboardInformation.metaData[0] &&
         dataSources.ListDataSource
       ) {
-        const selectedDataSource: ListDataSourceResponse = dataSources?.ListDataSource.filter(
+        const selectedDataSource: ListDataSourceResponse = dataSources.ListDataSource.filter(
           (data) => {
             return (
               data.ds_id === selectedDashboardInformation.metaData[0].ds_id
@@ -151,7 +151,10 @@ const DashboardPage: React.FC = () => {
             selectedDataSourceName: selectedDataSource.ds_name,
           });
         }
-        if (selectedDataSource.health_status !== 'Active') {
+        if (
+          selectedDataSource &&
+          selectedDataSource.health_status !== 'Active'
+        ) {
           setDataSourceStatus(selectedDataSource.health_status);
         }
       }
@@ -199,6 +202,7 @@ const DashboardPage: React.FC = () => {
                 (data: ListDashboardResponse) => {
                   return (
                     <MenuItem
+                      key={`${data.db_id}-monitoringDashboard`}
                       value={data.db_id}
                       onClick={() => {
                         setSelectedDashboardInformation({
