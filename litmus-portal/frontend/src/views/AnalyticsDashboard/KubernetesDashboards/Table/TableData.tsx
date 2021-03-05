@@ -148,8 +148,8 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             ? (workflowYaml as WorkflowYaml).spec.templates
             : (workflowYaml as CronWorkflowYaml).spec.workflowSpec.templates
           ).forEach((template: Template) => {
-            if (template.inputs) {
-              template.inputs?.artifacts.forEach((artifact: Artifact) => {
+            if (template.inputs && template.inputs.artifacts) {
+              template.inputs.artifacts.forEach((artifact: Artifact) => {
                 const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
                 if (parsedEmbeddedYaml.kind === 'ChaosEngine') {
                   let engineNamespace: string = '';
@@ -363,8 +363,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       selectedAgentID: data.cluster_id,
       selectedAgentName: data.cluster_name,
     });
-    // TODO it crashes on calling reSync
-    // return Promise.resolve(reSyncChaosQueries());
+    return Promise.resolve(reSyncChaosQueries());
   };
 
   useEffect(() => {

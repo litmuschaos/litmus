@@ -148,9 +148,8 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
               ? (workflowYaml as WorkflowYaml).spec.templates
               : (workflowYaml as CronWorkflowYaml).spec.workflowSpec.templates
             ).forEach((template: Template) => {
-              if (template.inputs) {
-                // TODO it will crash on create configurer new dashboard
-                (template.inputs?.artifacts ?? []).forEach(
+              if (template.inputs && template.inputs.artifacts) {
+                (template.inputs.artifacts ?? []).forEach(
                   (artifact: Artifact) => {
                     const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
                     if (parsedEmbeddedYaml.kind === 'ChaosEngine') {

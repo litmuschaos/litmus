@@ -16,7 +16,7 @@ export interface DashboardData {
 }
 
 export interface DashboardDetails {
-  id?: string;
+  id: string;
   name: string;
   dashboardType: string;
   dataSourceType: string;

@@ -116,8 +116,8 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
             ? (workflowYaml as WorkflowYaml).spec.templates
             : (workflowYaml as CronWorkflowYaml).spec.workflowSpec.templates
           ).forEach((template: Template) => {
-            if (template.inputs) {
-              template.inputs?.artifacts.forEach((artifact: Artifact) => {
+            if (template.inputs && template.inputs.artifacts) {
+              template.inputs.artifacts.forEach((artifact: Artifact) => {
                 const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
                 if (parsedEmbeddedYaml.kind === 'ChaosEngine') {
                   let engineNamespace: string = '';
@@ -331,8 +331,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
       selectedAgentID: data.cluster_id,
       selectedAgentName: data.cluster_name,
     });
-    // TODO crashes on calling
-    // return Promise.resolve(reSyncChaosQueries(data));
+    return Promise.resolve(reSyncChaosQueries(data));
   };
   return (
     <div>

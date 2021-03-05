@@ -61,6 +61,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
     (state: RootState) => state.selectDashboard
   );
   const [dashboardDetails, setDashboardDetails] = useState<DashboardDetails>({
+    id: '',
     name: '',
     dashboardType: selectedDashboard.selectedDashboardTemplateName ?? '',
     dataSourceType: '',
