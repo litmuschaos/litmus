@@ -28,7 +28,7 @@ const TotalWorkflows: React.FC<TotalWorkflowProps> = ({
       <div className={classes.contentDiv}>
         <Avatar className={classes.avatarStyle}>
           <img
-            src="/icons/weeklyWorkflows.svg"
+            src="./icons/weeklyWorkflows.svg"
             alt="Ellipse Icon"
             className={classes.weeklyIcon}
           />

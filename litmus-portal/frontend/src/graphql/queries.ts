@@ -323,3 +323,85 @@ export const GET_PROJECT = gql`
     }
   }
 `;
+
+export const LIST_DATASOURCE = gql`
+  query listDataSource($projectID: String!) {
+    ListDataSource(project_id: $projectID) {
+      ds_id
+      ds_name
+      ds_type
+      ds_url
+      access_type
+      auth_type
+      basic_auth_username
+      basic_auth_password
+      scrape_interval
+      query_timeout
+      http_method
+      project_id
+      created_at
+      updated_at
+      health_status
+    }
+  }
+`;
+
+export const LIST_DASHBOARD = gql`
+  query listDashboard($projectID: String!) {
+    ListDashboard(project_id: $projectID) {
+      db_id
+      ds_id
+      db_name
+      db_type
+      cluster_name
+      ds_name
+      ds_type
+      panel_groups {
+        panels {
+          panel_id
+          prom_queries {
+            queryid
+            prom_query_name
+            legend
+            resolution
+            minstep
+            line
+            close_area
+          }
+          panel_options {
+            points
+            grids
+            left_axis
+          }
+          panel_name
+          y_axis_left
+          y_axis_right
+          x_axis_down
+          unit
+        }
+        panel_group_name
+        panel_group_id
+      }
+      end_time
+      start_time
+      refresh_rate
+      project_id
+      cluster_id
+      created_at
+      updated_at
+    }
+  }
+`;
+
+export const PROM_QUERY = gql`
+  query PrometheusQuery($prometheusInput: promInput) {
+    GetPromQuery(query: $prometheusInput) {
+      queryid
+      legends
+      tsvs {
+        timestamp
+        value
+      }
+    }
+  }
+`;
