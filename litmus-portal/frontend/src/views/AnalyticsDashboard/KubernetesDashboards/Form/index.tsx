@@ -212,7 +212,12 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
               >
                 {getDataSourceType(dataSourceList?.ListDataSource ?? []).map(
                   (dataSourceType: string) => (
-                    <MenuItem value={dataSourceType}>{dataSourceType}</MenuItem>
+                    <MenuItem
+                      key={`${dataSourceType}-kubernetesDashboard-form`}
+                      value={dataSourceType}
+                    >
+                      {dataSourceType}
+                    </MenuItem>
                   )
                 )}
               </Select>
@@ -364,6 +369,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
                   </div>
                   {panelGroup.panels.map((panel: string, index: number) => (
                     <Typography
+                      key={`${panel}-kubernetesDashboard`}
                       variant="body1"
                       align="left"
                       className={classes.groupPanelBodyText}
