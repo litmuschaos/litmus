@@ -53,50 +53,44 @@ const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
               <div />
             )}
           </div>
-          {scheduleWorkflowList && scheduleWorkflowList.length > 0 && (
-            <Table className={classes.tableStyling}>
-              {scheduleWorkflowList &&
-                scheduleWorkflowList.slice(0, 3).map((schedule) => (
-                  <TableRow
-                    key={schedule.workflow_id}
-                    className={classes.tableRow}
+          <Table className={classes.tableStyling}>
+            {scheduleWorkflowList.slice(0, 3).map((schedule) => (
+              <TableRow key={schedule.workflow_id} className={classes.tableRow}>
+                <TableCell scope="row" className={classes.tableRowHeader}>
+                  <Typography className={classes.dataRowName}>
+                    {schedule.workflow_name}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography className={classes.dateText}>
+                    {t('analyticsDashboard.timeText.lastRun')}:{' '}
+                    {GetTimeDiff(
+                      currentTime / 1000,
+                      parseInt(schedule.updated_at, 10),
+                      t
+                    )}{' '}
+                    {t('analyticsDashboard.timeText.ago')}
+                  </Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    className={classes.seeAllBtn}
+                    disableRipple
+                    disableFocusRipple
+                    onClick={() =>
+                      history.push(
+                        `/workflows/analytics/${schedule.workflow_id}`
+                      )
+                    }
                   >
-                    <TableCell scope="row" className={classes.tableRowHeader}>
-                      <Typography className={classes.dataRowName}>
-                        {schedule.workflow_name}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography className={classes.dateText}>
-                        {t('analyticsDashboard.timeText.lastRun')}:{' '}
-                        {GetTimeDiff(
-                          currentTime / 1000,
-                          parseInt(schedule.updated_at, 10),
-                          t
-                        )}{' '}
-                        {t('analyticsDashboard.timeText.ago')}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        className={classes.seeAllBtn}
-                        disableRipple
-                        disableFocusRipple
-                        onClick={() =>
-                          history.push(
-                            `/workflows/analytics/${schedule.workflow_id}`
-                          )
-                        }
-                      >
-                        <Typography className={classes.seeAllText}>
-                          {t('analyticsDashboard.seeAnalytics')}
-                        </Typography>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </Table>
-          )}
+                    <Typography className={classes.seeAllText}>
+                      {t('analyticsDashboard.seeAnalytics')}
+                    </Typography>
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </Table>
         </Paper>
       ) : (
         <div />

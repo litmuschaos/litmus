@@ -151,7 +151,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <MenuItem value="All">All</MenuItem>
           {agentNames.map((agentName: string) => (
-            <MenuItem value={agentName}>{agentName}</MenuItem>
+            <MenuItem
+              key={`${agentName}-kubernetesDashboard-Toolbar`}
+              value={agentName}
+            >
+              {agentName}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

@@ -212,7 +212,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <MenuItem value="All">All</MenuItem>
           {clusters.map((cluster: string) => (
-            <MenuItem value={cluster}>{cluster}</MenuItem>
+            <MenuItem
+              key={`${cluster}-litmusDashboard-workflowComparison-toolBar`}
+              value={cluster}
+            >
+              {cluster}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

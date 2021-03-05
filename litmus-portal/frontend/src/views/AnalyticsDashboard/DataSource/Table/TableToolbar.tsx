@@ -133,7 +133,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <MenuItem value="All">All</MenuItem>
           {statuses.map((status: string) => (
-            <MenuItem value={status}>{status}</MenuItem>
+            <MenuItem
+              key={`${status}-analyticsDashboard-dataSource-toolbar`}
+              value={status}
+            >
+              {status}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
@@ -155,7 +160,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <MenuItem value="All">All</MenuItem>
           {dataSourceTypes.map((dataSourceType: string) => (
-            <MenuItem value={dataSourceType}>{dataSourceType}</MenuItem>
+            <MenuItem
+              key={`${dataSourceType}-analyticsDashboard-dataSource-tableToolbar`}
+              value={dataSourceType}
+            >
+              {dataSourceType}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

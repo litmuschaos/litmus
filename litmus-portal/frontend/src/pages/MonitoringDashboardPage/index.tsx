@@ -151,7 +151,10 @@ const DashboardPage: React.FC = () => {
             selectedDataSourceName: selectedDataSource.ds_name,
           });
         }
-        if (selectedDataSource.health_status !== 'Active') {
+        if (
+          selectedDataSource &&
+          selectedDataSource.health_status !== 'Active'
+        ) {
           setDataSourceStatus(selectedDataSource.health_status);
         }
       }

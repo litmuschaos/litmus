@@ -277,7 +277,7 @@ const DataSourceTable: React.FC = () => {
                       </Typography>
                     </TableCell>
                   </TableRow>
-                ) : payload && payload.length ? (
+                ) : payload.length ? (
                   payload
                     .slice(0)
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

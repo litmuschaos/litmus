@@ -117,7 +117,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
             : (workflowYaml as CronWorkflowYaml).spec.workflowSpec.templates
           ).forEach((template: Template) => {
             if (template.inputs) {
-              template.inputs?.artifacts.forEach((artifact: Artifact) => {
+              template.inputs.artifacts.forEach((artifact: Artifact) => {
                 const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
                 if (parsedEmbeddedYaml.kind === 'ChaosEngine') {
                   let engineNamespace: string = '';
@@ -342,7 +342,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
             <Typography variant="h4" className={classes.weightedHeading}>
               {t('analyticsDashboard.applicationDashboard')}
             </Typography>
-            {dashboardDataList && dashboardDataList.length > 3 ? (
+            {dashboardDataList.length > 3 ? (
               <IconButton
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
@@ -359,52 +359,49 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
               <div />
             )}
           </div>
-          {dashboardDataList && dashboardDataList.length > 0 && (
-            <Table className={classes.tableStyling}>
-              {dashboardDataList &&
-                dashboardDataList.slice(0, 3).map((dashboard) => (
-                  <TableRow key={dashboard.db_id} className={classes.tableRow}>
-                    <TableCell scope="row" className={classes.tableRowHeader}>
-                      <Typography className={classes.dataRowName}>
-                        {dashboard.db_name}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography className={classes.dateText}>
-                        {t('analyticsDashboard.timeText.lastRun')}:{' '}
-                        {GetTimeDiff(
-                          currentTime / 1000,
-                          parseInt(dashboard.updated_at, 10),
-                          t
-                        )}{' '}
-                        {t('analyticsDashboard.timeText.ago')}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        className={classes.seeAllBtn}
-                        disableRipple
-                        disableFocusRipple
-                        onClick={() => {
-                          onDashboardLoadRoutine(dashboard).then(() => {
-                            dataSource.selectDataSource({
-                              selectedDataSourceURL: '',
-                              selectedDataSourceID: '',
-                              selectedDataSourceName: '',
-                            });
-                            history.push('/analytics/dashboard');
-                          });
-                        }}
-                      >
-                        <Typography className={classes.seeAllText}>
-                          {t('analyticsDashboard.seeAnalytics')}
-                        </Typography>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </Table>
-          )}
+          <Table className={classes.tableStyling}>
+            {dashboardDataList.slice(0, 3).map((dashboard) => (
+              <TableRow key={dashboard.db_id} className={classes.tableRow}>
+                <TableCell scope="row" className={classes.tableRowHeader}>
+                  <Typography className={classes.dataRowName}>
+                    {dashboard.db_name}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography className={classes.dateText}>
+                    {t('analyticsDashboard.timeText.lastRun')}:{' '}
+                    {GetTimeDiff(
+                      currentTime / 1000,
+                      parseInt(dashboard.updated_at, 10),
+                      t
+                    )}{' '}
+                    {t('analyticsDashboard.timeText.ago')}
+                  </Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    className={classes.seeAllBtn}
+                    disableRipple
+                    disableFocusRipple
+                    onClick={() => {
+                      onDashboardLoadRoutine(dashboard).then(() => {
+                        dataSource.selectDataSource({
+                          selectedDataSourceURL: '',
+                          selectedDataSourceID: '',
+                          selectedDataSourceName: '',
+                        });
+                        history.push('/analytics/dashboard');
+                      });
+                    }}
+                  >
+                    <Typography className={classes.seeAllText}>
+                      {t('analyticsDashboard.seeAnalytics')}
+                    </Typography>
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </Table>
         </Paper>
       ) : (
         <div />

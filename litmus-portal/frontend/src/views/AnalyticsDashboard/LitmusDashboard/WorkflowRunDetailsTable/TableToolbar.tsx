@@ -152,7 +152,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <MenuItem value="All">All</MenuItem>
           {testResults.map((testResult: string) => (
-            <MenuItem value={testResult}>{testResult}</MenuItem>
+            <MenuItem
+              key={`${testResult}-litmusDashboard-workflowRunDetails`}
+              value={testResult}
+            >
+              {testResult}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
