@@ -391,6 +391,7 @@ workflowDetailsView:
       endTime: End Time
       duration: Duration
       namespace: Namespace
+      finished: To be finished
     nodeDetails:
       curr: Currently Running Nodes
       exec: Executed Nodes

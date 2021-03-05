@@ -98,7 +98,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
                   {t('workflowDetailsView.workflowInfo.param.endTime')}:
                 </span>{' '}
                 {execution_data.finishedAt === ''
-                  ? 'To be finished'
+                  ? t('workflowDetailsView.workflowInfo.param.finished')
                   : timeDifference(execution_data.finishedAt)}
               </Typography>
               <Typography>
