@@ -42,7 +42,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
               {panel_group_name}
             </Typography>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails className={classes.panelGroupContainer}>
             {panels &&
               panels.map((panel: PanelResponse) => (
                 <div key={panel.panel_id} data-cy="dashboardPanel">

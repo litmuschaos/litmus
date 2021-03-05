@@ -46,7 +46,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
           )}
           {analyticsHome && (
             <QuickActionItems>
-              <img src="./icons/targets.svg" alt="agent" />
+              <img src="./icons/target.svg" alt="agent" />
               <Link to="/target-connect" className={classes.listItem}>
                 {t('quickActionCard.connectNewAgent')}
               </Link>
@@ -55,7 +55,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
           {userRole === 'Owner' && (
             <QuickActionItems>
               <div className={classes.imgDiv}>
-                <img src="/icons/team.png" alt="team" />
+                <img src="./icons/teamMember.svg" alt="team" />
               </div>
               <Link
                 to="/settings"
@@ -68,7 +68,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
           )}
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="/icons/survey.png" alt="survey" />
+              <img src="./icons/survey.svg" alt="survey" />
             </div>
             <a
               href="https://forms.gle/qMuVphRyEWCFqjD56"
@@ -80,7 +80,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
           </QuickActionItems>
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="/icons/docs.png" alt="docs" />
+              <img src="./icons/docs.svg" alt="docs" />
             </div>
             <a
               href="https://docs.litmuschaos.io/docs/getstarted/"
@@ -92,7 +92,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
           </QuickActionItems>
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="/icons/docs.png" alt="docs" />
+              <img src="./icons/docs.svg" alt="docs" />
             </div>
             <a href={apiDocsUrl} className={classes.listItem} target="_">
               {t('quickActionCard.readAPIDocs')}

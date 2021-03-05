@@ -4,50 +4,36 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   rootPanel: {
     display: 'inline-block',
-    gap: 0,
     background: theme.palette.background.paper,
     padding: theme.spacing(2),
+    margin: theme.spacing(3, 1),
   },
 
   rootPanelGroup: {
     width: '100%',
     display: 'inline-block',
-    gap: 0,
     background: theme.palette.background.paper,
     padding: theme.spacing(2),
     paddingBottom: 0,
-    marginBottom: theme.spacing(-3),
+    marginBottom: theme.spacing(1),
   },
   panelGroup: {
     display: 'flex',
     alignItems: 'left',
-    background: theme.palette.cards.background,
+    background: theme.palette.disabledBackground,
   },
-  // CardContent
-  panelGroupTitle: {
-    fontWeight: 700,
-    fontSize: '1rem',
-  },
-  card: {
-    background: theme.palette.cards.background,
-    minWidth: '10.0rem',
-    borderRadius: 3,
-    overflow: 'hidden',
-    fontSize: '0.875rem',
-    margin: theme.spacing(1),
-    textAlign: 'center',
-    cursor: 'pointer',
-    border: `1px solid ${theme.palette.secondary.main}`,
-    boxSizing: 'border-box',
-    '&:hover': {
-      border: `1px solid ${theme.palette.secondary.dark}`,
-      boxShadow: `0px 4px 4px ${theme.palette.highlight}80`,
+  panelGroupContainer: {
+    background: theme.palette.cards.header,
+    display: 'flex',
+    justifyContent: 'space-around',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
     },
   },
 
-  // CARD CONTENT
-  cardContent: {
-    color: theme.palette.text.primary,
+  panelGroupTitle: {
+    fontWeight: 700,
+    fontSize: '1rem',
   },
 
   title: {
@@ -58,7 +44,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     paddingTop: theme.spacing(2.5),
   },
-  singleGraph: { width: '25rem', height: '25rem' },
+
+  singleGraph: {
+    width: '32.5vw',
+    height: '27.5rem',
+    [theme.breakpoints.down(1200)]: {
+      width: '30vw',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '42.5vw',
+    },
+  },
 }));
 
 export const Accordion = withStyles({

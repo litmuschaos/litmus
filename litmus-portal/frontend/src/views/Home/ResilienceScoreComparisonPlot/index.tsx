@@ -82,9 +82,9 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       dataY = yData.Monthly;
     }
     const colors = [
-      palette.graph.dashboard.lightBlue,
-      palette.warning.main,
       palette.primary.main,
+      palette.warning.main,
+      palette.secondary.main,
       palette.error.main,
     ];
     const lineSize = [3, 3, 3, 3];
@@ -194,8 +194,6 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         label: 'default',
       },
     ],
-    bgcolor: palette.common.black,
-    activecolor: palette.status.pending.background,
   };
 
   const processLayout = () => {
@@ -294,7 +292,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         <FormControl
           variant="outlined"
           className={classes.formControl}
-          color="secondary"
+          color="primary"
           focused
         >
           <InputLabel
@@ -332,7 +330,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             className={classes.analyticsBtnPos}
           >
             <AssessmentOutlinedIcon
-              color="secondary"
+              color="primary"
               className={classes.analyticsButton}
             />
           </IconButton>

@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(0.2),
     display: 'block',
-    backgroundColor: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.common.white,
     width: '0.9375rem',
     height: '0.9375rem',
   },
@@ -15,10 +15,10 @@ const useStyles = makeStyles((theme) => ({
     height: '0.9375rem',
   },
   cancelIcon: {
-    color: theme.palette.error.dark,
+    color: theme.palette.error.main,
   },
   checkIcon: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.success.main,
   },
 }));
 

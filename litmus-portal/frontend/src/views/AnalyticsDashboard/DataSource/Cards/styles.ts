@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.border.main}`,
     boxSizing: 'border-box',
     '&:hover': {
-      border: `1px solid ${theme.palette.secondary.dark}`,
+      border: `1px solid ${theme.palette.primary.main}`,
       boxShadow: `0px 4px 4px ${theme.palette.highlight}80`,
     },
   },
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     fontSize: '1rem',
     lineHeight: '130%',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
   },
 
   description: {
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     margin: `0.5rem auto`,
     marginBottom: theme.spacing(4),
     width: '80%',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.hint,
   },
 
   noImage: {

@@ -18,9 +18,13 @@ const useStyles = makeStyles((theme) => ({
   headerDiv: {
     display: 'flex',
     flexDirection: 'row',
-    marginTop: theme.spacing(3),
-    backgroundColor: theme.palette.background.paper,
+    marginTop: theme.spacing(5),
+    backgroundColor: theme.palette.disabledBackground,
     minHeight: '5rem',
+  },
+
+  italic: {
+    fontStyle: 'italic',
   },
 
   dashboardType: {
@@ -35,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   analyticsDiv: {
-    marginTop: theme.spacing(5),
+    paddingTop: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
     minHeight: '26rem',
   },
@@ -48,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     height: '3rem',
     width: '3rem',
-    marginLeft: theme.spacing(3),
+    marginLeft: theme.spacing(1.5),
   },
 
   dashboardSwitchIcon: {
@@ -63,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
   // Menu option
   menuItem: {
     '&:hover': {
-      background: theme.palette.secondary.dark,
+      background: theme.palette.primary.main,
     },
     minWidth: '10rem',
     height: '2.5rem',

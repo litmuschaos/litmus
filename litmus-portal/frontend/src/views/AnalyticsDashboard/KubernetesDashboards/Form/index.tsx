@@ -192,7 +192,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
             <FormControl
               variant="outlined"
               className={classes.formControl}
-              color="secondary"
+              color="primary"
               focused
             >
               <InputLabel className={classes.selectText}>
@@ -223,7 +223,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
             <FormControl
               variant="outlined"
               className={classes.formControl}
-              color="secondary"
+              color="primary"
               focused
             >
               <InputLabel className={classes.selectText}>
@@ -268,7 +268,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
           <FormControl
             variant="outlined"
             className={classes.formControlSingle}
-            color="secondary"
+            color="primary"
             focused
           >
             <InputLabel className={classes.selectText}>Agent</InputLabel>

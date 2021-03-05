@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
   input: {
     '&:-webkit-autofill': {
-      WebkitTextFillColor: theme.palette.text.secondary,
+      WebkitTextFillColor: theme.palette.text.primary,
       WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
     },
   },
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(7),
     fontFamily: 'Ubuntu',
     fontSize: '1.5rem',
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.text.primary,
   },
 
   description: {
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.text.primary,
   },
 
   tableFix: {
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   calIcon: {
-    color: `${theme.palette.text.hint}`,
+    color: theme.palette.text.hint,
     marginLeft: theme.spacing(3.5),
   },
 
@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
     '&:not(:last-child)': {
       borderBottom: 0,
@@ -124,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
     '&:not(:last-child)': {
       borderBottom: 0,
@@ -140,7 +140,7 @@ const useStyles = makeStyles((theme) => ({
 
   seeAllPaper: {
     height: '5rem',
-    backgroundColor: theme.palette.cards.background,
+    backgroundColor: theme.palette.disabledBackground,
     paddingTop: theme.spacing(3.75),
     paddingBottom: theme.spacing(3.75),
     paddingLeft: '42%',
@@ -148,14 +148,14 @@ const useStyles = makeStyles((theme) => ({
 
   tableHead: {
     opacity: 0.7,
-    color: 'red',
+    color: theme.palette.text.primary,
   },
 
   workflowName: {
     borderRight: `1px solid ${theme.palette.border.main}`,
     paddingTop: theme.spacing(2.5),
     maxWidth: '16.5rem',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
   },
 
   workflowNameHead: {
@@ -164,7 +164,7 @@ const useStyles = makeStyles((theme) => ({
 
   tableObjects: {
     paddingLeft: theme.spacing(3.75),
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
   },
 
   headSpacing: {
@@ -172,7 +172,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   nameContent: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.text.primary,
     display: 'flex',
     flexDirection: 'row',
     fontSize: '0.8rem',
@@ -212,17 +212,17 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.primary.dark,
+    color: theme.palette.secondary.main,
   },
 
   markerIconDown: {
-    color: `${theme.palette.text.hint}`,
+    color: theme.palette.text.primary,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   markerIconUp: {
-    color: `${theme.palette.text.hint}`,
+    color: theme.palette.text.primary,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
@@ -233,7 +233,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   backgroundFix: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     width: '100%',
     height: '46rem',
@@ -259,7 +259,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   selectText: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(0.4),
   },
@@ -277,7 +277,7 @@ const useStyles = makeStyles((theme) => ({
   displayDate: {
     marginLeft: theme.spacing(1),
     width: '100%',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
   },
 
   headerDiv: {
@@ -312,7 +312,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   noData: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     width: '100%',
     height: '25rem',
@@ -343,12 +343,12 @@ const useStyles = makeStyles((theme) => ({
 
   paddedText: {
     paddingLeft: theme.spacing(1.25),
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
   },
 
   error: {
-    fontColor: theme.palette.secondary.contrastText,
-    color: theme.palette.secondary.contrastText,
+    fontColor: theme.palette.text.primary,
+    color: theme.palette.text.primary,
   },
 
   featureButtons: {

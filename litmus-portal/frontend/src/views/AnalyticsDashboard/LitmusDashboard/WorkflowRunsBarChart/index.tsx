@@ -62,10 +62,10 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     y: number;
   }>({ x: 0, y: 0 });
   const [colorsPassed, setColorsPassed] = React.useState<string[]>(
-    Array(workflowRunData.length).fill(palette.primary.dark)
+    Array(workflowRunData.length).fill(palette.success.main)
   );
   const [colorsFailed, setColorsFailed] = React.useState<string[]>(
-    Array(workflowRunData.length).fill(palette.error.dark)
+    Array(workflowRunData.length).fill(palette.error.main)
   );
 
   // Function to convert UNIX time in format of DD MMM YYY
@@ -169,8 +169,6 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         label: 'default',
       },
     ],
-    bgcolor: palette.common.black,
-    activecolor: palette.status.pending.background,
   };
 
   const processLayout = () => {
@@ -234,8 +232,6 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
       modebar: {
         bgcolor: palette.background.paper,
       },
-      paper_bgcolor: palette.background.paper,
-      plot_bgcolor: palette.background.paper,
     };
     setPlotLayout(layout);
   };
@@ -328,7 +324,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               const newFailedColours = [];
               let loc = { x: 0, y: 0 };
               for (let i = 0; i < colorsPassed.length; i++) {
-                if (colorsPassed[i] === palette.status.completed.background) {
+                if (colorsPassed[i] === palette.success.light) {
                   recolour = true;
                 }
               }
@@ -342,17 +338,17 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
                 }
                 for (let i = 0; i < colorsPassed.length; i++) {
                   if (i !== ind) {
-                    newPassedColours.push(palette.status.completed.background);
-                    newFailedColours.push(palette.status.failed.background);
+                    newPassedColours.push(palette.success.light);
+                    newFailedColours.push(palette.error.light);
                   } else {
-                    newPassedColours.push(palette.primary.dark);
-                    newFailedColours.push(palette.error.dark);
+                    newPassedColours.push(palette.success.main);
+                    newFailedColours.push(palette.error.main);
                   }
                 }
               } else {
                 for (let i = 0; i < colorsPassed.length; i++) {
-                  newPassedColours.push(palette.primary.dark);
-                  newFailedColours.push(palette.error.dark);
+                  newPassedColours.push(palette.success.main);
+                  newFailedColours.push(palette.error.main);
                 }
               }
               setVisibleIndex(ind);
@@ -370,11 +366,11 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               }
               for (let i = 0; i < colorsPassed.length; i++) {
                 if (i !== ind) {
-                  newPassedColours.push(palette.status.completed.background);
-                  newFailedColours.push(palette.status.failed.background);
+                  newPassedColours.push(palette.success.light);
+                  newFailedColours.push(palette.error.light);
                 } else {
-                  newPassedColours.push(palette.primary.dark);
-                  newFailedColours.push(palette.error.dark);
+                  newPassedColours.push(palette.success.main);
+                  newFailedColours.push(palette.error.main);
                 }
               }
               setColorsPassed(newPassedColours);
@@ -387,8 +383,8 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               const newPassedColours = [];
               const newFailedColours = [];
               for (let i = 0; i < colorsPassed.length; i++) {
-                newPassedColours.push(palette.primary.dark);
-                newFailedColours.push(palette.error.dark);
+                newPassedColours.push(palette.success.main);
+                newFailedColours.push(palette.error.main);
               }
               setColorsPassed(newPassedColours);
               setColorsFailed(newFailedColours);
