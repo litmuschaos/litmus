@@ -27,7 +27,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
   const userRole = useSelector((state: RootState) => state.userData.userRole);
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
-  const apiDocsUrl = `${window.location.href}api-doc`;
+  const apiDocsUrl = `${window.location.href}api-doc/index.html`;
 
   return (
     <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>

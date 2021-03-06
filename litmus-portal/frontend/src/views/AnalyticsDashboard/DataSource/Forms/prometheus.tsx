@@ -270,6 +270,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
               control={
                 <StyledCheckbox
                   color="primary"
+                  disabled
                   checked={dataSourceDetails.basicAuth}
                   onChange={handleAuthChange}
                   name="basicAuth"
