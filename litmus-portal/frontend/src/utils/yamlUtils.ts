@@ -29,23 +29,34 @@ const parsed = (yaml: string) => {
   try {
     const parsedYaml = YAML.parse(file as string);
     try {
-      const count = (file.match(/kind: ChaosEngine/g) || []).length;
       if (parsedYaml.kind === 'CronWorkflow') {
-        for (let i = 0; i < count; i += 1) {
-          const embeddedYaml =
-            parsedYaml.spec.workflowSpec.templates[2 + i].inputs.artifacts[0]
-              .raw.data;
-          nameextractor(embeddedYaml).forEach((test) => {
-            testNames.push(test);
-          });
+        const totalSteps = parsedYaml.spec.workflowSpec.templates.length - 1; // Total Steps in CronWorkflow
+        for (let i = 0; i < totalSteps; i++) {
+          const TemplateElement = YAML.stringify(
+            parsedYaml.spec.workflowSpec.templates[1 + i]
+          ); // Accessing Current Step
+          if (TemplateElement.match(/kind: ChaosEngine/g)) {
+            // Checking if current step contains "kind: ChaosEngine"
+            const embeddedYaml =
+              parsedYaml.spec.workflowSpec.templates[1 + i].inputs.artifacts[0]
+                .raw.data;
+            const testName = nameextractor(embeddedYaml);
+            testNames.push(...testName);
+          }
         }
       } else {
-        for (let i = 0; i < count; i += 1) {
-          const embeddedYaml =
-            parsedYaml.spec.templates[2 + i].inputs.artifacts[0].raw.data;
-          nameextractor(embeddedYaml).forEach((test) => {
-            testNames.push(test);
-          });
+        const totalSteps = parsedYaml.spec.templates.length - 1; // Total Steps in Workflow
+        for (let i = 0; i < totalSteps; i++) {
+          const TemplateElement = YAML.stringify(
+            parsedYaml.spec.templates[1 + i]
+          ); // Accessing Current Step
+          if (TemplateElement.match(/kind: ChaosEngine/g)) {
+            // Checking if current step contains "kind: ChaosEngine"
+            const embeddedYaml =
+              parsedYaml.spec.templates[1 + i].inputs.artifacts[0].raw.data;
+            const testName = nameextractor(embeddedYaml);
+            testNames.push(...testName);
+          }
         }
       }
     } catch (err) {
@@ -57,6 +68,25 @@ const parsed = (yaml: string) => {
     testNames = [];
     return testNames;
   }
+};
+
+export const getWorkflowParameter = (parameterString: string) => {
+  return parameterString
+    .substring(1, parameterString.length - 1)
+    .replace(/^\s+|\s+$/gm, '')
+    .split('.')[2];
+};
+
+export const generateChaosQuery = (
+  chaosQueryStringTemplate: string,
+  engineName: string,
+  namespace: string
+) => {
+  const queryStringWithEngineName: string = chaosQueryStringTemplate.replaceAll(
+    '#{}',
+    engineName
+  );
+  return queryStringWithEngineName.replaceAll('*{}', namespace);
 };
 
 export default parsed;

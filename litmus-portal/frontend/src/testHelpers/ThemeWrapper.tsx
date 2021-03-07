@@ -1,14 +1,17 @@
 // This Component will work as a Theme Wrapper for the component to be tested.
-
+import { LitmusThemeProvider } from 'litmus-ui';
 import React from 'react';
-import withTheme from '../theme';
 
 interface ThemeWrapperProps {
   children?: React.ReactNode;
 }
 
 const ThemeWrapper: React.FC<ThemeWrapperProps> = ({ children }) => {
-  return <div>{children}</div>;
+  return (
+    <LitmusThemeProvider platform="litmus-portal">
+      {children}
+    </LitmusThemeProvider>
+  );
 };
 
-export default withTheme(ThemeWrapper);
+export default ThemeWrapper;

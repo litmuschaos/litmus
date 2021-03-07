@@ -14,12 +14,36 @@ metadata:
   labels:
     name: litmus-admin
 rules:
-- apiGroups: ["","apps","batch","extensions","litmuschaos.io","openebs.io","storage.k8s.io"]
-  resources: ["chaosengines","chaosexperiments","chaosresults","cstorpools","cstorvolumereplicas","configmaps","secrets","pods","pods/exec","pods/log","pods/eviction","jobs","replicasets","deployments","daemonsets","statefulsets","persistentvolumeclaims","persistentvolumes","storageclasses","services","events"]
+- apiGroups: [""]
+  resources: ["pods","events","configmaps","secrets","services"]
   verbs: ["create","delete","get","list","patch","update", "deletecollection"]
 - apiGroups: [""]
+  resources: ["pods/exec","pods/log","pods/eviction","replicationcontrollers"]
+  verbs: ["get","list","create"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["create","list","get","delete","deletecollection"]
+- apiGroups: ["apps"]
+  resources: ["deployments","statefulsets"]
+  verbs: ["list","get","patch","update"]
+- apiGroups: ["apps"]
+  resources: ["replicasets"]
+  verbs: ["list","get"]
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs: ["list","get","delete"]
+- apiGroups: ["apps.openshift.io"]
+  resources: ["deploymentconfigs"]
+  verbs: ["list","get"]
+- apiGroups: ["argoproj.io"]
+  resources: ["rollouts"]
+  verbs: ["list","get"]
+- apiGroups: ["litmuschaos.io"]
+  resources: ["chaosengines","chaosexperiments","chaosresults"]
+  verbs: ["create","list","get","patch","update","delete"]
+- apiGroups: [""]
   resources: ["nodes"]
-  verbs: ["get","list","patch","update"]
+  verbs: ["patch","get","list","update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -35,3 +59,4 @@ subjects:
 - kind: ServiceAccount
   name: litmus-admin
   namespace: litmus
+

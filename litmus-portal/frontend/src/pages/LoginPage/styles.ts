@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
 
   loginDiv: {
     marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(-2),
   },
 
   imageDiv: {
@@ -64,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inputValue: {
+    marginLeft: theme.spacing(2),
     width: '25rem',
   },
 
@@ -75,6 +75,10 @@ const useStyles = makeStyles((theme) => ({
   descImg: {
     verticalAlign: 'middle',
     paddingLeft: theme.spacing(0.625),
+  },
+
+  w20: {
+    width: '20%',
   },
 }));
 

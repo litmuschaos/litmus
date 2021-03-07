@@ -1,7 +1,7 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
+import { InputField } from 'litmus-ui';
 import React from 'react';
-import InputField from '../../../../components/InputField';
-import { validateLength } from '../../../../utils/validate';
+import { useTranslation } from 'react-i18next';
 import UserDetails from '../CreateUser/UserDetails';
 import DelUser from './DelUser';
 import ResetModal from './ResetModal';
@@ -28,6 +28,7 @@ const EditUser: React.FC<EditUserProps> = ({
   fullName,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // for conditional rendering of reset password div
 
@@ -58,22 +59,20 @@ const EditUser: React.FC<EditUserProps> = ({
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
-            <strong>Edit user profile</strong>
+            <strong>{t('settings.userManagementTab.editUser.header')}</strong>
           </Typography>
         </div>
 
         <Typography className={classes.descText}>
-          Edit the user&apos;s personal and login details
+          {t('settings.userManagementTab.editUser.info')}
         </Typography>
         <div className={classes.container}>
           <div>
             <div className={classes.suSegments}>
               {/* Personal Details */}
               <UserDetails
-                nameIsDisabled
-                emailIsDisabled
-                nameValue={fullName}
                 usernameIsDisabled
+                nameValue={fullName}
                 emailValue={email}
                 userValue={userName}
               />
@@ -84,24 +83,20 @@ const EditUser: React.FC<EditUserProps> = ({
 
               <div>
                 <Typography className={classes.headerText}>
-                  <strong> Login Details</strong>
+                  <strong>
+                    {t('settings.userManagementTab.editUser.login')}
+                  </strong>
                 </Typography>
                 <div>
                   <form>
                     <div data-cy="editPassword" className={classes.details1}>
                       <InputField
                         required
-                        helperText={
-                          validateLength(createPAssword.password)
-                            ? 'Password is too short'
-                            : ''
-                        }
-                        handleChange={handleCreatePassword('password')}
+                        onChange={handleCreatePassword('password')}
                         type="password"
-                        validationError={validateLength(
-                          createPAssword.password
+                        label={t(
+                          'settings.userManagementTab.editUser.label.newPassword'
                         )}
-                        label="New Password"
                         value={createPAssword.password}
                       />
                     </div>

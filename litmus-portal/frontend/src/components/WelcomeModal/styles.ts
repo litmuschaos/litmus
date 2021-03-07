@@ -1,11 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  /* CSS for Index */
-  rootContainer: {
-    paddingBottom: theme.spacing(2),
-  },
-
   /* CSS for Modal Page Component */
   heading: {
     fontSize: '2rem',
@@ -21,8 +16,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(4),
   },
+  modal: {
+    overflow: 'hidden',
+  },
   insideModal: {
-    marginBottom: theme.spacing(10),
+    [theme.breakpoints.up('lg')]: {
+      padding: theme.spacing(20),
+    },
+    paddingBottom: theme.spacing(12),
+    padding: theme.spacing(5),
   },
   mark: {
     marginTop: theme.spacing(6),
@@ -31,9 +33,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   /* CSS for input and password field */
   inputArea: {
-    width: '60%',
+    width: '70%',
     margin: '1rem auto',
-    color: theme.palette.primary.contrastText,
   },
   passwordArea: {
     width: '60%',
@@ -54,12 +55,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'absolute',
     left: '50%',
     transform: 'translate(-50%, 0)',
-    bottom: '13%',
+    bottom: '10%',
   },
   buttonDiv: {
     display: 'flex',
     justifyContent: 'center',
     marginBottom: theme.spacing(1),
+    gap: '1rem',
   },
 }));
 export default useStyles;

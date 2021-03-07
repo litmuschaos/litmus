@@ -12,13 +12,11 @@ import {
   Member,
   Project,
 } from '../../models/graphql/user';
-// import { Message, NotificationIds } from '../../models/header';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
-import configureStore from '../../redux/configureStore';
+import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import CustomBreadCrumbs from '../BreadCrumbs';
-// import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
 
@@ -44,9 +42,10 @@ const Header: React.FC = () => {
   const email: string = data?.getUser.email ?? '';
   const projects: Project[] = data?.getUser.projects ?? [];
 
-  const [selectedProjectDetails, setSelectedProjectDetails] = useState<
-    SelectedProjectDetails
-  >({
+  const [
+    selectedProjectDetails,
+    setSelectedProjectDetails,
+  ] = useState<SelectedProjectDetails>({
     selectedProjectID: userData.selectedProjectID,
     selectedProjectName: userData.selectedProjectName,
     selectedUserRole: userData.userRole,
@@ -58,6 +57,12 @@ const Header: React.FC = () => {
         const memberList: Member[] = project.members;
 
         memberList.forEach((member) => {
+          if (member.role === 'Owner') {
+            user.updateUserDetails({
+              selectedProjectOwner: member.user_name,
+            });
+          }
+
           if (member.user_name === data?.getUser.username) {
             user.updateUserDetails({
               selectedProjectID,
@@ -72,87 +77,16 @@ const Header: React.FC = () => {
               selectedUserRole: member.role,
               selectedProjectName: project.name,
             });
+
+            if (member.role !== 'Owner') {
+              history.push('/');
+            }
           }
         });
       }
     });
   };
 
-  /*
-  // Fetch and Set Notifications from backend.
-
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  const [countOfMessages, setCountOfMessages] = useState(0);
-
-  const fetchRandomMessages = useCallback(() => {
-    const messages = [];
-
-    const notificationsList = [
-      {
-        id: '1',
-        messageType: 'Pod Delete workflow',
-        Message: 'complete',
-        generatedTime: '',
-      },
-      {
-        id: '2',
-        messageType: 'Argo Chaos workflow',
-        Message: 'started started',
-        generatedTime: '',
-      },
-      {
-        id: '3',
-        messageType: 'New',
-        Message: 'crashed',
-        generatedTime: '',
-      },
-    ];
-
-    const iterations = notificationsList.length;
-
-    const oneDaySeconds = 60 * 60 * 24;
-
-    let curUnix = Math.round(
-      new Date().getTime() / 1000 - iterations * oneDaySeconds
-    );
-
-    for (let i = 0; i < iterations; i += 1) {
-      const notificationItem = notificationsList[i];
-      const message = {
-        sequenceID: (i as unknown) as string,
-        id: notificationItem.id,
-        messageType: notificationItem.messageType,
-        date: curUnix,
-        text: `${notificationItem.messageType}- ${notificationItem.Message}`,
-      };
-      curUnix += oneDaySeconds;
-      messages.push(message);
-    }
-    messages.reverse();
-    setMessages(messages);
-  }, [setMessages]);
-  /*
-  const deleteNotification = (notificationIDs: NotificationIds) => {
-    for (let i = 0; i < messages.length; i += 1) {
-      if (messages[i].sequenceID === notificationIDs.sequenceID) {
-        if (i > -1) {
-          messages.splice(i, 1);
-        }
-      }
-    }
-    
-    // send POST request with #notificationIDs.id to update db with notification
-    // id marked as disissed from active or persist it in redux or cookie.
-    setMessages(messages);
-    //setCountOfMessages(messages.length);
-  };
-
-  useEffect(() => {
-    fetchRandomMessages();
-  }, [fetchRandomMessages]);
-
-  */
   useEffect(() => {
     setSelectedProjectDetails({
       selectedProjectID: userData.selectedProjectID,
@@ -171,13 +105,12 @@ const Header: React.FC = () => {
                 <CustomBreadCrumbs location={useLocation().pathname} />
               </Box>
               <Box p={1} className={classes.headerFlexPadded}>
-                {/* uncomment to activate notifications.
-                  <NotificationsDropdown
+                {/*              <NotificationsDropdown
                   count={`${countOfMessages}`}
                   messages={messages}
                   CallbackToHeaderOnDeleteNotification={deleteNotification}
                 />
-               */}
+  */}
               </Box>
               <Box p={1} flexGrow={1} className={classes.headerFlexProfile}>
                 <ProfileDropdownSection

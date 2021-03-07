@@ -4,14 +4,19 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
+import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
+import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
@@ -46,8 +51,13 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 const SideBar: React.FC = () => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
+  const tabs = useActions(TabActions);
   const { t } = useTranslation();
   const pathName = useLocation().pathname.split('/')[1];
+  const version = process.env.REACT_APP_KB_CHAOS_VERSION;
+  const buildTime = moment
+    .unix(Number(process.env.REACT_APP_BUILD_TIME))
+    .format('DD MMM YYYY HH:MM:SS');
 
   return (
     <Drawer
@@ -88,11 +98,24 @@ const SideBar: React.FC = () => {
             key="workflow"
             handleClick={() => {
               history.push('/workflows');
+              tabs.changeWorkflowsTabs(0);
             }}
             label="Workflows"
             selected={pathName === 'workflows'}
           >
             <WorkflowsIcon />
+          </CustomisedListItem>
+        </div>
+        <div data-cy="myHub">
+          <CustomisedListItem
+            key="myhub"
+            handleClick={() => {
+              history.push('/myhub');
+            }}
+            label="My Hub"
+            selected={pathName === 'myhub'}
+          >
+            <MyHubIcon />
           </CustomisedListItem>
         </div>
         <CustomisedListItem
@@ -104,6 +127,16 @@ const SideBar: React.FC = () => {
           selected={pathName === 'targets'}
         >
           <TargetsIcon />
+        </CustomisedListItem>
+        <CustomisedListItem
+          key="analytics"
+          handleClick={() => {
+            history.push('/analytics');
+          }}
+          label="Analytics"
+          selected={pathName === 'analytics'}
+        >
+          <AnalyticsIcon />
         </CustomisedListItem>
         <CustomisedListItem
           key="community"
@@ -128,6 +161,10 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         )}
       </List>
+      <Typography className={classes.versionDiv}>
+        <b>Version: </b> {version} <br />
+        <b>Build Time: </b> {buildTime}
+      </Typography>
     </Drawer>
   );
 };

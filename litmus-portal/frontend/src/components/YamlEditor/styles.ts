@@ -31,14 +31,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editorBackgroundFull: {
-    backgroundColor: theme.palette.editorBackground,
+    backgroundColor: theme.palette.common.black,
     color: theme.palette.secondary.contrastText,
     width: '100%',
   },
 
   horizontalLineWhite: {
     marginTop: theme.spacing(4),
-    backgroundColor: theme.palette.customColors.white(0.2),
+    backgroundColor: theme.palette.border.main,
   },
 
   widthManager: {
@@ -88,17 +88,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   extraSpace: {
-    backgroundColor: theme.palette.editorBackground,
+    backgroundColor: theme.palette.common.black,
     height: '2rem',
     width: '100%',
   },
 
   editorButtons: {
     borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
+    backgroundColor: theme.palette.common.black,
     boxSizing: 'border-box',
     color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
+    borderColor: theme.palette.border.main,
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
     height: '2.75rem',
@@ -188,10 +188,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonFullScreen: {
     borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
+    backgroundColor: theme.palette.common.black,
     boxSizing: 'border-box',
-    color: theme.palette.customColors.white(0.2),
-    borderColor: theme.palette.editorBackground,
+    color: theme.palette.text.primary,
+    borderColor: theme.palette.common.black,
     paddingLeft: theme.spacing(3.75),
     paddingBottom: theme.spacing(1.875),
     marginTop: theme.spacing(-2),
@@ -233,7 +233,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(6),
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.secondary.dark,
+    color: theme.palette.success.main,
     display: 'inline',
   },
 
@@ -241,14 +241,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.primary.dark,
+    color: theme.palette.success.main,
   },
 
   markStyleWrong: {
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.error.dark,
+    color: theme.palette.error.main,
   },
 
   fullScreenGrid: {

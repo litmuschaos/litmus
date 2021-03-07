@@ -11,73 +11,33 @@ import (
 )
 
 var (
-	collections = map[string]string{
-		"Cluster":  "cluster-collection",
-		"User":     "user",
-		"Project":  "project",
-		"Workflow": "workflow-collection",
-	}
-	//Database ...
+	// Database ...
 	Database *mongo.Database
 	dbName   = "litmus"
 
-	//Collections ...
-	clusterCollection  *mongo.Collection
-	workflowCollection *mongo.Collection
-	backgroundContext  = context.Background()
-	err                error
+	backgroundContext = context.Background()
+	err               error
 )
 
-type Cluster struct {
-	ClusterID          string  `bson:"cluster_id"`
-	ProjectID          string  `bson:"project_id"`
-	ClusterName        string  `bson:"cluster_name"`
-	Description        *string `bson:"description"`
-	PlatformName       string  `bson:"platform_name"`
-	AccessKey          string  `bson:"access_key"`
-	IsRegistered       bool    `bson:"is_registered"`
-	IsClusterConfirmed bool    `bson:"is_cluster_confirmed"`
-	IsActive           bool    `bson:"is_active"`
-	UpdatedAt          string  `bson:"updated_at"`
-	CreatedAt          string  `bson:"created_at"`
-	ClusterType        string  `bson:"cluster_type"`
-	Token              string  `bson:"token"`
-}
-
-type ChaosWorkFlowInput struct {
-	WorkflowID          string             `bson:"workflow_id"`
-	WorkflowManifest    string             `bson:"workflow_manifest"`
-	CronSyntax          string             `bson:"cronSyntax"`
-	WorkflowName        string             `bson:"Workflow_name"`
-	WorkflowDescription string             `bson:"Workflow_description"`
-	Weightages          []*WeightagesInput `bson:"Weightages"`
-	IsCustomWorkflow    bool               `bson:"isCustomWorkflow"`
-	UpdatedAt           string             `bson:"updated_at"`
-	CreatedAt           string             `bson:"created_at"`
-	ProjectID           string             `bson:"project_id"`
-	ClusterID           string             `bson:"cluster_id"`
-	WorkflowRuns        []*WorkflowRun     `bson:"workflow_runs"`
-}
-
-type WorkflowRun struct {
-	WorkflowRunID string `bson:"workflow_run_id"`
-	LastUpdated   string `bson:"last_updated"`
-	ExecutionData string `bson:"execution_data"`
-}
-
-type WeightagesInput struct {
-	ExperimentName string `bson:"experiment_name"`
-	Weightage      int    `bson:"weightage"`
-}
-
-//init initializes database connection
+// init initializes database connection
 func init() {
 
-	dbServer := os.Getenv("DB_SERVER")
-	if dbServer == "" {
-		log.Fatal("Environment Variable DB_SERVER is not present")
+	var (
+		dbServer = os.Getenv("DB_SERVER")
+		username = os.Getenv("DB_USER")
+		pwd      = os.Getenv("DB_PASSWORD")
+	)
+
+	if dbServer == "" || username == "" || pwd == "" {
+		log.Fatal("DB configuration failed")
 	}
-	clientOptions := options.Client().ApplyURI(dbServer)
+
+	credential := options.Credential{
+		Username: username,
+		Password: pwd,
+	}
+
+	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -94,11 +54,4 @@ func init() {
 	}
 
 	Database = client.Database(dbName)
-	initAllCollections()
-
-}
-
-func initAllCollections() {
-	clusterCollection = Database.Collection(collections["Cluster"])
-	workflowCollection = Database.Collection(collections["Workflow"])
 }

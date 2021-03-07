@@ -1,10 +1,7 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
+import { InputField } from 'litmus-ui';
 import React from 'react';
-import InputFieldOutline from '../../../../components/InputFieldOutline';
-import {
-  validateLength,
-  validateStartEmptySpacing,
-} from '../../../../utils/validate';
+import { useTranslation } from 'react-i18next';
 import NewUserModal from './NewUserModal';
 import useStyles from './styles';
 import UserDetails from './UserDetails';
@@ -28,9 +25,10 @@ interface CreateUserProps {
 // CreateUser displays the UI screen for creating a new user by admin
 const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // for conditional rendering of reset password div
-  const [createPAssword, setCreatePassword] = React.useState<Password>({
+  const [createPassword, setCreatePassword] = React.useState<Password>({
     password: '',
     showPassword: false,
   });
@@ -40,7 +38,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setCreatePassword({
-      ...createPAssword,
+      ...createPassword,
       [prop]: event.target.value,
     });
   };
@@ -71,12 +69,12 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
-            <strong>Create a new user</strong>
+            <strong>{t('settings.userManagementTab.createUser.header')}</strong>
           </Typography>
         </div>
 
         <Typography className={classes.descText}>
-          Enter the user&apos;s personal and login details
+          {t('settings.userManagementTab.createUser.info')}
         </Typography>
 
         <div className={classes.container}>
@@ -86,8 +84,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
               <UserDetails
                 nameValue={personalData.fullName}
                 usernameIsDisabled={false}
-                emailIsDisabled={false}
-                nameIsDisabled={false}
                 handleNameChange={(e) => {
                   setPersonalData({
                     fullName: e.target.value,
@@ -119,43 +115,34 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
 
               <div>
                 <Typography className={classes.headerText}>
-                  <strong> Login Details</strong>
+                  <strong>
+                    {t('settings.userManagementTab.createUser.login')}
+                  </strong>
                 </Typography>
                 <div>
                   <form>
                     <div className={classes.details1}>
                       <div data-cy="userName">
-                        <InputFieldOutline
-                          helperText={
-                            validateStartEmptySpacing(personalData.userName)
-                              ? 'Should not start with an empty space'
-                              : ''
-                          }
-                          label="Username"
-                          value={personalData.userName}
-                          handleChange={handleUsername}
-                          validationError={validateStartEmptySpacing(
-                            personalData.userName
+                        <InputField
+                          label={t(
+                            'settings.userManagementTab.createUser.label.username'
                           )}
+                          value={personalData.userName}
+                          onChange={handleUsername}
                           disabled
                         />
                       </div>
+                      <div style={{ width: '2rem' }} />
 
                       <div data-cy="passwordInput">
-                        <InputFieldOutline
+                        <InputField
                           required
                           type="password"
-                          helperText={
-                            validateLength(createPAssword.password)
-                              ? 'Password is too short'
-                              : ''
-                          }
-                          handleChange={handleCreatePassword('password')}
-                          value={createPAssword.password}
-                          validationError={validateLength(
-                            createPAssword.password
+                          onChange={handleCreatePassword('password')}
+                          value={createPassword.password}
+                          label={t(
+                            'settings.userManagementTab.createUser.label.newPassword'
                           )}
-                          label="New Password"
                         />
                       </div>
                     </div>
@@ -170,12 +157,12 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
             handleDiv={handleDiv}
             showModal={
               personalData.userName.length > 0 &&
-              createPAssword.password.length > 0
+              createPassword.password.length > 0
             }
             name={personalData.fullName}
             email={personalData.email}
             username={personalData.userName}
-            password={createPAssword.password}
+            password={createPassword.password}
           />
         </div>
       </div>

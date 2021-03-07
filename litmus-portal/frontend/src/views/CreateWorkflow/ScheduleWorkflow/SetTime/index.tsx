@@ -1,4 +1,4 @@
-import { FormControl, Select } from '@material-ui/core';
+import { FormControl, MenuItem, Select } from '@material-ui/core';
 import React from 'react';
 import useStyles from './styles';
 
@@ -12,30 +12,36 @@ interface SetTimeProps {
   data: number[];
 }
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
+};
+
 // dropdown menu component for setting time
 const SetTime: React.FC<SetTimeProps> = ({ handleChange, value, data }) => {
   const classes = useStyles();
   return (
     <div>
-      <FormControl className={classes.formControlMonth}>
+      <FormControl className={classes.formControl}>
         <Select
-          className={classes.select}
-          disableUnderline
+          displayEmpty
           value={value}
+          disableUnderline
+          className={classes.select}
           onChange={handleChange}
-          label="dates"
-          inputProps={{
-            name: 'dates',
-            style: {
-              fontSize: '0.75rem',
-            },
-          }}
-          MenuProps={{ classes: { paper: classes.menuPaper } }}
+          MenuProps={MenuProps}
+          inputProps={{ 'aria-label': 'Without label' }}
         >
           {data.map((dataValue) => (
-            <option key={dataValue} className={classes.opt} value={dataValue}>
+            <MenuItem key={dataValue} className={classes.opt} value={dataValue}>
               {dataValue}
-            </option>
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

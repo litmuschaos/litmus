@@ -31,7 +31,7 @@ var (
 )
 
 // IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.
-func IsClusterConfirmed(clusterData map[string]string) (bool, string, error) {
+func IsClusterConfirmed() (bool, string, error) {
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, "", err
@@ -75,7 +75,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 
 	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Create(&newConfigMap)
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 
 	log.Println("Configmap created")
@@ -98,6 +98,19 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		log.Println("Resource successfully created")
 		return response, nil
 	} else if requestType == "update" {
+		getObj, err := dr.Get(obj.GetName(), metav1.GetOptions{})
+		if errors.IsNotFound(err) {
+			// This doesnt ever happen even if it is already deleted or not found
+			log.Printf("%v not found", obj.GetName())
+			return nil, nil
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		obj.SetResourceVersion(getObj.GetResourceVersion())
+
 		response, err := dr.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return nil, err

@@ -1,17 +1,17 @@
 import { useLazyQuery } from '@apollo/client';
 import {
   FormControl,
-  Snackbar,
-  Typography,
+  Input,
+  InputLabel,
   MenuItem,
   Select,
-  InputLabel,
-  Input,
+  Snackbar,
+  Typography,
 } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
+import { useSelector } from 'react-redux';
 import { GET_CLUSTER } from '../../../graphql';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -29,8 +29,9 @@ const MenuProps = {
 };
 
 interface Cluster {
-  cluster_id: string;
+  cluster_name: string;
   is_active: boolean;
+  cluster_id: string;
 }
 
 interface WorkflowClusterProps {
@@ -45,19 +46,24 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
-
+  const [clusterData, setclusterData] = useState<Cluster[]>([]);
   const [name, setName] = React.useState('');
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const str: string = event.target.value as string;
+    let clusterName;
+    clusterData.forEach((cluster) => {
+      if (str === cluster.cluster_id) {
+        clusterName = cluster.cluster_name;
+      }
+    });
     workflow.setWorkflowDetails({
       clusterid: str,
       project_id: selectedProjectID,
+      clustername: clusterName,
     });
     setName(str);
     setTarget(false);
   };
-
-  const [clusterData, setclusterData] = useState<Cluster[]>([]);
 
   const [getCluster] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
@@ -66,8 +72,23 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         data.getCluster.forEach((e: Cluster) => {
           if (e.is_active === true) {
             clusters.push({
-              cluster_id: e.cluster_id,
+              cluster_name: e.cluster_name,
               is_active: e.is_active,
+              cluster_id: e.cluster_id,
+            });
+            workflow.setWorkflowDetails({
+              cronSyntax: '',
+              scheduleType: {
+                scheduleOnce: 'now',
+                recurringSchedule: '',
+              },
+              scheduleInput: {
+                hour_interval: 0,
+                day: 1,
+                weekday: 'Monday',
+                time: new Date(),
+                date: new Date(),
+              },
             });
           }
         });
@@ -100,31 +121,33 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         </Typography>
         <Typography className={classes.headchaos}>
           {t('workflowCluster.header.creatingNew')}
-          <strong>{t('workflowCluster.header.creatingNewBold')} </strong>
+          <strong> {t('workflowCluster.header.creatingNewBold')} </strong>
         </Typography>
         <Typography className={classes.headcluster}>
           {t('workflowCluster.header.selectAgent')}
         </Typography>
 
         <div className={classes.radiobutton}>
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-            color="secondary"
-          >
+          <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel className={classes.selectText}>
-              {t('workflowCluster.header.selectCluster')}
+              {t('createWorkflow.workflowCluster.activeCluster')}
             </InputLabel>
             <Select
+              labelId="Active Cluster"
               value={name}
               onChange={handleChange}
+              label="Active Cluster"
               input={<Input />}
               MenuProps={MenuProps}
               className={classes.selectText}
+              color="primary"
             >
+              <MenuItem value="" disabled>
+                <em> {t('createWorkflow.workflowCluster.none')}</em>
+              </MenuItem>
               {clusterData.map((name: Cluster) => (
                 <MenuItem key={name.cluster_id} value={name.cluster_id}>
-                  {name.cluster_id}
+                  {name.cluster_name}
                 </MenuItem>
               ))}
             </Select>
@@ -141,9 +164,8 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         <div className={classes.button} data-cy="Internal">
           <ButtonFilled
             data-cy="gotItButton"
-            isPrimary
-            isDisabled={isTragetSelected}
-            handleClick={() => handleClick()}
+            disabled={isTragetSelected}
+            onClick={() => handleClick()}
           >
             <div>{t('workflowCluster.header.select')}</div>
           </ButtonFilled>

@@ -1,4 +1,14 @@
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmus-portal-admin-config
+data:
+  AgentScope: cluster
+  AgentNamespace: litmus
+  DataBaseServer: "mongodb://mongo-service:27017"
+  JWTSecret: "litmus-portal@123"
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,7 +30,7 @@ spec:
           image: #{portal-frontend}
           imagePullPolicy: Always
           ports:
-          - containerPort: 80
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -31,7 +41,7 @@ spec:
   ports:
     - name: http
       port: 9091
-      targetPort: 80
+      targetPort: 8080
   selector:
     component: litmusportal-frontend
 ---
@@ -56,23 +66,45 @@ spec:
           image: #{portal-server}
           env:
             - name: DB_SERVER
-              value: "mongo-service:27017"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DataBaseServer
             - name: JWT_SECRET
-              value: "litmus-portal@123"
-            - name: EXTERNAL_ADDRESS
-              value: ""
-            - name: SERVICE_ADDRESS
-              value: "http://litmusportal-server-service:9002"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: JWTSecret
             - name: SELF_CLUSTER
               value: "false"
+            - name: AGENT_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: AgentScope
+            - name: AGENT_NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: AgentNamespace
+            - name: LITMUS_PORTAL_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: PORTAL_SCOPE
+              value: "cluster"
             - name: SUBSCRIBER_IMAGE
               value: #{subscriber}
-            - name: SUBSCRIBER_NAMESPACE
-              value: "litmus"
-            - name: DEPLOYER_IMAGE
-              value: "litmuschaos/litmusportal-self-deployer:ci"
-            - name: DEPLOYER_NAMESPACE
-              value: "litmus"
+            - name: ARGO_SERVER_IMAGE
+              value: "argoproj/argocli:v2.9.3"
+            - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
+              value: "argoproj/workflow-controller:v2.9.3"
+            - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
+              value: "argoproj/argoexec:v2.9.3"
+            - name: LITMUS_CHAOS_OPERATOR_IMAGE
+              value: "litmuschaos/chaos-operator:1.8.2"
+            - name: LITMUS_CHAOS_RUNNER_IMAGE
+              value: "litmuschaos/chaos-runner:1.8.2"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
@@ -80,9 +112,15 @@ spec:
           image: #{auth-server}
           env:
             - name: DB_SERVER
-              value: "mongodb://mongo-service:27017"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DataBaseServer
             - name: JWT_SECRET
-              value: "litmus-portal@123"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: JWTSecret
             - name: ADMIN_USERNAME
               value: "admin"
             - name: ADMIN_PASSWORD

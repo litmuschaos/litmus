@@ -8,16 +8,18 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import CustomDate from '../../../components/DateTime/CustomDate/index';
 import CustomTime from '../../../components/DateTime/CustomTime/index';
 import { WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
+import * as TemplateSelectionActions from '../../../redux/actions/template';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import SetTime from './SetTime/index';
 import useStyles from './styles';
-import * as WorkflowActions from '../../../redux/actions/workflow';
-import * as TemplateSelectionActions from '../../../redux/actions/template';
 
 interface ScheduleSyntax {
   minute: string | undefined;
@@ -70,9 +72,14 @@ const ScheduleWorkflow: React.FC = () => {
       workflow.setWorkflowDetails({
         cronSyntax,
       });
+    if (value === 'disable')
+      workflow.setWorkflowDetails({
+        isDisabled: true,
+      });
   }, [cronValue]);
 
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // Sets individual minutes
   const [minute, setMinute] = React.useState(
@@ -87,12 +94,12 @@ const ScheduleWorkflow: React.FC = () => {
 
   // Sets Time
   const [selectedTime, setSelectedTime] = React.useState<Date | null>(
-    workflowData.scheduleInput.time
+    new Date(workflowData.scheduleInput.time)
   );
 
   // Sets Date
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-    workflowData.scheduleInput.date
+    new Date(workflowData.scheduleInput.date)
   );
 
   // Function to validate the date and time for "Specific Time" radio button
@@ -186,6 +193,9 @@ const ScheduleWorkflow: React.FC = () => {
   // UseEffect to update the values of CronSyntax on radio button change
   useEffect(() => {
     if (value === 'now') {
+      workflow.setWorkflowDetails({
+        isDisabled: false,
+      });
       setValueDef('');
       setCronValue({
         minute: '',
@@ -193,6 +203,11 @@ const ScheduleWorkflow: React.FC = () => {
         day_month: '',
         month: '',
         day_week: '',
+      });
+    }
+    if (value === 'disable') {
+      workflow.setWorkflowDetails({
+        isDisabled: true,
       });
     }
     if (value === 'specificTime') {
@@ -224,6 +239,9 @@ const ScheduleWorkflow: React.FC = () => {
       }
     }
     if (valueDef === 'everyHr') {
+      workflow.setWorkflowDetails({
+        isDisabled: false,
+      });
       setCronValue({
         minute: minute.toString(),
         hour: '0-23',
@@ -233,6 +251,9 @@ const ScheduleWorkflow: React.FC = () => {
       });
     }
     if (valueDef === 'everyDay') {
+      workflow.setWorkflowDetails({
+        isDisabled: false,
+      });
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -242,6 +263,9 @@ const ScheduleWorkflow: React.FC = () => {
       });
     }
     if (valueDef === 'everyWeek') {
+      workflow.setWorkflowDetails({
+        isDisabled: false,
+      });
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -251,6 +275,9 @@ const ScheduleWorkflow: React.FC = () => {
       });
     }
     if (valueDef === 'everyMonth') {
+      workflow.setWorkflowDetails({
+        isDisabled: false,
+      });
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -260,6 +287,9 @@ const ScheduleWorkflow: React.FC = () => {
       });
     }
     if (value === 'recurringSchedule' && valueDef === '') {
+      workflow.setWorkflowDetails({
+        isDisabled: false,
+      });
       template.selectTemplate({ isDisable: true });
     } else {
       template.selectTemplate({ isDisable: false });
@@ -279,19 +309,17 @@ const ScheduleWorkflow: React.FC = () => {
         <div className={classes.scSegments}>
           <div>
             <Typography className={classes.headerText}>
-              <strong>Choose a chaos schedule</strong>
+              <strong>{t('createWorkflow.scheduleWorkflow.header')}</strong>
             </Typography>
 
             <div className={classes.schBody}>
               <Typography align="left" className={classes.description}>
-                Choose the right time to start your first workflow. Below your
-                first workflow. Below you can find any option convenient for
-                you.
+                {t('createWorkflow.scheduleWorkflow.info')}
               </Typography>
             </div>
           </div>
           <img
-            src="./icons/calendar.svg"
+            src="/icons/calendar.svg"
             alt="calendar"
             className={classes.calIcon}
           />
@@ -308,29 +336,59 @@ const ScheduleWorkflow: React.FC = () => {
               onChange={handleChange}
             >
               {/* options to choose schedule */}
-              <FormControlLabel
-                value="now"
-                control={<Radio />}
-                label={
-                  <Typography className={classes.radioText}>
-                    Schedule now
-                  </Typography>
-                }
-              />
-              <FormControlLabel
+              {!workflowData.isRecurring ? (
+                <FormControlLabel
+                  value="now"
+                  control={
+                    <Radio
+                      classes={{
+                        root: classes.radio,
+                        checked: classes.checked,
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography className={classes.radioText}>
+                      {t('createWorkflow.scheduleWorkflow.radio.now')}
+                    </Typography>
+                  }
+                />
+              ) : YAML.parse(workflowData.yaml).spec.suspend === true ? (
+                <></>
+              ) : workflowData.isRecurring ? (
+                <FormControlLabel
+                  value="disable"
+                  control={
+                    <Radio
+                      classes={{
+                        root: classes.radio,
+                        checked: classes.checked,
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography className={classes.radioText}>
+                      Disable Schedule
+                    </Typography>
+                  }
+                />
+              ) : (
+                <></>
+              )}
+              {/* <FormControlLabel
                 value="specificTime"
                 disabled
-                control={<Radio />}
+                control={<Radio classes={{ root: classes.radio, checked: classes.checked }}/>}
                 label={
                   <Typography className={classes.radioText}>
-                    Schedule at a specific time
+                    {t('createWorkflow.scheduleWorkflow.radio.specific')}
                   </Typography>
                 }
-              />
+              /> */}
               {value === 'specificTime' ? (
                 <div className={classes.schLater}>
                   <Typography className={classes.captionText}>
-                    Select date and time to start workflow in future
+                    {t('createWorkflow.scheduleWorkflow.radio.future')}
                   </Typography>
                   <div className={classes.innerSpecific}>
                     <CustomDate
@@ -355,17 +413,21 @@ const ScheduleWorkflow: React.FC = () => {
               )}
               <FormControlLabel
                 value="recurringSchedule"
-                control={<Radio />}
+                control={
+                  <Radio
+                    classes={{ root: classes.radio, checked: classes.checked }}
+                  />
+                }
                 label={
                   <Typography className={classes.radioText}>
-                    Recurring Schedule
+                    {t('createWorkflow.scheduleWorkflow.radio.recurr')}
                   </Typography>
                 }
               />
               {value === 'recurringSchedule' ? (
                 <div className={classes.schLater}>
                   <Typography className={classes.captionText}>
-                    Choose the right recurring time to start your workflow
+                    {t('createWorkflow.scheduleWorkflow.radio.rightRecurr')}
                   </Typography>
 
                   {/* options to select time of recurring schedule */}
@@ -381,14 +443,21 @@ const ScheduleWorkflow: React.FC = () => {
                       >
                         <FormControlLabel
                           value="everyHr"
-                          control={<Radio />}
-                          label="Every Hour"
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
+                          label={t('createWorkflow.scheduleWorkflow.every.hr')}
                         />
                         {valueDef === 'everyHr' ? (
                           <div>
                             <div className={classes.scRandom}>
                               <Typography className={classes.scRandsub1}>
-                                At
+                                {t('createWorkflow.scheduleWorkflow.at')}
                               </Typography>
                               <SetTime
                                 data={mins}
@@ -411,9 +480,13 @@ const ScheduleWorkflow: React.FC = () => {
                                 value={minute}
                               />
                               {minute === 0 || minute === 1 ? (
-                                <Typography>min</Typography>
+                                <Typography>
+                                  {t('createWorkflow.scheduleWorkflow.min')}
+                                </Typography>
                               ) : (
-                                <Typography>mins</Typography>
+                                <Typography>
+                                  {t('createWorkflow.scheduleWorkflow.mins')}
+                                </Typography>
                               )}
                             </div>
                           </div>
@@ -422,14 +495,21 @@ const ScheduleWorkflow: React.FC = () => {
                         )}
                         <FormControlLabel
                           value="everyDay"
-                          control={<Radio />}
-                          label="Every Day "
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
+                          label={t('createWorkflow.scheduleWorkflow.every.day')}
                         />
                         {valueDef === 'everyDay' ? (
                           <div>
                             <div className={classes.scRandom}>
                               <Typography className={classes.scRandsub1}>
-                                At
+                                {t('createWorkflow.scheduleWorkflow.at')}
                               </Typography>
                               <CustomTime
                                 handleDateChange={(date: Date | null) => {
@@ -458,14 +538,23 @@ const ScheduleWorkflow: React.FC = () => {
                         )}
                         <FormControlLabel
                           value="everyWeek"
-                          control={<Radio />}
-                          label="Every Week "
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
+                          label={t(
+                            'createWorkflow.scheduleWorkflow.every.week'
+                          )}
                         />
                         {valueDef === 'everyWeek' ? (
                           <div>
                             <div className={classes.scRandom}>
                               <Typography className={classes.scRandsub1}>
-                                On
+                                {t('createWorkflow.scheduleWorkflow.on')}
                               </Typography>
                               <FormControl className={classes.formControlDT}>
                                 <Select
@@ -514,7 +603,7 @@ const ScheduleWorkflow: React.FC = () => {
                                 </Select>
                               </FormControl>
                               <Typography className={classes.scRandsub1}>
-                                at
+                                {t('createWorkflow.scheduleWorkflow.at')}
                               </Typography>
                               <CustomTime
                                 handleDateChange={(date: Date | null) => {
@@ -531,14 +620,23 @@ const ScheduleWorkflow: React.FC = () => {
                         )}
                         <FormControlLabel
                           value="everyMonth"
-                          control={<Radio />}
-                          label="Every Month"
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
+                          label={t(
+                            'createWorkflow.scheduleWorkflow.every.month'
+                          )}
                         />
                         {valueDef === 'everyMonth' ? (
                           <div>
                             <div className={classes.scRandom}>
                               <Typography className={classes.scRandsub1}>
-                                On
+                                {t('createWorkflow.scheduleWorkflow.on')}
                               </Typography>
                               <SetTime
                                 data={names}
@@ -559,7 +657,7 @@ const ScheduleWorkflow: React.FC = () => {
                                 value={dates}
                               />
                               <Typography className={classes.scRandsub1}>
-                                at
+                                {t('createWorkflow.scheduleWorkflow.at')}
                               </Typography>
                               <CustomTime
                                 handleDateChange={(date: Date | null) => {

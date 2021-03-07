@@ -5,12 +5,12 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
     root: {
       border: (props) =>
         props !== true
-          ? `1px solid ${theme.palette.input.disabled}`
+          ? `1px solid ${theme.palette.border.main}`
           : `1px solid ${theme.palette.primary.dark}`,
       borderRadius: '0.25rem',
       overflow: 'hidden',
       color: 'inherit',
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      backgroundColor: theme.palette.cards.background,
       focused: {
         borderColor: (props) =>
           props === true
@@ -23,10 +23,10 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
       },
       transition: theme.transitions.create(['border-color', 'box-shadow']),
       '&$error': {
-        backgroundColor: theme.palette.homePageCardBackgroundColor,
+        backgroundColor: theme.palette.cards.background,
       },
       '&:hover': {
-        backgroundColor: theme.palette.homePageCardBackgroundColor,
+        backgroundColor: theme.palette.cards.background,
         borderColor: (props) =>
           props !== true ? theme.palette.secondary.dark : '',
         boxShadow: (props) =>
@@ -35,11 +35,11 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
             : 'none',
       },
       '&$selected': {
-        backgroundColor: theme.palette.homePageCardBackgroundColor,
+        backgroundColor: theme.palette.cards.background,
         color: 'inherit',
       },
       '&$focused': {
-        backgroundColor: theme.palette.homePageCardBackgroundColor,
+        backgroundColor: theme.palette.cards.background,
         color: 'inherit',
       },
     },
@@ -56,7 +56,7 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
     error: {
       borderColor: theme.palette.error.main,
       '&$focused': {
-        backgroundColor: theme.palette.homePageCardBackgroundColor,
+        backgroundColor: theme.palette.cards.background,
         borderColor: theme.palette.error.main,
         color: theme.palette.error.main,
       },
@@ -66,7 +66,7 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
       },
     },
     disabled: {
-      backgroundColor: theme.palette.inputFieldDisabled,
+      backgroundColor: theme.palette.disabledBackground,
     },
   })
 );

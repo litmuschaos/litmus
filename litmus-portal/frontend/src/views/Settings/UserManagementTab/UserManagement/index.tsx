@@ -25,9 +25,10 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import config from '../../../../config';
-import getToken from '../../../../utils/getToken';
+import { getToken } from '../../../../utils/auth';
 import CreateUser from '../CreateUser';
 import EditUser from '../EditUser';
 import useStyles from './styles';
@@ -36,8 +37,8 @@ import useStyles from './styles';
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
-      color: theme.palette.teamingTabHeadTextColor,
+      backgroundColor: theme.palette.cards.background,
+      color: theme.palette.text.primary,
     },
     body: {
       fontSize: '0.875rem',
@@ -69,6 +70,8 @@ interface PaginationData {
 // UserManagement displays users table
 const UserManagement: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const [showDiv, setShowDiv] = React.useState<boolean>(false);
   // for response data
   const [rows, setRows] = useState<UserData[]>([]);
@@ -151,12 +154,12 @@ const UserManagement: React.FC = () => {
                 <div className={classes.members}>
                   <img src="./icons/user.svg" alt="members" />
                   <Typography className={classes.memTypo}>
-                    Members (<span>{rows ? rows.length : 0}</span>)
+                    {t('settings.userManagementTab.header')} (
+                    <span>{rows ? rows.length : 0}</span>)
                   </Typography>
                 </div>
                 <Typography className={classes.descText}>
-                  Create users , manage them and reset their password and
-                  username when required:
+                  {t('settings.userManagementTab.info')}
                 </Typography>
 
                 <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
@@ -165,7 +168,7 @@ const UserManagement: React.FC = () => {
                     <TextField
                       data-cy="searchField"
                       id="input-with-icon-adornment"
-                      placeholder="Search..."
+                      placeholder={t('settings.userManagementTab.label.search')}
                       value={filters.search}
                       onChange={(e) => {
                         setFilters({
@@ -190,11 +193,11 @@ const UserManagement: React.FC = () => {
                       <FormControl
                         variant="outlined"
                         className={classes.formControl}
-                        color="secondary"
+                        color="primary"
                         focused
                       >
                         <InputLabel className={classes.selectText}>
-                          User Status
+                          {t('settings.userManagementTab.label.userStatus')}
                         </InputLabel>
                         <Select
                           label="User Status"
@@ -207,11 +210,21 @@ const UserManagement: React.FC = () => {
                             setPaginationData({ ...paginationData, pageNo: 0 });
                           }}
                           className={classes.selectText}
-                          color="secondary"
+                          color="primary"
                         >
-                          <MenuItem value="all">All</MenuItem>
-                          <MenuItem value="signedout">Not signed</MenuItem>
-                          <MenuItem value="signedin">Signed in</MenuItem>
+                          <MenuItem value="all">
+                            {t('settings.userManagementTab.label.options.all')}
+                          </MenuItem>
+                          <MenuItem value="signedout">
+                            {t(
+                              'settings.userManagementTab.label.options.notSignedIn'
+                            )}
+                          </MenuItem>
+                          <MenuItem value="signedin">
+                            {t(
+                              'settings.userManagementTab.label.options.signedIn'
+                            )}
+                          </MenuItem>
                         </Select>
                       </FormControl>
                     </div>
@@ -223,7 +236,7 @@ const UserManagement: React.FC = () => {
                       }}
                       isPrimary
                     >
-                      <div>Create new user</div>
+                      <div>{t('settings.userManagementTab.button.create')}</div>
                     </ButtonFilled>
                   </div>
                 </Toolbar>
@@ -234,11 +247,19 @@ const UserManagement: React.FC = () => {
                       <TableHead>
                         <TableRow className={classes.TR}>
                           <StyledTableCell className={classes.styledTC}>
-                            Status
+                            {t('settings.userManagementTab.tableCell.status')}
                           </StyledTableCell>
-                          <StyledTableCell>Username</StyledTableCell>
-                          <StyledTableCell>Email</StyledTableCell>
-                          <StyledTableCell>User Created</StyledTableCell>
+                          <StyledTableCell>
+                            {t('settings.userManagementTab.tableCell.username')}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            {t('settings.userManagementTab.tableCell.email')}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            {t(
+                              'settings.userManagementTab.tableCell.userCreated'
+                            )}
+                          </StyledTableCell>
                           <StyledTableCell />
                           <TableHead />
                         </TableRow>
@@ -267,11 +288,15 @@ const UserManagement: React.FC = () => {
                                   <div className={classes.firstCol}>
                                     {row.logged_in ? (
                                       <div className={classes.Signed}>
-                                        Signed in
+                                        {t(
+                                          'settings.userManagementTab.label.options.signedIn'
+                                        )}
                                       </div>
                                     ) : (
                                       <div className={classes.NotSigned}>
-                                        Not Signed
+                                        {t(
+                                          'settings.userManagementTab.label.options.notSignedIn'
+                                        )}
                                       </div>
                                     )}
 
@@ -333,7 +358,9 @@ const UserManagement: React.FC = () => {
                                           src="./icons/Edit.svg"
                                         />
                                       </IconButton>
-                                      Edit Profile
+                                      {t(
+                                        'settings.userManagementTab.editProfile'
+                                      )}
                                     </MenuItem>
                                     {/* 
                                     <MenuItem
@@ -357,7 +384,7 @@ const UserManagement: React.FC = () => {
                           <TableRow>
                             <TableCell colSpan={5}>
                               <Typography align="center">
-                                No users available.
+                                {t('settings.userManagementTab.noUsers')}
                               </Typography>
                             </TableCell>
                           </TableRow>

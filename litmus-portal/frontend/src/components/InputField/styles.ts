@@ -5,7 +5,7 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
     root: {
       border: (props) =>
         props !== true
-          ? `1px solid ${theme.palette.input.disabled}`
+          ? `1px solid ${theme.palette.border.main}`
           : `1px solid ${theme.palette.primary.dark}`,
       overflow: 'hidden',
       borderRadius: 4,
@@ -65,7 +65,7 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
       },
     },
     disabled: {
-      backgroundColor: theme.palette.input.disabled,
+      backgroundColor: theme.palette.disabledBackground,
     },
   })
 );

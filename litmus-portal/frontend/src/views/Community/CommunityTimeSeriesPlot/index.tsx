@@ -109,7 +109,11 @@ const CommunityAnalyticsPlot: React.FC = () => {
       });
     }
 
-    const dataObject = { x: [] = [Date], y: [] = [string], y2: [] = [string] };
+    const dataObject = {
+      x: ([] = [Date]),
+      y: ([] = [string]),
+      y2: ([] = [string]),
+    };
 
     rawData.forEach(function dateSplit(datum: any) {
       const splits = datum.date.split('-');
@@ -181,7 +185,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
       <FormControl
         variant="outlined"
         className={classes.formControl}
-        color="secondary"
+        color="primary"
         focused
       >
         <InputLabel htmlFor="outlined-selection" className={classes.root}>
@@ -205,7 +209,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
       <FormControl
         variant="outlined"
         className={classes.formControl}
-        color="secondary"
+        color="primary"
         focused
       >
         <InputLabel

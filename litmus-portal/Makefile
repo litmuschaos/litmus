@@ -37,7 +37,7 @@ frontend-services-checks:
 	@echo "------------------"
 	cd frontend && npm i eslint --no-save && npm run lint
 	@echo "------------------"
-	@echo "--> Check litmus-portal frontend [depcheck]"
+	@echo "--> Check litmusportal frontend [depcheck]"
 	@echo "------------------"
 	cd frontend && npm i depcheck --no-save && node_modules/.bin/depcheck --skip-missing .
 
@@ -52,7 +52,7 @@ backend-services-checks:
 		&& exit 1;\
 	fi
 	@echo "------------------"
-	@echo "--> Check litmus-portal backend [go mod tidy]"
+	@echo "--> Check litmusportal backend [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd graphql-server && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
@@ -61,7 +61,7 @@ backend-services-checks:
 		&& exit 1; \
 	fi
 	@echo "------------------"
-	@echo "--> Check litmus-portal authentication [go mod tidy]"
+	@echo "--> Check litmusportal authentication [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd authentication && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
@@ -70,25 +70,7 @@ backend-services-checks:
 		&& exit 1; \
 	fi
 	@echo "------------------"
-	@echo "--> Check litmus-portal self-deployer [go mod tidy]"
-	@echo "------------------"
-	@tidyRes=$$(cd tools/self-deployer && go mod tidy); \
-	if [ -n "$${tidyRes}" ]; then \
-		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
-		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
-		&& exit 1; \
-	fi
-	@echo "------------------"
-	@echo "--> Check litmus-portal workflow-agent [go mod tidy]"
-	@echo "------------------"
-	@tidyRes=$$(cd cluster-agents/workflow-agent && go mod tidy); \
-	if [ -n "$${tidyRes}" ]; then \
-		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
-		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
-		&& exit 1; \
-	fi
-	@echo "------------------"
-	@echo "--> Check litmus-portal subscriber [go mod tidy]"
+	@echo "--> Check litmusportal subscriber [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd cluster-agents/subscriber && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
@@ -96,3 +78,13 @@ backend-services-checks:
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
 		&& exit 1; \
 	fi
+	@echo "------------------"
+	@echo "--> Check litmusportal event tracker [go mod tidy]"
+	@echo "------------------"
+	@tidyRes=$$(cd cluster-agents/event-tracker && go mod tidy); \
+	if [ -n "$${tidyRes}" ]; then \
+		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
+		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
+		&& exit 1; \
+	fi
+

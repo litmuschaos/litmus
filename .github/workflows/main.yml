@@ -8,7 +8,7 @@ on:
 jobs:
   tests:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
 
       - name: Notification for Starting Testing.
@@ -18,7 +18,6 @@ jobs:
           body: |
             ****
             **Test Status:** The testing has been started please wait for the results ...
-
       #Using the last commit id of pull request
       - uses: octokit/request-action@v2.x
         id: get_PR_commits
@@ -40,20 +39,73 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{steps.getcommit.outputs.sha}}
+          fetch-depth: 0
 
+      - uses: octokit/request-action@v2.x
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        name: Getting the files changed in current Pull-Request
+        id: get_files
+        with:
+          route: GET /repos/:repo/pulls/:pull_number/files
+          repo: ${{ github.repository }}
+          pull_number: ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setting up KinD Cluster
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: "v0.7.0"
+
+      - name: Configuring and Testing the Cluster Installation
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+          kubectl cluster-info --context kind-kind
+          kind get kubeconfig --internal >$HOME/.kube/config
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
+      - name: Filtering the file paths and building images on the basic of changed files
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+            chmod 755 ./.github/filter_and_build.sh
+            ./.github/filter_and_build.sh
+        env:
+          changed_data: ${{steps.get_files.outputs.data}}
+
+      - name: Deploying the litmus-portal for E2E testing
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+          wget https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
+          sed -i 's/Always/IfNotPresent/g' cluster-k8s-manifest.yml
+          kubectl apply -f cluster-k8s-manifest.yml
+          kubectl get pods -n litmus
+          kubectl get deployments -o wide -n litmus
+          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
+       
+      - name: Getting the ENV variables for using while testing
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+          export frontendPodName=$(kubectl get pods -l component=litmusportal-frontend --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' -n litmus)
+          export frontendPodPort=$(kubectl get pod $frontendPodName --template='{{(index (index .spec.containers 0).ports 0).containerPort}}{{"\n"}}' --namespace litmus)
+          kubectl port-forward $frontendPodName -n litmus 3001:$frontendPodPort &
+      
       - name: Setting Dependencies
         uses: actions/setup-node@v1
+        if: startsWith(github.event.comment.body, '/run-unit')
         with:
           working-directory: litmus-portal/frontend
 
       - name: Installing Dependencies for frontend.
+        if: startsWith(github.event.comment.body, '/run-unit')
         run: |
           HUSKY_SKIP_INSTALL=1 npm i
         working-directory: litmus-portal/frontend
 
-      # Step for running all frontend Cypress unit tests.
+        # Step for running all frontend Cypress unit tests.
       - name: Starting cypress unit tests
-        if: startsWith(github.event.comment.body, '/run-unit') || startsWith(github.event.comment.body, '/run-all')
+        if: startsWith(github.event.comment.body, '/run-unit')
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
@@ -63,42 +115,42 @@ jobs:
 
       # Cloning the litmus-e2e repo for E2E tests.
       - name: Cloning the litmus-e2e Repo
-        if: startsWith(github.event.comment.body, '/run-e2e') || startsWith(github.event.comment.body, '/run-all')
+        if: startsWith(github.event.comment.body, '/run-e2e')
         run: |
            git clone https://github.com/litmuschaos/litmus-e2e.git -b litmus-portal
 
-      # Starting the React-Server for E2E tests.
-      - name: Starting the server
-        if: startsWith(github.event.comment.body, '/run-e2e') || startsWith(github.event.comment.body, '/run-all')
-        run: |
-          CHOKIDAR_USEPOLLING=1 npm start &
-        working-directory: litmus-portal/frontend
-
-      - name: Installing Cypress and running tests for login page
-        if: startsWith(github.event.comment.body, '/run-e2e-login')
+      - name: Running basic tests (Login and Welcome Modal Tests)
+        if: startsWith(github.event.comment.body, '/run-e2e-AuthTests') || startsWith(github.event.comment.body, '/run-e2e')
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
-          wait-on: http://localhost:3000
-          spec: cypress/integration/Login/*
+          spec: cypress/integration/Basic_Setup/**/*.spec.js
           working-directory: litmus-e2e/CypressE2E/
+          config-file: cypress.prod.json
 
-      - name: Install Cypress and run all tests
-        if: startsWith(github.event.comment.body, '/run-e2e-all') || startsWith(github.event.comment.body, '/run-all')
+      - name: Teaming and Account Settings Tests
+        if: startsWith(github.event.comment.body, '/run-e2e-Settings')
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
-          wait-on: http://localhost:3000
-          spec: cypress/integration/**/*
+          spec: cypress/integration/Parallel_Tests/Account_Settings/*.spec.js
+          working-directory: litmus-e2e/CypressE2E/
+          config-file: cypress.prod.json
+
+      - name: Run all E2E tests
+        if: startsWith(github.event.comment.body, '/run-e2e-all')
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Parallel_Tests/**/*.spec.js
           working-directory: litmus-e2e/CypressE2E
+          config-file: cypress.prod.json
 
       - name: Check the test run
         if: |
-         startsWith(github.event.comment.body, '/run-unit') || startsWith(github.event.comment.body, '/run-all') ||
-         startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') ||
-         startsWith(github.event.comment.body, '/run-e2e-all')
+         startsWith(github.event.comment.body, '/run-unit') || startsWith(github.event.comment.body, '/run-e2e')
         run: |
-          echo ::set-env name=TEST_RUN::true
+          echo "TEST_RUN=true" >> $GITHUB_ENV
 
       - name: Check for all the jobs are succeeded
         if: ${{ success() && env.TEST_RUN == 'true' }}
@@ -135,6 +187,10 @@ jobs:
           reactions: eyes
         env:
           RUN_ID: ${{ github.run_id }}
+
+      - name: Deleting KinD cluster
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: kind delete cluster
 
   merge:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/merge')

@@ -10,15 +10,14 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid ',
-    borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: '1px solid rgba(0, 0, 0, 0.05)',
+    backgroundColor: theme.palette.cards.background,
   },
 
   search: {
     fontSize: 14,
     marginRight: 'auto',
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     marginLeft: theme.spacing(6.25),
   },
 
@@ -42,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '9rem',
     border: '0.125rem solid',
     borderRadius: 4,
-    borderColor: theme.palette.secondary.main,
+    borderColor: theme.palette.primary.main,
     marginRight: theme.spacing(3.75),
     textTransform: 'none',
   },
@@ -52,11 +51,23 @@ const useStyles = makeStyles((theme) => ({
   },
 
   // Table and Table Data Properties
+  root: {
+    backgroundColor: theme.palette.background.paper,
+  },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: `1px solid ${theme.palette.disabledBackground}`,
+    backgroundColor: theme.palette.cards.background,
     height: '29.219rem',
+    '&::-webkit-scrollbar': {
+      width: '0.2em',
+    },
+    '&::-webkit-scrollbar-track': {
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.primary.main,
+    },
   },
   tableHead: {
     '& p': {
@@ -66,16 +77,16 @@ const useStyles = makeStyles((theme) => ({
     '& th': {
       fontWeight: 'bold',
       fontSize: '0.8125rem',
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      backgroundColor: theme.palette.cards.background,
     },
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.disabled,
   },
   workflowName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
-    color: theme.palette.customColors.black(0.4),
+    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
+    color: theme.palette.text.disabled,
   },
   sortDiv: {
     display: 'flex',
@@ -83,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.25),
   },
   headData: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.disabled,
   },
   tableDataStatus: {
     paddingLeft: theme.spacing(8.5),
@@ -96,11 +107,11 @@ const useStyles = makeStyles((theme) => ({
   },
   workflowNameData: {
     maxWidth: '15.625rem',
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.disabled,
   },
   clusterName: {
     marginLeft: theme.spacing(4),
@@ -122,7 +133,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.error.main,
   },
   success: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.success.main,
   },
   // Menu option with icon
   expDiv: {

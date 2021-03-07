@@ -22,14 +22,19 @@ func MarshalGQLData(gqlData interface{}) (string, error) {
 }
 
 // generate gql mutation payload for workflow event
-func GenerateWorkflowPayload(cid, accessKey string, wfEvent types.WorkflowEvent) ([]byte, error) {
+func GenerateWorkflowPayload(cid, accessKey, completed string, wfEvent types.WorkflowEvent) ([]byte, error) {
 	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
-	// process event data
+
+	for id, event := range wfEvent.Nodes {
+		event.Message = strings.Replace(event.Message, `"`, ``, -1)
+		wfEvent.Nodes[id] = event
+	}
+
 	processed, err := MarshalGQLData(wfEvent)
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ workflow_id: \"` + wfEvent.WorkflowID + `\", workflow_run_id: \"` + wfEvent.UID + `\", workflow_name:\"` + wfEvent.Name + `\", cluster_id: ` + clusterID + `, execution_data:\"` + processed[1:len(processed)-1] + `\"}`
+	mutation := `{ workflow_id: \"` + wfEvent.WorkflowID + `\", workflow_run_id: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflow_name:\"` + wfEvent.Name + `\", cluster_id: ` + clusterID + `, execution_data:\"` + processed[1:len(processed)-1] + `\"}`
 	var payload = []byte(`{"query":"mutation { chaosWorkflowRun(workflowData:` + mutation + ` )}"}`)
 	return payload, nil
 }

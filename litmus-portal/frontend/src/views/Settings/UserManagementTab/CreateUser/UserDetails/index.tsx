@@ -1,8 +1,7 @@
 import { Avatar, Button, Typography } from '@material-ui/core';
+import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import InputFieldOutline from '../../../../../components/InputFieldOutline';
-import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateEmail,
   validateStartEmptySpacing,
@@ -18,21 +17,17 @@ interface PersonalDetailsProps {
   handleEmailChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   emailValue: string;
   usernameIsDisabled: boolean;
-  nameIsDisabled: boolean;
-  emailIsDisabled: boolean;
 }
 
 // Displays the personals details on the "accounts" tab
 const UserDetails: React.FC<PersonalDetailsProps> = ({
   handleNameChange,
   nameValue,
-  handleUserChange,
   userValue,
   handleEmailChange,
   emailValue,
+  handleUserChange,
   usernameIsDisabled,
-  nameIsDisabled,
-  emailIsDisabled,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -65,62 +60,78 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               className={classes.avatarBackground}
               src={avatar}
             />
-            <Button className={classes.edit} onClick={handleOpen}>
+            <Button className={classes.edit} onClick={handleOpen} disabled>
               {t('settings.userManagementTab.createUser.userDetails.button')}
             </Button>
-            <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              modalActions={
+                <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+              }
+            >
               <ChooseAvatarModal
                 avatar={avatar}
                 setAvatar={setAvatar}
                 handleSubmit={handleClose}
               />
-            </Unimodal>
+            </Modal>
           </div>
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
             <div data-cy="InputName">
-              <InputFieldOutline
-                required
+              <InputField
                 helperText={
                   validateStartEmptySpacing(nameValue)
                     ? 'Should not start with an empty space'
                     : ''
                 }
                 value={nameValue}
-                disabled={nameIsDisabled}
-                handleChange={handleNameChange}
-                validationError={validateStartEmptySpacing(nameValue)}
+                onChange={handleNameChange}
+                variant={
+                  validateStartEmptySpacing(nameValue) ? 'error' : 'primary'
+                }
                 label={t(
                   'settings.userManagementTab.createUser.userDetails.label.fullName'
                 )}
               />
             </div>
+            <div style={{ width: '2rem' }} />
             <div data-cy="InputEmail">
-              <InputFieldOutline
-                required
+              <InputField
                 helperText={
                   validateEmail(emailValue) ? 'Should be a valid email' : ''
                 }
                 type="email"
                 value={emailValue}
-                disabled={emailIsDisabled}
-                handleChange={handleEmailChange}
-                validationError={validateEmail(emailValue)}
+                onChange={handleEmailChange}
+                variant={validateEmail(emailValue) ? 'error' : 'primary'}
                 label={t(
                   'settings.userManagementTab.createUser.userDetails.label.email'
                 )}
               />
             </div>
             {/* Username is not editable by non admin user */}
+            <div style={{ marginTop: '5rem' }} />
             <div data-cy="username">
-              <InputFieldOutline
-                value={userValue}
-                handleChange={handleUserChange}
-                disabled={usernameIsDisabled}
-                validationError={false}
+              <InputField
+                helperText={
+                  validateStartEmptySpacing(userValue)
+                    ? t(
+                        'settings.userManagementTab.createUser.userDetails.validationEmptySpace'
+                      )
+                    : ''
+                }
                 label={t(
-                  'settings.userManagementTab.createUser.userDetails.label.username'
+                  'settings.userManagementTab.createUser.label.username'
                 )}
+                required
+                value={userValue}
+                disabled={usernameIsDisabled}
+                onChange={handleUserChange}
+                variant={
+                  validateStartEmptySpacing(userValue) ? 'error' : 'primary'
+                }
               />
             </div>
           </div>

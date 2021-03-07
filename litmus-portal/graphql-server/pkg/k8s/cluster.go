@@ -1,95 +1,74 @@
 package k8s
 
 import (
-	"context"
-	appsv1 "k8s.io/api/apps/v1"
-	apiv1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
 	"log"
 	"os"
 	"strconv"
+
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/restmapper"
+
+	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	memory "k8s.io/client-go/discovery/cached"
 )
 
-func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
-	deployerImage := os.Getenv("DEPLOYER_IMAGE")
-	subscriberSC := os.Getenv("AGENT_SCOPE")
-	selfDeployerSvcAccount := "self-deployer-namespace-account"
-	if subscriberSC == "cluster" {
-		selfDeployerSvcAccount = "self-deployer-admin-account"
-	}
-	cfg, err := GetKubeConfig()
-	clientset, err := kubernetes.NewForConfig(cfg)
-	if err != nil {
-		panic(err)
-	}
-	deploymentsClient := clientset.AppsV1().Deployments(namespace)
+var (
+	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
+	dr              dynamic.ResourceInterface
+	AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
+)
 
-	deployment := &appsv1.Deployment{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "self-deployer",
-			Labels:    map[string]string{"component": "self-deployer"},
-			Namespace: namespace,
-		},
-		Spec: appsv1.DeploymentSpec{
-			Replicas: func(i int32) *int32 { return &i }(1),
-			Selector: &metav1.LabelSelector{
-				MatchLabels: map[string]string{
-					"component": "self-deployer",
-				},
-			},
-			Template: apiv1.PodTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Labels: map[string]string{
-						"component": "self-deployer",
-					},
-				},
-				Spec: apiv1.PodSpec{
-					Containers: []apiv1.Container{
-						{
-							Name:  "deployer",
-							Image: deployerImage,
-							Resources: apiv1.ResourceRequirements{
-								Limits: apiv1.ResourceList{
-									"cpu":    resource.MustParse("100m"),
-									"memory": resource.MustParse("128Mi"),
-								},
-							},
-							ImagePullPolicy: "Always",
-							Env: []apiv1.EnvVar{
-								{
-									Name:  "SERVER",
-									Value: "http://litmusportal-server-service:9002",
-								},
-								{
-									Name:  "TOKEN",
-									Value: token,
-								},
-								{
-									Name: "NAMESPACE",
-									ValueFrom: &apiv1.EnvVarSource{
-										FieldRef: &apiv1.ObjectFieldSelector{
-											FieldPath: "metadata.namespace",
-										},
-									},
-								},
-							},
-						},
-					},
-					ServiceAccountName: selfDeployerSvcAccount,
-				},
-			},
-		},
-	}
-
-	// Create Deployment
-	log.Println("Creating deployment...")
-	result, err := deploymentsClient.Create(context.TODO(), deployment, metav1.CreateOptions{})
+// This function handles cluster operations
+func ClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
+	// Getting dynamic and discovery client
+	discoveryClient, dynamicClient, err := GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+
+	// Create a mapper using dynamic client
+	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(discoveryClient))
+
+	// Decode YAML manifest into unstructured.Unstructured
+	obj := &unstructured.Unstructured{}
+	_, gvk, err := decUnstructured.Decode([]byte(manifest), nil, obj)
+	if err != nil {
+		return nil, err
+	}
+
+	// Find GVR
+	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
+	if err != nil {
+		return nil, err
+	}
+
+	// Obtain REST interface for the GVR
+	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
+		// namespaced resources should specify the namespace
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
+	} else {
+		// for cluster-wide resources
+		dr = dynamicClient.Resource(mapping.Resource)
+	}
+
+	response, err := dr.Create(obj, metaV1.CreateOptions{})
+	if errors.IsAlreadyExists(err) {
+		// This doesnt ever happen even if it does already exist
+		log.Print("Already exists")
+		return nil, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("Resource successfully created")
+
+	return response, nil
 }
 
 func GetPortalEndpoint() (string, error) {
@@ -105,11 +84,11 @@ func GetPortalEndpoint() (string, error) {
 		return "", err
 	}
 
-	podList, _ := clientset.CoreV1().Pods(LitmusPortalNS).List(context.TODO(), metav1.ListOptions{
+	podList, _ := clientset.CoreV1().Pods(LitmusPortalNS).List(metaV1.ListOptions{
 		LabelSelector: "component=litmusportal-server",
 	})
 
-	svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(context.TODO(), "litmusportal-server-service", metav1.GetOptions{})
+	svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get("litmusportal-server-service", metaV1.GetOptions{})
 	if err != nil {
 		return "", err
 	}
@@ -120,7 +99,7 @@ func GetPortalEndpoint() (string, error) {
 		}
 	}
 
-	nodeIP, err := clientset.CoreV1().Nodes().Get(context.TODO(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
+	nodeIP, err := clientset.CoreV1().Nodes().Get(podList.Items[0].Spec.NodeName, metaV1.GetOptions{})
 	if err != nil {
 		return "", err
 	}

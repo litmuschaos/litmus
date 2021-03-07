@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"os/signal"
+	"runtime"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
 	"log"
@@ -26,11 +27,13 @@ var (
 )
 
 func init() {
+	log.Printf("Go Version: %s", runtime.Version())
+	log.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()
 
-	var isConfirmed bool
-	isConfirmed, newKey, err = k8s.IsClusterConfirmed(clusterData)
+	isConfirmed, newKey, err := k8s.IsClusterConfirmed()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,9 +54,12 @@ func init() {
 		}
 
 		if responseInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
-			log.Println("cluster confirmed")
 			clusterData["KEY"] = responseInterface.Data.ClusterConfirm.NewClusterKey
-			k8s.ClusterRegister(clusterData)
+			_, err = k8s.ClusterRegister(clusterData)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("cluster confirmed")
 		} else {
 			log.Fatal("Cluster not confirmed")
 		}

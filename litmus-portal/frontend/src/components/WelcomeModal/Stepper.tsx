@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react/hooks';
 import MobileStepper from '@material-ui/core/MobileStepper';
+import { InputField } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -10,7 +11,7 @@ import { CreateUserData } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
-import getToken from '../../utils/getToken';
+import { getToken } from '../../utils/auth';
 import {
   validateConfirmPassword,
   validateEmail,
@@ -18,7 +19,6 @@ import {
 } from '../../utils/validate';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
-import InputField from '../InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 
@@ -153,9 +153,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     }
   }
 
-  // If password is less than 6 characters and does not contain
-  // an alpha numeric character as well as a number
-  // then button would be disabled
   // If the two passwords are not same then button would be disabled
   // Back Button: [Button State: Enabled]
   // Continue Button: [Button State: Disabled]
@@ -248,7 +245,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
 
   // Submit on Enter Key-press
   const keyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && isError.current === false) {
       if (activeStep === 0) {
         handleNext();
         return;
@@ -273,19 +270,18 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                   <InputField
                     label={t('welcomeModal.case-0.label')}
                     value={info.project_name}
-                    required
                     helperText={
                       validateStartEmptySpacing(info.project_name)
                         ? 'Should not start with an empty space'
                         : ''
                     }
-                    validationError={validateStartEmptySpacing(
-                      info.project_name
-                    )}
-                    type="text"
-                    handleChange={(event) => {
-                      setData('project_name', event.target.value);
-                    }}
+                    variant={
+                      validateStartEmptySpacing(info.project_name)
+                        ? 'error'
+                        : 'primary'
+                    }
+                    required
+                    onChange={(e) => setData('project_name', e.target.value)}
                     onKeyPress={keyPress}
                   />
                 </div>
@@ -315,8 +311,10 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         ? 'Should not start with an empty space'
                         : ''
                     }
-                    validationError={validateStartEmptySpacing(info.name)}
-                    handleChange={(event) => {
+                    variant={
+                      validateStartEmptySpacing(info.name) ? 'error' : 'primary'
+                    }
+                    onChange={(event) => {
                       setData('name', event.target.value);
                     }}
                     onKeyPress={keyPress}
@@ -337,15 +335,14 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 className={classes.passwordSetterDiv}
                 data-cy="InputPassword"
               >
+                <div aria-details="spacer" style={{ margin: '0.5rem 0' }} />
                 <div className={classes.passwordArea}>
                   <InputField
                     label={t('welcomeModal.case-2.label')}
                     type="password"
                     required
-                    validationError={false}
                     value={values.password}
-                    success={isSuccess.current}
-                    handleChange={(event) =>
+                    onChange={(event) =>
                       setValues({
                         password: event.target.value,
                         confirmPassword: values.confirmPassword,
@@ -354,6 +351,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     onKeyPress={keyPress}
                   />
                 </div>
+                <div aria-details="spacer" style={{ margin: '0.5rem 0' }} />
                 <div className={classes.passwordArea}>
                   <InputField
                     label={t('welcomeModal.case-2.cnfLabel')}
@@ -368,15 +366,15 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         ? 'Password is not same'
                         : ''
                     }
-                    success={isSuccess.current}
-                    validationError={
-                      // validatePassword(values.confirmPassword) &&
+                    variant={
                       validateConfirmPassword(
                         values.password,
                         values.confirmPassword
                       )
+                        ? 'error'
+                        : 'primary'
                     }
-                    handleChange={(event) =>
+                    onChange={(event) =>
                       setValues({
                         password: values.password,
                         confirmPassword: event.target.value,
@@ -405,8 +403,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     helperText={
                       validateEmail(info.email) ? 'Should be a valid email' : ''
                     }
-                    validationError={validateEmail(info.email)}
-                    handleChange={(event) => {
+                    variant={validateEmail(info.email) ? 'error' : 'primary'}
+                    onChange={(event) => {
                       setData('email', event.target.value);
                     }}
                     onKeyPress={keyPress}

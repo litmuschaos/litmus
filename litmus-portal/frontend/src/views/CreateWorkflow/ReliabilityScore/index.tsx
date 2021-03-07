@@ -1,10 +1,11 @@
 import { Typography } from '@material-ui/core';
+import { Modal } from 'litmus-ui';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Center from '../../../containers/layouts/Center';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -16,6 +17,7 @@ import useStyles from './styles';
 
 const ReliablityScore = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -52,22 +54,22 @@ const ReliablityScore = () => {
         <div className={classes.mainDiv}>
           <div>
             <Typography className={classes.headerText}>
-              <strong>
-                Adjust the weights of the experiments in the workflow
-              </strong>
+              <strong>{t('createWorkflow.reliabilityScore.header')}</strong>
             </Typography>
             <Typography className={classes.description}>
-              You have selected {weights?.length} tests in the “Kubernetes
-              conformance test” workflow. Successful outcome of each test
-              carries a certain weight. We have pre-selected weights for each
-              test for you. However, you may review and modify the weigtage
-              against. <strong>The weights are relative to each other.</strong>
+              {t('createWorkflow.reliabilityScore.info')} {weights?.length}{' '}
+              {t('createWorkflow.reliabilityScore.infoNext')}{' '}
+              <strong>
+                {t('createWorkflow.reliabilityScore.infoNextStrong')}
+              </strong>
             </Typography>
           </div>
           <hr className={classes.horizontalLine} />
           <div className={classes.divRow}>
             <Typography className={classes.testHeading}>
-              <strong>Kubernetes conformance test</strong>
+              <strong>
+                {t('createWorkflow.reliabilityScore.testHeading')}
+              </strong>
             </Typography>
           </div>
           {(weights as any).map((Data: experimentMap, index: number) => (
@@ -93,41 +95,37 @@ const ReliablityScore = () => {
                 data-cy="testRunButton"
               >
                 <div className={classes.buttonOutlineDiv}>
-                  <img src="icons/video.png" alt="Play icon" />
+                  <img src="/icons/video.png" alt="Play icon" />
                   <Typography className={classes.buttonOutlineText}>
-                    Demo Launch
+                    {t('createWorkflow.reliabilityScore.button.demo')}
                   </Typography>
                 </div>
               </ButtonOutline>
               {/* <div className={classes.toolTipDiv}>
                 <InfoTooltip value="Text Default" />
                 </div> */}
-              <Unimodal
-                isOpen={open}
-                handleClose={() => setOpen(false)}
-                hasCloseBtn={false}
-              >
+              <Modal open={open} onClose={() => setOpen(false)}>
                 <div>
                   <ResultTable testValue={testWeights} testNames={testNames} />
-                </div>
-                <hr className={classes.horizontalLineResult} />
-                <div className={classes.gotItBtn}>
+                  <hr className={classes.horizontalLineResult} />
                   <Center>
                     <ButtonFilled
                       handleClick={() => setOpen(false)}
                       data-cy="gotItButton"
                       isPrimary
+                      styles={classes.gotItBtn}
                     >
-                      <div>Got it</div>
+                      <div>
+                        {t('createWorkflow.reliabilityScore.button.gotIt')}
+                      </div>
                     </ButtonFilled>
                   </Center>
                 </div>
-              </Unimodal>
+              </Modal>
             </div>
             <div>
               <Typography className={classes.testInfo}>
-                Compare the importance of the items above and launch a demo
-                version of Kubernetes conformance test to see how it works.
+                {t('createWorkflow.reliabilityScore.testInfo')}
               </Typography>
             </div>
           </div>

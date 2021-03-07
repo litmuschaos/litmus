@@ -16,12 +16,12 @@ func init() {
 
 //UserCredentials contains the user information
 type UserCredentials struct {
-	ID       string `bson:"_id,omitempty"`
-	UserName string `bson:"username,omitempty"`
-	Password string `bson:"password,omitempty"`
-	Email    string `bson:"email,omitempty"`
-	Name     string `bson:"name,omitempty"`
-	// UserID		string       `bson:"user_id"`
+	ID          string       `bson:"_id,omitempty"`
+	UserName    string       `bson:"username,omitempty"`
+	Password    string       `bson:"password,omitempty"`
+	Email       string       `bson:"email,omitempty"`
+	Name        string       `bson:"name,omitempty"`
+	Role        Role         `bson:"role"`
 	LoggedIn    bool         `bson:"logged_in,omitempty"`
 	SocialAuths []SocialAuth `bson:"social_auths,omitempty"`
 	CreatedAt   *time.Time   `bson:"created_at,omitempty"`
@@ -30,15 +30,29 @@ type UserCredentials struct {
 	State       State        `bson:"state,omitempty"`
 }
 
+// Role states the role of the user in the portal
+type Role string
+
+const (
+	//RoleAdmin gives the admin permissions to a user
+	RoleAdmin Role = "admin"
+
+	//RoleUser gives the normal user permissions to a user
+	RoleUser Role = "user"
+)
+
 //DefaultUser is the admin user created by default
-var DefaultUser *UserCredentials = &UserCredentials{
+var DefaultUser = &UserCredentials{
 	UserName: types.DefaultUserName,
 	Password: types.DefaultUserPassword,
+	Role:     RoleAdmin,
 }
 
 //PublicUserInfo displays the information of the user that is publicly available
 type PublicUserInfo struct {
 	ID        string     `json:"_id"`
+	UID       string     `json:"uid"`
+	Role      Role       `json:"role"`
 	UserName  string     `json:"username"`
 	Email     string     `json:"email"`
 	Name      string     `json:"name"`
@@ -80,6 +94,11 @@ func (u *UserCredentials) GetID() string {
 // GetUserName user username
 func (u *UserCredentials) GetUserName() string {
 	return u.UserName
+}
+
+// GetRole role
+func (u *UserCredentials) GetRole() Role {
+	return u.Role
 }
 
 // GetPassword user password
@@ -134,6 +153,7 @@ func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 		UserName:  u.GetUserName(),
 		Email:     u.GetEmail(),
 		ID:        u.GetID(),
+		Role:      u.GetRole(),
 		LoggedIn:  u.GetLoggedIn(),
 		CreatedAt: u.GetCreatedAt(),
 		UpdatedAt: u.GetUpdatedAt(),
@@ -142,7 +162,7 @@ func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 	}
 }
 
-// GetUserName user username
+//GetUserName user username
 func (uinfo *PublicUserInfo) GetUserName() string {
 	return uinfo.UserName
 }
@@ -150,6 +170,10 @@ func (uinfo *PublicUserInfo) GetUserName() string {
 // GetName user username
 func (uinfo *PublicUserInfo) GetName() string {
 	return uinfo.Name
+}
+
+func (uinfo *PublicUserInfo) GetRole() Role {
+	return uinfo.Role
 }
 
 // GetEmail user email
@@ -187,7 +211,7 @@ func (uinfo *PublicUserInfo) GetState() State {
 	return uinfo.State
 }
 
-// GetType returns auth type
+// GetType returns auth typeName
 func (s *SocialAuth) GetType() string {
 	return s.Type
 }

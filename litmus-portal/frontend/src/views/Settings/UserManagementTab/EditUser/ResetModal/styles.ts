@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: theme.spacing(7.5),
+    padding: theme.spacing(7),
   },
   typo: {
     fontSize: '2rem',
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'center',
+    padding: theme.spacing(7, 0),
   },
   buttonModal: {
     marginTop: theme.spacing(3.75),

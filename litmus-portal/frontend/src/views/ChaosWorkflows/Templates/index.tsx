@@ -67,6 +67,7 @@ const Templates = () => {
             selectWorkflow(index);
           }}
           workflows={workflowData}
+          isCustomWorkflowVisible={false}
         />
       </div>
     </div>

@@ -1,11 +1,14 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useQuery } from '@apollo/client';
-import { Button, Card, CardActionArea, Typography } from '@material-ui/core';
+import { CardActionArea, Typography, useTheme } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop/Backdrop';
+import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import { ButtonFilled, LitmusCard } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled';
 import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -23,38 +26,49 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as UserActions from '../../redux/actions/user';
+import * as WorkflowActions from '../../redux/actions/workflow';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import ReturningHome from '../../views/Home/ReturningHome/index';
+import ReturningHome from '../../views/Home/ReturningHome';
 import useStyles from './style';
 
 const CreateWorkflowCard: React.FC = () => {
   const { t } = useTranslation();
   const classes = useStyles();
   const template = useActions(TemplateSelectionActions);
-
+  const workflowAction = useActions(WorkflowActions);
   const handleCreateWorkflow = () => {
+    workflowAction.setWorkflowDetails({
+      isCustomWorkflow: false,
+      customWorkflows: [],
+    });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
     history.push('/create-workflow');
   };
 
   return (
-    <Card
-      elevation={3}
-      className={classes.createWorkflowCard}
-      onClick={handleCreateWorkflow}
+    <LitmusCard
+      width="15rem"
+      height="100%"
+      borderColor={useTheme().palette.highlight}
       data-cy="createWorkflow"
     >
-      <CardActionArea>
-        <Typography className={classes.createWorkflowHeading}>
-          {t('home.workflow.heading')}
-        </Typography>
-        <Typography className={classes.createWorkflowTitle}>
-          {t('home.workflow.info')}
-        </Typography>
-        <ArrowForwardIcon className={classes.arrowForwardIcon} />
-      </CardActionArea>
-    </Card>
+      <div
+        aria-hidden="true"
+        style={{ height: '100%' }}
+        onClick={handleCreateWorkflow}
+      >
+        <CardActionArea classes={{ root: classes.cardAreaBody }}>
+          <Typography className={classes.createWorkflowHeading}>
+            {t('home.workflow.heading')}
+          </Typography>
+          <Typography className={classes.createWorkflowTitle}>
+            {t('home.workflow.info')}
+          </Typography>
+          <ArrowForwardIcon className={classes.arrowForwardIcon} />
+        </CardActionArea>
+      </div>
+    </LitmusCard>
   );
 };
 
@@ -83,7 +97,7 @@ const HomePage: React.FC = () => {
     setIsOpen(false);
   };
 
-  const [secondLogin, setSecondLogin] = useState<boolean>(true);
+  const [dataPresent, setDataPresent] = useState<boolean>(true);
 
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
@@ -109,6 +123,7 @@ const HomePage: React.FC = () => {
           selectedProjectID: isOwnerOfProject.id,
           userRole: 'Owner',
           selectedProjectName: isOwnerOfProject.name,
+          selectedProjectOwner: userData.username,
         });
         user.updateUserDetails({ loader: false });
         // Flush data to persistor immediately
@@ -141,12 +156,12 @@ const HomePage: React.FC = () => {
                 {t('home.heading')}
                 <strong>{` ${name}`}</strong>
               </Typography>
-              {secondLogin ? (
+              {dataPresent ? (
                 <ReturningHome
-                  callbackToSetSecondlogin={(secondLogin: boolean) => {
-                    setSecondLogin(secondLogin);
+                  callbackToSetDataPresent={(dataPresent: boolean) => {
+                    setDataPresent(dataPresent);
                   }}
-                  currentStatus={secondLogin}
+                  currentStatus={dataPresent}
                 />
               ) : (
                 <div className={classes.headingDiv}>
@@ -161,18 +176,19 @@ const HomePage: React.FC = () => {
                       <Typography className={classes.mainDesc}>
                         {t('home.subHeading3')}
                       </Typography>
-                      <Button
-                        variant="contained"
-                        className={classes.predefinedBtn}
-                        onClick={() => {
-                          tabs.changeWorkflowsTabs(2);
-                          history.push('/workflows');
-                        }}
-                      >
-                        <Typography variant="subtitle1">
-                          {t('home.button1')}
-                        </Typography>
-                      </Button>
+                      <div className={classes.predefinedBtn}>
+                        <ButtonFilled
+                          variant="success"
+                          onClick={() => {
+                            tabs.changeWorkflowsTabs(2);
+                            history.push('/workflows');
+                          }}
+                        >
+                          <Typography variant="subtitle1">
+                            {t('home.button1')}
+                          </Typography>
+                        </ButtonFilled>
+                      </div>
                     </div>
                     <div className={classes.imageDiv}>
                       <img src="icons/applause.png" alt="Applause icon" />
@@ -183,32 +199,39 @@ const HomePage: React.FC = () => {
                   </div>
                 </div>
               )}
-              <div className={classes.contentDiv}>
-                <div className={classes.statDiv}>
-                  <div className={classes.btnHeaderDiv}>
-                    <Typography className={classes.statsHeading}>
-                      <strong>{t('home.analytics.heading')}</strong>
-                    </Typography>
-
-                    <Button className={classes.seeAllBtn}>
-                      <Link to="/community">
+              {!dataPresent ? (
+                <div className={classes.contentDiv}>
+                  <div className={classes.statDiv}>
+                    <div className={classes.btnHeaderDiv}>
+                      <Typography className={classes.statsHeading}>
+                        <strong>{t('home.analytics.heading')}</strong>
+                      </Typography>
+                      <IconButton
+                        className={classes.seeAllBtn}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          history.push('/community');
+                        }}
+                      >
                         <div className={classes.btnSpan}>
                           <Typography className={classes.btnText}>
                             {t('home.analytics.moreInfo')}
                           </Typography>
                           <img src="icons/next.png" alt="next" />
                         </div>
-                      </Link>
-                    </Button>
+                      </IconButton>
+                    </div>
+                    <div className={classes.cardDiv}>
+                      <InfoFilledWrap />
+                    </div>
                   </div>
-                  <div className={classes.cardDiv}>
-                    <InfoFilledWrap />
+                  <div className={classes.quickActionDiv}>
+                    <QuickActionCard analyticsHome={false} nonAdmin />
                   </div>
                 </div>
-                <div className={classes.quickActionDiv}>
-                  <QuickActionCard />
-                </div>
-              </div>
+              ) : (
+                <div />
+              )}
             </div>
           </div>
         </Scaffold>

@@ -4,13 +4,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '95%',
     fontSize: '1rem',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     marginLeft: theme.spacing(8),
     marginTop: theme.spacing(4),
   },
   linkBox: {
     border: '1px solid ',
-    borderColor: theme.palette.customColors.black(0.07),
+    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
     borderRadius: '0.1875rem',
     padding: theme.spacing(6),
@@ -26,11 +26,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   buttonBox: {
     display: 'flex',
-    flexDirection: 'row',
+    paddingLeft: theme.spacing(3),
+    paddingTop: theme.spacing(2.5),
   },
   copyText: {
     display: 'flex',
-    flexDirection: 'row',
   },
   yamlLink: {
     width: '90%',

@@ -46,7 +46,9 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
-        <CustomStatus status={exeData.phase} />
+        <CustomStatus
+          status={exeData.finishedAt.length === 0 ? 'Running' : exeData.phase}
+        />
       </TableCell>
       <TableCell className={classes.workflowNameData}>
         <Typography data-cy="workflowName">
@@ -55,7 +57,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterName}>
-          {nameCapitalized(data.cluster_type)}
+          {nameCapitalized(data.cluster_name)}
         </Typography>
       </TableCell>
       <TableCell>
@@ -110,7 +112,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() => {
-              history.push(`/workflows/details/${data.workflow_run_id}`);
+              history.push(`/workflows/${data.workflow_run_id}`);
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">

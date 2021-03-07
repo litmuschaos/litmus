@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExecutionData } from '../../../models/graphql/workflowData';
 import timeDifference from '../../../utils/datesModifier';
 import useStyles from './styles';
@@ -21,6 +22,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
   cluster_name,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   // Get selected node data from redux
 
   const [duration, setDuration] = useState<number>(0);
@@ -59,7 +61,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
       {/* Workflow Information */}
       <div className={classes.heightMaintainer}>
         <Typography className={classes.workflowSpacing}>
-          <span className={classes.bold}>Workflow name:</span>
+          <span className={classes.bold}>
+            {t('workflowDetailsView.workflowInfo.header')}:
+          </span>
           <br />
           {workflow_name}
         </Typography>
@@ -76,20 +80,31 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
       <div className={classes.workflowSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>
-            <span className={classes.bold}>State:</span> {execution_data.phase}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowInfo.param.state')}:
+            </span>{' '}
+            {execution_data.phase}
           </Typography>
           <Typography>
-            <span className={classes.bold}>Start time:</span>{' '}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowInfo.param.startTime')}:
+            </span>{' '}
             {timeDifference(execution_data.startedAt)}
           </Typography>
           {execution_data.phase !== 'Running' ? (
             <>
               <Typography>
-                <span className={classes.bold}>End time:</span>{' '}
-                {timeDifference(execution_data.finishedAt)}
+                <span className={classes.bold}>
+                  {t('workflowDetailsView.workflowInfo.param.endTime')}:
+                </span>{' '}
+                {execution_data.finishedAt === ''
+                  ? t('workflowDetailsView.workflowInfo.param.finished')
+                  : timeDifference(execution_data.finishedAt)}
               </Typography>
               <Typography>
-                <span className={classes.bold}>Duration:</span>{' '}
+                <span className={classes.bold}>
+                  {t('workflowDetailsView.workflowInfo.param.duration')}:
+                </span>{' '}
                 {`${duration.toFixed(1)} minutes`}
               </Typography>
             </>
@@ -97,7 +112,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
             <></>
           )}
           <Typography>
-            <span className={classes.bold}>Namespace:</span>{' '}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowInfo.param.namespace')}:
+            </span>{' '}
             {execution_data.namespace}
           </Typography>
         </div>
@@ -112,7 +129,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
         <div className={classes.heightMaintainer}>
           {execution_data.phase === 'Running' ? (
             <Typography>
-              <span className={classes.bold}>Currently Running Nodes:</span>{' '}
+              <span className={classes.bold}>
+                {t('workflowDetailsView.workflowInfo.nodeDetails.curr')}:
+              </span>{' '}
               <ul>
                 {data.currentRunningNodes.map((node) => (
                   <li key={node}>{node}</li>
@@ -123,7 +142,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
             <></>
           )}
           <Typography>
-            <span className={classes.bold}>Executed Nodes:</span>{' '}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowInfo.nodeDetails.exec')}:
+            </span>{' '}
             {data.executedNodes.length ? (
               <ul>
                 {data.executedNodes.map((node) => (
@@ -131,7 +152,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
                 ))}
               </ul>
             ) : (
-              <Typography>No executed nodes</Typography>
+              <Typography>
+                {t('workflowDetailsView.workflowInfo.nodeDetails.noExec')}
+              </Typography>
             )}
           </Typography>
         </div>
@@ -144,7 +167,10 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
       <div className={classes.workflowSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>
-            <span className={classes.bold}>Cluster:</span> {cluster_name}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowInfo.cluster')}:
+            </span>{' '}
+            {cluster_name}
           </Typography>
         </div>
       </div>

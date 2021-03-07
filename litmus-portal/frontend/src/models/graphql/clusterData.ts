@@ -2,7 +2,7 @@ export interface Cluster {
   cluster_id: string;
   project_id: string;
   cluster_name: string;
-  description: String;
+  description: string;
   platform_name: string;
   access_key: string;
   is_registered: boolean;
@@ -14,6 +14,12 @@ export interface Cluster {
   no_of_workflows: number;
   no_of_schedules: number;
   token: string;
+  agent_namespace: string;
+  serviceaccount: string;
+  agent_scope: string;
+  agent_ns_exists: boolean;
+  agent_sa_exists: boolean;
+  last_workflow_timestamp: string;
 }
 
 export interface Clusters {
@@ -27,6 +33,11 @@ export interface CreateClusterInput {
     platform_name: string;
     project_id: string;
     cluster_type: string;
+    agent_namespace: string;
+    serviceaccount: string;
+    agent_scope: string;
+    agent_ns_exists: boolean;
+    agent_sa_exists: boolean;
   };
 }
 
@@ -42,4 +53,8 @@ export interface CreateClusterInputResponse {
 
 export interface ClusterVars {
   project_id: string;
+}
+
+export interface DeleteCluster {
+  cluster_id: string;
 }

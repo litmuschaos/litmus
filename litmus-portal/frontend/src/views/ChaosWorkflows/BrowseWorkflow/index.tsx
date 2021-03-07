@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import {
   IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -143,6 +144,16 @@ const BrowseWorkflow = () => {
     toDate: new Date(new Date().setHours(23, 59, 59)).toString(),
   });
 
+  const getClusters = (searchingData: WorkflowRun[]) => {
+    const uniqueList: string[] = [];
+    searchingData.forEach((data) => {
+      if (!uniqueList.includes(data.cluster_name)) {
+        uniqueList.push(data.cluster_name);
+      }
+    });
+    return uniqueList;
+  };
+
   const filteredData = data?.getWorkFlowRuns
     .filter((dataRow) =>
       dataRow.workflow_name.toLowerCase().includes(filters.search.toLowerCase())
@@ -157,7 +168,7 @@ const BrowseWorkflow = () => {
     .filter((dataRow) =>
       filters.cluster === 'All'
         ? true
-        : dataRow.cluster_type
+        : dataRow.cluster_name
             .toLowerCase()
             .includes(filters.cluster.toLowerCase())
     )
@@ -278,13 +289,15 @@ const BrowseWorkflow = () => {
           popOverClick={handlePopOverClick}
           popOverClose={handlePopOverClose}
           isOpen={isOpen}
+          data={data}
+          getClusters={getClusters}
           popAnchorEl={popAnchorEl}
           isDateOpen={open}
           displayDate={dateRange.dateValue}
           selectDate={dateChange}
         />
       </section>
-      <section className="table section">
+      <Paper className={classes.root}>
         <TableContainer
           data-cy="browseWorkflowTable"
           className={classes.tableMain}
@@ -470,7 +483,7 @@ const BrowseWorkflow = () => {
             })
           }
         />
-      </section>
+      </Paper>
     </div>
   );
 };

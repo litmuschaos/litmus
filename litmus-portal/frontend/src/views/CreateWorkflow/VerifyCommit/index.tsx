@@ -1,19 +1,19 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
+import { EditableText, Modal, ButtonOutlined } from 'litmus-ui';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
-import CustomText from '../../../components/CustomText';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import {
   AceValidations,
   parseYamlValidations,
 } from '../../../components/YamlEditor/Validations';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -22,10 +22,15 @@ import useStyles from './styles';
 
 interface VerifyCommitProps {
   gotoStep: (page: number) => void;
+  isEditable?: boolean;
 }
 
-const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
+const VerifyCommit: React.FC<VerifyCommitProps> = ({
+  gotoStep,
+  isEditable,
+}) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const workflow = useActions(WorkflowActions);
 
@@ -41,6 +46,8 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     description,
     weights,
     cronSyntax,
+    isDisabled,
+    clustername,
   } = workflowData;
 
   const [open, setOpen] = React.useState(false);
@@ -90,9 +97,9 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       annotations: editorValidations.annotations,
     };
     if (stateObject.annotations.length > 0) {
-      setYamlStatus('Error in CRD Yaml.');
+      setYamlStatus(`${t('createWorkflow.verifyCommit.errYaml')}`);
     } else {
-      setYamlStatus('Your code is fine. You can move on !');
+      setYamlStatus(`${t('createWorkflow.verifyCommit.codeIsFine')}`);
     }
   }, [modified]);
 
@@ -104,15 +111,14 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         <div className={classes.suHeader}>
           <div className={classes.suBody}>
             <Typography className={classes.headerText}>
-              <strong> Confirmation of Results</strong>
+              <strong> {t('createWorkflow.verifyCommit.header')}</strong>
             </Typography>
             <Typography className={classes.description}>
-              Before committing the workflow changes to your, verify and if
-              needed go back to a corresponding section of the wizard to modify.
+              {t('createWorkflow.verifyCommit.info')}
             </Typography>
           </div>
           <img
-            src="./icons/b-finance.png"
+            src="/icons/b-finance.png"
             alt="bfinance"
             className={classes.bfinIcon}
           />
@@ -120,46 +126,63 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         <Divider />
 
         <Typography className={classes.sumText}>
-          <strong>Summary</strong>
+          <strong>{t('createWorkflow.verifyCommit.summary.header')}</strong>
         </Typography>
 
         <div className={classes.outerSum}>
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>Workflow name:</Typography>
+              <Typography className={classes.col1}>
+                {t('createWorkflow.verifyCommit.summary.workflowName')}:
+              </Typography>
             </div>
             <div className={classes.col2}>
-              <CustomText
+              <EditableText
                 value={name}
                 id="name"
-                onchange={(changedName: string) =>
-                  handleNameChange({ changedName })
+                fullWidth
+                onChange={(e) =>
+                  handleNameChange({ changedName: e.target.value })
                 }
+                disabled={workflowData.isRecurring}
               />
             </div>
           </div>
+
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>Description:</Typography>
+              <Typography className={classes.col1}>
+                {t('createWorkflow.verifyCommit.summary.clustername')}:
+              </Typography>
             </div>
-            <div
-              className={classes.col2}
-              style={{
-                width: 724,
-              }}
-            >
-              <CustomText
+            <Typography className={classes.clusterName}>
+              {clustername}
+            </Typography>
+          </div>
+
+          <div className={classes.summaryDiv}>
+            <div className={classes.innerSumDiv}>
+              <Typography className={classes.col1}>
+                {t('createWorkflow.verifyCommit.summary.desc')}:
+              </Typography>
+            </div>
+            <div className={classes.col2}>
+              <EditableText
                 value={description}
                 id="desc"
-                onchange={(changedDesc: string) =>
-                  handleDescChange({ changedDesc })
+                fullWidth
+                onChange={(e) =>
+                  handleDescChange({ changedDesc: e.target.value })
                 }
+                disabled={!isEditable}
               />
             </div>
           </div>
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>Schedule:</Typography>
+              <Typography className={classes.col1}>
+                {t('createWorkflow.verifyCommit.summary.schedule')}:
+              </Typography>
             </div>
             <div className={classes.schCol2}>
               {/* <CustomDate disabled={edit} />
@@ -169,9 +192,13 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 ampm
                 disabled={edit}
               /> */}
-              {cronSyntax === '' ? (
+              {isDisabled ? (
                 <Typography className={classes.schedule}>
-                  Scheduling now
+                  {t('createWorkflow.verifyCommit.summary.disabled')}
+                </Typography>
+              ) : cronSyntax === '' ? (
+                <Typography className={classes.schedule}>
+                  {t('createWorkflow.verifyCommit.summary.schedulingNow')}
                 </Typography>
               ) : (
                 <Typography className={classes.schedule}>
@@ -189,15 +216,13 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
               <Typography className={classes.col1}>
-                Adjusted Weights:
+                {t('createWorkflow.verifyCommit.summary.adjustedWeights')}:
               </Typography>
             </div>
             {weights.length === 0 ? (
               <div>
                 <Typography className={classes.errorText}>
-                  <strong>
-                    Invalid Workflow CRD found ! Please correct the errors.
-                  </strong>
+                  <strong>{t('createWorkflow.verifyCommit.error')}</strong>
                 </Typography>
               </div>
             ) : (
@@ -215,12 +240,12 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
                 {/* <div className={classes.editButton2}> */}
                 <ButtonOutline
-                  isDisabled={false}
+                  isDisabled={workflowData.isRecurring}
                   handleClick={() => gotoStep(3)}
                   data-cy="testRunButton"
                 >
                   <Typography className={classes.buttonOutlineText}>
-                    Edit
+                    {t('createWorkflow.verifyCommit.button.edit')}
                   </Typography>
                 </ButtonOutline>
                 {/* </div> */}
@@ -233,43 +258,31 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </div>
             <div className={classes.yamlFlex}>
               {weights.length === 0 ? (
-                <Typography> Error in CRD Yaml. </Typography>
+                <Typography>
+                  {' '}
+                  {t('createWorkflow.verifyCommit.errYaml')}{' '}
+                </Typography>
               ) : (
                 <Typography>{yamlStatus}</Typography>
               )}
               <div className={classes.yamlButton}>
                 <ButtonFilled handleClick={handleOpen} isPrimary>
-                  <div>View YAML</div>
+                  <div>{t('createWorkflow.verifyCommit.button.viewYaml')}</div>
                 </ButtonFilled>
               </div>
             </div>
           </div>
         </div>
         <Divider />
-        {/*
-        <div>
-          <Typography className={classes.config}>
-            The configuration details of this workflow will be committed to:{' '}
-            <span>
-              <Link
-                href="https://github.com/abcorn-org/reputeops/sandbox-repute.yaml"
-                onClick={preventDefault}
-                className={classes.link}
-              >
-                https://github.com/abcorn-org/reputeops/sandbox-repute.yaml
-              </Link>
-            </span>
-          </Typography>
-        </div>
-        */}
       </div>
 
-      <Unimodal
-        isOpen={open}
-        handleClose={handleClose}
-        hasCloseBtn
-        isDark
-        textAlign="left"
+      <Modal
+        open={open}
+        onClose={handleClose}
+        width="60%"
+        modalActions={
+          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+        }
       >
         <YamlEditor
           content={yaml}
@@ -279,7 +292,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           description={description}
           readOnly
         />
-      </Unimodal>
+      </Modal>
     </div>
   );
 };

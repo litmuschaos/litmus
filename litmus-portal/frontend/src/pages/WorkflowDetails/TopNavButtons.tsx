@@ -1,93 +1,20 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import ButtonOutline from '../../components/Button/ButtonOutline';
+import useActions from '../../redux/actions';
+import * as ToggleButtonAction from '../../redux/actions/button';
+import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
 
-interface TopNavButtonsProps {
-  isAnalyticsToggled: boolean;
-  isExportToggled: boolean;
-  isInfoToggled: boolean;
-}
-
-interface Props {
-  isToggled: TopNavButtonsProps;
-  setIsToggled: React.Dispatch<React.SetStateAction<TopNavButtonsProps>>;
-}
-
-const TopNavButtons: React.FC<Props> = ({ isToggled, setIsToggled }) => {
+const TopNavButtons: React.FC = () => {
   const classes = useStyles();
 
-  const setFilledButtonState = (buttonName: string, buttonIcon: string) => {
-    return (
-      <ButtonFilled
-        styles={{ height: '2.2rem' }}
-        isPrimary
-        handleClick={() =>
-          setIsToggled({
-            isAnalyticsToggled: false,
-            isExportToggled: false,
-            isInfoToggled: false,
-          })
-        }
-      >
-        <img
-          src={`/icons/${buttonIcon}.svg`}
-          alt={`${buttonName} Icon`}
-          className={classes.icon}
-        />
-        {buttonName}
-      </ButtonFilled>
-    );
-  };
-
-  const setButtonOutlinedState = (
-    buttonName: string,
-    buttonIcon: string,
-    setIsToggleValues: TopNavButtonsProps
-  ) => {
-    return (
-      <ButtonOutline
-        styles={{ height: '2.2rem' }}
-        isDisabled={false}
-        handleClick={() => setIsToggled(setIsToggleValues)}
-      >
-        <img
-          src={`/icons/${buttonIcon}.svg`}
-          alt={`${buttonName} Icon`}
-          className={classes.icon}
-        />
-        {buttonName}
-      </ButtonOutline>
-    );
-  };
-
-  const AnalyticsButton = () =>
-    isToggled.isAnalyticsToggled
-      ? setFilledButtonState('Analytics', 'show-analytics')
-      : setButtonOutlinedState('Analytics', 'show-analytics', {
-          isAnalyticsToggled: true,
-          isExportToggled: false,
-          isInfoToggled: false,
-        });
-
-  const ExportButton = () =>
-    isToggled.isExportToggled
-      ? setFilledButtonState('Export', 'export')
-      : setButtonOutlinedState('Export', 'export', {
-          isAnalyticsToggled: false,
-          isExportToggled: true,
-          isInfoToggled: false,
-        });
-
-  const InfoButton = () =>
-    isToggled.isInfoToggled
-      ? setFilledButtonState('Info', 'alignment')
-      : setButtonOutlinedState('Info', 'alignment', {
-          isAnalyticsToggled: false,
-          isExportToggled: false,
-          isInfoToggled: true,
-        });
+  const isInfoToggled = useSelector(
+    (state: RootState) => state.toggleInfoButton.isInfoToggled
+  );
+  const toggleButtonAction = useActions(ToggleButtonAction);
 
   return (
     <div className={classes.button}>
@@ -95,9 +22,41 @@ const TopNavButtons: React.FC<Props> = ({ isToggled, setIsToggled }) => {
         <BackButton isDisabled={false} />
       </div>
       <div>
-        {AnalyticsButton()}
-        {ExportButton()}
-        {InfoButton()}
+        {isInfoToggled ? (
+          <ButtonFilled
+            styles={{ height: '2.2rem' }}
+            isPrimary
+            handleClick={() =>
+              toggleButtonAction.toggleInfoButton({
+                isInfoToggled: false,
+              })
+            }
+          >
+            <img
+              src="/icons/alignmentToggle.svg"
+              alt="Info Icon"
+              className={classes.icon}
+            />
+            Info
+          </ButtonFilled>
+        ) : (
+          <ButtonOutline
+            styles={{ height: '2.2rem' }}
+            isDisabled={false}
+            handleClick={() =>
+              toggleButtonAction.toggleInfoButton({
+                isInfoToggled: true,
+              })
+            }
+          >
+            <img
+              src="/icons/alignment.svg"
+              alt="Info Icon"
+              className={classes.icon}
+            />
+            Info
+          </ButtonOutline>
+        )}
       </div>
     </div>
   );

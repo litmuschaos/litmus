@@ -1,19 +1,18 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
-import Unimodal from '../../../../containers/layouts/Unimodal';
 import { GET_USER, UPDATE_DETAILS } from '../../../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
 import { UpdateUser } from '../../../../models/redux/user';
-import { RootState } from '../../../../redux/reducers';
-import getToken from '../../../../utils/getToken';
+import { getToken, getUsername } from '../../../../utils/auth';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
@@ -26,7 +25,9 @@ interface personaData {
 // Displays the personals details on the "accounts" tab
 const PersonalDetails: React.FC = () => {
   const classes = useStyles();
-  const username = useSelector((state: RootState) => state.userData.username);
+  const { t } = useTranslation();
+
+  const username = getUsername();
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
   const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
@@ -34,7 +35,7 @@ const PersonalDetails: React.FC = () => {
     { variables: { username } }
   );
   const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? '';
+  const name: string = dataA?.getUser.name ?? ''; // Check if can be replaced with JWT based data.
   const email: string = dataA?.getUser.email ?? '';
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,
@@ -123,8 +124,6 @@ const PersonalDetails: React.FC = () => {
     <div>
       <form>
         <UserDetails
-          emailIsDisabled={false}
-          nameIsDisabled={false}
           nameValue={personaData.fullName}
           usernameIsDisabled
           handleNameChange={handleNameChange}
@@ -145,22 +144,39 @@ const PersonalDetails: React.FC = () => {
                   <Loader size={20} />
                 </div>
               ) : (
-                <>Save Changes</>
+                <>
+                  {t('settings.accountsTab.personalDetails.button.saveChanges')}
+                </>
               )}
             </ButtonFilled>
           </div>
-          <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            modalActions={
+              <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+            }
+          >
             {error.length ? (
               <div className={classes.errDiv}>
                 {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
                 <div className={classes.textError}>
                   <Typography className={classes.typo} align="center">
-                    <strong> Error </strong> while updating details.
+                    <strong>
+                      {t(
+                        'settings.accountsTab.personalDetails.modal.headerErrStrong'
+                      )}
+                      :
+                    </strong>{' '}
+                    {t('settings.accountsTab.personalDetails.modal.headerErr')}
                   </Typography>
                 </div>
                 <div className={classes.textSecondError}>
                   <Typography className={classes.typoSub}>
-                    Error: {error}
+                    {t(
+                      'settings.accountsTab.personalDetails.modal.headerErrStrong'
+                    )}
+                    : {error}
                   </Typography>
                 </div>
                 <div data-cy="done" className={classes.buttonModal}>
@@ -169,7 +185,7 @@ const PersonalDetails: React.FC = () => {
                     isDisabled={false}
                     handleClick={handleClose}
                   >
-                    <>Done</>
+                    <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>
               </div>
@@ -178,12 +194,17 @@ const PersonalDetails: React.FC = () => {
                 <img src="./icons/userLarge.svg" alt="user" />
                 <div className={classes.text}>
                   <Typography className={classes.typo} align="center">
-                    Your personal information <strong>has been changed!</strong>
+                    {t('settings.accountsTab.personalDetails.modal.header')}{' '}
+                    <strong>
+                      {t(
+                        'settings.accountsTab.personalDetails.modal.headerStrong'
+                      )}
+                    </strong>
                   </Typography>
                 </div>
                 <div className={classes.text1}>
                   <Typography align="center" className={classes.typo1}>
-                    Changes took effect
+                    {t('settings.accountsTab.personalDetails.modal.info')}
                   </Typography>
                 </div>
                 <div data-cy="done">
@@ -192,12 +213,12 @@ const PersonalDetails: React.FC = () => {
                     isDisabled={false}
                     handleClick={handleClose}
                   >
-                    <>Done</>
+                    <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>
               </div>
             )}
-          </Unimodal>
+          </Modal>
         </div>
       </form>
     </div>

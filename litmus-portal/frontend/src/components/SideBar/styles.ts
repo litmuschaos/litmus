@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   drawerPaper: {
     width: '100%',
     position: 'relative',
-    backgroundColor: theme.palette.sidebarBackground,
+    backgroundColor: theme.palette.sidebarMenu,
     color: 'inherit',
   },
   litmusDiv: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     left: theme.spacing(2.25),
     top: theme.spacing(3),
     marginLeft: theme.spacing(1.75),
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
   },
   drawerListItem: {
     display: 'flex',
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   active: {
-    backgroundColor: `${theme.palette.totalRunsCountColor} !important`,
+    backgroundColor: `${theme.palette.primary.light} !important`,
     color: theme.palette.secondary.contrastText,
     '& path': {
       fill: theme.palette.common.white,
@@ -66,6 +66,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   drawerList: {
     marginTop: theme.spacing(8),
     height: '16.68rem',
+  },
+  versionlogo: {
+    width: '1.25rem',
+    height: '2.185rem',
+  },
+  versionText: {
+    margin: 'auto',
+    marginLeft: theme.spacing(1.25),
+    fontSize: '0.75rem',
+  },
+  versionDiv: {
+    marginTop: 'auto',
+    marginBottom: theme.spacing(2),
+    marginLeft: theme.spacing(4),
+    fontSize: '0.75rem',
   },
 }));
 

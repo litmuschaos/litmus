@@ -6,20 +6,24 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '6.875rem',
     height: '2.8125rem',
     color: theme.palette.common.white,
-    marginRight: theme.spacing(2),
-    marginLeft: theme.spacing(2),
     textTransform: 'none',
   },
   buttonPrimary: {
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: theme.palette.primary.main,
     '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
   buttonSecondary: {
     backgroundColor: theme.palette.primary.dark,
     '&:hover': {
       backgroundColor: theme.palette.primary.dark,
+    },
+  },
+  buttonWarning: {
+    backgroundColor: theme.palette.error.dark,
+    '&:hover': {
+      backgroundColor: theme.palette.error.dark,
     },
   },
 }));

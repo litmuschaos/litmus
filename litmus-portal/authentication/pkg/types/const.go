@@ -11,6 +11,8 @@ var (
 	DefaultUserName            string = os.Getenv("ADMIN_USERNAME")
 	DefaultUserPassword        string = os.Getenv("ADMIN_PASSWORD")
 	DefaultDBServerURL         string = os.Getenv("DB_SERVER")
+	DBUser                     string = os.Getenv("DB_USER")
+	DBPassword                 string = os.Getenv("DB_PASSWORD")
 	DefaultAuthDB              string = "auth"
 	DefaultLocalAuthCollection string = "usercredentials"
 	PasswordEncryptionCost     int    = 15

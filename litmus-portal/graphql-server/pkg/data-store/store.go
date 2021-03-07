@@ -6,7 +6,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
-//Application state, contains channels and mutexes used for subscriptions
+// Application state, contains channels and mutexes used for subscriptions
 type StateData struct {
 	ClusterEventPublish  map[string][]chan *model.ClusterEvent
 	ConnectedCluster     map[string]chan *model.ClusterAction
@@ -15,7 +15,7 @@ type StateData struct {
 	Mutex                *sync.Mutex
 }
 
-func New() *StateData {
+func NewStore() *StateData {
 	return &StateData{
 		ClusterEventPublish:  make(map[string][]chan *model.ClusterEvent),
 		ConnectedCluster:     make(map[string]chan *model.ClusterAction),
@@ -24,3 +24,5 @@ func New() *StateData {
 		Mutex:                &sync.Mutex{},
 	}
 }
+
+var Store = NewStore()

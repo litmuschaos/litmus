@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface AverageResilienceScoreProps {
@@ -13,6 +14,8 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
   value,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const [progress, setProgress] = useState<number>(0);
 
   /*
@@ -28,7 +31,7 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
   return (
     <Paper className={classes.root} variant="outlined">
       <Typography className={classes.headerMain}>
-        Average Resilience Score
+        {t('homeView.averageResilienceScore.header')}
       </Typography>
       <Box className={classes.progressBox}>
         <div className={classes.progressIndicatorDiv}>
@@ -53,7 +56,7 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
         </div>
         <Box className={classes.progressLabel}>
           <img
-            src="/icons/avgResilience.png"
+            src="./icons/avgResilience.png"
             alt="Progress Icon"
             className={classes.progressIcon}
             data-cy="progressIcon"
@@ -67,7 +70,7 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
         </Box>
       </Box>
       <Typography variant="body2" className={classes.testResultDesc}>
-        Based on results of completed tests
+        {t('homeView.averageResilienceScore.desc')}
       </Typography>
     </Paper>
   );

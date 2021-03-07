@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   backdrop: {
-    background: theme.palette.input.disabled,
+    background: theme.palette.border.main,
     display: 'flex',
     flexDirection: 'column',
   },
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
   mainDiv: {
     padding: theme.spacing(3.75),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    backgroundColor: theme.palette.background.paper,
     width: '50rem',
     display: 'flex',
     flexDirection: 'row',
@@ -37,32 +37,24 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2.75),
   },
 
-  createWorkflowCard: {
-    width: '15.65rem',
-    border: '1px solid ',
-    borderColor: theme.palette.secondary.dark,
-    backgroundColor: theme.palette.homePageWorkflowCardBackgroundColor,
-    borderRadius: 3,
-    color: 'inherit',
-    marginLeft: theme.spacing(5),
-    boxShadow: theme.palette.createWorkflowCardShadow,
-    [theme.breakpoints.down('sm')]: {
-      marginTop: theme.spacing(5),
-    },
+  cardAreaBody: {
+    height: '100%',
   },
 
   createWorkflowHeading: {
     fontSize: '0.9375rem',
+    position: 'absolute',
     marginLeft: theme.spacing(3.75),
-    paddingTop: theme.spacing(5),
+    top: '10%',
   },
 
   createWorkflowTitle: {
     fontSize: 25,
-    color: theme.palette.workflowTitleColor,
+    position: 'absolute',
+    color: theme.palette.primary.main,
     fontWeight: 'bold',
     marginLeft: theme.spacing(3.75),
-    marginTop: theme.spacing(2.5),
+    top: '30%',
   },
 
   headingDiv: {
@@ -75,14 +67,14 @@ const useStyles = makeStyles((theme) => ({
   },
 
   arrowForwardIcon: {
-    color: theme.palette.workflowTitleColor,
+    color: theme.palette.primary.main,
     marginLeft: theme.spacing(22.5),
-    marginTop: theme.spacing(4.375),
-    marginBottom: theme.spacing(2.5),
+    position: 'absolute',
+    bottom: '10%',
   },
 
   mainHeading: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.secondary.main,
     fontSize: '1.5625rem',
     marginBottom: theme.spacing(0.625),
   },
@@ -122,7 +114,7 @@ const useStyles = makeStyles((theme) => ({
   statDiv: {
     width: '50rem',
     flexGrow: 1,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    backgroundColor: theme.palette.cards.background,
     borderRadius: 3,
     [theme.breakpoints.down('sm')]: {
       width: '18rem',
@@ -154,17 +146,9 @@ const useStyles = makeStyles((theme) => ({
       alignItems: 'center',
     },
   },
+
   predefinedBtn: {
-    height: '2.8125rem',
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.common.white,
-    paddingLeft: theme.spacing(2.5),
-    paddingRight: theme.spacing(2.5),
-    textTransform: 'none',
-    marginTop: theme.spacing(3.75),
-    '&:hover': {
-      backgroundColor: theme.palette.primary.dark,
-    },
+    marginTop: theme.spacing(2.5),
   },
 
   btnHeaderDiv: {
@@ -177,9 +161,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   seeAllBtn: {
-    width: '7.5rem',
-    height: theme.spacing(5),
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(1.5),
+    marginRight: theme.spacing(6),
     marginLeft: 'auto',
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(0.2),

@@ -20,7 +20,7 @@ export const validateEmail = (value: string) => {
 };
 
 export const validateWorkflowName = (value: string) => {
-  const workflowValid = /^[a-z0-9._-]+$/g;
+  const workflowValid = /(^[a-z0-9-]{0,55}$)/;
   if (value.length > 0) {
     if (value.match(workflowValid)) return false;
     return true;
@@ -57,4 +57,39 @@ export const validateOnlyAlphabet = (value: string) => {
 export const validateLength = (value: string) => {
   if (value.length > 0) return false;
   return true;
+};
+
+export const isValidWebUrl = (value: string) => {
+  const regEx = /^(http|https):\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/gm;
+  const regExLocal = /^http:\/\/localhost:([0-9]){1,4}$/g;
+  const regExIpv4 = /^http:\/\/(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]):([0-9]){1,4}$/g;
+  const regExIpv6 = /^http:\/\/((([0-9a-fA-F]){1,4})\\:){7}([0-9a-fA-F]){1,4}:([0-9]){1,4}$/g;
+  const sshRegEx = /^([A-Za-z0-9]+@|http(|s)\:\/\/)([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git)?$/i;
+  if (
+    value.match(regEx) ||
+    value.match(regExLocal) ||
+    value.match(regExIpv4) ||
+    value.match(regExIpv6) ||
+    value.match(sshRegEx)
+  )
+    return true;
+  return false;
+};
+
+export const validateTimeInSeconds = (value: string) => {
+  const timeInSecondsValid = /^[0-9]+s$/g;
+  if (value.length > 1) {
+    if (value.match(timeInSecondsValid)) return true;
+    return false;
+  }
+  return false;
+};
+
+export const validateWorkflowParameter = (value: string) => {
+  const workflowParameterValid = /^{[a-zA-Z0-9]+}$/g;
+  if (value.length > 0) {
+    if (value.match(workflowParameterValid)) return false;
+    return true;
+  }
+  return false;
 };

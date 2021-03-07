@@ -20,6 +20,12 @@ type Cluster {
   no_of_schedules: Int
   no_of_workflows: Int
   token: String!
+  agent_namespace: String
+  serviceaccount: String
+  agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
+  last_workflow_timestamp: String!
 }
 
 input ClusterInput {
@@ -28,6 +34,11 @@ input ClusterInput {
   platform_name: String!
   project_id: ID!
   cluster_type: String!
+  agent_namespace: String
+  serviceaccount: String
+  agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 type ClusterEvent {
@@ -39,9 +50,9 @@ type ClusterEvent {
 }
 
 type ActionPayload {
-  request_type: String
-  k8s_manifest: String
-  namespace: String
+  request_type: String!
+  k8s_manifest: String!
+  namespace: String!
   external_data: String
 }
 
@@ -84,6 +95,7 @@ type weightages {
 }
 
 input ChaosWorkFlowInput {
+  workflow_id: String
   workflow_manifest: String!
   cronSyntax: String!
   workflow_name: String!
@@ -120,6 +132,7 @@ input WorkflowRunInput {
   workflow_name: String!
   execution_data: String!
   cluster_id: ClusterIdentity!
+  completed: Boolean!
 }
 
 type PodLogResponse {
@@ -163,6 +176,7 @@ type ScheduledWorkflows {
   project_id: ID!
   cluster_id: ID!
   cluster_type: String!
+  isRemoved: Boolean!
 }
 
 type Workflow {
@@ -179,6 +193,7 @@ type Workflow {
   project_id: ID!
   cluster_id: ID!
   cluster_type: String!
+  isRemoved: Boolean!
   workflow_runs: [WorkflowRuns]
 }
 
@@ -194,6 +209,32 @@ type clusterRegResponse {
   cluster_name: String!
 }
 
+type SSHKey {
+  publicKey: String!
+  privateKey: String!
+}
+
+input GitConfig {
+  ProjectID: String!
+  Branch: String!
+  RepoURL: String!
+  AuthType: AuthType!
+  Token: String
+  UserName: String
+  Password: String
+  SSHPrivateKey: String
+}
+type GitConfigResponse {
+  Enabled: Boolean!
+  ProjectID: String!
+  Branch: String
+  RepoURL: String
+  AuthType: AuthType
+  Token: String
+  UserName: String
+  Password: String
+  SSHPrivateKey: String
+}
 type Query {
   # [Deprecated soon]
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -202,7 +243,11 @@ type Query {
 
   getUser(username: String!): User! @authorized
 
+  #It is used to get projects by projectID
   getProject(projectID: String!): Project! @authorized
+
+  #It is used to get projects by userID
+  listProjects: [Project!]! @authorized
 
   users: [User!]! @authorized
 
@@ -210,6 +255,23 @@ type Query {
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+
+  getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
+
+  getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+
+  getHubStatus(projectID: String!): [MyHubStatus]! @authorized
+
+  getYAMLData(experimentInput: ExperimentInput!): String!
+
+  ListDataSource(project_id: String!): [DSResponse]! @authorized
+
+  GetPromQuery(query: promInput): [promResponse!]! @authorized
+
+  ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+
+  # Git Ops
+  getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
 }
 
 type Mutation {
@@ -217,8 +279,9 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+
+  reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -226,13 +289,20 @@ type Mutation {
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
+  #Used for sending invitation
   sendInvitation(member: MemberInput!): Member @authorized
 
+  #Used for accepting invitation
   acceptInvitation(member: MemberInput!): String! @authorized
 
+  #Used for declining the invitation
   declineInvitation(member: MemberInput!): String! @authorized
 
+  #Used for cancelling the sent invitation
   removeInvitation(member: MemberInput!): String! @authorized
+
+  #Used for leaving a project
+  leaveProject(member: MemberInput!): String! @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -243,6 +313,48 @@ type Mutation {
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
+
+  addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+
+  saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+
+  syncHub(id: ID!): [MyHubStatus!]! @authorized
+
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+
+  deleteClusterReg(cluster_id: String!): String! @authorized
+
+  generaterSSHKey: SSHKey! @authorized
+
+  updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
+
+  deleteMyHub(hub_id: String!): Boolean! @authorized
+
+  # Gitops
+
+  gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
+
+  enableGitOps(config: GitConfig!): Boolean! @authorized
+
+  disableGitOps(project_id: String!): Boolean! @authorized
+
+  updateGitOps(config: GitConfig!): Boolean! @authorized
+
+  # Analytics
+
+  createDataSource(datasource: DSInput): DSResponse @authorized
+
+  createDashBoard(dashboard: createDBInput): String! @authorized
+
+  updateDataSource(datasource: DSInput!): DSResponse! @authorized
+
+  updateDashboard(dashboard: updataDBInput): String! @authorized
+
+  updatePanel(panelInput: [panel]): String! @authorized
+
+  deleteDashboard(db_id: String): Boolean! @authorized
+
+  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 }
 
 type Subscription {

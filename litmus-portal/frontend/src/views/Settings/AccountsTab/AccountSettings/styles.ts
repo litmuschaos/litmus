@@ -4,8 +4,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     marginTop: theme.spacing(3.75),
     border: '1px solid ',
-    borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    borderColor: theme.palette.border.main,
+    backgroundColor: theme.palette.cards.background,
     borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(5),
   },
@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   text1: {
     width: '27.5rem',
     height: '1.6875rem',
-    marginBottom: theme.spacing(3.75),
+    marginTop: theme.spacing(14),
   },
   typo1: {
     fontSize: '1rem',
@@ -95,7 +95,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   buttonModal: {
     marginTop: theme.spacing(3.75),
-    width: '55%',
   },
   textSecondError: {
     width: '27.5rem',
@@ -108,6 +107,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'center',
+    padding: theme.spacing(7, 0),
   },
   typoSub: {
     fontSize: '1rem',

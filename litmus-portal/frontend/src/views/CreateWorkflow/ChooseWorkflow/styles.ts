@@ -1,4 +1,4 @@
-import { makeStyles, TextField, withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,6 +27,10 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
   },
 
+  modal: {
+    padding: theme.spacing(10),
+  },
+
   modalHeading: {
     marginTop: theme.spacing(1.5),
     fontFamily: 'Ubuntu',
@@ -50,44 +54,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
   },
 
-  inputArea: {
-    marginTop: theme.spacing(3),
-    display: 'flex',
-    textDecoration: 'none',
-    flexDirection: 'column',
-    paddingLeft: theme.spacing(2),
-    paddingBottom: theme.spacing(2.2),
-    borderRadius: 3,
-    color: 'rgba(0, 0, 0, 0.2)',
-    border: '1px solid rgba(0, 0, 0, 0.2)',
-  },
-
-  inputAreaDescription: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    display: 'flex',
-    textDecoration: 'none',
-    flexDirection: 'column',
-    paddingLeft: theme.spacing(2),
-    paddingBottom: theme.spacing(2.2),
-    borderRadius: 3,
-    color: 'rgba(0, 0, 0, 0.2)',
-    border: '1px solid rgba(0, 0, 0, 0.2)',
-  },
-
-  textfieldworkflowname: {
-    marginTop: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-  },
-
   totalWorkflows: {
     fontSize: '1rem',
     fontWeight: 500,
-  },
-
-  textfieldworkflowdescription: {
-    marginTop: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
   },
 
   inputDiv: {
@@ -95,23 +64,18 @@ const useStyles = makeStyles((theme) => ({
   },
 
   saved: {
-    width: '25rem',
     marginTop: theme.spacing(6),
     fontFamily: 'Ubuntu',
     lineHeight: '130%',
     fontWeight: 500,
     fontSize: '1rem',
-    color: theme.palette.primary.dark,
+    color: theme.palette.success.main,
   },
 
   testType: {
     fontSize: '1rem',
     fontFamily: 'Ubuntu',
     paddingRight: theme.spacing(1.25),
-  },
-
-  resize: {
-    fontSize: '1rem',
   },
 
   resizeName: {
@@ -125,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   buttons: {
+    marginTop: theme.spacing(4),
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -133,22 +98,6 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
   },
-
-  cancelButton: {
-    marginLeft: theme.spacing(-2),
-  },
-  saveButton: {
-    marginRight: theme.spacing(-2),
-  },
 }));
-
-export const CssTextField = withStyles({
-  root: {
-    '& label.MuiInputLabel-root': {
-      color: 'rgba(0, 0, 0, 0.6)',
-      fontSize: 16,
-    },
-  },
-})(TextField);
 
 export default useStyles;
