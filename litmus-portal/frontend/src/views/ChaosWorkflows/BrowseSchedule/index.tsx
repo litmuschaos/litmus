@@ -22,6 +22,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Loader from '../../../components/Loader';
 import { SCHEDULE_DETAILS, DELETE_SCHEDULE } from '../../../graphql';
 import {
@@ -40,6 +41,10 @@ import {
 import useStyles from './styles';
 import TableData from './TableData';
 
+interface ParamType {
+  projectID: string;
+}
+
 interface FilterOption {
   search: string;
   cluster: string;
@@ -55,15 +60,13 @@ interface SortData {
 
 const BrowseSchedule = () => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
 
   // Apollo query to get the scheduled data
   const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID: projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -71,7 +74,7 @@ const BrowseSchedule = () => {
   // Apollo mutation to delete the selected schedule
   const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_SCHEDULE, {
     refetchQueries: [
-      { query: SCHEDULE_DETAILS, variables: { projectID: selectedProjectID } },
+      { query: SCHEDULE_DETAILS, variables: { projectID: projectID } },
     ],
   });
 

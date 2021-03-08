@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
   FormControl,
   Input,
@@ -9,14 +9,17 @@ import {
   Typography,
 } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { GET_CLUSTER } from '../../../graphql';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
-import { RootState } from '../../../redux/reducers';
 import useStyles from './styles';
+
+interface ParamType {
+  projectID: string;
+}
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 4;
@@ -43,9 +46,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const workflow = useActions(WorkflowActions);
   const [isTragetSelected, setTarget] = React.useState(true);
   const [isOpenSnackBar, setOpenSnackBar] = React.useState(false);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
   const [clusterData, setclusterData] = useState<Cluster[]>([]);
   const [name, setName] = React.useState('');
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -58,15 +59,19 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
     });
     workflow.setWorkflowDetails({
       clusterid: str,
-      project_id: selectedProjectID,
+      project_id: projectID,
       clustername: clusterName,
     });
     setName(str);
     setTarget(false);
   };
 
-  const [getCluster] = useLazyQuery(GET_CLUSTER, {
+  //TODO:: Check with Amit/Vedant
+
+  useQuery(GET_CLUSTER, {
+    variables: { project_id: projectID },
     onCompleted: (data) => {
+      console.log('Snackbar projectID: ', projectID);
       const clusters: Cluster[] = [];
       if (data && data.getCluster.length !== 0) {
         data.getCluster.forEach((e: Cluster) => {
@@ -99,10 +104,6 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
     },
     fetchPolicy: 'cache-and-network',
   });
-
-  useEffect(() => {
-    getCluster({ variables: { project_id: selectedProjectID } });
-  }, []);
 
   const handleClick = () => {
     gotoStep(1);

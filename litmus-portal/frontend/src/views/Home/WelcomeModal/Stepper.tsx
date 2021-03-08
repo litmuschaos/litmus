@@ -9,31 +9,14 @@ import ButtonOutline from '../../../components/Button/ButtonOutline';
 import config from '../../../config';
 import { CREATE_USER } from '../../../graphql';
 import { CreateUserData } from '../../../models/graphql/user';
-import { UserActions } from '../../../models/redux/user';
-import useActions from '../../../redux/actions';
 import { RootState } from '../../../redux/reducers';
-import { getToken } from '../../../utils/auth';
+import { getToken, getUserDetailsFromJwt } from '../../../utils/auth';
 import {
   validateConfirmPassword,
   validateEmail,
   validateStartEmptySpacing,
 } from '../../../utils/validate';
 import ModalPage from './Modalpage';
-/* import config from '../../config';
-import { CREATE_USER } from '../../graphql';
-import { CreateUserData, Projects } from '../../models/graphql/user';
-import useActions from '../../redux/actions';
-import * as UserActions from '../../redux/actions/user';
-import { RootState } from '../../redux/reducers';
-import { getToken, getUserId } from '../../utils/auth';
-import {
-  validateConfirmPassword,
-  validateEmail,
-  validateStartEmptySpacing,
-} from '../../utils/validate';
-import ButtonFilled from '../Button/ButtonFilled';
-import ButtonOutline from '../Button/ButtonOutline';
-import ModalPage from './Modalpage'; */
 import useStyles from './styles';
 
 interface CStepperProps {
@@ -43,8 +26,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const userData = useSelector((state: RootState) => state.userData);
-  const userLoader = useActions(UserActions);
+  const userData = getUserDetailsFromJwt();
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const isError = useRef(true);
   const isSuccess = useRef(false);
@@ -55,7 +37,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     name: userData.name,
     project_name: '',
   });
-
+  // console.log(info);
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -72,13 +54,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
-  const rerender = () => {
-    // window.location.reload();
-  };
 
   const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
     onCompleted: () => {
-      // rerender();
       handleModal();
     },
   });
@@ -86,7 +64,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
-    // userLoader.updateUserDetails({ loader: true });
 
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
@@ -157,7 +134,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   // Continue Button: [Button State: Disabled]
   if (activeStep === 1) {
     if (
-      info.name.length > 0 &&
+      info.name?.length > 0 &&
       validateStartEmptySpacing(info.name) === false
     ) {
       isError.current = false;
@@ -191,7 +168,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   // Skip Button: [Button State: Enabled]
   // Let's Start Button: [Button State: Disabled]
   if (activeStep === 3) {
-    if (info.email.length > 0 && validateEmail(info.email) === false) {
+    if (info.email?.length > 0 && validateEmail(info.email) === false) {
       isError.current = false;
     } else {
       isError.current = true;
@@ -345,7 +322,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 className={classes.passwordSetterDiv}
                 data-cy="InputPassword"
               >
-                <div aria-details="spacer" style={{ margin: '0.5rem 0' }} />
+                <div style={{ margin: '0.5rem 0' }} />
                 <div className={classes.passwordArea}>
                   <InputField
                     label={t('welcomeModal.case-2.label')}
@@ -362,7 +339,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     onKeyPress={keyPress}
                   />
                 </div>
-                <div aria-details="spacer" style={{ margin: '0.5rem 0' }} />
+                <div style={{ margin: '0.5rem 0' }} />
                 <div className={classes.passwordArea}>
                   <InputField
                     label={t('welcomeModal.case-2.cnfLabel')}

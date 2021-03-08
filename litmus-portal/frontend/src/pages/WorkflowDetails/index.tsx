@@ -4,7 +4,7 @@ import Tabs from '@material-ui/core/Tabs/Tabs';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -24,19 +24,22 @@ import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import useStyles from './styles';
 import TopNavButtons from './TopNavButtons';
 
+interface ParamType {
+  projectID: string;
+}
+
 const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
 
   const tabs = useActions(TabActions);
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
-  const workflowRunId = pathname.split('/')[2];
+  const workflowRunId = pathname.split('/')[3];
   const { t } = useTranslation();
 
   // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
+
   const isInfoToggled = useSelector(
     (state: RootState) => state.toggleInfoButton.isInfoToggled
   );
@@ -47,7 +50,7 @@ const WorkflowDetails: React.FC = () => {
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+    { variables: { projectID: projectID } }
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
@@ -63,7 +66,7 @@ const WorkflowDetails: React.FC = () => {
     ) {
       subscribeToMore<WorkflowSubscription>({
         document: WORKFLOW_EVENTS,
-        variables: { projectID: selectedProjectID },
+        variables: { projectID: projectID },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           const modifiedWorkflows = prev.getWorkFlowRuns.slice();

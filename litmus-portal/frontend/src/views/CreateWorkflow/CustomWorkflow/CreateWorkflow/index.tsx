@@ -21,6 +21,7 @@ import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
@@ -37,6 +38,10 @@ import { RootState } from '../../../../redux/reducers';
 import { validateWorkflowName } from '../../../../utils/validate';
 import BackButton from '../BackButton';
 import useStyles, { MenuProps } from './styles';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface WorkflowDetails {
   workflow_name: string;
@@ -56,10 +61,7 @@ interface VerifyCommitProps {
 const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const workflowDetails = useSelector((state: RootState) => state.workflowData);
   const workflowAction = useActions(WorkflowActions);
-
-  const { selectedProjectID } = useSelector(
-    (state: RootState) => state.userData
-  );
+  const { projectID } = useParams<ParamType>();
 
   const [workflowData, setWorkflowData] = useState<WorkflowDetails>({
     workflow_name: workflowDetails.name,
@@ -83,7 +85,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [getExperimentYaml] = useLazyQuery(GET_EXPERIMENT_YAML, {
     variables: {
       experimentInput: {
-        ProjectID: selectedProjectID,
+        ProjectID: projectID,
         HubName: selectedHub,
         ChartName: selectedExp.split('/')[0],
         ExperimentName: selectedExp.split('/')[1],
@@ -125,7 +127,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
 
   // Get all MyHubs with status
   const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: selectedProjectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
     onCompleted: (hubData) => {
       if (hubData.getHubStatus.length) {
@@ -133,7 +135,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         setAvailableHubs([...hubData.getHubStatus]);
         getCharts({
           variables: {
-            projectID: selectedProjectID,
+            projectID: projectID,
             HubName: hubData.getHubStatus[0].HubName,
           },
         });
@@ -156,7 +158,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     })[0];
     getCharts({
       variables: {
-        projectID: selectedProjectID,
+        projectID: projectID,
         HubName: hubname,
       },
     });

@@ -124,7 +124,7 @@ const Community: React.FC = () => {
                   <a
                     href="https://blog.mayadata.io/"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className={classes.devToLink}
                   >
                     <Button variant="contained" className={classes.followBtn}>

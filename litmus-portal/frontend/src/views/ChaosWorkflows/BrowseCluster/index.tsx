@@ -1,38 +1,41 @@
+import { useMutation, useQuery } from '@apollo/client';
 import {
+  IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
   TablePagination,
-  IconButton,
+  TableRow,
   Typography,
-  Paper,
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useMutation, useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
-import HeaderSection from './HeaderSection';
-import useStyles from './styles';
-import { GET_CLUSTER, DELETE_CLUSTER } from '../../../graphql';
+import { useParams } from 'react-router-dom';
 import Loader from '../../../components/Loader';
-import { RootState } from '../../../redux/reducers';
-import TableData from './TableData';
+import { DELETE_CLUSTER, GET_CLUSTER } from '../../../graphql';
+import {
+  Cluster,
+  Clusters,
+  ClusterVars,
+  DeleteCluster,
+} from '../../../models/graphql/clusterData';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
   sortNumDesc,
 } from '../../../utils/sort';
-import {
-  Cluster,
-  ClusterVars,
-  Clusters,
-  DeleteCluster,
-} from '../../../models/graphql/clusterData';
+import HeaderSection from './HeaderSection';
+import useStyles from './styles';
+import TableData from './TableData';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface FilterOptions {
   search: string;
@@ -58,10 +61,7 @@ interface PaginationData {
 
 const BrowseCluster = () => {
   const classes = useStyles();
-
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
 
   const [filters, setFilters] = useState<FilterOptions>({
     search: '',
@@ -73,7 +73,7 @@ const BrowseCluster = () => {
     GET_CLUSTER,
     {
       variables: {
-        project_id: selectedProjectID,
+        project_id: projectID,
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 3000,

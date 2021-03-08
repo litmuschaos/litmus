@@ -14,12 +14,12 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, Modal, ButtonOutlined } from 'litmus-ui';
 import moment from 'moment';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import ReplayIcon from '@material-ui/icons/Replay';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import * as TabActions from '../../../redux/actions/tabs';
@@ -31,6 +31,14 @@ import { RootState } from '../../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
+import { useParams } from 'react-router-dom';
+import { GET_PROJECT_ROLES } from '../../../graphql';
+import { Project, Member } from '../../../models/graphql/user';
+import { getUserId } from '../../../utils/auth';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface TableDataProps {
   data: ScheduleWorkflow;
@@ -40,6 +48,24 @@ interface TableDataProps {
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+
+  const userID = getUserId();
+  const { projectID } = useParams<ParamType>();
+  const [userRole, setuserRole] = useState<string>('');
+
+  useQuery<Project>(GET_PROJECT_ROLES, {
+    variables: { projectID: projectID },
+    onCompleted: (data) => {
+      if (data.members) {
+        data.members.forEach((member: Member) => {
+          if (member.user_id === userID) {
+            setuserRole(member.role);
+          }
+        });
+      }
+    },
+  });
+
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
@@ -55,7 +81,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   };
 
   const workflow = useActions(WorkflowActions);
-  const userData = useSelector((state: RootState) => state.userData);
 
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
@@ -307,7 +332,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               </Typography>
             </div>
           </MenuItem>
-          {userData.userRole !== 'Viewer' ? (
+          {userRole !== 'Viewer' ? (
             <MenuItem value="Analysis" onClick={() => setIsModalOpen(true)}>
               <div className={classes.expDiv}>
                 <img

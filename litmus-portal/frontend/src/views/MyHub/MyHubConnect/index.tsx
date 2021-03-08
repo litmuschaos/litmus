@@ -36,6 +36,11 @@ import {
 import VideoCarousel from '../../../components/VideoCarousel';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
+import { useParams } from 'react-router-dom';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface GitHub {
   HubName: string;
@@ -52,10 +57,10 @@ interface SaveLater {
   saveLater: boolean;
 }
 
-const MyHub = () => {
+const MyHub: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const userData = useSelector((state: RootState) => state.userData);
+  const { projectID } = useParams<ParamType>();
   const [gitHub, setGitHub] = useState<GitHub>({
     HubName: '',
     GitURL: '',
@@ -143,7 +148,7 @@ const MyHub = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: userData.selectedProjectID,
+        projectID: projectID,
       },
     });
     setCloningRepo(true);
@@ -176,7 +181,7 @@ const MyHub = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: userData.selectedProjectID,
+        projectID: projectID,
       },
     });
     setSavingHub(true);

@@ -16,6 +16,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../graphql';
 import {
   ExecutionData,
@@ -34,6 +35,10 @@ import {
 import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface FilterOptions {
   search: string;
@@ -60,15 +65,13 @@ interface DateData {
 
 const BrowseWorkflow = () => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID: projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -77,7 +80,7 @@ const BrowseWorkflow = () => {
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
-      variables: { projectID: selectedProjectID },
+      variables: { projectID: projectID },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const modifiedWorkflows = prev.getWorkFlowRuns.slice();

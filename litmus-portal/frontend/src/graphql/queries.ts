@@ -304,6 +304,19 @@ export const LIST_PROJECTS = gql`
   }
 `;
 
+export const LIST_PROJECTS_AND_ROLES = gql`
+  query listProjects {
+    listProjects {
+      id
+      name
+      members {
+        user_id
+        role
+      }
+    }
+  }
+`;
+
 export const GET_PROJECT = gql`
   query getProject($projectID: String!) {
     getProject(projectID: $projectID) {
@@ -320,6 +333,18 @@ export const GET_PROJECT = gql`
       created_at
       updated_at
       removed_at
+    }
+  }
+`;
+
+export const GET_PROJECT_ROLES = gql`
+  query getProject($projectID: String!) {
+    getProject(projectID: $projectID) {
+      name
+      members {
+        user_id
+        role
+      }
     }
   }
 `;

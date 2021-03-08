@@ -1,23 +1,44 @@
+import { useQuery } from '@apollo/client';
 import { Tooltip, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Scaffold from '../../../containers/layouts/Scaffold';
+import { GET_PROJECT_ROLES } from '../../../graphql';
+import { Member, Project } from '../../../models/graphql/user';
 import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
+import { getUserId } from '../../../utils/auth';
 import BrowseCluster from '../../../views/ChaosWorkflows/BrowseCluster';
 import useStyles from './styles';
 
-const ConnectHome = () => {
+interface ParamType {
+  projectID: string;
+}
+
+const ConnectHome: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const userID = getUserId();
+  const { projectID } = useParams<ParamType>();
+  const [userRole, setuserRole] = useState<string>('');
 
   const handleCluster = () => {
     history.push('/target-connect');
   };
 
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
+  useQuery<Project>(GET_PROJECT_ROLES, {
+    variables: { projectID: projectID },
+    onCompleted: (data) => {
+      if (data.members) {
+        data.members.forEach((member: Member) => {
+          if (member.user_id === userID) {
+            setuserRole(member.role);
+          }
+        });
+      }
+    },
+  });
 
   return (
     <Scaffold>

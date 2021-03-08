@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -5,10 +6,12 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { generatePath, Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { LIST_PROJECTS } from '../../graphql';
+import { Projects, Member } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
@@ -19,6 +22,7 @@ import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
+import { getUserId } from '../../utils/auth';
 import useStyles from './styles';
 
 interface CustomisedListItemProps {
@@ -53,7 +57,10 @@ interface ParamType {
 
 const SideBar: React.FC = () => {
   const classes = useStyles();
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
+  const { projectID } = useParams<ParamType>();
+  const [isOwner, setisOwner] = useState<boolean>(false);
+  const userID = getUserId();
+
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
   const pathName = useLocation().pathname.split('/')[1];
@@ -61,7 +68,25 @@ const SideBar: React.FC = () => {
   const buildTime = moment
     .unix(Number(process.env.REACT_APP_BUILD_TIME))
     .format('DD MMM YYYY HH:MM:SS');
-  const { projectID } = useParams<ParamType>();
+
+  //TODO: Type a better query (presently overfetching)
+  useQuery<Projects>(LIST_PROJECTS, {
+    onCompleted: (data) => {
+      if (data.listProjects) {
+        data.listProjects.map((project) => {
+          project.members.forEach((member: Member) => {
+            if (
+              member.user_id === userID &&
+              member.role === 'Owner' &&
+              project.id === projectID
+            ) {
+              setisOwner(true);
+            }
+          });
+        });
+      }
+    },
+  });
 
   return (
     <Drawer
@@ -91,13 +116,9 @@ const SideBar: React.FC = () => {
           key="home"
           handleClick={() => {
             history.push(`/home/${projectID}`);
-            /* const path = generatePath('/:projectID/home', {
-              projectID,
-            });
-            history.replace(path); */
           }}
           label="Home"
-          selected={pathName === ''}
+          selected={pathName === 'home'}
         >
           <HomeIcon />
         </CustomisedListItem>
@@ -105,11 +126,7 @@ const SideBar: React.FC = () => {
           <CustomisedListItem
             key="workflow"
             handleClick={() => {
-              const path = generatePath('/:projectID/workflows', {
-                projectID,
-              });
-              history.replace(path);
-              tabs.changeWorkflowsTabs(0);
+              history.push(`/workflows/${projectID}`);
             }}
             label="Workflows"
             selected={pathName === 'workflows'}
@@ -121,10 +138,7 @@ const SideBar: React.FC = () => {
           <CustomisedListItem
             key="myhub"
             handleClick={() => {
-              const path = generatePath('/:projectID/myhub', {
-                projectID,
-              });
-              history.replace(path);
+              history.push(`/myhub/${projectID}`);
             }}
             label="My Hub"
             selected={pathName === 'myhub'}
@@ -135,10 +149,7 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="targets"
           handleClick={() => {
-            const path = generatePath('/:projectID/targets', {
-              projectID,
-            });
-            history.replace(path);
+            history.push(`/targets/${projectID}`);
           }}
           label="Targets"
           selected={pathName === 'targets'}
@@ -148,26 +159,18 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="community"
           handleClick={() => {
-            const path = generatePath('/:projectID/community', {
-              projectID,
-            });
-            history.replace(path);
+            history.push(`/community/${projectID}`);
           }}
           label="Community"
           selected={pathName === 'community'}
         >
           <CommunityIcon />
         </CustomisedListItem>
-        {userRole === 'Owner' && (
+        {isOwner && (
           <CustomisedListItem
             key="settings"
             handleClick={() => {
-              // history.push('/settings');
               history.push(`/settings/${projectID}`);
-              /*  const path = generatePath('/settings/:projectID', {
-                projectID,
-              });
-              history.replace(path); */
             }}
             label="Settings"
             selected={pathName === 'settings'}

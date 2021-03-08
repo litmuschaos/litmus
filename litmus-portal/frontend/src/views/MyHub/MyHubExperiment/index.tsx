@@ -20,22 +20,19 @@ interface URLParams {
   chart: string;
   experiment: string;
   hubname: string;
+  projectID: string;
 }
 
 const MyHub = () => {
   const classes = useStyles();
-
-  // User Data from Redux
-  const userData = useSelector((state: RootState) => state.userData);
+  // Get Parameters from URL
+  const paramData: URLParams = useParams();
 
   // Get all MyHubs with status
   const { data: hubDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.selectedProjectID },
+    variables: { data: paramData.projectID },
     fetchPolicy: 'cache-and-network',
   });
-
-  // Get Parameters from URL
-  const paramData: URLParams = useParams();
 
   // Filter the selected MyHub
   const UserHub = hubDetails?.getHubStatus.filter((myHub) => {
@@ -47,7 +44,7 @@ const MyHub = () => {
     variables: {
       data: {
         HubName: paramData.hubname,
-        ProjectID: userData.selectedProjectID,
+        ProjectID: paramData.projectID,
         ChartName: paramData.chart,
         ExperimentName: paramData.experiment,
       },
@@ -65,7 +62,7 @@ const MyHub = () => {
 
   // State for default icon URL
   const experimentDefaultImagePath = `${config.grahqlEndpoint}/icon`;
-  const imageURL = `${experimentDefaultImagePath}/${userData.selectedProjectID}/${paramData.hubname}/${paramData.chart}/${paramData.experiment}.png`;
+  const imageURL = `${experimentDefaultImagePath}/${paramData.projectID}/${paramData.hubname}/${paramData.chart}/${paramData.experiment}.png`;
 
   const { t } = useTranslation();
 

@@ -10,7 +10,7 @@ import { Done } from '@material-ui/icons';
 import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import Loader from '../../../components/Loader';
@@ -20,12 +20,10 @@ import {
   GENERATE_SSH,
 } from '../../../graphql/mutations';
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
-import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
 import { GitOpsDetail } from '../../../models/graphql/gitOps';
-import { RootState } from '../../../redux/reducers';
+import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
-import { useParams } from 'react-router-dom';
 
 interface ParamType {
   projectID: string;

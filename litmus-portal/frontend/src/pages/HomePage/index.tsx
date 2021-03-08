@@ -34,6 +34,9 @@ const HomePage: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const tabs = useActions(TabActions);
+  const { projectID } = useParams<ParamType>();
+
+  console.log('On home page!!');
 
   // Query to get user details
   const { data, loading } = useQuery<
@@ -46,53 +49,41 @@ const HomePage: React.FC = () => {
   const name: string = data?.getUser.name ?? '';
 
   const userID = getUserId();
-  const { projectID } = useParams<ParamType>();
-
-  // console.log('Header Mounted');
 
   const [listProjects] = useLazyQuery<Projects>(LIST_PROJECTS, {
     onCompleted: (data) => {
-      let isOwnerOfProject = false;
       if (data?.listProjects) {
         data?.listProjects.map((project) => {
           project.members.forEach((member: Member) => {
             if (member.user_id === userID && member.role === 'Owner') {
               const id = project.id;
-              // history.push('/home');
-              history.push(`/home/${id}`);
-              /* if (projectID === 'projectID') {
-                const path = generatePath('/home/:projectID', {
-                  projectID: id,
-                });
-                history.replace(path);
-              } */
+              window.location.assign(`/home/${id}`);
+              // history.push(`/home/${id}`);
             }
           });
         });
-        // if (!isOwnerOfProject) setIsOpen(true);
       }
     },
     fetchPolicy: 'no-cache',
   });
 
   const handleModal = () => {
-    console.log('before isopen');
     setIsOpen(false);
-    console.log('after isopen');
     listProjects();
   };
 
   useQuery<Projects>(LIST_PROJECTS, {
+    skip: projectID ? true : false,
     onCompleted: (data) => {
       let isOwnerOfProject = false;
-      if (data?.listProjects) {
-        data?.listProjects.map((project) => {
+      if (data.listProjects) {
+        data.listProjects.map((project) => {
           project.members.forEach((member: Member) => {
             if (member.user_id === userID && member.role === 'Owner') {
-              console.log(project);
               const id = project.id;
               isOwnerOfProject = true;
-              history.push(`/home/${id}`);
+              window.location.assign(`/home/${id}`);
+              // history.push(`/home/${id}`);
             }
           });
         });

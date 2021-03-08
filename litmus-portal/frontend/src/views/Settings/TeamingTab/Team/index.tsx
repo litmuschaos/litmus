@@ -1,5 +1,3 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable consistent-return */
 import { useQuery } from '@apollo/client';
 import {
   Box,
@@ -27,7 +25,6 @@ import {
 import { Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Center from '../../../../containers/layouts/Center';
 import { ALL_USERS, GET_PROJECT, LIST_PROJECTS } from '../../../../graphql';
@@ -39,7 +36,6 @@ import {
   ProjectDetailVars,
   Projects,
 } from '../../../../models/graphql/user';
-import { RootState } from '../../../../redux/reducers';
 import { getUserId } from '../../../../utils/auth';
 import Invitation from '../Invitation';
 import InviteNew from '../InviteNew';
@@ -113,7 +109,6 @@ const TeamingTab: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const userData = useSelector((state: RootState) => state.userData);   //Check below for dependency
   const { projectID } = useParams<ParamType>();
 
   const [loading, setLoading] = useState(true);
@@ -126,7 +121,8 @@ const TeamingTab: React.FC = () => {
 
   const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
 
-  const [activeTab, setActiveTab] = React.useState(0);
+  const [activeTab, setActiveTab] = useState<number>(0);
+  const [selectedProjectName, setselectedProjectName] = useState<string>('');
 
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
@@ -136,7 +132,7 @@ const TeamingTab: React.FC = () => {
     GET_PROJECT,
     {
       variables: { projectID: projectID },
-
+      onCompleted: (data) => setselectedProjectName(data.getProject.name),
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -313,7 +309,7 @@ const TeamingTab: React.FC = () => {
                   <img src="./icons/chaos-logo.svg" alt="Chaos Logo" />
                   <Typography className={classes.projectName}>
                     {/* Check for removal of userData */}
-                    {userData.selectedProjectName}
+                    {selectedProjectName}
                   </Typography>
                 </div>
                 <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>

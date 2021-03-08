@@ -1,9 +1,8 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { IconButton, Paper, Typography } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
   GET_PROJECT,
@@ -12,10 +11,6 @@ import {
 } from '../../../../../graphql';
 import { MemberInvitation } from '../../../../../models/graphql/invite';
 import { Member, Project, Projects } from '../../../../../models/graphql/user';
-import useActions from '../../../../../redux/actions';
-import * as UserActions from '../../../../../redux/actions/user';
-import configureStore, { history } from '../../../../../redux/configureStore';
-import { RootState } from '../../../../../redux/reducers';
 import { getUserId, getUsername, getUserRole } from '../../../../../utils/auth';
 import useStyles from './styles';
 
@@ -26,10 +21,8 @@ interface ParamType {
 const AcceptedInvitations: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { persistor } = configureStore();
 
   const userID = getUserId();
-  const user = useActions(UserActions);
   const [projectOther, setProjectOther] = useState<Project[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
@@ -114,10 +107,10 @@ const AcceptedInvitations: React.FC = () => {
                   {project.name}
                 </Typography>
                 {/* <IconButton onClick={() => setSelectedProjectID(project.id)}> */}
-                  <Typography className={classes.viewProject}>
-                    {/* TODO:: Add translation */}
-                    View Project
-                  </Typography>
+                <Typography className={classes.viewProject}>
+                  {/* TODO:: Add translation */}
+                  View Project
+                </Typography>
                 {/* </IconButton> */}
               </div>
               <div className={classes.buttonDiv}>
@@ -125,6 +118,7 @@ const AcceptedInvitations: React.FC = () => {
                   <ButtonFilled
                     className={classes.leaveProjectBtn}
                     onClick={() => {
+                      // TODO: CHECK if same project.id as in URL
                       setExitedMember(project.id);
                       leaveProject({
                         variables: {

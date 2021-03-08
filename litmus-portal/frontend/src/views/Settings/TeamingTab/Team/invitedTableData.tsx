@@ -10,7 +10,6 @@ import {
 import { ButtonFilled, ButtonOutlined, LightPills, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Loader from '../../../../components/Loader';
 import {
@@ -29,7 +28,6 @@ import {
   Member,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
-import { RootState } from '../../../../redux/reducers';
 import userAvatar from '../../../../utils/user';
 import useStyles from './styles';
 

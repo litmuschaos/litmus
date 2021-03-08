@@ -11,7 +11,7 @@ import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
-import { UpdateUser } from '../../../../models/redux/user';
+import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';

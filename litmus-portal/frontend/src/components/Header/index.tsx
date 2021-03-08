@@ -1,21 +1,15 @@
 import { useQuery } from '@apollo/client';
-import { Box, Divider } from '@material-ui/core';
+import { Divider } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import { GET_USER } from '../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
   Project,
 } from '../../models/graphql/user';
-import useActions from '../../redux/actions';
-import * as UserActions from '../../redux/actions/user';
-import configureStore from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
-import CustomBreadCrumbs from '../BreadCrumbs';
+import { getUsername } from '../../utils/auth';
 import useStyles from './styles';
 
 interface SelectedProjectDetails {
@@ -30,125 +24,23 @@ interface ParamType {
 
 const Header: React.FC = () => {
   const classes = useStyles();
-  const userData = useSelector((state: RootState) => state.userData);
-  const user = useActions(UserActions);
-  // Use the persistor object
-  const { persistor } = configureStore();
 
+  //Get present user's username from JWT using auth utility
+  const username = getUsername();
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username: userData.username } }
+    { variables: { username: username } }
   );
   const name: string = data?.getUser.name ?? '';
   const email: string = data?.getUser.email ?? '';
   const projects: Project[] = data?.getUser.projects ?? [];
 
-  // const [selectedProjectDetails, setSelectedProjectDetails] = useState<
-  //   SelectedProjectDetails
-  // >({
-  //   selectedProjectID: userData.selectedProjectID,
-  //   selectedProjectName: userData.selectedProjectName,
-  //   selectedUserRole: userData.userRole,
-  // });
-
-  // const setSelectedProjectID = (selectedProjectID: string) => {
-  //   projects.forEach((project) => {
-  //     if (selectedProjectID === project.id) {
-  //       const memberList: Member[] = project.members;
-
-  //       memberList.forEach((member) => {
-  //         if (member.role === 'Owner') {
-  //           user.updateUserDetails({
-  //             selectedProjectOwner: member.user_name,
-  //           });
-  //         }
-
-  //         if (member.user_name === data?.getUser.username) {
-  //           user.updateUserDetails({
-  //             selectedProjectID,
-  //             userRole: member.role,
-  //             selectedProjectName: project.name,
-  //           });
-  //           // Flush data to persistor immediately
-  //           persistor.flush();
-
-  //           setSelectedProjectDetails({
-  //             selectedProjectID,
-  //             selectedUserRole: member.role,
-  //             selectedProjectName: project.name,
-  //           });
-
-  //           if (member.role !== 'Owner') {
-  //             history.push('/');
-  //           }
-  //         }
-  //       });
-  //     }
-  //   });
-  // };
-
-  /*  const userID = getUserId();
-  const { projectID } = useParams<ParamType>();
-
-  console.log('Header Mounted'); */
-
-  /*  useQuery<Projects>(LIST_PROJECTS, {
-    onCompleted: (data) => {
-      if (data?.listProjects) {
-        data?.listProjects.map((project) => {
-          project.members.forEach((member: Member) => {
-            if (member.user_id === userID && member.role === 'Owner') {
-              console.log(projectID);
-              if (!projectID) history.push(`${project.id}/home`);
-            }
-          });
-        });
-      }
-    },
-    fetchPolicy: 'no-cache',
-  });
- */
-  // useEffect(() => {
-  //   setSelectedProjectDetails({
-  //     selectedProjectID: userData.selectedProjectID,
-  //     selectedProjectName: userData.selectedProjectName,
-  //     selectedUserRole: userData.userRole,
-  //   });
-  // }, [userData.selectedProjectID]);
-
   return (
     <div data-cy="headerComponent">
-      <AppBar position="relative" className={classes.appBar} elevation={0}>
-        <Toolbar>
-          <div style={{ width: '100%' }}>
-            <Box display="flex" p={1} className={classes.headerFlex}>
-              <Box p={1} flexGrow={8} className={classes.headerFlexExtraPadded}>
-                <CustomBreadCrumbs location={useLocation().pathname} />
-              </Box>
-              <Box p={1} className={classes.headerFlexPadded}>
-                {/*              <NotificationsDropdown
-                  count={`${countOfMessages}`}
-                  messages={messages}
-                  CallbackToHeaderOnDeleteNotification={deleteNotification}
-                />
-  */}
-              </Box>
-              <Box p={1} flexGrow={1} className={classes.headerFlexProfile}>
-                {/* <ProfileDropdownSection
-                  name={name}
-                  email={email}
-                  username={userData.username}
-                  selectedProjectID={selectedProjectDetails.selectedProjectID}
-                  CallbackToSetSelectedProjectID={setSelectedProjectID}
-                  selectedProjectName={
-                    selectedProjectDetails.selectedProjectName
-                  }
-                  userRole={selectedProjectDetails.selectedUserRole}
-                /> */}
-              </Box>
-            </Box>
-          </div>
+      <AppBar className={classes.appBar}>
+        <Toolbar style={{ background: '#00000' }}>
+          <div>Hello world</div>
         </Toolbar>
         <Divider />
       </AppBar>

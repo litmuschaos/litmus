@@ -51,7 +51,8 @@ const LoginPage = () => {
         } else {
           setUserDetails(data.access_token);
           setIsLoading(false);
-          window.location.assign('/home/projectID');
+          //TODO: react-router generate experiment
+          window.location.assign('/home');
         }
       })
       .catch((err) => {
@@ -105,7 +106,7 @@ const LoginPage = () => {
                   }
                 />
               </div>
-              <div aria-details="spacer" style={{ margin: '0.4rem 0' }} />
+              <div style={{ margin: '0.4rem 0' }} />
               <div className={classes.inputValue} data-cy="inputPassword">
                 <InputField
                   label="Password"

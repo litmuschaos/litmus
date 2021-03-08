@@ -4,6 +4,7 @@ import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
@@ -13,6 +14,10 @@ import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
 import BackButton from '../BackButton';
 import useStyles from './styles';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface EnvValues {
   name: string;
@@ -31,6 +36,8 @@ interface AppInfo {
 
 const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+  const { projectID } = useParams<ParamType>();
   const [overrideEnvs, setOverrideEnvs] = useState<EnvValues[]>([
     { name: '', value: '' },
   ]);
@@ -48,8 +55,6 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [loadingEnv, setLoadingEnv] = useState(true);
   const [jobCleanup, setJobCleanup] = useState('delete');
 
-  const { t } = useTranslation();
-  const userData = useSelector((state: RootState) => state.userData);
   const [getEngineYaml] = useLazyQuery(GET_ENGINE_YAML, {
     onCompleted: (data) => {
       const parsedYaml = YAML.parse(data.getYAMLData);
@@ -102,7 +107,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       getEngineYaml({
         variables: {
           experimentInput: {
-            ProjectID: userData.selectedProjectID,
+            ProjectID: projectID,
             HubName: customWorkflow.hubName,
             ChartName: customWorkflow.experiment_name.split('/')[0],
             ExperimentName: customWorkflow.experiment_name.split('/')[1],
@@ -278,7 +283,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            <div style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.appinfo?.applabel ? (
               <div className={classes.appInfoDiv}>
                 <Typography className={classes.appInfoText}>
@@ -300,7 +305,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            <div style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.appinfo?.appkind ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>
@@ -322,7 +327,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            <div style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.annotationCheck ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>
@@ -339,7 +344,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            <div style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.jobCleanUpPolicy ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>

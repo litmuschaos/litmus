@@ -22,7 +22,6 @@ import * as _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Loader from '../../../../components/Loader';
 import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
@@ -33,7 +32,6 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../../models/graphql/workflowListData';
-import { RootState } from '../../../../redux/reducers';
 import {
   sortAlphaAsc,
   sortAlphaDesc,

@@ -1,13 +1,19 @@
+import { useQuery } from '@apollo/client';
 import { List, ListItem, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { LIST_PROJECTS_AND_ROLES } from '../../graphql';
+import { Member, Projects } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
-import { RootState } from '../../redux/reducers';
+import { getUserId } from '../../utils/auth';
 import useStyles from './style';
+
+interface ParamType {
+  projectID: string;
+}
 
 const QuickActionItems: React.FC = ({ children }) => {
   const classes = useStyles();
@@ -16,10 +22,30 @@ const QuickActionItems: React.FC = ({ children }) => {
 
 const QuickActionCard = () => {
   const classes = useStyles();
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
+  const { projectID } = useParams<ParamType>();
+  const [isOwner, setisOwner] = useState<boolean>(false);
+  const userID = getUserId();
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
   const apiDocsUrl = `${window.location.href}api-doc`;
+
+  useQuery<Projects>(LIST_PROJECTS_AND_ROLES, {
+    onCompleted: (data) => {
+      if (data.listProjects) {
+        data.listProjects.map((project) => {
+          project.members.forEach((member: Member) => {
+            if (
+              member.user_id === userID &&
+              member.role === 'Owner' &&
+              project.id === projectID
+            ) {
+              setisOwner(true);
+            }
+          });
+        });
+      }
+    },
+  });
 
   return (
     <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>
@@ -28,13 +54,7 @@ const QuickActionCard = () => {
           {t('quickActionCard.quickActions')}
         </Typography>
         <List>
-          {/* <QuickActionItems>
-            <img src="/icons/cluster.png" alt="cluster" />
-            <Link to="/" className={classes.listItem}>
-              Connect a new cluster
-            </Link>
-          </QuickActionItems> */}
-          {userRole === 'Owner' && (
+          {isOwner && (
             <QuickActionItems>
               <div className={classes.imgDiv}>
                 <img src="/icons/team.png" alt="team" />

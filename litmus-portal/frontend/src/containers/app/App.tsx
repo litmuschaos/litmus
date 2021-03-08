@@ -1,13 +1,15 @@
+import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, Suspense, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
+import { LIST_PROJECTS } from '../../graphql';
+import { Member, Projects } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
-import { getToken } from '../../utils/auth';
+import { getToken, getUserId } from '../../utils/auth';
+import Center from '../layouts/Center';
 import useStyles from './App-styles';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
@@ -37,41 +39,71 @@ const CreateCustomWorkflow = lazy(() =>
   import('../../pages/CreateCustomWorkflow')
 );
 
-interface RoutesProps {
-  isOwner: boolean;
-  isProjectAvailable: boolean;
+interface ParamType {
+  projectID: string;
 }
 
-const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
+interface RoutesProps {
+  isOwner: boolean;
+}
+
+const Routes: React.FC<RoutesProps> = ({ isOwner }) => {
   const classes = useStyles();
+
+  const baseRoute = window.location.pathname.split('/')[1];
+  const projectIDFromURL = window.location.pathname.split('/')[2];
+  const [projectID, setprojectID] = useState<string>(projectIDFromURL);
+  const userID = getUserId();
+  console.log('on App.tsx: ', projectID);
+
+  useQuery<Projects>(LIST_PROJECTS, {
+    skip: projectID ? true : false,
+    onCompleted: (data) => {
+      let isOwnerOfProject = false;
+      if (data.listProjects) {
+        data.listProjects.map((project) => {
+          project.members.forEach((member: Member) => {
+            if (member.user_id === userID && member.role === 'Owner') {
+              const id = project.id;
+              isOwnerOfProject = true;
+              // window.location.assign(`/home/${id}`);
+              setprojectID(id);
+              history.push(`/${baseRoute}/${id}`);
+            }
+          });
+        });
+      }
+    },
+    fetchPolicy: 'no-cache',
+  });
 
   if (getToken() === '') {
     return (
       <div className={classes.content}>
         <Switch>
+          <Route exact path="/login" component={LoginPage} />
           <Route
             exact
             path="/api-doc"
             render={() => <Redirect to="/api-doc/index.html" />}
           />
-          <Route exact path="/login" component={LoginPage} />
-          <Route path="/" render={() => <Redirect to="/login" />} />
+          <Redirect to="/login" />
         </Switch>
       </div>
     );
   }
 
-  if (!isProjectAvailable) {
+  if (!projectID) {
     return (
       <div className={classes.content}>
         <Switch>
-          <Route exact path="/home/:projectID" component={HomePage} />
+          <Route exact path="/home" component={HomePage} />
           <Route
             exact
             path="/api-doc"
             render={() => <Redirect to="/api-doc/index.html" />}
           />
-          {/* <Route path="/" render={() => <Redirect to="/:projectID/home" />} /> */}
+          <Redirect to="/home" />
         </Switch>
       </div>
     );
@@ -80,11 +112,14 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
   return (
     <div className={classes.content}>
       <Switch>
+        <Route exact path="/home" component={HomePage} />
         <Route exact path="/home/:projectID" component={HomePage} />
-        <Route exact path="/:projectID/workflows" component={Workflows} />
+        <Redirect exact path="/" to="/home" />
+        <Route exact path="/workflows" component={Workflows} />
+        <Route exact path="/workflows/:projectID" component={Workflows} />
         <Route
           exact
-          path="/:projectID/create-workflow"
+          path="/create-workflow/:projectID"
           component={CreateWorkflow}
         />
         <Route
@@ -93,71 +128,72 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           render={() => <Redirect to="/api-doc/index.html" />}
         />
         {/* Redirects */}
-        <Redirect exact path="/login" to="/" />
-        <Redirect exact path="/workflows/schedule" to="/workflows" />
-        <Redirect exact path="/workflows/template" to="/workflows" />
-        <Redirect exact path="/workflows/analytics" to="/workflows" />
+        <Redirect exact path="/login" to="/home" />
+        <Redirect exact path="/workflows/schedule" to="/workflows/:projectID" />
+        <Redirect exact path="/workflows/template" to="/workflows/:projectID" />
+        <Redirect
+          exact
+          path="/workflows/analytics"
+          to="/workflows/:projectID"
+        />
         <Route
           exact
-          path="/workflows/:workflowRunId"
+          path="/workflows/:projectID/:workflowRunId"
           component={WorkflowDetails}
         />
         <Route
           exact
-          path="/workflows/schedule/:projectID/:workflowName"
+          path="/workflows/:projectID/schedule/:scheduleProjectID/:workflowName" // Check
           component={SchedulePage}
         />
         <Route
           exact
-          path="/workflows/template/:templateName"
+          path="/workflows/:projectID/template/:templateName"
           component={BrowseTemplate}
         />
         <Route
           exact
-          path="/workflows/analytics/:workflowRunId"
+          path="/workflows/:projectID/analytics/:workflowRunId"
           component={AnalyticsPage}
         />
-        <Route exact path="/:projectID/community" component={Community} />
-        <Route exact path="/:projectID/targets" component={TargetHome} />
+        <Route exact path="/community/:projectID" component={Community} />
+        <Route exact path="/targets/:projectID" component={TargetHome} />
         <Route
           exact
-          path="/:projectID/targets/cluster"
+          path="/targets/:projectID/cluster"
           component={ClusterInfo}
         />
         <Route
           exact
-          path="/:projectID/target-connect"
+          path="/target-connect/:projectID"
           component={ConnectTargets}
         />
-        <Route exact path="/:projectID/myhub" component={MyHub} />
+        <Route exact path="/myhub/:projectID" component={MyHub} />
         <Route
           exact
-          path="/:projectID/myhub/connect"
+          path="/myhub/:projectID/connect"
           component={MyHubConnect}
         />
+        <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
+        <Route exact path="/myhub/:hubname" component={ChaosChart} />
         <Route
           exact
-          path="/:projectID/myhub/edit/:hubname"
-          component={MyHubEdit}
-        />
-        <Route exact path="/:projectID/myhub/:hubname" component={ChaosChart} />
-        <Route
-          exact
-          path="/myhub/:hubname/:chart/:experiment"
+          path="/myhub/:projectID/:hubname/:chart/:experiment"
           component={MyHubExperiment}
         />
         <Route
           exact
-          path="/:projectID/create-workflow/custom"
+          path="/create-workflow/:projectID/custom"
           component={CreateCustomWorkflow}
         />
+        {/* TODO: check if possible on the settings page itself / efficient way to check here itself*/}
         {isOwner ? (
           <Route path="/settings/:projectID" component={Settings} />
         ) : (
-          <Redirect to="/" />
+          <Redirect to="/home/:projectID" />
         )}
         <Route exact path="/404" component={ErrorPage} />
-        {/* <Redirect to="/404" /> */}
+        <Redirect to="/404" />
       </Switch>
     </div>
   );
@@ -166,7 +202,6 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
 function App() {
   const classes = useStyles();
   const analyticsAction = useActions(AnalyticsActions);
-  const userData = useSelector((state: RootState) => state.userData);
   const token = getToken();
   useEffect(() => {
     if (token !== '') {
@@ -175,15 +210,18 @@ function App() {
   }, [token]);
   return (
     <LitmusThemeProvider platform="litmus-portal">
-      <Suspense fallback={<Loader />}>
+      <Suspense
+        fallback={
+          <Center>
+            <Loader />
+          </Center>
+        }
+      >
         <Router history={history}>
           <div className={classes.root}>
             <div className={classes.appFrame}>
               {/* <Routes /> */}
-              <Routes
-                isOwner={userData.userRole === 'Owner'}
-                isProjectAvailable={!!userData.selectedProjectID}
-              />
+              <Routes isOwner={true} />
             </div>
           </div>
         </Router>

@@ -37,6 +37,7 @@ import GithubInputFields from '../../../components/GitHubComponents/GithubInputF
 
 interface MyHubParams {
   hubname: string;
+  projectID: string;
 }
 
 interface GitHub {
@@ -50,15 +51,14 @@ interface MyHubToggleProps {
   isPrivateToggled: boolean;
 }
 
-const MyHub = () => {
+const MyHub: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const userData = useSelector((state: RootState) => state.userData);
+  const params: MyHubParams = useParams();
   const { data, loading } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.selectedProjectID },
+    variables: { data: params.projectID },
     fetchPolicy: 'cache-and-network',
   });
-  const params: MyHubParams = useParams();
   const hubData = data?.getHubStatus.filter(
     (hubs) => hubs.HubName === params.hubname
   )[0];
@@ -184,7 +184,7 @@ const MyHub = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: userData.selectedProjectID,
+        projectID: params.projectID,
       },
     });
     setCloningRepo(true);

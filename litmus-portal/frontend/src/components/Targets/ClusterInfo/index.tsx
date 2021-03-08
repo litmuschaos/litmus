@@ -1,20 +1,25 @@
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonFilled, Modal, ButtonOutlined } from 'litmus-ui';
-import React from 'react';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import { DELETE_CLUSTER } from '../../../graphql';
+import { DELETE_CLUSTER, GET_PROJECT_ROLES } from '../../../graphql';
 import { Cluster, DeleteCluster } from '../../../models/graphql/clusterData';
+import { Member, Project } from '../../../models/graphql/user';
 import { LocationState } from '../../../models/routerModel';
 import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
+import { getUserId } from '../../../utils/auth';
 import BackButton from '../../Button/BackButton';
 import ButtonOutline from '../../Button/ButtonOutline';
 import TargetCopy from '../TargetCopy';
 // import BrowseWorkflow from '../TargetHome/BrowseWorkflow';
 import useStyles from './styles';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface ClusterProps {
   data: Cluster;
@@ -27,8 +32,11 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
   const { data } = location.state;
   const classes = useStyles();
   const link: string = data.token;
+  const { projectID } = useParams<ParamType>();
+  const userID = getUserId();
 
   const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER);
+  const [userRole, setuserRole] = useState<string>('');
   const [open, setOpen] = React.useState(false);
 
   const handleDelete = () => {
@@ -36,7 +44,19 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
     history.push('/targets');
   };
 
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
+  useQuery<Project>(GET_PROJECT_ROLES, {
+    variables: { projectID: projectID },
+    onCompleted: (data) => {
+      if (data.members) {
+        data.members.forEach((member: Member) => {
+          if (member.user_id === userID) {
+            setuserRole(member.role);
+          }
+        });
+      }
+    },
+  });
+
   const { t } = useTranslation();
 
   return (
