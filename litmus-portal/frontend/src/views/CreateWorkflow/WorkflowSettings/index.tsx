@@ -1,9 +1,16 @@
 import { Avatar, Typography } from '@material-ui/core';
 import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import data from '../../../components/PredifinedWorkflows/data';
+import useActions from '../../../redux/actions';
+import * as AlertActions from '../../../redux/actions/alert';
 import capitalize from '../../../utils/capitalize';
 import { validateWorkflowName } from '../../../utils/validate';
 import useStyles from './styles';
@@ -19,48 +26,104 @@ interface WorkflowDetailsProps {
   icon: string;
 }
 
-const WorkflowSettings: React.FC = () => {
+const WorkflowSettings = forwardRef((_, ref) => {
   const classes = useStyles();
 
   const [avatarModal, setAvatarModal] = useState<boolean>(false);
-  const [workflowDetails, setWorkflowDetails] = useState<WorkflowDetailsProps>({
-    name: 'Workflow Name',
-    description: 'Workflow Description',
-    icon: '',
-  });
+
+  // Workflow States
+  const [name, setName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [icon, setIcon] = useState<string>('');
 
   const { t } = useTranslation();
+  const alert = useActions(AlertActions);
 
-  // Loading Workflow Related Data for Workflow Settings
-  useEffect(() => {
+  const checkForStoredData = () => {
+    localforage.getItem('workflow').then((workflow) => {
+      // If data is present set all the data to local state for the UI to display
+      if (workflow && (workflow as WorkflowDetailsProps).name !== '') {
+        setName((workflow as WorkflowDetailsProps).name);
+      }
+      if (workflow && (workflow as WorkflowDetailsProps).description !== '') {
+        setDescription((workflow as WorkflowDetailsProps).description);
+      }
+      if (workflow && (workflow as WorkflowDetailsProps).icon !== '') {
+        setIcon((workflow as WorkflowDetailsProps).icon);
+      }
+    });
+  };
+
+  const initializeWithDefault = () => {
     localforage.getItem('selectedScheduleOption').then((value) =>
       // Map over the list of predefined workflows and extract the name and detail
       data.map((w) => {
         if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
-          setWorkflowDetails({
-            name: w.title,
-            description: w.details,
-            icon: w.urlToIcon,
-          });
+          setName(w.title);
+          setDescription(w.details);
+          setIcon(w.urlToIcon);
         }
         return null;
       })
     );
-  }, [workflowDetails]);
+    /** Store a boolean value in local storage to serve as an indication
+     *  whether user already has edited data or not
+     */
 
-  // Workflow Name change handler
-  const WorkflowNameChangeHandler = () =>
-    // event: React.ChangeEvent<{ value: string }>
-    {};
+    localforage.setItem('hasSetWorkflowData', false);
+  };
 
-  // Workflow Description change handler
-  const WorkflowDescriptionChangeHandler = () =>
-    // event: React.ChangeEvent<{ value: string }>
-    {};
+  // Loading Workflow Related Data for Workflow Settings
+  useEffect(() => {
+    /** Retrieving saved data from index DB,
+     *  if user has already edited the details then it will fetch the stored data
+     *  and call checkForStoredData()
+     *  else it will initializeWithDefault()
+     */
+    localforage.getItem('hasSetWorkflowData').then((isDataPresent) => {
+      return isDataPresent ? checkForStoredData() : initializeWithDefault();
+    });
+  }, []);
+
+  // Workflow Name Change Handler
+  const nameChangeHandle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+    localforage.setItem('hasSetWorkflowData', true);
+  };
+
+  // Workflow Description Change Handler
+  const descriptionChangeHandle = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setDescription(event.target.value);
+    localforage.setItem('hasSetWorkflowData', true);
+  };
 
   const handleClose = () => {
     setAvatarModal(false);
   };
+
+  function onNext() {
+    /** Creating an object to be stored in local forage for iterative fetching
+     *  Used in cases where users need to return back to previous page
+     *  and wants the edited data stored/saved
+     */
+    const workflowDetails: WorkflowDetailsProps = {
+      name,
+      description,
+      icon,
+    };
+    localforage.setItem('workflow', workflowDetails);
+    if (validateWorkflowName(name)) {
+      alert.changeAlertState(true); // Workflow Name is not valid and user clicked on Next
+      return false;
+    }
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <div className={classes.root}>
@@ -70,9 +133,7 @@ const WorkflowSettings: React.FC = () => {
         </Typography>
         <Typography className={classes.description}>
           {t('createWorkflow.chooseWorkflow.description1')}{' '}
-          {workflowDetails.name
-            .split('-')
-            .map((text) => `${capitalize(text)} `)}
+          {name.split('-').map((text) => `${capitalize(text)} `)}
           <br />
           {t('createWorkflow.chooseWorkflow.description2')}
         </Typography>
@@ -84,7 +145,7 @@ const WorkflowSettings: React.FC = () => {
             className={classes.avatar}
             data-cy="avatar"
             alt="User"
-            src={workflowDetails.icon}
+            src={icon}
           />
           <Typography
             className={classes.editText}
@@ -100,15 +161,13 @@ const WorkflowSettings: React.FC = () => {
               data-cy="inputWorkflow"
               fullWidth
               helperText={
-                validateWorkflowName(workflowDetails.name)
+                validateWorkflowName(name)
                   ? t('createWorkflow.chooseWorkflow.validate')
                   : ''
               }
-              variant={
-                validateWorkflowName(workflowDetails.name) ? 'error' : 'primary'
-              }
-              onChange={WorkflowNameChangeHandler}
-              value={workflowDetails.name}
+              variant={validateWorkflowName(name) ? 'error' : 'primary'}
+              onChange={nameChangeHandle}
+              value={name}
             />
           </div>
           <div aria-details="spacer" style={{ margin: '3rem 0' }} />
@@ -120,8 +179,8 @@ const WorkflowSettings: React.FC = () => {
               disableUnderline: true,
             }}
             data-cy="inputWorkflowDescription"
-            value={workflowDetails.description}
-            onChange={WorkflowDescriptionChangeHandler}
+            value={description}
+            onChange={descriptionChangeHandle}
             multiline
             rows={8}
           />
@@ -149,7 +208,7 @@ const WorkflowSettings: React.FC = () => {
       ) : null}
     </div>
   );
-};
+});
 
 // Modal Content
 

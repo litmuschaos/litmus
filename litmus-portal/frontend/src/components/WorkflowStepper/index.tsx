@@ -53,9 +53,9 @@ function getStepContent(
     case 0:
       return <ChooseAWorkflowAgent ref={childRef} />;
     case 1:
-      return <ChooseWorkflow />;
+      return <ChooseWorkflow ref={childRef} />;
     case 2:
-      return <WorkflowSettings />;
+      return <WorkflowSettings ref={childRef} />;
     case 3:
       return <TuneWorkflow />;
     case 4:
@@ -179,6 +179,8 @@ const WorkflowStepper = () => {
         return t(`workflowStepper.step1.errorSnackbar`);
       case 1:
         return t(`workflowStepper.step2.errorSnackbar`);
+      case 2:
+        return t(`workflowStepper.step3.errorSnackbar`);
       default:
         return '';
     }

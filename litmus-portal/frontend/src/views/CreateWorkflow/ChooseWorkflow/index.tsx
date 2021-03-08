@@ -6,8 +6,15 @@ import {
 } from '@material-ui/core';
 import { RadioButton } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
+import useActions from '../../../redux/actions';
+import * as AlertActions from '../../../redux/actions/alert';
 import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
 import useStyles from './styles';
 import UploadYAML from './uploadYAML';
@@ -17,15 +24,24 @@ interface ChooseWorkflowRadio {
   id?: string;
 }
 
-const ChooseWorkflow: React.FC = () => {
+const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const alert = useActions(AlertActions);
 
   const [selected, setSelected] = useState<string>('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.value);
   };
+
+  function onNext() {
+    if (selected === '') {
+      alert.changeAlertState(true); // No Workflow Type has been selected and user clicked on Next
+      return false;
+    }
+    return true;
+  }
 
   useEffect(() => {
     localforage
@@ -36,6 +52,10 @@ const ChooseWorkflow: React.FC = () => {
           : setSelected('')
       );
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <div className={classes.root}>
@@ -93,6 +113,6 @@ const ChooseWorkflow: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default ChooseWorkflow;

@@ -32,6 +32,7 @@ const ChoosePreDefinedExperiments = () => {
       id: event.target.value,
     };
     localforage.setItem('selectedScheduleOption', selection);
+    localforage.setItem('hasSetWorkflowData', false);
   };
 
   const filteredPreDefinedWorkflows = data.filter(

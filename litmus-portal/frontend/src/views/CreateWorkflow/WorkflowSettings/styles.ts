@@ -35,13 +35,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.25),
   },
   avatar: {
-    width: '5.625rem',
-    height: '5.625rem',
+    width: '5rem',
+    height: '5rem',
     borderRadius: 4,
     marginBottom: theme.spacing(2.5),
-    backgroundColor: theme.palette.disabledBackground,
     '& img': {
-      padding: theme.spacing(2),
       objectFit: 'contain',
     },
   },
