@@ -4,8 +4,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import React from 'react';
 import moment from 'moment';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
@@ -13,6 +13,7 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
@@ -126,6 +127,16 @@ const SideBar: React.FC = () => {
           selected={pathName === 'targets'}
         >
           <TargetsIcon />
+        </CustomisedListItem>
+        <CustomisedListItem
+          key="analytics"
+          handleClick={() => {
+            history.push('/analytics');
+          }}
+          label="Analytics"
+          selected={pathName === 'analytics'}
+        >
+          <AnalyticsIcon />
         </CustomisedListItem>
         <CustomisedListItem
           key="community"

@@ -5,7 +5,7 @@ import {
   CardContent,
   Typography,
 } from '@material-ui/core';
-import { Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -266,7 +266,7 @@ const MyHub = () => {
                 {t('myhub.mainPage.videoDescription')}
               </Typography>
               <div className={classes.quickActionDiv}>
-                <QuickActionCard />
+                <QuickActionCard analyticsHome={false} nonAdmin />
               </div>
             </div>
           </div>

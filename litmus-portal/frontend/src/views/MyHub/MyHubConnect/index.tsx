@@ -6,26 +6,25 @@ import {
   RadioGroup,
   Typography,
 } from '@material-ui/core';
-import React, { useState } from 'react';
 import Done from '@material-ui/icons/DoneAllTwoTone';
+import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { InputField, Modal, ButtonOutlined } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
+import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
+import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
+import VideoCarousel from '../../../components/VideoCarousel';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import {
   ADD_MY_HUB,
   GENERATE_SSH,
   SAVE_MY_HUB,
 } from '../../../graphql/mutations';
-import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
-import { validateStartEmptySpacing } from '../../../utils/validate';
-import useStyles from './styles';
 import {
   CreateMyHub,
   MyHubData,
@@ -33,9 +32,10 @@ import {
   SSHKey,
   SSHKeys,
 } from '../../../models/graphql/user';
-import VideoCarousel from '../../../components/VideoCarousel';
-import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
-import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
+import { history } from '../../../redux/configureStore';
+import { RootState } from '../../../redux/reducers';
+import { validateStartEmptySpacing } from '../../../utils/validate';
+import useStyles from './styles';
 
 interface GitHub {
   HubName: string;
@@ -546,7 +546,7 @@ const MyHub = () => {
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div className={classes.quickActionDiv}>
-            <QuickActionCard />
+            <QuickActionCard analyticsHome={false} nonAdmin />
           </div>
         </div>
       </div>

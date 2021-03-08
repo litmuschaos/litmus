@@ -97,7 +97,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
                 <span className={classes.bold}>
                   {t('workflowDetailsView.workflowInfo.param.endTime')}:
                 </span>{' '}
-                {timeDifference(execution_data.finishedAt)}
+                {execution_data.finishedAt === ''
+                  ? t('workflowDetailsView.workflowInfo.param.finished')
+                  : timeDifference(execution_data.finishedAt)}
               </Typography>
               <Typography>
                 <span className={classes.bold}>

@@ -183,7 +183,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       container: {
         args: [`${installAllExp}sleep 30`],
         command: ['sh', '-c'],
-        image: 'lachlanevenson/k8s-kubectl',
+        image: 'alpine/k8s:1.18.2',
       },
     };
     workflows.forEach((data) => {
@@ -236,7 +236,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             `kubectl delete chaosengine ${removeChaosEngine} -n {{workflow.parameters.adminModeNamespace}}`,
           ],
           command: ['sh', '-c'],
-          image: 'lachlanevenson/k8s-kubectl',
+          image: 'alpine/k8s:1.18.2',
         },
       };
     }
