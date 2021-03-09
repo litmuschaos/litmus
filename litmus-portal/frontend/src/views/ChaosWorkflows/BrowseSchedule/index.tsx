@@ -60,16 +60,14 @@ const BrowseSchedule: React.FC = () => {
   const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: projectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
 
   // Apollo mutation to delete the selected schedule
   const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_SCHEDULE, {
-    refetchQueries: [
-      { query: SCHEDULE_DETAILS, variables: { projectID: projectID } },
-    ],
+    refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
   });
 
   // State for search and filtering

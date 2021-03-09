@@ -41,7 +41,7 @@ const AcceptedInvitations: React.FC = () => {
     refetchQueries: [
       {
         query: GET_PROJECT,
-        variables: { projectID: projectID },
+        variables: { projectID },
       },
       { query: LIST_PROJECTS },
     ],

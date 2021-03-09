@@ -21,12 +21,12 @@ interface SelectedProjectDetails {
 const Header: React.FC = () => {
   const classes = useStyles();
 
-  //Get present user's username from JWT using auth utility
+  // Get present user's username from JWT using auth utility
   const username = getUsername();
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username: username } }
+    { variables: { username } }
   );
   const name: string = data?.getUser.name ?? '';
   const email: string = data?.getUser.email ?? '';

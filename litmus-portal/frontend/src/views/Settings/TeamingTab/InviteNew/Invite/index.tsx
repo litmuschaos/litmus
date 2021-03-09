@@ -80,7 +80,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const { loading, data: dataB } = useQuery<ProjectDetail, ProjectDetailVars>(
     GET_PROJECT,
     {
-      variables: { projectID: projectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -116,7 +116,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     refetchQueries: [
       {
         query: GET_PROJECT,
-        variables: { projectID: projectID },
+        variables: { projectID },
       },
     ],
   });

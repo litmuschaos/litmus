@@ -142,7 +142,7 @@ const MyHub: React.FC = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: projectID,
+        projectID,
       },
     });
     setCloningRepo(true);
@@ -175,7 +175,7 @@ const MyHub: React.FC = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: projectID,
+        projectID,
       },
     });
     setSavingHub(true);

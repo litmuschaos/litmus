@@ -47,7 +47,7 @@ const WorkflowDetails: React.FC = () => {
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: projectID } }
+    { variables: { projectID } }
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
@@ -63,7 +63,7 @@ const WorkflowDetails: React.FC = () => {
     ) {
       subscribeToMore<WorkflowSubscription>({
         document: WORKFLOW_EVENTS,
-        variables: { projectID: projectID },
+        variables: { projectID },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           const modifiedWorkflows = prev.getWorkFlowRuns.slice();

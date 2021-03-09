@@ -8,6 +8,7 @@ import config from '../../config';
 import { setUserDetails } from '../../utils/auth';
 import { validateStartEmptySpacing } from '../../utils/validate';
 import useStyles from './styles';
+
 interface authData {
   username: string;
   password: string;
@@ -51,7 +52,7 @@ const LoginPage = () => {
         } else {
           setUserDetails(data.access_token);
           setIsLoading(false);
-          //TODO: react-router generate experiment
+          // TODO: react-router generate experiment
           window.location.assign('/home');
         }
       })

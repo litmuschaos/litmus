@@ -3,13 +3,11 @@ import MobileStepper from '@material-ui/core/MobileStepper';
 import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import config from '../../../config';
 import { CREATE_USER } from '../../../graphql';
 import { CreateUserData } from '../../../models/graphql/user';
-import { RootState } from '../../../redux/reducers';
 import { getToken, getUserDetailsFromJwt } from '../../../utils/auth';
 import {
   validateConfirmPassword,
@@ -37,7 +35,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     name: userData.name,
     project_name: '',
   });
-  // console.log(info);
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };

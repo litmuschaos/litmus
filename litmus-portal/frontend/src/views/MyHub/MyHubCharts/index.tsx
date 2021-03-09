@@ -46,7 +46,7 @@ const MyHub: React.FC = () => {
   const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
     variables: {
       HubName: paramData.hubname,
-      projectID: projectID,
+      projectID,
     },
     fetchPolicy: 'cache-and-network',
   });

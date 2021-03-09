@@ -46,7 +46,6 @@ const Routes: React.FC = () => {
   const baseRoute = window.location.pathname.split('/')[1];
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
-  console.log('App.tsx pre-query projectID:', projectIDFromURL);
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
   const userID = getUserId();

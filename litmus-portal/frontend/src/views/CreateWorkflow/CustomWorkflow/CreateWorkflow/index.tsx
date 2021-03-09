@@ -131,7 +131,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         setAvailableHubs([...hubData.getHubStatus]);
         getCharts({
           variables: {
-            projectID: projectID,
+            projectID,
             HubName: hubData.getHubStatus[0].HubName,
           },
         });
@@ -154,7 +154,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     })[0];
     getCharts({
       variables: {
-        projectID: projectID,
+        projectID,
         HubName: hubname,
       },
     });

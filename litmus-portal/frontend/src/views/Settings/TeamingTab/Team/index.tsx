@@ -127,7 +127,7 @@ const TeamingTab: React.FC = () => {
   const { data: dataB, refetch } = useQuery<ProjectDetail, ProjectDetailVars>(
     GET_PROJECT,
     {
-      variables: { projectID: projectID },
+      variables: { projectID },
       onCompleted: (data) => setselectedProjectName(data.getProject.name),
       fetchPolicy: 'cache-and-network',
     }
@@ -228,7 +228,7 @@ const TeamingTab: React.FC = () => {
     let projectOwner = 0;
     let projectInvitation = 0;
     let projectOther = 0;
-    projects.map((project) => {
+    projects.forEach((project) => {
       project.members.forEach((member: Member) => {
         if (member.user_id === userID && member.role === 'Owner') {
           projectOwner++;

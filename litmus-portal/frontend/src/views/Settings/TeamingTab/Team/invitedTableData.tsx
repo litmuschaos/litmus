@@ -52,7 +52,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
     refetchQueries: [
       {
         query: GET_PROJECT,
-        variables: { projectID: projectID },
+        variables: { projectID },
       },
     ],
   });
@@ -68,7 +68,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
       refetchQueries: [
         {
           query: GET_PROJECT,
-          variables: { projectID: projectID },
+          variables: { projectID },
         },
       ],
     }

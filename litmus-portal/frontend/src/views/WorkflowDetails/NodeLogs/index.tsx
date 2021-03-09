@@ -42,7 +42,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
 
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: projectID } }
+    { variables: { projectID } }
   );
 
   const workflow = workflow_data?.getWorkFlowRuns.filter(

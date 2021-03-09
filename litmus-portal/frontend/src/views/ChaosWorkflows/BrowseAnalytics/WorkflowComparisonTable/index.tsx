@@ -134,7 +134,7 @@ const WorkflowComparisonTable = () => {
   const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: projectID, workflowIDs: [] },
+      variables: { projectID, workflowIDs: [] },
       fetchPolicy: 'cache-and-network',
     }
   );

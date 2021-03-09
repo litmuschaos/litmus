@@ -62,12 +62,9 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
     setTarget(false);
   };
 
-  //TODO:: Check with Amit/Vedant
-
   useQuery(GET_CLUSTER, {
     variables: { project_id: projectID },
     onCompleted: (data) => {
-      console.log('Snackbar projectID: ', projectID);
       const clusters: Cluster[] = [];
       if (data && data.getCluster.length !== 0) {
         data.getCluster.forEach((e: Cluster) => {

@@ -1,15 +1,11 @@
-import { useQuery } from '@apollo/client';
 import { List, ListItem, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { LIST_PROJECTS_AND_ROLES } from '../../graphql';
-import { Member, Projects } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
-import { getUserId } from '../../utils/auth';
-import { getProjectID } from '../../utils/getSearchParams';
+import { getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './style';
 
 const QuickActionItems: React.FC = ({ children }) => {
@@ -19,30 +15,10 @@ const QuickActionItems: React.FC = ({ children }) => {
 
 const QuickActionCard = () => {
   const classes = useStyles();
-  const projectID = getProjectID();
-  const [isOwner, setisOwner] = useState<boolean>(false);
-  const userID = getUserId();
+  const userRole = getProjectRole();
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
   const apiDocsUrl = `${window.location.href}api-doc`;
-
-  useQuery<Projects>(LIST_PROJECTS_AND_ROLES, {
-    onCompleted: (data) => {
-      if (data.listProjects) {
-        data.listProjects.map((project) => {
-          project.members.forEach((member: Member) => {
-            if (
-              member.user_id === userID &&
-              member.role === 'Owner' &&
-              project.id === projectID
-            ) {
-              setisOwner(true);
-            }
-          });
-        });
-      }
-    },
-  });
 
   return (
     <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>
@@ -51,7 +27,7 @@ const QuickActionCard = () => {
           {t('quickActionCard.quickActions')}
         </Typography>
         <List>
-          {isOwner && (
+          {userRole === 'Owner' && (
             <QuickActionItems>
               <div className={classes.imgDiv}>
                 <img src="/icons/team.png" alt="team" />
