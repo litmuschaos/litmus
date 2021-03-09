@@ -28,6 +28,64 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3, 0),
     fontSize: '1rem',
   },
+
+  closeButton: {
+    borderColor: theme.palette.border.main,
+  },
+
+  modal: {
+    [theme.breakpoints.up('lg')]: {
+      padding: theme.spacing(10),
+    },
+    width: '100%',
+    padding: theme.spacing(3),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+
+  // Styles for Add Experiment Modal
+  addExpModal: {
+    textAlign: 'left',
+    padding: theme.spacing(5),
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  doneBtn: {
+    marginLeft: 'auto',
+    marginTop: theme.spacing(2.5),
+    marginRight: theme.spacing(2),
+  },
+  inputDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: theme.spacing(2.5),
+    alignItems: 'center',
+  },
+  formControl: {
+    height: '2.5rem',
+    width: '20rem',
+    marginTop: 20,
+  },
+  selectText: {
+    height: '2.5rem',
+    padding: theme.spacing(0.5),
+  },
+  label: {
+    color: theme.palette.common.black,
+  },
 }));
 
 export default useStyles;
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+
+export const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
+};

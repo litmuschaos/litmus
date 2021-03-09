@@ -50,7 +50,6 @@ quickActionCard:
 customWorkflowCard:
   customWorkflow: Create your own workflow
   infraChaos: Infra-Chaos
-  
 
 workflowStepper:
   continueError: To continue, please check the error in code.
@@ -390,19 +389,19 @@ workflowDetailsView:
   workflowInfo:
     header: Overall Workflow Description
     resilienceScore: Resilience Score
-    runTime: 
+    runTime:
       runTimeHeader: Run Time
-      startTime: "Start Time :"
-      endTime: "End Time :"
+      startTime: 'Start Time :'
+      endTime: 'End Time :'
     hostedOn:
       hostedOnHeader: Hosted On
-      cluster: "Cluster :"
-      namespace: "Namespace :"
+      cluster: 'Cluster :'
+      namespace: 'Namespace :'
     targets:
       targetsHeader: Targets
-      cluster: "Cluster :"
-      namespace: "Namespace :"
-    application: "Application :"
+      cluster: 'Cluster :'
+      namespace: 'Namespace :'
+    application: 'Application :'
   workflowNodeInfo:
     name: Name
     type: Type
@@ -418,7 +417,7 @@ workflowDetailsView:
       status: Status
       duration: Duration
       startTime: Start Time
-      applicationDetails: Application Details 
+      applicationDetails: Application Details
     showProperties: Show properties
     viewLogs: View Logs
     nodeName: Step Name
@@ -450,7 +449,7 @@ createWorkflow:
     modalHeading: Create your
     modalHeadingStrong: workflow name
     settings: Workflow Settings
-    description1: You have selected a pre-defined workflow 
+    description1: You have selected a pre-defined workflow
     description2: Provide a name and description to the new workflow.
     edit: Edit Photo
     changeImage: Change workflow logo
@@ -460,6 +459,7 @@ createWorkflow:
     continue: Do you want to continue?
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
+    selectMyHub: Select MyHub
     label:
       workflowName: Workflow name
       desc: Description
@@ -519,6 +519,14 @@ createWorkflow:
     header: Tune the selected workflow
     selectedWorkflowInfo: You have selected
     description: Fine tune the application  names and other variables to suit your needs
+    addExp: Add experiments
+    view: View YAML
+    firstExperiment: Add your first experiment
+    choose: Choose Experiments
+    selectAvailableExp: Select experiments available in
+    afterSelect: After selecting you can fine tune them.
+    selectExp: Select An Experiment
+    done: Done
     addProbe:
       heading: Add
       headingStrong: Probe
