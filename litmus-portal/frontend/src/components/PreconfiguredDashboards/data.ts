@@ -9,7 +9,7 @@ export default [
     information:
       'This dashboard visualizes Node and Pod level CPU and memory utilization metrics interleaved with chaos events.',
     chaosEventQueryTemplate:
-      'heptio_eventrouter_normal_total{reason="ChaosInject", involved_object_name="#{}", involved_object_namespace="*{}", involved_object_kind="ChaosEngine"} - on () (heptio_eventrouter_normal_total{reason="ChaosEngineCompleted", involved_object_name="#{}", involved_object_namespace="*{}", involved_object_kind="ChaosEngine"} OR on() vector(0))',
+      'litmuschaos_awaited_experiments{chaosresult_name="#{}",chaosresult_namespace="*{}", job="chaos-monitor"}',
     panelGroupMap: [
       {
         groupName: 'CPU Usage Metrics',
@@ -279,7 +279,7 @@ export default [
     information:
       'This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics.',
     chaosEventQueryTemplate:
-      'heptio_eventrouter_normal_total{reason="ChaosInject", involved_object_name="#{}", involved_object_namespace="*{}", involved_object_kind="ChaosEngine"} - on () (heptio_eventrouter_normal_total{reason="ChaosEngineCompleted", involved_object_name="#{}", involved_object_namespace="*{}", involved_object_kind="ChaosEngine"} OR on() vector(0))',
+      'litmuschaos_awaited_experiments{chaosresult_name="#{}",chaosresult_namespace="*{}", job="chaos-monitor"}',
     panelGroupMap: [
       {
         groupName: 'Orders Metrics',

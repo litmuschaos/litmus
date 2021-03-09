@@ -20,6 +20,11 @@ import {
 import { RootState } from '../../../redux/reducers';
 import useStyles from './styles';
 
+interface PrometheusQueryDataInterface {
+  promInput: PrometheusQueryInput;
+  chaosInput: string[];
+}
+
 const filterUndefinedData = (data: GraphMetric[]): GraphMetric[] =>
   data
     ? data
@@ -53,11 +58,14 @@ const PanelContent: React.FC<PanelResponse> = ({
   const [
     prometheusQueryData,
     setPrometheusQueryData,
-  ] = React.useState<PrometheusQueryInput>({
-    url: '',
-    start: '',
-    end: '',
-    queries: [],
+  ] = React.useState<PrometheusQueryDataInterface>({
+    promInput: {
+      url: '',
+      start: '',
+      end: '',
+      queries: [],
+    },
+    chaosInput: [],
   });
 
   const [updateQueries, setUpdateQueries] = React.useState<boolean>(false);
@@ -77,14 +85,18 @@ const PanelContent: React.FC<PanelResponse> = ({
     PrometheusResponse,
     PrometheusQueryVars
   >(PROM_QUERY, {
-    variables: { prometheusInput: prometheusQueryData },
+    variables: { prometheusInput: prometheusQueryData.promInput },
     // fetchPolicy: 'cache-and-network',
     pollInterval: selectedDashboard.refreshRate,
   });
 
   const generatePrometheusQueryData = () => {
     const promQueries: promQueryInput[] = [];
+    const chaosQueries: string[] = [];
     prom_queries.forEach((query: PromQuery) => {
+      if (query.prom_query_name.startsWith('litmuschaos_awaited_experiments')) {
+        chaosQueries.push(query.queryid);
+      }
       promQueries.push({
         queryid: query.queryid,
         query: query.prom_query_name,
@@ -99,7 +111,10 @@ const PanelContent: React.FC<PanelResponse> = ({
       end: `${Math.round(new Date().getTime() / 1000)}`,
       queries: promQueries,
     };
-    setPrometheusQueryData(prometheusQueryInput);
+    setPrometheusQueryData({
+      promInput: prometheusQueryInput,
+      chaosInput: chaosQueries,
+    });
   };
 
   useEffect(() => {
@@ -135,7 +150,33 @@ const PanelContent: React.FC<PanelResponse> = ({
     }));
   }
 
-  if (error || !seriesData) {
+  let eventData: Array<GraphMetric> = [
+    { metricName: '', data: [{ date: NaN, value: NaN }] },
+  ];
+  if (
+    prometheusData &&
+    prometheusData.GetPromQuery.length &&
+    prometheusData.GetPromQuery[0].legends?.length &&
+    prometheusData.GetPromQuery[0].legends !== null &&
+    prometheusData.GetPromQuery[0].legends[0] !== null
+  ) {
+    prometheusData.GetPromQuery.forEach((queryResponse) => {
+      if (prometheusQueryData.chaosInput.includes(queryResponse.queryid)) {
+        if (queryResponse.legends && queryResponse.legends[0]) {
+          eventData = queryResponse.legends.map((elem, index) => ({
+            metricName: elem[0] ?? 'test',
+            data: queryResponse.tsvs[index].map((dataPoint) => ({
+              date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
+              value: parseFloat(dataPoint.value ?? '0.0'),
+            })),
+            baseColor: 'red',
+          }));
+        }
+      }
+    });
+  }
+
+  if (error) {
     return (
       <div className={classes.rootPanel}>
         <Typography>{panel_name}</Typography>
@@ -143,8 +184,6 @@ const PanelContent: React.FC<PanelResponse> = ({
       </div>
     );
   }
-
-  // console.log(seriesData);
 
   return (
     <div className={classes.rootPanel}>
@@ -173,6 +212,7 @@ const PanelContent: React.FC<PanelResponse> = ({
           <LineAreaGraph
             legendTableHeight={120}
             openSeries={filterUndefinedData(seriesData)}
+            eventSeries={filterUndefinedData(eventData)}
             showPoints={false}
             showLegendTable
             showTips
