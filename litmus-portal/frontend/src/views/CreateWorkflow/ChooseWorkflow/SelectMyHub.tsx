@@ -44,7 +44,9 @@ const SelectMyHub = () => {
   // Retrieving saved data from index DB,
   useEffect(() => {
     localforage.getItem('selectedHub').then((value) => {
-      return value !== null && setSelectedHub(value as string);
+      if (value !== null) {
+        setSelectedHub(value as string);
+      }
     });
   }, []);
 
