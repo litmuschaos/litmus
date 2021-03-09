@@ -9,6 +9,7 @@ import Center from '../../../containers/layouts/Center';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../graphql';
 import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
+import { getProjectID } from '../../../utils/getSearchParams';
 import ChartCard from './chartCard';
 import HeaderSection from './headerSection';
 import useStyles from './styles';
@@ -19,14 +20,13 @@ interface ChartName {
 }
 
 interface URLParams {
-  projectID: string;
   hubname: string;
 }
 
 const MyHub: React.FC = () => {
   // Get Parameters from URL
   const paramData: URLParams = useParams();
-  const projectID = paramData.projectID;
+  const projectID = getProjectID();
   // Get all MyHubs with status
   const { data: hubDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
     variables: { data: projectID },

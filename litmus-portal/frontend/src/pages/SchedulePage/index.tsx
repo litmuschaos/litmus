@@ -4,7 +4,7 @@ import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
-import { Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -25,7 +25,7 @@ import {
   WeightMap,
 } from '../../models/graphql/createWorkflowData';
 import { ScheduleDataVars, Schedules } from '../../models/graphql/scheduleData';
-import { Project, Member } from '../../models/graphql/user';
+import { Member, Project } from '../../models/graphql/user';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -34,6 +34,7 @@ import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getUserId } from '../../utils/auth';
+import { getProjectID } from '../../utils/getSearchParams';
 import { validateWorkflowName } from '../../utils/validate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
@@ -45,7 +46,6 @@ import ChooseAWorkflowCluster from '../../views/CreateWorkflow/WorkflowCluster';
 import { cronWorkflow, workflowOnce } from './templates';
 
 interface URLParams {
-  projectID: string;
   workflowName: string;
   scheduleProjectID: string;
 }
@@ -149,7 +149,7 @@ const EditScheduledWorkflow = () => {
   const workflow = useActions(WorkflowActions);
   // Get Parameters from URL
   const paramData: URLParams = useParams();
-  const selectedProjectID = paramData.projectID;
+  const selectedProjectID = getProjectID();
   const [userRole, setuserRole] = useState<string>('');
 
   // Apollo query to get the scheduled data

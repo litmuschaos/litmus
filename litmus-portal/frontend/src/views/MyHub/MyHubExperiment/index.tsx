@@ -1,36 +1,34 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Scaffold from '../../../containers/layouts/Scaffold';
-import useStyles from './styles';
-import { RootState } from '../../../redux/reducers';
-import ExperimentHeader from '../../../components/ExperimentHeader';
+import { useParams } from 'react-router-dom';
 import DeveloperGuide from '../../../components/DeveloperGuide';
+import ExperimentHeader from '../../../components/ExperimentHeader';
 import ExperimentInfo from '../../../components/ExperimentInfo';
-import UsefulLinks from '../../../components/UsefulLinks';
 import InstallChaos from '../../../components/InstallChaos';
+import Loader from '../../../components/Loader';
+import UsefulLinks from '../../../components/UsefulLinks';
+import config from '../../../config';
+import Scaffold from '../../../containers/layouts/Scaffold';
 import { GET_EXPERIMENT_DATA, GET_HUB_STATUS } from '../../../graphql';
 import { ExperimentDetail, HubStatus, Link } from '../../../models/redux/myhub';
-import Loader from '../../../components/Loader';
-import config from '../../../config';
+import { getProjectID } from '../../../utils/getSearchParams';
+import useStyles from './styles';
 
 interface URLParams {
   chart: string;
   experiment: string;
   hubname: string;
-  projectID: string;
 }
 
 const MyHub = () => {
   const classes = useStyles();
   // Get Parameters from URL
   const paramData: URLParams = useParams();
-
+  const projectID = getProjectID();
   // Get all MyHubs with status
   const { data: hubDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: paramData.projectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -44,7 +42,7 @@ const MyHub = () => {
     variables: {
       data: {
         HubName: paramData.hubname,
-        ProjectID: paramData.projectID,
+        ProjectID: projectID,
         ChartName: paramData.chart,
         ExperimentName: paramData.experiment,
       },
@@ -62,7 +60,7 @@ const MyHub = () => {
 
   // State for default icon URL
   const experimentDefaultImagePath = `${config.grahqlEndpoint}/icon`;
-  const imageURL = `${experimentDefaultImagePath}/${paramData.projectID}/${paramData.hubname}/${paramData.chart}/${paramData.experiment}.png`;
+  const imageURL = `${experimentDefaultImagePath}/${projectID}/${paramData.hubname}/${paramData.chart}/${paramData.experiment}.png`;
 
   const { t } = useTranslation();
 
