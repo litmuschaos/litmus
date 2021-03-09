@@ -1,16 +1,14 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import { DELETE_CLUSTER, GET_PROJECT_ROLES } from '../../../graphql';
+import { DELETE_CLUSTER } from '../../../graphql';
 import { Cluster, DeleteCluster } from '../../../models/graphql/clusterData';
-import { Member, Project } from '../../../models/graphql/user';
 import { LocationState } from '../../../models/routerModel';
 import { history } from '../../../redux/configureStore';
-import { getUserId } from '../../../utils/auth';
-import { getProjectID } from '../../../utils/getSearchParams';
+import { getProjectRole } from '../../../utils/getSearchParams';
 import BackButton from '../../Button/BackButton';
 import ButtonOutline from '../../Button/ButtonOutline';
 import TargetCopy from '../TargetCopy';
@@ -28,30 +26,15 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
   const { data } = location.state;
   const classes = useStyles();
   const link: string = data.token;
-  const projectID = getProjectID();
-  const userID = getUserId();
 
   const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER);
-  const [userRole, setuserRole] = useState<string>('');
+  const userRole = getProjectRole();
   const [open, setOpen] = React.useState(false);
 
   const handleDelete = () => {
     deleteCluster({ variables: { cluster_id: data.cluster_id } });
     history.push('/targets');
   };
-
-  useQuery<Project>(GET_PROJECT_ROLES, {
-    variables: { projectID: projectID },
-    onCompleted: (data) => {
-      if (data.members) {
-        data.members.forEach((member: Member) => {
-          if (member.user_id === userID) {
-            setuserRole(member.role);
-          }
-        });
-      }
-    },
-  });
 
   const { t } = useTranslation();
 

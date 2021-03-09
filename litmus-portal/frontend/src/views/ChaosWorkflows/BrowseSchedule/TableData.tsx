@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import {
   Button,
   IconButton,
@@ -16,21 +16,18 @@ import ReplayIcon from '@material-ui/icons/Replay';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
-import { GET_PROJECT_ROLES } from '../../../graphql';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
-import { Member, Project } from '../../../models/graphql/user';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
-import { getUserId } from '../../../utils/auth';
-import { getProjectID } from '../../../utils/getSearchParams';
+import { getUserRole } from '../../../utils/auth';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
 
@@ -43,22 +40,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const userID = getUserId();
-  const projectID = getProjectID();
-  const [userRole, setuserRole] = useState<string>('');
-
-  useQuery<Project>(GET_PROJECT_ROLES, {
-    variables: { projectID: projectID },
-    onCompleted: (data) => {
-      if (data.members) {
-        data.members.forEach((member: Member) => {
-          if (member.user_id === userID) {
-            setuserRole(member.role);
-          }
-        });
-      }
-    },
-  });
+  const userRole = getUserRole();
 
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

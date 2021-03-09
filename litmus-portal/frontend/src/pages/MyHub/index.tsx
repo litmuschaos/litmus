@@ -15,17 +15,10 @@ import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
 import VideoCarousel from '../../components/VideoCarousel';
 import Scaffold from '../../containers/layouts/Scaffold';
-import {
-  DELETE_HUB,
-  GET_HUB_STATUS,
-  GET_PROJECT_ROLES,
-  SYNC_REPO,
-} from '../../graphql';
-import { Member, Project } from '../../models/graphql/user';
+import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
-import { getUserId } from '../../utils/auth';
-import { getProjectID } from '../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import CustomMyHubCard from './customMyHubCard';
 import useStyles from './styles';
 
@@ -45,23 +38,8 @@ const MyHub: React.FC = () => {
 
   // Get selected projectID from the URL
   const projectID = getProjectID();
-  const userID = getUserId();
-
-  const [userRole, setuserRole] = useState<string>('');
-
   // Set userRole
-  useQuery<Project>(GET_PROJECT_ROLES, {
-    variables: { projectID: projectID },
-    onCompleted: (data) => {
-      if (data.members) {
-        data.members.forEach((member: Member) => {
-          if (member.user_id === userID) {
-            setuserRole(member.role);
-          }
-        });
-      }
-    },
-  });
+  const userRole = getProjectRole();
 
   // Get MyHubs with Status
   const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {

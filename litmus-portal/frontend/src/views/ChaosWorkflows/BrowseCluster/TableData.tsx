@@ -1,17 +1,13 @@
-import { useQuery } from '@apollo/client';
 import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
-import { GET_PROJECT_ROLES } from '../../../graphql';
 import { Cluster } from '../../../models/graphql/clusterData';
-import { Member, Project } from '../../../models/graphql/user';
 import { history } from '../../../redux/configureStore';
-import { getUserId } from '../../../utils/auth';
+import { getUserRole } from '../../../utils/auth';
 import timeDifferenceForDate from '../../../utils/datesModifier';
-import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -22,7 +18,6 @@ interface TableDataProps {
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const userID = getUserId();
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -32,21 +27,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     return 'Date not available';
   };
 
-  const projectID = getProjectID();
-  const [userRole, setuserRole] = useState<string>('');
-
-  useQuery<Project>(GET_PROJECT_ROLES, {
-    variables: { projectID: projectID },
-    onCompleted: (data) => {
-      if (data.members) {
-        data.members.forEach((member: Member) => {
-          if (member.user_id === userID) {
-            setuserRole(member.role);
-          }
-        });
-      }
-    },
-  });
+  const userRole = getUserRole();
 
   const [open, setOpen] = React.useState(false);
 

@@ -1,21 +1,20 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import Step from '@material-ui/core/Step';
 import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import { ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import { CREATE_WORKFLOW, GET_PROJECT_ROLES } from '../../graphql';
+import { CREATE_WORKFLOW } from '../../graphql';
 import {
   CreateWorkFlowInput,
   CreateWorkflowResponse,
   WeightMap,
 } from '../../models/graphql/createWorkflowData';
-import { Member, Project } from '../../models/graphql/user';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -23,8 +22,7 @@ import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { getUserId } from '../../utils/auth';
-import { getProjectID } from '../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { validateWorkflowName } from '../../utils/validate';
 import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 import parsed from '../../utils/yamlUtils';
@@ -123,8 +121,7 @@ function getStepContent(
 const CustomStepper: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const userID = getUserId();
-  const [userRole, setuserRole] = useState<string>('');
+  const userRole = getProjectRole();
   const template = useActions(TemplateSelectionActions);
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -149,19 +146,6 @@ const CustomStepper: React.FC = () => {
   const isDisable = useSelector(
     (state: RootState) => state.selectTemplate.isDisable
   );
-
-  useQuery<Project>(GET_PROJECT_ROLES, {
-    variables: { projectID: projectID },
-    onCompleted: (data) => {
-      if (data.members) {
-        data.members.forEach((member: Member) => {
-          if (member.user_id === userID) {
-            setuserRole(member.role);
-          }
-        });
-      }
-    },
-  });
 
   const tabs = useActions(TabActions);
   const workflow = useActions(WorkflowActions);

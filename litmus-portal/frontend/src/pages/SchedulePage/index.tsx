@@ -5,7 +5,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import { ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -18,14 +18,13 @@ import useStyles from '../../components/WorkflowStepper/styles';
 import useQontoStepIconStyles from '../../components/WorkflowStepper/useQontoStepIconStyles';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
-import { GET_PROJECT_ROLES, SCHEDULE_DETAILS } from '../../graphql/queries';
+import { SCHEDULE_DETAILS } from '../../graphql/queries';
 import {
   CreateWorkFlowInput,
   UpdateWorkflowResponse,
   WeightMap,
 } from '../../models/graphql/createWorkflowData';
 import { ScheduleDataVars, Schedules } from '../../models/graphql/scheduleData';
-import { Member, Project } from '../../models/graphql/user';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -34,7 +33,7 @@ import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getUserId } from '../../utils/auth';
-import { getProjectID } from '../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { validateWorkflowName } from '../../utils/validate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
@@ -138,7 +137,7 @@ function getStepContent(
   }
 }
 
-const EditScheduledWorkflow = () => {
+const EditScheduledWorkflow: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const userID = getUserId();
@@ -150,7 +149,7 @@ const EditScheduledWorkflow = () => {
   // Get Parameters from URL
   const paramData: URLParams = useParams();
   const selectedProjectID = getProjectID();
-  const [userRole, setuserRole] = useState<string>('');
+  const userRole = getProjectRole();
 
   // Apollo query to get the scheduled data
   const { data, loading } = useQuery<Schedules, ScheduleDataVars>(
@@ -160,19 +159,6 @@ const EditScheduledWorkflow = () => {
       fetchPolicy: 'cache-and-network',
     }
   );
-
-  useQuery<Project>(GET_PROJECT_ROLES, {
-    variables: { projectID: selectedProjectID },
-    onCompleted: (data) => {
-      if (data.members) {
-        data.members.forEach((member: Member) => {
-          if (member.user_id === userID) {
-            setuserRole(member.role);
-          }
-        });
-      }
-    },
-  });
 
   const wfDetails =
     data &&
