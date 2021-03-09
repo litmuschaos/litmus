@@ -19,7 +19,7 @@ const SelectMyHub = () => {
   const [availableHubs, setAvailableHubs] = useState<MyHubDetail[]>([]);
 
   // Get all MyHubs with status
-  const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
+  const { data, loading } = useQuery<HubStatus>(GET_HUB_STATUS, {
     variables: { data: selectedProjectID },
     fetchPolicy: 'cache-and-network',
   });
@@ -39,7 +39,7 @@ const SelectMyHub = () => {
     if (data?.getHubStatus.length) {
       setAvailableHubs([...data.getHubStatus]);
     }
-  }, [data]);
+  }, [loading]);
 
   // Retrieving saved data from index DB,
   useEffect(() => {
