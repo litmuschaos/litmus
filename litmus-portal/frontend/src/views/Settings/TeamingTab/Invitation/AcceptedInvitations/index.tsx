@@ -3,7 +3,6 @@ import { Paper, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   GET_PROJECT,
   LEAVE_PROJECT,
@@ -12,11 +11,8 @@ import {
 import { MemberInvitation } from '../../../../../models/graphql/invite';
 import { Member, Project, Projects } from '../../../../../models/graphql/user';
 import { getUserId, getUsername, getUserRole } from '../../../../../utils/auth';
+import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 const AcceptedInvitations: React.FC = () => {
   const classes = useStyles();
@@ -33,7 +29,7 @@ const AcceptedInvitations: React.FC = () => {
     },
   });
   // const userData = useSelector((state: RootState) => state.userData);
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   // stores the user who has left the project
   const [exitedMember, setExitedMember] = useState<string>('');

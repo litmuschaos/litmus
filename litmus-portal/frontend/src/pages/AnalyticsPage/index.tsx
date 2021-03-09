@@ -6,8 +6,7 @@ import { Typography } from '@material-ui/core';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -18,15 +17,11 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
-import { RootState } from '../../redux/reducers';
+import { getProjectID } from '../../utils/getSearchParams';
 import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
 import WorkflowDetailsTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunDetailsTable';
 import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface WorkflowRunData {
   testsPassed: number;
@@ -89,7 +84,7 @@ const AnalyticsPage: React.FC = () => {
   });
 
   // get ProjectID
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
   const { data, error } = useQuery<WorkflowList, WorkflowListDataVars>(

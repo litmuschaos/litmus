@@ -21,7 +21,6 @@ import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
@@ -35,13 +34,10 @@ import * as TemplateSelectionActions from '../../../../redux/actions/template';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
 import { RootState } from '../../../../redux/reducers';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import { validateWorkflowName } from '../../../../utils/validate';
 import BackButton from '../BackButton';
 import useStyles, { MenuProps } from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface WorkflowDetails {
   workflow_name: string;
@@ -61,7 +57,7 @@ interface VerifyCommitProps {
 const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const workflowDetails = useSelector((state: RootState) => state.workflowData);
   const workflowAction = useActions(WorkflowActions);
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   const [workflowData, setWorkflowData] = useState<WorkflowDetails>({
     workflow_name: workflowDetails.name,

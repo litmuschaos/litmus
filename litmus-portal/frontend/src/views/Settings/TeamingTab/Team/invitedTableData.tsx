@@ -10,7 +10,6 @@ import {
 import { ButtonFilled, ButtonOutlined, LightPills, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import Loader from '../../../../components/Loader';
 import {
   GET_PROJECT,
@@ -28,12 +27,9 @@ import {
   Member,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import userAvatar from '../../../../utils/user';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface TableDataProps {
   row: Member;
@@ -41,13 +37,13 @@ interface TableDataProps {
 }
 const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
   const classes = useStyles();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   const { t } = useTranslation();
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [role, setRole] = useState<string>(row.role);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };

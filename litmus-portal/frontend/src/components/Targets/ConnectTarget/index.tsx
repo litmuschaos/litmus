@@ -3,7 +3,6 @@ import { Typography } from '@material-ui/core';
 import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { GET_CLUSTER, USER_CLUSTER_REG } from '../../../graphql';
 import {
@@ -12,16 +11,13 @@ import {
   CreateClusterInputResponse,
 } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
+import { getProjectID } from '../../../utils/getSearchParams';
 import BackButton from '../../Button/BackButton';
 import ButtonFilled from '../../Button/ButtonFilled';
 import ButtonOutline from '../../Button/ButtonOutline';
 import Loader from '../../Loader';
 import TargetCopy from '../TargetCopy';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 const ConnectTarget = () => {
   const classes = useStyles();
@@ -30,7 +26,7 @@ const ConnectTarget = () => {
   const [id, setID] = React.useState('');
   const [modal, setModal] = React.useState(false);
 
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   const [createClusterReg] = useMutation<
     CreateClusterInputResponse,

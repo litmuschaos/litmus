@@ -1,22 +1,15 @@
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import YAML from 'yaml';
-import useStyles from './styles';
 import { WORKFLOW_DETAILS } from '../../../graphql';
-
 import {
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
-import { RootState } from '../../../redux/reducers';
-import { useParams } from 'react-router-dom';
-
-interface ParamType {
-  projectID: string;
-}
+import { getProjectID } from '../../../utils/getSearchParams';
+import useStyles from './styles';
 
 interface ChaosResultProps {
   chaosResultOpen: boolean;
@@ -32,7 +25,7 @@ const ChaosResult: React.FC<ChaosResultProps> = ({
   pod_name,
 }) => {
   const classes = useStyles();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,

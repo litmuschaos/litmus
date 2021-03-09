@@ -25,7 +25,6 @@ import {
 import { Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import Center from '../../../../containers/layouts/Center';
 import { ALL_USERS, GET_PROJECT, LIST_PROJECTS } from '../../../../graphql';
 import { UserInvite } from '../../../../models/graphql/invite';
@@ -37,6 +36,7 @@ import {
   Projects,
 } from '../../../../models/graphql/user';
 import { getUserId } from '../../../../utils/auth';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import Invitation from '../Invitation';
 import InviteNew from '../InviteNew';
 import InvitedTableData from './invitedTableData';
@@ -57,10 +57,6 @@ const StyledTableCell = withStyles((theme: Theme) =>
     },
   })
 )(TableCell);
-
-interface ParamType {
-  projectID: string;
-}
 
 interface FilterOptions {
   search: string;
@@ -109,7 +105,7 @@ const TeamingTab: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   const [loading, setLoading] = useState(true);
 

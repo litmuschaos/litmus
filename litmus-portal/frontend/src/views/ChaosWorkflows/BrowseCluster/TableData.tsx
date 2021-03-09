@@ -4,7 +4,6 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { GET_PROJECT_ROLES } from '../../../graphql';
 import { Cluster } from '../../../models/graphql/clusterData';
@@ -12,11 +11,8 @@ import { Member, Project } from '../../../models/graphql/user';
 import { history } from '../../../redux/configureStore';
 import { getUserId } from '../../../utils/auth';
 import timeDifferenceForDate from '../../../utils/datesModifier';
+import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface TableDataProps {
   data: Cluster;
@@ -36,7 +32,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     return 'Date not available';
   };
 
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
   const [userRole, setuserRole] = useState<string>('');
 
   useQuery<Project>(GET_PROJECT_ROLES, {

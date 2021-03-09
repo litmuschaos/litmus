@@ -21,17 +21,15 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import Loader from '../../../components/Loader';
-import { SCHEDULE_DETAILS, DELETE_SCHEDULE } from '../../../graphql';
+import { DELETE_SCHEDULE, SCHEDULE_DETAILS } from '../../../graphql';
 import {
   DeleteSchedule,
   ScheduleDataVars,
   Schedules,
   ScheduleWorkflow,
 } from '../../../models/graphql/scheduleData';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -40,10 +38,6 @@ import {
 } from '../../../utils/sort';
 import useStyles from './styles';
 import TableData from './TableData';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface FilterOption {
   search: string;
@@ -58,9 +52,9 @@ interface SortData {
   name: { sort: boolean; ascending: boolean };
 }
 
-const BrowseSchedule = () => {
+const BrowseSchedule: React.FC = () => {
   const classes = useStyles();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled data
   const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(

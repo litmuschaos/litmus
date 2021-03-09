@@ -14,7 +14,6 @@ import { useTheme } from '@material-ui/core/styles';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import Loader from '../../../../../components/Loader';
 import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../../graphql';
 import {
@@ -25,12 +24,9 @@ import {
   ProjectDetail,
   ProjectDetailVars,
 } from '../../../../../models/graphql/user';
+import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './styles';
 import TableData from './TableData';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface FilterOptions {
   search: string;
@@ -59,7 +55,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // for response data
   const [rows, setRows] = useState<UserInvite[]>([]);
 
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   // for setting the role of the user while sending invitation
   const [roles, setRoles] = useState<Role[]>([]);

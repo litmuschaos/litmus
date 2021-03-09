@@ -10,7 +10,6 @@ import { Done } from '@material-ui/icons';
 import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import Loader from '../../../components/Loader';
@@ -22,12 +21,9 @@ import {
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
 import { GitOpsDetail } from '../../../models/graphql/gitOps';
 import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
+import { getProjectID } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface GitHub {
   GitURL: string;
@@ -42,7 +38,7 @@ interface GitOpsResult {
 const GitOpsTab = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState('disabled');
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
   const { t } = useTranslation();
   // Local State Variables for Github Data and GitOps result data
   const [gitHub, setGitHub] = useState<GitHub>({

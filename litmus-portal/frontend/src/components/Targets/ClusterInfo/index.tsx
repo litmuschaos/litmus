@@ -3,7 +3,6 @@ import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { DELETE_CLUSTER, GET_PROJECT_ROLES } from '../../../graphql';
 import { Cluster, DeleteCluster } from '../../../models/graphql/clusterData';
@@ -11,15 +10,12 @@ import { Member, Project } from '../../../models/graphql/user';
 import { LocationState } from '../../../models/routerModel';
 import { history } from '../../../redux/configureStore';
 import { getUserId } from '../../../utils/auth';
+import { getProjectID } from '../../../utils/getSearchParams';
 import BackButton from '../../Button/BackButton';
 import ButtonOutline from '../../Button/ButtonOutline';
 import TargetCopy from '../TargetCopy';
 // import BrowseWorkflow from '../TargetHome/BrowseWorkflow';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface ClusterProps {
   data: Cluster;
@@ -32,7 +28,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
   const { data } = location.state;
   const classes = useStyles();
   const link: string = data.token;
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
   const userID = getUserId();
 
   const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER);

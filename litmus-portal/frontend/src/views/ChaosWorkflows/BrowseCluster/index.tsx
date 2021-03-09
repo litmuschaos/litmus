@@ -14,7 +14,6 @@ import {
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import Loader from '../../../components/Loader';
 import { DELETE_CLUSTER, GET_CLUSTER } from '../../../graphql';
 import {
@@ -23,6 +22,7 @@ import {
   ClusterVars,
   DeleteCluster,
 } from '../../../models/graphql/clusterData';
+import { getProjectID } from '../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -32,10 +32,6 @@ import {
 import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface FilterOptions {
   search: string;
@@ -59,9 +55,9 @@ interface PaginationData {
   rowsPerPage: number;
 }
 
-const BrowseCluster = () => {
+const BrowseCluster: React.FC = () => {
   const classes = useStyles();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   const [filters, setFilters] = useState<FilterOptions>({
     search: '',

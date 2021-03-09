@@ -3,17 +3,14 @@ import { List, ListItem, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { LIST_PROJECTS_AND_ROLES } from '../../graphql';
 import { Member, Projects } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { getUserId } from '../../utils/auth';
+import { getProjectID } from '../../utils/getSearchParams';
 import useStyles from './style';
-
-interface ParamType {
-  projectID: string;
-}
 
 const QuickActionItems: React.FC = ({ children }) => {
   const classes = useStyles();
@@ -22,7 +19,7 @@ const QuickActionItems: React.FC = ({ children }) => {
 
 const QuickActionCard = () => {
   const classes = useStyles();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
   const [isOwner, setisOwner] = useState<boolean>(false);
   const userID = getUserId();
   const tabs = useActions(TabActions);

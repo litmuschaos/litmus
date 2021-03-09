@@ -1,3 +1,4 @@
+import { useMutation, useQuery } from '@apollo/client';
 import {
   Button,
   IconButton,
@@ -11,34 +12,27 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ReplayIcon from '@material-ui/icons/Replay';
 import cronstrue from 'cronstrue';
-import { ButtonFilled, Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import ReplayIcon from '@material-ui/icons/Replay';
-import { useMutation, useQuery } from '@apollo/client';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
+import { GET_PROJECT_ROLES } from '../../../graphql';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
-import * as TabActions from '../../../redux/actions/tabs';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
+import { Member, Project } from '../../../models/graphql/user';
 import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
+import { getUserId } from '../../../utils/auth';
+import { getProjectID } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
-import { useParams } from 'react-router-dom';
-import { GET_PROJECT_ROLES } from '../../../graphql';
-import { Project, Member } from '../../../models/graphql/user';
-import { getUserId } from '../../../utils/auth';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface TableDataProps {
   data: ScheduleWorkflow;
@@ -50,7 +44,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const { t } = useTranslation();
 
   const userID = getUserId();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
   const [userRole, setuserRole] = useState<string>('');
 
   useQuery<Project>(GET_PROJECT_ROLES, {

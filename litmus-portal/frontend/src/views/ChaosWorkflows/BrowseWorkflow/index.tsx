@@ -15,8 +15,6 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../graphql';
 import {
   ExecutionData,
@@ -25,7 +23,7 @@ import {
   WorkflowRun,
   WorkflowSubscription,
 } from '../../../models/graphql/workflowData';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -35,10 +33,6 @@ import {
 import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface FilterOptions {
   search: string;
@@ -65,7 +59,7 @@ interface DateData {
 
 const BrowseWorkflow = () => {
   const classes = useStyles();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(

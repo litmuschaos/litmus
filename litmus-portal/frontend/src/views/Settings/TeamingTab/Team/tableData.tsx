@@ -4,7 +4,6 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import Loader from '../../../../components/Loader';
 import { GET_PROJECT, GET_USER, REMOVE_INVITATION } from '../../../../graphql';
 import { MemberInvitation } from '../../../../models/graphql/invite';
@@ -14,12 +13,9 @@ import {
   Member,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import userAvatar from '../../../../utils/user';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface TableDataProps {
   row: Member;
@@ -27,11 +23,11 @@ interface TableDataProps {
 }
 const TableData: React.FC<TableDataProps> = ({ row }) => {
   const classes = useStyles();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   const { t } = useTranslation();
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
   const formatDate = (date: string) => {
     const day = moment(date).format('Do MMM, YYYY LT');

@@ -4,7 +4,7 @@ import Tabs from '@material-ui/core/Tabs/Tabs';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -18,15 +18,12 @@ import {
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
+import { getProjectID } from '../../utils/getSearchParams';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import useStyles from './styles';
 import TopNavButtons from './TopNavButtons';
-
-interface ParamType {
-  projectID: string;
-}
 
 const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
@@ -38,7 +35,7 @@ const WorkflowDetails: React.FC = () => {
   const { t } = useTranslation();
 
   // get ProjectID
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   const isInfoToggled = useSelector(
     (state: RootState) => state.toggleInfoButton.isInfoToggled

@@ -22,7 +22,6 @@ import * as _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import Loader from '../../../../components/Loader';
 import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
 import {
@@ -32,6 +31,7 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../../models/graphql/workflowListData';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -43,10 +43,6 @@ import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolbar';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface RangeType {
   startDate: string;
@@ -132,7 +128,7 @@ const WorkflowComparisonTable = () => {
     setTotalValidWorkflowRunsCount,
   ] = React.useState<number>(0);
 
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
   const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(

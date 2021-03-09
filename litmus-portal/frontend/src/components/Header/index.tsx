@@ -18,10 +18,6 @@ interface SelectedProjectDetails {
   selectedUserRole: string;
 }
 
-interface ParamType {
-  projectID: string;
-}
-
 const Header: React.FC = () => {
   const classes = useStyles();
 

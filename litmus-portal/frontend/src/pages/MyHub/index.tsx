@@ -5,11 +5,9 @@ import {
   CardContent,
   Typography,
 } from '@material-ui/core';
-import { Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import ButtonOutline from '../../components/Button/ButtonOutline';
 import DeveloperGuide from '../../components/DeveloperGuide';
@@ -23,17 +21,13 @@ import {
   GET_PROJECT_ROLES,
   SYNC_REPO,
 } from '../../graphql';
-import { Project, Member } from '../../models/graphql/user';
+import { Member, Project } from '../../models/graphql/user';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
 import { getUserId } from '../../utils/auth';
+import { getProjectID } from '../../utils/getSearchParams';
 import CustomMyHubCard from './customMyHubCard';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface DeleteHub {
   deleteHubModal: boolean;
@@ -50,7 +44,7 @@ const MyHub: React.FC = () => {
   const { t } = useTranslation();
 
   // Get selected projectID from the URL
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
   const userID = getUserId();
 
   const [userRole, setuserRole] = useState<string>('');

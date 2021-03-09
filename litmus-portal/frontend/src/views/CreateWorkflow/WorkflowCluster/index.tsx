@@ -11,15 +11,11 @@ import {
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import { GET_CLUSTER } from '../../../graphql';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
+import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 4;
@@ -46,7 +42,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const workflow = useActions(WorkflowActions);
   const [isTragetSelected, setTarget] = React.useState(true);
   const [isOpenSnackBar, setOpenSnackBar] = React.useState(false);
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
   const [clusterData, setclusterData] = useState<Cluster[]>([]);
   const [name, setName] = React.useState('');
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {

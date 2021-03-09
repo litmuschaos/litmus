@@ -4,7 +4,6 @@ import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
@@ -12,12 +11,9 @@ import { GET_ENGINE_YAML } from '../../../../graphql/queries';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import BackButton from '../BackButton';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 interface EnvValues {
   name: string;
@@ -37,7 +33,7 @@ interface AppInfo {
 const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { projectID } = useParams<ParamType>();
+  const projectID = getProjectID();
   const [overrideEnvs, setOverrideEnvs] = useState<EnvValues[]>([
     { name: '', value: '' },
   ]);
