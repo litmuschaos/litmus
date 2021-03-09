@@ -1,4 +1,3 @@
-import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -6,16 +5,12 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { LIST_PROJECTS } from '../../graphql';
-import { Projects, Member } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
@@ -23,6 +18,7 @@ import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
 import { getUserId } from '../../utils/auth';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface CustomisedListItemProps {
@@ -58,9 +54,10 @@ interface ParamType {
 const SideBar: React.FC = () => {
   const classes = useStyles();
   const { projectID } = useParams<ParamType>();
-  const [isOwner, setisOwner] = useState<boolean>(false);
   const userID = getUserId();
 
+  const projectIDFromURL = getProjectID();
+  const projectRole = getProjectRole();
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
   const pathName = useLocation().pathname.split('/')[1];
@@ -68,25 +65,6 @@ const SideBar: React.FC = () => {
   const buildTime = moment
     .unix(Number(process.env.REACT_APP_BUILD_TIME))
     .format('DD MMM YYYY HH:MM:SS');
-
-  //TODO: Type a better query (presently overfetching)
-  useQuery<Projects>(LIST_PROJECTS, {
-    onCompleted: (data) => {
-      if (data.listProjects) {
-        data.listProjects.map((project) => {
-          project.members.forEach((member: Member) => {
-            if (
-              member.user_id === userID &&
-              member.role === 'Owner' &&
-              project.id === projectID
-            ) {
-              setisOwner(true);
-            }
-          });
-        });
-      }
-    },
-  });
 
   return (
     <Drawer
@@ -166,7 +144,7 @@ const SideBar: React.FC = () => {
         >
           <CommunityIcon />
         </CustomisedListItem>
-        {isOwner && (
+        {projectRole === 'Owner' && (
           <CustomisedListItem
             key="settings"
             handleClick={() => {

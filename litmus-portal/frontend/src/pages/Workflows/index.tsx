@@ -1,4 +1,3 @@
-import { useQuery } from '@apollo/client';
 import { AppBar, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
@@ -6,27 +5,19 @@ import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { generatePath, useParams } from 'react-router-dom';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
-import { LIST_PROJECTS } from '../../graphql';
-import { Member, Projects } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { getUserId } from '../../utils/auth';
 import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
 import useStyles from './styles';
-
-interface ParamType {
-  projectID: string;
-}
 
 const Workflows = () => {
   const classes = useStyles();
@@ -39,33 +30,10 @@ const Workflows = () => {
   const tabs = useActions(TabActions);
 
   const theme = useTheme();
-  const userID = getUserId();
-
-  const { projectID } = useParams<ParamType>();
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     tabs.changeWorkflowsTabs(newValue);
   };
-
-  useQuery<Projects>(LIST_PROJECTS, {
-    onCompleted: (data) => {
-      if (data.listProjects) {
-        data.listProjects.map((project) => {
-          project.members.forEach((member: Member) => {
-            if (member.user_id === userID && member.role === 'Owner') {
-              if (projectID === '' || projectID === undefined) {
-                const id = project.id;
-                const path = generatePath(`/workflows/${id}`);
-                console.log('Project ID is:', id);
-                history.replace(path);
-              }
-            }
-          });
-        });
-      }
-    },
-    fetchPolicy: 'no-cache',
-  });
 
   const handleScheduleWorkflow = () => {
     workflowAction.setWorkflowDetails({
@@ -73,7 +41,7 @@ const Workflows = () => {
       customWorkflows: [],
     });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
-    history.push(`/create-workflow/${projectID}`);
+    history.push(`/create-workflow`);
   };
 
   return (

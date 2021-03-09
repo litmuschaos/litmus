@@ -4,7 +4,6 @@ import IconButton from '@material-ui/core/IconButton';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import { CreateWorkflowCard } from '../../components/CreateWorkflowCard';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -20,23 +19,18 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { getUserDetailsFromJwt, getUserId } from '../../utils/auth';
+import { getProjectID } from '../../utils/getSearchParams';
 import WelcomeModal from '../../views/Home/WelcomeModal';
 import useStyles from './style';
 
-interface ParamType {
-  projectID: string;
-}
-
 const HomePage: React.FC = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const userData = getUserDetailsFromJwt();
   const classes = useStyles();
   const { t } = useTranslation();
   const tabs = useActions(TabActions);
-  const { projectID } = useParams<ParamType>();
-
-  console.log('On home page!!');
+  const projectID = getProjectID();
 
   // Query to get user details
   const { data, loading } = useQuery<
@@ -52,13 +46,14 @@ const HomePage: React.FC = () => {
 
   const [listProjects] = useLazyQuery<Projects>(LIST_PROJECTS, {
     onCompleted: (data) => {
-      if (data?.listProjects) {
-        data?.listProjects.map((project) => {
+      if (data.listProjects) {
+        data.listProjects.forEach((project) => {
           project.members.forEach((member: Member) => {
             if (member.user_id === userID && member.role === 'Owner') {
-              const id = project.id;
-              window.location.assign(`/home/${id}`);
-              // history.push(`/home/${id}`);
+              history.push({
+                pathname: `/home`,
+                search: `?projectID=${project.id}&projectRole=${member.role}`,
+              });
             }
           });
         });
@@ -72,33 +67,10 @@ const HomePage: React.FC = () => {
     listProjects();
   };
 
-  useQuery<Projects>(LIST_PROJECTS, {
-    skip: projectID ? true : false,
-    onCompleted: (data) => {
-      let isOwnerOfProject = false;
-      if (data.listProjects) {
-        data.listProjects.map((project) => {
-          project.members.forEach((member: Member) => {
-            if (member.user_id === userID && member.role === 'Owner') {
-              const id = project.id;
-              isOwnerOfProject = true;
-              window.location.assign(`/home/${id}`);
-              // history.push(`/home/${id}`);
-            }
-          });
-        });
-        if (!isOwnerOfProject) setIsOpen(true);
-      }
-    },
-    fetchPolicy: 'no-cache',
-  });
-
-  const [dataPresent, setDataPresent] = useState<boolean>(true);
-
   return (
     <div>
       <Scaffold>
-        {isOpen && !loading ? (
+        {isOpen && !loading && !projectID ? (
           <WelcomeModal handleIsOpen={handleModal} />
         ) : (
           <></>

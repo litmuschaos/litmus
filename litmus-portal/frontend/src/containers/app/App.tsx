@@ -9,6 +9,7 @@ import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId } from '../../utils/auth';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import Center from '../layouts/Center';
 import useStyles from './App-styles';
 
@@ -39,36 +40,29 @@ const CreateCustomWorkflow = lazy(() =>
   import('../../pages/CreateCustomWorkflow')
 );
 
-interface ParamType {
-  projectID: string;
-}
-
-interface RoutesProps {
-  isOwner: boolean;
-}
-
-const Routes: React.FC<RoutesProps> = ({ isOwner }) => {
+const Routes: React.FC = () => {
   const classes = useStyles();
 
   const baseRoute = window.location.pathname.split('/')[1];
-  const projectIDFromURL = window.location.pathname.split('/')[2];
+  const projectIDFromURL = getProjectID();
+  const projectRoleFromURL = getProjectRole();
+  console.log('App.tsx pre-query projectID:', projectIDFromURL);
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
+  const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
   const userID = getUserId();
-  console.log('on App.tsx: ', projectID);
-
   useQuery<Projects>(LIST_PROJECTS, {
-    skip: projectID ? true : false,
+    skip: projectID !== '' && projectID !== undefined,
     onCompleted: (data) => {
-      let isOwnerOfProject = false;
       if (data.listProjects) {
-        data.listProjects.map((project) => {
+        data.listProjects.forEach((project) => {
           project.members.forEach((member: Member) => {
             if (member.user_id === userID && member.role === 'Owner') {
-              const id = project.id;
-              isOwnerOfProject = true;
-              // window.location.assign(`/home/${id}`);
-              setprojectID(id);
-              history.push(`/${baseRoute}/${id}`);
+              setprojectID(project.id);
+              setprojectRole(member.role);
+              history.push({
+                pathname: `/${baseRoute}`,
+                search: `?projectID=${project.id}&projectRole=${member.role}`,
+              });
             }
           });
         });
@@ -113,15 +107,9 @@ const Routes: React.FC<RoutesProps> = ({ isOwner }) => {
     <div className={classes.content}>
       <Switch>
         <Route exact path="/home" component={HomePage} />
-        <Route exact path="/home/:projectID" component={HomePage} />
         <Redirect exact path="/" to="/home" />
         <Route exact path="/workflows" component={Workflows} />
-        <Route exact path="/workflows/:projectID" component={Workflows} />
-        <Route
-          exact
-          path="/create-workflow/:projectID"
-          component={CreateWorkflow}
-        />
+        <Route exact path="/create-workflow" component={CreateWorkflow} />
         <Route
           exact
           path="/api-doc"
@@ -129,68 +117,51 @@ const Routes: React.FC<RoutesProps> = ({ isOwner }) => {
         />
         {/* Redirects */}
         <Redirect exact path="/login" to="/home" />
-        <Redirect exact path="/workflows/schedule" to="/workflows/:projectID" />
-        <Redirect exact path="/workflows/template" to="/workflows/:projectID" />
-        <Redirect
-          exact
-          path="/workflows/analytics"
-          to="/workflows/:projectID"
-        />
+        <Redirect exact path="/workflows/schedule" to="/workflows" />
+        <Redirect exact path="/workflows/template" to="/workflows" />
+        <Redirect exact path="/workflows/analytics" to="/workflows" />
         <Route
           exact
-          path="/workflows/:projectID/:workflowRunId"
+          path="/workflows/:workflowRunId"
           component={WorkflowDetails}
         />
         <Route
           exact
-          path="/workflows/:projectID/schedule/:scheduleProjectID/:workflowName" // Check
+          path="/workflows/schedule/:scheduleProjectID/:workflowName" // Check
           component={SchedulePage}
         />
         <Route
           exact
-          path="/workflows/:projectID/template/:templateName"
+          path="/workflows/template/:templateName"
           component={BrowseTemplate}
         />
         <Route
           exact
-          path="/workflows/:projectID/analytics/:workflowRunId"
+          path="/workflows/analytics/:workflowRunId"
           component={AnalyticsPage}
         />
-        <Route exact path="/community/:projectID" component={Community} />
-        <Route exact path="/targets/:projectID" component={TargetHome} />
-        <Route
-          exact
-          path="/targets/:projectID/cluster"
-          component={ClusterInfo}
-        />
-        <Route
-          exact
-          path="/target-connect/:projectID"
-          component={ConnectTargets}
-        />
-        <Route exact path="/myhub/:projectID" component={MyHub} />
-        <Route
-          exact
-          path="/myhub/:projectID/connect"
-          component={MyHubConnect}
-        />
+        <Route exact path="/community" component={Community} />
+        <Route exact path="/targets" component={TargetHome} />
+        <Route exact path="/targets/cluster" component={ClusterInfo} />
+        <Route exact path="/target-connect" component={ConnectTargets} />
+        <Route exact path="/myhub" component={MyHub} />
+        <Route exact path="/myhub/connect" component={MyHubConnect} />
         <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
         <Route exact path="/myhub/:hubname" component={ChaosChart} />
         <Route
           exact
-          path="/myhub/:projectID/:hubname/:chart/:experiment"
+          path="/myhub/:hubname/:chart/:experiment"
           component={MyHubExperiment}
         />
         <Route
           exact
-          path="/create-workflow/:projectID/custom"
+          path="/create-workflow/custom"
           component={CreateCustomWorkflow}
         />
-        {/* TODO: check if possible on the settings page itself / efficient way to check here itself*/}
-        {isOwner ? (
-          <Route path="/settings/:projectID" component={Settings} />
+        {projectRole === 'Owner' ? (
+          <Route path="/settings" component={Settings} />
         ) : (
-          <Redirect to="/home/:projectID" />
+          <Redirect to="/home" />
         )}
         <Route exact path="/404" component={ErrorPage} />
         <Redirect to="/404" />
@@ -221,7 +192,7 @@ function App() {
           <div className={classes.root}>
             <div className={classes.appFrame}>
               {/* <Routes /> */}
-              <Routes isOwner={true} />
+              <Routes />
             </div>
           </div>
         </Router>
