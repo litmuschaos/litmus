@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
+import SelectMyHub from './SelectMyHub';
 import useStyles from './styles';
 import UploadYAML from './uploadYAML';
 
@@ -97,11 +98,29 @@ const ChooseWorkflow = forwardRef((_, ref) => {
             Create a new workflow by cloning an existing workflow
           </RadioButton>
 
-          <RadioButton value="C" onChange={(e) => handleChange(e)}>
-            Create a new workflow using the experiments from My Hubs
-          </RadioButton>
+          <Accordion
+            expanded={selected === 'C'}
+            classes={{
+              root: classes.MuiAccordionroot,
+            }}
+            className={classes.accordion}
+          >
+            <AccordionSummary>
+              <RadioButton value="C" onChange={(e) => handleChange(e)}>
+                Create a new workflow using the experiments from
+                <strong> My Hubs</strong>
+              </RadioButton>
+            </AccordionSummary>
+            <SelectMyHub />
+          </Accordion>
 
-          <Accordion expanded={selected === 'D'} className={classes.accordion}>
+          <Accordion
+            expanded={selected === 'D'}
+            classes={{
+              root: classes.MuiAccordionroot,
+            }}
+            className={classes.accordion}
+          >
             <AccordionSummary>
               <RadioButton value="D" onChange={(e) => handleChange(e)}>
                 Import a workflow using YAML
