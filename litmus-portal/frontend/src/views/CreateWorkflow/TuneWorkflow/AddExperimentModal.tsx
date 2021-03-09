@@ -8,7 +8,13 @@ import {
 } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import useStyles, { MenuProps } from './styles';
+
+interface ChartName {
+  ChaosName: string;
+  ExperimentName: string;
+}
 
 interface AddExperimentModalProps {
   addExpModal: boolean;
@@ -21,7 +27,7 @@ interface AddExperimentModalProps {
       value: unknown;
     }>
   ) => void;
-  allExperiments: any;
+  allExperiments: ChartName[];
   handleDone: () => void;
 }
 
@@ -35,6 +41,7 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
   handleDone,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   return (
     <Modal
       open={addExpModal}
@@ -57,15 +64,15 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
     >
       <div className={classes.addExpModal}>
         <Typography variant="h5">
-          <strong>Choose Experiments</strong>
+          <strong>{t('createWorkflow.tuneWorkflow.choose')}</strong>
         </Typography>
         <Typography>
-          Select experiments available in {hubName} . After selecting you can
-          fine tune them.
+          {t('createWorkflow.tuneWorkflow.selectAvailableExp')} {hubName} .{' '}
+          {t('createWorkflow.tuneWorkflow.afterSelect')}
         </Typography>
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="demo-simple-select-label" className={classes.label}>
-            Select An Experiment
+            {t('createWorkflow.tuneWorkflow.selectExp')}
           </InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -75,7 +82,7 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
             MenuProps={MenuProps}
             input={<OutlinedInput labelWidth={150} />}
           >
-            {allExperiments.map((exp: any) => (
+            {allExperiments.map((exp: ChartName) => (
               <MenuItem
                 key={`${exp.ChaosName}/${exp.ExperimentName}`}
                 value={`${exp.ChaosName}/${exp.ExperimentName}`}
@@ -91,7 +98,7 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
           }}
           className={classes.doneBtn}
         >
-          Done
+          {t('createWorkflow.tuneWorkflow.done')}
         </ButtonFilled>
       </div>
     </Modal>

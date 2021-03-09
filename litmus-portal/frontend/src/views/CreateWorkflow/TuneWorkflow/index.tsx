@@ -135,15 +135,8 @@ const TuneWorkflow: React.FC = () => {
      *  else it will initializeWithDefault()
      */
     localforage.getItem('selectedScheduleOption').then((value) => {
-      // Map over the list of predefined workflows and extract the name and detail
-      if ((value as ChooseWorkflowRadio).selected === 'A') {
-        return null;
-      }
-      if ((value as ChooseWorkflowRadio).selected === 'B') {
-        return null;
-      }
       // Setting default data when MyHub is selected
-      if ((value as ChooseWorkflowRadio).selected === 'C') {
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
         localforage.getItem('selectedHub').then((hub) => {
           setHubName(hub as string);
           getCharts({
@@ -152,7 +145,7 @@ const TuneWorkflow: React.FC = () => {
         });
       }
       // Setting default data when Upload is selected
-      if ((value as ChooseWorkflowRadio).selected === 'D') {
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'D') {
         return null;
       }
       return null;
@@ -173,7 +166,7 @@ const TuneWorkflow: React.FC = () => {
             {t('createWorkflow.tuneWorkflow.description')}
           </Typography>
           <ButtonOutlined style={{ marginRight: 20 }} onClick={() => {}}>
-            View YAML
+            {t('createWorkflow.tuneWorkflow.view')}
           </ButtonOutlined>
           <ButtonOutlined
             onClick={() => {
@@ -181,7 +174,7 @@ const TuneWorkflow: React.FC = () => {
               setAddExpModal(true);
             }}
           >
-            Add experiments
+            {t('createWorkflow.tuneWorkflow.addExp')}
           </ButtonOutlined>
         </div>
 
@@ -189,7 +182,7 @@ const TuneWorkflow: React.FC = () => {
           <>{/* Display Table Here */}</>
         ) : (
           <ButtonFilled onClick={() => setAddExpModal(true)}>
-            Add your first experiment
+            {t('createWorkflow.tuneWorkflow.firstExperiment')}
           </ButtonFilled>
         )}
       </div>

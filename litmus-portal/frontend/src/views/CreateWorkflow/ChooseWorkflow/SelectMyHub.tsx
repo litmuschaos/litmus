@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import localforage from 'localforage';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
 import { HubStatus } from '../../../models/redux/myhub';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
 import { RootState } from '../../../redux/reducers';
@@ -10,6 +11,7 @@ import useStyles, { MenuProps } from './styles';
 import { MyHubDetail } from '../../../models/graphql/user';
 
 const SelectMyHub = () => {
+  const { t } = useTranslation();
   const { selectedProjectID } = useSelector(
     (state: RootState) => state.userData
   );
@@ -42,7 +44,7 @@ const SelectMyHub = () => {
   // Retrieving saved data from index DB,
   useEffect(() => {
     localforage.getItem('selectedHub').then((value) => {
-      setSelectedHub(value as string);
+      return value !== null && setSelectedHub(value as string);
     });
   }, []);
 
@@ -51,7 +53,9 @@ const SelectMyHub = () => {
     <div>
       <div className={classes.inputDiv}>
         <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel className={classes.label}>Select MyHub</InputLabel>
+          <InputLabel className={classes.label}>
+            {t('createWorkflow.chooseWorkflow.selectMyHub')}
+          </InputLabel>
           <Select
             value={selectedHub}
             onChange={(e) => {
