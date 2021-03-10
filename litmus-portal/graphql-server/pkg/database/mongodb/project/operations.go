@@ -2,7 +2,6 @@ package project
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -107,7 +106,6 @@ func UpdateInvite(ctx context.Context, projectID, userID string, invitation Invi
 
 	switch invitation {
 	case PendingInvitation:
-		fmt.Println("case pending invitation ")
 		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation, "members.$[elem].role": Role}}
 	case DeclinedInvitation:
 		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation}}
