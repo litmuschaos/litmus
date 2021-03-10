@@ -15,7 +15,7 @@ spec:
   sslSecretName: my-cluster-ssl
   sslInternalSecretName: my-cluster-ssl-internal
   logCollectorSecretName: my-log-collector-secrets
-  #  disableHookValidation: true
+  disableHookValidation: true
   #  tls:
   #    SANs:
   #      - pxc-1.example.com

@@ -20,6 +20,10 @@ spec:
         - image: litmuschaos/chaos-exporter:v1.13.x
           imagePullPolicy: Always
           name: chaos-exporter
+          # uncomment the following lines to use the litmuschaos exporter for monitoring the chaos events and chaosresults for a selected namespace
+          # env:
+          #   - name: WATCH_NAMESPACE
+          #     value: "litmus"
       serviceAccountName: litmus
 ---
 apiVersion: v1
