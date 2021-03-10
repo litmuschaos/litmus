@@ -540,7 +540,7 @@ const MyHub = () => {
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div className={classes.quickActionDiv}>
-            <QuickActionCard />
+            <QuickActionCard analyticsHome={false} nonAdmin />
           </div>
         </div>
       </div>

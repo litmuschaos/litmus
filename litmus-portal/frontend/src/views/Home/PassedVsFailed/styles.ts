@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     width: '20.3125rem',
     height: '14.6875rem',
     color: theme.palette.text.primary,
-    backgroundColor: theme.palette.cards.background,
+    backgroundColor: theme.palette.background.paper,
   },
   boxMain: {
     display: 'flex',
