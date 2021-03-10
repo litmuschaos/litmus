@@ -10,9 +10,9 @@ data:
         - static_configs:
           - targets: ["alertmanager:9093"]
     scrape_configs:
-      - job_name: 'chaos-monitor'
+      - job_name: 'chaos-exporter'
         static_configs:
-          - targets: ['chaos-monitor.litmus.svc.cluster.local:8080']
+          - targets: ['chaos-exporter.litmus.svc.cluster.local:8080']
       - job_name: 'mysql_server1'
         static_configs:
           - targets: ['mysql-exporter.monitoring.svc.cluster.local:9104']
