@@ -1,5 +1,7 @@
 import { AlertAction } from './alert';
 import { AnalyticsAction } from './analytics';
+import { DashboardSelectionAction } from './dashboards';
+import { DataSourceSelectionAction } from './dataSource';
 import { MyHubAction } from './myhub';
 import { NodeSelectionAction } from './nodeSelection';
 import { TabAction } from './tabs';
@@ -15,4 +17,6 @@ export type Action =
   | TabAction
   | AlertAction
   | TemplateSelectionAction
-  | MyHubAction;
+  | MyHubAction
+  | DataSourceSelectionAction
+  | DashboardSelectionAction;

@@ -24,6 +24,9 @@ const WorkflowSettings = forwardRef((_, ref) => {
 
   // Workflow States
   const [name, setName] = useState<string>('');
+  const [descriptionHeader, setDescriptionHeader] = useState<JSX.Element>(
+    <></>
+  );
   const [description, setDescription] = useState<string>('');
   const [CRD, setCRD] = useState<string>('');
   const [icon, setIcon] = useState<string>('');
@@ -46,8 +49,30 @@ const WorkflowSettings = forwardRef((_, ref) => {
     });
   };
 
+  const detectHeader = () => {
+    return localforage
+      .getItem('selectedScheduleOption')
+      .then((value) =>
+        value && (value as ChooseWorkflowRadio).selected === 'A'
+          ? setDescriptionHeader(
+              <>{t('createWorkflow.chooseWorkflow.descriptionA')} </>
+            )
+          : value && (value as ChooseWorkflowRadio).selected === 'B'
+          ? setDescriptionHeader(
+              <>{t('createWorkflow.chooseWorkflow.descriptionB')} </>
+            )
+          : value && (value as ChooseWorkflowRadio).selected === 'C'
+          ? setDescriptionHeader(
+              <>{t('createWorkflow.chooseWorkflow.descriptionC')} </>
+            )
+          : setDescriptionHeader(
+              <>{t('createWorkflow.chooseWorkflow.descriptionD')} </>
+            )
+      );
+  };
+
   const initializeWithDefault = () => {
-    localforage.getItem('selectedScheduleOption').then((value) =>
+    localforage.getItem('selectedScheduleOption').then((value) => {
       // Map over the list of predefined workflows and extract the name and detail
       data.map((w) => {
         if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
@@ -57,13 +82,21 @@ const WorkflowSettings = forwardRef((_, ref) => {
           setIcon(w.urlToIcon);
         }
         return null;
-      })
-    );
-    /** Store a boolean value in local storage to serve as an indication
-     *  whether user already has edited data or not
-     */
+      });
 
-    localforage.setItem('hasSetWorkflowData', false);
+      if ((value as ChooseWorkflowRadio).selected !== 'A') {
+        setName('custom-chaos-workflow');
+        setCRD('');
+        setDescription('Custom Chaos Workflow');
+        setIcon('./avatars/litmus.svg');
+      }
+
+      /** Store a boolean value in local storage to serve as an indication
+       *  whether user already has edited data or not
+       */
+
+      localforage.setItem('hasSetWorkflowData', false);
+    });
   };
 
   // Loading Workflow Related Data for Workflow Settings
@@ -76,6 +109,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
     localforage.getItem('hasSetWorkflowData').then((isDataPresent) => {
       return isDataPresent ? checkForStoredData() : initializeWithDefault();
     });
+    detectHeader();
   }, []);
 
   // Workflow Name Change Handler
@@ -126,7 +160,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
           {t('createWorkflow.chooseWorkflow.settings')}
         </Typography>
         <Typography className={classes.description}>
-          {t('createWorkflow.chooseWorkflow.description1')}{' '}
+          {descriptionHeader}
           <i>
             <strong>
               {name.split('-').map((text) => `${capitalize(text)} `)}

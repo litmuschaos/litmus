@@ -151,9 +151,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     }
   }
 
-  // If password is less than 6 characters and does not contain
-  // an alpha numeric character as well as a number
-  // then button would be disabled
   // If the two passwords are not same then button would be disabled
   // Back Button: [Button State: Enabled]
   // Continue Button: [Button State: Disabled]
@@ -333,7 +330,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     type="password"
                     required
                     value={values.password}
-                    variant={isSuccess.current ? 'primary' : 'error'}
                     onChange={(event) =>
                       setValues({
                         password: event.target.value,

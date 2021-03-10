@@ -154,15 +154,16 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             </MenuItem>
           </Select>
         </FormControl>
-
-        <ButtonOutlined onClick={popOverClick}>
-          <Typography className={classes.displayDate}>
-            {displayDate}
-            <IconButton className={classes.iconButton}>
-              {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </Typography>
-        </ButtonOutlined>
+        <div className={classes.dateBtn}>
+          <ButtonOutlined disabled={false} onClick={popOverClick}>
+            <Typography className={classes.displayDate}>
+              {displayDate}
+              <IconButton className={classes.iconButton}>
+                {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
+              </IconButton>
+            </Typography>
+          </ButtonOutlined>
+        </div>
         <Popover
           open={isOpen}
           anchorEl={popAnchorEl}

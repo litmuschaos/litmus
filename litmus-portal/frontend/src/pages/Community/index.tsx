@@ -146,7 +146,7 @@ const Community: React.FC = () => {
                 <GeoMap />
               </Paper>
               <div className={classes.quickActionCard}>
-                <QuickActionCard />
+                <QuickActionCard analyticsHome={false} nonAdmin />
               </div>
             </div>
           </div>

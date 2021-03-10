@@ -74,6 +74,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: window.screen.height < 1080 ? '15rem' : '20rem',
     overflowY: 'scroll',
   },
+  MuiAccordionroot: {
+    '&.MuiAccordion-root:before': {
+      backgroundColor: 'white',
+    },
+  },
   predefinedWorkflowCard: {
     backgroundColor: theme.palette.cards.background,
     lineHeight: '5rem', // Making the div content vertically aligned
@@ -178,6 +183,32 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(1.25),
     marginLeft: theme.spacing(2.5),
   },
+
+  // Select MyHub Option Styles
+  inputDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: theme.spacing(2.5),
+    alignItems: 'center',
+  },
+  formControl: {
+    minWidth: '9rem',
+    marginLeft: theme.spacing(1),
+  },
+  label: {
+    color: theme.palette.common.black,
+  },
 }));
 
 export default useStyles;
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+
+export const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
+};

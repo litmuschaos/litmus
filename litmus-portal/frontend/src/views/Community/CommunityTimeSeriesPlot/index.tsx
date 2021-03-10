@@ -109,7 +109,11 @@ const CommunityAnalyticsPlot: React.FC = () => {
       });
     }
 
-    const dataObject = { x: [] = [Date], y: [] = [string], y2: [] = [string] };
+    const dataObject = {
+      x: ([] = [Date]),
+      y: ([] = [string]),
+      y2: ([] = [string]),
+    };
 
     rawData.forEach(function dateSplit(datum: any) {
       const splits = datum.date.split('-');

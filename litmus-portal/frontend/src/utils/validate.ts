@@ -75,3 +75,21 @@ export const isValidWebUrl = (value: string) => {
     return true;
   return false;
 };
+
+export const validateTimeInSeconds = (value: string) => {
+  const timeInSecondsValid = /^[0-9]+s$/g;
+  if (value.length > 1) {
+    if (value.match(timeInSecondsValid)) return true;
+    return false;
+  }
+  return false;
+};
+
+export const validateWorkflowParameter = (value: string) => {
+  const workflowParameterValid = /^{[a-zA-Z0-9]+}$/g;
+  if (value.length > 0) {
+    if (value.match(workflowParameterValid)) return false;
+    return true;
+  }
+  return false;
+};

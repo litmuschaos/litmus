@@ -20,8 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
   quickActionDiv: {
     marginTop: theme.spacing(4),
-    borderLeft: `1px solid ${theme.palette.disabledBackground}`,
-    paddingLeft: theme.spacing(3),
+    marginRight: theme.spacing(-6),
   },
 
   aggregate: {
@@ -73,7 +72,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   extrasDiv: {
-    marginRight: theme.spacing(2.5),
+    marginRight: theme.spacing(8),
+    marginTop: theme.spacing(20),
   },
 
   fixedRecents: {

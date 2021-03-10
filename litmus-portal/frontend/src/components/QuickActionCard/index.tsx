@@ -9,17 +9,25 @@ import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 
+interface QuickActionCardProps {
+  analyticsHome: boolean;
+  nonAdmin: boolean;
+}
+
 const QuickActionItems: React.FC = ({ children }) => {
   const classes = useStyles();
   return <ListItem className={classes.listItems}>{children}</ListItem>;
 };
 
-const QuickActionCard = () => {
+const QuickActionCard: React.FC<QuickActionCardProps> = ({
+  analyticsHome,
+  nonAdmin,
+}) => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
-  const apiDocsUrl = `${window.location.href}api-doc`;
+  const apiDocsUrl = `${window.location.href}api-doc/index.html`;
 
   return (
     <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>
@@ -28,16 +36,26 @@ const QuickActionCard = () => {
           {t('quickActionCard.quickActions')}
         </Typography>
         <List>
-          {/* <QuickActionItems>
-            <img src="/icons/cluster.png" alt="cluster" />
-            <Link to="/" className={classes.listItem}>
-              Connect a new cluster
-            </Link>
-          </QuickActionItems> */}
+          {!nonAdmin && analyticsHome && (
+            <QuickActionItems>
+              <img src="./icons/calendarWorkflowIcon.svg" alt="Calender" />
+              <Link to="/create-workflow" className={classes.listItem}>
+                {t('quickActionCard.scheduleWorkflow')}
+              </Link>
+            </QuickActionItems>
+          )}
+          {analyticsHome && (
+            <QuickActionItems>
+              <img src="./icons/target.svg" alt="agent" />
+              <Link to="/target-connect" className={classes.listItem}>
+                {t('quickActionCard.connectNewAgent')}
+              </Link>
+            </QuickActionItems>
+          )}
           {userRole === 'Owner' && (
             <QuickActionItems>
               <div className={classes.imgDiv}>
-                <img src="/icons/team.png" alt="team" />
+                <img src="./icons/teamMember.svg" alt="team" />
               </div>
               <Link
                 to="/settings"
@@ -50,7 +68,7 @@ const QuickActionCard = () => {
           )}
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="/icons/survey.png" alt="survey" />
+              <img src="./icons/survey.svg" alt="survey" />
             </div>
             <a
               href="https://forms.gle/qMuVphRyEWCFqjD56"
@@ -62,7 +80,7 @@ const QuickActionCard = () => {
           </QuickActionItems>
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="/icons/docs.png" alt="docs" />
+              <img src="./icons/docs.svg" alt="docs" />
             </div>
             <a
               href="https://docs.litmuschaos.io/docs/getstarted/"
@@ -74,7 +92,7 @@ const QuickActionCard = () => {
           </QuickActionItems>
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="/icons/docs.png" alt="docs" />
+              <img src="./icons/docs.svg" alt="docs" />
             </div>
             <a href={apiDocsUrl} className={classes.listItem} target="_">
               {t('quickActionCard.readAPIDocs')}

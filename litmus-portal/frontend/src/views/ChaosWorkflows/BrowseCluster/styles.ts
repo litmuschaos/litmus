@@ -217,7 +217,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     gap: '1rem',
   },
-
+  dateBtn: {
+    marginRight: theme.spacing(2.5),
+  },
   w7: { width: '7rem' },
   // delete user
   delDiv: {
