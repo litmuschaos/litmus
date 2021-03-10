@@ -18,7 +18,7 @@ const QuickActionCard = () => {
   const userRole = getProjectRole();
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
-  const apiDocsUrl = `${window.location.href}api-doc`;
+  const apiDocsUrl = `/api-doc/index.html`;
 
   return (
     <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>

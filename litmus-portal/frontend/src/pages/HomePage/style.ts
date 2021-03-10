@@ -14,11 +14,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
 
-  root: {
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(2),
-  },
-
   mainDiv: {
     padding: theme.spacing(3.75),
     backgroundColor: theme.palette.background.paper,

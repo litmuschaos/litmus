@@ -7,18 +7,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: '100%',
+    backgroundColor: '#F5F6F8',
     position: 'relative',
-    backgroundColor: theme.palette.sidebarMenu,
     color: 'inherit',
   },
   litmusDiv: {
     display: 'flex',
-    flexDirection: 'row',
-    marginTop: theme.spacing(3.5),
-    marginLeft: theme.spacing(4),
-    '& img': {
-      userDrag: 'none',
-    },
+    margin: theme.spacing(2.5, 0, 0, 3.75),
   },
   homeLink: {
     textDecoration: 'none',
@@ -36,17 +31,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.primary,
   },
   drawerListItem: {
-    display: 'flex',
-    height: '3.187rem',
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    height: '3.1875rem',
+    transition: '0.8s',
     '&:hover': {
-      backgroundColor: theme.palette.secondary.light,
-      color: theme.palette.secondary.contrastText,
-      '& path': {
-        fill: theme.palette.secondary.contrastText,
-      },
+      backgroundColor: '#D9D9D9',
     },
   },
   active: {
@@ -65,7 +53,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerList: {
     marginTop: theme.spacing(8),
-    height: '16.68rem',
   },
   versionlogo: {
     width: '1.25rem',

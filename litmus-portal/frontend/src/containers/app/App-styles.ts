@@ -1,20 +1,9 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
-    width: 'auto',
-    height: '100vh',
-    zIndex: 1,
-  },
-  appFrame: {
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-    color: theme.palette.text.primary,
-  },
-  content: {
-    backgroundColor: theme.palette.background.default,
-    width: '100%',
+    // backgroundColor: theme.palette.background.default,
+    backgroundColor: '#F5F6F8',
   },
 }));
 

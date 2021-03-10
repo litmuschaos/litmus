@@ -41,8 +41,6 @@ const CreateCustomWorkflow = lazy(() =>
 );
 
 const Routes: React.FC = () => {
-  const classes = useStyles();
-
   const baseRoute = window.location.pathname.split('/')[1];
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
@@ -72,7 +70,7 @@ const Routes: React.FC = () => {
 
   if (getToken() === '') {
     return (
-      <div className={classes.content}>
+      <>
         <Switch>
           <Route exact path="/login" component={LoginPage} />
           <Route
@@ -82,13 +80,13 @@ const Routes: React.FC = () => {
           />
           <Redirect to="/login" />
         </Switch>
-      </div>
+      </>
     );
   }
 
   if (!projectID) {
     return (
-      <div className={classes.content}>
+      <>
         <Switch>
           <Route exact path="/home" component={HomePage} />
           <Route
@@ -98,12 +96,12 @@ const Routes: React.FC = () => {
           />
           <Redirect to="/home" />
         </Switch>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className={classes.content}>
+    <>
       <Switch>
         <Route exact path="/home" component={HomePage} />
         <Redirect exact path="/" to="/home" />
@@ -165,7 +163,7 @@ const Routes: React.FC = () => {
         <Route exact path="/404" component={ErrorPage} />
         <Redirect to="/404" />
       </Switch>
-    </div>
+    </>
   );
 };
 
@@ -189,10 +187,8 @@ function App() {
       >
         <Router history={history}>
           <div className={classes.root}>
-            <div className={classes.appFrame}>
-              {/* <Routes /> */}
-              <Routes />
-            </div>
+            {/* <Routes /> */}
+            <Routes />
           </div>
         </Router>
       </Suspense>

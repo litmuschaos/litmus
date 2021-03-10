@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
           <></>
         )}
         <div className={classes.rootContainer}>
-          <div className={classes.root}>
+          <div>
             <Typography variant="h3" className={classes.userName}>
               {t('home.heading')}
               <strong>{` ${name}`}</strong>

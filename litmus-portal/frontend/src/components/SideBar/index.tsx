@@ -135,19 +135,6 @@ const SideBar: React.FC = () => {
         >
           <TargetsIcon />
         </CustomisedListItem>
-        <CustomisedListItem
-          key="community"
-          handleClick={() => {
-            history.push({
-              pathname: `/community`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
-          label="Community"
-          selected={pathName === 'community'}
-        >
-          <CommunityIcon />
-        </CustomisedListItem>
         {projectRole === 'Owner' && (
           <CustomisedListItem
             key="settings"
@@ -163,6 +150,19 @@ const SideBar: React.FC = () => {
             <SettingsIcon />
           </CustomisedListItem>
         )}
+        <CustomisedListItem
+          key="community"
+          handleClick={() => {
+            history.push({
+              pathname: `/community`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
+          }}
+          label="Community"
+          selected={pathName === 'community'}
+        >
+          <CommunityIcon />
+        </CustomisedListItem>
       </List>
       <Typography className={classes.versionDiv}>
         <b>Version: </b> {version} <br />

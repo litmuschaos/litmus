@@ -337,14 +337,10 @@ export const GET_PROJECT = gql`
   }
 `;
 
-export const GET_PROJECT_ROLES = gql`
+export const GET_PROJECT_NAME = gql`
   query getProject($projectID: String!) {
     getProject(projectID: $projectID) {
       name
-      members {
-        user_id
-        role
-      }
     }
   }
 `;

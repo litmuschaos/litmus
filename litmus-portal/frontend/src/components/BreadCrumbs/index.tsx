@@ -4,17 +4,13 @@ import { Link } from 'react-router-dom';
 import capitalize from '../../utils/capitalize';
 import useStyles from './styles';
 
-interface CustomBreadcrumbsProps {
-  location: string;
-}
-
-const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
-  const pathname: string[] = location.split('/');
+const Breadcrumb: React.FC = () => {
+  const pathname: string[] = window.location.pathname.split('/');
   let intermediateRoutes = '/';
   const classes = useStyles();
 
   return (
-    <Breadcrumbs aria-label="breadcrumb">
+    <Breadcrumbs>
       {pathname.map((path) => {
         if (path) {
           intermediateRoutes += path;
@@ -47,4 +43,4 @@ const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
   );
 };
 
-export default CustomBreadcrumbs;
+export default Breadcrumb;
