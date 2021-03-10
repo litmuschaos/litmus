@@ -52,7 +52,7 @@ export default [
             prom_queries: [
               {
                 queryid: uuidv4(),
-                prom_query_name: 'instance:node_cpu_utilisation:rate1m',
+                prom_query_name: 'instance:node_cpu_utilisation:rate1m*100',
                 legend: '{{instance}}',
                 resolution: '1/2',
                 minstep: '5',
@@ -104,7 +104,7 @@ export default [
             prom_queries: [
               {
                 queryid: uuidv4(),
-                prom_query_name: 'instance:node_memory_utilisation:ratio',
+                prom_query_name: 'instance:node_memory_utilisation:ratio*100',
                 legend: '{{instance}}',
                 resolution: '1/2',
                 minstep: '5',
