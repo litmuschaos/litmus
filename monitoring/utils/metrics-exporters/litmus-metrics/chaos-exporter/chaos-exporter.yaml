@@ -24,6 +24,7 @@ spec:
           # env:
           #   - name: WATCH_NAMESPACE
           #     value: "litmus"
+      # to use with litmus portal in cluster scope change service account name to 'litmus-cluster-scope' and for using litmus portal in namespaced scope change to 'litmus-namespace-scope'
       serviceAccountName: litmus
 ---
 apiVersion: v1
