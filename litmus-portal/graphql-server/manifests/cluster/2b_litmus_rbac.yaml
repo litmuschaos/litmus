@@ -71,3 +71,20 @@ subjects:
   - kind: ServiceAccount
     name: litmus-cluster-scope
     namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: chaos-monitor
+  name: chaos-monitor
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  ports:
+    - port: 8080
+      name: tcp
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: chaos-monitor
+  type: ClusterIP

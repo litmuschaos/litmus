@@ -175,6 +175,8 @@ spec:
               value: "litmuschaos/chaos-operator:1.13.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:1.13.0"
+            - name: LITMUS-CHAOS-EXPORTER_IMAGE
+              value: "litmuschaos/chaos-exporter:v1.13.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

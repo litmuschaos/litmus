@@ -48,3 +48,26 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "chaos-operator"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chaos-monitor
+  name: chaos-monitor
+  namespace: litmus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chaos-monitor
+  template:
+    metadata:
+      labels:
+        app: chaos-monitor
+    spec:
+      containers:
+        - image: #{LITMUS-CHAOS-EXPORTER}
+          imagePullPolicy: Always
+          name: chaos-exporter
+      serviceAccountName: litmus-cluster-scope
