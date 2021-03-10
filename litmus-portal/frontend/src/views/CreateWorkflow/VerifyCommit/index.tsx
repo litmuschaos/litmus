@@ -8,10 +8,7 @@ import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import YamlEditor from '../../../components/YamlEditor/Editor';
-import {
-  AceValidations,
-  parseYamlValidations,
-} from '../../../components/YamlEditor/Validations';
+import { parseYamlValidations } from '../../../components/YamlEditor/Validations';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -85,11 +82,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
   const WorkflowTestData: experimentMap[] = weights as any;
 
   useEffect(() => {
-    let editorValidations: AceValidations = {
-      markers: [],
-      annotations: [],
-    };
-    editorValidations = parseYamlValidations(yaml, classes);
+    const editorValidations = parseYamlValidations(yaml, classes);
     const stateObject = {
       markers: editorValidations.markers,
       annotations: editorValidations.annotations,

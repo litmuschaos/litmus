@@ -154,7 +154,7 @@ function App() {
     }
   }, [token]);
   return (
-    <LitmusThemeProvider platform="litmus-portal">
+    <LitmusThemeProvider>
       <Suspense fallback={<Loader />}>
         <Router history={history}>
           <div className={classes.root}>

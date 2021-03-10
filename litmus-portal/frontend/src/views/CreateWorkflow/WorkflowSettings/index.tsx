@@ -9,22 +9,13 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import data from '../../../components/PredifinedWorkflows/data';
+import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
+import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import capitalize from '../../../utils/capitalize';
 import { validateWorkflowName } from '../../../utils/validate';
 import useStyles from './styles';
-
-interface ChooseWorkflowRadio {
-  selected: string;
-  id?: string;
-}
-
-interface WorkflowDetailsProps {
-  name: string;
-  description: string;
-  icon: string;
-}
 
 const WorkflowSettings = forwardRef((_, ref) => {
   const classes = useStyles();
@@ -34,6 +25,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
   // Workflow States
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [CRD, setCRD] = useState<string>('');
   const [icon, setIcon] = useState<string>('');
 
   const { t } = useTranslation();
@@ -61,6 +53,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
         if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
           setName(w.title);
           setDescription(w.details);
+          setCRD(w.chaosWkfCRDLink);
           setIcon(w.urlToIcon);
         }
         return null;
@@ -111,6 +104,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
     const workflowDetails: WorkflowDetailsProps = {
       name,
       description,
+      CRD,
       icon,
     };
     localforage.setItem('workflow', workflowDetails);
@@ -133,7 +127,11 @@ const WorkflowSettings = forwardRef((_, ref) => {
         </Typography>
         <Typography className={classes.description}>
           {t('createWorkflow.chooseWorkflow.description1')}{' '}
-          {name.split('-').map((text) => `${capitalize(text)} `)}
+          <i>
+            <strong>
+              {name.split('-').map((text) => `${capitalize(text)} `)}
+            </strong>
+          </i>
           <br />
           {t('createWorkflow.chooseWorkflow.description2')}
         </Typography>

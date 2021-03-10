@@ -517,7 +517,7 @@ createWorkflow:
     fail: Fail
   tuneWorkflow:
     header: Tune the selected workflow
-    selectedWorkflowInfo: You have selected
+    selectedWorkflowInfo: You have selected a pre-defined workflow
     description: Fine tune the application  names and other variables to suit your needs
     addProbe:
       heading: Add

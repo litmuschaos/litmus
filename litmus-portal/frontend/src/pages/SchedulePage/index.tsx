@@ -174,7 +174,7 @@ const EditScheduledWorkflow = () => {
   function EditYaml() {
     const oldParsedYaml = YAML.parse(yaml);
     const NewLink: string = ' ';
-    let NewYaml: string = ' ';
+    let NewYaml;
     if (
       oldParsedYaml.kind === 'Workflow' &&
       scheduleType.scheduleOnce !== 'now'

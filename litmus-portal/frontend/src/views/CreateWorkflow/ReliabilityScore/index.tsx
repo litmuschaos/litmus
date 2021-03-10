@@ -55,7 +55,7 @@ const ReliablityScore = () => {
               <strong>{t('createWorkflow.reliabilityScore.header')}</strong>
             </Typography>
             <Typography className={classes.description}>
-              {t('createWorkflow.reliabilityScore.info')} {weights?.length}{' '}
+              {t('createWorkflow.reliabilityScore.info')} {weights.length}{' '}
               {t('createWorkflow.reliabilityScore.infoNext')}{' '}
               <strong>
                 {t('createWorkflow.reliabilityScore.infoNextStrong')}
@@ -71,18 +71,14 @@ const ReliablityScore = () => {
             </Typography>
           </div>
           {(weights as any).map((Data: experimentMap, index: number) => (
-            <div>
-              <div>
-                <WeightSlider
-                  index={index}
-                  testName={Data.experimentName}
-                  weight={Data.weight}
-                  handleChange={(newValue, index) =>
-                    handleChange({ newValue, index })
-                  }
-                />
-              </div>
-            </div>
+            <WeightSlider
+              index={index}
+              testName={Data.experimentName}
+              weight={Data.weight}
+              handleChange={(newValue, index) =>
+                handleChange({ newValue, index })
+              }
+            />
           ))}
           <hr className={classes.horizontalLine} />
           <div className={classes.modalDiv}>
