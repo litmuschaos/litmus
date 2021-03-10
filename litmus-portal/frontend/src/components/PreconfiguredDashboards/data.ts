@@ -9,7 +9,7 @@ export default [
     information:
       'This dashboard visualizes Node and Pod level CPU and memory utilization metrics interleaved with chaos events.',
     chaosEventQueryTemplate:
-      'litmuschaos_awaited_experiments{chaosresult_name="#{}",chaosresult_namespace="*{}", job="chaos-monitor"}',
+      'litmuschaos_awaited_experiments{chaosresult_name="#{}",chaosresult_namespace="*{}", job="chaos-exporter"}',
     panelGroupMap: [
       {
         groupName: 'CPU Usage Metrics',
@@ -279,7 +279,7 @@ export default [
     information:
       'This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics.',
     chaosEventQueryTemplate:
-      'litmuschaos_awaited_experiments{chaosresult_name="#{}",chaosresult_namespace="*{}", job="chaos-monitor"}',
+      'litmuschaos_awaited_experiments{chaosresult_name="#{}",chaosresult_namespace="*{}", job="chaos-exporter"}',
     panelGroupMap: [
       {
         groupName: 'Orders Metrics',
