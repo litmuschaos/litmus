@@ -637,6 +637,8 @@ createWorkflow:
     afterSelect: After selecting you can fine tune them.
     selectExp: Select An Experiment
     done: Done
+    editSequence: Edit Sequence
+    addANewExperiment: Add a new experiment
     addProbe:
       heading: Add
       headingStrong: Probe

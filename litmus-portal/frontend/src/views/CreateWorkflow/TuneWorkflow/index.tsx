@@ -204,7 +204,7 @@ const TuneWorkflow: React.FC = () => {
                 setAddExpModal(true);
               }}
             >
-              Add a new experiment
+              {t('createWorkflow.tuneWorkflow.addANewExperiment')}
             </ButtonOutlined>
           </div>
         </Row>
@@ -225,7 +225,7 @@ const TuneWorkflow: React.FC = () => {
         <ButtonOutlined>
           <img src="./icons/editsequence.svg" alt="Edit Sequence" />{' '}
           <Width width="0.5rem" />
-          Edit Sequence
+          {t('createWorkflow.tuneWorkflow.editSequence')}
         </ButtonOutlined>
         {/* Details Section -> Graph on the Left and Table on the Right */}
         <Row>
