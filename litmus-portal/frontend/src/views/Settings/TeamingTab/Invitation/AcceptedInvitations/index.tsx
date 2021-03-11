@@ -15,7 +15,7 @@ import useActions from '../../../../../redux/actions';
 import * as UserActions from '../../../../../redux/actions/user';
 import configureStore, { history } from '../../../../../redux/configureStore';
 import { RootState } from '../../../../../redux/reducers';
-import { getUserId, getUsername } from '../../../../../utils/auth';
+import { getUserId } from '../../../../../utils/auth';
 import useStyles from './styles';
 
 const AcceptedInvitations: React.FC = () => {
@@ -123,7 +123,7 @@ const AcceptedInvitations: React.FC = () => {
                         variables: {
                           data: {
                             project_id: project.id,
-                            user_name: getUsername(),
+                            user_id: getUserId(),
                             role: userData.userRole,
                           },
                         },
