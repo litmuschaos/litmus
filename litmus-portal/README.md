@@ -39,7 +39,6 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/lit
 curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-K8s-template.yml --output litmus-portal-namespaced-K8s-template.yml
 envsubst < litmus-portal-namespaced-K8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
 
 #### Configuration Options for Cluster scope.
