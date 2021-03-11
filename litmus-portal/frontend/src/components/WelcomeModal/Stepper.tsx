@@ -51,11 +51,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   });
 
   const handleNext = () => {
-    if (activeStep === 2 && values.confirmPassword !== values.password) {
-      isError.current = true;
-    } else {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
   const rerender = () => {
     window.location.reload();
@@ -64,6 +60,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
     onCompleted: () => {
       rerender();
+      handleModal();
     },
   });
 
@@ -105,8 +102,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         isError.current = true;
         console.error(err);
       });
-
-    handleModal();
   };
 
   // If first character is empty then all the successive letters would
@@ -156,35 +151,10 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         </div>
       );
     }
-    if (activeStep === 1) {
-      return (
-        <div className={classes.buttonDiv}>
-          <div data-cy="backButton">
-            <ButtonOutline isDisabled={false} handleClick={handleBack}>
-              <>{t('welcomeModal.button.back')}</>
-            </ButtonOutline>
-          </div>
-          <div data-cy="startButton">
-            <ButtonFilled
-              isPrimary
-              isDisabled={isError.current}
-              handleClick={handleSubmit}
-              data-cy="Start"
-            >
-              <div>{t('welcomeModal.button.letsStart')}</div>
-            </ButtonFilled>
-          </div>
-        </div>
-      );
-    }
     return (
       <div className={classes.buttonDiv}>
         <div data-cy="backButton">
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={handleBack}
-            data-cy="Back"
-          >
+          <ButtonOutline isDisabled={false} handleClick={handleBack}>
             <>{t('welcomeModal.button.back')}</>
           </ButtonOutline>
         </div>
@@ -192,10 +162,10 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ButtonFilled
             isPrimary
             isDisabled={isError.current}
-            handleClick={handleNext}
-            data-cy="Continue"
+            handleClick={handleSubmit}
+            data-cy="Start"
           >
-            <div>{t('welcomeModal.button.continue')}</div>
+            <div>{t('welcomeModal.button.letsStart')}</div>
           </ButtonFilled>
         </div>
       </div>
@@ -209,7 +179,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         handleNext();
         return;
       }
-      if (activeStep === 3) {
+      if (activeStep === 1) {
         handleSubmit();
         return;
       }
