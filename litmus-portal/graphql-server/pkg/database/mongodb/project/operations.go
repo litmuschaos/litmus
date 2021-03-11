@@ -77,31 +77,30 @@ func AddMember(ctx context.Context, projectID string, member *Member) error {
 	return nil
 }
 
-// RemoveInvitation ...
-func RemoveInvitation(ctx context.Context, projectID string, userName string, invitation Invitation) error {
+// RemoveInvitation :Removes member or cancels the invitation
+func RemoveInvitation(ctx context.Context, projectID string, userID string, invitation Invitation) error {
 	query := bson.M{"_id": projectID}
-	update := bson.M{"$pull": bson.M{"members": bson.M{"username": userName}}}
+	update := bson.M{"$pull": bson.M{"members": bson.M{"user_id": userID}}}
 	_, err := projectCollection.UpdateOne(ctx, query, update)
 	if err != nil {
 		if invitation == AcceptedInvitation {
-			log.Print("Error Removing the member with username:", userName, "from project with project id: ", projectID, err)
+			log.Print("Error Removing the member with userID:", userID, "from project with project id: ", projectID, err)
 			return err
 		}
-		log.Print("Error Removing the invite with username:", userName, "from project with project id: ", projectID, err)
+		log.Print("Error Removing the invite with userID:", userID, "from project with project id: ", projectID, err)
 		return err
 
 	}
 	return nil
 }
 
-// UpdateInvite ...
-func UpdateInvite(ctx context.Context, projectID, userName string, invitation Invitation, Role *model.MemberRole) error {
+// UpdateInvite :Updates the status of sent invitation
+func UpdateInvite(ctx context.Context, projectID, userID string, invitation Invitation, Role *model.MemberRole) error {
 	options := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.M{"elem.username": userName},
+			bson.M{"elem.user_id": userID},
 		},
 	})
-
 	query := bson.M{"_id": projectID}
 	var update bson.M
 

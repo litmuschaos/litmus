@@ -3387,7 +3387,7 @@ type Member {
 
 input MemberInput {
   project_id: ID!
-  user_name: String!
+  user_id: String!
   role: MemberRole
 }
 
@@ -17791,9 +17791,9 @@ func (ec *executionContext) unmarshalInputMemberInput(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
-		case "user_name":
+		case "user_id":
 			var err error
-			it.UserName, err = ec.unmarshalNString2string(ctx, v)
+			it.UserID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
