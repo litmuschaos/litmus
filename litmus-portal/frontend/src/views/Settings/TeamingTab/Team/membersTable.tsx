@@ -1,37 +1,18 @@
 import {
-  createStyles,
   Paper,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
   TableHead,
   TablePagination,
   TableRow,
-  Theme,
   Typography,
-  withStyles,
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Member } from '../../../../models/graphql/user';
-import useStyles from './styles';
+import useStyles, { StyledTableCell } from './styles';
 import TableData from './tableData';
-
-// StyledTableCell used to create custom table cell
-const StyledTableCell = withStyles((theme: Theme) =>
-  createStyles({
-    head: {
-      backgroundColor: theme.palette.background.paper,
-      color: theme.palette.text.disabled,
-      borderBottom: `1px solid ${theme.palette.border.main}`,
-    },
-    body: {
-      backgroundColor: theme.palette.background.paper,
-      fontSize: '0.875rem',
-    },
-  })
-)(TableCell);
 
 interface PaginationData {
   pageNo: number;
