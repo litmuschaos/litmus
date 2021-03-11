@@ -37,12 +37,8 @@ const PanelContent: React.FC<PanelResponse> = ({
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
-  const lineGraph: string[] = Object.values(palette.graph.line).map((elem) =>
-    typeof elem === 'string' ? elem : palette.graph.dashboard.lightBlue
-  );
-  const areaGraph: string[] = Object.values(palette.graph.area).map((elem) =>
-    typeof elem === 'string' ? elem : palette.graph.dashboard.lightBlue
-  );
+  const lineGraph: string[] = palette.graph.line;
+  const areaGraph: string[] = palette.graph.area;
 
   const [
     prometheusQueryData,
@@ -199,8 +195,8 @@ const PanelContent: React.FC<PanelResponse> = ({
             showEventMarkers
             unit={unit}
             yLabel={y_axis_left}
-            yLabelOffset={30}
-            margin={{ left: 50, right: 20, top: 20, bottom: 10 }}
+            yLabelOffset={50}
+            margin={{ left: 70, right: 20, top: 20, bottom: 10 }}
           />
         </div>
         {/* <Typography>
