@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import useStyle from './styles';
 
 interface LinearProgressBarProps {
   value: number;
@@ -13,21 +13,10 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
   maxValue,
   isInTable,
 }) => {
-  const width: number = 15; //default width
+  
   const resultValue = ((value as number) / (maxValue as number)) * 100;
 
-  const barStyle = makeStyles(() => ({
-    root: {
-      borderRadius: 5,
-      height: width,
-    },
-    barColorPrimary: {
-      backgroundColor:
-        resultValue > 60 ? '#109B67' : resultValue > 30 ? '#F6B92B' : '#CA2C2C',
-    },
-  }));
-
-  const styleClass = barStyle();
+  const styleClass = useStyle();
 
   return (
     <LinearProgress
@@ -35,10 +24,20 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
       value={resultValue}
       classes={
         isInTable
-          ? {
-              root: styleClass.root,
-              barColorPrimary: styleClass.barColorPrimary,
-            }
+          ? resultValue > 60
+            ? {
+                root: styleClass.root,
+                barColorPrimary: styleClass.greenColorPrimary,
+              }
+            : resultValue > 30
+            ? {
+                root: styleClass.root,
+                barColorPrimary: styleClass.yellowColorPrimary,
+              }
+            : {
+                root: styleClass.root,
+                barColorPrimary: styleClass.redColorPrimary,
+              }
           : {}
       }
     />
