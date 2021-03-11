@@ -16,6 +16,7 @@ import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { getUsername } from '../../utils/auth';
 import CustomBreadCrumbs from '../BreadCrumbs';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
@@ -38,7 +39,6 @@ const Header: React.FC = () => {
     GET_USER,
     { variables: { username: userData.username } }
   );
-  const name: string = data?.getUser.name ?? '';
   const email: string = data?.getUser.email ?? '';
   const projects: Project[] = data?.getUser.projects ?? [];
 
@@ -114,9 +114,9 @@ const Header: React.FC = () => {
               </Box>
               <Box p={1} flexGrow={1} className={classes.headerFlexProfile}>
                 <ProfileDropdownSection
-                  name={name}
+                  name={getUsername()}
                   email={email}
-                  username={userData.username}
+                  username={getUsername()}
                   selectedProjectID={selectedProjectDetails.selectedProjectID}
                   CallbackToSetSelectedProjectID={setSelectedProjectID}
                   selectedProjectName={

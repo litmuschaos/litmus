@@ -1,14 +1,14 @@
 export interface MemberInvitation {
   member: {
     project_id: string;
-    user_name: string;
+    user_id: string;
   };
 }
 
 export interface MemberInviteNew {
   member: {
     project_id: string;
-    user_name: string;
+    user_id: string;
     role: string;
   };
 }
