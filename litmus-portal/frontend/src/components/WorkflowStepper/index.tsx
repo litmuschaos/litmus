@@ -402,11 +402,7 @@ const CustomStepper = () => {
               }
             >
               <div className={classes.modal}>
-                <img
-                  src="/icons/finish.svg"
-                  // className={classes.mark}
-                  alt="mark"
-                />
+                <img src="/icons/finish.svg" alt="mark" />
                 <div className={classes.heading}>
                   {t('workflowStepper.aNewChaosWorkflow')}
                   <br />
@@ -444,11 +440,7 @@ const CustomStepper = () => {
               }
             >
               <div className={classes.modal}>
-                <img
-                  src="/icons/red-cross.svg"
-                  // className={classes.mark}
-                  alt="mark"
-                />
+                <img src="/icons/red-cross.svg" alt="mark" />
                 <div className={classes.heading}>
                   <strong>{t('workflowStepper.workflowFailed')}</strong>
                 </div>
