@@ -9,10 +9,10 @@ spec:
   jobLabel: app
   selector:
     matchLabels:
-      app: chaos-monitor
+      app: chaos-exporter
   namespaceSelector:
     matchNames:
-    - litmus
+      - litmus
   endpoints:
-  - port: tcp
-    interval: 1s
+    - port: tcp
+      interval: 1s

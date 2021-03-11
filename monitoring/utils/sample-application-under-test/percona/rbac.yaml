@@ -1,0 +1,111 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: percona-xtradb-cluster-operator
+rules:
+  - apiGroups:
+      - pxc.percona.com
+    resources:
+      - perconaxtradbclusters
+      - perconaxtradbclusters/status
+      - perconaxtradbclusterbackups
+      - perconaxtradbclusterbackups/status
+      - perconaxtradbclusterrestores
+      - perconaxtradbclusterrestores/status
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/exec
+      - pods/log
+      - configmaps
+      - services
+      - persistentvolumeclaims
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+      - cronjobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - certmanager.k8s.io
+      - cert-manager.io
+    resources:
+      - issuers
+      - certificates
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+      - deletecollection
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: percona-xtradb-cluster-operator
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: service-account-percona-xtradb-cluster-operator
+subjects:
+  - kind: ServiceAccount
+    name: percona-xtradb-cluster-operator
+roleRef:
+  kind: Role
+  name: percona-xtradb-cluster-operator
+  apiGroup: rbac.authorization.k8s.io
