@@ -40,9 +40,10 @@ const PanelContent: React.FC<PanelResponse> = ({
   const lineGraph: string[] = palette.graph.line;
   const areaGraph: string[] = palette.graph.area;
 
-  const [prometheusQueryData, setPrometheusQueryData] = React.useState<
-    PrometheusQueryDataInterface
-  >({
+  const [
+    prometheusQueryData,
+    setPrometheusQueryData,
+  ] = React.useState<PrometheusQueryDataInterface>({
     promInput: {
       url: '',
       start: '',

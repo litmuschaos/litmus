@@ -15,33 +15,33 @@ const Workflows = lazy(() => import('../../pages/Workflows'));
 const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
-const BrowseTemplate = lazy(() =>
-  import('../../views/ChaosWorkflows/BrowseTemplate')
+const BrowseTemplate = lazy(
+  () => import('../../views/ChaosWorkflows/BrowseTemplate')
 );
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
 const TargetHome = lazy(() => import('../../components/Targets/ConnectHome'));
-const ConnectTargets = lazy(() =>
-  import('../../components/Targets/ConnectTarget')
+const ConnectTargets = lazy(
+  () => import('../../components/Targets/ConnectTarget')
 );
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
 const ClusterInfo = lazy(() => import('../../components/Targets/ClusterInfo'));
-const AnalyticsDashboard = lazy(() =>
-  import('../../pages/AnalyticsDashboards')
+const AnalyticsDashboard = lazy(
+  () => import('../../pages/AnalyticsDashboards')
 );
-const DataSourceSelectPage = lazy(() =>
-  import('../../pages/SelectAndConfigureDataSource/Select')
+const DataSourceSelectPage = lazy(
+  () => import('../../pages/SelectAndConfigureDataSource/Select')
 );
-const DataSourceConfigurePage = lazy(() =>
-  import('../../pages/SelectAndConfigureDataSource/Configure')
+const DataSourceConfigurePage = lazy(
+  () => import('../../pages/SelectAndConfigureDataSource/Configure')
 );
-const DashboardSelectPage = lazy(() =>
-  import('../../pages/SelectAndConfigureDashboards/Select')
+const DashboardSelectPage = lazy(
+  () => import('../../pages/SelectAndConfigureDashboards/Select')
 );
-const DashboardConfigurePage = lazy(() =>
-  import('../../pages/SelectAndConfigureDashboards/Configure')
+const DashboardConfigurePage = lazy(
+  () => import('../../pages/SelectAndConfigureDashboards/Configure')
 );
 const DashboardPage = lazy(() => import('../../pages/MonitoringDashboardPage'));
 const MyHub = lazy(() => import('../../pages/MyHub'));
@@ -49,8 +49,8 @@ const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));
-const CreateCustomWorkflow = lazy(() =>
-  import('../../pages/CreateCustomWorkflow')
+const CreateCustomWorkflow = lazy(
+  () => import('../../pages/CreateCustomWorkflow')
 );
 
 interface RoutesProps {
