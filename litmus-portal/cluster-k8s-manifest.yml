@@ -224,17 +224,18 @@ spec:
     component: litmusportal-server
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mongo
   namespace: litmus
   labels:
     app: mongo
 spec:
-  replicas: 1
   selector:
     matchLabels:
       component: database
+  serviceName: mongo
+  replicas: 1
   template:
     metadata:
       labels:
@@ -260,24 +261,15 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
-      volumes:
-        - name: mongo-persistent-storage
-          persistentVolumeClaim:
-            claimName: mongo-pv-claim
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mongo-pv-claim
-  namespace: litmus
-  labels:
-    app: mongo
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
 ---
 apiVersion: v1
 kind: Service
