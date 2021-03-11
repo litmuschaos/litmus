@@ -2,6 +2,7 @@ package events
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
@@ -102,10 +103,11 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 			ChaosExp:   cd,
 			Message:    nodeStatus.Message,
 		}
-		if cd != nil && cd.ExperimentVerdict == "Fail" {
+		if cd != nil && (strings.ToLower(cd.ExperimentVerdict) == "fail" || strings.ToLower(cd.ExperimentVerdict) == "stopped") {
 			experimentFail = 1
 			details.Phase = "Failed"
 			details.Message = "Chaos Experiment Failed"
+			cd.ExperimentVerdict = "Fail"
 		}
 		nodes[nodeStatus.ID] = details
 	}
