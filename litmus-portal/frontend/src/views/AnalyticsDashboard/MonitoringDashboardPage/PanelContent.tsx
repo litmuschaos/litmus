@@ -2,7 +2,7 @@
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
-import { DateValue, GraphMetric, LineAreaGraph } from 'litmus-ui';
+import { GraphMetric, LineAreaGraph } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
@@ -20,20 +20,11 @@ import {
 import { RootState } from '../../../redux/reducers';
 import useStyles from './styles';
 
-const filterUndefinedData = (data: GraphMetric[]): GraphMetric[] =>
-  data
-    ? data
-        .filter((elem) => elem && elem.data && elem.data.length)
-        .filter((elem) =>
-          elem.data.filter(
-            (d: DateValue) =>
-              d &&
-              d.date &&
-              typeof d.date === 'number' &&
-              typeof d.value === 'number'
-          )
-        )
-    : data;
+interface PrometheusQueryDataInterface {
+  promInput: PrometheusQueryInput;
+  chaosInput: string[];
+}
+
 const PanelContent: React.FC<PanelResponse> = ({
   panel_id,
   panel_name,
@@ -46,18 +37,20 @@ const PanelContent: React.FC<PanelResponse> = ({
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
-  const lineGraph: string[] = Object.values(palette.graph.line).map((elem) =>
-    typeof elem === 'string' ? elem : palette.graph.dashboard.lightBlue
-  );
+  const lineGraph: string[] = palette.graph.line;
+  const areaGraph: string[] = palette.graph.area;
 
   const [
     prometheusQueryData,
     setPrometheusQueryData,
-  ] = React.useState<PrometheusQueryInput>({
-    url: '',
-    start: '',
-    end: '',
-    queries: [],
+  ] = React.useState<PrometheusQueryDataInterface>({
+    promInput: {
+      url: '',
+      start: '',
+      end: '',
+      queries: [],
+    },
+    chaosInput: [],
   });
 
   const [updateQueries, setUpdateQueries] = React.useState<boolean>(false);
@@ -77,14 +70,18 @@ const PanelContent: React.FC<PanelResponse> = ({
     PrometheusResponse,
     PrometheusQueryVars
   >(PROM_QUERY, {
-    variables: { prometheusInput: prometheusQueryData },
-    // fetchPolicy: 'cache-and-network',
+    variables: { prometheusInput: prometheusQueryData.promInput },
+    fetchPolicy: 'cache-and-network',
     pollInterval: selectedDashboard.refreshRate,
   });
 
   const generatePrometheusQueryData = () => {
     const promQueries: promQueryInput[] = [];
+    const chaosQueries: string[] = [];
     prom_queries.forEach((query: PromQuery) => {
+      if (query.prom_query_name.startsWith('litmuschaos_awaited_experiments')) {
+        chaosQueries.push(query.queryid);
+      }
       promQueries.push({
         queryid: query.queryid,
         query: query.prom_query_name,
@@ -99,23 +96,16 @@ const PanelContent: React.FC<PanelResponse> = ({
       end: `${Math.round(new Date().getTime() / 1000)}`,
       queries: promQueries,
     };
-    setPrometheusQueryData(prometheusQueryInput);
+    setPrometheusQueryData({
+      promInput: prometheusQueryInput,
+      chaosInput: chaosQueries,
+    });
   };
 
-  useEffect(() => {
-    if (firstLoad === true && updateQueries === false) {
-      generatePrometheusQueryData();
-      setFirstLoad(false);
-      setUpdateQueries(true);
-    }
-    if (updateQueries === true && firstLoad === false) {
-      setTimeout(() => {
-        generatePrometheusQueryData();
-      }, selectedDashboard.refreshRate);
-    }
-  }, [prometheusQueryData]);
-
   let seriesData: Array<GraphMetric> = [
+    { metricName: '', data: [{ date: NaN, value: NaN }] },
+  ];
+  let eventData: Array<GraphMetric> = [
     { metricName: '', data: [{ date: NaN, value: NaN }] },
   ];
   if (
@@ -133,9 +123,36 @@ const PanelContent: React.FC<PanelResponse> = ({
       })),
       baseColor: lineGraph[index % lineGraph.length],
     }));
+    prometheusData.GetPromQuery.forEach((queryResponse) => {
+      if (prometheusQueryData.chaosInput.includes(queryResponse.queryid)) {
+        if (queryResponse.legends && queryResponse.legends[0]) {
+          eventData = queryResponse.legends.map((elem, index) => ({
+            metricName: elem[0] ?? 'test',
+            data: queryResponse.tsvs[index].map((dataPoint) => ({
+              date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
+              value: parseInt(dataPoint.value ?? '0', 10),
+            })),
+            baseColor: areaGraph[index % areaGraph.length],
+          }));
+        }
+      }
+    });
   }
 
-  if (error || !seriesData) {
+  useEffect(() => {
+    if (firstLoad === true && updateQueries === false) {
+      generatePrometheusQueryData();
+      setFirstLoad(false);
+      setUpdateQueries(true);
+    }
+    if (updateQueries === true && firstLoad === false) {
+      setTimeout(() => {
+        generatePrometheusQueryData();
+      }, selectedDashboard.refreshRate);
+    }
+  }, [prometheusQueryData]);
+
+  if (error) {
     return (
       <div className={classes.rootPanel}>
         <Typography>{panel_name}</Typography>
@@ -143,8 +160,6 @@ const PanelContent: React.FC<PanelResponse> = ({
       </div>
     );
   }
-
-  // console.log(seriesData);
 
   return (
     <div className={classes.rootPanel}>
@@ -172,11 +187,16 @@ const PanelContent: React.FC<PanelResponse> = ({
         <div className={classes.singleGraph}>
           <LineAreaGraph
             legendTableHeight={120}
-            openSeries={filterUndefinedData(seriesData)}
+            openSeries={seriesData}
+            eventSeries={eventData}
             showPoints={false}
             showLegendTable
             showTips
-            margin={{ left: 50, right: 20, top: 20, bottom: 10 }}
+            showEventMarkers
+            unit={unit}
+            yLabel={y_axis_left}
+            yLabelOffset={50}
+            margin={{ left: 70, right: 20, top: 20, bottom: 10 }}
           />
         </div>
         {/* <Typography>

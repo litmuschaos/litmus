@@ -149,7 +149,9 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                   const check: number = chaosEngineNamesAndNamespacesMap.filter(
                     (data, index) => {
                       if (
-                        data.engineName === parsedEmbeddedYaml.metadata.name &&
+                        data.engineName.includes(
+                          parsedEmbeddedYaml.metadata.name
+                        ) &&
                         data.engineNamespace === engineNamespace
                       ) {
                         matchIndex = index;
@@ -160,7 +162,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                   ).length;
                   if (check === 0) {
                     chaosEngineNamesAndNamespacesMap.push({
-                      engineName: parsedEmbeddedYaml.metadata.name,
+                      engineName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
                       engineNamespace,
                       workflowName: workflowYaml.metadata.name,
                     });
@@ -185,7 +187,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
       (existingPromQuery: PromQuery) => {
         if (
           existingPromQuery.prom_query_name.startsWith(
-            'heptio_eventrouter_normal_total{reason="ChaosInject"'
+            'litmuschaos_awaited_experiments'
           )
         ) {
           const chaosDetails: ChaosEngineNamesAndNamespacesMap = getEngineNameAndNamespace(
@@ -197,8 +199,9 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
               index: number
             ) => {
               if (
-                chaosDetailsFomSchedule.engineName ===
-                  chaosDetails.engineName &&
+                chaosDetailsFomSchedule.engineName.includes(
+                  chaosDetails.engineName
+                ) &&
                 chaosDetailsFomSchedule.engineNamespace ===
                   chaosDetails.engineNamespace
               ) {
@@ -222,9 +225,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
         panel.prom_queries.forEach((query: PromQuery) => {
           let updatedLegend: string = query.legend;
           if (
-            query.prom_query_name.startsWith(
-              'heptio_eventrouter_normal_total{reason="ChaosInject"'
-            )
+            query.prom_query_name.startsWith('litmuschaos_awaited_experiments')
           ) {
             const chaosDetails: ChaosEngineNamesAndNamespacesMap = getEngineNameAndNamespace(
               query.prom_query_name
@@ -232,8 +233,9 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
             chaosEngineNamesAndNamespacesMap.forEach(
               (chaosDetailsFomSchedule: ChaosEngineNamesAndNamespacesMap) => {
                 if (
-                  chaosDetailsFomSchedule.engineName ===
-                    chaosDetails.engineName &&
+                  chaosDetailsFomSchedule.engineName.includes(
+                    chaosDetails.engineName
+                  ) &&
                   chaosDetailsFomSchedule.engineNamespace ===
                     chaosDetails.engineNamespace &&
                   !query.legend.includes(chaosDetailsFomSchedule.workflowName)

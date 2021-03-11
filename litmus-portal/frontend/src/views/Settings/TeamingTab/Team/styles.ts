@@ -140,10 +140,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 'auto',
   },
   avatarBackground: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.light,
     width: '2.56rem',
     height: '2.56rem',
-    color: theme.palette.text.primary,
+    color: theme.palette.secondary.contrastText,
     alignContent: 'right',
     marginRight: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
