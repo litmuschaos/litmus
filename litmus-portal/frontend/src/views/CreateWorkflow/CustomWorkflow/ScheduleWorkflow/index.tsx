@@ -273,6 +273,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             {workflows.map((data, index) => {
               return (
                 <li
+                  key={data.index}
                   className={classes.listItem}
                   onDragOver={() => onDragOver(index)}
                 >

@@ -5,11 +5,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "cross-env NODE_PATH=src react-scripts build",
-    "test": "cypress run",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .js,.tsx,.ts",
-    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts",
-    "unit:ci": "cypress run --config video=false"
+    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.1.2",
@@ -34,7 +32,7 @@
     "jsonwebtoken": "^8.5.1",
     "jspdf": "^2.1.1",
     "jspdf-autotable": "^3.5.13",
-    "litmus-ui": "^0.1.4",
+    "litmus-ui": "^1.0.3",
     "localforage": "^1.7.3",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
@@ -101,8 +99,6 @@
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
     "cross-env": "^5.2.0",
-    "cypress": "^5.6.0",
-    "cypress-react-unit-test": "^4.11.2",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.11.0",

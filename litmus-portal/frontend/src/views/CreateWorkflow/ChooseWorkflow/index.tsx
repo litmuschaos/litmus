@@ -13,17 +13,13 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
 import SelectMyHub from './SelectMyHub';
 import useStyles from './styles';
 import UploadYAML from './uploadYAML';
-
-interface ChooseWorkflowRadio {
-  selected: string;
-  id?: string;
-}
 
 const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();

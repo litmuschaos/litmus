@@ -556,7 +556,10 @@ createWorkflow:
     modalHeading: Create your
     modalHeadingStrong: workflow name
     settings: Workflow Settings
-    description1: You have selected a pre-defined workflow
+    descriptionA: You have selected a pre-defined workflow
+    descriptionB: You have selected an existing workflow
+    descriptionC: You have selected a MyHub workflow
+    descriptionD: You have imported a workflow YAML
     description2: Provide a name and description to the new workflow.
     edit: Edit Photo
     changeImage: Change workflow logo
@@ -624,9 +627,8 @@ createWorkflow:
     fail: Fail
   tuneWorkflow:
     header: Tune the selected workflow
-    selectedWorkflowInfo: You have selected
-    description: Fine tune the application  names and other variables to suit your needs
-    addExp: Add experiments
+    selectedWorkflowInfo: You have selected a pre-defined workflow
+    description: Fine tune the application  names and other variables to suit your needs    
     view: View YAML
     firstExperiment: Add your first experiment
     choose: Choose Experiments
@@ -634,6 +636,8 @@ createWorkflow:
     afterSelect: After selecting you can fine tune them.
     selectExp: Select An Experiment
     done: Done
+    editSequence: Edit Sequence
+    addANewExperiment: Add a new experiment
     addProbe:
       heading: Add
       headingStrong: Probe

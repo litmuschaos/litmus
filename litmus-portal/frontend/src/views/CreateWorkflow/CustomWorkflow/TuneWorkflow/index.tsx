@@ -360,7 +360,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               {t('customWorkflow.tuneExperiment.envText')}
             </Typography>
             {env.map((data, index) => (
-              <div className={classes.inputDiv}>
+              <div key={data.name} className={classes.inputDiv}>
                 <Typography className={classes.envName}>{data.name}</Typography>
                 <InputField
                   label="Value"
@@ -379,7 +379,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             {t('customWorkflow.tuneExperiment.customEnvText')}
           </Typography>
           {overrideEnvs.map((data, index) => (
-            <div className={classes.inputDivEnv}>
+            <div key={data.name} className={classes.inputDivEnv}>
               <InputField
                 label="Key"
                 data-cy="inputWorkflow"

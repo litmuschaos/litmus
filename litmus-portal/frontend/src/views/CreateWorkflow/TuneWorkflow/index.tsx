@@ -1,23 +1,29 @@
 import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined } from 'litmus-ui';
 import localforage from 'localforage';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import Row from '../../../containers/layouts/Row';
+import Width from '../../../containers/layouts/Width';
 import {
   GET_CHARTS_DATA,
   GET_ENGINE_YAML,
   GET_EXPERIMENT_YAML,
 } from '../../../graphql/queries';
-import useStyles from './styles';
+import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
+import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { Charts } from '../../../models/redux/myhub';
 import { RootState } from '../../../redux/reducers';
+import capitalize from '../../../utils/capitalize';
 import AddExperimentModal from './AddExperimentModal';
+import useStyles from './styles';
+import WorkflowTable from './WorkflowTable';
 
-interface ChooseWorkflowRadio {
-  selected: string;
-  id?: string;
+interface WorkflowProps {
+  name: string;
+  crd: string;
 }
 
 interface WorkflowExperiment {
@@ -32,17 +38,34 @@ interface ChartName {
 
 const TuneWorkflow: React.FC = () => {
   const classes = useStyles();
-  const { t } = useTranslation();
 
   // State Variables for Tune Workflow
   const [hubName, setHubName] = useState<string>('');
-  const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]);
+  const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]); // eslint-disable-line
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
   const [selectedExp, setSelectedExp] = useState('');
   const { selectedProjectID } = useSelector(
     (state: RootState) => state.userData
   );
   const [addExpModal, setAddExpModal] = useState(false);
+  const [workflow, setWorkflow] = useState<WorkflowProps>({
+    name: '',
+    crd: '',
+  });
+  const { t } = useTranslation();
+
+  const getSelectedWorkflowName = () => {
+    localforage.getItem('workflow').then((workflow) =>
+      setWorkflow({
+        name: (workflow as WorkflowDetailsProps).name,
+        crd: (workflow as WorkflowDetailsProps).CRD,
+      })
+    );
+  };
+
+  useEffect(() => {
+    getSelectedWorkflowName();
+  }, []);
 
   // Graphql Query for fetching Engine YAML
   const [
@@ -159,32 +182,32 @@ const TuneWorkflow: React.FC = () => {
         <Typography className={classes.heading}>
           {t('createWorkflow.tuneWorkflow.header')}
         </Typography>
-        <div style={{ display: 'flex' }}>
+        <Row className={classes.descriptionWrapper}>
           <Typography className={classes.description}>
-            {t('createWorkflow.tuneWorkflow.selectedWorkflowInfo')}
+            {t('createWorkflow.tuneWorkflow.selectedWorkflowInfo')}{' '}
+            <i>
+              <strong>
+                {workflow.name.split('-').map((text) => `${capitalize(text)} `)}
+              </strong>
+            </i>
             <br />
             {t('createWorkflow.tuneWorkflow.description')}
           </Typography>
-          <ButtonOutlined style={{ marginRight: 20 }} onClick={() => {}}>
-            {t('createWorkflow.tuneWorkflow.view')}
-          </ButtonOutlined>
-          <ButtonOutlined
-            onClick={() => {
-              setSelectedExp('');
-              setAddExpModal(true);
-            }}
-          >
-            {t('createWorkflow.tuneWorkflow.addExp')}
-          </ButtonOutlined>
-        </div>
-
-        {experiment.length ? (
-          <>{/* Display Table Here */}</>
-        ) : (
-          <ButtonFilled onClick={() => setAddExpModal(true)}>
-            {t('createWorkflow.tuneWorkflow.firstExperiment')}
-          </ButtonFilled>
-        )}
+          <div className={classes.headerBtn}>
+            <ButtonOutlined className={classes.btn1}>
+              <img src="./icons/viewYAMLicon.svg" alt="view YAML" />{' '}
+              <Width width="0.5rem" /> {t('createWorkflow.tuneWorkflow.view')}
+            </ButtonOutlined>
+            <ButtonOutlined
+              onClick={() => {
+                setSelectedExp('');
+                setAddExpModal(true);
+              }}
+            >
+              {t('createWorkflow.tuneWorkflow.addANewExperiment')}
+            </ButtonOutlined>
+          </div>
+        </Row>
       </div>
       {/* Add Experiment Modal */}
       <AddExperimentModal
@@ -197,6 +220,23 @@ const TuneWorkflow: React.FC = () => {
         handleDone={handleDone}
       />
       {/* Experiment Details */}
+      <div className={classes.experimentWrapper}>
+        {/* Edit Button */}
+        <ButtonOutlined>
+          <img src="./icons/editsequence.svg" alt="Edit Sequence" />{' '}
+          <Width width="0.5rem" />
+          {t('createWorkflow.tuneWorkflow.editSequence')}
+        </ButtonOutlined>
+        {/* Details Section -> Graph on the Left and Table on the Right */}
+        <Row>
+          {/* Argo Workflow Graph */}
+          <Width width="30%">Argo Graph</Width>
+          {/* Workflow Table */}
+          <Width width="70%">
+            <WorkflowTable crd={workflow.crd} />
+          </Width>
+        </Row>
+      </div>
     </div>
   );
 };

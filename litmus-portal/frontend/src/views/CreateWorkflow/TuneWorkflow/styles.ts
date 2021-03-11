@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  // Header
   headerWrapper: {
     padding: theme.spacing(0, 4),
   },
@@ -23,12 +24,35 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
   },
 
+  headerBtn: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    width: '30%',
+  },
+
+  descriptionWrapper: {
+    padding: theme.spacing(3, 0),
+    justifyContent: 'space-between',
+  },
+
   description: {
     width: '70%',
-    padding: theme.spacing(3, 0),
     fontSize: '1rem',
   },
 
+  // Header Buttons [View YAML, Add Exp]
+  btn1: {
+    border: 'none !important',
+    color: theme.palette.highlight,
+  },
+
+  // Experiment Section
+  experimentWrapper: {
+    background: theme.palette.cards.header,
+    padding: theme.spacing(2, 4),
+  },
+
+  // Modal
   closeButton: {
     borderColor: theme.palette.border.main,
   },
