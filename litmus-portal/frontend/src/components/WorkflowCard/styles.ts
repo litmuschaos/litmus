@@ -191,7 +191,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
     padding: theme.spacing(0.275, 0.75, 0.275, 0.75),
-    backgroundColor: theme.palette.secondary.light,
+    backgroundColor: theme.palette.warning.main,
     color: theme.palette.secondary.contrastText,
     borderRadius: 3,
   },
