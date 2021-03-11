@@ -205,9 +205,7 @@
       "options": {
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "max"
-          ],
+          "calcs": ["max"],
           "fields": "",
           "values": false
         },
@@ -217,7 +215,7 @@
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "sum(chaosengine_experiments_count{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "expr": "sum(chaosengine_experiments_count{engine_namespace=\"litmus\",job=\"chaos-exporter\"})",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -276,9 +274,7 @@
       "options": {
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "max"
-          ],
+          "calcs": ["max"],
           "fields": "",
           "values": false
         },
@@ -288,7 +284,7 @@
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "sum(chaosengine_passed_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "expr": "sum(chaosengine_passed_experiments{engine_namespace=\"litmus\",job=\"chaos-exporter\"})",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -347,9 +343,7 @@
       "options": {
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "max"
-          ],
+          "calcs": ["max"],
           "fields": "",
           "values": false
         },
@@ -359,7 +353,7 @@
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "sum(chaosengine_failed_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "expr": "sum(chaosengine_failed_experiments{engine_namespace=\"litmus\",job=\"chaos-exporter\"})",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -416,9 +410,7 @@
       "options": {
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -428,7 +420,7 @@
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "sum(chaosengine_waiting_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "expr": "sum(chaosengine_waiting_experiments{engine_namespace=\"litmus\",job=\"chaos-exporter\"})",
           "interval": "",
           "intervalFactor": 3,
           "legendFormat": "",
@@ -2105,17 +2097,7 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "browser",
   "title": "Sock-Shop Performance",

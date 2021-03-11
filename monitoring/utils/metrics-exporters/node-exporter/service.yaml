@@ -2,23 +2,17 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/name: node-exporter
-    app.kubernetes.io/version: v0.18.1
-  name: node-exporter
-  namespace: monitoring
+    app: node-exporter
   annotations:
     prometheus.io/scrape: "true"
-    prometheus.io/path: "/metrics"
-    prometheus.io/port: "9091"
-    prometheus.io/scheme: "http"
+  name: node-exporter
+  namespace: monitoring
 spec:
+  type: ClusterIP
   clusterIP: None
   ports:
-    - name: http
+    - name: metrics
       port: 9100
       targetPort: http
-    - name: https
-      port: 9101
-      targetPort: https
   selector:
-    app.kubernetes.io/name: node-exporter
+    app: node-exporter

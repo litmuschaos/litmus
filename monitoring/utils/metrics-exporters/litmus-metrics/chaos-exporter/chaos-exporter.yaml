@@ -3,39 +3,43 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: chaos-monitor
-  name: chaos-monitor
+    app: chaos-exporter
+  name: chaos-exporter
   namespace: litmus
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: chaos-monitor
+      app: chaos-exporter
   template:
     metadata:
       labels:
-        app: chaos-monitor
+        app: chaos-exporter
     spec:
       containers:
-      - image: litmuschaos/chaos-exporter:ci
-        imagePullPolicy: Always
-        name: chaos-exporter
-      serviceAccount: litmus
+        - image: litmuschaos/chaos-exporter:1.13.0
+          imagePullPolicy: Always
+          name: chaos-exporter
+          # uncomment the following lines to use the litmuschaos exporter for monitoring the chaos events and chaosresults for a selected namespace
+          # env:
+          #   - name: WATCH_NAMESPACE
+          #     value: "litmus"
+      # to use with litmus portal in cluster scope change service account name to 'litmus-cluster-scope' and for using litmus portal in namespaced scope change to 'litmus-namespace-scope'
       serviceAccountName: litmus
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: chaos-monitor
-  name: chaos-monitor
+    app: chaos-exporter
+  name: chaos-exporter
   namespace: litmus
 spec:
   ports:
-  - port: 8080
-    name: tcp
-    protocol: TCP
-    targetPort: 8080
+    - port: 8080
+      name: tcp
+      protocol: TCP
+      targetPort: 8080
   selector:
-    app: chaos-monitor
+    app: chaos-exporter
   type: ClusterIP

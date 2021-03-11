@@ -249,6 +249,7 @@ analyticsDashboard:
     seconds: seconds
     minutes: minutes
     hours: hours
+    days: days
     few: few
 
 error:

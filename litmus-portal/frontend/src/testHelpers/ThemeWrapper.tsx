@@ -7,11 +7,7 @@ interface ThemeWrapperProps {
 }
 
 const ThemeWrapper: React.FC<ThemeWrapperProps> = ({ children }) => {
-  return (
-    <LitmusThemeProvider platform="litmus-portal">
-      {children}
-    </LitmusThemeProvider>
-  );
+  return <LitmusThemeProvider>{children}</LitmusThemeProvider>;
 };
 
 export default ThemeWrapper;

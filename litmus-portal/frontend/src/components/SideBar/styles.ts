@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     justifyContent: 'center',
     '&:hover': {
-      backgroundColor: theme.palette.secondary.light,
+      backgroundColor: theme.palette.primary.light,
       color: theme.palette.secondary.contrastText,
       '& path': {
         fill: theme.palette.secondary.contrastText,
