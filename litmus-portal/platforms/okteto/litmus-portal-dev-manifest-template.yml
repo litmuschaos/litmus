@@ -35,7 +35,7 @@ spec:
               memory: 100Mi
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
@@ -311,7 +311,7 @@ spec:
               memory: 100Mi
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
