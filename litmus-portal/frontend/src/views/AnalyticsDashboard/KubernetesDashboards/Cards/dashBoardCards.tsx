@@ -4,7 +4,7 @@ import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { history } from '../../../../redux/configureStore';
 import DashboardCard from './index';
-import useStyles from './styles';
+import useStyles from '../../DataSource/Cards/styles';
 
 interface DashboardCardsProps {
   dashboards: DashboardData[];
