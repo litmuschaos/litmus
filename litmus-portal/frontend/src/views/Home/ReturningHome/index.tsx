@@ -72,10 +72,9 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     currentStatus
   );
   const [isChecking, setIsChecking] = useState<boolean>(true);
-  const [
-    plotDataForComparison,
-    setPlotDataForComparison,
-  ] = React.useState<ResilienceScoreComparisonPlotProps>();
+  const [plotDataForComparison, setPlotDataForComparison] = React.useState<
+    ResilienceScoreComparisonPlotProps
+  >();
   const [
     totalValidWorkflowRunsCount,
     setTotalValidWorkflowRunsCount,

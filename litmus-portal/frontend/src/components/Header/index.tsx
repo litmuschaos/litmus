@@ -42,10 +42,9 @@ const Header: React.FC = () => {
   const email: string = data?.getUser.email ?? '';
   const projects: Project[] = data?.getUser.projects ?? [];
 
-  const [
-    selectedProjectDetails,
-    setSelectedProjectDetails,
-  ] = useState<SelectedProjectDetails>({
+  const [selectedProjectDetails, setSelectedProjectDetails] = useState<
+    SelectedProjectDetails
+  >({
     selectedProjectID: userData.selectedProjectID,
     selectedProjectName: userData.selectedProjectName,
     selectedUserRole: userData.userRole,

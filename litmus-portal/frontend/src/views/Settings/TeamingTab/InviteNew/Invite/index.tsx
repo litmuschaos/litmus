@@ -111,10 +111,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   });
 
   // mutation to send invitation to selected users
-  const [
-    SendInvite,
-    { error: errorB, loading: loadingB },
-  ] = useMutation<MemberInviteNew>(SEND_INVITE, {
+  const [SendInvite, { error: errorB, loading: loadingB }] = useMutation<
+    MemberInviteNew
+  >(SEND_INVITE, {
     refetchQueries: [
       {
         query: GET_PROJECT,

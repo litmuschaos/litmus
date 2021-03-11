@@ -62,10 +62,9 @@ const AnalyticsPage: React.FC = () => {
   // Getting the workflow nome from the pathname
   const workflowId = pathname.split('/')[3];
   const { t } = useTranslation();
-  const [
-    selectedWorkflowRunID,
-    setSelectedWorkflowRunID,
-  ] = React.useState<string>('');
+  const [selectedWorkflowRunID, setSelectedWorkflowRunID] = React.useState<
+    string
+  >('');
   const [
     selectedWorkflowRunDetails,
     setSelectedWorkflowRunDetails,
@@ -73,10 +72,9 @@ const AnalyticsPage: React.FC = () => {
   const [workflowRunDataForPlot, setWorkflowRunDataForPlot] = React.useState<
     WorkflowRunData[]
   >([]);
-  const [
-    selectedWorkflowRunData,
-    setSelectedWorkflowRunData,
-  ] = React.useState<SelectedWorkflowRunData>({
+  const [selectedWorkflowRunData, setSelectedWorkflowRunData] = React.useState<
+    SelectedWorkflowRunData
+  >({
     testsPassed: 0,
     testsFailed: 0,
     resilienceScore: 0,
