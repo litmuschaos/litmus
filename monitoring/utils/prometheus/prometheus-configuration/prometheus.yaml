@@ -7,12 +7,12 @@ metadata:
 spec:
   alerting:
     alertmanagers:
-    - name: alertmanager-main
-      namespace: monitoring
-      port: web
+      - name: alertmanager-main
+        namespace: monitoring
+        port: web
   externalLabels:
     cluster: docker-desktop
-  image: quay.io/prometheus/prometheus:v2.19.2
+  image: quay.io/prometheus/prometheus:v2.25.0
   nodeSelector:
     kubernetes.io/os: linux
   podMonitorNamespaceSelector: {}
@@ -33,26 +33,26 @@ spec:
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector:
     matchExpressions:
-    - key: k8s-app
-      operator: In
-      values:
-      - node-exporter
-      - kube-state-metrics
-      - apiserver
-      - kubelet
-      - carts
-      - carts-db
-      - shipping
-      - rabbitmq
-      - queue-master
-      - catalogue-db
-      - catalogue
-      - front-end
-      - orders-db
-      - orders
-      - payment
-      - user-db
-      - user
-      - litmus-event-router
-      - chaos-exporter
-  version: v2.19.2
+      - key: k8s-app
+        operator: In
+        values:
+          - node-exporter
+          - kube-state-metrics
+          - apiserver
+          - kubelet
+          - carts
+          - carts-db
+          - shipping
+          - rabbitmq
+          - queue-master
+          - catalogue-db
+          - catalogue
+          - front-end
+          - orders-db
+          - orders
+          - payment
+          - user-db
+          - user
+          - chaos-exporter
+          - mysql-exporter
+  version: v2.25.0
