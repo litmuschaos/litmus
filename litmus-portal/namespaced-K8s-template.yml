@@ -273,6 +273,15 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
 ---
 apiVersion: v1
 kind: Service
