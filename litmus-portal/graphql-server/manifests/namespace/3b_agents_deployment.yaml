@@ -59,7 +59,7 @@ spec:
       containers:
         - image: #{EVENT-TRACKER-IMAGE}
           imagePullPolicy: Always
-          name: kubera-litmus-event-tracker
+          name: litmus-event-tracker
           env:
             - name: GQL_SERVER
               value: #{SERVER}
