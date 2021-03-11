@@ -462,11 +462,12 @@ const WorkflowComparisonTable = () => {
         const contentDataURL = canvas.toDataURL('image/png');
         const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
         const position = -54;
+        const version = process.env.REACT_APP_KB_CHAOS_VERSION;
         doc.setFillColor(255, 255, 255);
         doc.setFontSize(10);
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(0, 0, 0);
-        doc.text('Litmus Portal Report Version: 1.3.x', 10, 10);
+        doc.text(`Litmus Portal Report Version: ${version}`, 10, 10);
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
         doc.text(
