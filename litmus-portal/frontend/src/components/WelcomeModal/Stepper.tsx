@@ -69,7 +69,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
 
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
-    // Object.assign(info, { password: values.password });
     userLoader.updateUserDetails({ loader: true });
 
     fetch(`${config.auth.url}/update/details`, {
@@ -110,17 +109,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     handleModal();
   };
 
-  // const setData = (key: string, value: string) => {
-  //   let data = info;
-  //   data = {
-  //     ...data,
-  //     [key]: value,
-  //   };
-  //   setInfo(data);
-  // };
-
-  // Custom Button Validation
-
   // If first character is empty then all the successive letters would
   // be treated as an error and button would be disabled
   // If the length is 0 then button would be disabled
@@ -143,7 +131,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     if (
       values.password.length > 0 &&
       values.confirmPassword.length > 0 &&
-      // validatePassword(values.password) === false &&
       validateConfirmPassword(values.password, values.confirmPassword) === false
     ) {
       isError.current = false;
