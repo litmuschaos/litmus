@@ -196,7 +196,7 @@ const TuneWorkflow: React.FC = () => {
           <div className={classes.headerBtn}>
             <ButtonOutlined className={classes.btn1}>
               <img src="./icons/viewYAMLicon.svg" alt="view YAML" />{' '}
-              <Width width="0.5rem" /> View YAML
+              <Width width="0.5rem" /> {t('createWorkflow.tuneWorkflow.view')}
             </ButtonOutlined>
             <ButtonOutlined
               onClick={() => {
