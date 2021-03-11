@@ -23,6 +23,9 @@ const SSHField: React.FC<SSHFieldProps> = ({
   const { t } = useTranslation();
   return (
     <div className={classes.sshDiv}>
+      <Typography className={classes.sshAlert}>
+        {t('myhub.connectHubPage.sshAlert')}
+      </Typography>
       <Typography className={classes.alertText}>
         {t('myhub.connectHubPage.sshText')}
       </Typography>

@@ -66,6 +66,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'center',
     marginTop: theme.spacing(5),
   },
+  errorText: {
+    fontSize: '1rem',
+  },
   successful: {
     fontSize: '2.2rem',
     fontWeight: 'bold',
