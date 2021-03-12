@@ -80,7 +80,8 @@ const useStyles = makeStyles((theme) => ({
   arrowForwardIcon: {
     color: theme.palette.primary.main,
     marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(-1),
+    height: '1.65rem',
+    width: '1.65rem',
   },
 
   arrowForwardIconCard: {

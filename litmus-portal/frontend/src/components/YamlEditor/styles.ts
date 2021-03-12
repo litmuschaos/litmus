@@ -259,11 +259,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
   },
 
+  fullScreenIcon: {
+    width: '1.5625rem',
+    height: '1.5625rem',
+    marginRight: '1.5625rem',
+  },
+
   // Validations
 
   validationError: {
     position: 'absolute',
-    background: 'rgba(202, 44, 44, 0.2)',
+    background: theme.palette.error.light,
   },
 }));
 

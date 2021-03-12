@@ -146,9 +146,8 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
+      margin: 0,
       marginTop: theme.spacing(5),
-      marginLeft: 0,
-      marginRight: 0,
       width: '20rem',
       flexDirection: 'column',
     },

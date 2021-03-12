@@ -30,7 +30,7 @@ welcomeModal:
 
 sidebar:
   title: Litmus
-  version: "Version: 1.13"
+  version: 'Version: 1.13'
 
 header:
   notificationDropdown:
@@ -46,8 +46,8 @@ quickActionCard:
   quickSurvey: Take a quick survey
   readDocs: Read the Litmus docs
   readAPIDocs: Read the Litmus Portal API docs
-  addDataSource: Add a Data Source
   addDashboard: Add a Dashboard
+  addDataSource: Add a Data Source
   addAgent: Add an agent
   connectNewAgent: Connect a new agent
   scheduleWorkflow: Schedule a workflow
@@ -111,14 +111,14 @@ login:
   passwordForgot: Don’t remember your password?
 
 schedule:
-  heading: "Schedule a workflow"
-  headingDesc: "Click on test to see detailed log of your workflow"
-  headingText: "Schedule details:"
-  description: "Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you."
-  save: "Save Changes"
+  heading: 'Schedule a workflow'
+  headingDesc: 'Click on test to see detailed log of your workflow'
+  headingText: 'Schedule details:'
+  description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
+  save: 'Save Changes'
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: "Choose the minutes, hours, or days when you want to start workflow"
+  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
   scheduleSpecificTime: Schedule at a specific time
   scheduleFuture: Select date and time to start workflow in future
   scheduleRecurring: Recurring Schedule
@@ -126,7 +126,7 @@ schedule:
   after: After
   at: at
   At: At
-  scheduleOn: "On"
+  scheduleOn: 'On'
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new workflow on this project.
   contact: Contact portal administrator to upgrade your permission.
@@ -138,14 +138,14 @@ schedule:
   backBtn: Go Back
 
 workflowUnderground:
-  heading: "Click on Info to see details of your workflow"
+  heading: 'Click on Info to see details of your workflow'
 
 community:
-  title: "Community"
-  heading: "Litmus Insights"
-  headingDesc: "Stats for the Litmus community"
-  analyticDesc: "Periodic growth of Litmus"
-  statsHeading: "Litmus users around the world:"
+  title: 'Community'
+  heading: 'Litmus Insights'
+  headingDesc: 'Stats for the Litmus community'
+  analyticDesc: 'Periodic growth of Litmus'
+  statsHeading: 'Litmus users around the world:'
   litmusChaos: Litmuschaos
   follow: Follow
 
@@ -155,8 +155,8 @@ analytics:
   comingSoon: Analytics Coming Soon !
   waitingMessage: Waiting for workflow to start running !
   chaosCompleteWaitingMessage: Waiting for chaos experiment to finish !
-  highestScore: "Highest Score:"
-  lowestScore: "Lowest Score:"
+  highestScore: 'Highest Score:'
+  lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
   targetCluster: Target cluster
@@ -470,7 +470,7 @@ settings:
     disconnect: Are you sure you want to disconnect?
     save: Save Locally
     repo: Git Repository
-    desc: "* Any existing or active workflows saved locally will not be synced into the git repository"
+    desc: '* Any existing or active workflows saved locally will not be synced into the git repository'
     connect: Connect
     branch: Branch
     URL: Git URL
@@ -702,17 +702,17 @@ workflows:
 #########################################
 
 internetIssues:
-  fetchData: "Fetching the data..."
+  fetchData: 'Fetching the data...'
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
 ############     MyHub     ###########
 ######################################
 myhub:
-  title: My Hubs
+  title: MyHubs
   connectTarget: Connect the target
-  viewMyHub: View My Hub
-  error: "[Error: could not connect]"
+  viewMyHub: View MyHub
+  error: '[Error: could not connect]'
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
@@ -720,7 +720,7 @@ myhub:
   refresh: Refresh Hub
   disconnect: Disconnect Hub
   mainPage:
-    header: My Hub
+    header: MyHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
@@ -732,13 +732,13 @@ myhub:
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
     sync: Syncing Repo...
     retry: Retry Connection
-    disconnectHeader: Are you sure you want to disconnect My Hub?
+    disconnectHeader: Are you sure you want to disconnect MyHub?
     disconnectDesc: Action is not revertable
     cancel: Cancel
     deleteHub: Delete Hub
     syncError: Failed while syncing repo, try again!
   myhubChart:
-    header: My Hub
+    header: MyHub
     github: github.com/
     syncingRepo: Loading Charts, Please Wait...!
   connectHubPage:
@@ -751,15 +751,15 @@ myhub:
     creatingHub: while creating MyHub
     newHub: A new chaos hub
     success: is successfully created
-    newHubCreated: A new chaos hub will be added to the main page of the My hubs section
-    myHub: Back to my hubs
+    newHubCreated: A new chaos hub will be added to the main page of the MyHubs section
+    myHub: Back to MyHubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
-    sshAlert: "*Make sure to provide the SSH link of the Git Repository"
+    sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
-    updateHub: Update the My Hub with correct details from the My Hubs section
+    updateHub: Update the MyHub with correct details from the MyHubs section
   videoCarousel:
     video: Video Tips
   installChaos:
@@ -778,12 +778,12 @@ myhub:
   editPage:
     edit: Edit the Hub
     click: Then click on the update button
-    submit: Update My Hub
+    submit: Update MyHub
     wait: Please wait while we are updating your repo!
-    updating: while updating My Hub
-    success: My Hub successfully updated
-    desc: My Hub will be updated in the main page of the My Hubs section
-    error: Error while updating My Hub
+    updating: while updating MyHub
+    success: MyHub successfully updated
+    desc: MyHub will be updated in the main page of the MyHubs section
+    error: Error while updating MyHub
 
 ######################################
 ########   Custom Workflow     #######
@@ -791,7 +791,7 @@ myhub:
 customWorkflow:
   createWorkflow:
     create: Creating a new chaos workflow
-    createDesc: Add new experiments from your ChaosHubs defined at MyHub section
+    createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
     workflowInfo: Workflow information
     workflowName: Workflow Name
     workflowDesc: Description
@@ -800,7 +800,7 @@ customWorkflow:
     selectHub: Select the hub
     public: Public Hub
     configure: Construct your workflow
-    construct: Using experiments from MyHub
+    construct: Using experiments from MyHubs
     upload: Upload your
     yaml: YAML
     uploadFile: Upload File

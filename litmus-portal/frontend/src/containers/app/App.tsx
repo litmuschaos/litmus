@@ -167,7 +167,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         />
         <Route
           exact
-          path="/analytics/workflows/:workflowRunId"
+          path="/workflows/analytics/:workflowRunId"
           component={AnalyticsPage}
         />
         <Route exact path="/community" component={Community} />

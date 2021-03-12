@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { Box, Button, Typography } from '@material-ui/core';
+import { Box, Button, Typography, useTheme } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import Fade from '@material-ui/core/Fade';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -61,6 +61,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   readOnly,
 }) => {
   const classes = useStyles();
+  const { palette } = useTheme();
 
   const workflow = useActions(WorkflowActions);
 
@@ -105,7 +106,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
         'ace_gutter-cell'
       )[stateObject.annotations[0].row - 1] as any).style;
       nodeStyleError.background = 'red';
-      nodeStyleError.color = '#FFFFFF';
+      nodeStyleError.color = palette.secondary.contrastText;
     } else {
       setIsValid(true);
       setErrors({
@@ -118,8 +119,10 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
         'ace_gutter-cell'
       );
       for (let i = 0; i < nodeStyleErrorList.length; i += 1) {
-        (nodeStyleErrorList[i] as any).style.backgroundColor = '#000000';
-        (nodeStyleErrorList[i] as any).style.color = 'rgba(255, 255, 255, 0.4)';
+        (nodeStyleErrorList[i] as any).style.backgroundColor =
+          palette.common.black;
+        (nodeStyleErrorList[i] as any).style.color =
+          palette.secondary.contrastText;
       }
     }
     setModifiedYaml(value);
@@ -492,14 +495,14 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                 editor.setAnimatedScroll(true);
                 editor.setShowInvisibles(false);
                 editor.setFontSize('0.98rem');
-                editor.container.style.background = '#000000';
+                editor.container.style.background = palette.common.black;
                 editor.container.style.lineHeight = '160%';
                 const nodeStyle = (document.getElementsByClassName(
                   'ace_gutter'
                 )[0] as any).style;
-                nodeStyle.color = 'rgba(255, 255, 255, 0.4)';
+                nodeStyle.color = palette.secondary.contrastText;
                 nodeStyle.borderRight = 0;
-                nodeStyle.background = '#000000';
+                nodeStyle.background = palette.common.black;
               }}
               onCursorChange={(selection) => {
                 (YamlAce.current!.editor as any).setOptions({
@@ -512,9 +515,9 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                 );
                 for (let i = 0; i < nodeStyleActiveList.length; i += 1) {
                   (nodeStyleActiveList[i] as any).style.backgroundColor =
-                    '#000000';
+                    palette.common.black;
                   (nodeStyleActiveList[i] as any).style.color =
-                    'rgba(255, 255, 255, 0.4)';
+                    palette.secondary.contrastText;
                 }
 
                 if (
@@ -525,8 +528,8 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                   const nodeStyleActive = (document.getElementsByClassName(
                     'ace_gutter-cell'
                   )[selection.cursor.row] as any).style;
-                  nodeStyleActive.backgroundColor = '#5B44BA';
-                  nodeStyleActive.color = '#FFFFFF';
+                  nodeStyleActive.backgroundColor = palette.primary.main;
+                  nodeStyleActive.color = palette.secondary.contrastText;
                 }
               }}
               annotations={editorState.annotations}
@@ -549,10 +552,8 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                   <img
                     src="/icons/fullscreen.svg"
                     alt="Full Screen"
-                    color="#FFFFFF"
-                    width="25px"
-                    height="25px"
-                    margin-right="25px"
+                    color={palette.secondary.contrastText}
+                    className={classes.fullScreenIcon}
                   />
                 }
               />

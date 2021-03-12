@@ -45,13 +45,13 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.border.main}`,
     boxSizing: 'border-box',
     '&:hover': {
-      border: `1px solid ${theme.palette.primary.dark}`,
+      border: `1px solid ${theme.palette.primary.main}`,
       boxShadow: `0px 4px 4px ${theme.palette.primary.light}`,
     },
   },
 
   cardFocused: {
-    border: `1px solid ${theme.palette.primary.dark}`,
+    border: `1px solid ${theme.palette.primary.main}`,
     boxShadow: `0px 4px 4px ${theme.palette.primary.light}`,
   },
 
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 auto',
     textAlign: 'center',
     cursor: 'pointer',
-    border: `1px solid ${theme.palette.primary.dark}`,
+    border: `1px solid ${theme.palette.primary.main}`,
     boxSizing: 'border-box',
   },
 
@@ -134,7 +134,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   totalRunsSelected: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.primary.main,
     fontSize: '0.875rem',
     fontWeight: 500,
     marginTop: theme.spacing(0.375),
@@ -155,7 +155,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   expCountSelected: {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.secondary.contrastText,
     borderRadius: 3,
     paddingTop: theme.spacing(0.275),
@@ -173,7 +173,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   moreDetails: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.primary.main,
   },
 
   horizontalLine: {
