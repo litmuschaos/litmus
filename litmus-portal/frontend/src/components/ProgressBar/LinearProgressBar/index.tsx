@@ -40,7 +40,7 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({
               }
           : {}
       }
-      style={{ height: width, borderRadius: 5 }}
+      style={{ height: `${width}rem`, borderRadius: '5rem' }}
     />
   );
 };
