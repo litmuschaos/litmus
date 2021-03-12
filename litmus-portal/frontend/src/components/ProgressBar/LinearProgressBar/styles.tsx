@@ -2,14 +2,14 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyle = makeStyles((theme: Theme) => ({
   root: {
-    borderRadius: 5,
-    height: 15,
+    borderRadius: '5rem',
+    height: '1rem',
   },
   redColorPrimary: {
-    backgroundColor: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.main,
   },
   greenColorPrimary: {
-    backgroundColor: '#109B67',
+    backgroundColor: theme.palette.success.main,
   },
   yellowColorPrimary: {
     backgroundColor: theme.palette.warning.main,
