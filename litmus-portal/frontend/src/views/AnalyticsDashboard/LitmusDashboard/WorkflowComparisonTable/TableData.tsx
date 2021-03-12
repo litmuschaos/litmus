@@ -4,9 +4,10 @@ import cronstrue from 'cronstrue';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import CheckBox from '../../../../components/CheckBox';
 import { Workflow } from '../../../../models/graphql/workflowListData';
 import { history } from '../../../../redux/configureStore';
-import useStyles, { StyledCheckbox, StyledTableCell } from './styles';
+import useStyles, { StyledTableCell } from './styles';
 
 interface TableDataProps {
   data: Workflow;
@@ -35,7 +36,7 @@ const TableData: React.FC<TableDataProps> = ({
     <>
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
         {comparisonState === false ? (
-          <StyledCheckbox
+          <CheckBox
             checked={itemSelectionStatus}
             inputProps={{ 'aria-labelledby': labelIdentifier }}
           />

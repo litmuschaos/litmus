@@ -5,12 +5,12 @@ import {
   FormControlLabel,
   FormGroup,
   Typography,
-  withStyles,
 } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import CheckBox from '../../../../components/CheckBox';
 import { LIST_DATASOURCE } from '../../../../graphql';
 import { DataSourceDetails } from '../../../../models/dataSourceData';
 import {
@@ -25,13 +25,6 @@ import {
   validateTimeInSeconds,
 } from '../../../../utils/validate';
 import useStyles from './styles';
-
-const StyledCheckbox = withStyles((theme) => ({
-  root: {
-    color: theme.palette.text.hint,
-  },
-  checked: {},
-}))(Checkbox);
 
 interface ConfigurePrometheusProps {
   configure: boolean;
@@ -264,7 +257,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
           <div className={classes.inputDivCheckBox}>
             <FormControlLabel
               control={
-                <StyledCheckbox
+                <CheckBox
                   color="primary"
                   checked={dataSourceDetails.noAuth}
                   onChange={handleAuthChange}
@@ -276,7 +269,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             <FormControlLabel
               className={classes.basicAuth}
               control={
-                <StyledCheckbox
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.basicAuth}

@@ -1,5 +1,4 @@
 import {
-  Checkbox,
   createStyles,
   makeStyles,
   TableCell,
@@ -378,11 +377,5 @@ export const StyledTableCell = withStyles((theme) =>
     },
   })
 )(TableCell);
-
-export const StyledCheckbox = withStyles((theme) => ({
-  root: {
-    color: theme.palette.text.hint,
-  },
-}))(Checkbox);
 
 export default useStyles;
