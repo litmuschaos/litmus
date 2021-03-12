@@ -83,7 +83,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
               {/* Personal Details */}
               <UserDetails
                 nameValue={personalData.fullName}
-                usernameIsDisabled={false}
+                isUsernameDisabled={false}
                 handleNameChange={(e) => {
                   setPersonalData({
                     fullName: e.target.value,
@@ -91,6 +91,8 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                     email: personalData.email,
                   });
                 }}
+                isEmailDisabled={false}
+                isNameDisabled={false}
                 emailValue={personalData.email}
                 handleEmailChange={(e) => {
                   setPersonalData({
