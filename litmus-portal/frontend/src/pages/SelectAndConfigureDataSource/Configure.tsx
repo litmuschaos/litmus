@@ -225,7 +225,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        width="55%"
+        width="60%"
         modalActions={
           <ButtonOutlined
             className={classes.closeButton}

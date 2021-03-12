@@ -52,10 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   modal: {
-    [theme.breakpoints.up('lg')]: {
-      padding: theme.spacing(20),
-    },
-    padding: theme.spacing(10),
+    padding: theme.spacing(15, 0),
   },
 
   modalHeading: {

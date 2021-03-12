@@ -149,5 +149,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttomPad: {
     paddingBottom: theme.spacing(3.75),
   },
+  closeBtn: {
+    color: theme.palette.secondary.contrastText,
+    marginTop: theme.spacing(-6),
+    marginRight: theme.spacing(-2.5),
+  },
 }));
 export default useStyles;

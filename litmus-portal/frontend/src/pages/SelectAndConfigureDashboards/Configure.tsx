@@ -376,6 +376,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
       <Modal
         open={open}
         onClose={() => setOpen(false)}
+        width="60%"
         modalActions={
           <ButtonOutlined
             className={classes.closeButton}
@@ -385,7 +386,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
           </ButtonOutlined>
         }
       >
-        <div>
+        <div className={classes.modal}>
           <Typography align="center">
             {success === true ? (
               <img

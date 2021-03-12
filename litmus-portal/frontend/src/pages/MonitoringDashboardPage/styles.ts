@@ -106,6 +106,10 @@ const useStyles = makeStyles((theme) => ({
   loader: {
     padding: '22%',
   },
+
+  modal: {
+    padding: theme.spacing(15, 0),
+  },
 }));
 
 export default useStyles;
