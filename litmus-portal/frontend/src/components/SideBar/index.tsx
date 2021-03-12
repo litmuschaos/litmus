@@ -112,7 +112,7 @@ const SideBar: React.FC = () => {
             handleClick={() => {
               history.push('/myhub');
             }}
-            label="My Hub"
+            label="MyHubs"
             selected={pathName === 'myhub'}
           >
             <MyHubIcon />

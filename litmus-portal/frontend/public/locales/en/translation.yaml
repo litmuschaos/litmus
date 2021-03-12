@@ -708,9 +708,9 @@ internetIssues:
 ############     MyHub     ###########
 ######################################
 myhub:
-  title: My Hubs
+  title: MyHubs
   connectTarget: Connect the target
-  viewMyHub: View My Hub
+  viewMyHub: View MyHub
   error: '[Error: could not connect]'
   view: View
   validationEmptySpace: Should not start with an empty space
@@ -719,7 +719,7 @@ myhub:
   refresh: Refresh Hub
   disconnect: Disconnect Hub
   mainPage:
-    header: My Hub
+    header: MyHub
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
@@ -731,13 +731,13 @@ myhub:
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
     sync: Syncing Repo...
     retry: Retry Connection
-    disconnectHeader: Are you sure you want to disconnect My Hub?
+    disconnectHeader: Are you sure you want to disconnect MyHub?
     disconnectDesc: Action is not revertable
     cancel: Cancel
     deleteHub: Delete Hub
     syncError: Failed while syncing repo, try again!
   myhubChart:
-    header: My Hub
+    header: MyHub
     github: github.com/
     syncingRepo: Loading Charts, Please Wait...!
   connectHubPage:
@@ -750,15 +750,15 @@ myhub:
     creatingHub: while creating MyHub
     newHub: A new chaos hub
     success: is successfully created
-    newHubCreated: A new chaos hub will be added to the main page of the My hubs section
-    myHub: Back to my hubs
+    newHubCreated: A new chaos hub will be added to the main page of the MyHubs section
+    myHub: Back to MyHubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
     sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
-    updateHub: Update the My Hub with correct details from the My Hubs section
+    updateHub: Update the MyHub with correct details from the MyHubs section
   videoCarousel:
     video: Video Tips
   installChaos:
@@ -777,12 +777,12 @@ myhub:
   editPage:
     edit: Edit the Hub
     click: Then click on the update button
-    submit: Update My Hub
+    submit: Update MyHub
     wait: Please wait while we are updating your repo!
-    updating: while updating My Hub
-    success: My Hub successfully updated
-    desc: My Hub will be updated in the main page of the My Hubs section
-    error: Error while updating My Hub
+    updating: while updating MyHub
+    success: MyHub successfully updated
+    desc: MyHub will be updated in the main page of the MyHubs section
+    error: Error while updating MyHub
 
 ######################################
 ########   Custom Workflow     #######

@@ -104,6 +104,8 @@ const GitOpsTab = () => {
   );
 
   const [copying, setCopying] = useState(false);
+
+  // State variable to check if gitops is enable or not (required for edit gitops)
   const [isGitOpsEnabled, setIsGitOpsEnabled] = useState(false);
 
   // Function to copy the SSH key
@@ -134,6 +136,7 @@ const GitOpsTab = () => {
         type: 'success',
         message: 'Successfully enabled GitOps!',
       });
+      setIsGitOpsEnabled(true);
     },
   });
 
@@ -154,7 +157,7 @@ const GitOpsTab = () => {
           type: 'success',
           message: 'Successfully updated GitOps!',
         });
-        setIsGitOpsEnabled(false);
+        setIsGitOpsEnabled(true);
       },
     }
   );
@@ -190,7 +193,6 @@ const GitOpsTab = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    setIsGitOpsEnabled(true);
     refetch();
   };
   const onEditClicked = () => {
@@ -358,121 +360,123 @@ const GitOpsTab = () => {
                         <Typography className={classes.infoText}>
                           {t('settings.gitopsTab.desc')}
                         </Typography>
-                        <div className={classes.mainPrivateRepo}>
-                          <div className={classes.privateToggleDiv}>
-                            <div className={classes.privateRepoDetails}>
-                              <GithubInputFields
-                                gitURL={gitHub.GitURL}
-                                gitBranch={gitHub.GitBranch}
-                                setGitURL={handleGitURL}
-                                setGitBranch={handleGitBranch}
-                              />
-                            </div>
-                            <FormControl
-                              component="fieldset"
-                              className={classes.formControl}
-                            >
-                              <RadioGroup
-                                aria-label="privateHub"
-                                name="privateHub"
-                                value={privateHub}
-                                onChange={(e) => {
-                                  if (e.target.value === 'ssh') {
-                                    generateSSHKey();
-                                  }
-                                  if (e.target.value === 'token') {
-                                    setSshKey({
-                                      privateKey: '',
-                                      publicKey: '',
-                                    });
-                                  }
-                                  setPrivateHub(e.target.value);
-                                }}
+                        {value === 'enabled' ? (
+                          <div className={classes.mainPrivateRepo}>
+                            <div className={classes.privateToggleDiv}>
+                              <div className={classes.privateRepoDetails}>
+                                <GithubInputFields
+                                  gitURL={gitHub.GitURL}
+                                  gitBranch={gitHub.GitBranch}
+                                  setGitURL={handleGitURL}
+                                  setGitBranch={handleGitBranch}
+                                />
+                              </div>
+                              <FormControl
+                                component="fieldset"
+                                className={classes.formControl}
                               >
-                                <FormControlLabel
-                                  value="token"
-                                  control={
-                                    <Radio
-                                      classes={{
-                                        root: classes.radio,
-                                        checked: classes.checked,
-                                      }}
-                                    />
-                                  }
-                                  label={
-                                    <Typography>
-                                      {t('myhub.connectHubPage.accessToken')}
-                                    </Typography>
-                                  }
-                                />
-                                {privateHub === 'token' ? (
-                                  <InputField
-                                    label="Access Token"
-                                    value={accessToken}
-                                    helperText={
-                                      validateStartEmptySpacing(accessToken)
-                                        ? t('myhub.validationEmptySpace')
-                                        : ''
+                                <RadioGroup
+                                  aria-label="privateHub"
+                                  name="privateHub"
+                                  value={privateHub}
+                                  onChange={(e) => {
+                                    if (e.target.value === 'ssh') {
+                                      generateSSHKey();
                                     }
-                                    variant={
-                                      validateStartEmptySpacing(accessToken)
-                                        ? 'error'
-                                        : 'primary'
+                                    if (e.target.value === 'token') {
+                                      setSshKey({
+                                        privateKey: '',
+                                        publicKey: '',
+                                      });
                                     }
-                                    onChange={(e) =>
-                                      setAccessToken(e.target.value)
+                                    setPrivateHub(e.target.value);
+                                  }}
+                                >
+                                  <FormControlLabel
+                                    value="token"
+                                    control={
+                                      <Radio
+                                        classes={{
+                                          root: classes.radio,
+                                          checked: classes.checked,
+                                        }}
+                                      />
                                     }
-                                  />
-                                ) : null}
-                                <FormControlLabel
-                                  className={classes.sshRadioBtn}
-                                  value="ssh"
-                                  control={
-                                    <Radio
-                                      classes={{
-                                        root: classes.radio,
-                                        checked: classes.checked,
-                                      }}
-                                    />
-                                  }
-                                  label={
-                                    <Typography>
-                                      {t('myhub.connectHubPage.ssh')}
-                                    </Typography>
-                                  }
-                                />
-                                {privateHub === 'ssh' ? (
-                                  <SSHField
-                                    sshLoading={sshLoading}
-                                    copying={copying}
-                                    publicKey={sshKey.publicKey}
-                                    copyPublicKey={copyTextToClipboard}
-                                  />
-                                ) : null}
-                                <div className={classes.submitBtnDiv}>
-                                  <ButtonFilled
-                                    type="submit"
-                                    disabled={
-                                      gitOpsLoader ||
-                                      value !== 'enabled' ||
-                                      updateGitOpsLoader
-                                    }
-                                  >
-                                    {updateGitOpsLoader || gitOpsLoader ? (
-                                      <Loader size={20} />
-                                    ) : (
+                                    label={
                                       <Typography>
-                                        {data?.getGitOpsDetails.Enabled
-                                          ? 'Update'
-                                          : t('settings.gitopsTab.connect')}
+                                        {t('myhub.connectHubPage.accessToken')}
                                       </Typography>
-                                    )}
-                                  </ButtonFilled>
-                                </div>
-                              </RadioGroup>
-                            </FormControl>
+                                    }
+                                  />
+                                  {privateHub === 'token' ? (
+                                    <InputField
+                                      label="Access Token"
+                                      value={accessToken}
+                                      helperText={
+                                        validateStartEmptySpacing(accessToken)
+                                          ? t('myhub.validationEmptySpace')
+                                          : ''
+                                      }
+                                      variant={
+                                        validateStartEmptySpacing(accessToken)
+                                          ? 'error'
+                                          : 'primary'
+                                      }
+                                      onChange={(e) =>
+                                        setAccessToken(e.target.value)
+                                      }
+                                    />
+                                  ) : null}
+                                  <FormControlLabel
+                                    className={classes.sshRadioBtn}
+                                    value="ssh"
+                                    control={
+                                      <Radio
+                                        classes={{
+                                          root: classes.radio,
+                                          checked: classes.checked,
+                                        }}
+                                      />
+                                    }
+                                    label={
+                                      <Typography>
+                                        {t('myhub.connectHubPage.ssh')}
+                                      </Typography>
+                                    }
+                                  />
+                                  {privateHub === 'ssh' ? (
+                                    <SSHField
+                                      sshLoading={sshLoading}
+                                      copying={copying}
+                                      publicKey={sshKey.publicKey}
+                                      copyPublicKey={copyTextToClipboard}
+                                    />
+                                  ) : null}
+                                  <div className={classes.submitBtnDiv}>
+                                    <ButtonFilled
+                                      type="submit"
+                                      disabled={
+                                        gitOpsLoader ||
+                                        value !== 'enabled' ||
+                                        updateGitOpsLoader
+                                      }
+                                    >
+                                      {updateGitOpsLoader || gitOpsLoader ? (
+                                        <Loader size={20} />
+                                      ) : (
+                                        <Typography>
+                                          {data?.getGitOpsDetails.Enabled
+                                            ? 'Update'
+                                            : t('settings.gitopsTab.connect')}
+                                        </Typography>
+                                      )}
+                                    </ButtonFilled>
+                                  </div>
+                                </RadioGroup>
+                              </FormControl>
+                            </div>
                           </div>
-                        </div>
+                        ) : null}
                       </div>
                     ) : isGitOpsEnabled === true ? (
                       <GitOpsInfo
