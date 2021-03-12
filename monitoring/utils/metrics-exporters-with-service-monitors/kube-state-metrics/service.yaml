@@ -3,17 +3,17 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/version: 1.9.5
+    app.kubernetes.io/version: latest
   name: kube-state-metrics
   namespace: monitoring
 spec:
   clusterIP: None
   ports:
-  - name: https-main
-    port: 8443
-    targetPort: https-main
-  - name: https-self
-    port: 9443
-    targetPort: https-self
+    - name: http-metrics
+      port: 8080
+      targetPort: http-metrics
+    - name: telemetry
+      port: 8081
+      targetPort: telemetry
   selector:
     app.kubernetes.io/name: kube-state-metrics

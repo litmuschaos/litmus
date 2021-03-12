@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: 700,
     fontSize: '0.9rem',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
     textAlign: 'center',
     backgroundColor: theme.palette.background.paper,
     paddingTop: theme.spacing(2.5),

@@ -255,6 +255,7 @@ const CustomStepper = () => {
   };
 
   const [open, setOpen] = React.useState(false);
+  const [errorModal, setErrorModal] = React.useState(false);
 
   const handleBack = () => {
     if (activeStep === 2) {
@@ -265,10 +266,13 @@ const CustomStepper = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow] = useMutation<
+  const [createChaosWorkFlow, { error: workflowError }] = useMutation<
     CreateWorkflowResponse,
     CreateWorkFlowInput
   >(CREATE_WORKFLOW, {
+    onError: () => {
+      setErrorModal(true);
+    },
     onCompleted: () => {
       setOpen(true);
     },
@@ -308,12 +312,15 @@ const CustomStepper = () => {
 
   const handleOpen = () => {
     handleMutation();
-    setOpen(true);
   };
 
   const handleClose = () => {
     history.push('/workflows');
     setOpen(false);
+  };
+
+  const handleErrorModalClose = () => {
+    setErrorModal(false);
   };
 
   function gotoStep({ page }: { page: number }) {
@@ -395,11 +402,7 @@ const CustomStepper = () => {
               }
             >
               <div className={classes.modal}>
-                <img
-                  src="/icons/finish.svg"
-                  // className={classes.mark}
-                  alt="mark"
-                />
+                <img src="/icons/finish.svg" alt="mark" />
                 <div className={classes.heading}>
                   {t('workflowStepper.aNewChaosWorkflow')}
                   <br />
@@ -422,6 +425,39 @@ const CustomStepper = () => {
                     }}
                   >
                     <div>{t('workflowStepper.workflowBtn')}</div>
+                  </ButtonFilled>
+                </div>
+              </div>
+            </Modal>
+            <Modal
+              open={errorModal}
+              onClose={handleErrorModalClose}
+              width="60%"
+              modalActions={
+                <ButtonOutlined onClick={handleErrorModalClose}>
+                  &#x2715;
+                </ButtonOutlined>
+              }
+            >
+              <div className={classes.modal}>
+                <img src="/icons/red-cross.svg" alt="mark" />
+                <div className={classes.heading}>
+                  <strong>{t('workflowStepper.workflowFailed')}</strong>
+                </div>
+                <div className={classes.headWorkflow}>
+                  <Typography className={classes.errorText}>
+                    {t('workflowStepper.error')} : {workflowError?.message}
+                  </Typography>
+                </div>
+                <div className={classes.button}>
+                  <ButtonFilled
+                    isPrimary
+                    data-cy="selectFinish"
+                    handleClick={() => {
+                      setErrorModal(false);
+                    }}
+                  >
+                    <div>{t('workflowStepper.backBtn')}</div>
                   </ButtonFilled>
                 </div>
               </div>

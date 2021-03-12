@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
 import {
+  ALL_USERS,
   GET_PROJECT,
   GET_USER,
   REMOVE_INVITATION,
@@ -26,6 +27,7 @@ import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
   Member,
+  Role,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
 import { RootState } from '../../../../redux/reducers';
@@ -35,13 +37,20 @@ import useStyles from './styles';
 interface TableDataProps {
   row: Member;
   index: number;
+  showModal: () => void;
+  handleOpen: () => void;
+  open: boolean;
 }
-const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
+const InvitedTableData: React.FC<TableDataProps> = ({
+  row,
+  showModal,
+  handleOpen,
+  open,
+}) => {
   const classes = useStyles();
   const userData = useSelector((state: RootState) => state.userData);
   const { t } = useTranslation();
 
-  const [open, setOpen] = React.useState(false);
   const [role, setRole] = useState<string>(row.role);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const handleClose = () => {
@@ -49,10 +58,16 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
   };
 
   const [SendInvite] = useMutation<MemberInviteNew>(SEND_INVITE, {
+    onCompleted: () => {
+      window.location.reload();
+    },
     refetchQueries: [
       {
         query: GET_PROJECT,
         variables: { projectID: userData.selectedProjectID },
+      },
+      {
+        query: ALL_USERS,
       },
     ],
   });
@@ -62,13 +77,15 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
     REMOVE_INVITATION,
     {
       onCompleted: () => {
-        setOpen(false);
+        showModal();
       },
-      onError: () => {},
       refetchQueries: [
         {
           query: GET_PROJECT,
           variables: { projectID: userData.selectedProjectID },
+        },
+        {
+          query: ALL_USERS,
         },
       ],
     }
@@ -98,9 +115,9 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
             alt="User"
             className={classes.avatarBackground}
           >
-            {userAvatar(memberDetails ? memberDetails.name : '')}
+            {userAvatar(memberDetails ? memberDetails.username : '')}
           </Avatar>
-          {memberDetails ? memberDetails.name : ''}
+          {memberDetails ? memberDetails.username : ''}
         </div>
       </TableCell>
       <TableCell className={classes.otherTC}>
@@ -126,7 +143,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
           >
             <MenuItem
               onClick={() => {
-                setRole('Editor');
+                setRole(Role.editor);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -152,7 +169,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setRole(row.role);
+                setRole(Role.viewer);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -191,11 +208,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
 
       <TableCell className={classes.buttonTC} key={row.user_id}>
         <div className={classes.lastCell}>
-          <IconButton
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
+          <IconButton onClick={handleOpen}>
             <img alt="delete" src="./icons/deleteBox.svg" height="45" />
           </IconButton>
           <ButtonFilled
@@ -205,7 +218,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
                 variables: {
                   member: {
                     project_id: userData.selectedProjectID,
-                    user_name: row.user_name,
+                    user_id: row.user_id,
                     role,
                   },
                 },
@@ -222,16 +235,10 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
         width="43.75rem"
         disableBackdropClick
         disableEscapeKeyDown
-        onClose={() => {
-          setOpen(false);
-        }}
+        onClose={showModal}
         modalActions={
           <div className={classes.closeModal}>
-            <IconButton
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
+            <IconButton onClick={showModal}>
               <img src="./icons/closeBtn.svg" alt="close" />
             </IconButton>
           </div>
@@ -258,11 +265,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
             </Typography>
           </div>
           <div className={classes.buttonGroup}>
-            <ButtonOutlined
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
+            <ButtonOutlined onClick={showModal}>
               <>{t('settings.teamingTab.deleteModal.noButton')}</>
             </ButtonOutlined>
             <div className={classes.yesButton}>
@@ -273,7 +276,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
                     variables: {
                       data: {
                         project_id: userData.selectedProjectID,
-                        user_name: row.user_name,
+                        user_id: row.user_id,
                       },
                     },
                   });

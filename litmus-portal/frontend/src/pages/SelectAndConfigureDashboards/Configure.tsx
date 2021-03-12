@@ -181,8 +181,9 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                     const check: number = chaosEngineNamesAndNamespacesMap.filter(
                       (data, index) => {
                         if (
-                          data.engineName ===
-                            parsedEmbeddedYaml.metadata.name &&
+                          data.engineName.includes(
+                            parsedEmbeddedYaml.metadata.name
+                          ) &&
                           data.engineNamespace === engineNamespace
                         ) {
                           matchIndex = index;
@@ -193,7 +194,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                     ).length;
                     if (check === 0) {
                       chaosEngineNamesAndNamespacesMap.push({
-                        engineName: parsedEmbeddedYaml.metadata.name,
+                        engineName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
                         engineNamespace,
                         workflowName: workflowYaml.metadata.name,
                       });

@@ -29,6 +29,7 @@ import * as UserActions from '../../redux/actions/user';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { getUsername } from '../../utils/auth';
 import ReturningHome from '../../views/Home/ReturningHome';
 import useStyles from './style';
 
@@ -91,8 +92,6 @@ const HomePage: React.FC = () => {
     variables: { username: userData.username },
   });
 
-  const name: string = data?.getUser.name ?? '';
-
   const handleModal = () => {
     setIsOpen(false);
   };
@@ -154,7 +153,7 @@ const HomePage: React.FC = () => {
             <div className={classes.root}>
               <Typography variant="h3" className={classes.userName}>
                 {t('home.heading')}
-                <strong>{` ${name}`}</strong>
+                <strong>{getUsername()}</strong>
               </Typography>
               {dataPresent ? (
                 <ReturningHome

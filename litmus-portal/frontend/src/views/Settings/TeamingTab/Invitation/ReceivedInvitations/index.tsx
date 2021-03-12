@@ -14,7 +14,7 @@ import {
   UserInvite,
 } from '../../../../../models/graphql/invite';
 import { Projects } from '../../../../../models/graphql/user';
-import { getUserId, getUsername } from '../../../../../utils/auth';
+import { getUserId } from '../../../../../utils/auth';
 import userAvatar from '../../../../../utils/user';
 import useStyles from './styles';
 
@@ -152,7 +152,7 @@ const ReceivedInvitations: React.FC = () => {
                         variables: {
                           member: {
                             project_id: row.projectID,
-                            user_name: getUsername(),
+                            user_id: getUserId(),
                             role: row.role,
                           },
                         },
@@ -174,7 +174,7 @@ const ReceivedInvitations: React.FC = () => {
                           variables: {
                             member: {
                               project_id: row.projectID,
-                              user_name: getUsername(),
+                              user_id: getUserId(),
                               role: row.role,
                             },
                           },
