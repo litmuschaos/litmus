@@ -307,6 +307,7 @@ const GitOpsTab = () => {
                         }}
                       />
                     }
+                    data-cy="localRadioButton"
                     label={
                       <Typography className={classes.locallyText}>
                         {t('settings.gitopsTab.locally')}
@@ -320,6 +321,7 @@ const GitOpsTab = () => {
                         {t('settings.gitopsTab.disconnect')}
                       </Typography>
                       <ButtonFilled
+                        data-cy="disableGitopsButton"
                         disabled={disableGitOpsLoader}
                         onClick={() =>
                           disableGitOps({
@@ -346,6 +348,7 @@ const GitOpsTab = () => {
                           }}
                         />
                       }
+                      data-cy="gitopsRadioButton"
                       label={
                         <Typography style={{ fontSize: '20px' }}>
                           {t('settings.gitopsTab.repo')}
@@ -399,6 +402,7 @@ const GitOpsTab = () => {
                                       }}
                                     />
                                   }
+                                  data-cy="accessTokenRadioButton"
                                   label={
                                     <Typography>
                                       {t('myhub.connectHubPage.accessToken')}
@@ -407,6 +411,7 @@ const GitOpsTab = () => {
                                 />
                                 {privateHub === 'token' ? (
                                   <InputField
+                                    data-cy="accessTokenInput"
                                     label="Access Token"
                                     value={accessToken}
                                     helperText={
@@ -426,6 +431,7 @@ const GitOpsTab = () => {
                                 ) : null}
                                 <FormControlLabel
                                   className={classes.sshRadioBtn}
+                                  data-cy="sshKeyRadioButton"
                                   value="ssh"
                                   control={
                                     <Radio
@@ -449,7 +455,10 @@ const GitOpsTab = () => {
                                     copyPublicKey={copyTextToClipboard}
                                   />
                                 ) : null}
-                                <div className={classes.submitBtnDiv}>
+                                <div
+                                  className={classes.submitBtnDiv}
+                                  data-cy="connectButton"
+                                >
                                   <ButtonFilled
                                     type="submit"
                                     disabled={
@@ -494,6 +503,7 @@ const GitOpsTab = () => {
             </FormControl>
           </form>
           <Modal
+            data-cy="gitopsModal"
             open={isOpen}
             onClose={handleClose}
             modalActions={
@@ -512,7 +522,7 @@ const GitOpsTab = () => {
                     <Typography gutterBottom className={classes.modalHeading}>
                       <strong>Error: {gitopsResult.message}</strong>
                     </Typography>
-                    <ButtonFilled onClick={handleClose}>
+                    <ButtonFilled onClick={handleClose} data-cy="closeButton">
                       {t('settings.gitopsTab.setting')}
                     </ButtonFilled>
                   </div>
@@ -529,7 +539,7 @@ const GitOpsTab = () => {
                         {gitopsResult.message}
                       </Typography>
 
-                      <ButtonFilled onClick={handleClose}>
+                      <ButtonFilled onClick={handleClose} data-cy="closeButton">
                         {t('settings.gitopsTab.setting')}
                       </ButtonFilled>
                     </>
