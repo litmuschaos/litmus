@@ -27,6 +27,7 @@ import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
   Member,
+  Role,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
 import { RootState } from '../../../../redux/reducers';
@@ -142,7 +143,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           >
             <MenuItem
               onClick={() => {
-                setRole('Editor');
+                setRole(Role.editor);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -168,7 +169,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setRole(row.role);
+                setRole(Role.viewer);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}

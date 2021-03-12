@@ -115,3 +115,8 @@ export interface ProjectDetail {
 export interface ProjectDetailVars {
   projectID: string;
 }
+
+export enum Role {
+  viewer = 'Viewer',
+  editor = 'Editor',
+}
