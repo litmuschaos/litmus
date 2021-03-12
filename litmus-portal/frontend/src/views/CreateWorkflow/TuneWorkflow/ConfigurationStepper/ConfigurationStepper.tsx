@@ -67,12 +67,14 @@ const General = () => {
 
 const TargetApplication = () => {
   const classes = useStyles();
-  const [alignment, setAlignment] = React.useState<boolean | null>(true);
+  const [alignment, setAlignment] = React.useState<boolean>(true);
   const handleAlignment = (
     event: React.MouseEvent<HTMLElement>,
-    newAlignment: boolean | null
+    newAlignment: boolean
   ) => {
-    setAlignment(newAlignment);
+    if (newAlignment !== null) {
+      setAlignment(newAlignment);
+    }
   };
   return (
     <div>
@@ -88,9 +90,7 @@ const TargetApplication = () => {
       </div>
       <br />
       <div style={{ display: 'flex' }}>
-        <Typography style={{ marginRight: 15, marginTop: 5 }}>
-          Annotation Check
-        </Typography>
+        <Typography className={classes.annotation}>Annotation Check</Typography>
         <ToggleButtonGroup
           value={alignment}
           exclusive
@@ -98,17 +98,16 @@ const TargetApplication = () => {
           aria-label="text alignment"
         >
           <ToggleButton
+            className={classes.annotationToggleBtn}
             style={{
-              backgroundColor: alignment ? 'green' : '#D9D9D9',
-              width: 72,
-              height: 35,
+              backgroundColor: alignment ? '#109B67' : '#D9D9D9',
             }}
             value
             aria-label="left aligned"
           >
             <Typography
               style={{
-                color: alignment ? 'white' : 'grey',
+                color: alignment ? '#FFFFFF' : 'rgba(0, 0, 0, 0.38)',
                 textTransform: 'none',
               }}
             >
@@ -117,16 +116,15 @@ const TargetApplication = () => {
           </ToggleButton>
           <ToggleButton
             style={{
-              backgroundColor: !alignment ? 'red' : '#D9D9D9',
-              width: 72,
-              height: 35,
+              backgroundColor: !alignment ? '#CA2C2C' : '#D9D9D9',
             }}
+            className={classes.annotationToggleBtn}
             value={false}
             aria-label="centered"
           >
             <Typography
               style={{
-                color: !alignment ? 'white' : 'grey',
+                color: !alignment ? '#FFFFFF' : 'rgba(0, 0, 0, 0.38)',
                 textTransform: 'none',
               }}
             >
@@ -137,7 +135,7 @@ const TargetApplication = () => {
         <br />
       </div>
       <br />
-      <Typography style={{ fontSize: 12, maxWidth: 400 }}>
+      <Typography className={classes.annotationDesc}>
         The target application does not have an annotation “Chaos=true”.
         Ideally, you cannot run this experiment unless the annotation is patched
         to the application. However, this service account has the privileges to

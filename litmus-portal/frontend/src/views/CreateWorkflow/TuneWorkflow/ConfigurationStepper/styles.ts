@@ -32,5 +32,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  annotation: {
+    marginRight: theme.spacing(2),
+    marginTop: theme.spacing(0.6),
+  },
+  annotationDesc: {
+    fontSize: '0.75rem',
+    maxWidth: '25rem',
+  },
+  annotationToggleBtn: {
+    width: 72,
+    height: 35,
+  },
 }));
 export default useStyles;
