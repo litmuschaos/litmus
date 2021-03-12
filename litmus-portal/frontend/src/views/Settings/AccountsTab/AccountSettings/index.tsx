@@ -102,6 +102,11 @@ const AccountSettings: React.FC = () => {
         }
         setLoading(false);
         setOpen(true);
+        setPassword({
+          newPassword: '',
+          currPassword: '',
+          confNewPassword: '',
+        });
       })
       .catch((err) => {
         setLoading(false);
