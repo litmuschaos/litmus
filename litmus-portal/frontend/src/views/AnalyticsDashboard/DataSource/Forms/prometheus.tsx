@@ -5,6 +5,7 @@ import {
   FormControlLabel,
   FormGroup,
   Typography,
+  withStyles,
 } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { InputField } from 'litmus-ui';
@@ -23,7 +24,14 @@ import {
   validateTextEmpty,
   validateTimeInSeconds,
 } from '../../../../utils/validate';
-import useStyles, { StyledCheckbox } from './styles';
+import useStyles from './styles';
+
+const StyledCheckbox = withStyles((theme) => ({
+  root: {
+    color: theme.palette.text.hint,
+  },
+  checked: {},
+}))(Checkbox);
 
 interface ConfigurePrometheusProps {
   configure: boolean;
