@@ -269,14 +269,14 @@ const BrowseWorkflow = () => {
       return <></>;
     }
     return (
-      <TableRow data-cy="browseWorkflowData" key={dataRow.workflow_run_id}>
+      <TableRow data-cy="WorkflowRunsTableRow" key={dataRow.workflow_run_id}>
         <TableData data={dataRow} exeData={exe_data} />
       </TableRow>
     );
   };
 
   return (
-    <div>
+    <div data-cy="WorkflowRunsTable">
       <section className="Heading section">
         {/* Header Section */}
         <HeaderSection
