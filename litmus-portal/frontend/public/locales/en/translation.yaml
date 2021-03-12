@@ -719,7 +719,7 @@ myhub:
   refresh: Refresh Hub
   disconnect: Disconnect Hub
   mainPage:
-    header: MyHub
+    header: MyHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
@@ -790,7 +790,7 @@ myhub:
 customWorkflow:
   createWorkflow:
     create: Creating a new chaos workflow
-    createDesc: Add new experiments from your ChaosHubs defined at MyHub section
+    createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
     workflowInfo: Workflow information
     workflowName: Workflow Name
     workflowDesc: Description
@@ -799,7 +799,7 @@ customWorkflow:
     selectHub: Select the hub
     public: Public Hub
     configure: Construct your workflow
-    construct: Using experiments from MyHub
+    construct: Using experiments from MyHubs
     upload: Upload your
     yaml: YAML
     uploadFile: Upload File
