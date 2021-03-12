@@ -456,9 +456,7 @@ const GitOpsTab = () => {
                                     <ButtonFilled
                                       type="submit"
                                       disabled={
-                                        gitOpsLoader ||
-                                        value !== 'enabled' ||
-                                        updateGitOpsLoader
+                                        gitOpsLoader || updateGitOpsLoader
                                       }
                                     >
                                       {updateGitOpsLoader || gitOpsLoader ? (
