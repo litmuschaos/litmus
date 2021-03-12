@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   createStyles,
   makeStyles,
   TableCell,
@@ -294,10 +295,6 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
   },
 
-  checkBoxStyle: {
-    color: theme.palette.border.main,
-  },
-
   rangeSelectorIcon: {
     width: '0.625rem',
     height: '0.625rem',
@@ -381,5 +378,11 @@ export const StyledTableCell = withStyles((theme) =>
     },
   })
 )(TableCell);
+
+export const StyledCheckbox = withStyles((theme) => ({
+  root: {
+    color: theme.palette.text.hint,
+  },
+}))(Checkbox);
 
 export default useStyles;

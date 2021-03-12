@@ -26,8 +26,19 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     flexGrow: 1,
+    marginRight: theme.spacing(6.5),
     [theme.breakpoints.down('sm')]: {
-      width: '20rem',
+      width: '95%',
+      flexDirection: 'column',
+    },
+  },
+
+  workflowCardDiv: {
+    marginRight: theme.spacing(10),
+    [theme.breakpoints.down('sm')]: {
+      marginTop: theme.spacing(3),
+      height: '20rem',
+      width: '95%',
     },
   },
 
@@ -68,6 +79,12 @@ const useStyles = makeStyles((theme) => ({
 
   arrowForwardIcon: {
     color: theme.palette.primary.main,
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(-1),
+  },
+
+  arrowForwardIconCard: {
+    color: theme.palette.primary.main,
     marginLeft: theme.spacing(22.5),
     position: 'absolute',
     bottom: '10%',
@@ -105,19 +122,22 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     marginTop: theme.spacing(3.75),
     marginBottom: theme.spacing(2),
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down(1150)]: {
       display: 'flex',
       flexDirection: 'column',
     },
   },
 
   statDiv: {
-    width: '50rem',
+    width: '70%',
     flexGrow: 1,
     backgroundColor: theme.palette.cards.background,
     borderRadius: 3,
+    [theme.breakpoints.down(1150)]: {
+      width: '90%',
+    },
     [theme.breakpoints.down('sm')]: {
-      width: '18rem',
+      width: '95%',
     },
   },
 
@@ -164,6 +184,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.5),
     marginRight: theme.spacing(6),
     marginLeft: 'auto',
+    backgroundColor: 'transparent !important',
+    cursor: 'pointer',
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(0.2),
       marginBottom: theme.spacing(1),
@@ -179,7 +201,8 @@ const useStyles = makeStyles((theme) => ({
   btnText: {
     paddingRight: theme.spacing(1.25),
     textDecoration: 'none',
-    color: theme.palette.secondary.dark,
+    color: theme.palette.primary.main,
+    fontSize: '1rem',
   },
 }));
 

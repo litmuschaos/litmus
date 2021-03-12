@@ -77,16 +77,18 @@ const Settings: React.FC = () => {
         >
           <Tab data-cy="my-account" label="My Account" {...tabProps(0)} />
           <Tab data-cy="teaming" label="Team" {...tabProps(1)} />
-          {role === 'admin' ? (
+          {role === 'admin' && (
             <Tab
               data-cy="user-management"
               label="User Management"
               {...tabProps(2)}
             />
-          ) : (
-            <></>
           )}
-          <Tab data-cy="gitOps" label="GitOps" {...tabProps(3)} />
+          <Tab
+            data-cy="gitOps"
+            label="GitOps"
+            {...tabProps(role === 'admin' ? 3 : 2)}
+          />
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
@@ -97,15 +99,13 @@ const Settings: React.FC = () => {
           <TeamingTab />
         </TabPanel>
       </div>
-      {role === 'admin' ? (
+      {role === 'admin' && (
         <TabPanel value={settingsTabValue} index={2}>
           <UserManagement />
         </TabPanel>
-      ) : (
-        <></>
       )}
       <div data-cy="GitOpsPanel">
-        <TabPanel value={settingsTabValue} index={3}>
+        <TabPanel value={settingsTabValue} index={role === 'admin' ? 3 : 2}>
           <GitOpsTab />
         </TabPanel>
       </div>

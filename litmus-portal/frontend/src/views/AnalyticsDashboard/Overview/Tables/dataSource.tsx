@@ -43,7 +43,7 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
               <IconButton
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
-                  tabs.changeAnalyticsDashboardTabs(1);
+                  tabs.changeAnalyticsDashboardTabs(3);
                   history.push('/analytics');
                 }}
               >

@@ -108,6 +108,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '1.75rem',
   },
   seeAllArrowBtn: {
+    backgroundColor: 'transparent !important',
+    cursor: 'pointer',
     display: 'flex',
     '& p': {
       paddingRight: theme.spacing(2),

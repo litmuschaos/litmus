@@ -8,13 +8,25 @@ const AnalyticsQuickActionCard: React.FC = () => {
   const { t } = useTranslation();
   const quickActionDataAnalytics = [
     {
+      src: './icons/addDashboard.svg',
+      alt: 'dashboard',
+      onClick: () => history.push('/analytics/dashboard/select'),
+      text: t('quickActionCard.addDashboard'),
+    },
+    {
       src: './icons/addDataSource.svg',
-      alt: 'source',
+      alt: 'data source',
       onClick: () => history.push('/analytics/datasource/select'),
       text: t('quickActionCard.addDataSource'),
     },
     {
-      src: './icons/addAgent.svg',
+      src: './icons/calendarWorkflowIcon.svg',
+      alt: 'workflow',
+      onClick: () => history.push('/create-workflow'),
+      text: t('quickActionCard.scheduleWorkflow'),
+    },
+    {
+      src: './icons/target.svg',
       alt: 'agent',
       onClick: () => history.push('/agent-connect'),
       text: t('quickActionCard.addAgent'),

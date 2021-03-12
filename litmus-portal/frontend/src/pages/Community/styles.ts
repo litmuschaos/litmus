@@ -44,7 +44,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
-      marginLeft: theme.spacing(8),
     },
   },
   paper: {
@@ -137,7 +136,9 @@ const useStyles = makeStyles((theme) => ({
 
   quickActionCard: {
     height: '21.25rem',
-    width: '20rem',
+    width: '15rem',
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(7),
     [theme.breakpoints.down('md')]: {
       display: 'flex',
       width: '15rem',
@@ -146,7 +147,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       marginTop: theme.spacing(5),
-      width: '25rem',
+      marginLeft: 0,
+      marginRight: 0,
+      width: '20rem',
       flexDirection: 'column',
     },
   },

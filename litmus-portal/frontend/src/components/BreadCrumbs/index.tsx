@@ -14,7 +14,7 @@ const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
   const classes = useStyles();
 
   return (
-    <Breadcrumbs aria-label="breadcrumb">
+    <Breadcrumbs aria-label="breadcrumb" className={classes.breadCrumb}>
       {pathname.map((path) => {
         if (path) {
           intermediateRoutes += path;

@@ -1,23 +1,19 @@
 /* eslint-disable no-param-reassign */
-import React, { useEffect, useState } from 'react';
-import { Typography, Button, Box } from '@material-ui/core';
+import { Box, Button, Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import GetAppTwoToneIcon from '@material-ui/icons/GetAppTwoTone';
+import Fade from '@material-ui/core/Fade';
+import Tooltip from '@material-ui/core/Tooltip';
+import ErrorTwoToneIcon from '@material-ui/icons/ErrorTwoTone';
 import FileCopyTwoToneIcon from '@material-ui/icons/FileCopyTwoTone';
 import FindInPageTwoToneIcon from '@material-ui/icons/FindInPageTwoTone';
 import FindReplaceTwoToneIcon from '@material-ui/icons/FindReplaceTwoTone';
-import UndoTwoToneIcon from '@material-ui/icons/UndoTwoTone';
+import GetAppTwoToneIcon from '@material-ui/icons/GetAppTwoTone';
 import RedoTwoToneIcon from '@material-ui/icons/RedoTwoTone';
+import SelectAllTwoToneIcon from '@material-ui/icons/SelectAllTwoTone';
+import UndoTwoToneIcon from '@material-ui/icons/UndoTwoTone';
 import UnfoldLessTwoToneIcon from '@material-ui/icons/UnfoldLessTwoTone';
 import UnfoldMoreTwoToneIcon from '@material-ui/icons/UnfoldMoreTwoTone';
-import SelectAllTwoToneIcon from '@material-ui/icons/SelectAllTwoTone';
-import ErrorTwoToneIcon from '@material-ui/icons/ErrorTwoTone';
-import Tooltip from '@material-ui/core/Tooltip';
-import Fade from '@material-ui/core/Fade';
 import AceEditor from 'react-ace';
-import 'brace/mode/yaml';
-import 'brace/theme/cobalt';
-import 'ace-builds/src-min-noconflict/ext-searchbox';
 import 'ace-builds/src-min-noconflict/ext-beautify';
 import 'ace-builds/src-min-noconflict/ext-code_lens';
 import 'ace-builds/src-min-noconflict/ext-elastic_tabstops_lite';
@@ -30,6 +26,7 @@ import 'ace-builds/src-min-noconflict/ext-modelist';
 import 'ace-builds/src-min-noconflict/ext-options';
 import 'ace-builds/src-min-noconflict/ext-prompt';
 import 'ace-builds/src-min-noconflict/ext-rtl';
+import 'ace-builds/src-min-noconflict/ext-searchbox';
 import 'ace-builds/src-min-noconflict/ext-spellcheck';
 import 'ace-builds/src-min-noconflict/ext-split';
 import 'ace-builds/src-min-noconflict/ext-static_highlight';
@@ -37,11 +34,14 @@ import 'ace-builds/src-min-noconflict/ext-statusbar';
 import 'ace-builds/src-min-noconflict/ext-textarea';
 import 'ace-builds/src-min-noconflict/ext-themelist';
 import 'ace-builds/src-min-noconflict/ext-whitespace';
+import 'brace/mode/yaml';
+import 'brace/theme/cobalt';
+import React, { useEffect, useState } from 'react';
 import YAML from 'yaml';
-import { AceValidations, parseYamlValidations } from './Validations';
-import useStyles from './styles';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
+import useStyles from './styles';
+import { AceValidations, parseYamlValidations } from './Validations';
 
 interface YamlEditorProps {
   id: string;
@@ -118,7 +118,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
         'ace_gutter-cell'
       );
       for (let i = 0; i < nodeStyleErrorList.length; i += 1) {
-        (nodeStyleErrorList[i] as any).style.backgroundColor = '#1C1C1C';
+        (nodeStyleErrorList[i] as any).style.backgroundColor = '#000000';
         (nodeStyleErrorList[i] as any).style.color = 'rgba(255, 255, 255, 0.4)';
       }
     }
@@ -492,14 +492,14 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                 editor.setAnimatedScroll(true);
                 editor.setShowInvisibles(false);
                 editor.setFontSize('0.98rem');
-                editor.container.style.background = '#1C1C1C';
+                editor.container.style.background = '#000000';
                 editor.container.style.lineHeight = '160%';
                 const nodeStyle = (document.getElementsByClassName(
                   'ace_gutter'
                 )[0] as any).style;
                 nodeStyle.color = 'rgba(255, 255, 255, 0.4)';
                 nodeStyle.borderRight = 0;
-                nodeStyle.background = '#1C1C1C';
+                nodeStyle.background = '#000000';
               }}
               onCursorChange={(selection) => {
                 (YamlAce.current!.editor as any).setOptions({
@@ -512,7 +512,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                 );
                 for (let i = 0; i < nodeStyleActiveList.length; i += 1) {
                   (nodeStyleActiveList[i] as any).style.backgroundColor =
-                    '#1C1C1C';
+                    '#000000';
                   (nodeStyleActiveList[i] as any).style.color =
                     'rgba(255, 255, 255, 0.4)';
                 }

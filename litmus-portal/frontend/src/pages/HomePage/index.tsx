@@ -4,7 +4,6 @@ import { useQuery } from '@apollo/client';
 import { CardActionArea, Typography, useTheme } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop/Backdrop';
 import IconButton from '@material-ui/core/IconButton';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { ButtonFilled, LitmusCard } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +28,7 @@ import * as UserActions from '../../redux/actions/user';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { ReactComponent as Arrow } from '../../svg/arrow.svg';
 import { getUsername } from '../../utils/auth';
 import ReturningHome from '../../views/Home/ReturningHome';
 import useStyles from './style';
@@ -66,7 +66,7 @@ const CreateWorkflowCard: React.FC = () => {
           <Typography className={classes.createWorkflowTitle}>
             {t('home.workflow.info')}
           </Typography>
-          <ArrowForwardIcon className={classes.arrowForwardIcon} />
+          <Arrow className={classes.arrowForwardIconCard} />
         </CardActionArea>
       </div>
     </LitmusCard>
@@ -193,7 +193,7 @@ const HomePage: React.FC = () => {
                       <img src="icons/applause.png" alt="Applause icon" />
                     </div>
                   </div>
-                  <div>
+                  <div className={classes.workflowCardDiv}>
                     <CreateWorkflowCard data-cy="CreateWorkflowCard" />
                   </div>
                 </div>
@@ -207,6 +207,8 @@ const HomePage: React.FC = () => {
                       </Typography>
                       <IconButton
                         className={classes.seeAllBtn}
+                        disableRipple
+                        disableFocusRipple
                         onClick={(event) => {
                           event.preventDefault();
                           history.push('/community');
@@ -216,7 +218,7 @@ const HomePage: React.FC = () => {
                           <Typography className={classes.btnText}>
                             {t('home.analytics.moreInfo')}
                           </Typography>
-                          <img src="icons/next.png" alt="next" />
+                          <Arrow className={classes.arrowForwardIcon} />
                         </div>
                       </IconButton>
                     </div>
