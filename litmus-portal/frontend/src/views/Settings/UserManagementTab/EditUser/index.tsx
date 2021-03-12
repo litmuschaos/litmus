@@ -71,7 +71,9 @@ const EditUser: React.FC<EditUserProps> = ({
             <div className={classes.suSegments}>
               {/* Personal Details */}
               <UserDetails
-                usernameIsDisabled
+                isNameDisabled
+                isEmailDisabled
+                isUsernameDisabled
                 nameValue={fullName}
                 emailValue={email}
                 userValue={userName}
