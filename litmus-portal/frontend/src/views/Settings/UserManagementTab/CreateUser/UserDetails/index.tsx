@@ -16,7 +16,9 @@ interface PersonalDetailsProps {
   userValue: string;
   handleEmailChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   emailValue: string;
-  usernameIsDisabled: boolean;
+  isUsernameDisabled: boolean;
+  isNameDisabled: boolean;
+  isEmailDisabled: boolean;
 }
 
 // Displays the personals details on the "accounts" tab
@@ -27,7 +29,9 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
   handleEmailChange,
   emailValue,
   handleUserChange,
-  usernameIsDisabled,
+  isUsernameDisabled,
+  isNameDisabled,
+  isEmailDisabled,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -86,6 +90,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                     ? 'Should not start with an empty space'
                     : ''
                 }
+                disabled={isNameDisabled}
                 value={nameValue}
                 onChange={handleNameChange}
                 variant={
@@ -103,6 +108,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                   validateEmail(emailValue) ? 'Should be a valid email' : ''
                 }
                 type="email"
+                disabled={isEmailDisabled}
                 value={emailValue}
                 onChange={handleEmailChange}
                 variant={validateEmail(emailValue) ? 'error' : 'primary'}
@@ -127,7 +133,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 )}
                 required
                 value={userValue}
-                disabled={usernameIsDisabled}
+                disabled={isUsernameDisabled}
                 onChange={handleUserChange}
                 variant={
                   validateStartEmptySpacing(userValue) ? 'error' : 'primary'
