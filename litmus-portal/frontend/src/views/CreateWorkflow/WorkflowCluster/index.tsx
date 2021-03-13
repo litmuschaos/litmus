@@ -128,7 +128,11 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         </Typography>
 
         <div className={classes.radiobutton}>
-          <FormControl variant="outlined" className={classes.formControl}>
+          <FormControl
+            variant="outlined"
+            className={classes.formControl}
+            data-cy="AgentsDropDown"
+          >
             <InputLabel className={classes.selectText}>
               {t('createWorkflow.workflowCluster.activeCluster')}
             </InputLabel>
@@ -146,7 +150,11 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
                 <em> {t('createWorkflow.workflowCluster.none')}</em>
               </MenuItem>
               {clusterData.map((name: Cluster) => (
-                <MenuItem key={name.cluster_id} value={name.cluster_id}>
+                <MenuItem
+                  key={name.cluster_id}
+                  value={name.cluster_id}
+                  data-cy="Agents"
+                >
                   {name.cluster_name}
                 </MenuItem>
               ))}
@@ -160,10 +168,9 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         is install and running) or alternative Install Litmus Agent to 
         other Kubernetes cluster 
       */}
-      <div className={classes.buttonDiv}>
-        <div className={classes.button} data-cy="Internal">
+      <div className={classes.buttonDiv} data-cy="SelectAndContinueButton">
+        <div className={classes.button}>
           <ButtonFilled
-            data-cy="gotItButton"
             disabled={isTragetSelected}
             onClick={() => handleClick()}
           >

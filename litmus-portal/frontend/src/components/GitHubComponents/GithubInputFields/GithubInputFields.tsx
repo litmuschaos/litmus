@@ -28,7 +28,7 @@ const GithubInputFields: React.FC<MyHubInputProps> = ({
   const { t } = useTranslation();
   return (
     <>
-      <div>
+      <div data-cy="githubURLInput">
         <InputField
           label="Git URL"
           value={gitURL}
@@ -39,7 +39,7 @@ const GithubInputFields: React.FC<MyHubInputProps> = ({
           className={classes.inputField}
         />
       </div>
-      <div>
+      <div data-cy="githubBranchInput">
         <InputField
           label="Branch"
           value={gitBranch}
