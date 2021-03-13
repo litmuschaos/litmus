@@ -24,7 +24,7 @@ const GitOpsInfo: React.FC<GitOpsInfoProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
   return (
-    <div className={classes.gitInfo}>
+    <div className={classes.gitInfo} data-cy="gitopsInfoBox">
       <Typography className={classes.branchText}>
         <strong>{data?.getGitOpsDetails.Branch}</strong>
       </Typography>

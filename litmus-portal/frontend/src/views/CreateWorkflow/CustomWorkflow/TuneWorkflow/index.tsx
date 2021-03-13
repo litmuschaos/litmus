@@ -229,7 +229,10 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography variant="h6" className={classes.mainText}>
               {t('customWorkflow.tuneExperiment.expName')}:
             </Typography>
-            <Typography className={classes.mainDetail}>
+            <Typography
+              className={classes.mainDetail}
+              data-cy="selectedExperimentName"
+            >
               {customWorkflow.experiment_name}
             </Typography>
           </div>
@@ -246,7 +249,10 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography variant="h6" className={classes.mainText}>
               {t('customWorkflow.tuneExperiment.sequence')}:
             </Typography>
-            <Typography className={classes.mainDetail}>
+            <Typography
+              className={classes.mainDetail}
+              data-cy="experimentSequence"
+            >
               {experimentSequence()}
             </Typography>
           </div>
@@ -255,7 +261,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         {loadingEnv ? (
           <Loader />
         ) : (
-          <div className={classes.appInfoMainDiv}>
+          <div className={classes.appInfoMainDiv} data-cy="envVariables">
             <Typography className={classes.appInfoHeader}>
               {t('customWorkflow.tuneExperiment.appInfo')}
             </Typography>
@@ -417,7 +423,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           ))}
         </div>
       </div>
-      <div className={classes.nextBtn}>
+      <div className={classes.nextBtn} data-cy="addExperimentButton">
         <ButtonFilled
           handleClick={() => {
             handleEnvModification();

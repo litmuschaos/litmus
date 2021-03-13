@@ -22,7 +22,7 @@ const SSHField: React.FC<SSHFieldProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
   return (
-    <div className={classes.sshDiv}>
+    <div className={classes.sshDiv} data-cy="sshKeyBox">
       <Typography className={classes.sshAlert}>
         {t('myhub.connectHubPage.sshAlert')}
       </Typography>
@@ -35,7 +35,7 @@ const SSHField: React.FC<SSHFieldProps> = ({
         ) : (
           <>
             <Typography className={classes.sshText}>{publicKey}</Typography>
-            <div className={classes.copyBtn}>
+            <div className={classes.copyBtn} data-cy="sshKeyCopyButton">
               <ButtonOutline
                 isDisabled={false}
                 handleClick={() => copyPublicKey(publicKey)}

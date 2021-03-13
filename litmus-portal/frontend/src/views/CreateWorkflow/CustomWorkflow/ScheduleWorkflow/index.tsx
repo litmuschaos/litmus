@@ -275,6 +275,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             {workflows.map((data, index) => {
               return (
                 <li
+                  data-cy="experimentRow"
                   className={classes.listItem}
                   onDragOver={() => onDragOver(index)}
                 >
@@ -341,13 +342,17 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </li>
               );
             })}
-            <Typography className={classes.addExp} onClick={() => gotoStep(0)}>
+            <Typography
+              className={classes.addExp}
+              data-cy="addMoreExperimentsButton"
+              onClick={() => gotoStep(0)}
+            >
               + {t('customWorkflow.scheduleWorkflow.addExp')}
             </Typography>
           </div>
         </div>
       </div>
-      <div className={classes.nextButtonDiv}>
+      <div className={classes.nextButtonDiv} data-cy="finishConstruction">
         <ButtonFilled
           handleClick={() => {
             setConfirmModal(true);
@@ -367,6 +372,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
       {/* Revert Chaos Confirmation Modal */}
       <Modal
+        data-cy="revertChaosVerifyModal"
         open={confirmModal}
         onClose={handleModalClose}
         width="60%"
@@ -415,7 +421,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <ButtonOutlined onClick={() => setConfirmModal(false)}>
                 {t('customWorkflow.scheduleWorkflow.cancel')}
               </ButtonOutlined>
-              <div className={classes.constructBtn}>
+              <div className={classes.constructBtn} data-cy="constructButton">
                 <ButtonFilled
                   isPrimary
                   handleClick={customYAMLGenerator}
