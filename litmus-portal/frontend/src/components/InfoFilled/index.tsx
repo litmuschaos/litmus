@@ -39,7 +39,7 @@ const InfoFilledWrap: React.FC = () => {
     {
       color: theme.palette.secondary.main,
       value: parseInt(communityData.google.operatorInstalls, 10),
-      statType: 'Operator Installed',
+      statType: 'Operator Installs',
       plus: true,
     },
     {
@@ -51,7 +51,7 @@ const InfoFilledWrap: React.FC = () => {
     {
       color: theme.palette.error.main,
       value: parseInt(communityData.github.stars, 10),
-      statType: 'Github Stars',
+      statType: 'GitHub Stars',
     },
   ];
 
