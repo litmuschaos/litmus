@@ -85,7 +85,7 @@ const PanelContent: React.FC<PanelResponse> = ({
     PROM_QUERY,
     {
       variables: { prometheusInput: prometheusQueryData.promInput },
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'no-cache',
       onCompleted: (data) => {
         prometheusData = data;
       },
@@ -124,10 +124,10 @@ const PanelContent: React.FC<PanelResponse> = ({
   };
 
   const updateGraphData = () => {
-    let seriesData: Array<GraphMetric> = [
+    const seriesData: Array<GraphMetric> = [
       { metricName: '', data: [{ date: NaN, value: NaN }] },
     ];
-    let eventData: Array<GraphMetric> = [
+    const eventData: Array<GraphMetric> = [
       { metricName: '', data: [{ date: NaN, value: NaN }] },
     ];
     if (
@@ -137,28 +137,33 @@ const PanelContent: React.FC<PanelResponse> = ({
       prometheusData.GetPromQuery[0].legends !== null &&
       prometheusData.GetPromQuery[0].legends[0] !== null
     ) {
-      seriesData = prometheusData.GetPromQuery[0].legends.map(
-        (elem, index) => ({
-          metricName: elem[0] ?? 'test',
-          data: prometheusData.GetPromQuery[0].tsvs[index].map((dataPoint) => ({
-            date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
-            value: parseFloat(dataPoint.value ?? '0.0'),
-          })),
-          baseColor: lineGraph[index % lineGraph.length],
-        })
-      );
       prometheusData.GetPromQuery.forEach((queryResponse) => {
         if (prometheusQueryData.chaosInput.includes(queryResponse.queryid)) {
           if (queryResponse.legends && queryResponse.legends[0]) {
-            eventData = queryResponse.legends.map((elem, index) => ({
-              metricName: elem[0] ?? 'test',
+            const event: Array<GraphMetric> = queryResponse.legends.map(
+              (elem, index) => ({
+                metricName: elem[0] ?? 'chaos',
+                data: queryResponse.tsvs[index].map((dataPoint) => ({
+                  date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
+                  value: parseInt(dataPoint.value ?? '0', 10),
+                })),
+                baseColor: areaGraph[index % areaGraph.length],
+              })
+            );
+            eventData.push(...event);
+          }
+        } else if (queryResponse.legends && queryResponse.legends[0]) {
+          const series: Array<GraphMetric> = queryResponse.legends.map(
+            (elem, index) => ({
+              metricName: elem[0] ?? 'metric',
               data: queryResponse.tsvs[index].map((dataPoint) => ({
                 date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
-                value: parseInt(dataPoint.value ?? '0', 10),
+                value: parseFloat(dataPoint.value ?? '0.0'),
               })),
-              baseColor: areaGraph[index % areaGraph.length],
-            }));
-          }
+              baseColor: lineGraph[index % lineGraph.length],
+            })
+          );
+          seriesData.push(...series);
         }
       });
     }

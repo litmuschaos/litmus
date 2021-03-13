@@ -6,7 +6,6 @@ import { ButtonFilled, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
-import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../graphql';
 import {
@@ -72,7 +71,6 @@ const DashboardPage: React.FC = () => {
   });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [refreshRate, setRefreshRate] = React.useState<number>(10000);
-  const [loader, setLoader] = React.useState<boolean>(false);
   const [dataSourceStatus, setDataSourceStatus] = React.useState<string>(
     'ACTIVE'
   );
@@ -89,7 +87,7 @@ const DashboardPage: React.FC = () => {
     LIST_DASHBOARD,
     {
       variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'no-cache',
     }
   );
 
@@ -98,7 +96,7 @@ const DashboardPage: React.FC = () => {
     LIST_DATASOURCE,
     {
       variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'no-cache',
     }
   );
 
@@ -160,10 +158,6 @@ const DashboardPage: React.FC = () => {
             setDataSourceStatus(selectedDataSource.health_status);
           }
         }
-        setLoader(true);
-        setTimeout(() => {
-          setLoader(false);
-        }, 4500);
       }
     }
   }, [selectedDashboardInformation.dashboardKey, dataSources]);
@@ -246,39 +240,27 @@ const DashboardPage: React.FC = () => {
               {selectedDashboardInformation.type}
             </Typography>
           </div>
-          {loader ? (
-            <div className={`${classes.analyticsDiv} ${classes.loader}`}>
-              <Typography
-                variant="h5"
-                className={`${classes.weightedFont} ${classes.loaderText}`}
-              >
-                Loading dashboard ...
-              </Typography>
-              <Loader />
-            </div>
-          ) : (
-            <div
-              className={classes.analyticsDiv}
-              key={selectedDashboardInformation.dashboardKey}
-            >
-              {selectedDashboardInformation.metaData[0] &&
-                selectedDashboardInformation.metaData[0].panel_groups.map(
-                  (panelGroup: PanelGroupResponse) => (
-                    <div
-                      key={`${panelGroup.panel_group_id}-dashboardPage-div`}
-                      data-cy="dashboardPanelGroup"
-                    >
-                      <DashboardPanelGroup
-                        key={`${panelGroup.panel_group_id}-dashboardPage-component`}
-                        panel_group_id={panelGroup.panel_group_id}
-                        panel_group_name={panelGroup.panel_group_name}
-                        panels={panelGroup.panels}
-                      />
-                    </div>
-                  )
-                )}
-            </div>
-          )}
+          <div
+            className={classes.analyticsDiv}
+            key={selectedDashboardInformation.dashboardKey}
+          >
+            {selectedDashboardInformation.metaData[0] &&
+              selectedDashboardInformation.metaData[0].panel_groups.map(
+                (panelGroup: PanelGroupResponse) => (
+                  <div
+                    key={`${panelGroup.panel_group_id}-dashboardPage-div`}
+                    data-cy="dashboardPanelGroup"
+                  >
+                    <DashboardPanelGroup
+                      key={`${panelGroup.panel_group_id}-dashboardPage-component`}
+                      panel_group_id={panelGroup.panel_group_id}
+                      panel_group_name={panelGroup.panel_group_name}
+                      panels={panelGroup.panels}
+                    />
+                  </div>
+                )
+              )}
+          </div>
         </div>
       </div>
       {dataSourceStatus !== 'ACTIVE' ? (
