@@ -29,8 +29,8 @@ export interface DashboardDetails {
   panelGroups?: PanelGroupResponse[];
 }
 
-export interface ChaosEngineNamesAndNamespacesMap {
-  engineName: string;
-  engineNamespace: string;
+export interface ChaosResultNamesAndNamespacesMap {
+  resultName: string;
+  resultNamespace: string;
   workflowName: string;
 }

@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
     [theme.breakpoints.down('xl')]: {
       height: '84vh',

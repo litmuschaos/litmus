@@ -1,7 +1,13 @@
 /* eslint-disable no-empty-pattern */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-param-reassign */
-import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  useTheme,
+} from '@material-ui/core';
 import Plotly from 'plotly.js';
 import { string } from 'prop-types';
 import React, { useEffect } from 'react';
@@ -14,6 +20,7 @@ const Plot = createPlotlyComponent(Plotly);
 
 const CommunityAnalyticsPlot: React.FC = () => {
   const classes = useStyles();
+  const { palette } = useTheme();
 
   const { communityData } = useSelector(
     (state: RootState) => state.communityData
@@ -178,6 +185,16 @@ const CommunityAnalyticsPlot: React.FC = () => {
 
   useEffect(() => {
     processData();
+    try {
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
+      nodeStyle.left = '29%';
+      nodeStyle.width = 'fit-content';
+      nodeStyle.backgroundColor = palette.background.paper;
+    } catch (err) {
+      console.error(err);
+    }
   }, [currentPlotType, currentGranularityType]);
 
   return (
@@ -241,7 +258,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
             y: data.y,
             mode: 'lines',
             name: 'Operator Installs',
-            line: { color: '#109B67' },
+            line: { color: palette.secondary.main },
           },
           {
             type: 'scatter',
@@ -250,12 +267,12 @@ const CommunityAnalyticsPlot: React.FC = () => {
             mode: 'lines',
             name: 'Experiment Runs',
             yaxis: 'y2',
-            line: { color: '#858CDD' },
+            line: { color: palette.primary.main },
           },
         ]}
         layout={{
           autosize: true,
-          height: 650,
+          height: 800,
           margin: {
             l: 60,
             r: 60,
@@ -284,10 +301,10 @@ const CommunityAnalyticsPlot: React.FC = () => {
             font: {
               family: 'ubuntu',
               size: 12,
-              color: '#000',
+              color: palette.text.primary,
             },
-            bgcolor: '#E2E2E2',
-            bordercolor: '#FFFFFF',
+            bgcolor: palette.background.paper,
+            bordercolor: palette.background.paper,
             borderwidth: 0,
           },
         }}
@@ -303,7 +320,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
           showAxisDragHandles: true,
           showAxisRangeEntryBoxes: true,
           showTips: true,
-          displayModeBar: false,
+          displayModeBar: true,
           toImageButtonOptions: {
             format: 'png',
             filename: 'Litmus_Community_Stats',
@@ -311,6 +328,18 @@ const CommunityAnalyticsPlot: React.FC = () => {
             height: 1080,
             scale: 2,
           },
+        }}
+        onInitialized={() => {
+          try {
+            const nodeStyle = (document.getElementsByClassName(
+              'modebar'
+            )[0] as HTMLElement).style;
+            nodeStyle.left = '29%';
+            nodeStyle.width = 'fit-content';
+            nodeStyle.backgroundColor = palette.background.paper;
+          } catch (err) {
+            console.error(err);
+          }
         }}
       />
     </div>
