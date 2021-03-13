@@ -450,7 +450,9 @@ const WorkflowComparisonTable = () => {
           run_date: run.run_date,
           tests_passed: run.tests_passed.toString(),
           tests_failed: run.tests_failed.toString(),
-          resilience_score: run.resilience_score.toString(),
+          resilience_score: `${parseFloat(run.resilience_score as string)
+            .toFixed(2)
+            .toString()}%`,
           test_details_string: detail_string,
         });
       });
