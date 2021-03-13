@@ -144,7 +144,6 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Redirect exact path="/login" to="/" />
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
-        <Redirect exact path="/workflows/analytics" to="/workflows" />
 
         <Redirect exact path="/analytics/overview" to="/analytics" />
         <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />

@@ -26,7 +26,7 @@ import {
   Template,
   WorkflowYaml,
 } from '../../../../models/chaosWorkflowYaml';
-import { ChaosEngineNamesAndNamespacesMap } from '../../../../models/dashboardsData';
+import { ChaosResultNamesAndNamespacesMap } from '../../../../models/dashboardsData';
 import {
   ListDashboardResponse,
   Panel,
@@ -95,7 +95,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
   // reSyncChaos
 
   const reSyncChaosQueries = (data: ListDashboardResponse) => {
-    const chaosEngineNamesAndNamespacesMap: ChaosEngineNamesAndNamespacesMap[] = [];
+    const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
     schedulesData?.getScheduledWorkflows.forEach(
       (schedule: ScheduleWorkflow) => {
         if (schedule.cluster_id === data.cluster_id && !schedule.isRemoved) {
@@ -146,13 +146,13 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                     engineNamespace = parsedEmbeddedYaml.metadata.namespace;
                   }
                   let matchIndex: number = -1;
-                  const check: number = chaosEngineNamesAndNamespacesMap.filter(
+                  const check: number = chaosResultNamesAndNamespacesMap.filter(
                     (data, index) => {
                       if (
-                        data.engineName.includes(
+                        data.resultName.includes(
                           parsedEmbeddedYaml.metadata.name
                         ) &&
-                        data.engineNamespace === engineNamespace
+                        data.resultNamespace === engineNamespace
                       ) {
                         matchIndex = index;
                         return true;
@@ -161,15 +161,15 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                     }
                   ).length;
                   if (check === 0) {
-                    chaosEngineNamesAndNamespacesMap.push({
-                      engineName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
-                      engineNamespace,
+                    chaosResultNamesAndNamespacesMap.push({
+                      resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
+                      resultNamespace: engineNamespace,
                       workflowName: workflowYaml.metadata.name,
                     });
                   } else {
-                    chaosEngineNamesAndNamespacesMap[
+                    chaosResultNamesAndNamespacesMap[
                       matchIndex
-                    ].workflowName = `${chaosEngineNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                    ].workflowName = `${chaosResultNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
                   }
                 }
               });
@@ -180,7 +180,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
     );
 
     const isChaosQueryPresent: number[] = Array(
-      chaosEngineNamesAndNamespacesMap.length
+      chaosResultNamesAndNamespacesMap.length
     ).fill(0);
 
     data.panel_groups[0].panels[0].prom_queries.forEach(
@@ -190,20 +190,20 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
             'litmuschaos_awaited_experiments'
           )
         ) {
-          const chaosDetails: ChaosEngineNamesAndNamespacesMap = getEngineNameAndNamespace(
+          const chaosDetails: ChaosResultNamesAndNamespacesMap = getEngineNameAndNamespace(
             existingPromQuery.prom_query_name
           );
-          chaosEngineNamesAndNamespacesMap.forEach(
+          chaosResultNamesAndNamespacesMap.forEach(
             (
-              chaosDetailsFomSchedule: ChaosEngineNamesAndNamespacesMap,
+              chaosDetailsFomSchedule: ChaosResultNamesAndNamespacesMap,
               index: number
             ) => {
               if (
-                chaosDetailsFomSchedule.engineName.includes(
-                  chaosDetails.engineName
+                chaosDetailsFomSchedule.resultName.includes(
+                  chaosDetails.resultName
                 ) &&
-                chaosDetailsFomSchedule.engineNamespace ===
-                  chaosDetails.engineNamespace
+                chaosDetailsFomSchedule.resultNamespace ===
+                  chaosDetails.resultNamespace
               ) {
                 isChaosQueryPresent[index] = 1;
               }
@@ -227,17 +227,17 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
           if (
             query.prom_query_name.startsWith('litmuschaos_awaited_experiments')
           ) {
-            const chaosDetails: ChaosEngineNamesAndNamespacesMap = getEngineNameAndNamespace(
+            const chaosDetails: ChaosResultNamesAndNamespacesMap = getEngineNameAndNamespace(
               query.prom_query_name
             );
-            chaosEngineNamesAndNamespacesMap.forEach(
-              (chaosDetailsFomSchedule: ChaosEngineNamesAndNamespacesMap) => {
+            chaosResultNamesAndNamespacesMap.forEach(
+              (chaosDetailsFomSchedule: ChaosResultNamesAndNamespacesMap) => {
                 if (
-                  chaosDetailsFomSchedule.engineName.includes(
-                    chaosDetails.engineName
+                  chaosDetailsFomSchedule.resultName.includes(
+                    chaosDetails.resultName
                   ) &&
-                  chaosDetailsFomSchedule.engineNamespace ===
-                    chaosDetails.engineNamespace &&
+                  chaosDetailsFomSchedule.resultNamespace ===
+                    chaosDetails.resultNamespace &&
                   !query.legend.includes(chaosDetailsFomSchedule.workflowName)
                 ) {
                   updatedLegend = `${chaosDetailsFomSchedule.workflowName}, \n${query.legend}`;
@@ -256,18 +256,18 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
           };
           updatedQueries.push(updatedQuery);
         });
-        chaosEngineNamesAndNamespacesMap.forEach(
-          (keyValue: ChaosEngineNamesAndNamespacesMap, index: number) => {
+        chaosResultNamesAndNamespacesMap.forEach(
+          (keyValue: ChaosResultNamesAndNamespacesMap, index: number) => {
             if (isChaosQueryPresent[index] === 0) {
               updatedQueries.push({
                 queryid: uuidv4(),
                 prom_query_name: generateChaosQuery(
                   DashboardTemplatesList[dashboardTemplateID]
                     .chaosEventQueryTemplate,
-                  keyValue.engineName,
-                  keyValue.engineNamespace
+                  keyValue.resultName,
+                  keyValue.resultNamespace
                 ),
-                legend: `${keyValue.workflowName}- \n${keyValue.engineName}`,
+                legend: `${keyValue.workflowName}- \n${keyValue.resultName}`,
                 resolution: '1/1',
                 minstep: '1',
                 line: false,

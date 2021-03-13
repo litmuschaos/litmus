@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
     [theme.breakpoints.down('xl')]: {
       height: '84vh',
@@ -259,11 +259,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
   },
 
+  fullScreenIcon: {
+    width: '1.5625rem',
+    height: '1.5625rem',
+    marginRight: '1.5625rem',
+  },
+
   // Validations
 
   validationError: {
     position: 'absolute',
-    background: 'rgba(202, 44, 44, 0.2)',
+    background: theme.palette.error.light,
   },
 }));
 

@@ -19,7 +19,7 @@ import {
   WorkflowYaml,
 } from '../../models/chaosWorkflowYaml';
 import {
-  ChaosEngineNamesAndNamespacesMap,
+  ChaosResultNamesAndNamespacesMap,
   DashboardDetails,
 } from '../../models/dashboardsData';
 import {
@@ -124,7 +124,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
 
   const getPanelGroups = () => {
     if (configure === false) {
-      const chaosEngineNamesAndNamespacesMap: ChaosEngineNamesAndNamespacesMap[] = [];
+      const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
       workflowSchedules?.getScheduledWorkflows.forEach(
         (schedule: ScheduleWorkflow) => {
           if (
@@ -178,13 +178,13 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                       engineNamespace = parsedEmbeddedYaml.metadata.namespace;
                     }
                     let matchIndex: number = -1;
-                    const check: number = chaosEngineNamesAndNamespacesMap.filter(
+                    const check: number = chaosResultNamesAndNamespacesMap.filter(
                       (data, index) => {
                         if (
-                          data.engineName.includes(
+                          data.resultName.includes(
                             parsedEmbeddedYaml.metadata.name
                           ) &&
-                          data.engineNamespace === engineNamespace
+                          data.resultNamespace === engineNamespace
                         ) {
                           matchIndex = index;
                           return true;
@@ -193,15 +193,15 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                       }
                     ).length;
                     if (check === 0) {
-                      chaosEngineNamesAndNamespacesMap.push({
-                        engineName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
-                        engineNamespace,
+                      chaosResultNamesAndNamespacesMap.push({
+                        resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
+                        resultNamespace: engineNamespace,
                         workflowName: workflowYaml.metadata.name,
                       });
                     } else {
-                      chaosEngineNamesAndNamespacesMap[
+                      chaosResultNamesAndNamespacesMap[
                         matchIndex
-                      ].workflowName = `${chaosEngineNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                      ].workflowName = `${chaosResultNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
                     }
                   }
                 });
@@ -217,16 +217,16 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
           const selectedPanels: Panel[] = [];
           panelGroup.panels.forEach((panel) => {
             const selectedPanel: Panel = panel;
-            chaosEngineNamesAndNamespacesMap.forEach((keyValue) => {
+            chaosResultNamesAndNamespacesMap.forEach((keyValue) => {
               selectedPanel.prom_queries.push({
                 queryid: uuidv4(),
                 prom_query_name: generateChaosQuery(
                   DashboardList[DashboardTemplateID ?? 0]
                     .chaosEventQueryTemplate,
-                  keyValue.engineName,
-                  keyValue.engineNamespace
+                  keyValue.resultName,
+                  keyValue.resultNamespace
                 ),
-                legend: `${keyValue.workflowName}- \n${keyValue.engineName}`,
+                legend: `${keyValue.workflowName}- \n${keyValue.resultName}`,
                 resolution: '1/1',
                 minstep: '1',
                 line: false,
@@ -376,6 +376,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
       <Modal
         open={open}
         onClose={() => setOpen(false)}
+        width="60%"
         modalActions={
           <ButtonOutlined
             className={classes.closeButton}
@@ -385,7 +386,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
           </ButtonOutlined>
         }
       >
-        <div>
+        <div className={classes.modal}>
           <Typography align="center">
             {success === true ? (
               <img

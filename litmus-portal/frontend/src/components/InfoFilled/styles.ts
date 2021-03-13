@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(3),
     borderRadius: 3,
     [theme.breakpoints.down('sm')]: {
-      width: theme.spacing(40),
+      width: '15rem',
     },
   },
   infoFilledWrap: {

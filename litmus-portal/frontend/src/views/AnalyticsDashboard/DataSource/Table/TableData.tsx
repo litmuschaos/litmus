@@ -136,6 +136,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           setOpen(false);
           setConfirm(false);
         }}
+        width="60%"
         modalActions={
           <ButtonOutlined
             className={classes.closeButton}
@@ -148,7 +149,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           </ButtonOutlined>
         }
       >
-        <div>
+        <div className={classes.modal}>
           {confirm === true ? (
             <Typography align="center">
               {success === true ? (

@@ -46,6 +46,7 @@ quickActionCard:
   quickSurvey: Take a quick survey
   readDocs: Read the Litmus docs
   readAPIDocs: Read the Litmus Portal API docs
+  addDashboard: Add a Dashboard
   addDataSource: Add a Data Source
   addAgent: Add an agent
   connectNewAgent: Connect a new agent
@@ -207,7 +208,7 @@ analyticsDashboard:
   overviewTabdataSourceTable: Connected Data Sources
   applicationDashboard: Application Dashboards
   connectedDataSources: Connected Data Sources
-  datasource: Data source
+  dataSource: Data sources
   dataSourceTable:
     tableHead1: Status
     tableHead2: Data Source Name

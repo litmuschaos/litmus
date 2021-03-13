@@ -279,8 +279,8 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
       {dataSourceStatus !== 'ACTIVE' ? (
-        <Modal open onClose={() => {}}>
-          <div>
+        <Modal open onClose={() => {}} width="60%">
+          <div className={classes.modal}>
             <Typography align="center">
               <CrossMarkIcon className={classes.icon} />
             </Typography>

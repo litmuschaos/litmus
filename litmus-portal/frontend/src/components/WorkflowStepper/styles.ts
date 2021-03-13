@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   stepper: {
     marginTop: theme.spacing(5),
+    paddingTop: theme.spacing(10),
   },
   backButton: {
     marginRight: theme.spacing(1),
@@ -16,6 +17,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     gap: '1rem',
     marginLeft: '9%',
+    paddingBottom: theme.spacing(3),
   },
   yamlError: {
     marginTop: theme.spacing(1.5),

@@ -1,9 +1,10 @@
-import { Checkbox, IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import cronstrue from 'cronstrue';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import CheckBox from '../../../../components/CheckBox';
 import { Workflow } from '../../../../models/graphql/workflowListData';
 import { history } from '../../../../redux/configureStore';
 import useStyles, { StyledTableCell } from './styles';
@@ -35,10 +36,9 @@ const TableData: React.FC<TableDataProps> = ({
     <>
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
         {comparisonState === false ? (
-          <Checkbox
+          <CheckBox
             checked={itemSelectionStatus}
             inputProps={{ 'aria-labelledby': labelIdentifier }}
-            className={classes.checkBoxStyle}
           />
         ) : (
           <div />

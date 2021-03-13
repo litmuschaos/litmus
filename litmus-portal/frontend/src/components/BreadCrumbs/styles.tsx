@@ -6,6 +6,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     textDecoration: 'none',
     color: theme.palette.text.primary,
   },
+  marker: {
+    color: theme.palette.text.disabled,
+  },
 }));
 
 export default useStyles;
