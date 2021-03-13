@@ -122,7 +122,7 @@ const Community: React.FC = () => {
                     </Typography>
                   </CardContent>
                   <a
-                    href="https://blog.mayadata.io/"
+                    href="https://dev.to/litmus-chaos"
                     target="_blank"
                     rel="noreferrer"
                     className={classes.devToLink}
