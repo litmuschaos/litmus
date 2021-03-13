@@ -103,65 +103,68 @@ const DashboardPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (
-      selectedDashboardInformation.id !==
-      selectedDashboardInformation.dashboardKey
-    ) {
-      const availableDashboards: ListDashboardResponse[] = dashboards
-        ? dashboards.ListDashboard.filter((data) => {
+    if (dashboards && dashboards.ListDashboard.length) {
+      if (
+        selectedDashboardInformation.id !==
+        selectedDashboardInformation.dashboardKey
+      ) {
+        const availableDashboards: ListDashboardResponse[] = dashboards.ListDashboard.filter(
+          (data) => {
             return data.cluster_id === selectedDashboardInformation.agentID;
-          })
-        : [];
-      const selectedDashboard: ListDashboardResponse = availableDashboards.filter(
-        (data) => {
-          return data.db_id === selectedDashboardInformation.id;
-        }
-      )[0];
-      setSelectedDashboardInformation({
-        ...selectedDashboardInformation,
-        dashboardListForAgent: availableDashboards,
-        metaData: [selectedDashboard],
-        dashboardKey: selectedDashboardInformation.id,
-      });
+          }
+        );
+        const selectedDashboard: ListDashboardResponse = availableDashboards.filter(
+          (data) => {
+            return data.db_id === selectedDashboardInformation.id;
+          }
+        )[0];
+        setSelectedDashboardInformation({
+          ...selectedDashboardInformation,
+          dashboardListForAgent: availableDashboards,
+          metaData: [selectedDashboard],
+          dashboardKey: selectedDashboardInformation.id,
+        });
+      }
     }
   }, [dashboards, selectedDashboardInformation.id]);
 
   useEffect(() => {
-    if (selectedDataSource.selectedDataSourceID === '') {
-      dashboard.selectDashboard({
-        refreshRate,
-      });
-      if (
-        dataSources &&
-        selectedDashboardInformation.metaData &&
-        selectedDashboardInformation.metaData[0] &&
-        dataSources.ListDataSource
-      ) {
-        const selectedDataSource: ListDataSourceResponse = dataSources.ListDataSource.filter(
-          (data) => {
-            return (
-              data.ds_id === selectedDashboardInformation.metaData[0].ds_id
-            );
-          }
-        )[0];
-        if (selectedDataSource) {
-          dataSource.selectDataSource({
-            selectedDataSourceURL: selectedDataSource.ds_url,
-            selectedDataSourceID: selectedDataSource.ds_id,
-            selectedDataSourceName: selectedDataSource.ds_name,
-          });
-        }
+    if (dataSources && dataSources.ListDataSource.length) {
+      if (selectedDataSource.selectedDataSourceID === '') {
+        dashboard.selectDashboard({
+          refreshRate,
+        });
         if (
-          selectedDataSource &&
-          selectedDataSource.health_status !== 'Active'
+          selectedDashboardInformation.metaData &&
+          selectedDashboardInformation.metaData[0] &&
+          dataSources.ListDataSource
         ) {
-          setDataSourceStatus(selectedDataSource.health_status);
+          const selectedDataSource: ListDataSourceResponse = dataSources.ListDataSource.filter(
+            (data) => {
+              return (
+                data.ds_id === selectedDashboardInformation.metaData[0].ds_id
+              );
+            }
+          )[0];
+          if (selectedDataSource) {
+            dataSource.selectDataSource({
+              selectedDataSourceURL: selectedDataSource.ds_url,
+              selectedDataSourceID: selectedDataSource.ds_id,
+              selectedDataSourceName: selectedDataSource.ds_name,
+            });
+          }
+          if (
+            selectedDataSource &&
+            selectedDataSource.health_status !== 'Active'
+          ) {
+            setDataSourceStatus(selectedDataSource.health_status);
+          }
         }
+        setLoader(true);
+        setTimeout(() => {
+          setLoader(false);
+        }, 4500);
       }
-      setLoader(true);
-      setTimeout(() => {
-        setLoader(false);
-      }, 4500);
     }
   }, [selectedDashboardInformation.dashboardKey, dataSources]);
 
@@ -296,7 +299,7 @@ const DashboardPage: React.FC = () => {
               variant="body1"
               className={classes.modalBody}
             >
-              Reconfigure this dashboard with a different datasource or update
+              Reconfigure this dashboard with a different data source or update
               data source information.
             </Typography>
             <div className={classes.flexButtons}>

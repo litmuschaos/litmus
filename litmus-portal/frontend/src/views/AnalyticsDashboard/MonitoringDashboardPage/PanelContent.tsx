@@ -25,6 +25,11 @@ interface PrometheusQueryDataInterface {
   chaosInput: string[];
 }
 
+interface GraphDataInterface {
+  seriesData: Array<GraphMetric>;
+  eventData: Array<GraphMetric>;
+}
+
 const PanelContent: React.FC<PanelResponse> = ({
   panel_id,
   panel_name,
@@ -53,9 +58,16 @@ const PanelContent: React.FC<PanelResponse> = ({
     chaosInput: [],
   });
 
+  const [graphData, setGraphData] = React.useState<GraphDataInterface>({
+    seriesData: [{ metricName: '', data: [{ date: NaN, value: NaN }] }],
+    eventData: [{ metricName: '', data: [{ date: NaN, value: NaN }] }],
+  });
+
   const [updateQueries, setUpdateQueries] = React.useState<boolean>(false);
 
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
+
+  const [fetch, setFetch] = React.useState<boolean>(false);
 
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
@@ -65,92 +77,126 @@ const PanelContent: React.FC<PanelResponse> = ({
     (state: RootState) => state.selectDataSource
   );
 
+  let prometheusData: PrometheusResponse = {
+    GetPromQuery: [],
+  };
   // Apollo query to get the prometheus data
-  const { data: prometheusData, error } = useQuery<
-    PrometheusResponse,
-    PrometheusQueryVars
-  >(PROM_QUERY, {
-    variables: { prometheusInput: prometheusQueryData.promInput },
-    fetchPolicy: 'cache-and-network',
-    pollInterval: selectedDashboard.refreshRate,
-  });
+  const { error } = useQuery<PrometheusResponse, PrometheusQueryVars>(
+    PROM_QUERY,
+    {
+      variables: { prometheusInput: prometheusQueryData.promInput },
+      fetchPolicy: 'cache-and-network',
+      onCompleted: (data) => {
+        prometheusData = data;
+      },
+    }
+  );
 
   const generatePrometheusQueryData = () => {
-    const promQueries: promQueryInput[] = [];
-    const chaosQueries: string[] = [];
-    prom_queries.forEach((query: PromQuery) => {
-      if (query.prom_query_name.startsWith('litmuschaos_awaited_experiments')) {
-        chaosQueries.push(query.queryid);
-      }
-      promQueries.push({
-        queryid: query.queryid,
-        query: query.prom_query_name,
-        legend: query.legend,
-        resolution: query.resolution,
-        minstep: parseInt(query.minstep, 10),
+    if (prom_queries.length) {
+      const promQueries: promQueryInput[] = [];
+      const chaosQueries: string[] = [];
+      prom_queries.forEach((query: PromQuery) => {
+        if (
+          query.prom_query_name.startsWith('litmuschaos_awaited_experiments')
+        ) {
+          chaosQueries.push(query.queryid);
+        }
+        promQueries.push({
+          queryid: query.queryid,
+          query: query.prom_query_name,
+          legend: query.legend,
+          resolution: query.resolution,
+          minstep: parseInt(query.minstep, 10),
+        });
       });
-    });
-    const prometheusQueryInput: PrometheusQueryInput = {
-      url: selectedDataSource.selectedDataSourceURL,
-      start: `${Math.round(new Date().getTime() / 1000) - 1800}`,
-      end: `${Math.round(new Date().getTime() / 1000)}`,
-      queries: promQueries,
-    };
-    setPrometheusQueryData({
-      promInput: prometheusQueryInput,
-      chaosInput: chaosQueries,
-    });
+      const prometheusQueryInput: PrometheusQueryInput = {
+        url: selectedDataSource.selectedDataSourceURL,
+        start: `${Math.round(new Date().getTime() / 1000) - 1800}`,
+        end: `${Math.round(new Date().getTime() / 1000)}`,
+        queries: promQueries,
+      };
+      setPrometheusQueryData({
+        promInput: prometheusQueryInput,
+        chaosInput: chaosQueries,
+      });
+    }
   };
 
-  let seriesData: Array<GraphMetric> = [
-    { metricName: '', data: [{ date: NaN, value: NaN }] },
-  ];
-  let eventData: Array<GraphMetric> = [
-    { metricName: '', data: [{ date: NaN, value: NaN }] },
-  ];
-  if (
-    prometheusData &&
-    prometheusData.GetPromQuery.length &&
-    prometheusData.GetPromQuery[0].legends?.length &&
-    prometheusData.GetPromQuery[0].legends !== null &&
-    prometheusData.GetPromQuery[0].legends[0] !== null
-  ) {
-    seriesData = prometheusData.GetPromQuery[0].legends.map((elem, index) => ({
-      metricName: elem[0] ?? 'test',
-      data: prometheusData.GetPromQuery[0].tsvs[index].map((dataPoint) => ({
-        date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
-        value: parseFloat(dataPoint.value ?? '0.0'),
-      })),
-      baseColor: lineGraph[index % lineGraph.length],
-    }));
-    prometheusData.GetPromQuery.forEach((queryResponse) => {
-      if (prometheusQueryData.chaosInput.includes(queryResponse.queryid)) {
-        if (queryResponse.legends && queryResponse.legends[0]) {
-          eventData = queryResponse.legends.map((elem, index) => ({
-            metricName: elem[0] ?? 'test',
-            data: queryResponse.tsvs[index].map((dataPoint) => ({
-              date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
-              value: parseInt(dataPoint.value ?? '0', 10),
-            })),
-            baseColor: areaGraph[index % areaGraph.length],
-          }));
+  const updateGraphData = () => {
+    let seriesData: Array<GraphMetric> = [
+      { metricName: '', data: [{ date: NaN, value: NaN }] },
+    ];
+    let eventData: Array<GraphMetric> = [
+      { metricName: '', data: [{ date: NaN, value: NaN }] },
+    ];
+    if (
+      prometheusData &&
+      prometheusData.GetPromQuery.length &&
+      prometheusData.GetPromQuery[0].legends?.length &&
+      prometheusData.GetPromQuery[0].legends !== null &&
+      prometheusData.GetPromQuery[0].legends[0] !== null
+    ) {
+      seriesData = prometheusData.GetPromQuery[0].legends.map(
+        (elem, index) => ({
+          metricName: elem[0] ?? 'test',
+          data: prometheusData.GetPromQuery[0].tsvs[index].map((dataPoint) => ({
+            date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
+            value: parseFloat(dataPoint.value ?? '0.0'),
+          })),
+          baseColor: lineGraph[index % lineGraph.length],
+        })
+      );
+      prometheusData.GetPromQuery.forEach((queryResponse) => {
+        if (prometheusQueryData.chaosInput.includes(queryResponse.queryid)) {
+          if (queryResponse.legends && queryResponse.legends[0]) {
+            eventData = queryResponse.legends.map((elem, index) => ({
+              metricName: elem[0] ?? 'test',
+              data: queryResponse.tsvs[index].map((dataPoint) => ({
+                date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
+                value: parseInt(dataPoint.value ?? '0', 10),
+              })),
+              baseColor: areaGraph[index % areaGraph.length],
+            }));
+          }
         }
-      }
+      });
+    }
+    setGraphData({
+      seriesData,
+      eventData,
     });
-  }
+  };
 
   useEffect(() => {
     if (firstLoad === true && updateQueries === false) {
       generatePrometheusQueryData();
       setFirstLoad(false);
       setUpdateQueries(true);
+      setFetch(true);
     }
     if (updateQueries === true && firstLoad === false) {
       setTimeout(() => {
         generatePrometheusQueryData();
+        setFetch(true);
       }, selectedDashboard.refreshRate);
     }
   }, [prometheusQueryData]);
+
+  useEffect(() => {
+    if (
+      prometheusData &&
+      prometheusData.GetPromQuery.length &&
+      prometheusData.GetPromQuery[0].legends?.length &&
+      prometheusData.GetPromQuery[0].legends !== null &&
+      prometheusData.GetPromQuery[0].legends[0] !== null
+    ) {
+      if (fetch === true) {
+        updateGraphData();
+        setFetch(false);
+      }
+    }
+  }, [prometheusData]);
 
   if (error) {
     return (
@@ -187,8 +233,8 @@ const PanelContent: React.FC<PanelResponse> = ({
         <div className={classes.singleGraph}>
           <LineAreaGraph
             legendTableHeight={120}
-            openSeries={seriesData}
-            eventSeries={eventData}
+            openSeries={graphData.seriesData}
+            eventSeries={graphData.eventData}
             showPoints={false}
             showLegendTable
             showTips
