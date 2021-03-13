@@ -243,7 +243,11 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   }, []);
 
   return (
-    <div className={classes.editorBackgroundFull} id="editor">
+    <div
+      className={classes.editorBackgroundFull}
+      id="editor"
+      data-cy="WorkflowEditor"
+    >
       <Typography
         className={
           readOnly

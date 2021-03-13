@@ -136,7 +136,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 {t('createWorkflow.verifyCommit.summary.workflowName')}:
               </Typography>
             </div>
-            <div className={classes.col2}>
+            <div className={classes.col2} data-cy="WorkflowName">
               <EditableText
                 value={name}
                 id="name"

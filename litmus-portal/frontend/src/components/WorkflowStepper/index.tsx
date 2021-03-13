@@ -392,13 +392,18 @@ const CustomStepper = () => {
         <div>
           <div>
             <Modal
+              data-cy="FinishModal"
               open={open}
               onClose={handleClose}
               width="60%"
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
               modalActions={
-                <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+                <div data-cy="GoToWorkflowButton">
+                  <ButtonOutlined onClick={handleClose}>
+                    &#x2715;
+                  </ButtonOutlined>
+                </div>
               }
             >
               <div className={classes.modal}>
@@ -466,7 +471,7 @@ const CustomStepper = () => {
           </div>
           {/* Control Buttons */}
           {activeStep !== 0 ? (
-            <div className={classes.buttonGroup}>
+            <div className={classes.buttonGroup} data-cy="StepperButtons">
               <ButtonOutline isDisabled={false} handleClick={handleBack}>
                 <Typography>Back</Typography>
               </ButtonOutline>
