@@ -42,43 +42,46 @@ This directory contains chaos interleaved grafana dashboards along with the util
 
 - Setup prometheus TSDB
 
-  > Model-1 (optional): Service monitor and prometheus operator model.
+  #### Model-1 (optional): Service monitor and prometheus operator model.
 
-      Create the operator to instantiate all CRDs
+      > Create the operator to instantiate all CRDs
 
       ```
       kubectl -n monitoring apply -f utils/prometheus/prometheus-operator/
       ```
 
-      Deploy monitoring components
+      > Deploy monitoring components
 
       ```
       kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/node-exporter/
-      kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/kube-state-metrics/
-      kubectl -n monitoring apply -f utils/alert-manager-with-service-monitor/
       kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
       ```
 
-      Deploy prometheus instance and all the service monitors for targets
+      > Deploy prometheus instance and all the service monitors for targets
 
       ```
       kubectl -n monitoring apply -f utils/prometheus/prometheus-configuration/
       ```
 
-      Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace `type: LoadBalancer` to `type: NodePort`
+      > Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace `type: LoadBalancer` to `type: NodePort`
 
-  > Model-2 (optional): Prometheus scrape config model.
+      > optional: Alert manager
 
-      Deploy prometheus components
+      ```
+      kubectl -n monitoring apply -f utils/alert-manager-with-service-monitor/
+      ```
+
+  #### Model-2 (optional): Prometheus scrape config model.
+
+      > Deploy prometheus components
 
       ```
       kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
       ```
 
-      Deploy metrics exporters
+      > Deploy metrics exporters
 
       ```
-      kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
       kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
       kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
       ```
@@ -91,15 +94,15 @@ This directory contains chaos interleaved grafana dashboards along with the util
 
 - You may access the grafana dashboard via the LoadBalancer (or NodePort) service IP or via a port-forward operation on localhost
 
-  View the services running in the monitoring namespace
+  > View the services running in the monitoring namespace
 
   ```
   kubectl get svc -n monitoring
   ```
 
-  Now copy the EXTERNAL-IP of grafana and view it in the browser
+  > Now copy the EXTERNAL-IP of grafana and view it in the browser
 
-  Default username/password credentials: `admin/admin`
+  > Default username/password credentials: `admin/admin`
 
 - Add the prometheus datasource from monitoring namespace as DS_PROMETHEUS for Grafana via the Grafana Settings menu
 
