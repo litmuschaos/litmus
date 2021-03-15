@@ -9,11 +9,7 @@ need to set up prometheus and grafana to enable monitoring, it is possible to ju
 
 - [Grafana Dashboards](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/grafana-dashboards)
 
-  > Contains chaos interleaved grafana dashboards for various native k8s and application metrics. These dashboards are
-
-  > modified slightly relative to the dashboards in the generic getting started guide to accomodate for additional labels.
-
-  > Kublr introduces in its centralized monitoring.
+  > Contains chaos interleaved grafana dashboards for various native k8s and application metrics. These dashboards are modified slightly relative to the dashboards in the generic getting started guide to accomodate for additional labels which Kublr introduces in its centralized monitoring.
 
 # Demonstration
 
