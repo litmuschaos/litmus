@@ -52,6 +52,7 @@ const TuneWorkflow: React.FC = () => {
     name: '',
     crd: '',
   });
+  const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
   const { t } = useTranslation();
 
   const getSelectedWorkflowName = () => {
@@ -159,7 +160,11 @@ const TuneWorkflow: React.FC = () => {
      */
     localforage.getItem('selectedScheduleOption').then((value) => {
       // Setting default data when MyHub is selected
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
+        setCustomWorkflow(false);
+      }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
+        setCustomWorkflow(true);
         localforage.getItem('selectedHub').then((hub) => {
           setHubName(hub as string);
           getCharts({
