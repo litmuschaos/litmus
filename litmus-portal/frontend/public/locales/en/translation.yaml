@@ -177,6 +177,10 @@ analytics:
 analyticsDashboard:
   heading: Analytics
   overview: Overview
+  monitoringDashboardPage:
+    dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
+    reConfigureDashboard: Re-configure dashboard
+    updateDataSource: Update data source
   workflowClusterDashboard:
     title: Dashboard
     tab1: Hourly
@@ -246,10 +250,15 @@ analyticsDashboard:
       description: To configure your first Kubernets dashboard use the connect Data sources of this project
   timeText:
     lastRun: Last run
+    lastOpened: Last opened
+    lastConfigured: Last configured
     ago: ago
     seconds: seconds
+    minute: minute
     minutes: minutes
+    hour: hour
     hours: hours
+    day: day
     days: days
     few: few
 

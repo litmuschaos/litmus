@@ -33,4 +33,5 @@ export interface ChaosResultNamesAndNamespacesMap {
   resultName: string;
   resultNamespace: string;
   workflowName: string;
+  experimentName: string;
 }

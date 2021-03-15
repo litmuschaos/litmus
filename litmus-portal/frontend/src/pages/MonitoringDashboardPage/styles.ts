@@ -67,7 +67,8 @@ const useStyles = makeStyles((theme) => ({
   // Menu option
   menuItem: {
     '&:hover': {
-      background: theme.palette.primary.main,
+      background: theme.palette.primary.light,
+      color: theme.palette.secondary.contrastText,
     },
     minWidth: '10rem',
     height: '2.5rem',
