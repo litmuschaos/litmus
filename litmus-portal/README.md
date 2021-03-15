@@ -85,7 +85,7 @@ kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta1/litmus-2.0.0-
 
 Or
 
-> Master (Latest) Cluster scope. Uninstall in litmus namespace by default.
+> Master (Latest) Cluster scope. Uninstall in litmus namespace by default. (Only deleting litmus portal components)
 ```bash
 kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
 ```
