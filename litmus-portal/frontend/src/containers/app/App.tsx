@@ -21,13 +21,10 @@ const BrowseTemplate = lazy(
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
-const TargetHome = lazy(() => import('../../components/Targets/ConnectHome'));
-const ConnectTargets = lazy(
-  () => import('../../components/Targets/ConnectTarget')
-);
+const Targets = lazy(() => import('../../pages/Targets'));
+const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
-const ClusterInfo = lazy(() => import('../../components/Targets/ClusterInfo'));
 const AnalyticsDashboard = lazy(
   () => import('../../pages/AnalyticsDashboards')
 );
@@ -171,8 +168,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           component={AnalyticsPage}
         />
         <Route exact path="/community" component={Community} />
-        <Route exact path="/targets" component={TargetHome} />
-        <Route exact path="/targets/cluster" component={ClusterInfo} />
+        <Route exact path="/targets" component={Targets} />
         <Route exact path="/target-connect" component={ConnectTargets} />
         <Route exact path="/myhub" component={MyHub} />
         <Route exact path="/myhub/connect" component={MyHubConnect} />

@@ -89,7 +89,7 @@ export default [
   {
     workflowID: 3,
     title: 'kube-proxy-chaos',
-    chaosinfra: false,
+    chaosinfra: true,
     urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',

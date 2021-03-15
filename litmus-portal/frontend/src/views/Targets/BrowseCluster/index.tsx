@@ -1,38 +1,38 @@
+import { useMutation, useQuery } from '@apollo/client';
 import {
+  IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
   TablePagination,
-  IconButton,
+  TableRow,
   Typography,
-  Paper,
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useMutation, useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
-import HeaderSection from './HeaderSection';
-import useStyles from './styles';
-import { GET_CLUSTER, DELETE_CLUSTER } from '../../../graphql';
+import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
+import { DELETE_CLUSTER, GET_CLUSTER } from '../../../graphql';
+import {
+  Cluster,
+  Clusters,
+  ClusterVars,
+  DeleteCluster,
+} from '../../../models/graphql/clusterData';
 import { RootState } from '../../../redux/reducers';
-import TableData from './TableData';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
   sortNumDesc,
 } from '../../../utils/sort';
-import {
-  Cluster,
-  ClusterVars,
-  Clusters,
-  DeleteCluster,
-} from '../../../models/graphql/clusterData';
+import HeaderSection from './HeaderSection';
+import useStyles from './styles';
+import TableData from './TableData';
 
 interface FilterOptions {
   search: string;
@@ -56,7 +56,7 @@ interface PaginationData {
   rowsPerPage: number;
 }
 
-const BrowseCluster = () => {
+const BrowseCluster: React.FC = () => {
   const classes = useStyles();
 
   const selectedProjectID = useSelector(
@@ -102,14 +102,11 @@ const BrowseCluster = () => {
       if (filters.status === 'All') {
         return true;
       }
-      if (
-        (dataRow.is_cluster_confirmed as boolean).toString().toLowerCase() ===
-        'false'
-      ) {
+      if (!dataRow.is_cluster_confirmed) {
         const p = 'pending';
         return p.includes(filters.status.toLowerCase());
       }
-      return (dataRow.is_active as boolean)
+      return dataRow.is_active
         .toString()
         .toLowerCase()
         .includes(filters.status.toLowerCase());

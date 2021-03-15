@@ -23,7 +23,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
-import { SCHEDULE_DETAILS, DELETE_SCHEDULE } from '../../../graphql';
+import { DELETE_SCHEDULE, SCHEDULE_DETAILS } from '../../../graphql';
 import {
   DeleteSchedule,
   ScheduleDataVars,
@@ -53,7 +53,7 @@ interface SortData {
   name: { sort: boolean; ascending: boolean };
 }
 
-const BrowseSchedule = () => {
+const BrowseSchedule: React.FC = () => {
   const classes = useStyles();
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID

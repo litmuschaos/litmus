@@ -13,7 +13,7 @@ const DataSourceSelectPage: React.FC = () => {
     <Scaffold>
       <div className={classes.root}>
         <div className={classes.button}>
-          <BackButton isDisabled={false} />
+          <BackButton />
         </div>
         <Typography className={classes.heading}>
           <strong>Select a data source</strong>

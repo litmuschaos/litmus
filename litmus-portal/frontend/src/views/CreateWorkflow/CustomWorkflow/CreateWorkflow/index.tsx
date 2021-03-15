@@ -22,6 +22,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import BackButton from '../../../../components/Button/BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../../graphql';
@@ -35,7 +36,6 @@ import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
 import { RootState } from '../../../../redux/reducers';
 import { validateWorkflowName } from '../../../../utils/validate';
-import BackButton from '../BackButton';
 import useStyles, { MenuProps } from './styles';
 
 interface WorkflowDetails {
@@ -233,7 +233,6 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     <div className={classes.root}>
       <div className={classes.headerDiv}>
         <BackButton
-          isDisabled={false}
           onClick={() => {
             workflowAction.setWorkflowDetails({
               isCustomWorkflow: false,

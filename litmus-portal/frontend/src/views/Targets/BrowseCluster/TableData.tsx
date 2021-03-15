@@ -1,12 +1,11 @@
 import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
-import { ButtonFilled, Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { Cluster } from '../../../models/graphql/clusterData';
-import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import useStyles from './styles';
@@ -57,16 +56,8 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           </Typography>
         )}
       </TableCell>
-      <TableCell
-        key={data.cluster_id}
-        onClick={() => {
-          history.push({ pathname: '/targets/cluster', state: { data } });
-        }}
-        className={classes.workflowNameData}
-      >
-        <IconButton size="small">
-          <Typography>{data.cluster_name}</Typography>
-        </IconButton>
+      <TableCell className={classes.workflowNameData}>
+        <Typography>{data.cluster_name}</Typography>
       </TableCell>
       <TableCell className={classes.stepsDataTime}>
         {formatDate(data.updated_at)}
@@ -111,7 +102,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           </div>
         </Tooltip>
         <div>
-          {open ? (
+          {open && (
             <div>
               <Modal
                 open={open}
@@ -164,7 +155,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 </div>
               </Modal>
             </div>
-          ) : null}
+          )}
         </div>
       </TableCell>
     </>
