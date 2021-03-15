@@ -9,7 +9,7 @@ import { RootState } from '../../redux/reducers';
 import BrowseCluster from '../../views/Targets/BrowseCluster';
 import useStyles from './styles';
 
-const Targets = () => {
+const Targets: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 
