@@ -308,7 +308,7 @@ const AnalyticsPage: React.FC = () => {
             <div className={classes.rootContainer}>
               <div className={classes.root}>
                 <div className={classes.button}>
-                  <BackButton isDisabled={false} />
+                  <BackButton />
                 </div>
                 <Typography variant="h4">
                   <strong>Workflow Analytics</strong>

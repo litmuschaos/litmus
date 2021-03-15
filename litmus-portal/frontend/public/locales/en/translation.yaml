@@ -30,7 +30,6 @@ welcomeModal:
 
 sidebar:
   title: Litmus
-  version: 'Version: 1.13'
 
 header:
   notificationDropdown:
@@ -39,6 +38,9 @@ header:
     editProfile: Edit Profile
     logOut: Log Out
     noProjects: You haven't created any projects yet.
+
+button:
+  backButton: Back
 
 quickActionCard:
   quickActions: Quick Actions
@@ -111,14 +113,14 @@ login:
   passwordForgot: Don’t remember your password?
 
 schedule:
-  heading: 'Schedule a workflow'
-  headingDesc: 'Click on test to see detailed log of your workflow'
-  headingText: 'Schedule details:'
-  description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  heading: "Schedule a workflow"
+  headingDesc: "Click on test to see detailed log of your workflow"
+  headingText: "Schedule details:"
+  description: "Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you."
+  save: "Save Changes"
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
+  scheduleAfterSometime: "Choose the minutes, hours, or days when you want to start workflow"
   scheduleSpecificTime: Schedule at a specific time
   scheduleFuture: Select date and time to start workflow in future
   scheduleRecurring: Recurring Schedule
@@ -126,7 +128,7 @@ schedule:
   after: After
   at: at
   At: At
-  scheduleOn: 'On'
+  scheduleOn: "On"
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new workflow on this project.
   contact: Contact portal administrator to upgrade your permission.
@@ -137,15 +139,12 @@ schedule:
   workflowBtn: Go to Workflow
   backBtn: Go Back
 
-workflowUnderground:
-  heading: 'Click on Info to see details of your workflow'
-
 community:
-  title: 'Community'
-  heading: 'Litmus Insights'
-  headingDesc: 'Stats for the Litmus community'
-  analyticDesc: 'Periodic growth of Litmus'
-  statsHeading: 'Litmus users around the world:'
+  title: "Community"
+  heading: "Litmus Insights"
+  headingDesc: "Stats for the Litmus community"
+  analyticDesc: "Periodic growth of Litmus"
+  statsHeading: "Litmus users around the world:"
   litmusChaos: Litmuschaos
   follow: Follow
 
@@ -155,8 +154,8 @@ analytics:
   comingSoon: Analytics Coming Soon !
   waitingMessage: Waiting for workflow to start running !
   chaosCompleteWaitingMessage: Waiting for chaos experiment to finish !
-  highestScore: 'Highest Score:'
-  lowestScore: 'Lowest Score:'
+  highestScore: "Highest Score:"
+  lowestScore: "Lowest Score:"
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
   targetCluster: Target cluster
@@ -271,6 +270,7 @@ error:
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow
   fetchError: An error has occurred while fetching the data
+
 ######################################
 ############    Views    #############
 ######################################
@@ -479,7 +479,7 @@ settings:
     disconnect: Are you sure you want to disconnect?
     save: Save Locally
     repo: Git Repository
-    desc: '* Any existing or active workflows saved locally will not be synced into the git repository'
+    desc: "* Any existing or active workflows saved locally will not be synced into the git repository"
     connect: Connect
     branch: Branch
     URL: Git URL
@@ -493,6 +493,9 @@ settings:
 workflowDetailsView:
   argoWorkflow:
     loading: Loading Graph...
+    controls:
+      horizontal: Horizontal
+      vertical: Vertical
   nodeLogs:
     fetching: Fetching Logs...
     mainLogs: Main logs unavailable
@@ -638,16 +641,12 @@ targets:
   copy:
     copy: Copy
     copied: Copied
-    copying: Command copied to clickboard
+    copying: Command copied to clipboard
   newTarget:
     head: Connect a new target on your devices
-    head1: 1. Open the cluster console
-    head2: 2. Copy the command
-    head3: 3. Paste it into the cluster console
-    head4: 4. Click on the button
-    head5: Connect the target
-    conformation: Kuberenetes Agent is confirming, Please wait...
-    clusterDetails: Cluster Details
+    head1: Open the cluster console
+    head2: Download litmusctl
+    head3: Paste and Run the following command into the cluster console
   modalDelete:
     head1: Are you sure to
     head2: remove the current Agent?
@@ -711,7 +710,7 @@ workflows:
 #########################################
 
 internetIssues:
-  fetchData: 'Fetching the data...'
+  fetchData: "Fetching the data..."
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
@@ -721,7 +720,7 @@ myhub:
   title: MyHubs
   connectTarget: Connect the target
   viewMyHub: View MyHub
-  error: '[Error: could not connect]'
+  error: "[Error: could not connect]"
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
@@ -766,7 +765,7 @@ myhub:
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
-    sshAlert: '*Make sure to provide the SSH link of the Git Repository'
+    sshAlert: "*Make sure to provide the SSH link of the Git Repository"
     saveLater: Save for later
     updateHub: Update the MyHub with correct details from the MyHubs section
   videoCarousel:
@@ -854,5 +853,3 @@ customWorkflow:
     addExp: Add experiment
   viewYAML:
     view: View the YAML here
-  backBtn:
-    back: Back
