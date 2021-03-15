@@ -28,7 +28,7 @@ const AnalyticsQuickActionCard: React.FC = () => {
     {
       src: './icons/target.svg',
       alt: 'agent',
-      onClick: () => history.push('/agent-connect'),
+      onClick: () => history.push('/target-connect'),
       text: t('quickActionCard.addAgent'),
     },
     {

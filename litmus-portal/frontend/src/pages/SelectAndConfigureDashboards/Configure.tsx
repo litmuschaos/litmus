@@ -197,6 +197,8 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                         resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
                         resultNamespace: engineNamespace,
                         workflowName: workflowYaml.metadata.name,
+                        experimentName:
+                          parsedEmbeddedYaml.spec.experiments[0].name,
                       });
                     } else {
                       chaosResultNamesAndNamespacesMap[
@@ -226,7 +228,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                   keyValue.resultName,
                   keyValue.resultNamespace
                 ),
-                legend: `${keyValue.workflowName}- \n${keyValue.resultName}`,
+                legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
                 resolution: '1/1',
                 minstep: '1',
                 line: false,

@@ -4,9 +4,9 @@ import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { ButtonFilled, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
-import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../graphql';
 import {
@@ -42,6 +42,8 @@ interface SelectedDashboardInformation {
 
 const DashboardPage: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
+  const ACTIVE: string = 'Active';
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // get ProjectID
@@ -72,7 +74,6 @@ const DashboardPage: React.FC = () => {
   });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [refreshRate, setRefreshRate] = React.useState<number>(10000);
-  const [loader, setLoader] = React.useState<boolean>(false);
   const [dataSourceStatus, setDataSourceStatus] = React.useState<string>(
     'ACTIVE'
   );
@@ -89,7 +90,7 @@ const DashboardPage: React.FC = () => {
     LIST_DASHBOARD,
     {
       variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'no-cache',
     }
   );
 
@@ -98,70 +99,69 @@ const DashboardPage: React.FC = () => {
     LIST_DATASOURCE,
     {
       variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'no-cache',
     }
   );
 
   useEffect(() => {
-    if (
-      selectedDashboardInformation.id !==
-      selectedDashboardInformation.dashboardKey
-    ) {
-      const availableDashboards: ListDashboardResponse[] = dashboards
-        ? dashboards.ListDashboard.filter((data) => {
+    if (dashboards && dashboards.ListDashboard.length) {
+      if (
+        selectedDashboardInformation.id !==
+        selectedDashboardInformation.dashboardKey
+      ) {
+        const availableDashboards: ListDashboardResponse[] = dashboards.ListDashboard.filter(
+          (data) => {
             return data.cluster_id === selectedDashboardInformation.agentID;
-          })
-        : [];
-      const selectedDashboard: ListDashboardResponse = availableDashboards.filter(
-        (data) => {
-          return data.db_id === selectedDashboardInformation.id;
-        }
-      )[0];
-      setSelectedDashboardInformation({
-        ...selectedDashboardInformation,
-        dashboardListForAgent: availableDashboards,
-        metaData: [selectedDashboard],
-        dashboardKey: selectedDashboardInformation.id,
-      });
+          }
+        );
+        const selectedDashboard: ListDashboardResponse = availableDashboards.filter(
+          (data) => {
+            return data.db_id === selectedDashboardInformation.id;
+          }
+        )[0];
+        setSelectedDashboardInformation({
+          ...selectedDashboardInformation,
+          dashboardListForAgent: availableDashboards,
+          metaData: [selectedDashboard],
+          dashboardKey: selectedDashboardInformation.id,
+        });
+      }
     }
   }, [dashboards, selectedDashboardInformation.id]);
 
   useEffect(() => {
-    if (selectedDataSource.selectedDataSourceID === '') {
-      dashboard.selectDashboard({
-        refreshRate,
-      });
-      if (
-        dataSources &&
-        selectedDashboardInformation.metaData &&
-        selectedDashboardInformation.metaData[0] &&
-        dataSources.ListDataSource
-      ) {
-        const selectedDataSource: ListDataSourceResponse = dataSources.ListDataSource.filter(
-          (data) => {
-            return (
-              data.ds_id === selectedDashboardInformation.metaData[0].ds_id
-            );
-          }
-        )[0];
-        if (selectedDataSource) {
-          dataSource.selectDataSource({
-            selectedDataSourceURL: selectedDataSource.ds_url,
-            selectedDataSourceID: selectedDataSource.ds_id,
-            selectedDataSourceName: selectedDataSource.ds_name,
-          });
-        }
+    if (dataSources && dataSources.ListDataSource.length) {
+      if (selectedDataSource.selectedDataSourceID === '') {
+        dashboard.selectDashboard({
+          refreshRate,
+        });
         if (
-          selectedDataSource &&
-          selectedDataSource.health_status !== 'Active'
+          selectedDashboardInformation.metaData &&
+          selectedDashboardInformation.metaData[0] &&
+          dataSources.ListDataSource
         ) {
-          setDataSourceStatus(selectedDataSource.health_status);
+          const selectedDataSource: ListDataSourceResponse = dataSources.ListDataSource.filter(
+            (data) => {
+              return (
+                data.ds_id === selectedDashboardInformation.metaData[0].ds_id
+              );
+            }
+          )[0];
+          if (selectedDataSource) {
+            dataSource.selectDataSource({
+              selectedDataSourceURL: selectedDataSource.ds_url,
+              selectedDataSourceID: selectedDataSource.ds_id,
+              selectedDataSourceName: selectedDataSource.ds_name,
+            });
+          }
+          if (
+            selectedDataSource &&
+            selectedDataSource.health_status !== ACTIVE
+          ) {
+            setDataSourceStatus(selectedDataSource.health_status);
+          }
         }
       }
-      setLoader(true);
-      setTimeout(() => {
-        setLoader(false);
-      }, 4500);
     }
   }, [selectedDashboardInformation.dashboardKey, dataSources]);
 
@@ -243,39 +243,27 @@ const DashboardPage: React.FC = () => {
               {selectedDashboardInformation.type}
             </Typography>
           </div>
-          {loader ? (
-            <div className={`${classes.analyticsDiv} ${classes.loader}`}>
-              <Typography
-                variant="h5"
-                className={`${classes.weightedFont} ${classes.loaderText}`}
-              >
-                Loading dashboard ...
-              </Typography>
-              <Loader />
-            </div>
-          ) : (
-            <div
-              className={classes.analyticsDiv}
-              key={selectedDashboardInformation.dashboardKey}
-            >
-              {selectedDashboardInformation.metaData[0] &&
-                selectedDashboardInformation.metaData[0].panel_groups.map(
-                  (panelGroup: PanelGroupResponse) => (
-                    <div
-                      key={`${panelGroup.panel_group_id}-dashboardPage-div`}
-                      data-cy="dashboardPanelGroup"
-                    >
-                      <DashboardPanelGroup
-                        key={`${panelGroup.panel_group_id}-dashboardPage-component`}
-                        panel_group_id={panelGroup.panel_group_id}
-                        panel_group_name={panelGroup.panel_group_name}
-                        panels={panelGroup.panels}
-                      />
-                    </div>
-                  )
-                )}
-            </div>
-          )}
+          <div
+            className={classes.analyticsDiv}
+            key={selectedDashboardInformation.dashboardKey}
+          >
+            {selectedDashboardInformation.metaData[0] &&
+              selectedDashboardInformation.metaData[0].panel_groups.map(
+                (panelGroup: PanelGroupResponse) => (
+                  <div
+                    key={`${panelGroup.panel_group_id}-dashboardPage-div`}
+                    data-cy="dashboardPanelGroup"
+                  >
+                    <DashboardPanelGroup
+                      key={`${panelGroup.panel_group_id}-dashboardPage-component`}
+                      panel_group_id={panelGroup.panel_group_id}
+                      panel_group_name={panelGroup.panel_group_name}
+                      panels={panelGroup.panels}
+                    />
+                  </div>
+                )
+              )}
+          </div>
         </div>
       </div>
       {dataSourceStatus !== 'ACTIVE' ? (
@@ -296,8 +284,7 @@ const DashboardPage: React.FC = () => {
               variant="body1"
               className={classes.modalBody}
             >
-              Reconfigure this dashboard with a different datasource or update
-              data source information.
+              {t('analyticsDashboard.monitoringDashboardPage.dataSourceError')}
             </Typography>
             <div className={classes.flexButtons}>
               <ButtonFilled
@@ -321,7 +308,9 @@ const DashboardPage: React.FC = () => {
                   history.push('/analytics/dashboard/configure');
                 }}
               >
-                <div>Re-configure dashboard</div>
+                {t(
+                  'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
+                )}
               </ButtonFilled>
               <ButtonFilled
                 variant="success"
@@ -329,7 +318,9 @@ const DashboardPage: React.FC = () => {
                   history.push('/analytics/datasource/configure');
                 }}
               >
-                <div>Update data source</div>
+                {t(
+                  'analyticsDashboard.monitoringDashboardPage.updateDataSource'
+                )}
               </ButtonFilled>
             </div>
           </div>

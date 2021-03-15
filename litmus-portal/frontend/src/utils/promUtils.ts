@@ -13,6 +13,7 @@ const getResultNameAndNamespace = (chaosQueryString: string) => {
       .split('=')[1]
       .slice(1, -1),
     workflowName: '',
+    experimentName: '',
   };
   return parsedChaosInfoMap;
 };

@@ -165,6 +165,8 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                       resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
                       resultNamespace: engineNamespace,
                       workflowName: workflowYaml.metadata.name,
+                      experimentName:
+                        parsedEmbeddedYaml.spec.experiments[0].name,
                     });
                   } else {
                     chaosResultNamesAndNamespacesMap[
@@ -267,7 +269,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                   keyValue.resultName,
                   keyValue.resultNamespace
                 ),
-                legend: `${keyValue.workflowName}- \n${keyValue.resultName}`,
+                legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
                 resolution: '1/1',
                 minstep: '1',
                 line: false,
@@ -370,7 +372,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                 </TableCell>
                 <TableCell>
                   <Typography className={classes.dateText}>
-                    {t('analyticsDashboard.timeText.lastRun')}:{' '}
+                    {t('analyticsDashboard.timeText.lastOpened')}:{' '}
                     {GetTimeDiff(
                       currentTime / 1000,
                       parseInt(dashboard.updated_at, 10),
