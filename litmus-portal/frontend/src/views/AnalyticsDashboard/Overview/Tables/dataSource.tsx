@@ -88,7 +88,7 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
                 </TableCell>
                 <TableCell>
                   <Typography className={classes.dateText}>
-                    {t('analyticsDashboard.timeText.lastRun')}:{' '}
+                    {t('analyticsDashboard.timeText.lastConfigured')}:{' '}
                     {GetTimeDiff(
                       currentTime / 1000,
                       parseInt(singleDataSource.updated_at, 10),

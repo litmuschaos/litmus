@@ -250,10 +250,15 @@ analyticsDashboard:
       description: To configure your first Kubernets dashboard use the connect Data sources of this project
   timeText:
     lastRun: Last run
+    lastOpened: Last opened
+    lastConfigured: Last configured
     ago: ago
     seconds: seconds
+    minute: minute
     minutes: minutes
+    hour: hour
     hours: hours
+    day: day
     days: days
     few: few
 

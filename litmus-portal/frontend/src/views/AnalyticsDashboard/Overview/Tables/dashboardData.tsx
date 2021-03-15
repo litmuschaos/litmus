@@ -372,7 +372,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                 </TableCell>
                 <TableCell>
                   <Typography className={classes.dateText}>
-                    {t('analyticsDashboard.timeText.lastRun')}:{' '}
+                    {t('analyticsDashboard.timeText.lastOpened')}:{' '}
                     {GetTimeDiff(
                       currentTime / 1000,
                       parseInt(dashboard.updated_at, 10),
