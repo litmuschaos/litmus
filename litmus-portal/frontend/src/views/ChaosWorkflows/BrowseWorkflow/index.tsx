@@ -59,7 +59,7 @@ interface DateData {
   toDate: string;
 }
 
-const BrowseWorkflow = () => {
+const BrowseWorkflow: React.FC = () => {
   const classes = useStyles();
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID

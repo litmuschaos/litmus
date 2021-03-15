@@ -56,7 +56,7 @@ interface PaginationData {
   rowsPerPage: number;
 }
 
-const BrowseCluster = () => {
+const BrowseCluster: React.FC = () => {
   const classes = useStyles();
 
   const selectedProjectID = useSelector(

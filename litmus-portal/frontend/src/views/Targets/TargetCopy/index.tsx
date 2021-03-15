@@ -11,9 +11,14 @@ const TargetCopy: React.FC = () => {
 
   const [copying, setCopying] = useState(false);
 
+  function fallbackCopyTextToClipboard(text: string) {
+    // eslint-disable-next-line no-alert
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', text);
+  }
+
   function copyTextToClipboard(text: string) {
     if (!navigator.clipboard) {
-      console.error('Oops Could not copy text: ');
+      fallbackCopyTextToClipboard(text);
       return;
     }
     setCopying(true);
@@ -21,7 +26,7 @@ const TargetCopy: React.FC = () => {
       .writeText(text)
       .catch((err) => console.error('Async: Could not copy text: ', err));
 
-    setTimeout(() => setCopying(false), 6000);
+    setTimeout(() => setCopying(false), 3000);
   }
 
   const command = 'litmusctl agent register';

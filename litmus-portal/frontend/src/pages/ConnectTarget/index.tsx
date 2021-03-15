@@ -6,7 +6,7 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import TargetCopy from '../../views/Targets/TargetCopy';
 import useStyles from './styles';
 
-const ConnectTarget = () => {
+const ConnectTarget: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 

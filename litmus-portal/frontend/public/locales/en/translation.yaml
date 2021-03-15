@@ -30,7 +30,6 @@ welcomeModal:
 
 sidebar:
   title: Litmus
-  version: "Version: 1.13"
 
 header:
   notificationDropdown:
@@ -39,6 +38,9 @@ header:
     editProfile: Edit Profile
     logOut: Log Out
     noProjects: You haven't created any projects yet.
+
+button:
+  backButton: Back
 
 quickActionCard:
   quickActions: Quick Actions

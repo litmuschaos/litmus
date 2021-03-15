@@ -14,15 +14,12 @@ const useStyles = makeStyles((theme) => ({
   },
   connectTarget: {
     display: 'flex',
-    flexDirection: 'row',
     justifyContent: 'space-between',
   },
   loader: {
     display: 'flex',
-    flexDirection: 'row',
-    marginTop: theme.spacing(6),
+    margin: theme.spacing(6, 0, 0, 10),
     textalign: 'center',
-    marginLeft: theme.spacing(10),
   },
   linkTargetImg: {
     paddingTop: theme.spacing(2),
