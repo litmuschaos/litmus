@@ -11,12 +11,9 @@ if (
   process.env.NODE_ENV.trim() === 'development' ||
   process.env.NODE_ENV.trim() === 'test'
 ) {
-  // authURL = `${window.location.protocol}//${window.location.hostname}:3000`;
-  // apiURL = `${window.location.protocol}//${window.location.hostname}:8080`;
-  // sockURL += `//${window.location.hostname}:8080`;
-  authURL = `http://a7253a43170e04bfeb8800daa0d4d091-1591854639.us-east-2.elb.amazonaws.com:9003`;
-  apiURL = `http://a7253a43170e04bfeb8800daa0d4d091-1591854639.us-east-2.elb.amazonaws.com:9002`;
-  sockURL += `//a7253a43170e04bfeb8800daa0d4d091-1591854639.us-east-2.elb.amazonaws.com:9002`;
+  authURL = `${window.location.protocol}//${window.location.hostname}:3000`;
+  apiURL = `${window.location.protocol}//${window.location.hostname}:8080`;
+  sockURL += `//${window.location.hostname}:8080`;
 } else {
   authURL = '/auth';
   apiURL = '/api';
