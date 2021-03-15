@@ -5,7 +5,7 @@ import { getJWTToken, setCookie, setJWTToken } from './cookies';
 // Logs out the user and unsets the jwt token
 export function logout() {
   setCookie({ name: 'token', value: '', exhours: 1 });
-  history.push('/login');
+  window.location.reload();
 }
 
 // Returns the jwt token
@@ -14,7 +14,6 @@ export function getToken(): string {
 
   // Logout user if jwt is expired
   if (jwtToken === '') {
-    logout();
     history.push('/login');
   }
 

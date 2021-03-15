@@ -15,7 +15,7 @@ import {
 } from '../../../../../models/graphql/invite';
 import { Projects } from '../../../../../models/graphql/user';
 import { getUserId, getUsername } from '../../../../../utils/auth';
-import userAvatar from '../../../../../utils/user';
+import { userInitials } from '../../../../../utils/user';
 import useStyles from './styles';
 
 interface ReceivedInvitation {
@@ -111,7 +111,7 @@ const ReceivedInvitations: React.FC = () => {
                     className={classes.avatarBackground}
                     style={{ alignContent: 'right' }}
                   >
-                    {userAvatar(
+                    {userInitials(
                       allUsers?.filter((data) => {
                         return row.user_id === data.id;
                       })[0]?.name

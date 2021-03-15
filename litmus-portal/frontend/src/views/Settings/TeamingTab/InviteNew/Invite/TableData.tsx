@@ -10,7 +10,7 @@ import {
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserInvite } from '../../../../../models/graphql/invite';
-import userAvatar from '../../../../../utils/user';
+import { userInitials } from '../../../../../utils/user';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -52,7 +52,7 @@ const TableData: React.FC<TableDataProps> = ({
               className={classes.avatarBackground}
               style={{ alignContent: 'right' }}
             >
-              {row.name ? userAvatar(row.name) : userAvatar(row.username)}
+              {row.name ? userInitials(row.name) : userInitials(row.username)}
             </Avatar>
             <div className={classes.detail}>
               <div> {row.username}</div>

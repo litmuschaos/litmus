@@ -52,7 +52,6 @@ const LoginPage = () => {
         } else {
           setUserDetails(data.access_token);
           setIsLoading(false);
-          // TODO: react-router generate experiment
           window.location.assign('/home');
         }
       })

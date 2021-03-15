@@ -2,7 +2,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import React from 'react';
 import Breadcrumb from '../BreadCrumbs';
-import ProjectDropDown from './projectDropDown';
+import ProfileDropdown from './profileDropDown';
+import ProjectDropdown from './projectDropDown';
 import useStyles from './styles';
 
 const Header: React.FC = () => {
@@ -13,7 +14,8 @@ const Header: React.FC = () => {
       <AppBar className={classes.appBar}>
         <Toolbar disableGutters className={classes.toolBar}>
           <Breadcrumb />
-          <ProjectDropDown />
+          <ProjectDropdown />
+          <ProfileDropdown />
         </Toolbar>
       </AppBar>
     </div>

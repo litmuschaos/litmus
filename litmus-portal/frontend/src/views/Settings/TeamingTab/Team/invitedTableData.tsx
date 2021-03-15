@@ -28,7 +28,7 @@ import {
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
 import { getProjectID } from '../../../../utils/getSearchParams';
-import userAvatar from '../../../../utils/user';
+import { userInitials } from '../../../../utils/user';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -81,6 +81,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
     variables: { username: row.user_name },
     onCompleted: (data) => {
       setMemberDetails({
+        // TODO: Check if all are being used
         name: data.getUser.name,
         uid: data.getUser.id,
         username: data.getUser.username,
@@ -98,7 +99,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
             alt="User"
             className={classes.avatarBackground}
           >
-            {userAvatar(memberDetails ? memberDetails.name : '')}
+            {userInitials(memberDetails ? memberDetails.name : '')}
           </Avatar>
           {memberDetails ? memberDetails.name : ''}
         </div>

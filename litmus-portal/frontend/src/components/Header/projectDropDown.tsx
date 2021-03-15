@@ -1,29 +1,28 @@
+import { useQuery } from '@apollo/client';
 import { IconButton, Popover, Typography } from '@material-ui/core';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import React, { useState } from 'react';
-import { getProjectRole } from '../../utils/getSearchParams';
+import { GET_PROJECT_NAME } from '../../graphql';
+import { ProjectDetail } from '../../models/graphql/user';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
+import ProjectDropdownItems from './projectDropDownItems';
 import useStyles from './styles';
 
-const ProjectDropDown: React.FC = () => {
+const ProjectDropdown: React.FC = () => {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   // Get ProjectID from URL
-  //   const projectID = getProjectID();
+  const projectID = getProjectID();
 
   // Get the projectRole from URL
   const projectRole = getProjectRole();
 
   // Get Project Name
-
-  //   const projectName = useQuery<ProjectDetail>(GET_PROJECT_NAME, {
-  //     variables: { projectID },
-  //     onCompleted: (data) => {
-  //       const projectName = data.getProject.name;
-  //     },
-  //     fetchPolicy: 'cache-and-network',
-  //   });
+  const { data } = useQuery<ProjectDetail>(GET_PROJECT_NAME, {
+    variables: { projectID },
+  });
 
   // Handle clicks
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -39,8 +38,8 @@ const ProjectDropDown: React.FC = () => {
 
   return (
     <div className={classes.projectDropdown} data-cy="headerProjectDropdown">
-      <Typography>projectName</Typography>
-      <Typography>({projectRole})</Typography>
+      <Typography>{data?.getProject.name}</Typography>
+      <Typography> ({projectRole})</Typography>
       <IconButton edge="end" onClick={handleClick}>
         <ExpandMoreRoundedIcon />
       </IconButton>
@@ -58,10 +57,10 @@ const ProjectDropDown: React.FC = () => {
           horizontal: 'left',
         }}
       >
-        {/* <PopoverItems /> */}
+        <ProjectDropdownItems />
       </Popover>
     </div>
   );
 };
 
-export default ProjectDropDown;
+export default ProjectDropdown;

@@ -98,6 +98,17 @@ export const GET_USER = gql`
   }
 `;
 
+export const GET_USER_INFO = gql`
+  query getUser($username: String!) {
+    getUser(username: $username) {
+      username
+      email
+      id
+      name
+    }
+  }
+`;
+
 export const GET_CLUSTER = gql`
   query getClusters($project_id: String!, $cluster_type: String) {
     getCluster(project_id: $project_id, cluster_type: $cluster_type) {
@@ -300,19 +311,6 @@ export const LIST_PROJECTS = gql`
       created_at
       updated_at
       removed_at
-    }
-  }
-`;
-
-export const LIST_PROJECTS_AND_ROLES = gql`
-  query listProjects {
-    listProjects {
-      id
-      name
-      members {
-        user_id
-        role
-      }
     }
   }
 `;

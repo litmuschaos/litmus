@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, ReactNode, Suspense, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { LIST_PROJECTS } from '../../graphql';
@@ -24,7 +24,7 @@ const BrowseTemplate = lazy(() =>
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
-const TargetHome = lazy(() => import('../../components/Targets/ConnectHome'));
+const TargetHome = lazy(() => import('../../components/Targets/ConnectHome')); // TODO: Fix directory
 const ConnectTargets = lazy(() =>
   import('../../components/Targets/ConnectTarget')
 );
@@ -47,12 +47,13 @@ const Routes: React.FC = () => {
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
   const userID = getUserId();
+
   useQuery<Projects>(LIST_PROJECTS, {
     skip: projectID !== '' && projectID !== undefined,
     onCompleted: (data) => {
       if (data.listProjects) {
-        data.listProjects.forEach((project) => {
-          project.members.forEach((member: Member) => {
+        data.listProjects.forEach((project): void => {
+          project.members.forEach((member: Member): void => {
             if (member.user_id === userID && member.role === 'Owner') {
               setprojectID(project.id);
               setprojectRole(member.role);
@@ -76,7 +77,7 @@ const Routes: React.FC = () => {
           <Route
             exact
             path="/api-doc"
-            render={() => <Redirect to="/api-doc/index.html" />}
+            render={(): ReactNode => <Redirect to="/api-doc/index.html" />}
           />
           <Redirect to="/login" />
         </Switch>
@@ -92,7 +93,7 @@ const Routes: React.FC = () => {
           <Route
             exact
             path="/api-doc"
-            render={() => <Redirect to="/api-doc/index.html" />}
+            render={(): ReactNode => <Redirect to="/api-doc/index.html" />}
           />
           <Redirect to="/home" />
         </Switch>
@@ -113,7 +114,7 @@ const Routes: React.FC = () => {
           render={() => <Redirect to="/api-doc/index.html" />}
         />
         {/* Redirects */}
-        <Redirect exact path="/login" to="/home" />
+        <Redirect exact path="/login" to="/login" />
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
         <Redirect exact path="/workflows/analytics" to="/workflows" />

@@ -35,7 +35,7 @@ const PersonalDetails: React.FC = () => {
     { variables: { username } }
   );
   const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? ''; // Check if can be replaced with JWT based data.
+  const name: string = dataA?.getUser.name ?? ''; // TODO: Check if can be replaced with JWT based data.
   const email: string = dataA?.getUser.email ?? '';
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,

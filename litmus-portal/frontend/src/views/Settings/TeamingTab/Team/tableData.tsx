@@ -14,7 +14,7 @@ import {
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
 import { getProjectID } from '../../../../utils/getSearchParams';
-import userAvatar from '../../../../utils/user';
+import { userInitials } from '../../../../utils/user';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -74,7 +74,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
             alt="User"
             className={classes.avatarBackground}
           >
-            {userAvatar(memberDetails ? memberDetails.name : '')}
+            {userInitials(memberDetails ? memberDetails.name : '')}
           </Avatar>
           {memberDetails ? memberDetails.username : ''}
         </div>
