@@ -177,6 +177,10 @@ analytics:
 analyticsDashboard:
   heading: Analytics
   overview: Overview
+  monitoringDashboardPage:
+    dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
+    reConfigureDashboard: Re-configure dashboard
+    updateDataSource: Update data source
   workflowClusterDashboard:
     title: Dashboard
     tab1: Hourly

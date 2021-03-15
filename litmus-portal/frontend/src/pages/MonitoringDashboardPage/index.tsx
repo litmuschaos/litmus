@@ -4,6 +4,7 @@ import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { ButtonFilled, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -41,6 +42,7 @@ interface SelectedDashboardInformation {
 
 const DashboardPage: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // get ProjectID
@@ -281,8 +283,7 @@ const DashboardPage: React.FC = () => {
               variant="body1"
               className={classes.modalBody}
             >
-              Reconfigure this dashboard with a different data source or update
-              data source information.
+              {t('analyticsDashboard.monitoringDashboardPage.dataSourceError')}
             </Typography>
             <div className={classes.flexButtons}>
               <ButtonFilled
@@ -306,7 +307,11 @@ const DashboardPage: React.FC = () => {
                   history.push('/analytics/dashboard/configure');
                 }}
               >
-                <div>Re-configure dashboard</div>
+                <div>
+                  {t(
+                    'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
+                  )}
+                </div>
               </ButtonFilled>
               <ButtonFilled
                 variant="success"
@@ -314,7 +319,11 @@ const DashboardPage: React.FC = () => {
                   history.push('/analytics/datasource/configure');
                 }}
               >
-                <div>Update data source</div>
+                <div>
+                  {t(
+                    'analyticsDashboard.monitoringDashboardPage.updateDataSource'
+                  )}
+                </div>
               </ButtonFilled>
             </div>
           </div>
