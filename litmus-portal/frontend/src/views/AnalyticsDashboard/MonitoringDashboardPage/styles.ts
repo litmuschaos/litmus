@@ -46,6 +46,10 @@ const useStyles = makeStyles((theme) => ({
   },
 
   singleGraph: {
+    // TODO remove this later
+    '& hr': {
+      position: 'relative !important',
+    },
     width: '32.5vw',
     height: '27.5rem',
     [theme.breakpoints.down(1200)]: {
