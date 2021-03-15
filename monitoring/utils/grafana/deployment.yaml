@@ -1,3 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmus-grafana-datasources
+  namespace: monitoring
+data:
+  prometheus.yaml: |-
+    {
+        "apiVersion": 1,
+        "datasources": [
+            {
+               "access":"proxy",
+                "editable": true,
+                "name": "DS_PROMETHEUS",
+                "orgId": 1,
+                "type": "prometheus",
+                "url": "http://prometheus-k8s.monitoring.svc.cluster.local:9090",
+                "version": 1
+            }
+        ]
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmus-grafana-dashboards
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  cluster.json: |-
+    {"annotations":{"list":[{"$$hashKey":"object:137","builtIn":1,"datasource":"-- Grafana --","enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations & Alerts","type":"dashboard"},{"datasource":"DS_PROMETHEUS","enable":true,"expr":"litmuschaos_awaited_experiments{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\", chaosresult_namespace=\"litmus\"}","hide":false,"iconColor":"rgba(255, 96, 96, 1)","name":"catalogue-pod-cpu-hog","showIn":0,"step":"1s","tagKeys":"litmus, chaos","textFormat":"pod-cpu-hog","titleFormat":"catalogue-chaos"},{"datasource":"DS_PROMETHEUS","enable":true,"expr":"litmuschaos_awaited_experiments{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\", chaosresult_namespace=\"litmus\"}","hide":false,"iconColor":"rgba(255, 96, 96, 1)","name":"orders-pod-memory-hog","showIn":0,"step":"1s","tagKeys":"litmus, chaos","textFormat":"pod-memory-hog","titleFormat":"orders-chaos"},{"datasource":"DS_PROMETHEUS","enable":true,"expr":"litmuschaos_awaited_experiments{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"litmus\"}","hide":false,"iconColor":"rgba(255, 96, 96, 1)","name":"orders-node-memory-hog","showIn":0,"step":"1s","tagKeys":"litmus, chaos","textFormat":"node-memory-hog","titleFormat":"orders-chaos","useValueForTime":false},{"datasource":"DS_PROMETHEUS","enable":true,"expr":"litmuschaos_awaited_experiments{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"litmus\"}","hide":false,"iconColor":"rgba(255, 96, 96, 1)","name":"catalogue-node-cpu-hog","showIn":0,"step":"1s","tagKeys":"litmus, chaos","textFormat":"node-cpu-hog","titleFormat":"catalogue-chaos"}]},"editable":true,"gnetId":null,"graphTooltip":0,"id":3,"iteration":1615817690444,"links":[],"panels":[{"collapsed":false,"datasource":"DS_PROMETHEUS","gridPos":{"h":1,"w":24,"x":0,"y":0},"id":47,"panels":[],"title":"Litmus Chaos Chaos durations interleaved with Node Exporter & Kube-State Metrics","type":"row"},{"aliasColors":{},"bars":false,"dashLength":10,"dashes":false,"datasource":"$datasource","fieldConfig":{"defaults":{"custom":{},"links":[]},"overrides":[]},"fill":0,"fillGradient":0,"gridPos":{"h":16,"w":12,"x":0,"y":1},"hiddenSeries":false,"id":64,"interval":"","legend":{"alignAsTable":true,"avg":true,"current":true,"hideEmpty":true,"hideZero":true,"max":false,"min":false,"rightSide":false,"show":true,"sort":"current","sortDesc":true,"total":false,"values":true},"lines":true,"linewidth":1,"nullPointMode":"connected","options":{"alertThreshold":true},"percentage":false,"pluginVersion":"7.4.3","pointradius":5,"points":false,"renderer":"flot","seriesOverrides":[],"spaceLength":10,"stack":false,"steppedLine":false,"targets":[{"expr":"instance:node_cpu_utilisation:rate1m","interval":"","legendFormat":"\"{{instance}}\"","refId":"B"}],"thresholds":[],"timeFrom":null,"timeRegions":[],"timeShift":null,"title":"Chaos - Node - CPU Utilization","tooltip":{"shared":true,"sort":0,"value_type":"individual"},"type":"graph","xaxis":{"buckets":null,"mode":"time","name":null,"show":true,"values":[]},"yaxes":[{"$$hashKey":"object:92","format":"percentunit","label":"cores","logBase":1,"max":null,"min":null,"show":true},{"$$hashKey":"object:93","format":"short","label":"CHAOS","logBase":2,"max":"1","min":"0","show":false}],"yaxis":{"align":false,"alignLevel":null}},{"aliasColors":{},"bars":false,"dashLength":10,"dashes":false,"datasource":"$datasource","fieldConfig":{"defaults":{"custom":{},"links":[]},"overrides":[]},"fill":0,"fillGradient":0,"gridPos":{"h":16,"w":12,"x":12,"y":1},"hiddenSeries":false,"id":65,"legend":{"alignAsTable":true,"avg":true,"current":true,"hideEmpty":true,"hideZero":true,"max":false,"min":false,"rightSide":false,"show":true,"sort":"current","sortDesc":true,"total":false,"values":true},"lines":true,"linewidth":1,"nullPointMode":"null as zero","options":{"alertThreshold":true},"percentage":false,"pluginVersion":"7.4.3","pointradius":5,"points":false,"renderer":"flot","seriesOverrides":[],"spaceLength":10,"stack":false,"steppedLine":false,"targets":[{"expr":"instance:node_memory_utilisation:ratio","interval":"","legendFormat":"\"{{instance}}\"","refId":"B"}],"thresholds":[],"timeFrom":null,"timeRegions":[],"timeShift":null,"title":"Chaos - Node - Memory Utilization","tooltip":{"shared":true,"sort":0,"value_type":"individual"},"type":"graph","xaxis":{"buckets":null,"mode":"time","name":null,"show":true,"values":[]},"yaxes":[{"$$hashKey":"object:251","format":"percentunit","label":"Memory","logBase":1,"max":null,"min":null,"show":true},{"$$hashKey":"object:252","format":"short","label":"CHAOS","logBase":2,"max":"1","min":"0","show":false}],"yaxis":{"align":false,"alignLevel":null}},{"aliasColors":{},"bars":false,"dashLength":10,"dashes":false,"datasource":"$datasource","fieldConfig":{"defaults":{"custom":{},"links":[]},"overrides":[]},"fill":0,"fillGradient":0,"gridPos":{"h":13,"w":12,"x":0,"y":17},"hiddenSeries":false,"id":62,"interval":"","legend":{"alignAsTable":true,"avg":true,"current":true,"hideEmpty":true,"hideZero":true,"max":false,"min":false,"rightSide":false,"show":true,"sort":"current","sortDesc":true,"total":false,"values":true},"lines":true,"linewidth":1,"nullPointMode":"connected","options":{"alertThreshold":true},"percentage":false,"pluginVersion":"7.4.3","pointradius":5,"points":false,"renderer":"flot","seriesOverrides":[],"spaceLength":10,"stack":false,"steppedLine":false,"targets":[{"expr":"sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",pod!=\"\"}[5m])) by (pod)","interval":"","legendFormat":"\"{{pod}}\"","refId":"B"}],"thresholds":[],"timeFrom":null,"timeRegions":[],"timeShift":null,"title":"Chaos - Pod - CPU Usage","tooltip":{"shared":true,"sort":0,"value_type":"individual"},"type":"graph","xaxis":{"buckets":null,"mode":"time","name":null,"show":true,"values":[]},"yaxes":[{"$$hashKey":"object:535","format":"short","label":"cores","logBase":1,"max":null,"min":null,"show":true},{"$$hashKey":"object:536","format":"short","label":"CHAOS","logBase":2,"max":"1","min":"0","show":false}],"yaxis":{"align":false,"alignLevel":null}},{"aliasColors":{},"bars":false,"dashLength":10,"dashes":false,"datasource":"$datasource","fieldConfig":{"defaults":{"custom":{},"links":[]},"overrides":[]},"fill":0,"fillGradient":0,"gridPos":{"h":13,"w":12,"x":12,"y":17},"hiddenSeries":false,"id":63,"legend":{"alignAsTable":true,"avg":true,"current":true,"hideEmpty":true,"hideZero":true,"max":false,"min":false,"rightSide":false,"show":true,"sort":"current","sortDesc":true,"total":false,"values":true},"lines":true,"linewidth":1,"nullPointMode":"connected","options":{"alertThreshold":true},"percentage":false,"pluginVersion":"7.4.3","pointradius":5,"points":false,"renderer":"flot","seriesOverrides":[],"spaceLength":10,"stack":false,"steppedLine":false,"targets":[{"expr":"sum(container_memory_usage_bytes{container!=\"POD\",container!=\"\"}) by (pod)","interval":"","legendFormat":"\"{{pod}}\"","refId":"B"}],"thresholds":[],"timeFrom":null,"timeRegions":[],"timeShift":null,"title":"Chaos - Pod - Memory Usage","tooltip":{"shared":true,"sort":0,"value_type":"individual"},"type":"graph","xaxis":{"buckets":null,"mode":"time","name":null,"show":true,"values":[]},"yaxes":[{"$$hashKey":"object:665","format":"bytes","label":"Memory","logBase":1,"max":null,"min":null,"show":true},{"$$hashKey":"object:666","format":"short","label":"CHAOS","logBase":2,"max":"1","min":"0","show":false}],"yaxis":{"align":false,"alignLevel":null}}],"refresh":"5s","schemaVersion":27,"style":"dark","tags":[],"templating":{"list":[{"current":{"selected":false,"text":"DS_PROMETHEUS","value":"DS_PROMETHEUS"},"description":null,"error":null,"hide":0,"includeAll":false,"label":"","multi":false,"name":"datasource","options":[],"query":"prometheus","queryValue":"","refresh":1,"regex":"","skipUrlSync":false,"type":"datasource"},{"allValue":null,"current":{"isNone":true,"selected":false,"text":"None","value":""},"datasource":"$datasource","definition":"label_values(kube_pod_info, cluster)","description":null,"error":null,"hide":2,"includeAll":false,"label":null,"multi":false,"name":"cluster","options":[],"query":{"query":"label_values(kube_pod_info, cluster)","refId":"DS_PROMETHEUS-cluster-Variable-Query"},"refresh":1,"regex":"","skipUrlSync":false,"sort":1,"tagValuesQuery":"","tags":[],"tagsQuery":"","type":"query","useTags":false}]},"time":{"from":"now-30m","to":"now"},"timepicker":{"refresh_intervals":["5s","10s","30s","1m","5m","15m","30m","1h","2h","1d"]},"timezone":"","title":"Node and Pod Chaos Metrics","uid":"nodepodmetrics","version":1}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmus-grafana-provisioner
+  namespace: monitoring
+data:
+  default.yaml: |-
+    {
+        "apiVersion": 1,
+        "providers": [
+            {
+                "name": "Prometheus",
+                "orgId": 1,
+                "folder": "Services",
+                "type": "file",
+                "disableDeletion": false,
+                "editable": true,
+                "options": {
+                    "path": "/var/lib/grafana/dashboards"
+                }
+            }
+        ]
+    }
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,8 +80,26 @@ spec:
               name: grafana
               protocol: TCP
           volumeMounts:
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: grafana-datasources
+            - mountPath: /etc/grafana/provisioning/dashboards
+              name: grafana-provisioner
+            - mountPath: /var/lib/grafana/dashboards
+              name: grafana-dashboards
             - mountPath: /var/lib/grafana
               name: grafana-storage
       volumes:
-        - emptyDir: {}
+        - emptyDir: { }
           name: grafana-storage
+        - name: grafana-datasources
+          configMap:
+            defaultMode: 420
+            name: litmus-grafana-datasources
+        - name: grafana-dashboards
+          configMap:
+            defaultMode: 420
+            name: litmus-grafana-dashboards
+        - name: grafana-provisioner
+          configMap:
+            defaultMode: 420
+            name: litmus-grafana-provisioner
