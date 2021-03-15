@@ -246,7 +246,7 @@ const MyHub = () => {
     <Scaffold>
       <div className={classes.header}>
         <div className={classes.backBtnDiv}>
-          <BackButton isDisabled={false} />
+          <BackButton />
         </div>
         <Typography variant="h3" gutterBottom>
           {t('myhub.connectHubPage.connectHub')}

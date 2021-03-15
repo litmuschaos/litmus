@@ -24,6 +24,7 @@ import {
   WorkflowRun,
   WorkflowSubscription,
 } from '../../../models/graphql/workflowData';
+import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import {
   sortAlphaAsc,
@@ -269,7 +270,14 @@ const BrowseWorkflow = () => {
       return <></>;
     }
     return (
-      <TableRow data-cy="WorkflowRunsTableRow" key={dataRow.workflow_run_id}>
+      <TableRow
+        data-cy="WorkflowRunsTableRow"
+        key={dataRow.workflow_run_id}
+        style={{ cursor: 'pointer' }}
+        onClick={() => {
+          history.push(`/workflows/${dataRow.workflow_run_id}`);
+        }}
+      >
         <TableData data={dataRow} exeData={exe_data} />
       </TableRow>
     );

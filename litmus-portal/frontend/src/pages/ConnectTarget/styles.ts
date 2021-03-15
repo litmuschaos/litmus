@@ -1,0 +1,32 @@
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    marginTop: theme.spacing(5),
+  },
+  container: {
+    margin: theme.spacing(2.5, 1.5, 0, 1.5),
+  },
+  content: {
+    borderRadius: '0.1875rem',
+    padding: theme.spacing(4),
+    marginTop: theme.spacing(4),
+  },
+  connectTarget: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  loader: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(6),
+    textalign: 'center',
+    marginLeft: theme.spacing(10),
+  },
+  linkTargetImg: {
+    paddingTop: theme.spacing(2),
+  },
+}));
+
+export default useStyles;

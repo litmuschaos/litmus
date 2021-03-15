@@ -170,7 +170,7 @@ const DashboardPage: React.FC = () => {
       <div className={classes.rootContainer}>
         <div className={classes.root}>
           <div className={classes.button}>
-            <BackButton isDisabled={false} />
+            <BackButton />
           </div>
           <Typography variant="h3" className={classes.weightedFont}>
             {selectedDashboardInformation.agentName} /{' '}

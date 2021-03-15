@@ -3,13 +3,13 @@ import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import Scaffold from '../../../containers/layouts/Scaffold';
-import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
-import BrowseCluster from '../../../views/ChaosWorkflows/BrowseCluster';
+import Scaffold from '../../containers/layouts/Scaffold';
+import { history } from '../../redux/configureStore';
+import { RootState } from '../../redux/reducers';
+import BrowseCluster from '../../views/Targets/BrowseCluster';
 import useStyles from './styles';
 
-const ConnectHome = () => {
+const Targets = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -49,4 +49,4 @@ const ConnectHome = () => {
     </Scaffold>
   );
 };
-export default ConnectHome;
+export default Targets;

@@ -69,12 +69,12 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
     onCompleted: (data) => {
       const clusters: Cluster[] = [];
       if (data && data.getCluster.length !== 0) {
-        data.getCluster.forEach((e: Cluster) => {
-          if (e.is_active === true) {
+        data.getCluster.forEach((cluster: Cluster) => {
+          if (cluster.is_active === true) {
             clusters.push({
-              cluster_name: e.cluster_name,
-              is_active: e.is_active,
-              cluster_id: e.cluster_id,
+              cluster_name: cluster.cluster_name,
+              is_active: cluster.is_active,
+              cluster_id: cluster.cluster_id,
             });
             workflow.setWorkflowDetails({
               cronSyntax: '',
