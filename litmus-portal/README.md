@@ -19,7 +19,7 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 #### Applying k8s manifest
 > Litmus-2.0.0-Beta1 (Stable)
 ```bash
-kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0-Beta1/litmus-2.0.0-Beta1.yaml
+kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
 
 Or
@@ -80,7 +80,7 @@ View the User Guide <b>[here](https://docs.google.com/document/d/1fiN25BrZpvqg0U
 
 > Litmus-2.0.0-Beta1 (Stable)
 ```bash
-kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta1/litmus-2.0.0-Beta1.yaml
+kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
 
 Or
