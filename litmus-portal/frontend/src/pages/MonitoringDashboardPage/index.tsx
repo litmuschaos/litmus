@@ -43,6 +43,7 @@ interface SelectedDashboardInformation {
 const DashboardPage: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const ACTIVE: string = 'Active';
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // get ProjectID
@@ -155,7 +156,7 @@ const DashboardPage: React.FC = () => {
           }
           if (
             selectedDataSource &&
-            selectedDataSource.health_status !== 'Active'
+            selectedDataSource.health_status !== ACTIVE
           ) {
             setDataSourceStatus(selectedDataSource.health_status);
           }
@@ -307,11 +308,9 @@ const DashboardPage: React.FC = () => {
                   history.push('/analytics/dashboard/configure');
                 }}
               >
-                <div>
-                  {t(
-                    'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
-                  )}
-                </div>
+                {t(
+                  'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
+                )}
               </ButtonFilled>
               <ButtonFilled
                 variant="success"
@@ -319,11 +318,9 @@ const DashboardPage: React.FC = () => {
                   history.push('/analytics/datasource/configure');
                 }}
               >
-                <div>
-                  {t(
-                    'analyticsDashboard.monitoringDashboardPage.updateDataSource'
-                  )}
-                </div>
+                {t(
+                  'analyticsDashboard.monitoringDashboardPage.updateDataSource'
+                )}
               </ButtonFilled>
             </div>
           </div>

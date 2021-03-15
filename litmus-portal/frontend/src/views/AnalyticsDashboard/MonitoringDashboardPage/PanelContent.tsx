@@ -136,7 +136,7 @@ const PanelContent: React.FC<PanelResponse> = ({
                   date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
                   value: parseInt(dataPoint.value ?? '0', 10),
                 })),
-                baseColor: areaGraph[index % areaGraph.length],
+                baseColor: palette.error.main,
               }))
             );
           }
@@ -244,8 +244,8 @@ const PanelContent: React.FC<PanelResponse> = ({
             showEventMarkers
             unit={unit}
             yLabel={y_axis_left}
-            yLabelOffset={50}
-            margin={{ left: 70, right: 20, top: 20, bottom: 10 }}
+            yLabelOffset={55}
+            margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
           />
         </div>
         {/* <Typography>
