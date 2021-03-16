@@ -105,7 +105,11 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
           >
             <AccountTreeRoundedIcon />
           </ButtonOutline>
-          <Typography component="span">Horizontal</Typography>
+          <Typography component="span">
+            {horizontal
+              ? t('workflowDetailsView.argoWorkflow.controls.horizontal')
+              : t('workflowDetailsView.argoWorkflow.controls.vertical')}
+          </Typography>
         </div>
       </div>
 
@@ -135,7 +139,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
       />
     </>
   ) : (
-    <div>{t('workflowDetailsView.argoWorkFlow.loading')}</div>
+    <div>{t('workflowDetailsView.argoWorkflow.loading')}</div>
   );
 };
 

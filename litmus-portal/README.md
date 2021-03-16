@@ -17,9 +17,9 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 ## **Installation**
 
 #### Applying k8s manifest
-> Beta 2 (Stable)
+> Litmus-2.0.0-Beta1 (Stable)
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.13.x/litmus-portal/cluster-k8s-manifest.yml
+kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
 
 Or
@@ -78,14 +78,14 @@ View the User Guide <b>[here](https://docs.google.com/document/d/1fiN25BrZpvqg0U
 
 ### **Uninstallation**
 
-> Beta 2 (Stable)
+> Litmus-2.0.0-Beta1 (Stable)
 ```bash
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.13.x/litmus-portal/cluster-k8s-manifest.yml
+kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
 
 Or
 
-> Master (Latest) Cluster scope. Uninstall in litmus namespace by default.
+> Master (Latest) Cluster scope. Uninstall in litmus namespace by default. (Only deleting litmus portal components)
 ```bash
 kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
 ```

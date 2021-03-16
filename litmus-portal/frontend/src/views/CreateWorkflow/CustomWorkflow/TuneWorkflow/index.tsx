@@ -5,13 +5,13 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import BackButton from '../../../../components/Button/BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import { GET_ENGINE_YAML } from '../../../../graphql/queries';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
-import BackButton from '../BackButton';
 import useStyles from './styles';
 
 interface EnvValues {
@@ -211,7 +211,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     <div className={classes.root}>
       <div className={classes.headerDiv}>
         {customWorkflow.index === -1 ? (
-          <BackButton isDisabled={false} onClick={() => gotoStep(0)} />
+          <BackButton onClick={() => gotoStep(0)} />
         ) : null}
         <Typography variant="h3" className={classes.headerText} gutterBottom>
           {t('customWorkflow.tuneExperiment.headerText')}
