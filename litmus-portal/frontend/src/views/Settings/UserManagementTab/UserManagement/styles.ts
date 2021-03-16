@@ -35,29 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       backgroundColor: theme.palette.secondary.dark,
     },
   },
-  Signed: {
-    minWidth: '2.625rem',
-    minHeight: '0.8125rem',
-    background: theme.palette.success.light,
-    marginRight: theme.spacing(2.5),
-    borderRadius: '0.1875rem',
-    color: theme.palette.primary.dark,
-    fontSize: '0.625rem',
-    paddingRight: theme.spacing(1.18),
-    paddingLeft: theme.spacing(1.18),
-    paddingTop: theme.spacing(0.834),
-    paddingBottom: theme.spacing(0.834),
-  },
-  NotSigned: {
-    minWidth: '2.625rem',
-    minHeight: '0.8125rem',
-    background: theme.palette.error.light,
-    marginRight: theme.spacing(2.5),
-    fontSize: '0.625rem',
-    padding: theme.spacing(0.834),
-    borderRadius: '0.1875rem',
-    color: theme.palette.error.dark,
-  },
+
   toolbar: {
     height: '6.125rem',
     border: `1px solid ${theme.palette.border.main}`,
@@ -110,6 +88,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   styledTC: {
     borderRight: `1px solid ${theme.palette.border.main}`,
+    paddingLeft: theme.spacing(5.875),
   },
   opt: {
     background: theme.palette.secondary.contrastText,
