@@ -107,7 +107,7 @@ const TuneWorkflow: React.FC = () => {
       ],
     },
   };
-
+  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(yamlTemplate);
   // Graphql Query for fetching Engine YAML
   const [
     getEngineYaml,
@@ -197,7 +197,8 @@ const TuneWorkflow: React.FC = () => {
   }, [engineDataLoading, experimentDataLoading]);
 
   useEffect(() => {
-    updateCRD(yamlTemplate, experiment);
+    const updatedCRD = updateCRD(generatedYAML, experiment);
+    setGeneratedYAML(updatedCRD);
   }, [experiment]);
 
   // Loading Workflow Related Data for Workflow Settings
