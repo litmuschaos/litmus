@@ -66,6 +66,7 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ crd }) => {
         console.error(err);
       });
   };
+
   const closeConfigurationStepper = () => {
     setDisplayStepper(false);
   };
