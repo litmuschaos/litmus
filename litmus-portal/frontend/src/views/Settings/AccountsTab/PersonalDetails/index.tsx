@@ -13,6 +13,7 @@ import {
 } from '../../../../models/graphql/user';
 import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
+import { validateEmail } from '../../../../utils/validate';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
@@ -124,20 +125,24 @@ const PersonalDetails: React.FC = () => {
     <div>
       <form>
         <UserDetails
-          emailIsDisabled={false}
-          nameIsDisabled={false}
           nameValue={personaData.fullName}
-          usernameIsDisabled
+          isUsernameDisabled
           handleNameChange={handleNameChange}
           emailValue={personaData.email}
           handleEmailChange={handleEmailChange}
           userValue={personaData.userName}
           handleUserChange={handleUserChange}
+          isNameDisabled={false}
+          isEmailDisabled={false}
         />
         <div className={classes.saveButton}>
           <div data-cy="save">
             <ButtonFilled
-              isDisabled={!(personaData.fullName.length && !loading)}
+              isDisabled={
+                personaData.fullName === '' ||
+                validateEmail(personaData.email) ||
+                loading
+              }
               isPrimary
               handleClick={handleSubmit}
             >

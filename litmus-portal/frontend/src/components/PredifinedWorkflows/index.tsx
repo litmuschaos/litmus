@@ -24,7 +24,7 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
   const userRole = getProjectRole();
   const classes = useStyles();
   return (
-    <div className={classes.root}>
+    <div className={classes.root} data-cy="PredefinedWorkflowsPanel">
       {workflows &&
         workflows.map((w: preDefinedWorkflowData, index: number) => (
           <div key={w.workflowID} data-cy="templatesCard">
@@ -44,25 +44,27 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
             />
           </div>
         ))}
-      {isCustomWorkflowVisible ? (
-        <CustomWorkflowCard
-          handleClick={() => {
-            workflowAction.setWorkflowDetails({
-              name: `custom-chaos-workflow-${Math.round(
-                new Date().getTime() / 1000
-              )}`,
-              description: 'Custom Chaos Workflow',
-              isCustomWorkflow: true,
-              namespace: 'litmus',
-              customWorkflows: [],
-            });
-            history.push({
-              pathname: '/create-workflow/custom',
-              search: `?projectID=${projectID}&projectRole=${userRole}`,
-            });
-          }}
-        />
-      ) : null}
+      {isCustomWorkflowVisible && (
+        <div data-cy="CustomWorkflowCard">
+          <CustomWorkflowCard
+            handleClick={() => {
+              workflowAction.setWorkflowDetails({
+                name: `custom-chaos-workflow-${Math.round(
+                  new Date().getTime() / 1000
+                )}`,
+                description: 'Custom Chaos Workflow',
+                isCustomWorkflow: true,
+                namespace: 'litmus',
+                customWorkflows: [],
+              });
+              history.push({
+                pathname: '/create-workflow/custom',
+                search: `?projectID=${projectID}&projectRole=${userRole}`,
+              });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -53,7 +53,13 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           status={exeData.finishedAt.length === 0 ? 'Running' : exeData.phase}
         />
       </TableCell>
-      <TableCell className={classes.workflowNameData}>
+      <TableCell
+        className={classes.workflowNameData}
+        style={{ cursor: 'pointer' }}
+        onClick={() => {
+          history.push(`/workflows/${data.workflow_run_id}`);
+        }}
+      >
         <Typography data-cy="workflowName">
           <strong>{data.workflow_name}</strong>
         </Typography>

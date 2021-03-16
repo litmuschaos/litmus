@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.cards.background,
     height: '16rem',
     width: '11.875rem',
-    borderRadius: '3rem',
+    borderRadius: 3,
     fontSize: '0.875rem',
     textAlign: 'center',
     cursor: 'pointer',
@@ -42,16 +42,16 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     textAlign: 'center',
     cursor: 'pointer',
-    border: `1px solid ${theme.palette.text.hint}`,
+    border: `1px solid ${theme.palette.border.main}`,
     boxSizing: 'border-box',
     '&:hover': {
-      border: `1px solid ${theme.palette.secondary.dark}`,
+      border: `1px solid ${theme.palette.primary.main}`,
       boxShadow: `0px 4px 4px ${theme.palette.primary.light}`,
     },
   },
 
   cardFocused: {
-    border: `1px solid ${theme.palette.secondary.dark}`,
+    border: `1px solid ${theme.palette.primary.main}`,
     boxShadow: `0px 4px 4px ${theme.palette.primary.light}`,
   },
 
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 auto',
     textAlign: 'center',
     cursor: 'pointer',
-    border: `1px solid ${theme.palette.secondary.dark}`,
+    border: `1px solid ${theme.palette.primary.main}`,
     boxSizing: 'border-box',
   },
 
@@ -134,7 +134,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   totalRunsSelected: {
-    color: theme.palette.secondary.dark,
+    color: theme.palette.primary.main,
     fontSize: '0.875rem',
     fontWeight: 500,
     marginTop: theme.spacing(0.375),
@@ -155,7 +155,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   expCountSelected: {
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.secondary.contrastText,
     borderRadius: 3,
     paddingTop: theme.spacing(0.275),
@@ -173,7 +173,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   moreDetails: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.primary.main,
   },
 
   horizontalLine: {
@@ -191,7 +191,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
     padding: theme.spacing(0.275, 0.75, 0.275, 0.75),
-    backgroundColor: theme.palette.secondary.light,
+    backgroundColor: theme.palette.warning.main,
     color: theme.palette.secondary.contrastText,
     borderRadius: 3,
   },

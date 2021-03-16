@@ -138,6 +138,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.black,
     opacity: 0.4,
   },
+  sshAlert: {
+    color: theme.palette.error.main,
+    fontSize: '0.75rem',
+  },
   sshDataDiv: {
     display: 'flex',
     flexDirection: 'row',

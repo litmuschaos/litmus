@@ -1,8 +1,7 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
+import { InputField } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import InputField from '../../../../components/InputField';
-import { validateLength } from '../../../../utils/validate';
 import UserDetails from '../CreateUser/UserDetails';
 import DelUser from './DelUser';
 import ResetModal from './ResetModal';
@@ -72,10 +71,10 @@ const EditUser: React.FC<EditUserProps> = ({
             <div className={classes.suSegments}>
               {/* Personal Details */}
               <UserDetails
-                nameIsDisabled
-                emailIsDisabled
+                isNameDisabled
+                isEmailDisabled
+                isUsernameDisabled
                 nameValue={fullName}
-                usernameIsDisabled
                 emailValue={email}
                 userValue={userName}
               />
@@ -95,16 +94,8 @@ const EditUser: React.FC<EditUserProps> = ({
                     <div data-cy="editPassword" className={classes.details1}>
                       <InputField
                         required
-                        helperText={
-                          validateLength(createPAssword.password)
-                            ? 'Password is too short'
-                            : ''
-                        }
-                        handleChange={handleCreatePassword('password')}
+                        onChange={handleCreatePassword('password')}
                         type="password"
-                        validationError={validateLength(
-                          createPAssword.password
-                        )}
                         label={t(
                           'settings.userManagementTab.editUser.label.newPassword'
                         )}

@@ -29,8 +29,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   cityMapComposableMap: {
-    width: '54rem',
-    height: '40rem',
+    width: '45vw',
+    height: '30rem',
+    [theme.breakpoints.down('sm')]: {
+      height: '25rem',
+    },
   },
   countryMapchartStyle: {
     display: 'flex',
@@ -38,24 +41,22 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
   },
   countryMapchartContentStyle: {
-    width: '54rem',
-    height: '40rem',
+    width: '45vw',
+    height: '30rem',
+    [theme.breakpoints.down('sm')]: {
+      height: '25rem',
+    },
   },
   map: {
     flexGrow: 1,
     textAlign: 'center',
     color: theme.palette.text.primary,
+    backgroundColor: theme.palette.cards.background,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       width: '100%',
       flexDirection: 'column',
     },
-  },
-  cityMap: {
-    backgroundColor: theme.palette.cards.background,
-  },
-  countryMap: {
-    backgroundColor: theme.palette.cards.background,
   },
 }));
 

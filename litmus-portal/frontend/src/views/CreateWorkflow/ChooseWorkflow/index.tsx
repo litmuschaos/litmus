@@ -181,6 +181,7 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
           />
           <div className={classes.paddedTop}>
             <ButtonFilled
+              data-cy="EditWorkflowButton"
               onClick={() => {
                 setOpen(true);
               }}
@@ -207,6 +208,7 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
         </div>
       </div>
       <Modal
+        data-cy="WorkflowDetailsModal"
         open={open}
         onClose={() => setOpen(false)}
         width="70%"
@@ -225,41 +227,46 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
           </Typography>
           <div className={classes.modalContainerBody}>
             <div className={classes.inputDiv}>
-              <InputField
-                // id="filled-workflowname-input"
-                label={t('createWorkflow.chooseWorkflow.label.workflowName')}
-                data-cy="inputWorkflow"
-                fullWidth
-                helperText={
-                  validateWorkflowName(workflowDetails.workflowName)
-                    ? t('createWorkflow.chooseWorkflow.validate')
-                    : ''
-                }
-                variant={
-                  validateWorkflowName(workflowDetails.workflowName)
-                    ? 'error'
-                    : 'primary'
-                }
-                disabled={!isEditable}
-                onChange={WorkflowNameChangeHandler}
-                value={workflowDetails.workflowName}
-              />
+              <div data-cy="WorkflowNameInput">
+                <InputField
+                  // id="filled-workflowname-input"
+                  label={t('createWorkflow.chooseWorkflow.label.workflowName')}
+                  fullWidth
+                  helperText={
+                    validateWorkflowName(workflowDetails.workflowName)
+                      ? t('createWorkflow.chooseWorkflow.validate')
+                      : ''
+                  }
+                  variant={
+                    validateWorkflowName(workflowDetails.workflowName)
+                      ? 'error'
+                      : 'primary'
+                  }
+                  disabled={!isEditable}
+                  onChange={WorkflowNameChangeHandler}
+                  value={workflowDetails.workflowName}
+                />
+              </div>
               <div aria-details="spacer" style={{ margin: '1rem 0' }} />
-              <InputField
-                id="filled-workflowdescription-input"
-                label={t('createWorkflow.chooseWorkflow.label.desc')}
-                fullWidth
-                InputProps={{
-                  disableUnderline: true,
-                }}
-                data-cy="inputWorkflowDescription"
-                value={workflowDetails.workflowDesc}
-                onChange={WorkflowDescriptionChangeHandler}
-                multiline
-                rows={12}
-              />
+              <div data-cy="WorkflowDescriptionInput">
+                <InputField
+                  // id="filled-workflowdescription-input"
+                  label={t('createWorkflow.chooseWorkflow.label.desc')}
+                  fullWidth
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
+                  value={workflowDetails.workflowDesc}
+                  onChange={WorkflowDescriptionChangeHandler}
+                  multiline
+                  rows={12}
+                />
+              </div>
             </div>
-            <div className={classes.buttons}>
+            <div
+              className={classes.buttons}
+              data-cy="WorkflowDetailsModalButtons"
+            >
               <ButtonOutline
                 handleClick={() => setOpen(false)}
                 isDisabled={false}

@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'center',
+    padding: theme.spacing(7, 0),
   },
   textError: {
     width: '20.5rem',

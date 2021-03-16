@@ -215,7 +215,7 @@ const MyHub: React.FC = () => {
     <Scaffold>
       <div className={classes.header}>
         <div className={classes.backBtnDiv}>
-          <BackButton isDisabled={false} />
+          <BackButton />
         </div>
         <Typography variant="h3" gutterBottom>
           {t('myhub.editPage.edit')}
@@ -362,6 +362,9 @@ const MyHub: React.FC = () => {
                             />
                             {privateHub === 'ssh' ? (
                               <div className={classes.sshDiv}>
+                                <Typography className={classes.sshAlert}>
+                                  {t('myhub.connectHubPage.sshAlert')}
+                                </Typography>
                                 <Typography className={classes.alertText}>
                                   {t('myhub.connectHubPage.sshText')}
                                 </Typography>
@@ -488,7 +491,7 @@ const MyHub: React.FC = () => {
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div className={classes.quickActionDiv}>
-            <QuickActionCard />
+            <QuickActionCard analyticsHome={false} nonAdmin />
           </div>
         </div>
       </div>

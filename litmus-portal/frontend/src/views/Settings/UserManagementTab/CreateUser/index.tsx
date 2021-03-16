@@ -2,10 +2,6 @@ import { Divider, IconButton, Typography } from '@material-ui/core';
 import { InputField } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  validateLength,
-  validateStartEmptySpacing,
-} from '../../../../utils/validate';
 import NewUserModal from './NewUserModal';
 import useStyles from './styles';
 import UserDetails from './UserDetails';
@@ -32,7 +28,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
   const { t } = useTranslation();
 
   // for conditional rendering of reset password div
-  const [createPAssword, setCreatePassword] = React.useState<Password>({
+  const [createPassword, setCreatePassword] = React.useState<Password>({
     password: '',
     showPassword: false,
   });
@@ -42,7 +38,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setCreatePassword({
-      ...createPAssword,
+      ...createPassword,
       [prop]: event.target.value,
     });
   };
@@ -87,9 +83,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
               {/* Personal Details */}
               <UserDetails
                 nameValue={personalData.fullName}
-                usernameIsDisabled={false}
-                emailIsDisabled={false}
-                nameIsDisabled={false}
+                isUsernameDisabled={false}
                 handleNameChange={(e) => {
                   setPersonalData({
                     fullName: e.target.value,
@@ -97,6 +91,8 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                     email: personalData.email,
                   });
                 }}
+                isEmailDisabled={false}
+                isNameDisabled={false}
                 emailValue={personalData.email}
                 handleEmailChange={(e) => {
                   setPersonalData({
@@ -130,21 +126,11 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                     <div className={classes.details1}>
                       <div data-cy="userName">
                         <InputField
-                          helperText={
-                            validateStartEmptySpacing(personalData.userName)
-                              ? 'Should not start with an empty space'
-                              : ''
-                          }
                           label={t(
                             'settings.userManagementTab.createUser.label.username'
                           )}
                           value={personalData.userName}
                           onChange={handleUsername}
-                          variant={
-                            validateStartEmptySpacing(personalData.userName)
-                              ? 'error'
-                              : 'primary'
-                          }
                           disabled
                         />
                       </div>
@@ -154,18 +140,8 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                         <InputField
                           required
                           type="password"
-                          helperText={
-                            validateLength(createPAssword.password)
-                              ? 'Password is too short'
-                              : ''
-                          }
                           onChange={handleCreatePassword('password')}
-                          value={createPAssword.password}
-                          variant={
-                            validateLength(createPAssword.password)
-                              ? 'error'
-                              : 'primary'
-                          }
+                          value={createPassword.password}
                           label={t(
                             'settings.userManagementTab.createUser.label.newPassword'
                           )}
@@ -183,12 +159,12 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
             handleDiv={handleDiv}
             showModal={
               personalData.userName.length > 0 &&
-              createPAssword.password.length > 0
+              createPassword.password.length > 0
             }
             name={personalData.fullName}
             email={personalData.email}
             username={personalData.userName}
-            password={createPAssword.password}
+            password={createPassword.password}
           />
         </div>
       </div>

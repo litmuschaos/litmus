@@ -1,7 +1,7 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
-import { EditableText, Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, EditableText, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -136,7 +136,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 {t('createWorkflow.verifyCommit.summary.workflowName')}:
               </Typography>
             </div>
-            <div className={classes.col2}>
+            <div className={classes.col2} data-cy="WorkflowName">
               <EditableText
                 value={name}
                 id="name"
@@ -281,7 +281,9 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
         onClose={handleClose}
         width="60%"
         modalActions={
-          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+          <ButtonOutlined onClick={handleClose} className={classes.closeBtn}>
+            &#x2715;
+          </ButtonOutlined>
         }
       >
         <YamlEditor

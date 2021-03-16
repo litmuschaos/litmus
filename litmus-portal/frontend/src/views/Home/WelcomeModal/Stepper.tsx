@@ -8,10 +8,15 @@ import ButtonOutline from '../../../components/Button/ButtonOutline';
 import config from '../../../config';
 import { CREATE_USER } from '../../../graphql';
 import { CreateUserData } from '../../../models/graphql/user';
-import { getToken, getUserDetailsFromJwt } from '../../../utils/auth';
+import {
+  getToken,
+  getUserDetailsFromJwt,
+  getUserEmail,
+  getUserName,
+  getUsername,
+} from '../../../utils/auth';
 import {
   validateConfirmPassword,
-  validateEmail,
   validateStartEmptySpacing,
 } from '../../../utils/validate';
 import ModalPage from './Modalpage';
@@ -29,12 +34,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const isError = useRef(true);
   const isSuccess = useRef(false);
 
-  const [info, setInfo] = React.useState<CreateUserData>({
-    username: userData.username,
-    email: userData.email,
-    name: userData.name,
-    project_name: '',
-  });
+  const [projectName, setProjectName] = React.useState<string>('');
+
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -45,11 +46,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   });
 
   const handleNext = () => {
-    if (activeStep === 2 && values.confirmPassword !== values.password) {
-      isError.current = true;
-    } else {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
@@ -60,8 +57,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
 
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
-    Object.assign(info, { password: values.password });
-
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
       headers: {
@@ -69,9 +64,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify({
-        username: userData.username,
-        email: info.email,
-        name: info.name,
+        username: getUsername(),
+        email: getUserEmail(),
+        name: getUserName(),
         password: values.password,
       }),
     })
@@ -83,10 +78,10 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           CreateUser({
             variables: {
               user: {
-                username: userData.username,
-                email: info.email,
-                name: info.name,
-                project_name: info.project_name,
+                username: getUsername(),
+                email: getUserEmail(),
+                name: getUserName(),
+                project_name: projectName,
               },
             },
           });
@@ -98,25 +93,14 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
       });
   };
 
-  const setData = (key: string, value: string) => {
-    let data = info;
-    data = {
-      ...data,
-      [key]: value,
-    };
-    setInfo(data);
-  };
-
-  // Custom Button Validation
-
   // If first character is empty then all the successive letters would
   // be treated as an error and button would be disabled
   // If the length is 0 then button would be disabled
   // [Button State: Disabled]
   if (activeStep === 0) {
     if (
-      info.project_name.length > 0 &&
-      validateStartEmptySpacing(info.project_name) === false
+      projectName.length > 0 &&
+      validateStartEmptySpacing(projectName) === false
     ) {
       isError.current = false;
     } else {
@@ -124,33 +108,13 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     }
   }
 
-  // If first character is empty then all the successive letters would
-  // be treated as an error and button would be disabled
-  // If the length is 0 then button would be disabled
+  // If the two passwords are not same then button would be disabled
   // Back Button: [Button State: Enabled]
   // Continue Button: [Button State: Disabled]
   if (activeStep === 1) {
     if (
-      info.name?.length > 0 &&
-      validateStartEmptySpacing(info.name) === false
-    ) {
-      isError.current = false;
-    } else {
-      isError.current = true;
-    }
-  }
-
-  // If password is less than 6 characters and does not contain
-  // an alpha numeric character as well as a number
-  // then button would be disabled
-  // If the two passwords are not same then button would be disabled
-  // Back Button: [Button State: Enabled]
-  // Continue Button: [Button State: Disabled]
-  if (activeStep === 2) {
-    if (
       values.password.length > 0 &&
       values.confirmPassword.length > 0 &&
-      // validatePassword(values.password) === false &&
       validateConfirmPassword(values.password, values.confirmPassword) === false
     ) {
       isError.current = false;
@@ -158,17 +122,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     } else {
       isError.current = true;
       isSuccess.current = false;
-    }
-  }
-
-  // If entered email is not a valid email then button would be disabled
-  // Skip Button: [Button State: Enabled]
-  // Let's Start Button: [Button State: Disabled]
-  if (activeStep === 3) {
-    if (info.email?.length > 0 && validateEmail(info.email) === false) {
-      isError.current = false;
-    } else {
-      isError.current = true;
     }
   }
 
@@ -183,44 +136,20 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         </div>
       );
     }
-    if (activeStep === 3) {
-      return (
-        <div className={classes.buttonDiv}>
-          <div data-cy="backButton">
-            <ButtonOutline isDisabled={false} handleClick={handleBack}>
-              <>{t('welcomeModal.button.back')}</>
-            </ButtonOutline>
-          </div>
-          <div data-cy="startButton">
-            <ButtonFilled
-              disabled={isError.current}
-              onClick={handleSubmit}
-              data-cy="Start"
-            >
-              <div>{t('welcomeModal.button.letsStart')}</div>
-            </ButtonFilled>
-          </div>
-        </div>
-      );
-    }
     return (
       <div className={classes.buttonDiv}>
         <div data-cy="backButton">
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={handleBack}
-            data-cy="Back"
-          >
+          <ButtonOutline disabled={false} onClick={handleBack}>
             <>{t('welcomeModal.button.back')}</>
           </ButtonOutline>
         </div>
         <div data-cy="startButton">
           <ButtonFilled
             disabled={isError.current}
-            onClick={handleNext}
-            data-cy="Continue"
+            onClick={handleSubmit}
+            data-cy="Start"
           >
-            <div>{t('welcomeModal.button.continue')}</div>
+            <div>{t('welcomeModal.button.letsStart')}</div>
           </ButtonFilled>
         </div>
       </div>
@@ -234,7 +163,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         handleNext();
         return;
       }
-      if (activeStep === 3) {
+      if (activeStep === 1) {
         handleSubmit();
         return;
       }
@@ -253,19 +182,19 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 <div className={classes.inputArea} data-cy="InputProjectName">
                   <InputField
                     label={t('welcomeModal.case-0.label')}
-                    value={info.project_name}
+                    value={projectName}
                     helperText={
-                      validateStartEmptySpacing(info.project_name)
+                      validateStartEmptySpacing(projectName)
                         ? 'Should not start with an empty space'
                         : ''
                     }
                     variant={
-                      validateStartEmptySpacing(info.project_name)
+                      validateStartEmptySpacing(projectName)
                         ? 'error'
                         : 'primary'
                     }
                     required
-                    onChange={(e) => setData('project_name', e.target.value)}
+                    onChange={(e) => setProjectName(e.target.value)}
                     onKeyPress={keyPress}
                   />
                 </div>
@@ -280,38 +209,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             setText={t('welcomeModal.case-0.info')}
           />
         );
+
       case 1:
-        return (
-          <ModalPage
-            renderMenu={
-              <div>
-                <div className={classes.inputArea} data-cy="InputName">
-                  <InputField
-                    label={t('welcomeModal.case-1.label')}
-                    value={info.name}
-                    required
-                    helperText={
-                      validateStartEmptySpacing(info.name)
-                        ? 'Should not start with an empty space'
-                        : ''
-                    }
-                    variant={
-                      validateStartEmptySpacing(info.name) ? 'error' : 'primary'
-                    }
-                    onChange={(event) => {
-                      setData('name', event.target.value);
-                    }}
-                    onKeyPress={keyPress}
-                  />
-                </div>
-                {selectiveButtons()}
-              </div>
-            }
-            setName={info.name}
-            setText={t('welcomeModal.case-1.info')}
-          />
-        );
-      case 2:
         return (
           <ModalPage
             renderMenu={
@@ -326,7 +225,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     type="password"
                     required
                     value={values.password}
-                    variant={isSuccess.current ? 'primary' : 'error'}
                     onChange={(event) =>
                       setValues({
                         password: event.target.value,
@@ -371,36 +269,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 {selectiveButtons()}
               </div>
             }
-            setName={info.name}
+            setName={getUsername()}
             setText={t('welcomeModal.case-2.info')}
-          />
-        );
-      case 3:
-        return (
-          <ModalPage
-            renderMenu={
-              <div className={classes.passwordSetterDiv}>
-                <div className={classes.inputArea} data-cy="InputEmail">
-                  <InputField
-                    label={t('welcomeModal.case-3.label')}
-                    required
-                    value={info.email}
-                    helperText={
-                      validateEmail(info.email) ? 'Should be a valid email' : ''
-                    }
-                    variant={validateEmail(info.email) ? 'error' : 'primary'}
-                    onChange={(event) => {
-                      setData('email', event.target.value);
-                    }}
-                    onKeyPress={keyPress}
-                  />
-                </div>
-                {selectiveButtons()}
-              </div>
-            }
-            // pass here corresponding name of user
-            setName={info.name}
-            setText={t('welcomeModal.case-3.info')}
           />
         );
 
@@ -422,16 +292,15 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <div>{getStepContent(activeStep)}</div>
         )}
       </div>
-      <div className={classes.stepper}>
-        <MobileStepper
-          variant="dots"
-          steps={4}
-          position="static"
-          activeStep={activeStep}
-          nextButton={handleNext}
-          backButton={handleBack}
-        />
-      </div>
+      <MobileStepper
+        className={classes.stepper}
+        variant="dots"
+        steps={2}
+        position="static"
+        activeStep={activeStep}
+        nextButton={handleNext}
+        backButton={handleBack}
+      />
     </div>
   );
 };

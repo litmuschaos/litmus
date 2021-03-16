@@ -12,12 +12,14 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
 import {
+  ALL_USERS,
   GET_PROJECT,
   GET_USER,
   REMOVE_INVITATION,
   SEND_INVITE,
 } from '../../../../graphql';
 import {
+  InvitationStatus,
   MemberInvitation,
   MemberInviteNew,
 } from '../../../../models/graphql/invite';
@@ -25,6 +27,7 @@ import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
   Member,
+  Role,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
 import { getProjectID } from '../../../../utils/getSearchParams';
@@ -34,14 +37,21 @@ import useStyles from './styles';
 interface TableDataProps {
   row: Member;
   index: number;
+  showModal: () => void;
+  handleOpen: () => void;
+  open: boolean;
 }
-const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
+const InvitedTableData: React.FC<TableDataProps> = ({
+  row,
+  showModal,
+  handleOpen,
+  open,
+}) => {
   const classes = useStyles();
   const projectID = getProjectID();
 
   const { t } = useTranslation();
 
-  const [open, setOpen] = useState(false);
   const [role, setRole] = useState<string>(row.role);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClose = () => {
@@ -49,10 +59,16 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
   };
 
   const [SendInvite] = useMutation<MemberInviteNew>(SEND_INVITE, {
+    onCompleted: () => {
+      window.location.reload();
+    },
     refetchQueries: [
       {
         query: GET_PROJECT,
         variables: { projectID },
+      },
+      {
+        query: ALL_USERS,
       },
     ],
   });
@@ -62,13 +78,15 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
     REMOVE_INVITATION,
     {
       onCompleted: () => {
-        setOpen(false);
+        showModal();
       },
-      onError: () => {},
       refetchQueries: [
         {
           query: GET_PROJECT,
           variables: { projectID },
+        },
+        {
+          query: ALL_USERS,
         },
       ],
     }
@@ -99,9 +117,9 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
             alt="User"
             className={classes.avatarBackground}
           >
-            {userInitials(memberDetails ? memberDetails.name : '')}
+            {userInitials(memberDetails ? memberDetails.username : '')}
           </Avatar>
-          {memberDetails ? memberDetails.name : ''}
+          {memberDetails ? memberDetails.username : ''}
         </div>
       </TableCell>
       <TableCell className={classes.otherTC}>
@@ -127,7 +145,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
           >
             <MenuItem
               onClick={() => {
-                setRole('Editor');
+                setRole(Role.editor);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -153,7 +171,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setRole(row.role);
+                setRole(Role.viewer);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -185,20 +203,21 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
       </TableCell>
       <TableCell className={classes.otherTC}>
         <LightPills
-          variant={row.invitation === 'Pending' ? 'warning' : 'danger'}
+          variant={
+            row.invitation === InvitationStatus.pending ? 'warning' : 'danger'
+          }
           label={row.invitation}
         />
       </TableCell>
 
       <TableCell className={classes.buttonTC} key={row.user_id}>
         <div className={classes.lastCell}>
-          <IconButton
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            <img alt="delete" src="./icons/deleteBox.svg" height="45" />
-          </IconButton>
+          {row.invitation !== InvitationStatus.exited &&
+            row.invitation !== InvitationStatus.declined && (
+              <IconButton onClick={handleOpen}>
+                <img alt="delete" src="./icons/deleteBox.svg" height="45" />
+              </IconButton>
+            )}
           <ButtonFilled
             disabled={false}
             onClick={() => {
@@ -206,7 +225,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
                 variables: {
                   member: {
                     project_id: projectID,
-                    user_name: row.user_name,
+                    user_id: row.user_id,
                     role,
                   },
                 },
@@ -223,16 +242,10 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
         width="43.75rem"
         disableBackdropClick
         disableEscapeKeyDown
-        onClose={() => {
-          setOpen(false);
-        }}
+        onClose={showModal}
         modalActions={
           <div className={classes.closeModal}>
-            <IconButton
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
+            <IconButton onClick={showModal}>
               <img src="./icons/closeBtn.svg" alt="close" />
             </IconButton>
           </div>
@@ -259,11 +272,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
             </Typography>
           </div>
           <div className={classes.buttonGroup}>
-            <ButtonOutlined
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
+            <ButtonOutlined onClick={showModal}>
               <>{t('settings.teamingTab.deleteModal.noButton')}</>
             </ButtonOutlined>
             <div className={classes.yesButton}>
@@ -274,7 +283,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row }) => {
                     variables: {
                       data: {
                         project_id: projectID,
-                        user_name: row.user_name,
+                        user_id: row.user_id,
                       },
                     },
                   });

@@ -38,7 +38,7 @@ interface InviteProps {
 
 interface SelectedUser {
   user_name: string;
-  user_uid: string;
+  user_id: string;
   role: string;
 }
 
@@ -66,7 +66,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // Sets the user role while inviting
   const setUserRole = (user_uid: string, role: string) => {
     setSelected(
-      selected.map((r) => (r.user_uid === user_uid ? { ...r, role } : r))
+      selected.map((r) => (r.user_id === user_uid ? { ...r, role } : r))
     );
     if (roles.find((ele) => ele.user_uid === user_uid)) {
       setRoles(
@@ -110,9 +110,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   });
 
   // mutation to send invitation to selected users
-  const [SendInvite, { error: errorB, loading: loadingB }] = useMutation<
-    MemberInviteNew
-  >(SEND_INVITE, {
+  const [
+    SendInvite,
+    { error: errorB, loading: loadingB },
+  ] = useMutation<MemberInviteNew>(SEND_INVITE, {
     refetchQueries: [
       {
         query: GET_PROJECT,
@@ -124,7 +125,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // Checks if the user the already selected or not
   const isSelected = (user: UserInvite) => {
     const user_uids = new Map();
-    selected.map((el) => user_uids.set(el.user_uid, el.role));
+    selected.map((el) => user_uids.set(el.user_id, el.role));
     return user_uids.has(user.id);
   };
 
@@ -132,7 +133,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     event: React.MouseEvent<unknown>,
     selectedUser: UserInvite
   ) => {
-    const selectedIds = selected.map((el) => el.user_uid);
+    const selectedIds = selected.map((el) => el.user_id);
     const isUserAlreadySelected = selectedIds.indexOf(selectedUser.id);
     let newSelected: SelectedUser[] = [];
     if (isUserAlreadySelected === -1) {
@@ -145,7 +146,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       };
       newSelected = newSelected.concat(selected, {
         user_name: selectedUser.username,
-        user_uid: selectedUser.id,
+        user_id: selectedUser.id,
         role: userrole(),
       });
     } else if (isUserAlreadySelected === 0) {
@@ -281,7 +282,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                           variables: {
                             member: {
                               project_id: projectID,
-                              user_name: s.user_name,
+                              user_id: s.user_id,
                               role: s.role,
                             },
                           },

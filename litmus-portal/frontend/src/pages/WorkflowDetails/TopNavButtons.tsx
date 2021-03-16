@@ -19,7 +19,7 @@ const TopNavButtons: React.FC = () => {
   return (
     <div className={classes.button}>
       <div>
-        <BackButton isDisabled={false} />
+        <BackButton />
       </div>
       <div>
         {isInfoToggled ? (

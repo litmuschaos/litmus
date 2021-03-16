@@ -15,7 +15,6 @@ export const CREATE_WORKFLOW = gql`
 export const CREATE_USER = gql`
   mutation CreateUser($user: CreateUserInput!) {
     createUser(user: $user) {
-      id
       username
       created_at
       updated_at
@@ -157,6 +156,12 @@ export const ENABLE_GITOPS = gql`
   }
 `;
 
+export const UPDATE_GITOPS = gql`
+  mutation updateGitOps($gitConfig: GitConfig!) {
+    updateGitOps(config: $gitConfig)
+  }
+`;
+
 export const DISABLE_GITOPS = gql`
   mutation disableGitOPs($data: String!) {
     disableGitOps(project_id: $data)
@@ -172,5 +177,74 @@ export const RERUN_CHAOS_WORKFLOW = gql`
 export const LEAVE_PROJECT = gql`
   mutation LeaveProject($data: MemberInput!) {
     leaveProject(member: $data)
+  }
+`;
+
+export const CREATE_DATASOURCE = gql`
+  mutation createDataSource($DSInput: DSInput) {
+    createDataSource(datasource: $DSInput) {
+      ds_id
+      ds_name
+      ds_type
+      ds_url
+      access_type
+      auth_type
+      basic_auth_username
+      basic_auth_password
+      scrape_interval
+      query_timeout
+      http_method
+      project_id
+      health_status
+    }
+  }
+`;
+
+export const UPDATE_DATASOURCE = gql`
+  mutation updateDataSource($DSInput: DSInput!) {
+    updateDataSource(datasource: $DSInput) {
+      ds_id
+      ds_name
+      ds_type
+      ds_url
+      access_type
+      auth_type
+      basic_auth_username
+      basic_auth_password
+      scrape_interval
+      query_timeout
+      http_method
+      project_id
+    }
+  }
+`;
+
+export const DELETE_DATASOURCE = gql`
+  mutation deleteDataSource($deleteDSInput: deleteDSInput!) {
+    deleteDataSource(input: $deleteDSInput)
+  }
+`;
+
+export const CREATE_DASHBOARD = gql`
+  mutation createDashBoard($createDBInput: createDBInput) {
+    createDashBoard(dashboard: $createDBInput)
+  }
+`;
+
+export const UPDATE_DASHBOARD = gql`
+  mutation updateDashboard($updataDBInput: updataDBInput) {
+    updateDashboard(dashboard: $updataDBInput)
+  }
+`;
+
+export const DELETE_DASHBOARD = gql`
+  mutation deleteDashboard($dbID: String) {
+    deleteDashboard(db_id: $dbID)
+  }
+`;
+
+export const UPDATE_PANEL = gql`
+  mutation updatePanel($panelInput: [panel]) {
+    updatePanel(panelInput: $panelInput)
   }
 `;

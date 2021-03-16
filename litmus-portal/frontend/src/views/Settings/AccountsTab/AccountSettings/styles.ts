@@ -87,7 +87,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   text1: {
     width: '27.5rem',
     height: '1.6875rem',
-    marginBottom: theme.spacing(3.75),
   },
   typo1: {
     fontSize: '1rem',
@@ -95,7 +94,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   buttonModal: {
     marginTop: theme.spacing(3.75),
-    width: '55%',
   },
   textSecondError: {
     width: '27.5rem',
@@ -108,6 +106,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'center',
+    padding: theme.spacing(7, 0),
   },
   typoSub: {
     fontSize: '1rem',

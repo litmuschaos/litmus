@@ -18,9 +18,9 @@ import {
   WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
 import { getProjectID } from '../../utils/getSearchParams';
-import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
-import WorkflowDetailsTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunDetailsTable';
-import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
+import PopOver from '../../views/AnalyticsDashboard/LitmusDashboard/PopOver';
+import WorkflowDetailsTable from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowRunDetailsTable';
+import WorkflowRunsBarChart from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowRunsBarChart';
 import useStyles from './styles';
 
 interface WorkflowRunData {
@@ -61,9 +61,10 @@ const AnalyticsPage: React.FC = () => {
   // Getting the workflow nome from the pathname
   const workflowId = pathname.split('/')[3];
   const { t } = useTranslation();
-  const [selectedWorkflowRunID, setSelectedWorkflowRunID] = React.useState<
-    string
-  >('');
+  const [
+    selectedWorkflowRunID,
+    setSelectedWorkflowRunID,
+  ] = React.useState<string>('');
   const [
     selectedWorkflowRunDetails,
     setSelectedWorkflowRunDetails,
@@ -71,9 +72,10 @@ const AnalyticsPage: React.FC = () => {
   const [workflowRunDataForPlot, setWorkflowRunDataForPlot] = React.useState<
     WorkflowRunData[]
   >([]);
-  const [selectedWorkflowRunData, setSelectedWorkflowRunData] = React.useState<
-    SelectedWorkflowRunData
-  >({
+  const [
+    selectedWorkflowRunData,
+    setSelectedWorkflowRunData,
+  ] = React.useState<SelectedWorkflowRunData>({
     testsPassed: 0,
     testsFailed: 0,
     resilienceScore: 0,
@@ -90,8 +92,8 @@ const AnalyticsPage: React.FC = () => {
   const { data, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      pollInterval: 50,
       variables: { projectID, workflowIDs: [] },
+      pollInterval: 100,
     }
   );
 
@@ -113,7 +115,7 @@ const AnalyticsPage: React.FC = () => {
         (w) => w.workflow_id === workflowId
       );
       const selectedWorkflows = selectedWorkflowSchedule
-        ? selectedWorkflowSchedule[0].workflow_runs
+        ? selectedWorkflowSchedule[0]?.workflow_runs
         : [];
       selectedWorkflows?.forEach((data) => {
         try {
@@ -133,14 +135,15 @@ const AnalyticsPage: React.FC = () => {
                 chaosData.experimentVerdict === 'Fail'
               ) {
                 const weightageMap: WeightageMap[] = selectedWorkflowSchedule
-                  ? selectedWorkflowSchedule[0].weightages
+                  ? selectedWorkflowSchedule[0]?.weightages
                   : [];
                 weightageMap.forEach((weightage) => {
                   if (weightage.experiment_name === chaosData.experimentName) {
                     if (chaosData.experimentVerdict === 'Pass') {
-                      experimentTestResultsArray.push(weightage.weightage);
-                      experimentTestResultsArrayPerWorkflowRun.push(
-                        weightage.weightage
+                      experimentTestResultsArray.push(
+                        (weightage.weightage *
+                          parseInt(chaosData.probeSuccessPercentage, 10)) /
+                          100
                       );
                       totalExperimentsPassed += 1;
                     }
@@ -152,6 +155,11 @@ const AnalyticsPage: React.FC = () => {
                       chaosData.experimentVerdict === 'Pass' ||
                       chaosData.experimentVerdict === 'Fail'
                     ) {
+                      experimentTestResultsArrayPerWorkflowRun.push(
+                        (weightage.weightage *
+                          parseInt(chaosData.probeSuccessPercentage, 10)) /
+                          100
+                      );
                       weightsSum += weightage.weightage;
                       isValid = true;
                     }
@@ -200,7 +208,7 @@ const AnalyticsPage: React.FC = () => {
         resilienceScore: 0,
         testDate: Math.round(
           parseInt(
-            moment(resDate).subtract(0.5, 'days').endOf('day').format('x'),
+            moment(resDate).subtract(1.5, 'days').endOf('day').format('x'),
             10
           ) / 1000
         ).toString(),
@@ -213,7 +221,7 @@ const AnalyticsPage: React.FC = () => {
         resilienceScore: 0,
         testDate: Math.round(
           parseInt(
-            moment(resDate).add(0.5, 'days').startOf('day').format('x'),
+            moment(resDate).add(1.5, 'days').startOf('day').format('x'),
             10
           ) / 1000
         ).toString(),
@@ -227,7 +235,7 @@ const AnalyticsPage: React.FC = () => {
     } else {
       setWorkflowRunDataForPlot(validWorkflowRunsData);
     }
-  }, [data]);
+  }, [selectedWorkflowRunID, data]);
 
   useEffect(() => {
     const workflowTestsArray: WorkFlowTests[] = [];
@@ -236,7 +244,7 @@ const AnalyticsPage: React.FC = () => {
         (w) => w.workflow_id === workflowId
       );
       const workflowRuns = selectedWorkflowSchedule
-        ? selectedWorkflowSchedule[0].workflow_runs
+        ? selectedWorkflowSchedule[0]?.workflow_runs
         : [];
       const selectedWorkflows = workflowRuns.filter(
         (w) => w.workflow_run_id === selectedWorkflowRunID
@@ -251,7 +259,7 @@ const AnalyticsPage: React.FC = () => {
             if (node.chaosData) {
               const { chaosData } = node;
               const weightageMap: WeightageMap[] = selectedWorkflowSchedule
-                ? selectedWorkflowSchedule[0].weightages
+                ? selectedWorkflowSchedule[0]?.weightages
                 : [];
               weightageMap.forEach((weightage) => {
                 if (weightage.experiment_name === chaosData.experimentName) {
@@ -261,9 +269,9 @@ const AnalyticsPage: React.FC = () => {
                     test_result: chaosData.experimentVerdict,
                     test_weight: weightage.weightage,
                     resulting_points:
-                      chaosData.experimentVerdict === 'Pass'
-                        ? weightage.weightage
-                        : 0,
+                      (weightage.weightage *
+                        parseInt(chaosData.probeSuccessPercentage, 10)) /
+                      100,
                     last_run: chaosData.lastUpdatedAt,
                   });
                 }
@@ -281,6 +289,14 @@ const AnalyticsPage: React.FC = () => {
     }
   }, [selectedWorkflowRunID, data]);
 
+  // Number of Workflow Runs for the selected Schedule
+  const selectedWorkflowSchedule = data?.ListWorkflow.filter(
+    (w) => w.workflow_id === workflowId
+  );
+  const workflowRuns = selectedWorkflowSchedule
+    ? selectedWorkflowSchedule[0]?.workflow_runs
+    : [];
+
   return (
     <Scaffold>
       {workflowRunPresent ? (
@@ -289,7 +305,7 @@ const AnalyticsPage: React.FC = () => {
             <div className={classes.rootContainer}>
               <div className={classes.root}>
                 <div className={classes.button}>
-                  <BackButton isDisabled={false} />
+                  <BackButton />
                 </div>
                 <Typography variant="h4">
                   <strong>Workflow Analytics</strong>
@@ -301,6 +317,7 @@ const AnalyticsPage: React.FC = () => {
                 </div>
                 <div className={classes.analyticsDiv}>
                   <WorkflowRunsBarChart
+                    numberOfWorkflowRuns={workflowRuns.length}
                     workflowRunData={workflowRunDataForPlot}
                     callBackToShowPopOver={setPopOverDisplay}
                     callBackToSelectWorkflowRun={(
@@ -344,7 +361,7 @@ const AnalyticsPage: React.FC = () => {
           ) : (
             <div className={classes.waitingScreen}>
               <Typography className={classes.waitingText}>
-                {t('analytics.chaosStartWaitingMessage')}
+                {t('analytics.chaosCompleteWaitingMessage')}
               </Typography>
               <Loader />
             </div>

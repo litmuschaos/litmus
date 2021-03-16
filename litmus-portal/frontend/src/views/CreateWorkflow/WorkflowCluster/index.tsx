@@ -67,12 +67,12 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
     onCompleted: (data) => {
       const clusters: Cluster[] = [];
       if (data && data.getCluster.length !== 0) {
-        data.getCluster.forEach((e: Cluster) => {
-          if (e.is_active === true) {
+        data.getCluster.forEach((cluster: Cluster) => {
+          if (cluster.is_active === true) {
             clusters.push({
-              cluster_name: e.cluster_name,
-              is_active: e.is_active,
-              cluster_id: e.cluster_id,
+              cluster_name: cluster.cluster_name,
+              is_active: cluster.is_active,
+              cluster_id: cluster.cluster_id,
             });
             workflow.setWorkflowDetails({
               cronSyntax: '',
@@ -122,7 +122,11 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         </Typography>
 
         <div className={classes.radiobutton}>
-          <FormControl variant="outlined" className={classes.formControl}>
+          <FormControl
+            variant="outlined"
+            className={classes.formControl}
+            data-cy="AgentsDropDown"
+          >
             <InputLabel className={classes.selectText}>
               {t('createWorkflow.workflowCluster.activeCluster')}
             </InputLabel>
@@ -140,7 +144,11 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
                 <em> {t('createWorkflow.workflowCluster.none')}</em>
               </MenuItem>
               {clusterData.map((name: Cluster) => (
-                <MenuItem key={name.cluster_id} value={name.cluster_id}>
+                <MenuItem
+                  key={name.cluster_id}
+                  value={name.cluster_id}
+                  data-cy="Agents"
+                >
                   {name.cluster_name}
                 </MenuItem>
               ))}
@@ -154,10 +162,9 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         is install and running) or alternative Install Litmus Agent to 
         other Kubernetes cluster 
       */}
-      <div className={classes.buttonDiv}>
-        <div className={classes.button} data-cy="Internal">
+      <div className={classes.buttonDiv} data-cy="SelectAndContinueButton">
+        <div className={classes.button}>
           <ButtonFilled
-            data-cy="gotItButton"
             disabled={isTragetSelected}
             onClick={() => handleClick()}
           >

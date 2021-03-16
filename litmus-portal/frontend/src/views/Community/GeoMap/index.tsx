@@ -8,11 +8,7 @@ const GeoMap = () => {
   const [showCountry, setShowCountry] = useState<boolean>(true);
   const classes = useStyles();
   return (
-    <div
-      className={`${classes.map} ${
-        showCountry ? classes.countryMap : classes.cityMap
-      }`}
-    >
+    <div className={classes.map}>
       {showCountry ? <CountryMap /> : <CityMap />}
       <br />
       <br />
@@ -20,8 +16,8 @@ const GeoMap = () => {
         <BinarySwitch
           handleChange={() => setShowCountry(!showCountry)}
           checked={showCountry}
-          leftLabel="Country View"
-          rightLabel="City View"
+          leftLabel="City View"
+          rightLabel="Country View"
         />
       </div>
     </div>

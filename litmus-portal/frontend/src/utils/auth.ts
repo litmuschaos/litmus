@@ -40,30 +40,30 @@ export function getUserDetailsFromJwt(): any {
 export function getUsername(): string {
   let username = '';
   if (getToken()) username = getUserDetailsFromJwt().username;
-  return username;
+  return username ?? '';
 }
 
 // Returns userId from jwt token
 export function getUserId(): string {
   let uuid = '';
   if (getToken()) uuid = getUserDetailsFromJwt().uid;
-  return uuid;
+  return uuid ?? '';
 }
 
 export function getUserRole(): string {
   let role = '';
   if (getToken()) role = getUserDetailsFromJwt().role;
-  return role;
+  return role ?? '';
 }
 
 export function getUserEmail(): string {
   let email = '';
   if (getToken()) email = getUserDetailsFromJwt().email;
-  return email;
+  return email ?? '';
 }
 
 export function getUserName(): string {
   let name = '';
   if (getToken()) name = getUserDetailsFromJwt().name;
-  return name;
+  return name ?? '';
 }

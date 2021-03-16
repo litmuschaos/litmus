@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import BackButton from '../../../../components/Button/BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import { GET_ENGINE_YAML } from '../../../../graphql/queries';
@@ -12,7 +13,6 @@ import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
 import { getProjectID } from '../../../../utils/getSearchParams';
-import BackButton from '../BackButton';
 import useStyles from './styles';
 
 interface EnvValues {
@@ -52,6 +52,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [jobCleanup, setJobCleanup] = useState('delete');
 
   const [getEngineYaml] = useLazyQuery(GET_ENGINE_YAML, {
+    fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       const parsedYaml = YAML.parse(data.getYAMLData);
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
@@ -212,7 +213,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     <div className={classes.root}>
       <div className={classes.headerDiv}>
         {customWorkflow.index === -1 ? (
-          <BackButton isDisabled={false} onClick={() => gotoStep(0)} />
+          <BackButton onClick={() => gotoStep(0)} />
         ) : null}
         <Typography variant="h3" className={classes.headerText} gutterBottom>
           {t('customWorkflow.tuneExperiment.headerText')}
@@ -230,7 +231,10 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography variant="h6" className={classes.mainText}>
               {t('customWorkflow.tuneExperiment.expName')}:
             </Typography>
-            <Typography className={classes.mainDetail}>
+            <Typography
+              className={classes.mainDetail}
+              data-cy="selectedExperimentName"
+            >
               {customWorkflow.experiment_name}
             </Typography>
           </div>
@@ -247,7 +251,10 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography variant="h6" className={classes.mainText}>
               {t('customWorkflow.tuneExperiment.sequence')}:
             </Typography>
-            <Typography className={classes.mainDetail}>
+            <Typography
+              className={classes.mainDetail}
+              data-cy="experimentSequence"
+            >
               {experimentSequence()}
             </Typography>
           </div>
@@ -256,7 +263,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         {loadingEnv ? (
           <Loader />
         ) : (
-          <div className={classes.appInfoMainDiv}>
+          <div className={classes.appInfoMainDiv} data-cy="envVariables">
             <Typography className={classes.appInfoHeader}>
               {t('customWorkflow.tuneExperiment.appInfo')}
             </Typography>
@@ -418,7 +425,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           ))}
         </div>
       </div>
-      <div className={classes.nextBtn}>
+      <div className={classes.nextBtn} data-cy="addExperimentButton">
         <ButtonFilled
           handleClick={() => {
             handleEnvModification();

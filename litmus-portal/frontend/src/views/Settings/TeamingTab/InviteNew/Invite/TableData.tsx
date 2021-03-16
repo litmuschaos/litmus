@@ -52,7 +52,7 @@ const TableData: React.FC<TableDataProps> = ({
               className={classes.avatarBackground}
               style={{ alignContent: 'right' }}
             >
-              {row.name ? userInitials(row.name) : userInitials(row.username)}
+              {userInitials(row.username)}
             </Avatar>
             <div className={classes.detail}>
               <div> {row.username}</div>

@@ -22,6 +22,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import BackButton from '../../../../components/Button/BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../../graphql';
@@ -39,7 +40,6 @@ import {
   getProjectRole,
 } from '../../../../utils/getSearchParams';
 import { validateWorkflowName } from '../../../../utils/validate';
-import BackButton from '../BackButton';
 import useStyles, { MenuProps } from './styles';
 
 interface WorkflowDetails {
@@ -92,6 +92,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         FileType: 'experiment',
       },
     },
+    fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       const parsedYaml = YAML.parse(data.getYAMLData);
       workflowAction.setWorkflowDetails({
@@ -235,7 +236,6 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     <div className={classes.root}>
       <div className={classes.headerDiv}>
         <BackButton
-          isDisabled={false}
           onClick={() => {
             workflowAction.setWorkflowDetails({
               isCustomWorkflow: false,
@@ -260,9 +260,9 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               {t('customWorkflow.createWorkflow.workflowName')}:
             </Typography>
             <InputField
+              data-cy="workflowNameInput"
               label="Workflow Name"
               fullWidth
-              data-cy="inputWorkflowName"
               variant={
                 validateWorkflowName(workflowData.workflow_name)
                   ? 'error'
@@ -288,8 +288,8 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               {t('customWorkflow.createWorkflow.workflowDesc')}:
             </Typography>
             <InputField
+              data-cy="workflowDescriptionInput"
               label="Description"
-              data-cy="inputWorkflowDesc"
               InputProps={{
                 disableUnderline: true,
               }}
@@ -352,6 +352,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                         {t('customWorkflow.createWorkflow.selectHub')}
                       </InputLabel>
                       <Select
+                        data-cy="hubsDropDown"
                         value={selectedHub}
                         onChange={(e) => {
                           setSelectedHub(e.target.value as string);
@@ -362,7 +363,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                         className={classes.selectText}
                       >
                         {availableHubs.map((hubs) => (
-                          <MenuItem key={hubs.HubName} value={hubs.HubName}>
+                          <MenuItem
+                            data-cy="hubName"
+                            key={hubs.HubName}
+                            value={hubs.HubName}
+                          >
                             {hubs.HubName}
                           </MenuItem>
                         ))}
@@ -392,13 +397,17 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                           {t('customWorkflow.createWorkflow.selectExp')}
                         </InputLabel>
                         <OutlinedInput
+                          data-cy="selectedHub"
                           value={selectedExp}
                           onChange={(e) => {
                             setSelectedExp(e.target.value);
                             setOpen(true);
                           }}
                           endAdornment={
-                            <InputAdornment position="end">
+                            <InputAdornment
+                              position="end"
+                              data-cy="experimentDropDownArrow"
+                            >
                               <IconButton
                                 onClick={() => {
                                   setOpen(!open);
@@ -415,10 +424,14 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                         {open ? (
                           <ClickAwayListener onClickAway={() => setOpen(!open)}>
                             <Paper elevation={3}>
-                              <MenuList className={classes.expMenu}>
+                              <MenuList
+                                className={classes.expMenu}
+                                data-cy="experimentDropDown"
+                              >
                                 {filteredExperiment.length > 0 ? (
                                   filteredExperiment.map((exp) => (
                                     <MenuItem
+                                      data-cy="experimentName"
                                       key={`${exp.ChaosName}/${exp.ExperimentName}`}
                                       value={`${exp.ChaosName}/${exp.ExperimentName}`}
                                       onClick={() => {
@@ -476,6 +489,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               ) : null}
 
               <FormControlLabel
+                data-cy="uploadYamlRadioButton"
                 value="upload"
                 control={
                   <Radio
@@ -553,7 +567,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           </FormControl>
         </div>
       </div>
-      <div className={classes.nextButtonDiv}>
+      <div className={classes.nextButtonDiv} data-cy="nextButton">
         <ButtonFilled
           handleClick={() => {
             if (constructYAML === 'upload' && uploadedYAML !== '') {

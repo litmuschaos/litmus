@@ -4,7 +4,7 @@ import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -32,8 +32,8 @@ import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
 import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
 import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
 import ChooseAWorkflowCluster from '../../views/CreateWorkflow/WorkflowCluster';
-import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
+import Loader from '../Loader';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
@@ -255,6 +255,7 @@ const CustomStepper: React.FC = () => {
   };
 
   const [open, setOpen] = React.useState(false);
+  const [errorModal, setErrorModal] = React.useState(false);
 
   const handleBack = () => {
     if (activeStep === 2) {
@@ -265,10 +266,13 @@ const CustomStepper: React.FC = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow] = useMutation<
+  const [createChaosWorkFlow, { error: workflowError, loading }] = useMutation<
     CreateWorkflowResponse,
     CreateWorkFlowInput
   >(CREATE_WORKFLOW, {
+    onError: () => {
+      setErrorModal(true);
+    },
     onCompleted: () => {
       setOpen(true);
     },
@@ -308,7 +312,6 @@ const CustomStepper: React.FC = () => {
 
   const handleOpen = () => {
     handleMutation();
-    setOpen(true);
   };
 
   const handleClose = () => {
@@ -317,6 +320,10 @@ const CustomStepper: React.FC = () => {
       search: `?projectID=${projectID}&projectRole=${userRole}`,
     });
     setOpen(false);
+  };
+
+  const handleErrorModalClose = () => {
+    setErrorModal(false);
   };
 
   function gotoStep({ page }: { page: number }) {
@@ -351,9 +358,7 @@ const CustomStepper: React.FC = () => {
             marginTop: '1rem',
           }}
         >
-          <ButtonFilled isPrimary handleClick={() => history.goBack()}>
-            Go Back
-          </ButtonFilled>
+          <ButtonFilled onClick={() => history.goBack()}>Go Back</ButtonFilled>
         </div>
       </>
     );
@@ -388,21 +393,22 @@ const CustomStepper: React.FC = () => {
         <div>
           <div>
             <Modal
+              data-cy="FinishModal"
               open={open}
               onClose={handleClose}
               width="60%"
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
               modalActions={
-                <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+                <div data-cy="GoToWorkflowButton">
+                  <ButtonOutlined onClick={handleClose}>
+                    &#x2715;
+                  </ButtonOutlined>
+                </div>
               }
             >
               <div className={classes.modal}>
-                <img
-                  src="/icons/finish.svg"
-                  // className={classes.mark}
-                  alt="mark"
-                />
+                <img src="/icons/finish.svg" alt="mark" />
                 <div className={classes.heading}>
                   {t('workflowStepper.aNewChaosWorkflow')}
                   <br />
@@ -416,9 +422,8 @@ const CustomStepper: React.FC = () => {
                 </div>
                 <div className={classes.button}>
                   <ButtonFilled
-                    isPrimary
                     data-cy="selectFinish"
-                    handleClick={() => {
+                    onClick={() => {
                       setOpen(false);
                       tabs.changeWorkflowsTabs(0);
                       history.push({
@@ -432,28 +437,61 @@ const CustomStepper: React.FC = () => {
                 </div>
               </div>
             </Modal>
+            <Modal
+              open={errorModal}
+              onClose={handleErrorModalClose}
+              width="60%"
+              modalActions={
+                <ButtonOutlined onClick={handleErrorModalClose}>
+                  &#x2715;
+                </ButtonOutlined>
+              }
+            >
+              <div className={classes.modal}>
+                <img src="/icons/red-cross.svg" alt="mark" />
+                <div className={classes.heading}>
+                  <strong>{t('workflowStepper.workflowFailed')}</strong>
+                </div>
+                <div className={classes.headWorkflow}>
+                  <Typography className={classes.errorText}>
+                    {t('workflowStepper.error')} : {workflowError?.message}
+                  </Typography>
+                </div>
+                <div className={classes.button}>
+                  <ButtonFilled
+                    data-cy="selectFinish"
+                    onClick={() => {
+                      setErrorModal(false);
+                    }}
+                  >
+                    <div>{t('workflowStepper.backBtn')}</div>
+                  </ButtonFilled>
+                </div>
+              </div>
+            </Modal>
             {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
           {/* Control Buttons */}
           {activeStep !== 0 ? (
-            <div className={classes.buttonGroup}>
+            <div className={classes.buttonGroup} data-cy="StepperButtons">
               <ButtonOutline isDisabled={false} handleClick={handleBack}>
                 <Typography>Back</Typography>
               </ButtonOutline>
               {activeStep === steps.length - 1 ? (
                 <ButtonFilled
-                  isDisabled={validateWorkflowName(name)}
-                  handleClick={handleOpen}
-                  isPrimary
+                  disabled={validateWorkflowName(name) || loading}
+                  onClick={() => {
+                    handleOpen();
+                  }}
                 >
-                  <div>Finish</div>
+                  {loading ? (
+                    <Loader size={20} />
+                  ) : (
+                    <Typography>{t('workflowStepper.finish')}</Typography>
+                  )}
                 </ButtonFilled>
               ) : (
-                <ButtonFilled
-                  handleClick={() => handleNext()}
-                  isPrimary
-                  isDisabled={isDisable}
-                >
+                <ButtonFilled onClick={() => handleNext()} disabled={isDisable}>
                   <div>
                     Next
                     <img

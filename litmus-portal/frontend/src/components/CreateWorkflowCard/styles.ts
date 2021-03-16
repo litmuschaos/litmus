@@ -1,30 +1,53 @@
-import { makeStyles, Theme } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  cardAreaBody: {
-    height: '100%',
+interface StyleProps {
+  isDisabled?: boolean;
+}
+
+const useStyles = makeStyles((theme) => ({
+  createCardAction: {
+    width: '15.375rem',
+    color: (props: StyleProps) =>
+      props.isDisabled
+        ? theme.palette.text.disabled
+        : theme.palette.text.primary,
+    borderRadius: '0.1875rem',
+    padding: theme.spacing(3.75),
+    height: '22.5rem',
   },
 
-  createWorkflowHeading: {
-    fontSize: '0.9375rem',
-    position: 'absolute',
-    marginLeft: theme.spacing(3.75),
-    top: '10%',
+  createCardTitle: {
+    color: (props: StyleProps) =>
+      props.isDisabled ? theme.palette.text.disabled : theme.palette.highlight,
+    fontWeight: 700,
+    marginTop: theme.spacing(10),
+    fontSize: '1.5rem',
+    lineHeight: '130%',
   },
 
-  createWorkflowTitle: {
-    fontSize: 25,
-    position: 'absolute',
-    color: theme.palette.primary.main,
-    fontWeight: 'bold',
-    marginLeft: theme.spacing(3.75),
-    top: '30%',
+  createCardHeading: {
+    fontSize: '0.875rem',
   },
+
+  createCard: {
+    [theme.breakpoints.down('md')]: {
+      marginRight: theme.spacing(3.75),
+    },
+    marginLeft: theme.spacing(5),
+    pointerEvents: (props: StyleProps) => (props.isDisabled ? 'none' : 'all'),
+    boxShadow: (props: StyleProps) =>
+      props.isDisabled ? '' : `0px 4px 12px ${theme.palette.highlight}40`,
+    border: (props: StyleProps) =>
+      props.isDisabled
+        ? `1px solid ${theme.palette.text.disabled}`
+        : `1px solid ${theme.palette.highlight}`,
+    boxSizing: 'border-box',
+  },
+
   arrowForwardIcon: {
-    color: theme.palette.primary.main,
-    marginLeft: theme.spacing(22.5),
-    position: 'absolute',
-    bottom: '10%',
+    color: theme.palette.highlight,
+    marginLeft: theme.spacing(17.5),
+    marginTop: theme.spacing(12.5),
   },
 }));
 

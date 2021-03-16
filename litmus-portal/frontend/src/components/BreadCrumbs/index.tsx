@@ -2,12 +2,15 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import capitalize from '../../utils/capitalize';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
 
 const Breadcrumb: React.FC = () => {
   const pathname: string[] = window.location.pathname.split('/');
   let intermediateRoutes = '/';
   const classes = useStyles();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
 
   return (
     <Breadcrumbs className={classes.breadCrumb}>
@@ -26,7 +29,13 @@ const Breadcrumb: React.FC = () => {
             return <span key="schedule">{path}</span>;
           }
           const link = (
-            <Link key={path} to={intermediateRoutes}>
+            <Link
+              key={path}
+              to={{
+                pathname: intermediateRoutes,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              }}
+            >
               {capitalize(path)}
             </Link>
           );

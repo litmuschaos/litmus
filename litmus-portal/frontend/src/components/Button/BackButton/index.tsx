@@ -1,23 +1,22 @@
-import { Button, Typography } from '@material-ui/core';
+import { IconButton, IconButtonProps, Typography } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { history } from '../../../redux/configureStore';
 import useStyles from './styles';
 
-interface BackButtonProps {
-  isDisabled: boolean;
-}
-
-const BackButton: React.FC<BackButtonProps> = ({ isDisabled }) => {
+const BackButton: React.FC<IconButtonProps> = ({ onClick }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   return (
-    <Button
+    <IconButton
       size="medium"
       className={classes.btn}
-      disabled={isDisabled}
-      onClick={() => window.history.back()}
+      onClick={onClick ?? (() => history.goBack())}
     >
       <img src="/icons/back.svg" alt="back" />
-      <Typography className={classes.text}>Back</Typography>
-    </Button>
+      <Typography className={classes.text}>{t('button.backButton')}</Typography>
+    </IconButton>
   );
 };
 

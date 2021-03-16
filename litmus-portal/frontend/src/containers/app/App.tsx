@@ -18,26 +18,39 @@ const Workflows = lazy(() => import('../../pages/Workflows'));
 const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
-const BrowseTemplate = lazy(() =>
-  import('../../views/ChaosWorkflows/BrowseTemplate')
+const BrowseTemplate = lazy(
+  () => import('../../views/ChaosWorkflows/BrowseTemplate')
 );
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
-const TargetHome = lazy(() => import('../../components/Targets/ConnectHome'));
-const ConnectTargets = lazy(() =>
-  import('../../components/Targets/ConnectTarget')
-);
+const Targets = lazy(() => import('../../pages/Targets'));
+const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
-const ClusterInfo = lazy(() => import('../../components/Targets/ClusterInfo'));
+const AnalyticsDashboard = lazy(
+  () => import('../../pages/AnalyticsDashboards')
+);
+const DataSourceSelectPage = lazy(
+  () => import('../../pages/SelectAndConfigureDataSource/Select')
+);
+const DataSourceConfigurePage = lazy(
+  () => import('../../pages/SelectAndConfigureDataSource/Configure')
+);
+const DashboardSelectPage = lazy(
+  () => import('../../pages/SelectAndConfigureDashboards/Select')
+);
+const DashboardConfigurePage = lazy(
+  () => import('../../pages/SelectAndConfigureDashboards/Configure')
+);
+const DashboardPage = lazy(() => import('../../pages/MonitoringDashboardPage'));
 const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));
-const CreateCustomWorkflow = lazy(() =>
-  import('../../pages/CreateCustomWorkflow')
+const CreateCustomWorkflow = lazy(
+  () => import('../../pages/CreateCustomWorkflow')
 );
 
 const Routes: React.FC = () => {
@@ -107,6 +120,42 @@ const Routes: React.FC = () => {
         <Route exact path="/home" component={HomePage} />
         <Redirect exact path="/" to="/home" />
         <Route exact path="/workflows" component={Workflows} />
+        <Route exact path="/analytics" component={AnalyticsDashboard} />
+        <Route
+          exact
+          path="/analytics/datasource/select"
+          component={DataSourceSelectPage}
+        />
+        <Route
+          exact
+          path="/analytics/datasource/create"
+          component={() => <DataSourceConfigurePage configure={false} />}
+        />
+        <Route
+          exact
+          path="/analytics/datasource/configure"
+          component={() => <DataSourceConfigurePage configure />}
+        />
+        <Route
+          exact
+          path="/analytics/dashboard/select"
+          component={DashboardSelectPage}
+        />
+        <Route
+          exact
+          path="/analytics/dashboard/create"
+          component={() => <DashboardConfigurePage configure={false} />}
+        />
+        <Route
+          exact
+          path="/analytics/dashboard/configure"
+          component={() => <DashboardConfigurePage configure />}
+        />
+        <Route
+          exact
+          path="/analytics/dashboard"
+          component={() => <DashboardPage />}
+        />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
         <Route
           exact
@@ -117,7 +166,12 @@ const Routes: React.FC = () => {
         <Redirect exact path="/login" to="/login" />
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
-        <Redirect exact path="/workflows/analytics" to="/workflows" />
+
+        <Redirect exact path="/analytics/overview" to="/analytics" />
+        <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
+        <Redirect exact path="/analytics/kubernetesdashborad" to="/analytics" />
+        <Redirect exact path="/analytics/datasource" to="/analytics" />
+
         <Route
           exact
           path="/workflows/:workflowRunId"
@@ -139,8 +193,7 @@ const Routes: React.FC = () => {
           component={AnalyticsPage}
         />
         <Route exact path="/community" component={Community} />
-        <Route exact path="/targets" component={TargetHome} />
-        <Route exact path="/targets/cluster" component={ClusterInfo} />
+        <Route exact path="/targets" component={Targets} />
         <Route exact path="/target-connect" component={ConnectTargets} />
         <Route exact path="/myhub" component={MyHub} />
         <Route exact path="/myhub/connect" component={MyHubConnect} />
@@ -178,7 +231,7 @@ function App() {
     }
   }, [token]);
   return (
-    <LitmusThemeProvider platform="litmus-portal">
+    <LitmusThemeProvider>
       <Suspense
         fallback={
           <Center>

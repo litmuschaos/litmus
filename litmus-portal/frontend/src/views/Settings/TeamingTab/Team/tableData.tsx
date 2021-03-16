@@ -20,14 +20,21 @@ import useStyles from './styles';
 interface TableDataProps {
   row: Member;
   index: number;
+  showModal: () => void;
+  handleOpen: () => void;
+  open: boolean;
 }
-const TableData: React.FC<TableDataProps> = ({ row }) => {
+const TableData: React.FC<TableDataProps> = ({
+  row,
+  showModal,
+  handleOpen,
+  open,
+}) => {
   const classes = useStyles();
   const projectID = getProjectID();
 
   const { t } = useTranslation();
 
-  const [open, setOpen] = useState(false);
   // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
   const formatDate = (date: string) => {
     const day = moment(date).format('Do MMM, YYYY LT');
@@ -39,7 +46,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
     REMOVE_INVITATION,
     {
       onCompleted: () => {
-        setOpen(false);
+        showModal();
       },
       onError: () => {},
       refetchQueries: [
@@ -74,7 +81,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
             alt="User"
             className={classes.avatarBackground}
           >
-            {userInitials(memberDetails ? memberDetails.name : '')}
+            {userInitials(memberDetails ? memberDetails.username : '')}
           </Avatar>
           {memberDetails ? memberDetails.username : ''}
         </div>
@@ -96,11 +103,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
 
       {row.role !== 'Owner' ? (
         <TableCell className={classes.otherTC} key={row.user_id}>
-          <IconButton
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
+          <IconButton onClick={handleOpen}>
             <img alt="delete" src="./icons/deleteBin.svg" height="50" />
           </IconButton>
         </TableCell>
@@ -113,16 +116,10 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
         width="43.75rem"
         disableBackdropClick
         disableEscapeKeyDown
-        onClose={() => {
-          setOpen(false);
-        }}
+        onClose={showModal}
         modalActions={
           <div className={classes.closeModal}>
-            <IconButton
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
+            <IconButton onClick={showModal}>
               <img src="./icons/closeBtn.svg" alt="close" />
             </IconButton>
           </div>
@@ -142,11 +139,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
             </Typography>
           </div>
           <div className={classes.buttonGroup}>
-            <ButtonOutlined
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
+            <ButtonOutlined onClick={showModal}>
               <>{t('settings.teamingTab.deleteUser.noButton')}</>
             </ButtonOutlined>
 
@@ -158,7 +151,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     variables: {
                       data: {
                         project_id: projectID,
-                        user_name: row.user_name,
+                        user_id: row.user_id,
                         role: row.role,
                       },
                     },

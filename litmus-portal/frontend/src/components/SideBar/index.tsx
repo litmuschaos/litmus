@@ -9,6 +9,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { history } from '../../redux/configureStore';
+import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
@@ -116,7 +117,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="My Hub"
+            label="MyHubs"
             selected={pathName === 'myhub'}
           >
             <MyHubIcon />
@@ -134,6 +135,19 @@ const SideBar: React.FC = () => {
           selected={['targets', 'target-connect'].includes(pathName)}
         >
           <TargetsIcon />
+        </CustomisedListItem>
+        <CustomisedListItem
+          key="analytics"
+          handleClick={() => {
+            history.push({
+              pathname: `/analytics`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
+          }}
+          label="Analytics"
+          selected={pathName === 'analytics'}
+        >
+          <AnalyticsIcon />
         </CustomisedListItem>
         {projectRole === 'Owner' && (
           <CustomisedListItem

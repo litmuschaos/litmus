@@ -30,11 +30,13 @@ welcomeModal:
 
 sidebar:
   title: Litmus
-  version: 'Version: 1.13'
 
 header:
   profileDropdown:
     noProjectsOther: You are not part of any projects not owned by you
+
+button:
+  backButton: Back
 
 quickActionCard:
   quickActions: Quick Actions
@@ -42,6 +44,11 @@ quickActionCard:
   quickSurvey: Take a quick survey
   readDocs: Read the Litmus docs
   readAPIDocs: Read the Litmus Portal API docs
+  addDashboard: Add a Dashboard
+  addDataSource: Add a Data Source
+  addAgent: Add an agent
+  connectNewAgent: Connect a new agent
+  scheduleWorkflow: Schedule a workflow
 
 customWorkflowCard:
   customWorkflow: Create your own workflow
@@ -53,9 +60,12 @@ workflowStepper:
   successful: is successfully created!
   congratulationsSub1: Congratulations on creating your workflow! Now information about
   congratulationsSub2: it will be displayed on the workflow schedules.
+  error: Error
+  workflowFailed: Failed to create a new workflow.
   workflowBtn: Go to Workflow
   finish: Finish
   next: Next
+  backBtn: Back
 
 ######################################
 ############    Pages    #############
@@ -73,7 +83,7 @@ home:
   analytics:
     heading: How busy is the Litmus Project?
     moreInfo: See more
-  comingSoon: Coming soon!
+  comingSoon: Coming soon !
   resilienceScore: Resilience score
   recentActivity: Recent activity
   resilienceScoreComparisonOptions:
@@ -82,6 +92,14 @@ home:
     option3: Monthly
     granularity: Granularity
   recentActivityEmpty: No recent activity.
+  NonAdmin:
+    noAgent: No LitmusChaos Agent has been discovered on any cluster.
+    agentDeployInfo: To configure your workflow you need to deploy an agent. Click on “Deploy your first Agent” to continue.
+    chaosAgent: Deploy LitmusChaos agent on your Kubernetes clusters.
+    agents: Agents
+    chaosAgentInfo: Cloud native chaos engineering can be setup on this cluster using LitmusChaos
+    deployFirst: Deploy your first Agent
+    toProjects: To projects
 
 login:
   heading: Welcome to <strong>Litmus!</strong>
@@ -117,9 +135,6 @@ schedule:
   workflowBtn: Go to Workflow
   backBtn: Go Back
 
-workflowUnderground:
-  heading: 'Click on Info to see details of your workflow'
-
 community:
   title: 'Community'
   heading: 'Litmus Insights'
@@ -132,9 +147,9 @@ community:
 analytics:
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
-  comingSoon: Analytics Coming Soon!
-  waitingMessage: Waiting for workflow to start running!
-  chaosStartWaitingMessage: Waiting for chaos experiments to start!
+  comingSoon: Analytics Coming Soon !
+  waitingMessage: Waiting for workflow to start running !
+  chaosCompleteWaitingMessage: Waiting for chaos experiment to finish !
   highestScore: 'Highest Score:'
   lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
@@ -154,6 +169,94 @@ analytics:
     tableHead5: Last run
     close: Close
 
+analyticsDashboard:
+  heading: Analytics
+  overview: Overview
+  monitoringDashboardPage:
+    dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
+    reConfigureDashboard: Re-configure dashboard
+    updateDataSource: Update data source
+  workflowClusterDashboard:
+    title: Dashboard
+    tab1: Hourly
+    tab2: Daily
+    tab3: Monthly
+    tab4: Yearly
+    worflowSchedulesTitle: Workflow Schedules
+    clusterCountTitle: Clusters
+    timeSelectionMessage: Overview of latest
+    timeSelection0: Hour
+    timeSelection1: Day
+    timeSelection2: Month
+    scheduleWorkflowMessage: Schedule my first workflow
+  seeAll: See All
+  seeDetails: See Details
+  seeAnalytics: See Analytics
+  workflowStats:
+    title: Workflow stats
+    workflowPassed: Passed
+    workflowRunning: Running
+    workflowFailed: Failed
+  workflowScheduleTable:
+    title: Workflow Schedules
+    noRecordMessage: No workflow has been schedule
+  kubernetesDashboardTable:
+    title: Application Dashboard
+    noRecordMessage: No dashboard has been configured
+  workflowDashboard: Workflow Dashboards
+  overviewTabdataSourceTable: Connected Data Sources
+  applicationDashboard: Application Dashboards
+  connectedDataSources: Connected Data Sources
+  dataSource: Data sources
+  dataSourceTable:
+    tableHead1: Status
+    tableHead2: Data Source Name
+    tableHead3: Data Source Type
+    tableHead4: Last Configured
+    addDataSource: Add a Data Source
+    loading: Loading available data sources
+    noRecords: No data source available
+    fetchError: Unable to fetch data
+  dashboardTable:
+    tableHead1: Dashboard Name
+    tableHead2: Agent Name
+    tableHead3: Dashboard Type
+    tableHead4: Data Source Type
+    tableHead5: Last viewed
+    addDashboard: Add a Dashboard
+  glowCard:
+    title-0: Set it up
+    heading-0: Add a Data Source
+    title-1: Let's start!
+    heading-1: Configure a new chaos interleaved dashboard
+  scheduleWorkflowCard:
+    mainHeading-0: Schedule your
+    mainHeading-1: Workflow
+    mainHeading-2: now
+    subHeading: Worflow dashboards are available once the workflows are run
+    description: Create complex chaos workflow, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability workflows and compliance reports
+    buttonText: Schedule a workflow
+  configureBanner:
+    case-0:
+      heading: No data source is configured yet for any agent
+      description: To configure your first Kubernetes dashboard you need to connect a data source. Select "Add a data source" to connect.
+    case-1:
+      heading: Data sources has been added, now configure a dashboard
+      description: To configure your first Kubernets dashboard use the connect Data sources of this project
+  timeText:
+    lastRun: Last run
+    lastOpened: Last opened
+    lastConfigured: Last configured
+    ago: ago
+    seconds: seconds
+    minute: minute
+    minutes: minutes
+    hour: hour
+    hours: hours
+    day: day
+    days: days
+    few: few
+
 error:
   whoops: Whoops!
   pageUnavailable: This page is unavailable
@@ -163,6 +266,7 @@ error:
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow
   fetchError: An error has occurred while fetching the data
+
 ######################################
 ############    Views    #############
 ######################################
@@ -181,6 +285,17 @@ chaosWorkflows:
   browseSchedule:
     regularityOnce: Once
     showExperiment: Show Experiment
+
+analyticsDashboardViews:
+  kubernetesDashboard:
+    form:
+      dashboardPanels: Dashboard Panels
+    table:
+      seeAnalytics: See Analytics
+      configure: Configure
+      noRecords: No dashboard available
+      loading: Loading available dashboards
+      error: Unable to fetch data
 
 settings:
   accountsTab:
@@ -277,7 +392,7 @@ settings:
         receivedHeading:
           You have been invited to the following projects. Once accepted,
           they will be available to browse on the top right section of
-          this portal.
+          the portal.
       sentInvitation:
         resend: Resend
         noInvites: There is no one waiting for your invitation.
@@ -322,6 +437,7 @@ settings:
           fullName: Full Name
           email: Email Address
           username: Username
+        validationEmptySpace: Should not start with an empty space
       chooseAvatarModal:
         title: Change your Avatar
         info: You can now use your new password to login to your account
@@ -331,13 +447,13 @@ settings:
         headerInfo: was successfully created
         headerErr: while creating a new user.
         error: Error
-        info: Now information about it will be displayed on the user management screen of the application.
+        info: Now information about the user will be displayed on the user management screen of the application.
         button:
           done: Done
           create: Create
     editUser:
       header: Edit user profile
-      info: Edit the user's personal and login details
+      info: Edit the user's login details
       login: Login Details
       label:
         newPassword: New Password
@@ -364,10 +480,18 @@ settings:
     branch: Branch
     URL: Git URL
     setting: Back to settings
+    editHeader: Are you sure you want to edit the GitOps configuration?
+    editDescription: This will affect all the workflows. Few of the workflows may not work as expected.
+    edit: Edit
+    cancel: Cancel
+    proceed: Yes, proceed
 
 workflowDetailsView:
   argoWorkflow:
     loading: Loading Graph...
+    controls:
+      horizontal: Horizontal
+      vertical: Vertical
   nodeLogs:
     fetching: Fetching Logs...
     mainLogs: Main logs unavailable
@@ -382,6 +506,7 @@ workflowDetailsView:
       endTime: End Time
       duration: Duration
       namespace: Namespace
+      finished: To be finished
     nodeDetails:
       curr: Currently Running Nodes
       exec: Executed Nodes
@@ -512,16 +637,12 @@ targets:
   copy:
     copy: Copy
     copied: Copied
-    copying: Command copied to clickboard
+    copying: Command copied to clipboard
   newTarget:
     head: Connect a new target on your devices
-    head1: 1. Open the cluster console
-    head2: 2. Copy the command
-    head3: 3. Paste it into the cluster console
-    head4: 4. Click on the button
-    head5: Connect the target
-    conformation: Kuberenetes Agent is confirming, Please wait...
-    clusterDetails: Cluster Details
+    head1: Open the cluster console
+    head2: Download litmusctl
+    head3: Paste and Run the following command into the cluster console
   modalDelete:
     head1: Are you sure to
     head2: remove the current Agent?
@@ -592,9 +713,9 @@ internetIssues:
 ############     MyHub     ###########
 ######################################
 myhub:
-  title: My Hubs
+  title: MyHubs
   connectTarget: Connect the target
-  viewMyHub: View My Hub
+  viewMyHub: View MyHub
   error: '[Error: could not connect]'
   view: View
   validationEmptySpace: Should not start with an empty space
@@ -603,7 +724,7 @@ myhub:
   refresh: Refresh Hub
   disconnect: Disconnect Hub
   mainPage:
-    header: My Hub
+    header: MyHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
@@ -615,13 +736,13 @@ myhub:
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
     sync: Syncing Repo...
     retry: Retry Connection
-    disconnectHeader: Are you sure you want to disconnect My Hub?
+    disconnectHeader: Are you sure you want to disconnect MyHub?
     disconnectDesc: Action is not revertable
     cancel: Cancel
     deleteHub: Delete Hub
     syncError: Failed while syncing repo, try again!
   myhubChart:
-    header: My Hub
+    header: MyHub
     github: github.com/
     syncingRepo: Loading Charts, Please Wait...!
   connectHubPage:
@@ -634,14 +755,15 @@ myhub:
     creatingHub: while creating MyHub
     newHub: A new chaos hub
     success: is successfully created
-    newHubCreated: A new chaos hub will be added to the main page of the My hubs section
-    myHub: Back to my hubs
+    newHubCreated: A new chaos hub will be added to the main page of the MyHubs section
+    myHub: Back to MyHubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
+    sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
-    updateHub: Update the My Hub with correct details from the My Hubs section
+    updateHub: Update the MyHub with correct details from the MyHubs section
   videoCarousel:
     video: Video Tips
   installChaos:
@@ -660,12 +782,12 @@ myhub:
   editPage:
     edit: Edit the Hub
     click: Then click on the update button
-    submit: Update My Hub
+    submit: Update MyHub
     wait: Please wait while we are updating your repo!
-    updating: while updating My Hub
-    success: My Hub successfully updated
-    desc: My Hub will be updated in the main page of the My Hubs section
-    error: Error while updating My Hub
+    updating: while updating MyHub
+    success: MyHub successfully updated
+    desc: MyHub will be updated in the main page of the MyHubs section
+    error: Error while updating MyHub
 
 ######################################
 ########   Custom Workflow     #######
@@ -673,7 +795,7 @@ myhub:
 customWorkflow:
   createWorkflow:
     create: Creating a new chaos workflow
-    createDesc: Add new experiments from your ChaosHubs defined at MyHub section
+    createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
     workflowInfo: Workflow information
     workflowName: Workflow Name
     workflowDesc: Description
@@ -682,7 +804,7 @@ customWorkflow:
     selectHub: Select the hub
     public: Public Hub
     configure: Construct your workflow
-    construct: Using experiments from MyHub
+    construct: Using experiments from MyHubs
     upload: Upload your
     yaml: YAML
     uploadFile: Upload File
@@ -727,5 +849,3 @@ customWorkflow:
     addExp: Add experiment
   viewYAML:
     view: View the YAML here
-  backBtn:
-    back: Back

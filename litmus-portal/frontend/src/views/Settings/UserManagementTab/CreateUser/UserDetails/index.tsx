@@ -1,5 +1,5 @@
 import { Avatar, Button, Typography } from '@material-ui/core';
-import { InputField, Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,22 +16,22 @@ interface PersonalDetailsProps {
   userValue: string;
   handleEmailChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   emailValue: string;
-  usernameIsDisabled: boolean;
-  nameIsDisabled: boolean;
-  emailIsDisabled: boolean;
+  isUsernameDisabled: boolean;
+  isNameDisabled: boolean;
+  isEmailDisabled: boolean;
 }
 
 // Displays the personals details on the "accounts" tab
 const UserDetails: React.FC<PersonalDetailsProps> = ({
   handleNameChange,
   nameValue,
-  handleUserChange,
   userValue,
   handleEmailChange,
   emailValue,
-  usernameIsDisabled,
-  nameIsDisabled,
-  emailIsDisabled,
+  handleUserChange,
+  isUsernameDisabled,
+  isNameDisabled,
+  isEmailDisabled,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -85,14 +85,13 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
           <div className={classes.details1}>
             <div data-cy="InputName">
               <InputField
-                required
                 helperText={
                   validateStartEmptySpacing(nameValue)
                     ? 'Should not start with an empty space'
                     : ''
                 }
+                disabled={isNameDisabled}
                 value={nameValue}
-                disabled={nameIsDisabled}
                 onChange={handleNameChange}
                 variant={
                   validateStartEmptySpacing(nameValue) ? 'error' : 'primary'
@@ -105,13 +104,12 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
             <div style={{ width: '2rem' }} />
             <div data-cy="InputEmail">
               <InputField
-                required
                 helperText={
                   validateEmail(emailValue) ? 'Should be a valid email' : ''
                 }
                 type="email"
+                disabled={isEmailDisabled}
                 value={emailValue}
-                disabled={emailIsDisabled}
                 onChange={handleEmailChange}
                 variant={validateEmail(emailValue) ? 'error' : 'primary'}
                 label={t(
@@ -123,13 +121,23 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
             <div style={{ marginTop: '5rem' }} />
             <div data-cy="username">
               <InputField
-                value={userValue}
-                onChange={handleUserChange}
-                disabled={usernameIsDisabled}
-                variant="primary"
+                helperText={
+                  validateStartEmptySpacing(userValue)
+                    ? t(
+                        'settings.userManagementTab.createUser.userDetails.validationEmptySpace'
+                      )
+                    : ''
+                }
                 label={t(
-                  'settings.userManagementTab.createUser.userDetails.label.username'
+                  'settings.userManagementTab.createUser.label.username'
                 )}
+                required
+                value={userValue}
+                disabled={isUsernameDisabled}
+                onChange={handleUserChange}
+                variant={
+                  validateStartEmptySpacing(userValue) ? 'error' : 'primary'
+                }
               />
             </div>
           </div>

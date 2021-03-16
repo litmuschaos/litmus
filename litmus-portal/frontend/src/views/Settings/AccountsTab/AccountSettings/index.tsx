@@ -1,5 +1,5 @@
 import { Divider, Typography } from '@material-ui/core';
-import { InputField, Modal } from 'litmus-ui';
+import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
@@ -102,6 +102,11 @@ const AccountSettings: React.FC = () => {
         }
         setLoading(false);
         setOpen(true);
+        setPassword({
+          newPassword: '',
+          currPassword: '',
+          confNewPassword: '',
+        });
       })
       .catch((err) => {
         setLoading(false);
@@ -188,7 +193,7 @@ const AccountSettings: React.FC = () => {
                       ? 'error'
                       : isSuccess.current
                       ? 'success'
-                      : 'error'
+                      : 'primary'
                   }
                   value={password.confNewPassword}
                 />
@@ -199,7 +204,8 @@ const AccountSettings: React.FC = () => {
                   isPrimary
                   isDisabled={
                     !(
-                      isSuccess.current &&
+                      password.newPassword.length > 0 &&
+                      password.newPassword === password.confNewPassword &&
                       password.currPassword.length > 0 &&
                       !loading
                     )
@@ -219,7 +225,15 @@ const AccountSettings: React.FC = () => {
                   )}
                 </ButtonFilled>
               </div>
-              <Modal open={open} onClose={handleClose}>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                modalActions={
+                  <ButtonOutlined onClick={handleClose}>
+                    &#x2715;
+                  </ButtonOutlined>
+                }
+              >
                 {error.length ? (
                   <div className={classes.errDiv}>
                     <div className={classes.textError}>
@@ -270,7 +284,6 @@ const AccountSettings: React.FC = () => {
                             'settings.accountsTab.accountsSettings.modal.headerStrong'
                           )}
                         </strong>
-                        Your password <strong>has been changed!</strong>
                       </Typography>
                     </div>
                     <div className={classes.text1}>

@@ -10,7 +10,7 @@ import {
 } from '../../../../../graphql';
 import { MemberInvitation } from '../../../../../models/graphql/invite';
 import { Member, Project, Projects } from '../../../../../models/graphql/user';
-import { getUserId, getUsername, getUserRole } from '../../../../../utils/auth';
+import { getUserId, getUserRole } from '../../../../../utils/auth';
 import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -120,7 +120,7 @@ const AcceptedInvitations: React.FC = () => {
                         variables: {
                           data: {
                             project_id: project.id,
-                            user_name: getUsername(),
+                            user_id: getUserId(),
                             role: getUserRole(),
                           },
                         },

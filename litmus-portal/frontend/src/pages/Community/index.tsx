@@ -122,7 +122,7 @@ const Community: React.FC = () => {
                     </Typography>
                   </CardContent>
                   <a
-                    href="https://blog.mayadata.io/"
+                    href="https://dev.to/litmus-chaos"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={classes.devToLink}
@@ -146,7 +146,7 @@ const Community: React.FC = () => {
                 <GeoMap />
               </Paper>
               <div className={classes.quickActionCard}>
-                <QuickActionCard />
+                <QuickActionCard analyticsHome={false} nonAdmin />
               </div>
             </div>
           </div>

@@ -1,7 +1,13 @@
 /* eslint-disable no-empty-pattern */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-param-reassign */
-import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  useTheme,
+} from '@material-ui/core';
 import Plotly from 'plotly.js';
 import { string } from 'prop-types';
 import React, { useEffect } from 'react';
@@ -14,6 +20,7 @@ const Plot = createPlotlyComponent(Plotly);
 
 const CommunityAnalyticsPlot: React.FC = () => {
   const classes = useStyles();
+  const { palette } = useTheme();
 
   const { communityData } = useSelector(
     (state: RootState) => state.communityData
@@ -109,7 +116,11 @@ const CommunityAnalyticsPlot: React.FC = () => {
       });
     }
 
-    const dataObject = { x: [] = [Date], y: [] = [string], y2: [] = [string] };
+    const dataObject = {
+      x: ([] = [Date]),
+      y: ([] = [string]),
+      y2: ([] = [string]),
+    };
 
     rawData.forEach(function dateSplit(datum: any) {
       const splits = datum.date.split('-');
@@ -174,6 +185,16 @@ const CommunityAnalyticsPlot: React.FC = () => {
 
   useEffect(() => {
     processData();
+    try {
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
+      nodeStyle.left = '29%';
+      nodeStyle.width = 'fit-content';
+      nodeStyle.backgroundColor = palette.background.paper;
+    } catch (err) {
+      console.error(err);
+    }
   }, [currentPlotType, currentGranularityType]);
 
   return (
@@ -228,91 +249,99 @@ const CommunityAnalyticsPlot: React.FC = () => {
           <MenuItem value="Monthly">Monthly</MenuItem>
         </Select>
       </FormControl>
-
-      <div className={classes.plot}>
-        <Plot
-          data={[
-            {
-              type: 'scatter',
-              x: data.x,
-              y: data.y,
-              mode: 'lines',
-              name: 'Operator Installs',
-              line: { color: '#109B67' },
+      <Plot
+        className={classes.plot}
+        data={[
+          {
+            type: 'scatter',
+            x: data.x,
+            y: data.y,
+            mode: 'lines',
+            name: 'Operator Installs',
+            line: { color: palette.secondary.main },
+          },
+          {
+            type: 'scatter',
+            x: data.x,
+            y: data.y2,
+            mode: 'lines',
+            name: 'Experiment Runs',
+            yaxis: 'y2',
+            line: { color: palette.primary.main },
+          },
+        ]}
+        layout={{
+          autosize: true,
+          height: 800,
+          margin: {
+            l: 60,
+            r: 60,
+            b: 10,
+            t: 5,
+            pad: 10,
+          },
+          xaxis: {
+            rangeselector: selectorOptions as any,
+            rangeslider: { visible: true },
+          },
+          yaxis: {
+            title: 'Operators',
+            side: 'left',
+            showgrid: false,
+          },
+          yaxis2: {
+            title: 'Experiments',
+            side: 'right',
+            overlaying: 'y',
+          },
+          legend: {
+            x: 0,
+            y: 1,
+            traceorder: 'normal',
+            font: {
+              family: 'ubuntu',
+              size: 12,
+              color: palette.text.primary,
             },
-            {
-              type: 'scatter',
-              x: data.x,
-              y: data.y2,
-              mode: 'lines',
-              name: 'Experiment Runs',
-              yaxis: 'y2',
-              line: { color: '#858CDD' },
-            },
-          ]}
-          layout={{
-            autosize: true,
-            width: 920,
-            height: 650,
-            margin: {
-              l: 60,
-              r: 60,
-              b: 10,
-              t: 5,
-              pad: 10,
-            },
-            xaxis: {
-              rangeselector: selectorOptions as any,
-              rangeslider: { visible: true },
-            },
-            yaxis: {
-              title: 'Operators',
-              side: 'left',
-              showgrid: false,
-            },
-            yaxis2: {
-              title: 'Experiments',
-              side: 'right',
-              overlaying: 'y',
-            },
-            legend: {
-              x: 0,
-              y: 1,
-              traceorder: 'normal',
-              font: {
-                family: 'ubuntu',
-                size: 12,
-                color: '#000',
-              },
-              bgcolor: '#E2E2E2',
-              bordercolor: '#FFFFFF',
-              borderwidth: 0,
-            },
-          }}
-          useResizeHandler
-          style={{
-            width: 'fit-content',
-            margin: 'auto',
-          }}
-          config={{
-            displaylogo: false,
-            autosizable: true,
-            responsive: true,
-            frameMargins: 0.2,
-            showAxisDragHandles: true,
-            showAxisRangeEntryBoxes: true,
-            showTips: true,
-            displayModeBar: true,
-            toImageButtonOptions: {
-              format: 'png',
-              filename: 'Litmus_Community_Stats',
-              width: 1920,
-              height: 1080,
-              scale: 2,
-            },
-          }}
-        />
-      </div>
+            bgcolor: palette.background.paper,
+            bordercolor: palette.background.paper,
+            borderwidth: 0,
+          },
+        }}
+        useResizeHandler
+        style={{
+          margin: 'auto',
+        }}
+        config={{
+          displaylogo: false,
+          autosizable: true,
+          responsive: true,
+          frameMargins: 0.2,
+          showAxisDragHandles: true,
+          showAxisRangeEntryBoxes: true,
+          showTips: true,
+          displayModeBar: true,
+          toImageButtonOptions: {
+            format: 'png',
+            filename: 'Litmus_Community_Stats',
+            width: 1920,
+            height: 1080,
+            scale: 2,
+          },
+        }}
+        onInitialized={() => {
+          try {
+            const nodeStyle = (document.getElementsByClassName(
+              'modebar'
+            )[0] as HTMLElement).style;
+            nodeStyle.left = '29%';
+            nodeStyle.width = 'fit-content';
+            nodeStyle.backgroundColor = palette.background.paper;
+          } catch (err) {
+            console.error(err);
+          }
+        }}
+      />
     </div>
   );
 };

@@ -270,7 +270,7 @@ const MyHub: React.FC = () => {
                 {t('myhub.mainPage.videoDescription')}
               </Typography>
               <div className={classes.quickActionDiv}>
-                <QuickActionCard />
+                <QuickActionCard analyticsHome={false} nonAdmin />
               </div>
             </div>
           </div>

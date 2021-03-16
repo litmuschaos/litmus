@@ -126,6 +126,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.disabledBackground,
     padding: theme.spacing(2.5),
   },
+  sshAlert: {
+    color: theme.palette.error.main,
+    fontSize: '0.75rem',
+  },
   alertText: {
     marginBottom: theme.spacing(2.5),
     fontSize: '0.75rem',

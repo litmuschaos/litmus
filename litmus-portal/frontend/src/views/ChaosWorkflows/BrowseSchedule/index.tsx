@@ -134,7 +134,7 @@ const BrowseSchedule: React.FC = () => {
     });
   };
   return (
-    <div>
+    <div data-cy="workflowSchedulesTable">
       <section className="Heading section">
         <div className={classes.headerSection}>
           {/* Search Field */}
@@ -308,7 +308,7 @@ const BrowseSchedule: React.FC = () => {
                   )
                   .map((data: ScheduleWorkflow) => (
                     <TableRow
-                      data-cy="browseScheduleData"
+                      data-cy="workflowSchedulesTableRow"
                       key={data.workflow_id}
                     >
                       <TableData data={data} deleteRow={deleteRow} />

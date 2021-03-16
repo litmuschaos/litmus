@@ -14,7 +14,7 @@ import {
   UserInvite,
 } from '../../../../../models/graphql/invite';
 import { Projects } from '../../../../../models/graphql/user';
-import { getUserId, getUsername } from '../../../../../utils/auth';
+import { getUserId } from '../../../../../utils/auth';
 import { userInitials } from '../../../../../utils/user';
 import useStyles from './styles';
 
@@ -114,7 +114,7 @@ const ReceivedInvitations: React.FC = () => {
                     {userInitials(
                       allUsers?.filter((data) => {
                         return row.user_id === data.id;
-                      })[0]?.name
+                      })[0]?.username
                     )}
                   </Avatar>
                   <div>
@@ -122,7 +122,7 @@ const ReceivedInvitations: React.FC = () => {
                       {
                         allUsers?.filter((data) => {
                           return row.user_id === data.id;
-                        })[0]?.name
+                        })[0]?.username
                       }
                     </Typography>
                     <Typography className={classes.email}>
@@ -152,7 +152,7 @@ const ReceivedInvitations: React.FC = () => {
                         variables: {
                           member: {
                             project_id: row.projectID,
-                            user_name: getUsername(),
+                            user_id: getUserId(),
                             role: row.role,
                           },
                         },
@@ -174,7 +174,7 @@ const ReceivedInvitations: React.FC = () => {
                           variables: {
                             member: {
                               project_id: row.projectID,
-                              user_name: getUsername(),
+                              user_id: getUserId(),
                               role: row.role,
                             },
                           },

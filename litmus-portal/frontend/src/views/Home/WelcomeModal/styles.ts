@@ -17,11 +17,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(4),
   },
   modal: {
-    overflow: 'hidden',
+    overflowY: 'hidden',
   },
   insideModal: {
     [theme.breakpoints.up('lg')]: {
-      padding: theme.spacing(20),
+      padding: theme.spacing(15),
     },
     paddingBottom: theme.spacing(12),
     padding: theme.spacing(5),
@@ -52,10 +52,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   /* CSS for stepper */
   stepper: {
-    position: 'absolute',
-    left: '50%',
-    transform: 'translate(-50%, 0)',
-    bottom: '10%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.palette.common.white,
+    marginBottom: theme.spacing(5),
   },
   buttonDiv: {
     display: 'flex',
