@@ -6,9 +6,8 @@ import { useTranslation } from 'react-i18next';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { Cluster } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
-import { getUserRole } from '../../../utils/auth';
 import timeDifferenceForDate from '../../../utils/datesModifier';
-import { getProjectID } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -29,7 +28,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     return 'Date not available';
   };
 
-  const userRole = getUserRole();
+  const userRole = getProjectRole();
 
   const [open, setOpen] = React.useState(false);
 

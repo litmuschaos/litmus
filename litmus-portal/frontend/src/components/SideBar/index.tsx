@@ -102,7 +102,7 @@ const SideBar: React.FC = () => {
               });
             }}
             label="Workflows"
-            selected={pathName === 'workflows'}
+            selected={['workflows', 'create-workflow'].includes(pathName)}
           >
             <WorkflowsIcon />
           </CustomisedListItem>
@@ -131,7 +131,7 @@ const SideBar: React.FC = () => {
             });
           }}
           label="Targets"
-          selected={pathName === 'targets'}
+          selected={['targets', 'target-connect'].includes(pathName)}
         >
           <TargetsIcon />
         </CustomisedListItem>

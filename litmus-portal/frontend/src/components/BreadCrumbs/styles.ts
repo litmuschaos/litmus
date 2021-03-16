@@ -2,9 +2,11 @@ import { makeStyles, Theme } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) => ({
   breadCrumb: {
-    fontSize: 12,
-    textDecoration: 'none',
-    color: theme.palette.text.primary,
+    fontSize: '0.875rem',
+    '& *': {
+      color: theme.palette.text.hint,
+      textDecoration: 'none',
+    },
   },
 }));
 

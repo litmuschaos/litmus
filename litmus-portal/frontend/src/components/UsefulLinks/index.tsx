@@ -52,7 +52,12 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
           (d: Link) =>
             d.Url && (
               <div key={d.Name}>
-                <a href={d.Url} className={classes.createLinkText}>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={d.Url}
+                  className={classes.createLinkText}
+                >
                   <Typography className={classes.linkType}>{d.Name}</Typography>
                 </a>
               </div>

@@ -10,7 +10,7 @@ const Breadcrumb: React.FC = () => {
   const classes = useStyles();
 
   return (
-    <Breadcrumbs>
+    <Breadcrumbs className={classes.breadCrumb}>
       {pathname.map((path) => {
         if (path) {
           intermediateRoutes += path;
@@ -26,11 +26,7 @@ const Breadcrumb: React.FC = () => {
             return <span key="schedule">{path}</span>;
           }
           const link = (
-            <Link
-              key={path}
-              to={intermediateRoutes}
-              className={classes.breadCrumb}
-            >
+            <Link key={path} to={intermediateRoutes}>
               {capitalize(path)}
             </Link>
           );
