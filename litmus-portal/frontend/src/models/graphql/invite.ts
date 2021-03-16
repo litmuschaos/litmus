@@ -19,3 +19,11 @@ export interface UserInvite {
   username: string;
   email: string;
 }
+
+// Invitation status for users
+export enum InvitationStatus {
+  accepted = 'Accepted',
+  pending = 'Pending',
+  declined = 'Declined',
+  exited = 'Exited',
+}

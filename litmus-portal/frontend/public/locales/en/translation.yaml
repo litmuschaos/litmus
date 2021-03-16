@@ -113,14 +113,14 @@ login:
   passwordForgot: Don’t remember your password?
 
 schedule:
-  heading: "Schedule a workflow"
-  headingDesc: "Click on test to see detailed log of your workflow"
-  headingText: "Schedule details:"
-  description: "Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you."
-  save: "Save Changes"
+  heading: 'Schedule a workflow'
+  headingDesc: 'Click on test to see detailed log of your workflow'
+  headingText: 'Schedule details:'
+  description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
+  save: 'Save Changes'
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: "Choose the minutes, hours, or days when you want to start workflow"
+  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
   scheduleSpecificTime: Schedule at a specific time
   scheduleFuture: Select date and time to start workflow in future
   scheduleRecurring: Recurring Schedule
@@ -128,7 +128,7 @@ schedule:
   after: After
   at: at
   At: At
-  scheduleOn: "On"
+  scheduleOn: 'On'
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new workflow on this project.
   contact: Contact portal administrator to upgrade your permission.
@@ -140,11 +140,11 @@ schedule:
   backBtn: Go Back
 
 community:
-  title: "Community"
-  heading: "Litmus Insights"
-  headingDesc: "Stats for the Litmus community"
-  analyticDesc: "Periodic growth of Litmus"
-  statsHeading: "Litmus users around the world:"
+  title: 'Community'
+  heading: 'Litmus Insights'
+  headingDesc: 'Stats for the Litmus community'
+  analyticDesc: 'Periodic growth of Litmus'
+  statsHeading: 'Litmus users around the world:'
   litmusChaos: Litmuschaos
   follow: Follow
 
@@ -154,8 +154,8 @@ analytics:
   comingSoon: Analytics Coming Soon !
   waitingMessage: Waiting for workflow to start running !
   chaosCompleteWaitingMessage: Waiting for chaos experiment to finish !
-  highestScore: "Highest Score:"
-  lowestScore: "Lowest Score:"
+  highestScore: 'Highest Score:'
+  lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
   targetCluster: Target cluster
@@ -396,7 +396,7 @@ settings:
         receivedHeading:
           You have been invited to the following projects. Once accepted,
           they will be available to browse on the top right section of
-          this portal.
+          the portal.
       sentInvitation:
         resend: Resend
         noInvites: There is no one waiting for your invitation.
@@ -451,13 +451,13 @@ settings:
         headerInfo: was successfully created
         headerErr: while creating a new user.
         error: Error
-        info: Now information about it will be displayed on the user management screen of the application.
+        info: Now information about the user will be displayed on the user management screen of the application.
         button:
           done: Done
           create: Create
     editUser:
       header: Edit user profile
-      info: Edit the user's personal and login details
+      info: Edit the user's login details
       login: Login Details
       label:
         newPassword: New Password
@@ -479,7 +479,7 @@ settings:
     disconnect: Are you sure you want to disconnect?
     save: Save Locally
     repo: Git Repository
-    desc: "* Any existing or active workflows saved locally will not be synced into the git repository"
+    desc: '* Any existing or active workflows saved locally will not be synced into the git repository'
     connect: Connect
     branch: Branch
     URL: Git URL
@@ -710,7 +710,7 @@ workflows:
 #########################################
 
 internetIssues:
-  fetchData: "Fetching the data..."
+  fetchData: 'Fetching the data...'
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
@@ -720,7 +720,7 @@ myhub:
   title: MyHubs
   connectTarget: Connect the target
   viewMyHub: View MyHub
-  error: "[Error: could not connect]"
+  error: '[Error: could not connect]'
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
@@ -765,7 +765,7 @@ myhub:
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
-    sshAlert: "*Make sure to provide the SSH link of the Git Repository"
+    sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
     updateHub: Update the MyHub with correct details from the MyHubs section
   videoCarousel:
