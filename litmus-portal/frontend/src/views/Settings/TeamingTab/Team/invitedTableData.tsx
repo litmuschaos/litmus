@@ -211,14 +211,12 @@ const InvitedTableData: React.FC<TableDataProps> = ({
 
       <TableCell className={classes.buttonTC} key={row.user_id}>
         <div className={classes.lastCell}>
-          {row.invitation === InvitationStatus.exited ||
-          row.invitation === InvitationStatus.declined ? (
-            <></>
-          ) : (
-            <IconButton onClick={handleOpen}>
-              <img alt="delete" src="./icons/deleteBox.svg" height="45" />
-            </IconButton>
-          )}
+          {row.invitation !== InvitationStatus.exited &&
+            row.invitation !== InvitationStatus.declined && (
+              <IconButton onClick={handleOpen}>
+                <img alt="delete" src="./icons/deleteBox.svg" height="45" />
+              </IconButton>
+            )}
           <ButtonFilled
             disabled={false}
             onClick={() => {
