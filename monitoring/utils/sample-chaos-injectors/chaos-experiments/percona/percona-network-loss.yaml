@@ -1,0 +1,39 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: percona-network-chaos
+  namespace: litmus
+spec:
+  jobCleanUpPolicy: "retain"
+  annotationCheck: "false"
+  engineState: "active"
+  monitoring: true
+  appinfo:
+    appns: "pxc"
+    applabel: "app.kubernetes.io/name=percona-xtradb-cluster"
+    appkind: "statefulset"
+  chaosServiceAccount: litmus-admin
+  experiments:
+    - name: pod-network-loss
+      spec:
+        components:
+          env:
+            #Network interface inside target container
+            - name: NETWORK_INTERFACE
+              value: "eth0"
+            - name: NETWORK_PACKET_LOSS_PERCENTAGE
+              value: "100"
+            - name: TOTAL_CHAOS_DURATION
+              value: "9" # in seconds
+            - name: TARGET_PODS
+              value: "cluster1-pxc-1"
+            - name: DESTINATION_HOSTS
+              value: "cluster1-pxc-0,cluster1-pxc-2"
+            # provide the name of container runtime
+            # for litmus LIB, it supports docker, containerd, crio
+            # for pumba LIB, it supports docker only
+            - name: CONTAINER_RUNTIME
+              value: "docker"
+            # provide the socket file path
+            - name: SOCKET_PATH
+              value: "/var/run/docker.sock"

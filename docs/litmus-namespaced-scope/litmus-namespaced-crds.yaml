@@ -106,21 +106,22 @@ spec:
                             k8sProbe/inputs:
                               type: object
                               properties:
-                                command:
-                                  type: object
-                                  properties:
-                                    group:
-                                      type: string
-                                    version:
-                                      type: string
-                                    resource:
-                                      type: string
-                                    namespace:
-                                      type: string
-                                    fieldSelector:
-                                      type: string
-                                    labelSelector:
-                                      type: string
+                                group:
+                                  type: string
+                                version:
+                                  type: string
+                                resource:
+                                  type: string
+                                namespace:
+                                  type: string
+                                fieldSelector:
+                                  type: string
+                                labelSelector:
+                                  type: string
+                                operation:
+                                  type: string
+                                  pattern: ^(present|absent|create|delete)$
+                                  minLength: 1
                             cmdProbe/inputs:
                               type: object
                               properties:
@@ -149,7 +150,8 @@ spec:
                                   minLength: 1
                                 insecureSkipVerify:
                                   type: boolean
-                                  minLength: 1
+                                responseTimeout: 
+                                  type: integer
                                 method:
                                   type: object
                                   minProperties: 1
@@ -216,10 +218,6 @@ spec:
                             mode:
                               type: string
                               pattern: ^(SOT|EOT|Edge|Continuous|OnChaos)$
-                              minLength: 1
-                            operation:
-                              type: string
-                              pattern: ^(present|absent|create|delete)$
                               minLength: 1
                             data:
                               type: string

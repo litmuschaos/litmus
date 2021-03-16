@@ -20,7 +20,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.2.2"
+      "version": "7.4.3"
     },
     {
       "type": "panel",
@@ -40,7 +40,7 @@
       {
         "datasource": "${DS_DS_PROMETHEUS}",
         "enable": true,
-        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\", chaosresult_namespace=\"litmus\"}",
         "hide": false,
         "iconColor": "#F2CC0C",
         "limit": 100,
@@ -56,9 +56,9 @@
       {
         "datasource": "${DS_DS_PROMETHEUS}",
         "enable": true,
-        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\", chaosresult_namespace=\"litmus\"}",
         "hide": false,
-        "iconColor": "#E0B400",
+        "iconColor": "#E02F44",
         "limit": 100,
         "name": "catalogue-pod-cpu-hog",
         "showIn": 0,
@@ -71,9 +71,9 @@
       {
         "datasource": "${DS_DS_PROMETHEUS}",
         "enable": true,
-        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"litmus\"}",
         "hide": false,
-        "iconColor": "#E0B400",
+        "iconColor": "#3274D9",
         "limit": 100,
         "name": "catalogue-node-cpu-hog",
         "showIn": 0,
@@ -86,9 +86,9 @@
       {
         "datasource": "${DS_DS_PROMETHEUS}",
         "enable": true,
-        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"litmus\"}",
         "hide": false,
-        "iconColor": "#E0B400",
+        "iconColor": "#56A64B",
         "limit": 100,
         "name": "orders-node-memory-hog",
         "showIn": 0,
@@ -173,74 +173,20 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:485",
-          "alias": "catalogue-pod-cpu-hog",
-          "color": "#C4162A",
-          "fillGradient": 5,
-          "stack": "A",
-          "steppedLine": true
-        },
-        {
-          "$$hashKey": "object:486",
-          "alias": "orders-pod-memory-hog",
-          "color": "#C4162A",
-          "fillGradient": 5,
-          "stack": "B",
-          "steppedLine": true
-        },
-        {
-          "$$hashKey": "object:676",
-          "alias": "catalogue-node-cpu-hog",
-          "color": "#C4162A",
-          "fillGradient": 5,
-          "stack": "C",
-          "steppedLine": true
-        },
-        {
-          "$$hashKey": "object:681",
-          "alias": "orders-node-memory-hog",
-          "color": "#C4162A",
-          "fillGradient": 5,
-          "stack": "D",
-          "steppedLine": true
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": true,
       "targets": [
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "instant": false,
+          "expr": "litmuschaos_awaited_experiments",
           "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "catalogue-pod-cpu-hog",
+          "legendFormat": "{{chaosresult_name}}",
           "refId": "A"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "orders-pod-memory-hog",
-          "refId": "B"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-node-cpu-hog",
-          "refId": "C"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-node-memory-hog",
-          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -278,7 +224,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -293,7 +239,6 @@
         "defaults": {
           "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -331,13 +276,14 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "sum(chaosengine_experiments_count{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
-          "instant": true,
+          "expr": "sum(litmuschaos_passed_experiments + litmuschaos_failed_experiments)",
+          "instant": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -357,7 +303,6 @@
         "defaults": {
           "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -395,13 +340,14 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "sum(chaosengine_passed_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
-          "instant": true,
+          "expr": "sum(litmuschaos_passed_experiments)",
+          "instant": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -421,7 +367,6 @@
         "defaults": {
           "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -459,13 +404,14 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "sum(chaosengine_failed_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
-          "instant": true,
+          "expr": "sum(litmuschaos_failed_experiments)",
+          "instant": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -483,7 +429,6 @@
         "defaults": {
           "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -521,12 +466,13 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "sum(chaosengine_waiting_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "expr": "sum(litmuschaos_awaited_experiments)",
           "instant": true,
           "interval": "",
           "intervalFactor": 3,
@@ -592,7 +538,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -640,13 +586,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "F"
@@ -735,7 +681,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -801,13 +747,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "E"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "G"
@@ -911,7 +857,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -961,13 +907,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "C"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "E"
@@ -1056,7 +1002,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1124,13 +1070,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "F"
@@ -1232,7 +1178,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1339,7 +1285,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1464,7 +1410,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1572,7 +1518,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1697,7 +1643,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1800,7 +1746,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1925,7 +1871,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2028,7 +1974,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2153,7 +2099,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2256,7 +2202,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2328,7 +2274,7 @@
     }
   ],
   "refresh": "10s",
-  "schemaVersion": 26,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -2365,5 +2311,5 @@
   "timezone": "browser",
   "title": "Sock-Shop Performance",
   "uid": "sockshopperfornamce",
-  "version": 1
+  "version": 7
 }

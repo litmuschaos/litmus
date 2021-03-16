@@ -6,7 +6,7 @@ This dashboard visualizes Sock Shop application metrics metrics interleaved with
 
 - Sock shop microservices application deployments with service monitors.
 
-- Litmus event router and chaos exporter with service monitors.
+- Litmus chaos exporter with service monitors.
 
 - Prometheus operator and deployment configured for using the service monitors.
 

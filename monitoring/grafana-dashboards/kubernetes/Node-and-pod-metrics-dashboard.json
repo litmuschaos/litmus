@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.1.5"
+      "version": "7.4.3"
     },
     {
       "type": "panel",
@@ -40,6 +40,59 @@
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
         "type": "dashboard"
+      },
+      {
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\", chaosresult_namespace=\"litmus\"}",
+        "hide": false,
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "name": "catalogue-pod-cpu-hog",
+        "showIn": 0,
+        "step": "1s",
+        "tagKeys": "litmus, chaos",
+        "textFormat": "pod-cpu-hog",
+        "titleFormat": "catalogue-chaos"
+      },
+      {
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\", chaosresult_namespace=\"litmus\"}",
+        "hide": false,
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "name": "orders-pod-memory-hog",
+        "showIn": 0,
+        "step": "1s",
+        "tagKeys": "litmus, chaos",
+        "textFormat": "pod-memory-hog",
+        "titleFormat": "orders-chaos"
+      },
+      {
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"litmus\"}",
+        "hide": false,
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "name": "orders-node-memory-hog",
+        "showIn": 0,
+        "step": "1s",
+        "tagKeys": "litmus, chaos",
+        "textFormat": "node-memory-hog",
+        "titleFormat": "orders-chaos",
+        "useValueForTime": false
+      },
+      {
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"litmus\"}",
+        "hide": false,
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "name": "catalogue-node-cpu-hog",
+        "showIn": 0,
+        "step": "1s",
+        "tagKeys": "litmus, chaos",
+        "textFormat": "node-cpu-hog",
+        "titleFormat": "catalogue-chaos"
       }
     ]
   },
@@ -47,7 +100,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1600497075563,
+  "iteration": 1614781246233,
   "links": [],
   "panels": [
     {
@@ -106,49 +159,15 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:26",
-          "alias": "catalogue-pod-cpu-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "$$hashKey": "object:27",
-          "alias": "orders-pod-memory-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "$$hashKey": "object:28",
-          "alias": "catalogue-node-cpu-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "$$hashKey": "object:29",
-          "alias": "orders-node-memory-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -158,30 +177,6 @@
           "interval": "",
           "legendFormat": "\"{{instance}}\"",
           "refId": "B"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-pod-cpu-hog",
-          "refId": "A"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-pod-memory-hog",
-          "refId": "C"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-node-cpu-hog",
-          "refId": "D"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-node-memory-hog",
-          "refId": "E"
         }
       ],
       "thresholds": [],
@@ -219,7 +214,7 @@
           "logBase": 2,
           "max": "1",
           "min": "0",
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -268,45 +263,15 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "catalogue-pod-cpu-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "orders-pod-memory-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "catalogue-node-cpu-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "orders-node-memory-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -316,30 +281,6 @@
           "interval": "",
           "legendFormat": "\"{{instance}}\"",
           "refId": "B"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-pod-cpu-hog",
-          "refId": "A"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-pod-memory-hog",
-          "refId": "C"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-node-cpu-hog",
-          "refId": "D"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-node-memory-hog",
-          "refId": "E"
         }
       ],
       "thresholds": [],
@@ -362,6 +303,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:251",
           "format": "percentunit",
           "label": "Memory",
           "logBase": 1,
@@ -370,12 +312,13 @@
           "show": true
         },
         {
+          "$$hashKey": "object:252",
           "format": "short",
           "label": "CHAOS",
           "logBase": 2,
           "max": "1",
           "min": "0",
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -425,45 +368,15 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "catalogue-pod-cpu-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "orders-pod-memory-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "catalogue-node-cpu-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "orders-node-memory-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -473,30 +386,6 @@
           "interval": "",
           "legendFormat": "\"{{pod}}\"",
           "refId": "B"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-pod-cpu-hog",
-          "refId": "A"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-pod-memory-hog",
-          "refId": "C"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-node-cpu-hog",
-          "refId": "D"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-node-memory-hog",
-          "refId": "E"
         }
       ],
       "thresholds": [],
@@ -519,6 +408,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:535",
           "format": "short",
           "label": "cores",
           "logBase": 1,
@@ -527,12 +417,13 @@
           "show": true
         },
         {
+          "$$hashKey": "object:536",
           "format": "short",
           "label": "CHAOS",
           "logBase": 2,
           "max": "1",
           "min": "0",
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -581,45 +472,15 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "catalogue-pod-cpu-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "orders-pod-memory-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "catalogue-node-cpu-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        },
-        {
-          "alias": "orders-node-memory-hog",
-          "color": "#C4162A",
-          "fill": 1,
-          "fillGradient": 5,
-          "steppedLine": true,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -629,30 +490,6 @@
           "interval": "",
           "legendFormat": "\"{{pod}}\"",
           "refId": "B"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-pod-cpu-hog",
-          "refId": "A"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-pod-memory-hog",
-          "refId": "C"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-node-cpu-hog",
-          "refId": "D"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-node-memory-hog",
-          "refId": "E"
         }
       ],
       "thresholds": [],
@@ -675,6 +512,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:665",
           "format": "bytes",
           "label": "Memory",
           "logBase": 1,
@@ -683,12 +521,13 @@
           "show": true
         },
         {
+          "$$hashKey": "object:666",
           "format": "short",
           "label": "CHAOS",
           "logBase": 2,
           "max": "1",
           "min": "0",
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -698,7 +537,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 26,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -709,6 +548,8 @@
           "text": "default",
           "value": "default"
         },
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "",
@@ -727,13 +568,18 @@
         "current": {},
         "datasource": "$datasource",
         "definition": "label_values(kube_pod_info, cluster)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "cluster",
         "options": [],
-        "query": "label_values(kube_pod_info, cluster)",
+        "query": {
+          "query": "label_values(kube_pod_info, cluster)",
+          "refId": "DS_PROMETHEUS-cluster-Variable-Query"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -767,5 +613,5 @@
   "timezone": "",
   "title": "Node and Pod Chaos Metrics",
   "uid": "nodepodmetrics",
-  "version": 1
+  "version": 12
 }

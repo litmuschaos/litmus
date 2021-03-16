@@ -41,6 +41,9 @@ func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.Litmuschao
 		cd.ExperimentName = crd.Status.Experiments[0].Name
 		cd.LastUpdatedAt = strconv.FormatInt(crd.Status.Experiments[0].LastUpdateTime.Unix(), 10)
 		cd.ExperimentVerdict = crd.Status.Experiments[0].Verdict
+	} else if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped" {
+		cd.ExperimentVerdict = "Stopped"
+		cd.ExperimentStatus = "Stopped"
 	} else {
 		cd = nil
 	}
