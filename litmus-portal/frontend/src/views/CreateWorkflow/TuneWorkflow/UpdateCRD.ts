@@ -45,46 +45,43 @@ export const updateCRD = (
     steps: customSteps,
   };
 
-  // Step 2 in template (experiment YAMLs of all experiments)
-  generatedYAML.spec.templates[1] = {
-    name: 'install-chaos-experiments',
-    inputs: {
-      artifacts: [],
-    },
-    container: {
-      args: [`${installAllExp}sleep 30`],
-      command: ['sh', '-c'],
-      image: 'alpine/k8s:1.18.2',
-    },
-  };
+  if (experiment.length === 0) {
+    // Step 2 in template (experiment YAMLs of all experiments)
+    generatedYAML.spec.templates[1] = {
+      name: 'install-chaos-experiments',
+      inputs: {
+        artifacts: [],
+      },
+      container: {
+        args: [`${installAllExp}sleep 30`],
+        command: ['sh', '-c'],
+        image: 'alpine/k8s:1.18.2',
+      },
+    };
+  }
 
-  experiment.forEach((exp) => {
-    const ChaosEngine = YAML.parse(Object.values(exp.ChaosEngine)[0]);
-    ChaosEngine.metadata.name = YAML.parse(
-      Object.values(exp.Experiment)[0]
-    ).metadata.name;
-    ChaosEngine.metadata.namespace =
-      '{{workflow.parameters.adminModeNamespace}}';
-    ChaosEngine.spec.appinfo.appns =
-      '{{workflow.parameters.adminModeNamespace}}';
-    ChaosEngine.spec.appinfo.applabel = `app=${
-      YAML.parse(Object.values(exp.Experiment)[0]).metadata.name
-    }`;
+  // experiment.forEach((exp) => {
 
-    const experimentData = generatedYAML.spec.templates[1].inputs?.artifacts;
-    if (experimentData !== undefined) {
-      experimentData.push({
-        name: ChaosEngine.metadata.name,
-        path: `/tmp/${ChaosEngine.metadata.name}.yaml`,
-        raw: {
-          data: YAML.stringify(ChaosEngine),
-        },
-      });
-    }
-  });
+  // });
 
   // Step 3 in template (engine YAMLs of all experiments)
   experiment.forEach((data) => {
+    const ExperimentYAML = YAML.parse(Object.values(data.Experiment)[0]);
+    ExperimentYAML.metadata.name = YAML.parse(
+      Object.values(data.Experiment)[0]
+    ).metadata.name;
+    ExperimentYAML.metadata.namespace =
+      '{{workflow.parameters.adminModeNamespace}}';
+    const artifacts = generatedYAML.spec.templates[1].inputs?.artifacts;
+    if (artifacts !== undefined) {
+      artifacts.push({
+        name: ExperimentYAML.metadata.name,
+        path: `/tmp/${ExperimentYAML.metadata.name}.yaml`,
+        raw: {
+          data: YAML.stringify(ExperimentYAML),
+        },
+      });
+    }
     const ChaosEngine = YAML.parse(Object.values(data.ChaosEngine)[0]);
     ChaosEngine.metadata.name = YAML.parse(
       Object.values(data.Experiment)[0]
@@ -93,9 +90,6 @@ export const updateCRD = (
       '{{workflow.parameters.adminModeNamespace}}';
     ChaosEngine.spec.appinfo.appns =
       '{{workflow.parameters.adminModeNamespace}}';
-    ChaosEngine.spec.appinfo.applabel = `app=${
-      YAML.parse(Object.values(data.Experiment)[0]).metadata.name
-    }`;
 
     generatedYAML.spec.templates.push({
       name: ChaosEngine.metadata.name,
@@ -120,7 +114,8 @@ export const updateCRD = (
     });
   });
 
+  return generatedYAML;
   // Uncomment for Checking the Generated YAML and custom steps
-  // console.log(generatedYAML)
-  // console.log(customSteps)
+  // console.log(generatedYAML);
+  // console.log(customSteps);
 };
