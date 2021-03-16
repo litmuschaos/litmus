@@ -14,6 +14,7 @@ import {
 } from '../../../models/graphql/workflowData';
 import { history } from '../../../redux/configureStore';
 import timeDifferenceForDate from '../../../utils/datesModifier';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
 
@@ -24,6 +25,8 @@ interface TableDataProps {
 
 const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -112,7 +115,10 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() => {
-              history.push(`/workflows/${data.workflow_run_id}`);
+              history.push({
+                pathname: `/workflows/${data.workflow_run_id}`,
+                search: `?projectID=${projectID}&projectRole=${userRole}`,
+              });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
@@ -128,9 +134,12 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           </MenuItem>
           <MenuItem
             value="Analysis"
-            onClick={() =>
-              history.push(`/workflows/analytics/${data.workflow_id}`)
-            }
+            onClick={() => {
+              history.push({
+                pathname: `/workflows/analytics/${data.workflow_id}`,
+                search: `?projectID=${projectID}&projectRole=${userRole}`,
+              });
+            }}
           >
             <div className={classes.expDiv} data-cy="workflowAnalytics">
               <img

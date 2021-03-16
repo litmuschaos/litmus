@@ -158,7 +158,7 @@ error:
   whoops: Whoops!
   pageUnavailable: This page is unavailable
   pageDoesNotExist: The page does not exist, or please try again later.
-  backHome: Go back home
+  goBack: Go back
 
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow

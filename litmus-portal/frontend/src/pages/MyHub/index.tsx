@@ -191,6 +191,7 @@ const MyHub: React.FC = () => {
                           onClick={() => {
                             history.push({
                               pathname: '/myhub/connect',
+                              search: `?projectID=${projectID}&projectRole=${userRole}`,
                             });
                           }}
                         >

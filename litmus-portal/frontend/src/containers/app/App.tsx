@@ -24,7 +24,7 @@ const BrowseTemplate = lazy(() =>
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
-const TargetHome = lazy(() => import('../../components/Targets/ConnectHome')); // TODO: Fix directory
+const TargetHome = lazy(() => import('../../components/Targets/ConnectHome'));
 const ConnectTargets = lazy(() =>
   import('../../components/Targets/ConnectTarget')
 );

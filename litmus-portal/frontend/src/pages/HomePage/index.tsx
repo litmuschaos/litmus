@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { ButtonFilled } from 'litmus-ui';
@@ -8,18 +8,16 @@ import { CreateWorkflowCard } from '../../components/CreateWorkflowCard';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
-import { GET_USER, LIST_PROJECTS } from '../../graphql';
+import { GET_USER } from '../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
-  Member,
-  Projects,
 } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
-import { getUserDetailsFromJwt, getUserId } from '../../utils/auth';
-import { getProjectID } from '../../utils/getSearchParams';
+import { getUserDetailsFromJwt } from '../../utils/auth';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import WelcomeModal from '../../views/Home/WelcomeModal';
 import useStyles from './style';
 
@@ -31,6 +29,7 @@ const HomePage: React.FC = () => {
   const { t } = useTranslation();
   const tabs = useActions(TabActions);
   const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   // Query to get user details
   const { data, loading } = useQuery<
@@ -42,38 +41,16 @@ const HomePage: React.FC = () => {
 
   const name: string = data?.getUser.name ?? '';
 
-  const userID = getUserId();
-
-  const [listProjects] = useLazyQuery<Projects>(LIST_PROJECTS, {
-    onCompleted: (data) => {
-      if (data.listProjects) {
-        data.listProjects.forEach((project) => {
-          project.members.forEach((member: Member) => {
-            if (member.user_id === userID && member.role === 'Owner') {
-              history.push({
-                pathname: `/home`,
-                search: `?projectID=${project.id}&projectRole=${member.role}`,
-              });
-            }
-          });
-        });
-      }
-    },
-    fetchPolicy: 'no-cache',
-  });
-
   const handleModal = () => {
     setIsOpen(false);
-    listProjects();
+    window.location.reload();
   };
 
   return (
     <div>
       <Scaffold>
-        {isOpen && !loading && !projectID ? (
+        {isOpen && !loading && !projectID && (
           <WelcomeModal handleIsOpen={handleModal} />
-        ) : (
-          <></>
         )}
         <div className={classes.rootContainer}>
           <div>
@@ -98,7 +75,10 @@ const HomePage: React.FC = () => {
                       variant="success"
                       onClick={() => {
                         tabs.changeWorkflowsTabs(2);
-                        history.push('/workflows');
+                        history.push({
+                          pathname: '/workflows',
+                          search: `?projectID=${projectID}&projectRole=${userRole}`,
+                        });
                       }}
                     >
                       <Typography variant="subtitle1">
@@ -125,7 +105,10 @@ const HomePage: React.FC = () => {
                     className={classes.seeAllBtn}
                     onClick={(event) => {
                       event.preventDefault();
-                      history.push('/community');
+                      history.push({
+                        pathname: '/community',
+                        search: `?projectID=${projectID}&projectRole=${userRole}`,
+                      });
                     }}
                   >
                     <div className={classes.btnSpan}>

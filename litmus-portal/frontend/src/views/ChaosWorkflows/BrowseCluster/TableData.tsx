@@ -8,6 +8,7 @@ import { Cluster } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
 import { getUserRole } from '../../../utils/auth';
 import timeDifferenceForDate from '../../../utils/datesModifier';
+import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -18,6 +19,7 @@ interface TableDataProps {
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -60,7 +62,11 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       <TableCell
         key={data.cluster_id}
         onClick={() => {
-          history.push({ pathname: '/targets/cluster', state: { data } });
+          history.push({
+            pathname: '/targets/cluster',
+            search: `?projectID=${projectID}&projectRole=${userRole}`,
+            state: { data },
+          });
         }}
         className={classes.workflowNameData}
       >

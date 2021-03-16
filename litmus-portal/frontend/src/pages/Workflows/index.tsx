@@ -13,6 +13,7 @@ import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
@@ -22,6 +23,8 @@ import useStyles from './styles';
 const Workflows = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
   const workflowAction = useActions(WorkflowActions);
   const template = useActions(TemplateSelectionActions);
   const workflowTabValue = useSelector(
@@ -41,7 +44,10 @@ const Workflows = () => {
       customWorkflows: [],
     });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
-    history.push(`/create-workflow`);
+    history.push({
+      pathname: '/create-workflow',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   return (

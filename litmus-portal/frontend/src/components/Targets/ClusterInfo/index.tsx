@@ -1,14 +1,14 @@
 import { useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { DELETE_CLUSTER } from '../../../graphql';
 import { Cluster, DeleteCluster } from '../../../models/graphql/clusterData';
 import { LocationState } from '../../../models/routerModel';
 import { history } from '../../../redux/configureStore';
-import { getProjectRole } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import BackButton from '../../Button/BackButton';
 import ButtonOutline from '../../Button/ButtonOutline';
 import TargetCopy from '../TargetCopy';
@@ -25,15 +25,19 @@ interface ClusterVarsProps {
 const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
   const { data } = location.state;
   const classes = useStyles();
+  const projectID = getProjectID();
   const link: string = data.token;
 
   const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER);
   const userRole = getProjectRole();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleDelete = () => {
     deleteCluster({ variables: { cluster_id: data.cluster_id } });
-    history.push('/targets');
+    history.push({
+      pathname: '/targets',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   const { t } = useTranslation();

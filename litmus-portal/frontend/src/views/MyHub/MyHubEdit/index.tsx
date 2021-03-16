@@ -30,12 +30,12 @@ import {
 } from '../../../models/graphql/user';
 import { HubStatus } from '../../../models/redux/myhub';
 import { history } from '../../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
 
 interface MyHubParams {
   hubname: string;
-  projectID: string;
 }
 
 interface GitHub {
@@ -52,9 +52,11 @@ interface MyHubToggleProps {
 const MyHub: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
   const params: MyHubParams = useParams();
   const { data, loading } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: params.projectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
   });
   const hubData = data?.getHubStatus.filter(
@@ -182,7 +184,7 @@ const MyHub: React.FC = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: params.projectID,
+        projectID,
       },
     });
     setCloningRepo(true);
@@ -191,7 +193,10 @@ const MyHub: React.FC = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    history.push({ pathname: '/myhub' });
+    history.push({
+      pathname: '/myhub',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   // Function to copy the SSH key

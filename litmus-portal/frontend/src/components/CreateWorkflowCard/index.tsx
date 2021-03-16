@@ -7,12 +7,16 @@ import { TemplateSelectionActions } from '../../models/redux/template';
 import { WorkflowActions } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import { history } from '../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
 
 const CreateWorkflowCard: React.FC = () => {
   const { t } = useTranslation();
   const classes = useStyles();
   const template = useActions(TemplateSelectionActions);
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
+
   const workflowAction = useActions(WorkflowActions);
   const handleCreateWorkflow = () => {
     workflowAction.setWorkflowDetails({
@@ -20,7 +24,10 @@ const CreateWorkflowCard: React.FC = () => {
       customWorkflows: [],
     });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
-    history.push('/create-workflow');
+    history.push({
+      pathname: '/create-workflow',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   return (

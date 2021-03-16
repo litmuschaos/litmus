@@ -32,7 +32,7 @@ import {
   SSHKeys,
 } from '../../../models/graphql/user';
 import { history } from '../../../redux/configureStore';
-import { getProjectID } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
 
@@ -55,6 +55,7 @@ const MyHub: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const projectID = getProjectID();
+  const userRole = getProjectRole();
   const [gitHub, setGitHub] = useState<GitHub>({
     HubName: '',
     GitURL: '',
@@ -102,7 +103,10 @@ const MyHub: React.FC = () => {
   const handleClose = () => {
     setIsOpen(false);
     setIsSaveOpen(false);
-    history.push({ pathname: '/myhub' });
+    history.push({
+      pathname: '/myhub',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   // Mutation to generate SSH key

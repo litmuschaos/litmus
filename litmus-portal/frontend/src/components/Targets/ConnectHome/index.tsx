@@ -4,17 +4,21 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { history } from '../../../redux/configureStore';
-import { getProjectRole } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import BrowseCluster from '../../../views/ChaosWorkflows/BrowseCluster';
 import useStyles from './styles';
 
 const ConnectHome: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
   const userRole = getProjectRole();
 
   const handleCluster = () => {
-    history.push('/target-connect');
+    history.push({
+      pathname: '/target-connect',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   return (

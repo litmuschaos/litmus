@@ -122,6 +122,7 @@ const CustomStepper: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const userRole = getProjectRole();
+  const projectID = getProjectID();
   const template = useActions(TemplateSelectionActions);
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -140,8 +141,6 @@ const CustomStepper: React.FC = () => {
   const defaultStep = isCustomWorkflow ? 2 : 0;
 
   const [activeStep, setActiveStep] = React.useState(defaultStep);
-
-  const projectID = getProjectID();
 
   const isDisable = useSelector(
     (state: RootState) => state.selectTemplate.isDisable
@@ -313,7 +312,10 @@ const CustomStepper: React.FC = () => {
   };
 
   const handleClose = () => {
-    history.push('/workflows');
+    history.push({
+      pathname: '/workflows',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
     setOpen(false);
   };
 
@@ -419,7 +421,10 @@ const CustomStepper: React.FC = () => {
                     handleClick={() => {
                       setOpen(false);
                       tabs.changeWorkflowsTabs(0);
-                      history.push('/workflows');
+                      history.push({
+                        pathname: '/workflows',
+                        search: `?projectID=${projectID}&projectRole=${userRole}`,
+                      });
                     }}
                   >
                     <div>{t('workflowStepper.workflowBtn')}</div>

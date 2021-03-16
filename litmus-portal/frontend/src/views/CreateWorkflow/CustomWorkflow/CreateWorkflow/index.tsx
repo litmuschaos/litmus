@@ -34,7 +34,10 @@ import * as TemplateSelectionActions from '../../../../redux/actions/template';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
 import { RootState } from '../../../../redux/reducers';
-import { getProjectID } from '../../../../utils/getSearchParams';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import { validateWorkflowName } from '../../../../utils/validate';
 import BackButton from '../BackButton';
 import useStyles, { MenuProps } from './styles';
@@ -58,6 +61,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const workflowDetails = useSelector((state: RootState) => state.workflowData);
   const workflowAction = useActions(WorkflowActions);
   const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   const [workflowData, setWorkflowData] = useState<WorkflowDetails>({
     workflow_name: workflowDetails.name,
@@ -560,7 +564,10 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 ...workflowDetails,
                 yaml: YAML.stringify(parsedYaml),
               });
-              history.push('/create-workflow');
+              history.push({
+                pathname: '/create-workflow',
+                search: `?projectID=${projectID}&projectRole=${userRole}`,
+              });
               template.selectTemplate({ isDisable: false });
             }
             workflowAction.setWorkflowDetails({

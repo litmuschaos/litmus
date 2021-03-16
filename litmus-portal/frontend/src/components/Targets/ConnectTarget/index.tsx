@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { GET_CLUSTER, USER_CLUSTER_REG } from '../../../graphql';
@@ -11,7 +11,7 @@ import {
   CreateClusterInputResponse,
 } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
-import { getProjectID } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import BackButton from '../../Button/BackButton';
 import ButtonFilled from '../../Button/ButtonFilled';
 import ButtonOutline from '../../Button/ButtonOutline';
@@ -21,12 +21,13 @@ import useStyles from './styles';
 
 const ConnectTarget = () => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const [link, setLink] = React.useState('');
-  const [id, setID] = React.useState('');
-  const [modal, setModal] = React.useState(false);
+  const [open, setOpen] = useState(true);
+  const [link, setLink] = useState('');
+  const [id, setID] = useState('');
+  const [modal, setModal] = useState(false);
 
   const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   const [createClusterReg] = useMutation<
     CreateClusterInputResponse,
@@ -135,12 +136,22 @@ const ConnectTarget = () => {
         <Modal
           open={modal}
           onClose={() => {
-            history.push('/targets');
+            history.push({
+              pathname: '/targets',
+              search: `?projectID=${projectID}&projectRole=${userRole}`,
+            });
           }}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           modalActions={
-            <ButtonOutlined onClick={() => history.push('/targets')}>
+            <ButtonOutlined
+              onClick={() => {
+                history.push({
+                  pathname: '/targets',
+                  search: `?projectID=${projectID}&projectRole=${userRole}`,
+                });
+              }}
+            >
               &#x2715;
             </ButtonOutlined>
           }
@@ -160,7 +171,10 @@ const ConnectTarget = () => {
               <ButtonOutline
                 isDisabled={false}
                 handleClick={() => {
-                  history.push('/targets');
+                  history.push({
+                    pathname: '/targets',
+                    search: `?projectID=${projectID}&projectRole=${userRole}`,
+                  });
                   setOpen(false);
                 }}
               >
@@ -171,7 +185,10 @@ const ConnectTarget = () => {
                 data-cy="connectTarget"
                 isPrimary={false}
                 handleClick={() => {
-                  history.push('/create-workflow');
+                  history.push({
+                    pathname: '/create-workflow',
+                    search: `?projectID=${projectID}&projectRole=${userRole}`,
+                  });
                   setOpen(false);
                 }}
               >

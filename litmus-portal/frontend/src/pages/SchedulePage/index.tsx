@@ -146,7 +146,7 @@ const EditScheduledWorkflow: React.FC = () => {
   const workflow = useActions(WorkflowActions);
   // Get Parameters from URL
   const paramData: URLParams = useParams();
-  const selectedProjectID = getProjectID();
+  const projectID = getProjectID();
   const userRole = getProjectRole();
 
   // Apollo query to get the scheduled data
@@ -389,7 +389,7 @@ const EditScheduledWorkflow: React.FC = () => {
         workflow_description: description,
         isCustomWorkflow,
         weightages: weightData,
-        project_id: selectedProjectID,
+        project_id: projectID,
         cluster_id: clusterid,
       };
 
@@ -405,7 +405,10 @@ const EditScheduledWorkflow: React.FC = () => {
   };
 
   const handleClose = () => {
-    history.push('/workflows');
+    history.push({
+      pathname: `/workflows`,
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
     setOpen(false);
   };
 
@@ -515,7 +518,10 @@ const EditScheduledWorkflow: React.FC = () => {
                         handleClick={() => {
                           setOpen(false);
                           tabs.changeWorkflowsTabs(0);
-                          history.push('/workflows');
+                          history.push({
+                            pathname: `/workflows`,
+                            search: `?projectID=${projectID}&projectRole=${userRole}`,
+                          });
                         }}
                       >
                         <div>{t('workflowStepper.workflowBtn')}</div>

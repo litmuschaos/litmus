@@ -1,8 +1,9 @@
 import React from 'react';
 import { preDefinedWorkflowData } from '../../models/predefinedWorkflow';
-import * as WorkflowActions from '../../redux/actions/workflow';
 import useActions from '../../redux/actions';
+import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import CustomCard from '../WorkflowCard';
 import CustomWorkflowCard from '../WorkflowCard/CustomWorkflow';
 import useStyles from './styles';
@@ -19,6 +20,8 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
   isCustomWorkflowVisible,
 }) => {
   const workflowAction = useActions(WorkflowActions);
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -53,7 +56,10 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
               namespace: 'litmus',
               customWorkflows: [],
             });
-            history.push('/create-workflow/custom');
+            history.push({
+              pathname: '/create-workflow/custom',
+              search: `?projectID=${projectID}&projectRole=${userRole}`,
+            });
           }}
         />
       ) : null}

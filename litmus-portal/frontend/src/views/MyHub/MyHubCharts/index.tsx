@@ -9,7 +9,7 @@ import Center from '../../../containers/layouts/Center';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../graphql';
 import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
-import { getProjectID } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ChartCard from './chartCard';
 import HeaderSection from './headerSection';
 import useStyles from './styles';
@@ -112,7 +112,8 @@ const MyHub: React.FC = () => {
       <div className={classes.mainDiv}>
         <HeaderSection searchValue={search} changeSearch={changeSearch} />
         <div className={classes.chartsGroup}>
-          {totalExp && totalExp.length > 0 ? (
+          {totalExp &&
+            totalExp.length > 0 &&
             totalExp
               .filter(
                 (data) =>
@@ -127,12 +128,10 @@ const MyHub: React.FC = () => {
                     UserHub={UserHub}
                     setSearch={setSearch}
                     projectID={projectID}
+                    userRole={getProjectRole()}
                   />
                 );
-              })
-          ) : (
-            <></>
-          )}
+              })}
         </div>
       </div>
     </Scaffold>
