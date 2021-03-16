@@ -33,6 +33,7 @@ import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
 import ChooseAWorkflowCluster from '../../views/CreateWorkflow/WorkflowCluster';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
+import Loader from '../Loader';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
@@ -266,7 +267,7 @@ const CustomStepper = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow, { error: workflowError }] = useMutation<
+  const [createChaosWorkFlow, { error: workflowError, loading }] = useMutation<
     CreateWorkflowResponse,
     CreateWorkFlowInput
   >(CREATE_WORKFLOW, {
@@ -477,11 +478,15 @@ const CustomStepper = () => {
               </ButtonOutline>
               {activeStep === steps.length - 1 ? (
                 <ButtonFilled
-                  isDisabled={validateWorkflowName(name)}
+                  isDisabled={validateWorkflowName(name) || loading}
                   handleClick={handleOpen}
                   isPrimary
                 >
-                  <div>Finish</div>
+                  {loading ? (
+                    <Loader size={20} />
+                  ) : (
+                    <Typography>{t('workflowStepper.finish')}</Typography>
+                  )}
                 </ButtonFilled>
               ) : (
                 <ButtonFilled
