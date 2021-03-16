@@ -14,11 +14,13 @@ import {
 } from '../../../graphql/queries';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
+import { CustomYAML } from '../../../models/redux/customyaml';
 import { Charts } from '../../../models/redux/myhub';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
+import { updateCRD } from './UpdateCRD';
 import WorkflowTable from './WorkflowTable';
 
 interface WorkflowProps {
@@ -55,7 +57,8 @@ const TuneWorkflow: React.FC = () => {
   const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
   const { t } = useTranslation();
 
-  const getSelectedWorkflowName = () => {
+  // Index DB Fetching for extracting selected Button and Workflow Details
+  const getSelectedWorkflowDetails = () => {
     localforage.getItem('workflow').then((workflow) =>
       setWorkflow({
         name: (workflow as WorkflowDetailsProps).name,
@@ -65,8 +68,45 @@ const TuneWorkflow: React.FC = () => {
   };
 
   useEffect(() => {
-    getSelectedWorkflowName();
+    getSelectedWorkflowDetails();
   }, []);
+
+  // Default CRD
+  const yamlTemplate: CustomYAML = {
+    apiVersion: 'argoproj.io/v1alpha1',
+    kind: 'Workflow',
+    metadata: {
+      name: `${workflow.name}-${Math.round(new Date().getTime() / 1000)}`,
+      namespace: `litmus`,
+    },
+    spec: {
+      arguments: {
+        parameters: [
+          {
+            name: 'adminModeNamespace',
+            value: `litmus`,
+          },
+        ],
+      },
+      entrypoint: 'custom-chaos',
+      securityContext: {
+        runAsNonRoot: true,
+        runAsUser: 1000,
+      },
+      serviceAccountName: 'argo-chaos',
+      templates: [
+        {
+          name: '',
+          steps: [[]],
+          container: {
+            image: '',
+            command: [],
+            args: [],
+          },
+        },
+      ],
+    },
+  };
 
   // Graphql Query for fetching Engine YAML
   const [
@@ -101,6 +141,11 @@ const TuneWorkflow: React.FC = () => {
     fetchPolicy: 'cache-and-network',
   });
 
+  /**
+   * On Clicking the Done button present at Add Experiment Modal this function will get triggered
+   * Click => Done
+   * Function => handleDone()
+   * */
   const handleDone = () => {
     getExperimentYaml({
       variables: {
@@ -151,13 +196,12 @@ const TuneWorkflow: React.FC = () => {
     }
   }, [engineDataLoading, experimentDataLoading]);
 
+  useEffect(() => {
+    updateCRD(yamlTemplate, experiment);
+  }, [experiment]);
+
   // Loading Workflow Related Data for Workflow Settings
   useEffect(() => {
-    /** Retrieving saved data from index DB,
-     *  if user has already edited the details then it will fetch the stored data
-     *  and call checkForStoredData()
-     *  else it will initializeWithDefault()
-     */
     localforage.getItem('selectedScheduleOption').then((value) => {
       // Setting default data when MyHub is selected
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
@@ -172,11 +216,6 @@ const TuneWorkflow: React.FC = () => {
           });
         });
       }
-      // Setting default data when Upload is selected
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'D') {
-        return null;
-      }
-      return null;
     });
   }, []);
 
