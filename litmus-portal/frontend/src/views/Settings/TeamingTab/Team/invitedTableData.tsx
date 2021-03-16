@@ -20,6 +20,7 @@ import {
   SEND_INVITE,
 } from '../../../../graphql';
 import {
+  InvitationStatus,
   MemberInvitation,
   MemberInviteNew,
 } from '../../../../models/graphql/invite';
@@ -201,16 +202,23 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell className={classes.otherTC}>
         <LightPills
-          variant={row.invitation === 'Pending' ? 'warning' : 'danger'}
+          variant={
+            row.invitation === InvitationStatus.pending ? 'warning' : 'danger'
+          }
           label={row.invitation}
         />
       </TableCell>
 
       <TableCell className={classes.buttonTC} key={row.user_id}>
         <div className={classes.lastCell}>
-          <IconButton onClick={handleOpen}>
-            <img alt="delete" src="./icons/deleteBox.svg" height="45" />
-          </IconButton>
+          {row.invitation === InvitationStatus.exited ||
+          row.invitation === InvitationStatus.declined ? (
+            <></>
+          ) : (
+            <IconButton onClick={handleOpen}>
+              <img alt="delete" src="./icons/deleteBox.svg" height="45" />
+            </IconButton>
+          )}
           <ButtonFilled
             disabled={false}
             onClick={() => {
