@@ -87,7 +87,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   text1: {
     width: '27.5rem',
     height: '1.6875rem',
-    marginTop: theme.spacing(14),
   },
   typo1: {
     fontSize: '1rem',
