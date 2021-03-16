@@ -10,10 +10,12 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import Loader from '../../components/Loader';
 import { HubDetails } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
+import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
 
 interface customMyHubCardProp {
@@ -36,6 +38,9 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
   refreshLoader,
 }) => {
   const classes = useStyles();
+
+  // UserData from Redux
+  const userData = useSelector((state: RootState) => state.userData);
 
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -68,74 +73,81 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
           >
             {hub.IsAvailable ? 'Connected' : 'Error'}
           </Typography>
-          <IconButton
-            aria-label="more"
-            aria-controls="long-menu"
-            aria-haspopup="true"
-            onClick={handleClick}
-            data-cy="browseScheduleOptions"
-            className={classes.iconButton}
-          >
-            <MoreVertIcon className={classes.cardOption} />
-          </IconButton>
-          <Menu
-            id="long-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={open}
-            onClose={handleClose}
-          >
-            <MenuItem
-              value="Refresh"
-              onClick={() => {
-                handleRefresh(hub.id);
-              }}
-            >
-              <div className={classes.cardMenu}>
-                <img
-                  src="./icons/refresh.svg"
-                  alt="Refresh"
-                  className={classes.refreshImg}
-                />
-                <Typography data-cy="viewHub">{t('myhub.refresh')}</Typography>
-              </div>
-            </MenuItem>
-            <MenuItem
-              value="View"
-              onClick={() => {
-                history.push(`/myhub/edit/${hub.HubName}`);
-              }}
-            >
-              <div className={classes.cardMenu}>
-                <img
-                  src="./icons/Edit.svg"
-                  alt="Edit"
-                  className={classes.editImg}
-                />
-                <Typography data-cy="viewHub">{t('myhub.edit')}</Typography>
-              </div>
-            </MenuItem>
-            <MenuItem
-              value="Delete"
-              onClick={() => {
-                handleDelete(hub.id);
-              }}
-            >
-              <div className={classes.cardMenu}>
-                <img
-                  src="./icons/bin-red.svg"
-                  alt="disconnect"
-                  className={classes.disconnectImg}
-                />
-                <Typography
-                  className={classes.disconnectText}
-                  data-cy="viewHub"
+          {userData.userRole !== 'Viewer' && (
+            <>
+              <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+                data-cy="browseScheduleOptions"
+                className={classes.iconButton}
+              >
+                <MoreVertIcon className={classes.cardOption} />
+              </IconButton>
+              <Menu
+                id="long-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem
+                  value="Refresh"
+                  onClick={() => {
+                    handleRefresh(hub.id);
+                  }}
                 >
-                  {t('myhub.disconnect')}
-                </Typography>
-              </div>
-            </MenuItem>
-          </Menu>
+                  <div className={classes.cardMenu}>
+                    <img
+                      src="./icons/refresh.svg"
+                      alt="Refresh"
+                      className={classes.refreshImg}
+                    />
+                    <Typography data-cy="viewHub">
+                      {t('myhub.refresh')}
+                    </Typography>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  value="View"
+                  onClick={() => {
+                    history.push(`/myhub/edit/${hub.HubName}`);
+                  }}
+                >
+                  <div className={classes.cardMenu}>
+                    <img
+                      src="./icons/Edit.svg"
+                      alt="Edit"
+                      className={classes.editImg}
+                    />
+                    <Typography data-cy="viewHub">{t('myhub.edit')}</Typography>
+                  </div>
+                </MenuItem>
+
+                <MenuItem
+                  value="Delete"
+                  onClick={() => {
+                    handleDelete(hub.id);
+                  }}
+                >
+                  <div className={classes.cardMenu}>
+                    <img
+                      src="./icons/bin-red.svg"
+                      alt="disconnect"
+                      className={classes.disconnectImg}
+                    />
+                    <Typography
+                      className={classes.disconnectText}
+                      data-cy="viewHub"
+                    >
+                      {t('myhub.disconnect')}
+                    </Typography>
+                  </div>
+                </MenuItem>
+              </Menu>
+            </>
+          )}
         </div>
         <img
           src={`./icons/${
