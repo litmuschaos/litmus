@@ -73,7 +73,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
           >
             {hub.IsAvailable ? 'Connected' : 'Error'}
           </Typography>
-          {userData.userRole !== 'Viewer' ? (
+          {userData.userRole !== 'Viewer' && (
             <>
               <IconButton
                 aria-label="more"
@@ -147,8 +147,6 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                 </MenuItem>
               </Menu>
             </>
-          ) : (
-            <></>
           )}
         </div>
         <img
