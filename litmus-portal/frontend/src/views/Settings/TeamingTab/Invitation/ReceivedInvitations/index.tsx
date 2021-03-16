@@ -114,7 +114,7 @@ const ReceivedInvitations: React.FC = () => {
                     {userAvatar(
                       allUsers?.filter((data) => {
                         return row.user_id === data.id;
-                      })[0]?.name
+                      })[0]?.username
                     )}
                   </Avatar>
                   <div>
@@ -122,7 +122,7 @@ const ReceivedInvitations: React.FC = () => {
                       {
                         allUsers?.filter((data) => {
                           return row.user_id === data.id;
-                        })[0]?.name
+                        })[0]?.username
                       }
                     </Typography>
                     <Typography className={classes.email}>

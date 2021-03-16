@@ -284,7 +284,6 @@ const AccountSettings: React.FC = () => {
                             'settings.accountsTab.accountsSettings.modal.headerStrong'
                           )}
                         </strong>
-                        Your password <strong>has been changed!</strong>
                       </Typography>
                     </div>
                     <div className={classes.text1}>
