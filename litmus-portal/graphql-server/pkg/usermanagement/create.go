@@ -40,7 +40,6 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		return nil, err
 	}
 
-
 	outputUser = newUser.GetOutputUser()
 	return outputUser, nil
 }

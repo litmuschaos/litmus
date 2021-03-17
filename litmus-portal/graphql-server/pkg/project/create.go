@@ -60,7 +60,6 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
 	go myhub.AddMyHub(context.Background(), defaultHub, newProject.ID)
 
-
 	if strings.ToLower(self_cluster) == "true" && strings.ToLower(*user.Role) == "admin" {
 		log.Print("Starting self deployer")
 		go selfDeployer.StartDeployer(newProject.ID)

@@ -52,22 +52,22 @@ func (r *mutationResolver) CreateProject(ctx context.Context, projectName string
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	userUID := claims["uid"].(string)
 	role := claims["role"].(string)
-	email:= claims["email"]
-	fullname:= claims["name"]
+	email := claims["email"]
+	fullname := claims["name"]
 	username := claims["username"].(string)
 
-	var emailID,name string
+	var emailID, name string
 
-	if(email!=nil){
-		emailID=email.(string)
-	}else{
-		emailID=""
+	if email != nil {
+		emailID = email.(string)
+	} else {
+		emailID = ""
 	}
 
-	if(fullname!=nil){
-		name=fullname.(string)
-	}else{
-		name=""
+	if fullname != nil {
+		name = fullname.(string)
+	} else {
+		name = ""
 	}
 	user := &dbSchemaUserManagement.User{
 		ID:        userUID,
