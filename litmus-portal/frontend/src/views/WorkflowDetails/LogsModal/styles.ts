@@ -2,6 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    height: '40rem',
     padding: theme.spacing(0, 2, 2, 2),
   },
 
@@ -22,11 +23,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   section: {
     display: 'flex',
     width: '100%',
+    height: '25rem',
+    padding: theme.spacing(2, 2, 2, 2),
   },
 
   // Left side panel for Nodes data
   nodesData: {
-    margin: theme.spacing(7, 2, 2, 2),
+    margin: theme.spacing(5, 2, 2, 0),
     width: '35%',
   },
 
@@ -74,7 +77,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: theme.spacing(2, 2, 0, 2),
+    padding: theme.spacing(0, 0, 0, 2),
+  },
+
+  logsHeight: {
+    height: '100%',
   },
 }));
 

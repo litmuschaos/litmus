@@ -41,7 +41,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
   const [selectedNodeID, setSelectedNodeID] = useState<string>(
-    Object.keys(data.nodes)[0]
+    Object.keys(data.nodes)[1]
   );
   const nodeSelection = useActions(NodeSelectionActions);
   const [nodesArray, setNodesArray] = useState<SelectedNodeType[]>([]);
@@ -149,13 +149,15 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                 <Typography>{timeDifference(finishedAt)}</Typography>
               </div>
             </div>
-            <NodeLogs
-              cluster_id={cluster_id}
-              workflow_run_id={workflow_run_id}
-              pod_namespace={pod_namespace}
-              pod_name={pod_name}
-              pod_type={type}
-            />
+            <div className={classes.logsHeight}>
+              <NodeLogs
+                cluster_id={cluster_id}
+                workflow_run_id={workflow_run_id}
+                pod_namespace={pod_namespace}
+                pod_name={pod_name}
+                pod_type={type}
+              />
+            </div>
           </div>
         </div>
       </div>
