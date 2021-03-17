@@ -60,10 +60,6 @@ export const updateCRD = (
     };
   }
 
-  // experiment.forEach((exp) => {
-
-  // });
-
   // Step 3 in template (engine YAMLs of all experiments)
   experiment.forEach((data) => {
     const ExperimentYAML = YAML.parse(Object.values(data.Experiment)[0]);
@@ -115,6 +111,7 @@ export const updateCRD = (
   });
 
   return generatedYAML;
+
   // Uncomment for Checking the Generated YAML and custom steps
   // console.log(generatedYAML);
   // console.log(customSteps);

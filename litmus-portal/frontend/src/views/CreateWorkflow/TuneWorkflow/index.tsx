@@ -5,6 +5,7 @@ import localforage from 'localforage';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
@@ -21,6 +22,7 @@ import capitalize from '../../../utils/capitalize';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import { updateCRD } from './UpdateCRD';
+import WorkflowPreview from './WorkflowPreview';
 import WorkflowTable from './WorkflowTable';
 
 interface WorkflowProps {
@@ -169,6 +171,8 @@ const TuneWorkflow: React.FC = () => {
         },
       },
     });
+    const updatedCRD = updateCRD(generatedYAML, experiment);
+    setGeneratedYAML(updatedCRD);
     setAddExpModal(false);
   };
 
@@ -196,11 +200,6 @@ const TuneWorkflow: React.FC = () => {
     }
   }, [engineDataLoading, experimentDataLoading]);
 
-  useEffect(() => {
-    const updatedCRD = updateCRD(generatedYAML, experiment);
-    setGeneratedYAML(updatedCRD);
-  }, [experiment]);
-
   // Loading Workflow Related Data for Workflow Settings
   useEffect(() => {
     localforage.getItem('selectedScheduleOption').then((value) => {
@@ -219,6 +218,8 @@ const TuneWorkflow: React.FC = () => {
       }
     });
   }, []);
+
+  // console.log(generatedYAML);
 
   return (
     <div className={classes.root}>
@@ -275,10 +276,16 @@ const TuneWorkflow: React.FC = () => {
         {/* Details Section -> Graph on the Left and Table on the Right */}
         <Row>
           {/* Argo Workflow Graph */}
-          <Width width="30%">Argo Graph</Width>
+          <Width width="30%">
+            <WorkflowPreview crd={generatedYAML} />
+          </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            <WorkflowTable crd={workflow.crd} />
+            {experiment.length > 0 ? (
+              <WorkflowTable isCustom crd={YAML.stringify(generatedYAML)} />
+            ) : (
+              <WorkflowTable isCustom={false} crd={workflow.crd} />
+            )}
           </Width>
         </Row>
       </div>
