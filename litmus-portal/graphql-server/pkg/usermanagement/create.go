@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"os"
-	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -14,15 +12,11 @@ import (
 	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
-	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 )
 
-// CreateUser ...
-func CreateUser(ctx context.Context, user model.CreateUserInput, userID string, role string) (*model.User, error) {
+// CreateUser :creates a user
+func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
-	var (
-		self_cluster = os.Getenv("SELF_CLUSTER")
-	)
 	outputUser, err := GetUser(ctx, user.Username)
 	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
@@ -31,12 +25,13 @@ func CreateUser(ctx context.Context, user model.CreateUserInput, userID string, 
 	}
 
 	newUser := &dbSchemaUserManagement.User{
-		ID:          userID,
+		ID:          user.UserID,
 		Username:    user.Username,
 		Email:       user.Email,
 		CompanyName: user.CompanyName,
 		Name:        user.Name,
 		CreatedAt:   time.Now().Format(time.RFC1123Z),
+		Role:        &user.Role,
 	}
 
 	err = dbOperationsUserManagement.InsertUser(ctx, newUser)
@@ -45,19 +40,8 @@ func CreateUser(ctx context.Context, user model.CreateUserInput, userID string, 
 		return nil, err
 	}
 
-	project, err := project.CreateProjectWithUser(ctx, user.ProjectName, newUser)
-	if err != nil {
-		return nil, err
-	}
 
 	outputUser = newUser.GetOutputUser()
-	outputUser.Projects = append(outputUser.Projects, project)
-
-	if strings.ToLower(self_cluster) == "true" && strings.ToLower(role) == "admin" {
-		log.Print("Starting self deployer")
-		go selfDeployer.StartDeployer(project.ID)
-	}
-
 	return outputUser, nil
 }
 

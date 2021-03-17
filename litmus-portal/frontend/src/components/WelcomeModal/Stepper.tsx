@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import config from '../../config';
-import { CREATE_USER } from '../../graphql';
-import { CreateUserData } from '../../models/graphql/user';
+import { CREATE_PROJECT, CREATE_USER } from '../../graphql';
+import { CreateUserData, Project, UserRole } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
@@ -16,6 +16,7 @@ import {
   getUserEmail,
   getUserName,
   getUsername,
+  getUserRole,
 } from '../../utils/auth';
 import {
   validateConfirmPassword,
@@ -57,10 +58,20 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     window.location.reload();
   };
 
-  const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
+  const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
     onCompleted: () => {
       rerender();
       handleModal();
+    },
+  });
+
+  const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
+    onCompleted: () => {
+      CreateProject({
+        variables: {
+          projectName,
+        },
+      });
     },
   });
 
@@ -85,15 +96,22 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
       .then((data) => {
         if ('error' in data) {
           isError.current = true;
-        } else {
+        } else if (getUserRole() === UserRole.admin) {
           CreateUser({
             variables: {
               user: {
                 username: getUsername(),
                 email: getUserEmail(),
                 name: getUserName(),
-                project_name: projectName,
+                role: 'admin',
+                userID: data._id,
               },
+            },
+          });
+        } else {
+          CreateProject({
+            variables: {
+              projectName,
             },
           });
         }

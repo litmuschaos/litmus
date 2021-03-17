@@ -20,6 +20,7 @@ import {
   CurrentUserDetails,
   Member,
   Project,
+  Role,
 } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -74,7 +75,7 @@ const CreateWorkflowCard: React.FC = () => {
 };
 
 const HomePage: React.FC = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const userData = useSelector((state: RootState) => state.userData);
   const classes = useStyles();
@@ -99,8 +100,8 @@ const HomePage: React.FC = () => {
   const [dataPresent, setDataPresent] = useState<boolean>(true);
 
   useEffect(() => {
+    let isOwner = false;
     if (data?.getUser.username === userData.username) {
-      setIsOpen(false);
       if (userData.selectedProjectID === '') {
         let isOwnerOfProject = { id: '', name: '' };
         const projectList: Project[] = data?.getUser.projects ?? [];
@@ -108,9 +109,10 @@ const HomePage: React.FC = () => {
           const memberList: Member[] = project.members;
           memberList.forEach((member) => {
             if (
-              member.user_name === data?.getUser.username &&
-              member.role === 'Owner'
+              member.user_id === data?.getUser.id &&
+              member.role === Role.owner
             ) {
+              isOwner = true;
               isOwnerOfProject = {
                 id: project.id,
                 name: project.name,
@@ -118,11 +120,12 @@ const HomePage: React.FC = () => {
             }
           });
         });
+
+        if (!isOwner) setIsOpen(true);
         user.updateUserDetails({
           selectedProjectID: isOwnerOfProject.id,
           userRole: 'Owner',
           selectedProjectName: isOwnerOfProject.name,
-          selectedProjectOwner: userData.username,
         });
         user.updateUserDetails({ loader: false });
         // Flush data to persistor immediately
