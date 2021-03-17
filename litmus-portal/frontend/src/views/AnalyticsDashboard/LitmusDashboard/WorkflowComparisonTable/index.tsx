@@ -315,24 +315,32 @@ const WorkflowComparisonTable = () => {
                   experimentTestResultsArrayPerWorkflowRun.length -
                   totalExperimentsPassed,
                 resilience_score: experimentTestResultsArrayPerWorkflowRun.length
-                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                      (a, b) => a + b,
-                      0
-                    ) /
-                      weightsSum) *
-                    100
+                  ? parseFloat(
+                      (
+                        (experimentTestResultsArrayPerWorkflowRun.reduce(
+                          (a, b) => a + b,
+                          0
+                        ) /
+                          weightsSum) *
+                        100
+                      ).toFixed(2)
+                    )
                   : 0,
                 test_details: testDetails,
               });
               workflowTimeSeriesData.push({
                 date: data.last_updated,
                 value: experimentTestResultsArrayPerWorkflowRun.length
-                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                      (a, b) => a + b,
-                      0
-                    ) /
-                      weightsSum) *
-                    100
+                  ? parseFloat(
+                      (
+                        (experimentTestResultsArrayPerWorkflowRun.reduce(
+                          (a, b) => a + b,
+                          0
+                        ) /
+                          weightsSum) *
+                        100
+                      ).toFixed(2)
+                    )
                   : 0,
               });
             }
