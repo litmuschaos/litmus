@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { GET_PROJECT_NAME } from '../../graphql';
 import { ProjectDetail } from '../../models/graphql/user';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import ProjectDropdownItems from './projectDropDownItems';
+import ProjectDropdownItems from './ProjectDropDownItems';
 import useStyles from './styles';
 
 const ProjectDropdown: React.FC = () => {

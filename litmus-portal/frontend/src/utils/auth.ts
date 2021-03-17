@@ -2,6 +2,16 @@ import jwtDecode from 'jsonwebtoken';
 import { history } from '../redux/configureStore';
 import { getJWTToken, setCookie, setJWTToken } from './cookies';
 
+interface UserDetails {
+  role: string;
+  uid: string;
+  username: string;
+  name?: string;
+  email?: string;
+  exp: Date;
+  iat: Date;
+}
+
 // Logs out the user and unsets the jwt token
 export function logout() {
   setCookie({ name: 'token', value: '', exhours: 1 });
@@ -30,40 +40,35 @@ export function setUserDetails(token: string) {
 }
 
 // Returns the details of a user from jwt token
-export function getUserDetailsFromJwt(): any {
+export function getUserDetailsFromJwt(): UserDetails {
   const jwtToken = getToken();
-  const userDetails: any = jwtDecode.decode(jwtToken);
+  const userDetails = jwtDecode.decode(jwtToken) as UserDetails;
   return userDetails;
 }
 
 // Returns the username from jwt token
 export function getUsername(): string {
-  let username = '';
-  if (getToken()) username = getUserDetailsFromJwt().username;
-  return username ?? '';
+  if (getToken()) return getUserDetailsFromJwt().username;
+  return '';
 }
 
 // Returns userId from jwt token
 export function getUserId(): string {
-  let uuid = '';
-  if (getToken()) uuid = getUserDetailsFromJwt().uid;
-  return uuid ?? '';
+  if (getToken()) return getUserDetailsFromJwt().uid;
+  return '';
 }
 
 export function getUserRole(): string {
-  let role = '';
-  if (getToken()) role = getUserDetailsFromJwt().role;
-  return role ?? '';
+  if (getToken()) return getUserDetailsFromJwt().role;
+  return '';
 }
 
 export function getUserEmail(): string {
-  let email = '';
-  if (getToken()) email = getUserDetailsFromJwt().email;
-  return email ?? '';
+  if (getToken()) return getUserDetailsFromJwt().email ?? '';
+  return '';
 }
 
 export function getUserName(): string {
-  let name = '';
-  if (getToken()) name = getUserDetailsFromJwt().name;
-  return name ?? '';
+  if (getToken()) return getUserDetailsFromJwt().name ?? '';
+  return '';
 }

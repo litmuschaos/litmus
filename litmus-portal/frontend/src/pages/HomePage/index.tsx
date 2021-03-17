@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { ButtonFilled } from 'litmus-ui';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateWorkflowCard } from '../../components/CreateWorkflowCard';
 import InfoFilledWrap from '../../components/InfoFilled';
@@ -16,8 +16,6 @@ import WelcomeModal from '../../views/Home/WelcomeModal';
 import useStyles from './style';
 
 const HomePage: React.FC = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
-
   const userData = getUserDetailsFromJwt();
   const classes = useStyles();
   const { t } = useTranslation();
@@ -26,18 +24,17 @@ const HomePage: React.FC = () => {
   const userRole = getProjectRole();
 
   const handleModal = () => {
-    setIsOpen(false);
     window.location.reload();
   };
 
   return (
     <Scaffold>
-      {isOpen && !projectID && <WelcomeModal handleIsOpen={handleModal} />}
+      {!projectID && <WelcomeModal handleIsOpen={handleModal} />}
       <div className={classes.rootContainer}>
         <div>
           <Typography variant="h3" className={classes.userName}>
             {t('home.heading')}
-            <strong>{` ${userData.name}`}</strong>
+            <strong>{` ${userData.username}`}</strong>
           </Typography>
           <div className={classes.headingDiv}>
             <div className={classes.mainDiv}>

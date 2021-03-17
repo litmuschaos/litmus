@@ -598,7 +598,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 setConfirm(false);
                 setOpenModal(false);
                 tabs.changeAnalyticsDashboardTabs(2);
-                window.location.reload(false);
+                window.location.reload();
               }}
             >
               <div>Back to Kubernetes Dashboard</div>
@@ -622,7 +622,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                   setConfirm(false);
                   setOpenModal(false);
                   tabs.changeAnalyticsDashboardTabs(2);
-                  window.location.reload(false);
+                  window.location.reload();
                 }}
               >
                 <div>Back to Kubernetes Dashboard</div>

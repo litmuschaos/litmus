@@ -285,13 +285,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   */
   return (
     <div>
-      <div>
-        {activeStep === 1 ? (
-          <div>{getStepContent(activeStep)}</div>
-        ) : (
-          <div>{getStepContent(activeStep)}</div>
-        )}
-      </div>
+      <div>{getStepContent(activeStep)}</div>
       <MobileStepper
         className={classes.stepper}
         variant="dots"

@@ -217,7 +217,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 setConfirm(false);
                 setOpen(false);
                 tabs.changeAnalyticsDashboardTabs(3);
-                window.location.reload(false);
+                window.location.reload();
               }}
             >
               <div>Back to Data Source</div>
@@ -256,7 +256,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                   setConfirm(false);
                   setOpen(false);
                   tabs.changeAnalyticsDashboardTabs(3);
-                  window.location.reload(false);
+                  window.location.reload();
                 }}
               >
                 <div>Back to Data Source</div>

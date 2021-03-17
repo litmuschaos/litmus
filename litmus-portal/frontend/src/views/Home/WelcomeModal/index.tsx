@@ -1,5 +1,5 @@
-import React from 'react';
 import { Modal } from 'litmus-ui';
+import React from 'react';
 import ModalStepper from './Stepper';
 import useStyles from './styles';
 
@@ -23,6 +23,7 @@ const Welcomemodal: React.FC<WelcomemodalProps> = ({ handleIsOpen }) => {
       className={classes.modal}
       onClose={handleClose}
       disableBackdropClick
+      disableEscapeKeyDown
     >
       <ModalStepper handleModal={handleClose} />
     </Modal>
