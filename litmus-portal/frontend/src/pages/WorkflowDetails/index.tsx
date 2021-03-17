@@ -26,16 +26,15 @@ import useStyles from './styles';
 import NodeTable from '../../views/WorkflowDetails/workflowTable';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
-import * as ToggleButtonAction from '../../redux/actions/button';
 
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState(false);
+  const [isInfoToggled, setIsInfoToggled] = useState(true);
 
   const tabs = useActions(TabActions);
-  const toggleButtonAction = useActions(ToggleButtonAction);
 
   // Getting the workflow nome from the pathname
   const { pathname } = useLocation();
@@ -44,11 +43,6 @@ const WorkflowDetails: React.FC = () => {
   // get ProjectID
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
-  );
-
-  // For showing details based on togglingInfo
-  const { isInfoToggled } = useSelector(
-    (state: RootState) => state.toggleInfoButton
   );
 
   const workflowDetailsTabValue = useSelector(
@@ -154,6 +148,7 @@ const WorkflowDetails: React.FC = () => {
                   nodes={
                     (JSON.parse(workflow.execution_data) as ExecutionData).nodes
                   }
+                  onClick={() => setIsInfoToggled(true)}
                 />
                 {/* Workflow Details and Experiment Logs */}
                 {isInfoToggled ? (
@@ -161,9 +156,7 @@ const WorkflowDetails: React.FC = () => {
                     <ButtonOutlined
                       className={classes.closeButton}
                       onClick={() => {
-                        toggleButtonAction.toggleInfoButton({
-                          isInfoToggled: false,
-                        });
+                        setIsInfoToggled(false);
                       }}
                     >
                       &#x2715;

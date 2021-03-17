@@ -49,13 +49,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
 
-  // Node Status Block
-  status: {
-    display: 'flex',
-    float: 'left',
-    flexDirection: 'row',
-  },
-
   // Icon with right margin
   icon: {
     marginRight: theme.spacing(1),
@@ -72,23 +65,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderColor: theme.palette.border.main,
   },
 
-  // Classes for Status Texts
-  running: {
-    color: theme.palette.highlight,
-  },
-
-  failed: {
-    color: theme.palette.error.main,
-  },
-
-  succeeded: {
-    color: theme.palette.success.main,
-  },
-
-  pending: {
-    color: theme.palette.text.primary,
-  },
-
   subLogsHeader: {
     color: theme.palette.text.disabled,
   },
@@ -99,22 +75,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: theme.spacing(2, 2, 0, 2),
-  },
-
-  // Some explicit classes for Running Icon
-  runningSmallIcon: {
-    animation: 'runningNodeSpinAnimationSmall 2s ease-in-out infinite',
-  },
-
-  '@global': {
-    '@keyframes runningNodeSpinAnimationSmall': {
-      from: {
-        transform: `rotate(0deg)`,
-      },
-      to: {
-        transform: `rotate(360deg)`,
-      },
-    },
   },
 }));
 

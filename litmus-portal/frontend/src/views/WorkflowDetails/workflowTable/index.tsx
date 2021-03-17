@@ -42,7 +42,10 @@ const NodeTable: React.FC<NodeTableProps> = ({ data, handleClose }) => {
   useEffect(() => {
     const filteredNodes: SelectedNodeType[] = [];
     Object.keys(data.nodes).forEach((key) => {
-      if (data.nodes[key].type !== 'StepGroup') {
+      if (
+        data.nodes[key].type !== 'StepGroup' &&
+        data.nodes[key].type !== 'Steps'
+      ) {
         filteredNodes.push({ ...data.nodes[key], id: key });
       }
     });

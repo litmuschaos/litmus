@@ -14,16 +14,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '45%',
   },
 
-  workflowHeader: {
+  header: {
     fontSize: '1rem',
     marginBottom: theme.spacing(1),
-  },
-
-  heightMaintainer: {
-    marginTop: theme.spacing(2),
-    display: 'flex',
-    lineHeight: '2rem',
-    justifyContent: 'space-between',
   },
 
   subSection: {
@@ -36,11 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
 
-  status: {
-    display: 'flex',
-  },
-
-  marginTop: {
+  topMarginBox: {
     display: 'flex',
     marginTop: theme.spacing(1),
   },
@@ -56,20 +45,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   runningStatusText: {
     color: theme.palette.highlight,
-  },
-
-  runningSmallIcon: {
-    animation: 'runningSmallNodeSpinAnimation 2s ease-in-out infinite',
-  },
-  '@global': {
-    '@keyframes runningSmallNodeSpinAnimation': {
-      from: {
-        transform: `rotate(0deg)`,
-      },
-      to: {
-        transform: `rotate(360deg)`,
-      },
-    },
   },
 }));
 
