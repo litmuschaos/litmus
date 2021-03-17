@@ -4,8 +4,8 @@ import Tabs from '@material-ui/core/Tabs/Tabs';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import { ButtonOutlined } from 'litmus-ui';
+import localforage from 'localforage';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -31,15 +31,11 @@ const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const classes = useStyles();
-  const [logsModalOpen, setLogsModalOpen] = useState(false);
-  const [isInfoToggled, setIsInfoToggled] = useState(true);
+  const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
+  const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
+  const [workflowRunId, setWorkflowRunId] = useState<String>('');
 
   const tabs = useActions(TabActions);
-
-  // Getting the workflow nome from the pathname
-  const { pathname } = useLocation();
-  const workflowRunId = pathname.split('/')[2];
-
   // get ProjectID
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
@@ -48,6 +44,13 @@ const WorkflowDetails: React.FC = () => {
   const workflowDetailsTabValue = useSelector(
     (state: RootState) => state.tabNumber.node
   );
+
+  // get workflowRunID from localforage
+  useEffect(() => {
+    localforage.getItem('selectedWorkflowRunID').then((value) => {
+      setWorkflowRunId(value as string);
+    });
+  });
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(

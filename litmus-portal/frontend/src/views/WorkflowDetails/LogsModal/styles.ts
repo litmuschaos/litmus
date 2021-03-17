@@ -22,8 +22,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Section
   section: {
     display: 'flex',
-    width: '100%',
     height: '25rem',
+    width: '100%',
     padding: theme.spacing(2, 2, 2, 2),
   },
 
