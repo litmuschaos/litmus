@@ -45,6 +45,7 @@ const TuneWorkflow: React.FC = () => {
 
   // State Variables for Tune Workflow
   const [hubName, setHubName] = useState<string>('');
+  const [manifest, setManifest] = useState<string>('');
   const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]); // eslint-disable-line
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
   const [selectedExp, setSelectedExp] = useState('');
@@ -171,10 +172,14 @@ const TuneWorkflow: React.FC = () => {
         },
       },
     });
-    const updatedCRD = updateCRD(generatedYAML, experiment);
-    setGeneratedYAML(updatedCRD);
+
     setAddExpModal(false);
   };
+
+  useEffect(() => {
+    setGeneratedYAML(updateCRD(generatedYAML, experiment));
+    setManifest(YAML.stringify(generatedYAML));
+  }, [experiment]);
 
   const onModalClose = () => {
     setAddExpModal(false);
@@ -218,8 +223,6 @@ const TuneWorkflow: React.FC = () => {
       }
     });
   }, []);
-
-  // console.log(generatedYAML);
 
   return (
     <div className={classes.root}>
@@ -282,7 +285,7 @@ const TuneWorkflow: React.FC = () => {
           {/* Workflow Table */}
           <Width width="70%">
             {experiment.length > 0 ? (
-              <WorkflowTable isCustom crd={YAML.stringify(generatedYAML)} />
+              <WorkflowTable isCustom crd={manifest} />
             ) : (
               <WorkflowTable isCustom={false} crd={workflow.crd} />
             )}
