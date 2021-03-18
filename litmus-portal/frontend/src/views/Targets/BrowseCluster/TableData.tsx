@@ -18,7 +18,6 @@ interface TableDataProps {
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [clusterName, setClusterName] = React.useState<string>('');
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -31,7 +30,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const [open, setOpen] = React.useState(false);
 
   const handleClick = () => {
-    setClusterName(data.cluster_name);
     setOpen(true);
   };
   const userRole = useSelector((state: RootState) => state.userData.userRole);
@@ -127,10 +125,10 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                   <div className={classes.text}>
                     <Typography className={classes.typo} align="center">
                       {t('targets.modalDelete.head1')} <br />
-                      <strong> {t('targets.modalDelete.head2')}</strong>
+                      {t('targets.modalDelete.head2')}
+                      <br />
                       <strong>
-                        {' '}
-                        {clusterName} {t('targets.modalDelete.head4')}
+                        {data.cluster_name} {t('targets.modalDelete.head4')}
                       </strong>
                     </Typography>
                   </div>
