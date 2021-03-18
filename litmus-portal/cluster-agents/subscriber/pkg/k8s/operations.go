@@ -39,7 +39,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 
 	newConfigMapData := map[string]string{
 		"ACCESS_KEY":           clusterData["ACCESS_KEY"],
-		"IS_CLUSTER_CONFIRMED": "true",
+		"IS_CLUSTER_CONFIRMED": clusterData["IS_CLUSTER_CONFIRMED"],
 	}
 
 	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(&corev1.ConfigMap{
