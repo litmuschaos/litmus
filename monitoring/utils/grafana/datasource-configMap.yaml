@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmus-grafana-datasources
+  namespace: monitoring
+data:
+  prometheus.yaml: |-
+    {
+        "apiVersion": 1,
+        "datasources": [
+            {
+               "access":"proxy",
+                "editable": true,
+                "name": "DS_PROMETHEUS",
+                "orgId": 1,
+                "type": "prometheus",
+                "url": "http://prometheus-k8s.monitoring.svc.cluster.local:9090",
+                "version": 1
+            }
+        ]
+    }
