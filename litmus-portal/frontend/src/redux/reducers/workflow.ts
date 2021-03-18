@@ -72,7 +72,7 @@ export const workflowManifest = createReducer<WorkflowManifest>(init, {
   ) {
     return {
       ...state,
-      ...(action.payload as Object),
+      ...action.payload,
     };
   },
 });

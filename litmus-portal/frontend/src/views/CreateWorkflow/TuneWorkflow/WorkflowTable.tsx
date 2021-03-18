@@ -84,10 +84,10 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
   };
 
   useEffect(() => {
-    if (isCustom === false && manifest.length) {
-      fetchYaml(manifest);
-    } else if (isCustom === true && manifest.length) {
+    if (isCustom === true && manifest.length) {
       parsing(manifest);
+    } else if (manifest.length) {
+      fetchYaml(manifest);
     }
   }, [manifest]);
 

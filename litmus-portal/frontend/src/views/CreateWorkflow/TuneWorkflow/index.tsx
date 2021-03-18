@@ -291,7 +291,7 @@ const TuneWorkflow: React.FC = () => {
             {experiment.length > 0 ? (
               <WorkflowTable isCustom />
             ) : (
-              <WorkflowTable isCustom={false} />
+              <WorkflowTable />
             )}
           </Width>
         </Row>
