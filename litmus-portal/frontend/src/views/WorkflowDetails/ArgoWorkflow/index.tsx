@@ -13,10 +13,13 @@ interface GraphData {
 }
 interface ArgoWorkflowProps {
   nodes: Nodes;
-  onClick: () => void;
+  setIsInfoToggled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes, onClick }) => {
+const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({
+  nodes,
+  setIsInfoToggled,
+}) => {
   const { t } = useTranslation();
 
   // Graph orientation
@@ -108,8 +111,9 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes, onClick }) => {
           const nodeID = Object.keys(nodes).filter(
             (key) => key === original?.id
           )[0];
+
+          setIsInfoToggled(true);
           setSelectedNodeID(nodeID);
-          onClick();
         }}
       />
     </>

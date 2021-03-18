@@ -9,6 +9,21 @@ interface WorkflowStatusProps {
 const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
   const classes = useStyles();
 
+  function getStatus(phase: string) {
+    switch (phase) {
+      case 'Succeeded':
+        return classes.succeeded;
+      case 'Running':
+        return classes.running;
+      case 'Failed':
+        return classes.failed;
+      case 'Pending':
+        return classes.pending;
+      default:
+        return classes.pending;
+    }
+  }
+
   return (
     <div className={classes.status}>
       <span className={classes.icon}>
@@ -21,17 +36,7 @@ const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
         />
       </span>
       <Typography>
-        <span
-          className={`${
-            phase === 'Succeeded'
-              ? classes.succeeded
-              : phase === 'failed'
-              ? classes.failed
-              : phase === 'Running'
-              ? classes.running
-              : classes.pending
-          }`}
-        >
+        <span className={getStatus(phase)}>
           <strong>{phase}</strong>
         </span>
       </Typography>

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { ButtonOutlined } from 'litmus-ui';
-import localforage from 'localforage';
+import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -23,7 +23,7 @@ import { RootState } from '../../redux/reducers';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import useStyles from './styles';
-import NodeTable from '../../views/WorkflowDetails/workflowTable';
+import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
 
@@ -33,7 +33,6 @@ const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
-  const [workflowRunId, setWorkflowRunId] = useState<String>('');
 
   const tabs = useActions(TabActions);
   // get ProjectID
@@ -45,12 +44,9 @@ const WorkflowDetails: React.FC = () => {
     (state: RootState) => state.tabNumber.node
   );
 
-  // get workflowRunID from localforage
-  useEffect(() => {
-    localforage.getItem('selectedWorkflowRunID').then((value) => {
-      setWorkflowRunId(value as string);
-    });
-  });
+  // Getting the workflow nome from the pathname
+  const { pathname } = useLocation();
+  const workflowRunId = pathname.split('/')[2];
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -151,7 +147,7 @@ const WorkflowDetails: React.FC = () => {
                   nodes={
                     (JSON.parse(workflow.execution_data) as ExecutionData).nodes
                   }
-                  onClick={() => setIsInfoToggled(true)}
+                  setIsInfoToggled={setIsInfoToggled}
                 />
                 {/* Workflow Details and Experiment Logs */}
                 {isInfoToggled ? (

@@ -6,7 +6,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import localforage from 'localforage';
 import React from 'react';
 import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 import {
@@ -113,10 +112,6 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() => {
-              localforage.setItem(
-                'selectedWorkflowRunID',
-                data.workflow_run_id
-              );
               history.push(`/workflows/${data.workflow_run_id}`);
             }}
           >
