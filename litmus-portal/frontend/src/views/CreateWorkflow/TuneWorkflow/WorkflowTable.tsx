@@ -43,6 +43,7 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ crd, isCustom }) => {
   const parsing = (yamlText: string) => {
     const parsedYaml = YAML.parse(yamlText);
     const expData: ChaosCRDTable[] = [];
+
     parsedYaml.spec.templates.forEach((template: any) => {
       if (template.inputs !== undefined) {
         template.inputs.artifacts.forEach((artifact: any) => {
@@ -81,7 +82,7 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ crd, isCustom }) => {
   useEffect(() => {
     if (isCustom === false && crd.length) {
       fetchYaml(crd);
-    } else if (isCustom === true) {
+    } else if (isCustom === true && crd.length) {
       parsing(crd);
     }
   }, [crd]);

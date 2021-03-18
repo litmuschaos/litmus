@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     background: theme.palette.background.paper,
     color: theme.palette.text.primary,
-    paddingTop: theme.spacing(4),
+    paddingTop: theme.spacing(2),
     margin: '0 auto',
     height: '100%',
   },
@@ -12,9 +12,9 @@ const useStyles = makeStyles((theme) => ({
   // Header
   headerWrapper: {
     padding: theme.spacing(0, 4),
-    width: '88%',
+    width: '98%',
     [theme.breakpoints.up('lg')]: {
-      width: '87%',
+      width: '99%',
     },
   },
 
