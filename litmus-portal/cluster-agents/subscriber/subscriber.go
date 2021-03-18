@@ -53,7 +53,7 @@ func init() {
 			}
 			log.Println(clusterData["CLUSTER_ID"] + " has been confirmed")
 		} else {
-			log.Fatal(clusterData["CLUSTER_ID"] + " has been confirmed")
+			log.Fatal(clusterData["CLUSTER_ID"] + " hasn't been confirmed")
 		}
 	}
 
