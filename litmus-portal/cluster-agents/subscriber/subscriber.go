@@ -18,12 +18,12 @@ import (
 
 var (
 	clusterData = map[string]string{
-		"ACCESS_KEY":        os.Getenv("ACCESS_KEY"),
-		"CLUSTER_ID":        os.Getenv("CLUSTER_ID"),
-		"SERVER_ADDR": os.Getenv("SERVER_ADDR"),
+		"ACCESS_KEY":           os.Getenv("ACCESS_KEY"),
+		"CLUSTER_ID":           os.Getenv("CLUSTER_ID"),
+		"SERVER_ADDR":          os.Getenv("SERVER_ADDR"),
 		"IS_CLUSTER_CONFIRMED": os.Getenv("IS_CLUSTER_CONFIRMED"),
 	}
-	err    error
+	err error
 )
 
 func init() {
@@ -53,7 +53,7 @@ func init() {
 			}
 			log.Println(clusterData["CLUSTER_ID"] + " has been confirmed")
 		} else {
-			log.Fatal(clusterData["CLUSTER_ID"]+ " has been confirmed")
+			log.Fatal(clusterData["CLUSTER_ID"] + " has been confirmed")
 		}
 	}
 

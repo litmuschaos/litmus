@@ -24,13 +24,13 @@ import (
 
 var (
 	ClusterID  string
-	AccessKey string
+	AccessKey  string
 	ServerAddr = os.Getenv("SERVER_ADDR")
 	Namespace  = os.Getenv("AGENT_NAMESPACE")
 	KubeConfig = os.Getenv("KUBE_CONFIG")
 )
 
-const ExternAgentConfigName = "external-agent-config"
+const ExternAgentConfigName = "agent-config"
 
 // Function to get k8s client set
 func getK8sClient() (*kubernetes.Clientset, error) {

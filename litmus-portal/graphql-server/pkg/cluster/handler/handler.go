@@ -144,7 +144,7 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 		   "apiVersion": "v1",
 		   "kind": "ConfigMap",
 		   "metadata": {
-			  "name": "litmus-portal-config",
+			  "name": "agent-config",
 			  "namespace": ` + *cluster.AgentNamespace + `
 		   }
 		}`,

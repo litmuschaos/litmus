@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: external-agent-config
+  name: agent-config
   namespace: #{AGENT-NAMESPACE}
 data:
   SERVER_ADDR: #{SERVER_ADDR}
@@ -34,7 +34,7 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: external-agent-config
+                name: agent-config
           env:
             - name: AGENT_NAMESPACE
               valueFrom:
@@ -65,7 +65,7 @@ spec:
           name: litmus-event-tracker
           envFrom:
             - configMapRef:
-                name: external-agent-config
+                name: agent-config
           env:
             - name: AGENT_NAMESPACE
               valueFrom:

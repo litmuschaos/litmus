@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	ExternAgentConfigName = "external-agent-config"
+	ExternAgentConfigName = "agent-config"
 )
 
 var (
@@ -38,7 +38,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 	}
 
 	newConfigMapData := map[string]string{
-		"ACCESS_KEY":          clusterData["ACCESS_KEY"],
+		"ACCESS_KEY":           clusterData["ACCESS_KEY"],
 		"IS_CLUSTER_CONFIRMED": "true",
 	}
 
