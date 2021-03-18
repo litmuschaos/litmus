@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
     borderRight: `1px solid ${theme.palette.border.main}`,
     color: theme.palette.text.primary,
   },
-  sortDiv: {
+  targetsIcon: {
     paddingLeft: theme.spacing(1.5),
   },
   headData: {
@@ -207,8 +207,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.875),
     marginBottom: theme.spacing(3.75),
   },
-  typoSub: {
+  disconnectForever: {
     fontSize: '1rem',
+    marginTop: theme.spacing(2),
   },
   // for yes or no buttons
   buttonGroup: {

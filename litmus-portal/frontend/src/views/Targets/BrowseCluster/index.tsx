@@ -253,7 +253,7 @@ const BrowseCluster: React.FC = () => {
                         })
                       }
                     >
-                      <div className={classes.sortDiv}>
+                      <div className={classes.targetsIcon}>
                         <img
                           src="/icons/arrow_downward.svg"
                           alt="ConnectTarget icon"
@@ -278,7 +278,7 @@ const BrowseCluster: React.FC = () => {
                         })
                       }
                     >
-                      <div className={classes.sortDiv}>
+                      <div className={classes.targetsIcon}>
                         <img
                           src="/icons/arrow_downward.svg"
                           alt="ConnectTarget icon"
@@ -321,7 +321,7 @@ const BrowseCluster: React.FC = () => {
                 <TableCell className={classes.headData}>
                   <div className={classes.tableCell}>
                     <Typography>
-                      {t('workflowCluster.header.formControl.delete')}
+                      {t('workflowCluster.header.formControl.disconnect')}
                     </Typography>
                   </div>
                 </TableCell>
