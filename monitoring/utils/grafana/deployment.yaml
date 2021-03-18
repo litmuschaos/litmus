@@ -23,8 +23,26 @@ spec:
               name: grafana
               protocol: TCP
           volumeMounts:
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: grafana-datasources
+            - mountPath: /etc/grafana/provisioning/dashboards
+              name: grafana-provisioner
+            - mountPath: /var/lib/grafana/dashboards/
+              name: grafana-dashboards
             - mountPath: /var/lib/grafana
               name: grafana-storage
       volumes:
         - emptyDir: {}
           name: grafana-storage
+        - name: grafana-datasources
+          configMap:
+            defaultMode: 420
+            name: litmus-grafana-datasources
+        - name: grafana-dashboards
+          configMap:
+            defaultMode: 420
+            name: litmus-grafana-dashboards
+        - name: grafana-provisioner
+          configMap:
+            defaultMode: 420
+            name: litmus-grafana-provisioner

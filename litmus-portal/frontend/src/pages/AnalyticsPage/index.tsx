@@ -149,16 +149,17 @@ const AnalyticsPage: React.FC = () => {
                     }
                     if (chaosData.experimentVerdict === 'Fail') {
                       experimentTestResultsArray.push(0);
-                      experimentTestResultsArrayPerWorkflowRun.push(0);
                     }
                     if (
                       chaosData.experimentVerdict === 'Pass' ||
                       chaosData.experimentVerdict === 'Fail'
                     ) {
                       experimentTestResultsArrayPerWorkflowRun.push(
-                        (weightage.weightage *
-                          parseInt(chaosData.probeSuccessPercentage, 10)) /
-                          100
+                        chaosData.experimentVerdict === 'Fail'
+                          ? 0
+                          : (weightage.weightage *
+                              parseInt(chaosData.probeSuccessPercentage, 10)) /
+                              100
                       );
                       weightsSum += weightage.weightage;
                       isValid = true;
@@ -269,9 +270,12 @@ const AnalyticsPage: React.FC = () => {
                     test_result: chaosData.experimentVerdict,
                     test_weight: weightage.weightage,
                     resulting_points:
-                      (weightage.weightage *
-                        parseInt(chaosData.probeSuccessPercentage, 10)) /
-                      100,
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                        ? (weightage.weightage *
+                            parseInt(chaosData.probeSuccessPercentage, 10)) /
+                          100
+                        : 0,
                     last_run: chaosData.lastUpdatedAt,
                   });
                 }
