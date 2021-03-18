@@ -32,8 +32,15 @@ sidebar:
   title: Litmus
 
 header:
-  profileDropdown:
+  projectDropdown:
+    myProjects: My Projects
     noProjectsOther: You are not part of any projects not owned by you
+  profileDropdown:
+    signedIn: 'Signed in as:'
+    emailUnset: Email not set
+    emailSet: Set up your email
+    logout: Logout
+    editProfile: Edit Profile
 
 button:
   backButton: Back

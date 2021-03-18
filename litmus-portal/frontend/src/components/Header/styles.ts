@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   // Styles for Header
   appBar: {
-    backgroundColor: '#F5F6F8',
+    backgroundColor: theme.palette.background.default,
     height: '5rem',
     position: 'sticky',
     boxShadow: `0px 1.8px 0.6px rgba(0, 0, 0, 0.1), 0px 3.2px 7.2px rgba(0, 0, 0, 0.13)`,
@@ -25,11 +25,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   projectPopover: {
-    minWidth: '18.625rem',
-    maxHeight: '20.6875rem',
+    minWidth: '26.3125rem',
+    maxHeight: '23.0625rem',
     overflowY: 'auto',
     '& #hint': {
       color: theme.palette.text.hint,
+    },
+  },
+  projectListItem: {
+    '& p': {
+      color: theme.palette.text.hint,
+      width: '7.9375rem',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
     },
   },
   active: {
@@ -40,24 +49,35 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   profileDropdownPopover: {
     padding: theme.spacing(3.25, 2.875),
-    minWidth: '18.4375rem',
+    minWidth: '21.9375rem',
     minHeight: '11.3125rem',
-    '& div:nth-child(2)': {
-      marginLeft: theme.spacing(1.375),
-    },
-    '& button': {
-      marginTop: theme.spacing(3.75),
-    },
     '& #logoutIcon': {
       marginLeft: theme.spacing(1.875),
     },
   },
-  profileInfo: {
+  profileSet: {
+    marginTop: theme.spacing(1),
+    fontSize: '1rem',
+  },
+  profileDropdownRow: {
     display: 'flex',
-    '& #userName': {
-      fontWeight: 500,
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  profileUnset: {
+    marginTop: theme.spacing(1.25),
+    '& a': {
+      textDecoration: 'none',
+      color: theme.palette.primary.main,
+    },
+    '& #emailUnset': {
+      color: theme.palette.text.disabled,
+      fontStyle: 'italic',
       fontSize: '1rem',
     },
+  },
+  profileButtons: {
+    marginTop: theme.spacing(3.75),
   },
 }));
 

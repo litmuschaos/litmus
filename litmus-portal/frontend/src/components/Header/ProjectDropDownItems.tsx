@@ -1,5 +1,13 @@
 import { useQuery } from '@apollo/client';
-import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import {
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+} from '@material-ui/core';
+import { Done } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LIST_PROJECTS } from '../../graphql';
@@ -18,21 +26,43 @@ interface otherProjectsType {
 interface CustomisedListItemProps {
   handleClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   label: string;
+  secondaryLabel: string;
   selected: boolean;
 }
 
 const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
   handleClick,
   label,
+  secondaryLabel,
   selected,
 }) => {
   const classes = useStyles();
+  const [copying, setCopying] = useState<boolean>(false);
+
+  function fallbackCopyTextToClipboard(text: string) {
+    // eslint-disable-next-line no-alert
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', text);
+  }
+
+  function copyTextToClipboard(text: string) {
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(text);
+      return;
+    }
+    setCopying(true);
+    navigator.clipboard
+      .writeText(text)
+      .catch((err) => console.error('Async: Could not copy text: ', err));
+
+    setTimeout(() => setCopying(false), 3000);
+  }
+
   return (
     <ListItem
       button
       selected={selected}
       onClick={handleClick}
-      className={selected ? classes.active : ''}
+      className={`${classes.projectListItem} ${selected ? classes.active : ''}`}
     >
       <ListItemIcon>
         {selected ? (
@@ -41,7 +71,23 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
           <img src="./icons/nonSelectedproject.svg" alt="Un-selected Project" />
         )}
       </ListItemIcon>
-      <ListItemText primary={label} />
+      <ListItemText
+        primary={label}
+        secondary={`Project ID: ${secondaryLabel}`}
+      />
+      <ListItemSecondaryAction>
+        <IconButton
+          onClick={() => copyTextToClipboard(`${secondaryLabel}`)}
+          edge="end"
+          aria-label="copyProject"
+        >
+          {!copying ? (
+            <img src="./icons/copyProjectID.svg" alt="Copy project ID" />
+          ) : (
+            <Done />
+          )}
+        </IconButton>
+      </ListItemSecondaryAction>
     </ListItem>
   );
 };
@@ -98,7 +144,7 @@ const ProjectDropdownItems: React.FC = () => {
           </ListItem>
           {myProjects.length === 0 ? (
             <ListItem data-cy="project">
-              <ListItemText primary="No projects Owned" />
+              <ListItemText primary={t('header.projectDropdown.myProjects')} />
             </ListItem>
           ) : (
             myProjects.map((project) => {
@@ -112,6 +158,7 @@ const ProjectDropdownItems: React.FC = () => {
                     });
                   }}
                   label={project.name}
+                  secondaryLabel={project.id}
                   selected={projectID === project.id}
                 />
               );
@@ -123,7 +170,7 @@ const ProjectDropdownItems: React.FC = () => {
           {otherProjects.length === 0 ? (
             <ListItem data-cy="project">
               <ListItemText
-                primary={t('header.profileDropdown.noProjectsOther')}
+                primary={t('header.projectDropdown.noProjectsOther')}
               />
             </ListItem>
           ) : (
@@ -138,6 +185,7 @@ const ProjectDropdownItems: React.FC = () => {
                     });
                   }}
                   label={project.projectDetails.name}
+                  secondaryLabel={project.projectDetails.id}
                   selected={projectID === project.projectDetails.id}
                 />
               );

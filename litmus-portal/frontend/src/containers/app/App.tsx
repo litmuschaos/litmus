@@ -11,7 +11,6 @@ import { history } from '../../redux/configureStore';
 import { getToken, getUserId } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import Center from '../layouts/Center';
-import useStyles from './App-styles';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -216,7 +215,6 @@ const Routes: React.FC = () => {
 };
 
 function App() {
-  const classes = useStyles();
   const analyticsAction = useActions(AnalyticsActions);
   const token = getToken();
   useEffect(() => {
@@ -234,10 +232,8 @@ function App() {
         }
       >
         <Router history={history}>
-          <div className={classes.root}>
-            {/* <Routes /> */}
-            <Routes />
-          </div>
+          {/* <Routes /> */}
+          <Routes />
         </Router>
       </Suspense>
     </LitmusThemeProvider>
