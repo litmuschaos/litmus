@@ -51,9 +51,15 @@ export interface WorkflowData {
   workflowIcon: string;
 }
 
+export interface WorkflowManifest {
+  engineYAML: string;
+  manifest: string;
+}
+
 export enum WorkflowActions {
   SET_WORKFLOW_DETAILS = 'SET_WORKFLOW_DETAILS',
   SET_CUSTOM_WORKFLOW = 'SET_CUSTOM_WORKFLOW',
+  SET_WORKFLOW_MANIFEST = 'SET_WORKFLOW_MANIFEST',
 }
 
 interface WorkflowActionType<T, P> {
@@ -66,7 +72,8 @@ export type WorkflowAction =
       typeof WorkflowActions.SET_WORKFLOW_DETAILS,
       WorkflowData
     >
+  | WorkflowActionType<typeof WorkflowActions.SET_CUSTOM_WORKFLOW, WorkflowData>
   | WorkflowActionType<
-      typeof WorkflowActions.SET_CUSTOM_WORKFLOW,
-      WorkflowData
+      typeof WorkflowActions.SET_WORKFLOW_MANIFEST,
+      WorkflowManifest
     >;

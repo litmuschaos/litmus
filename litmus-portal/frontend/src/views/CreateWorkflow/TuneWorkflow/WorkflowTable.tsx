@@ -8,11 +8,12 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import { RootState } from '../../../redux/reducers';
 import ConfigurationStepper from './ConfigurationStepper/ConfigurationStepper';
 
 interface WorkflowTableProps {
-  crd: string;
   isCustom?: boolean;
 }
 
@@ -31,7 +32,7 @@ const useStyles = makeStyles({
   },
 });
 
-const WorkflowTable: React.FC<WorkflowTableProps> = ({ crd, isCustom }) => {
+const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
   const classes = useStyles();
   const [experiments, setExperiments] = useState<ChaosCRDTable[]>([]);
   const [displayStepper, setDisplayStepper] = useState<boolean>(false);
@@ -39,6 +40,9 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ crd, isCustom }) => {
     configureExperiment,
     setConfigureExperiment,
   ] = useState<ChaosCRDTable>();
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
 
   const parsing = (yamlText: string) => {
     const parsedYaml = YAML.parse(yamlText);
@@ -80,12 +84,12 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ crd, isCustom }) => {
   };
 
   useEffect(() => {
-    if (isCustom === false && crd.length) {
-      fetchYaml(crd);
-    } else if (isCustom === true && crd.length) {
-      parsing(crd);
+    if (isCustom && manifest.length) {
+      parsing(manifest);
+    } else if (manifest.length) {
+      fetchYaml(manifest);
     }
-  }, [crd]);
+  }, [manifest]);
 
   return (
     <div>

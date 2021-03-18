@@ -9,7 +9,7 @@ import { SelectedNode } from '../../models/redux/nodeSelection';
 import { TabState } from '../../models/redux/tabs';
 import { TemplateData } from '../../models/redux/template';
 import { UserData } from '../../models/redux/user';
-import { WorkflowData } from '../../models/redux/workflow';
+import { WorkflowData, WorkflowManifest } from '../../models/redux/workflow';
 import * as alertReducer from './alert';
 import * as analyticsReducer from './analytics';
 import * as infoButtonReducer from './button';
@@ -26,6 +26,7 @@ export interface RootState {
   communityData: AnalyticsData;
   userData: UserData;
   workflowData: WorkflowData;
+  workflowManifest: WorkflowManifest;
   selectedNode: SelectedNode;
   toggleInfoButton: InfoButtonData;
   tabNumber: TabState;

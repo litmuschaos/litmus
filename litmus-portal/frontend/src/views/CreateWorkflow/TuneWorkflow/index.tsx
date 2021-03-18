@@ -17,6 +17,8 @@ import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
 import { Charts } from '../../../models/redux/myhub';
+import useActions from '../../../redux/actions';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import AddExperimentModal from './AddExperimentModal';
@@ -27,7 +29,6 @@ import WorkflowTable from './WorkflowTable';
 
 interface WorkflowProps {
   name: string;
-  crd: string;
 }
 
 interface WorkflowExperiment {
@@ -45,7 +46,6 @@ const TuneWorkflow: React.FC = () => {
 
   // State Variables for Tune Workflow
   const [hubName, setHubName] = useState<string>('');
-  const [manifest, setManifest] = useState<string>('');
   const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]); // eslint-disable-line
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
   const [selectedExp, setSelectedExp] = useState('');
@@ -55,9 +55,12 @@ const TuneWorkflow: React.FC = () => {
   const [addExpModal, setAddExpModal] = useState(false);
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
-    crd: '',
   });
   const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
+
+  // Actions
+  const workflowAction = useActions(WorkflowActions);
+
   const { t } = useTranslation();
 
   // Index DB Fetching for extracting selected Button and Workflow Details
@@ -65,7 +68,6 @@ const TuneWorkflow: React.FC = () => {
     localforage.getItem('workflow').then((workflow) =>
       setWorkflow({
         name: (workflow as WorkflowDetailsProps).name,
-        crd: (workflow as WorkflowDetailsProps).CRD,
       })
     );
   };
@@ -178,7 +180,9 @@ const TuneWorkflow: React.FC = () => {
 
   useEffect(() => {
     setGeneratedYAML(updateCRD(generatedYAML, experiment));
-    setManifest(YAML.stringify(generatedYAML));
+    workflowAction.setWorkflowManifest({
+      manifest: YAML.stringify(generatedYAML),
+    });
   }, [experiment]);
 
   const onModalClose = () => {
@@ -285,9 +289,9 @@ const TuneWorkflow: React.FC = () => {
           {/* Workflow Table */}
           <Width width="70%">
             {experiment.length > 0 ? (
-              <WorkflowTable isCustom crd={manifest} />
+              <WorkflowTable isCustom />
             ) : (
-              <WorkflowTable isCustom={false} crd={workflow.crd} />
+              <WorkflowTable />
             )}
           </Width>
         </Row>

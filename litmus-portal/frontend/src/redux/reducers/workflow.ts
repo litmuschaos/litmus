@@ -3,6 +3,7 @@ import {
   WorkflowAction,
   WorkflowActions,
   WorkflowData,
+  WorkflowManifest,
 } from '../../models/redux/workflow';
 import createReducer from './createReducer';
 
@@ -47,6 +48,11 @@ const initialState: WorkflowData = {
   workflowIcon: '',
 };
 
+const init: WorkflowManifest = {
+  manifest: '',
+  engineYAML: '',
+};
+
 export const workflowData = createReducer<WorkflowData>(initialState, {
   [WorkflowActions.SET_WORKFLOW_DETAILS](
     state: WorkflowData,
@@ -59,4 +65,14 @@ export const workflowData = createReducer<WorkflowData>(initialState, {
   },
 });
 
-export default workflowData;
+export const workflowManifest = createReducer<WorkflowManifest>(init, {
+  [WorkflowActions.SET_WORKFLOW_MANIFEST](
+    state: WorkflowManifest,
+    action: WorkflowAction
+  ) {
+    return {
+      ...state,
+      ...action.payload,
+    };
+  },
+});
