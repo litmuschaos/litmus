@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	PortalConfigName = "litmus-portal-config"
+	ExternAgentConfigName = "external-agent-config"
 )
 
 var (
@@ -30,25 +30,6 @@ var (
 	AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
 )
 
-// IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.
-func IsClusterConfirmed() (bool, string, error) {
-	clientset, err := GetGenericK8sClient()
-	if err != nil {
-		return false, "", err
-	}
-
-	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(PortalConfigName, metav1.GetOptions{})
-	if errors.IsNotFound(err) {
-		return false, "", nil
-	} else if getCM.Data["is_cluster_confirmed"] == "true" {
-		return true, getCM.Data["cluster_key"], nil
-	} else if err != nil {
-		return false, "", err
-	}
-
-	return false, "", nil
-}
-
 // ClusterRegister function creates litmus-portal config map in the litmus namespace
 func ClusterRegister(clusterData map[string]string) (bool, error) {
 	clientset, err := GetGenericK8sClient()
@@ -56,29 +37,22 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		return false, err
 	}
 
-	configMapData := map[string]string{
-		"is_cluster_confirmed": "true",
-		"cluster_key":          clusterData["KEY"],
-		"cluster_id":           clusterData["CID"],
+	newConfigMapData := map[string]string{
+		"ACCESS_KEY":          clusterData["ACCESS_KEY"],
+		"IS_CLUSTER_CONFIRMED": "true",
 	}
 
-	newConfigMap := corev1.ConfigMap{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "ConfigMap",
-			APIVersion: "v1",
-		},
+	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(&corev1.ConfigMap{
+		Data: newConfigMapData,
 		ObjectMeta: metav1.ObjectMeta{
-			Name: PortalConfigName,
+			Name: ExternAgentConfigName,
 		},
-		Data: configMapData,
-	}
-
-	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Create(&newConfigMap)
+	})
 	if err != nil {
 		return false, err
 	}
 
-	log.Println("Configmap created")
+	log.Println(ExternAgentConfigName + " has been updated")
 	return true, nil
 }
 
