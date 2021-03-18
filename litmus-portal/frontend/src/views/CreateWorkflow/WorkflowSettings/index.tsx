@@ -13,6 +13,7 @@ import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import capitalize from '../../../utils/capitalize';
 import { validateWorkflowName } from '../../../utils/validate';
 import useStyles from './styles';
@@ -28,8 +29,10 @@ const WorkflowSettings = forwardRef((_, ref) => {
     <></>
   );
   const [description, setDescription] = useState<string>('');
-  const [CRD, setCRD] = useState<string>('');
   const [icon, setIcon] = useState<string>('');
+
+  // Actions
+  const workflowAction = useActions(WorkflowActions);
 
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
@@ -78,7 +81,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
         if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
           setName(w.title);
           setDescription(w.details);
-          setCRD(w.chaosWkfCRDLink);
+          workflowAction.setWorkflowManifest({ manifest: w.chaosWkfCRDLink });
           setIcon(w.urlToIcon);
         }
         return null;
@@ -86,7 +89,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
 
       if ((value as ChooseWorkflowRadio).selected !== 'A') {
         setName('custom-chaos-workflow');
-        setCRD('');
+        workflowAction.setWorkflowManifest({ manifest: '' });
         setDescription('Custom Chaos Workflow');
         setIcon('./avatars/litmus.svg');
       }
@@ -138,7 +141,6 @@ const WorkflowSettings = forwardRef((_, ref) => {
     const workflowDetails: WorkflowDetailsProps = {
       name,
       description,
-      CRD,
       icon,
     };
     localforage.setItem('workflow', workflowDetails);

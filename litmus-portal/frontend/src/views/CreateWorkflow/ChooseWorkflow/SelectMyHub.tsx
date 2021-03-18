@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { useSelector } from 'react-redux';
-import localforage from 'localforage';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import localforage from 'localforage';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { HubStatus } from '../../../models/redux/myhub';
+import { useSelector } from 'react-redux';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
+import { MyHubDetail } from '../../../models/graphql/user';
+import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
+import { HubStatus } from '../../../models/redux/myhub';
 import { RootState } from '../../../redux/reducers';
 import useStyles, { MenuProps } from './styles';
-import { MyHubDetail } from '../../../models/graphql/user';
 
 const SelectMyHub = () => {
   const { t } = useTranslation();
@@ -31,7 +32,10 @@ const SelectMyHub = () => {
     }>
   ) => {
     setSelectedHub(event.target.value as string);
-    localforage.setItem('selectedScheduleOption', { selected: 'C' });
+    const selection: ChooseWorkflowRadio = {
+      selected: 'C',
+    };
+    localforage.setItem('selectedScheduleOption', selection);
     localforage.setItem('selectedHub', event.target.value as string);
   };
 
@@ -40,15 +44,6 @@ const SelectMyHub = () => {
       setAvailableHubs([...data.getHubStatus]);
     }
   }, [loading]);
-
-  // Retrieving saved data from index DB,
-  useEffect(() => {
-    localforage.getItem('selectedHub').then((value) => {
-      if (value !== null) {
-        setSelectedHub(value as string);
-      }
-    });
-  }, []);
 
   const classes = useStyles();
   return (
