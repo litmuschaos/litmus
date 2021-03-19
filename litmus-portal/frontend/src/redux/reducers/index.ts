@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 import { AlertData } from '../../models/redux/alert';
 import { AnalyticsData } from '../../models/redux/analytics';
-import { InfoButtonData } from '../../models/redux/button';
 import { DashboardData } from '../../models/redux/dashboards';
 import { DataSourceData } from '../../models/redux/dataSource';
 import { HubDetails } from '../../models/redux/myhub';
@@ -12,7 +11,6 @@ import { UserData } from '../../models/redux/user';
 import { WorkflowData, WorkflowManifest } from '../../models/redux/workflow';
 import * as alertReducer from './alert';
 import * as analyticsReducer from './analytics';
-import * as infoButtonReducer from './button';
 import * as dashboardReducer from './dashboards';
 import * as dataSourceReducer from './dataSource';
 import * as hubDetails from './myhub';
@@ -28,7 +26,6 @@ export interface RootState {
   workflowData: WorkflowData;
   workflowManifest: WorkflowManifest;
   selectedNode: SelectedNode;
-  toggleInfoButton: InfoButtonData;
   tabNumber: TabState;
   alert: AlertData;
   selectTemplate: TemplateData;
@@ -46,7 +43,6 @@ export default () =>
     ...tabsReducer,
     ...alertReducer,
     ...templateReducer,
-    ...infoButtonReducer,
     ...hubDetails,
     ...dataSourceReducer,
     ...dashboardReducer,

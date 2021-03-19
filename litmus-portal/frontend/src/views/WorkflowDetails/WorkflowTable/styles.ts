@@ -77,47 +77,6 @@ const useStyles = makeStyles((theme) => ({
   disabledText: {
     color: theme.palette.text.disabled,
   },
-
-  // Status Text Colors
-  running: {
-    color: theme.palette.highlight,
-  },
-
-  failed: {
-    color: theme.palette.error.main,
-  },
-
-  succeeded: {
-    color: theme.palette.success.main,
-  },
-
-  pending: {
-    color: theme.palette.text.primary,
-  },
-
-  status: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-
-  icon: {
-    marginRight: theme.spacing(1),
-  },
-
-  runningSmallIcon: {
-    animation: 'runningNodeSpinAnimationSmall 2s ease-in-out infinite',
-  },
-
-  '@global': {
-    '@keyframes runningNodeSpinAnimationSmall': {
-      from: {
-        transform: `rotate(0deg)`,
-      },
-      to: {
-        transform: `rotate(360deg)`,
-      },
-    },
-  },
 }));
 
 export default useStyles;

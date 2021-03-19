@@ -4,8 +4,8 @@ import Tabs from '@material-ui/core/Tabs/Tabs';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import { ButtonOutlined } from 'litmus-ui';
+import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -23,37 +23,30 @@ import { RootState } from '../../redux/reducers';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import useStyles from './styles';
-import NodeTable from '../../views/WorkflowDetails/workflowTable';
+import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
-import * as ToggleButtonAction from '../../redux/actions/button';
 
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const classes = useStyles();
-  const [logsModalOpen, setLogsModalOpen] = useState(false);
+  const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
+  const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
 
   const tabs = useActions(TabActions);
-  const toggleButtonAction = useActions(ToggleButtonAction);
-
-  // Getting the workflow nome from the pathname
-  const { pathname } = useLocation();
-  const workflowRunId = pathname.split('/')[2];
-
   // get ProjectID
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
 
-  // For showing details based on togglingInfo
-  const { isInfoToggled } = useSelector(
-    (state: RootState) => state.toggleInfoButton
-  );
-
   const workflowDetailsTabValue = useSelector(
     (state: RootState) => state.tabNumber.node
   );
+
+  // Getting the workflow nome from the pathname
+  const { pathname } = useLocation();
+  const workflowRunId = pathname.split('/')[2];
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -154,6 +147,7 @@ const WorkflowDetails: React.FC = () => {
                   nodes={
                     (JSON.parse(workflow.execution_data) as ExecutionData).nodes
                   }
+                  setIsInfoToggled={setIsInfoToggled}
                 />
                 {/* Workflow Details and Experiment Logs */}
                 {isInfoToggled ? (
@@ -161,9 +155,7 @@ const WorkflowDetails: React.FC = () => {
                     <ButtonOutlined
                       className={classes.closeButton}
                       onClick={() => {
-                        toggleButtonAction.toggleInfoButton({
-                          isInfoToggled: false,
-                        });
+                        setIsInfoToggled(false);
                       }}
                     >
                       &#x2715;

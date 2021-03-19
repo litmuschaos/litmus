@@ -145,16 +145,14 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
   };
 
   return (
-    <div className={classes.root}>
-      <div className={classes.logs}>
-        {data !== undefined ? (
-          <div>{parseLogs(data.getPodLog.log)}</div>
-        ) : (
-          <Typography variant="h5">
-            {t('workflowDetailsView.nodeLogs.fetching')}
-          </Typography>
-        )}
-      </div>
+    <div className={classes.logs}>
+      {data !== undefined ? (
+        <div>{parseLogs(data.getPodLog.log)}</div>
+      ) : (
+        <Typography variant="h5">
+          {t('workflowDetailsView.nodeLogs.fetching')}
+        </Typography>
+      )}
     </div>
   );
 };

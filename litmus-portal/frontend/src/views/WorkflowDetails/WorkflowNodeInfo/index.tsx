@@ -9,6 +9,7 @@ import ChaosResult from '../ChaosResult';
 import NodeLogs from '../NodeLogs';
 import useStyles from './styles';
 import trimstring from '../../../utils/trim';
+import WorkflowStatus from '../WorkflowStatus';
 
 interface WorkflowNodeInfoProps {
   workflow_name: string;
@@ -35,70 +36,32 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
     <div className={classes.root}>
       {/* Node Details */}
       <div className={classes.leftPanel}>
-        <Typography className={classes.workflowHeader}>
+        <Typography className={classes.header}>
           <strong>{t('workflowDetailsView.workflowInfo.header')}:</strong>
         </Typography>
         <div className={classes.subSection}>
           <Typography className={classes.text}>
             {trimstring(workflow_name, 30)}
           </Typography>
-          <div className={classes.status}>
-            <span className={classes.icon}>
-              <img
-                className={
-                  phase.toLowerCase() === 'running'
-                    ? classes.runningSmallIcon
-                    : ''
-                }
-                src={`/icons/${phase.toLowerCase()}.svg`}
-              />
-            </span>
-            <Typography className={classes.text}>{phase}</Typography>
-          </div>
+          <WorkflowStatus phase={phase} />
         </div>
         <hr />
-        <div className={classes.heightMaintainer}>
+        <div className={classes.subSection}>
           <div>
-            <div className={classes.subSection}>
-              <Typography>
-                <strong>
-                  {t('workflowDetailsView.workflowNodeInfo.startTime')}:
-                </strong>
-              </Typography>
+            <Typography className={classes.text}>
+              <strong>
+                {t('workflowDetailsView.workflowNodeInfo.startTime')}:
+              </strong>
               &nbsp;&nbsp;&nbsp;
-              <Typography className={classes.text}>
-                {timeDifference(startedAt)}
-              </Typography>
-            </div>
-            <div className={classes.subSection}>
-              <Typography>
-                <strong>
-                  {t('workflowDetailsView.workflowNodeInfo.duration')}:{' '}
-                </strong>
-              </Typography>
-              &nbsp;&nbsp;&nbsp;
-              <Typography className={classes.text}>
-                {finishedAt !== ''
-                  ? (
-                      (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
-                      60
-                    ).toFixed(1)
-                  : (
-                      (new Date().getTime() / 1000 - parseInt(startedAt, 10)) /
-                      60
-                    ).toFixed(1)}{' '}
-                minutes
-              </Typography>
-            </div>
+              <span>{timeDifference(startedAt)}</span>
+            </Typography>
           </div>
-          <div className={classes.subSection}>
-            <Typography>
+          <div>
+            <Typography className={classes.text}>
               <strong>
                 {t('workflowDetailsView.workflowNodeInfo.endTime')}:
               </strong>
-            </Typography>
-            &nbsp;&nbsp;&nbsp;
-            <Typography className={classes.text}>
+              &nbsp;&nbsp;&nbsp;
               {finishedAt !== '' ? (
                 <span>{timeDifference(finishedAt)}</span>
               ) : (
@@ -107,7 +70,21 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
             </Typography>
           </div>
         </div>
-        <div className={classes.marginTop}>
+        <Typography className={classes.text}>
+          <strong>{t('workflowDetailsView.workflowNodeInfo.duration')}:</strong>
+          &nbsp;&nbsp;&nbsp;
+          {finishedAt !== ''
+            ? (
+                (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
+                60
+              ).toFixed(1)
+            : (
+                (new Date().getTime() / 1000 - parseInt(startedAt, 10)) /
+                60
+              ).toFixed(1)}{' '}
+          minutes
+        </Typography>
+        <div className={classes.topMarginBox}>
           <img className={classes.icon} src={'/icons/filledDownArrow.svg'} />
           <Typography className={classes.text}>
             <strong>
@@ -115,7 +92,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
             </strong>
           </Typography>
         </div>
-        <div className={classes.marginTop}>
+        <div className={classes.topMarginBox}>
           <img className={classes.icon} src={'/icons/filledDownArrow.svg'} />
           <Typography className={classes.text}>
             <strong>

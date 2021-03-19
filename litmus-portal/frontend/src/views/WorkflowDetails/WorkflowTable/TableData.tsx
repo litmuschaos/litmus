@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import timeDifference from '../../../utils/datesModifier';
 import useStyles, { StyledTableCell } from './styles';
 import { ExecutionData } from '../../../models/graphql/workflowData';
+import WorkflowStatus from '../WorkflowStatus';
 
 interface TableDataProps {
   data: ExecutionData['nodes'][0];
@@ -25,34 +26,7 @@ const TableData: React.FC<TableDataProps> = ({ data, handleClose }) => {
         </Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
-        <div className={classes.status}>
-          <span className={classes.icon}>
-            <img
-              className={
-                data.phase.toLowerCase() === 'running'
-                  ? classes.runningSmallIcon
-                  : ''
-              }
-              src={`/icons/${data.phase.toLowerCase()}.svg`}
-              alt="status"
-            />
-          </span>
-          <Typography>
-            <span
-              className={`${
-                data.phase === 'Succeeded'
-                  ? classes.succeeded
-                  : data.phase === 'failed'
-                  ? classes.failed
-                  : data.phase === 'Running'
-                  ? classes.running
-                  : classes.pending
-              }`}
-            >
-              <strong>{data.phase}</strong>
-            </span>
-          </Typography>
-        </div>
+        <WorkflowStatus phase={data.phase} />
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
         <Typography>

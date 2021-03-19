@@ -13,6 +13,7 @@ import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import NodeLogs from '../NodeLogs';
 import trimstring from '../../../utils/trim';
 import useActions from '../../../redux/actions';
+import WorkflowStatus from '../WorkflowStatus';
 
 interface NodeLogsModalProps {
   logsOpen: boolean;
@@ -40,7 +41,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
   const [selectedNodeID, setSelectedNodeID] = useState<string>(
-    Object.keys(data.nodes)[0]
+    Object.keys(data.nodes)[1]
   );
   const nodeSelection = useActions(NodeSelectionActions);
   const [nodesArray, setNodesArray] = useState<SelectedNodeType[]>([]);
@@ -60,7 +61,10 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
   useEffect(() => {
     const filteredNodes: SelectedNodeType[] = [];
     Object.keys(data.nodes).forEach((key) => {
-      if (data.nodes[key].type !== 'StepGroup') {
+      if (
+        data.nodes[key].type !== 'StepGroup' &&
+        data.nodes[key].type !== 'Steps'
+      ) {
         filteredNodes.push({ ...data.nodes[key], id: key });
       }
     });
@@ -113,34 +117,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                     {trimstring(node.name, 20)}
                   </Typography>
                 </div>
-                <div className={classes.status}>
-                  <span className={classes.icon}>
-                    <img
-                      className={
-                        node.phase.toLowerCase() === 'running'
-                          ? classes.runningSmallIcon
-                          : ''
-                      }
-                      src={`/icons/${node.phase.toLowerCase()}.svg`}
-                      alt="status"
-                    />
-                  </span>
-                  <Typography>
-                    <span
-                      className={`${
-                        node.phase === 'Succeeded'
-                          ? classes.succeeded
-                          : node.phase === 'failed'
-                          ? classes.failed
-                          : node.phase === 'Running'
-                          ? classes.running
-                          : classes.pending
-                      }`}
-                    >
-                      <strong>{node.phase}</strong>
-                    </span>
-                  </Typography>
-                </div>
+                <WorkflowStatus phase={node.phase} />
               </div>
             ))}
           </div>
@@ -154,34 +131,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                   <strong>{trimstring(name, 30)}</strong>
                 </Typography>
               </div>
-              <div className={classes.status}>
-                <span className={classes.icon}>
-                  <img
-                    className={
-                      phase.toLowerCase() === 'running'
-                        ? classes.runningSmallIcon
-                        : ''
-                    }
-                    src={`/icons/${phase.toLowerCase()}.svg`}
-                    alt="status"
-                  />
-                </span>
-                <Typography>
-                  <span
-                    className={`${
-                      phase === 'Succeeded'
-                        ? classes.succeeded
-                        : phase === 'failed'
-                        ? classes.failed
-                        : phase === 'Running'
-                        ? classes.running
-                        : classes.pending
-                    }`}
-                  >
-                    <strong>{phase}</strong>
-                  </span>
-                </Typography>
-              </div>
+              <WorkflowStatus phase={phase} />
               <div>
                 <Typography className={classes.subLogsHeader}>
                   <strong>
@@ -199,13 +149,15 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                 <Typography>{timeDifference(finishedAt)}</Typography>
               </div>
             </div>
-            <NodeLogs
-              cluster_id={cluster_id}
-              workflow_run_id={workflow_run_id}
-              pod_namespace={pod_namespace}
-              pod_name={pod_name}
-              pod_type={type}
-            />
+            <div className={classes.logsHeight}>
+              <NodeLogs
+                cluster_id={cluster_id}
+                workflow_run_id={workflow_run_id}
+                pod_namespace={pod_namespace}
+                pod_name={pod_name}
+                pod_type={type}
+              />
+            </div>
           </div>
         </div>
       </div>

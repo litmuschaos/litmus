@@ -2,6 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    height: '40rem',
     padding: theme.spacing(0, 2, 2, 2),
   },
 
@@ -21,12 +22,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Section
   section: {
     display: 'flex',
+    height: '25rem',
     width: '100%',
+    padding: theme.spacing(2, 2, 2, 2),
   },
 
   // Left side panel for Nodes data
   nodesData: {
-    margin: theme.spacing(7, 2, 2, 2),
+    margin: theme.spacing(5, 2, 2, 0),
     width: '35%',
   },
 
@@ -49,13 +52,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
 
-  // Node Status Block
-  status: {
-    display: 'flex',
-    float: 'left',
-    flexDirection: 'row',
-  },
-
   // Icon with right margin
   icon: {
     marginRight: theme.spacing(1),
@@ -72,23 +68,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderColor: theme.palette.border.main,
   },
 
-  // Classes for Status Texts
-  running: {
-    color: theme.palette.highlight,
-  },
-
-  failed: {
-    color: theme.palette.error.main,
-  },
-
-  succeeded: {
-    color: theme.palette.success.main,
-  },
-
-  pending: {
-    color: theme.palette.text.primary,
-  },
-
   subLogsHeader: {
     color: theme.palette.text.disabled,
   },
@@ -98,23 +77,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: theme.spacing(2, 2, 0, 2),
+    padding: theme.spacing(0, 0, 0, 2),
   },
 
-  // Some explicit classes for Running Icon
-  runningSmallIcon: {
-    animation: 'runningNodeSpinAnimationSmall 2s ease-in-out infinite',
-  },
-
-  '@global': {
-    '@keyframes runningNodeSpinAnimationSmall': {
-      from: {
-        transform: `rotate(0deg)`,
-      },
-      to: {
-        transform: `rotate(360deg)`,
-      },
-    },
+  logsHeight: {
+    height: '100%',
   },
 }));
 
