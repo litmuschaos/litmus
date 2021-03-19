@@ -2,7 +2,12 @@ import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonOutlined } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
@@ -41,12 +46,12 @@ interface ChartName {
   ExperimentName: string;
 }
 
-const TuneWorkflow: React.FC = () => {
+const TuneWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
 
   // State Variables for Tune Workflow
   const [hubName, setHubName] = useState<string>('');
-  const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]); // eslint-disable-line
+  const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]);
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
   const [selectedExp, setSelectedExp] = useState('');
   const { selectedProjectID } = useSelector(
@@ -228,6 +233,15 @@ const TuneWorkflow: React.FC = () => {
     });
   }, []);
 
+  // console.log(generatedYAML);
+  function onNext() {
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
+
   return (
     <div className={classes.root}>
       {/* Header */}
@@ -298,6 +312,6 @@ const TuneWorkflow: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default TuneWorkflow;

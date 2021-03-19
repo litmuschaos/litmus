@@ -1,6 +1,5 @@
 import { Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,14 +9,18 @@ import TableRow from '@material-ui/core/TableRow';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import useActions from '../../../redux/actions';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import ConfigurationStepper from './ConfigurationStepper/ConfigurationStepper';
+import useStyles from './styles';
 
 interface WorkflowTableProps {
   isCustom?: boolean;
 }
 
 interface ChaosCRDTable {
+  StepIndex: number;
   Name: string;
   Namespace: string;
   Application: string;
@@ -25,21 +28,12 @@ interface ChaosCRDTable {
   ChaosEngine: string;
 }
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-    minHeight: '20rem',
-  },
-});
-
 const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
   const classes = useStyles();
+  const workflow = useActions(WorkflowActions);
   const [experiments, setExperiments] = useState<ChaosCRDTable[]>([]);
   const [displayStepper, setDisplayStepper] = useState<boolean>(false);
-  const [
-    configureExperiment,
-    setConfigureExperiment,
-  ] = useState<ChaosCRDTable>();
+  const [engineIndex, setEngineIndex] = useState<number>(0);
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
@@ -47,13 +41,16 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
   const parsing = (yamlText: string) => {
     const parsedYaml = YAML.parse(yamlText);
     const expData: ChaosCRDTable[] = [];
-
-    parsedYaml.spec.templates.forEach((template: any) => {
+    workflow.setWorkflowManifest({
+      manifest: yamlText,
+    });
+    parsedYaml.spec.templates.forEach((template: any, index: number) => {
       if (template.inputs !== undefined) {
         template.inputs.artifacts.forEach((artifact: any) => {
           const chaosEngine = YAML.parse(artifact.raw.data);
           if (chaosEngine.kind === 'ChaosEngine') {
             expData.push({
+              StepIndex: index,
               Name: chaosEngine.metadata.name,
               Namespace: chaosEngine.spec.appinfo.appns,
               Application: chaosEngine.spec.appinfo.applabel,
@@ -115,7 +112,10 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
                     <TableCell
                       onClick={() => {
                         setDisplayStepper(true);
-                        setConfigureExperiment(experiment);
+                        setEngineIndex(experiment.StepIndex);
+                        workflow.setWorkflowManifest({
+                          engineYAML: experiment.ChaosEngine,
+                        });
                       }}
                       align="left"
                       style={{ cursor: 'pointer' }}
@@ -141,8 +141,9 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
         </TableContainer>
       ) : (
         <ConfigurationStepper
-          experimentData={configureExperiment}
+          experimentIndex={engineIndex}
           closeStepper={closeConfigurationStepper}
+          isCustom={isCustom}
         />
       )}
     </div>

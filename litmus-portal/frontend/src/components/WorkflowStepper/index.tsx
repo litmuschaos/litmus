@@ -57,7 +57,7 @@ function getStepContent(
     case 2:
       return <WorkflowSettings ref={childRef} />;
     case 3:
-      return <TuneWorkflow />;
+      return <TuneWorkflow ref={childRef} />;
     case 4:
       return <ReliablityScore />;
     case 5:
