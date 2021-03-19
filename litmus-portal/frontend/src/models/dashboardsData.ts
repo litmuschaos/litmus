@@ -34,4 +34,5 @@ export interface ChaosResultNamesAndNamespacesMap {
   resultNamespace: string;
   workflowName: string;
   experimentName: string;
+  isRemoved: string[];
 }

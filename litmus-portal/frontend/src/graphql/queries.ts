@@ -44,6 +44,7 @@ export const WORKFLOW_LIST_DETAILS = gql`
   query workflowListDetails($projectID: String!, $workflowIDs: [ID]) {
     ListWorkflow(project_id: $projectID, workflow_ids: $workflowIDs) {
       workflow_id
+      workflow_manifest
       cronSyntax
       cluster_name
       workflow_name
@@ -58,6 +59,7 @@ export const WORKFLOW_LIST_DETAILS = gql`
       project_id
       cluster_id
       cluster_type
+      isRemoved
       workflow_runs {
         execution_data
         workflow_run_id

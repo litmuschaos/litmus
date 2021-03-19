@@ -199,6 +199,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                         workflowName: workflowYaml.metadata.name,
                         experimentName:
                           parsedEmbeddedYaml.spec.experiments[0].name,
+                        isRemoved: [],
                       });
                     } else {
                       chaosResultNamesAndNamespacesMap[

@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import DashboardList from '../../../../components/PreconfiguredDashboards/data';
-import { SCHEDULE_DETAILS } from '../../../../graphql';
+import { WORKFLOW_LIST_DETAILS } from '../../../../graphql';
 import { DELETE_DASHBOARD, UPDATE_PANEL } from '../../../../graphql/mutations';
 import {
   Artifact,
@@ -35,10 +35,10 @@ import {
   UpdatePanelInput,
 } from '../../../../models/graphql/dashboardsDetails';
 import {
-  ScheduleDataVars,
-  Schedules,
-  ScheduleWorkflow,
-} from '../../../../models/graphql/scheduleData';
+  Workflow,
+  WorkflowList,
+  WorkflowListDataVars,
+} from '../../../../models/graphql/workflowListData';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
@@ -77,12 +77,12 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   ] = React.useState<DeleteDashboardInput>({
     dbID: '',
   });
-  // Apollo query to get the scheduled data
-  const { data: workflowSchedules } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
+
+  // Apollo query to get the scheduled workflow data
+  const { data: analyticsData } = useQuery<WorkflowList, WorkflowListDataVars>(
+    WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
+      variables: { projectID: selectedProjectID, workflowIDs: [] },
     }
   );
 
@@ -126,92 +126,94 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     setAnchorEl(null);
   };
 
-  const reSyncChaosQueries = () => {
+  const reSyncChaosQueries = (data: ListDashboardResponse) => {
     const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
-    workflowSchedules?.getScheduledWorkflows.forEach(
-      (schedule: ScheduleWorkflow) => {
-        if (schedule.cluster_id === data.cluster_id && !schedule.isRemoved) {
-          let workflowYaml: WorkflowYaml | CronWorkflowYaml;
-          let parametersMap: Parameter[];
-          let workflowYamlCheck: boolean = true;
-          try {
-            workflowYaml = JSON.parse(schedule.workflow_manifest);
-            parametersMap = (workflowYaml as WorkflowYaml).spec.arguments
-              .parameters;
-          } catch (err) {
-            workflowYaml = JSON.parse(schedule.workflow_manifest);
-            parametersMap = (workflowYaml as CronWorkflowYaml).spec.workflowSpec
-              .arguments.parameters;
-            workflowYamlCheck = false;
-          }
-          (workflowYamlCheck
-            ? (workflowYaml as WorkflowYaml).spec.templates
-            : (workflowYaml as CronWorkflowYaml).spec.workflowSpec.templates
-          ).forEach((template: Template) => {
-            if (template.inputs && template.inputs.artifacts) {
-              template.inputs.artifacts.forEach((artifact: Artifact) => {
-                const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
-                if (parsedEmbeddedYaml.kind === 'ChaosEngine') {
-                  let engineNamespace: string = '';
-                  if (
-                    typeof parsedEmbeddedYaml.metadata.namespace === 'string'
-                  ) {
-                    engineNamespace = (parsedEmbeddedYaml.metadata
-                      .namespace as string).substring(
-                      1,
-                      (parsedEmbeddedYaml.metadata.namespace as string).length -
-                        1
-                    );
-                  } else {
-                    engineNamespace = Object.keys(
-                      parsedEmbeddedYaml.metadata.namespace
-                    )[0];
-                  }
-                  if (validateWorkflowParameter(engineNamespace)) {
-                    engineNamespace = getWorkflowParameter(engineNamespace);
-                    parametersMap.forEach((parameterKeyValue: Parameter) => {
-                      if (parameterKeyValue.name === engineNamespace) {
-                        engineNamespace = parameterKeyValue.value;
-                      }
-                    });
-                  } else {
-                    engineNamespace = parsedEmbeddedYaml.metadata.namespace;
-                  }
-                  let matchIndex: number = -1;
-                  const check: number = chaosResultNamesAndNamespacesMap.filter(
-                    (data, index) => {
-                      if (
-                        data.resultName.includes(
-                          parsedEmbeddedYaml.metadata.name
-                        ) &&
-                        data.resultNamespace === engineNamespace
-                      ) {
-                        matchIndex = index;
-                        return true;
-                      }
-                      return false;
+    analyticsData?.ListWorkflow.forEach((schedule: Workflow) => {
+      if (schedule.cluster_id === data.cluster_id) {
+        let workflowYaml: WorkflowYaml | CronWorkflowYaml;
+        let parametersMap: Parameter[];
+        let workflowYamlCheck: boolean = true;
+        try {
+          workflowYaml = JSON.parse(schedule.workflow_manifest);
+          parametersMap = (workflowYaml as WorkflowYaml).spec.arguments
+            .parameters;
+        } catch (err) {
+          workflowYaml = JSON.parse(schedule.workflow_manifest);
+          parametersMap = (workflowYaml as CronWorkflowYaml).spec.workflowSpec
+            .arguments.parameters;
+          workflowYamlCheck = false;
+        }
+        (workflowYamlCheck
+          ? (workflowYaml as WorkflowYaml).spec.templates
+          : (workflowYaml as CronWorkflowYaml).spec.workflowSpec.templates
+        ).forEach((template: Template) => {
+          if (template.inputs && template.inputs.artifacts) {
+            template.inputs.artifacts.forEach((artifact: Artifact) => {
+              const parsedEmbeddedYaml = YAML.parse(artifact.raw.data);
+              if (parsedEmbeddedYaml.kind === 'ChaosEngine') {
+                let engineNamespace: string = '';
+                if (typeof parsedEmbeddedYaml.metadata.namespace === 'string') {
+                  engineNamespace = (parsedEmbeddedYaml.metadata
+                    .namespace as string).substring(
+                    1,
+                    (parsedEmbeddedYaml.metadata.namespace as string).length - 1
+                  );
+                } else {
+                  engineNamespace = Object.keys(
+                    parsedEmbeddedYaml.metadata.namespace
+                  )[0];
+                }
+                if (validateWorkflowParameter(engineNamespace)) {
+                  engineNamespace = getWorkflowParameter(engineNamespace);
+                  parametersMap.forEach((parameterKeyValue: Parameter) => {
+                    if (parameterKeyValue.name === engineNamespace) {
+                      engineNamespace = parameterKeyValue.value;
                     }
-                  ).length;
-                  if (check === 0) {
-                    chaosResultNamesAndNamespacesMap.push({
-                      resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
-                      resultNamespace: engineNamespace,
-                      workflowName: workflowYaml.metadata.name,
-                      experimentName:
-                        parsedEmbeddedYaml.spec.experiments[0].name,
-                    });
-                  } else {
-                    chaosResultNamesAndNamespacesMap[
-                      matchIndex
-                    ].workflowName = `${chaosResultNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                  });
+                } else {
+                  engineNamespace = parsedEmbeddedYaml.metadata.namespace;
+                }
+                let matchIndex: number = -1;
+                const check: number = chaosResultNamesAndNamespacesMap.filter(
+                  (data, index) => {
+                    if (
+                      data.resultName.includes(
+                        parsedEmbeddedYaml.metadata.name
+                      ) &&
+                      data.resultNamespace === engineNamespace
+                    ) {
+                      matchIndex = index;
+                      return true;
+                    }
+                    return false;
+                  }
+                ).length;
+                if (check === 0) {
+                  chaosResultNamesAndNamespacesMap.push({
+                    resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
+                    resultNamespace: engineNamespace,
+                    workflowName: workflowYaml.metadata.name,
+                    experimentName: parsedEmbeddedYaml.spec.experiments[0].name,
+                    isRemoved: schedule.isRemoved
+                      ? [workflowYaml.metadata.name]
+                      : [],
+                  });
+                } else {
+                  chaosResultNamesAndNamespacesMap[
+                    matchIndex
+                  ].workflowName = `${chaosResultNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                  if (schedule.isRemoved) {
+                    chaosResultNamesAndNamespacesMap[matchIndex].isRemoved.push(
+                      workflowYaml.metadata.name
+                    );
                   }
                 }
-              });
-            }
-          });
-        }
+              }
+            });
+          }
+        });
       }
-    );
+    });
 
     const isChaosQueryPresent: number[] = Array(
       chaosResultNamesAndNamespacesMap.length
@@ -271,28 +273,76 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                     chaosDetails.resultName
                   ) &&
                   chaosDetailsFomSchedule.resultNamespace ===
-                    chaosDetails.resultNamespace &&
-                  !query.legend.includes(chaosDetailsFomSchedule.workflowName)
+                    chaosDetails.resultNamespace
                 ) {
-                  updatedLegend = `${chaosDetailsFomSchedule.workflowName}, \n${query.legend}`;
+                  if (
+                    !query.legend.includes(
+                      chaosDetailsFomSchedule.workflowName
+                    ) &&
+                    !chaosDetailsFomSchedule.isRemoved.includes(
+                      chaosDetailsFomSchedule.workflowName
+                    )
+                  ) {
+                    updatedLegend = `${chaosDetailsFomSchedule.workflowName}, \n${query.legend}`;
+                  } else if (
+                    query.legend.includes(
+                      chaosDetailsFomSchedule.workflowName
+                    ) &&
+                    chaosDetailsFomSchedule.isRemoved.includes(
+                      chaosDetailsFomSchedule.workflowName
+                    )
+                  ) {
+                    const CharacterAfterWorkflowName: string =
+                      query.legend[
+                        query.legend.indexOf(
+                          chaosDetailsFomSchedule.workflowName
+                        ) + chaosDetailsFomSchedule.workflowName.length
+                      ];
+                    if (CharacterAfterWorkflowName === ',') {
+                      updatedLegend = query.legend.replace(
+                        `${chaosDetailsFomSchedule.workflowName}, \n`,
+                        ''
+                      );
+                    } else if (CharacterAfterWorkflowName === ' ') {
+                      updatedLegend = query.legend.replace(
+                        `, \n${chaosDetailsFomSchedule.workflowName} /`,
+                        ' /'
+                      );
+                    }
+                    if (query.legend.split(',').length - 1 === 0) {
+                      updatedLegend = '';
+                    }
+                  }
                 }
               }
             );
           }
-          const updatedQuery: PromQuery = {
-            queryid: query.queryid,
-            prom_query_name: query.prom_query_name,
-            resolution: query.resolution,
-            minstep: query.minstep,
-            line: query.line,
-            close_area: query.close_area,
-            legend: updatedLegend,
-          };
-          updatedQueries.push(updatedQuery);
+          if (
+            !(
+              updatedLegend === '' &&
+              query.prom_query_name.startsWith(
+                'litmuschaos_awaited_experiments'
+              )
+            )
+          ) {
+            const updatedQuery: PromQuery = {
+              queryid: query.queryid,
+              prom_query_name: query.prom_query_name,
+              resolution: query.resolution,
+              minstep: query.minstep,
+              line: query.line,
+              close_area: query.close_area,
+              legend: updatedLegend,
+            };
+            updatedQueries.push(updatedQuery);
+          }
         });
         chaosResultNamesAndNamespacesMap.forEach(
           (keyValue: ChaosResultNamesAndNamespacesMap, index: number) => {
-            if (isChaosQueryPresent[index] === 0) {
+            if (
+              isChaosQueryPresent[index] === 0 &&
+              !keyValue.isRemoved.includes(keyValue.workflowName)
+            ) {
               updatedQueries.push({
                 queryid: uuidv4(),
                 prom_query_name: generateChaosQuery(
@@ -359,7 +409,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     return true;
   };
 
-  const onDashboardLoadRoutine = async () => {
+  const onDashboardLoadRoutine = async (data: ListDashboardResponse) => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
       selectedDashboardName: data.db_name,
@@ -367,7 +417,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       selectedAgentID: data.cluster_id,
       selectedAgentName: data.cluster_name,
     });
-    return Promise.resolve(reSyncChaosQueries());
+    return Promise.resolve(reSyncChaosQueries(data));
   };
 
   useEffect(() => {
@@ -438,7 +488,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <MenuItem
             value="Analysis"
             onClick={() => {
-              onDashboardLoadRoutine().then(() => {
+              onDashboardLoadRoutine(data).then(() => {
                 dataSource.selectDataSource({
                   selectedDataSourceURL: '',
                   selectedDataSourceID: '',

@@ -14,6 +14,7 @@ const getResultNameAndNamespace = (chaosQueryString: string) => {
       .slice(1, -1),
     workflowName: '',
     experimentName: '',
+    isRemoved: [],
   };
   return parsedChaosInfoMap;
 };

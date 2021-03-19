@@ -48,7 +48,6 @@ const PanelContent: React.FC<PanelResponse> = ({
   const { palette } = useTheme();
   const classes = useStyles();
   const lineGraph: string[] = palette.graph.line;
-  const areaGraph: string[] = palette.graph.area;
 
   const [
     prometheusQueryData,
