@@ -60,7 +60,7 @@ metadata:
   labels:
     app: chaos-exporter
   name: chaos-exporter
-  namespace: litmus
+  namespace: #{AGENT-NAMESPACE}
 spec:
   replicas: 1
   selector:

@@ -652,9 +652,10 @@ targets:
     head3: Paste and Run the following command into the cluster console
   modalDelete:
     head1: Are you sure to
-    head2: remove the current Agent?
-    head3: It will be removed forever
-    delete: Delete
+    head2: disconnect the current
+    head3: It will be disconnect forever
+    head4: Agent?
+    disconnect: Disconnect
     yes: Yes
     no: No
 
@@ -696,7 +697,7 @@ workflowCluster:
       noSchedules: No. of Schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
-      delete: Delete
+      disconnect: Disconnect
       clusterInfo: Cluster information
       about: About Litmus Cluster
       back: Back
