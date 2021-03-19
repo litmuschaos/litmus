@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   btn1: {
     border: 'none !important',
-    color: theme.palette.highlight,
+    color: theme.palette.primary.main,
   },
 
   // General Component
@@ -44,12 +44,26 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 72,
     height: 35,
   },
+  text: {
+    textTransform: 'none',
+  },
 
-  // Stepper styles
-  stepperLabel: {
-    '& .MuiStepLabel-label': {
-      color: theme.palette.common.black,
-    },
+  // Probes Table
+  table: {
+    minWidth: 650,
+    minHeight: '9rem',
+  },
+
+  // Probes Popover
+  probePopOver: {
+    marginTop: 10,
+  },
+  popOverDiv: {
+    maxWidth: 'fit-content',
+    padding: 20,
+  },
+  probeText: {
+    fontSize: 14,
   },
 }));
 export default useStyles;
