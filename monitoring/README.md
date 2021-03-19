@@ -102,7 +102,11 @@ This directory contains chaos interleaved grafana dashboards along with the util
 
   > Now copy the EXTERNAL-IP of grafana and view it in the browser
 
-  > Default username/password credentials: `admin/admin`
+  Default username/password credentials: `admin/admin`
+
+  The `dashboard` and the `datasource` are imported automatically by Grafana during deployment, if something goes wrong, you can manually set it up as shown below.
+
+### Manually Importing datasource and dashboard
 
 - Add the prometheus datasource from monitoring namespace as DS_PROMETHEUS for Grafana via the Grafana Settings menu
 

@@ -74,7 +74,7 @@ Note: Default `username: admin` and `password: litmus`
 
 Litmus-Portal provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
-View the User Guide <b>[here](https://docs.google.com/document/d/1fiN25BrZpvqg0UkBCuqQBE7Mx8BwDGC8ss2j2oXkZNA/edit#)</b>
+View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)
 
 ### **Uninstallation**
 

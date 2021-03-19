@@ -90,6 +90,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         FileType: 'experiment',
       },
     },
+    fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       const parsedYaml = YAML.parse(data.getYAMLData);
       workflowAction.setWorkflowDetails({

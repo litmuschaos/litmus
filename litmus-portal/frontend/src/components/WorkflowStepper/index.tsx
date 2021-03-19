@@ -4,7 +4,7 @@ import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
-import { Modal, ButtonOutlined } from 'litmus-ui';
+import { Modal, ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -31,8 +31,9 @@ import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
 import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
 import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
 import ChooseAWorkflowCluster from '../../views/CreateWorkflow/WorkflowCluster';
-import ButtonFilled from '../Button/ButtonFilled';
+
 import ButtonOutline from '../Button/ButtonOutline';
+import Loader from '../Loader';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
@@ -266,7 +267,7 @@ const CustomStepper = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow, { error: workflowError }] = useMutation<
+  const [createChaosWorkFlow, { error: workflowError, loading }] = useMutation<
     CreateWorkflowResponse,
     CreateWorkFlowInput
   >(CREATE_WORKFLOW, {
@@ -355,9 +356,7 @@ const CustomStepper = () => {
             marginTop: '1rem',
           }}
         >
-          <ButtonFilled isPrimary handleClick={() => history.goBack()}>
-            Go Back
-          </ButtonFilled>
+          <ButtonFilled onClick={() => history.goBack()}>Go Back</ButtonFilled>
         </div>
       </>
     );
@@ -421,9 +420,8 @@ const CustomStepper = () => {
                 </div>
                 <div className={classes.button}>
                   <ButtonFilled
-                    isPrimary
                     data-cy="selectFinish"
-                    handleClick={() => {
+                    onClick={() => {
                       setOpen(false);
                       tabs.changeWorkflowsTabs(0);
                       history.push('/workflows');
@@ -456,9 +454,8 @@ const CustomStepper = () => {
                 </div>
                 <div className={classes.button}>
                   <ButtonFilled
-                    isPrimary
                     data-cy="selectFinish"
-                    handleClick={() => {
+                    onClick={() => {
                       setErrorModal(false);
                     }}
                   >
@@ -477,18 +474,19 @@ const CustomStepper = () => {
               </ButtonOutline>
               {activeStep === steps.length - 1 ? (
                 <ButtonFilled
-                  isDisabled={validateWorkflowName(name)}
-                  handleClick={handleOpen}
-                  isPrimary
+                  disabled={validateWorkflowName(name) || loading}
+                  onClick={() => {
+                    handleOpen();
+                  }}
                 >
-                  <div>Finish</div>
+                  {loading ? (
+                    <Loader size={20} />
+                  ) : (
+                    <Typography>{t('workflowStepper.finish')}</Typography>
+                  )}
                 </ButtonFilled>
               ) : (
-                <ButtonFilled
-                  handleClick={() => handleNext()}
-                  isPrimary
-                  isDisabled={isDisable}
-                >
+                <ButtonFilled onClick={() => handleNext()} disabled={isDisable}>
                   <div>
                     Next
                     <img

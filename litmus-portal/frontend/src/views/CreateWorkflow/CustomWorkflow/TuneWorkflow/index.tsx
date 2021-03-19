@@ -51,6 +51,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const { t } = useTranslation();
   const userData = useSelector((state: RootState) => state.userData);
   const [getEngineYaml] = useLazyQuery(GET_ENGINE_YAML, {
+    fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       const parsedYaml = YAML.parse(data.getYAMLData);
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);

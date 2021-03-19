@@ -1,59 +1,9 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    },
-    {
-      "name": "DS_PROMETHEUS-1",
-      "label": "Prometheus-1",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "digiapulssi-breadcrumb-panel",
-      "name": "Breadcrumb",
-      "version": "1.1.6"
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "6.7.4"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "singlestat",
-      "name": "Singlestat",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
         "$$hashKey": "object:627",
-        "datasource": "${DS_PROMETHEUS-1}",
+        "datasource": "DS_PROMETHEUS",
         "enable": true,
         "expr": "litmuschaos_awaited_experiments",
         "hide": true,
@@ -105,8 +55,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": null,
-  "iteration": 1610541836023,
+  "id": 4,
+  "iteration": 1615978059641,
   "links": [
     {
       "icon": "doc",
@@ -118,7 +68,7 @@
       "targetBlank": false,
       "title": "Home",
       "type": "link",
-      "url": "/graph/d/pmm-home/home-dashboard"
+      "url": "\/graph\/d\/pmm-home\/home-dashboard"
     },
     {
       "icon": "dashboard",
@@ -130,7 +80,7 @@
       "targetBlank": false,
       "title": "Query Analytics",
       "type": "link",
-      "url": "/graph/d/pmm-qan/pmm-query-analytics"
+      "url": "\/graph\/d\/pmm-qan\/pmm-query-analytics"
     },
     {
       "icon": "bolt",
@@ -142,7 +92,7 @@
       "targetBlank": false,
       "title": "Compare",
       "type": "link",
-      "url": "/graph/d/pxc-nodes-compare/pxc-galera-nodes-compare"
+      "url": "\/graph\/d\/pxc-nodes-compare\/pxc-galera-nodes-compare"
     },
     {
       "asDropdown": true,
@@ -192,7 +142,13 @@
   "panels": [
     {
       "breadcrumbItemsMaxAmount": 6,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -226,10 +182,16 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(255, 255, 255, 0.97)"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -270,7 +232,7 @@
       "rangeMaps": [
         {
           "from": "null",
-          "text": "N/A",
+          "text": "N\/A",
           "to": "null"
         }
       ],
@@ -324,10 +286,16 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(50, 172, 45, 0.97)"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -368,7 +336,7 @@
       "rangeMaps": [
         {
           "from": "null",
-          "text": "N/A",
+          "text": "N\/A",
           "to": "null"
         }
       ],
@@ -408,7 +376,7 @@
         },
         {
           "op": "=",
-          "text": "Donor/Desynced",
+          "text": "Donor\/Desynced",
           "value": "2"
         },
         {
@@ -433,10 +401,16 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(255, 255, 255, 0.9)"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -477,7 +451,7 @@
       "rangeMaps": [
         {
           "from": "null",
-          "text": "N/A",
+          "text": "N\/A",
           "to": "null"
         }
       ],
@@ -532,10 +506,16 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(50, 172, 45, 0.97)"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -576,7 +556,7 @@
       "rangeMaps": [
         {
           "from": "null",
-          "text": "N/A",
+          "text": "N\/A",
           "to": "null"
         }
       ],
@@ -631,10 +611,16 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(245, 54, 54, 0.9)"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "bytes",
       "gauge": {
         "maxValue": 100,
@@ -674,7 +660,7 @@
       "rangeMaps": [
         {
           "from": "null",
-          "text": "N/A",
+          "text": "N\/A",
           "to": "null"
         }
       ],
@@ -716,7 +702,13 @@
         "#508642",
         "rgb(255, 255, 255)"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -756,7 +748,7 @@
       "rangeMaps": [
         {
           "from": "null",
-          "text": "N/A",
+          "text": "N\/A",
           "to": "null"
         }
       ],
@@ -793,7 +785,7 @@
         },
         {
           "op": "=",
-          "text": "N/A",
+          "text": "N\/A",
           "value": "null"
         }
       ],
@@ -807,11 +799,18 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
       "description": "Shows figures for the replication latency on group communication. It measures latency from the time point when a message is sent out to the time point when a message is received. As replication is a group operation, this essentially gives you the slowest ACK and longest RTT in the cluster.",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "grid": {},
@@ -842,14 +841,15 @@
       "links": [
         {
           "title": "Galera Documentation",
-          "url": "http://galeracluster.com/documentation-webpages/galerastatusvariables.html#wsrep-evs-repl-latency"
+          "url": "http:\/\/galeracluster.com\/documentation-webpages\/galerastatusvariables.html#wsrep-evs-repl-latency"
         }
       ],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -943,11 +943,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
       "description": "Shows the length of receive and send queues.",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 2,
       "fillGradient": 0,
       "grid": {},
@@ -974,9 +981,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1059,11 +1067,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "description": "Shows the number of members currently connected to the cluster.",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "grid": {},
@@ -1092,9 +1107,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1164,11 +1180,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
-      "description": "Shows the number of FC_PAUSE events sent/received. They are sent by a node when its replication queue gets too full. If a node is sending out FC messages it indicates a problem.",
+      "description": "Shows the number of FC_PAUSE events sent\/received. They are sent by a node when its replication queue gets too full. If a node is sending out FC messages it indicates a problem.",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "grid": {},
@@ -1197,9 +1220,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1245,7 +1269,7 @@
           "calculatedInterval": "2m",
           "datasourceErrors": {},
           "errors": {},
-          "expr": "avg by (service_name) ((rate(mysql_global_status_wsrep_flow_control_paused_ns{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_flow_control_paused_ns{service_name=~\"$service_name\"}[5m])))/1000000000",
+          "expr": "avg by (service_name) ((rate(mysql_global_status_wsrep_flow_control_paused_ns{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_flow_control_paused_ns{service_name=~\"$service_name\"}[5m])))\/1000000000",
           "format": "time_series",
           "interval": "$interval",
           "intervalFactor": 1,
@@ -1303,11 +1327,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
       "description": "Shows the average distances between highest and lowest seqno that are concurrently applied, committed and can be possibly applied in parallel (potential degree of parallelization).",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "grid": {},
@@ -1336,9 +1367,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1435,11 +1467,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
-      "description": "Shows the number of local transactions being committed on this node that failed certification (some other node had a commit that conflicted with ours) – client received deadlock error on commit and also the number of local transactions in flight on this node that were aborted because they locked something an applier thread needed – deadlock error anywhere in an open transaction. Spikes in the graph may indicate writing to the same table potentially the same rows from 2 nodes.",
+      "description": "Shows the number of local transactions being committed on this node that failed certification (some other node had a commit that conflicted with ours) \u2013 client received deadlock error on commit and also the number of local transactions in flight on this node that were aborted because they locked something an applier thread needed \u2013 deadlock error anywhere in an open transaction. Spikes in the graph may indicate writing to the same table potentially the same rows from 2 nodes.",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 2,
       "fillGradient": 0,
       "grid": {},
@@ -1467,10 +1506,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1551,11 +1588,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
       "description": "Shows for how long the node can be taken out of the cluster before SST is required. SST is a full state transfer method.",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 2,
       "fillGradient": 0,
       "grid": {},
@@ -1583,10 +1627,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1607,7 +1649,7 @@
           "calculatedInterval": "2m",
           "datasourceErrors": {},
           "errors": {},
-          "expr": "avg by (service_name) (mysql_galera_gcache_size_bytes{service_name=~\"$service_name\"}) /\nignoring(job) (avg by (service_name) (rate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[1h])+rate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[1h])))",
+          "expr": "avg by (service_name) (mysql_galera_gcache_size_bytes{service_name=~\"$service_name\"}) \/\nignoring(job) (avg by (service_name) (rate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[1h])+rate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[1h])))",
           "format": "time_series",
           "interval": "1h",
           "intervalFactor": 1,
@@ -1617,7 +1659,7 @@
           "step": 300
         },
         {
-          "expr": "avg by (service_name) (mysql_galera_gcache_size_bytes{service_name=~\"$service_name\"}) /\nignoring(job) (avg by (service_name) ((rate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[5m])) + \n(rate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[5m]))))",
+          "expr": "avg by (service_name) (mysql_galera_gcache_size_bytes{service_name=~\"$service_name\"}) \/\nignoring(job) (avg by (service_name) ((rate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[5m])) + \n(rate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[5m]))))",
           "format": "time_series",
           "hide": false,
           "interval": "$interval",
@@ -1672,11 +1714,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
       "description": "Shows the count of transactions received from the cluster (any other node) and replicated to the cluster (from this node).",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 2,
       "fillGradient": 0,
       "grid": {},
@@ -1704,10 +1753,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1788,11 +1835,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
-      "description": "Shows the average transaction size received/replicated.",
+      "description": "Shows the average transaction size received\/replicated.",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 2,
       "fillGradient": 0,
       "grid": {},
@@ -1821,10 +1875,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1837,7 +1889,7 @@
           "calculatedInterval": "2m",
           "datasourceErrors": {},
           "errors": {},
-          "expr": "avg by (service_name) (rate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[$interval]) / rate(mysql_global_status_wsrep_received{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[5m]) / irate(mysql_global_status_wsrep_received{service_name=~\"$service_name\"}[5m]))",
+          "expr": "avg by (service_name) (rate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[$interval]) \/ rate(mysql_global_status_wsrep_received{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_received_bytes{service_name=~\"$service_name\"}[5m]) \/ irate(mysql_global_status_wsrep_received{service_name=~\"$service_name\"}[5m]))",
           "interval": "$interval",
           "intervalFactor": 1,
           "legendFormat": "Incoming Transaction Size",
@@ -1849,7 +1901,7 @@
           "calculatedInterval": "2m",
           "datasourceErrors": {},
           "errors": {},
-          "expr": "avg by (service_name) (rate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[$interval]) / rate(mysql_global_status_wsrep_replicated{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[5m]) / irate(mysql_global_status_wsrep_replicated{service_name=~\"$service_name\"}[5m]))",
+          "expr": "avg by (service_name) (rate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[$interval]) \/ rate(mysql_global_status_wsrep_replicated{service_name=~\"$service_name\"}[$interval]) or irate(mysql_global_status_wsrep_replicated_bytes{service_name=~\"$service_name\"}[5m]) \/ irate(mysql_global_status_wsrep_replicated{service_name=~\"$service_name\"}[5m]))",
           "interval": "$interval",
           "intervalFactor": 1,
           "legendFormat": "Replicating Transaction Size",
@@ -1904,11 +1956,18 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
       "description": "Shows the bytes of data received from the cluster (any other node) and replicated to the cluster (from this node).",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 6,
       "fillGradient": 0,
       "grid": {},
@@ -1937,10 +1996,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2022,11 +2079,18 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 2,
       "description": "Shows the bytes of data received from the cluster (any other node) and replicated to the cluster (from this node).",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 6,
       "fillGradient": 0,
       "grid": {},
@@ -2053,10 +2117,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2133,7 +2195,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 22,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -2149,6 +2211,8 @@
           "value": "$__auto_interval_interval"
         },
         "datasource": "Prometheus",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Interval",
@@ -2204,17 +2268,25 @@
       },
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values(mysql_global_status_wsrep_local_state, node_name)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
-        "index": -1,
         "label": "Node",
         "multi": true,
         "name": "node_name",
         "options": [],
-        "query": "label_values(mysql_global_status_wsrep_local_state, node_name)",
+        "query": {
+          "query": "label_values(mysql_global_status_wsrep_local_state, node_name)",
+          "refId": "DS_PROMETHEUS-node_name-Variable-Query"
+        },
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -2228,18 +2300,26 @@
       {
         "allFormat": "glob",
         "allValue": ".*",
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values(mysql_galera_variables_info, wsrep_cluster_name)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
-        "index": -1,
         "label": "Cluster",
         "multi": true,
         "multiFormat": "regex values",
         "name": "cluster",
         "options": [],
-        "query": "label_values(mysql_galera_variables_info, wsrep_cluster_name)",
+        "query": {
+          "query": "label_values(mysql_galera_variables_info, wsrep_cluster_name)",
+          "refId": "DS_PROMETHEUS-cluster-Variable-Query"
+        },
         "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
@@ -2254,21 +2334,30 @@
       {
         "allFormat": "glob",
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "query_result(mysql_galera_variables_info{wsrep_cluster_name=~\"$cluster\"} * on(service_name) mysql_global_variables_wsrep_rsu_commit_timeout)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
-        "index": -1,
         "label": "Service Name",
         "multi": false,
         "multiFormat": "regex values",
         "name": "service_name",
         "options": [],
-        "query": "query_result(mysql_galera_variables_info{wsrep_cluster_name=~\"$cluster\"} * on(service_name) mysql_global_variables_wsrep_rsu_commit_timeout)",
+        "query": {
+          "query": "query_result(mysql_galera_variables_info{wsrep_cluster_name=~\"$cluster\"} * on(service_name) mysql_global_variables_wsrep_rsu_commit_timeout)",
+          "refId": "DS_PROMETHEUS-service_name-Variable-Query"
+        },
         "refresh": 2,
         "refresh_on_load": false,
-        "regex": "/\"([^\"]+)\"/",
+        "regex": "\/\"([^\"]+)\"\/",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": null,
@@ -2279,17 +2368,25 @@
       },
       {
         "allValue": ".*",
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, environment)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
-        "index": -1,
         "label": "Environment",
         "multi": true,
         "name": "environment",
         "options": [],
-        "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, environment)",
+        "query": {
+          "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, environment)",
+          "refId": "DS_PROMETHEUS-environment-Variable-Query"
+        },
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -2302,17 +2399,25 @@
       },
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, replication_set)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
-        "index": -1,
         "label": "Replication Set",
         "multi": true,
         "name": "replication_set",
         "options": [],
-        "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, replication_set)",
+        "query": {
+          "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, replication_set)",
+          "refId": "DS_PROMETHEUS-replication_set-Variable-Query"
+        },
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -2325,17 +2430,25 @@
       },
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values(pg_stat_database_tup_fetched{service_name=~\"$service_name\",datname!~\"template.*|postgres\"},datname)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
-        "index": -1,
         "label": "Database",
         "multi": true,
         "name": "database",
         "options": [],
-        "query": "label_values(pg_stat_database_tup_fetched{service_name=~\"$service_name\",datname!~\"template.*|postgres\"},datname)",
+        "query": {
+          "query": "label_values(pg_stat_database_tup_fetched{service_name=~\"$service_name\",datname!~\"template.*|postgres\"},datname)",
+          "refId": "DS_PROMETHEUS-database-Variable-Query"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2348,17 +2461,25 @@
       },
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, node_type)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
-        "index": -1,
         "label": "Type",
         "multi": true,
         "name": "node_type",
         "options": [],
-        "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, node_type)",
+        "query": {
+          "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, node_type)",
+          "refId": "DS_PROMETHEUS-node_type-Variable-Query"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2371,17 +2492,25 @@
       },
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, service_type)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
-        "index": -1,
         "label": "Type",
         "multi": true,
         "name": "service_type",
         "options": [],
-        "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, service_type)",
+        "query": {
+          "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, service_type)",
+          "refId": "DS_PROMETHEUS-service_type-Variable-Query"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2394,17 +2523,25 @@
       },
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, schema)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
-        "index": -1,
         "label": "Schema",
         "multi": true,
         "name": "schema",
         "options": [],
-        "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, schema)",
+        "query": {
+          "query": "label_values({__name__=~\"pg_up|mysql_up|mongodb_up|proxysql_mysql_status_active_transactions\"}, schema)",
+          "refId": "DS_PROMETHEUS-schema-Variable-Query"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2454,10 +2591,7 @@
     "type": "timepicker"
   },
   "timezone": "browser",
-  "title": "PXC/Galera Node Summary Copy",
-  "uid": "5zz-xgBMk",
-  "variables": {
-    "list": []
-  },
-  "version": 7
+  "title": "PXC\/Galera Node Summary Copy",
+  "uid": null,
+  "version": 1
 }
