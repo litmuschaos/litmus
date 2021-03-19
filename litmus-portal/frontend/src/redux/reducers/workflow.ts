@@ -51,7 +51,6 @@ const initialState: WorkflowData = {
 const init: WorkflowManifest = {
   manifest: '',
   engineYAML: '',
-  weights: [],
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {

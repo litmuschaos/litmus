@@ -54,7 +54,6 @@ export interface WorkflowData {
 export interface WorkflowManifest {
   engineYAML: string;
   manifest: string;
-  weights: experimentMap[];
 }
 
 export enum WorkflowActions {

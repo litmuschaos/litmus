@@ -35,7 +35,7 @@ const ReliablityScore = () => {
     newValue: number;
     index: number;
   }) {
-    (weights as any)[index].weight = newValue;
+    weights[index].weight = newValue;
     setWeights([...weights]);
   }
 
@@ -63,7 +63,7 @@ const ReliablityScore = () => {
               </strong>
             </Typography>
           </div>
-          {(weights as any).map((Data: experimentMap, index: number) => (
+          {weights.map((Data: experimentMap, index: number) => (
             <WeightSlider
               key={Data.experimentName + index.toString()}
               index={index}
