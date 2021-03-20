@@ -101,7 +101,6 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 )}
               />
             </div>
-            <div style={{ width: '2rem' }} />
             <div data-cy="InputEmail">
               <InputField
                 helperText={
@@ -118,7 +117,6 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               />
             </div>
             {/* Username is not editable by non admin user */}
-            <div style={{ marginTop: '5rem' }} />
             <div data-cy="username">
               <InputField
                 helperText={
