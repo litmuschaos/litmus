@@ -38,7 +38,7 @@ import {
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
-import { getProjectID } from '../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { validateWorkflowParameter } from '../../utils/validate';
 import {
   generateChaosQuery,
@@ -56,6 +56,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
 }) => {
   const classes = useStyles();
   const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const dashboardID = useSelector(
     (state: RootState) => state.selectDashboard.selectedDashboardID
   );
@@ -432,7 +433,12 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
           {success === true ? (
             <ButtonFilled
               variant="success"
-              onClick={() => history.push('/analytics')}
+              onClick={() => {
+                history.push({
+                  pathname: '/analytics',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
+              }}
             >
               <div>Back to Kubernetes Dashboard</div>
             </ButtonFilled>
@@ -450,7 +456,12 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
 
               <ButtonFilled
                 variant="error"
-                onClick={() => history.push('/analytics')}
+                onClick={() => {
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
+                }}
               >
                 <div>Back to Kubernetes Dashboard</div>
               </ButtonFilled>

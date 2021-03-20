@@ -26,7 +26,7 @@ import * as DataSourceActions from '../../redux/actions/dataSource';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
-import { getProjectID } from '../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DashboardPanelGroup';
 import useStyles from './styles';
 
@@ -49,6 +49,7 @@ const DashboardPage: React.FC = () => {
   const dashboard = useActions(DashboardActions);
   // get ProjectID
   const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
@@ -303,7 +304,10 @@ const DashboardPage: React.FC = () => {
                     selectedDashboardName: selectedDashboardInformation.name,
                     selectedDashboardTemplateID: dashboardTemplateID,
                   });
-                  history.push('/analytics/dashboard/configure');
+                  history.push({
+                    pathname: '/analytics/dashboard/configure',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 {t(
@@ -313,7 +317,10 @@ const DashboardPage: React.FC = () => {
               <ButtonFilled
                 variant="success"
                 onClick={() => {
-                  history.push('/analytics/datasource/configure');
+                  history.push({
+                    pathname: '/analytics/datasource/configure',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 {t(

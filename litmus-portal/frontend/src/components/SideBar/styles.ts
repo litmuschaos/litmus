@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: '100%',
-    backgroundColor: '#F5F6F8',
+    backgroundColor: theme.palette.background.default,
     position: 'relative',
     color: 'inherit',
   },
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '3.1875rem',
     transition: '0.8s',
     '&:hover': {
-      backgroundColor: '#D9D9D9',
+      backgroundColor: theme.palette.disabledBackground,
     },
   },
   active: {

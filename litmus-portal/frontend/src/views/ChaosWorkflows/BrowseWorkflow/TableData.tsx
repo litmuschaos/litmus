@@ -26,7 +26,7 @@ interface TableDataProps {
 const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const classes = useStyles();
   const projectID = getProjectID();
-  const userRole = getProjectRole();
+  const projectRole = getProjectRole();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -57,7 +57,10 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         className={classes.workflowNameData}
         style={{ cursor: 'pointer' }}
         onClick={() => {
-          history.push(`/workflows/${data.workflow_run_id}`);
+          history.push({
+            pathname: `/workflows/${data.workflow_run_id}`,
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
         }}
       >
         <Typography data-cy="workflowName">
@@ -123,7 +126,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
             onClick={() => {
               history.push({
                 pathname: `/workflows/${data.workflow_run_id}`,
-                search: `?projectID=${projectID}&projectRole=${userRole}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
           >
@@ -143,7 +146,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
             onClick={() => {
               history.push({
                 pathname: `/workflows/analytics/${data.workflow_id}`,
-                search: `?projectID=${projectID}&projectRole=${userRole}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
           >
