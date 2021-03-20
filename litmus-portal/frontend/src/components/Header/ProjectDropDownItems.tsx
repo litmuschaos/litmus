@@ -66,9 +66,9 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
     >
       <ListItemIcon>
         {selected ? (
-          <img src="./icons/selectedProject.svg" alt="Selected Project" />
+          <img src="/icons/selectedProject.svg" alt="Selected Project" />
         ) : (
-          <img src="./icons/nonSelectedproject.svg" alt="Un-selected Project" />
+          <img src="/icons/nonSelectedproject.svg" alt="Un-selected Project" />
         )}
       </ListItemIcon>
       <ListItemText
@@ -82,7 +82,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
           aria-label="copyProject"
         >
           {!copying ? (
-            <img src="./icons/copyProjectID.svg" alt="Copy project ID" />
+            <img src="/icons/copyProjectID.svg" alt="Copy project ID" />
           ) : (
             <Done />
           )}
