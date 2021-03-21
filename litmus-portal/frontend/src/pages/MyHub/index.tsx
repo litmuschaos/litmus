@@ -13,13 +13,13 @@ import ButtonFilled from '../../components/Button/ButtonFilled';
 import ButtonOutline from '../../components/Button/ButtonOutline';
 import DeveloperGuide from '../../components/DeveloperGuide';
 import Loader from '../../components/Loader';
-import QuickActionCard from '../../components/QuickActionCard';
 import VideoCarousel from '../../components/VideoCarousel';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { HomePageQuickActionCard } from '../HomePage/homePageQuickActionCard';
 import CustomMyHubCard from './customMyHubCard';
 import useStyles from './styles';
 
@@ -266,7 +266,7 @@ const MyHub = () => {
                 {t('myhub.mainPage.videoDescription')}
               </Typography>
               <div className={classes.quickActionDiv}>
-                <QuickActionCard analyticsHome={false} nonAdmin />
+                <HomePageQuickActionCard />
               </div>
             </div>
           </div>

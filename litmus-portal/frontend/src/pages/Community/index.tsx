@@ -8,12 +8,12 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import InfoFilledWrap from '../../components/InfoFilled/index';
 import Loader from '../../components/Loader';
-import QuickActionCard from '../../components/QuickActionCard';
 import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import { RootState } from '../../redux/reducers';
 import CommunityAnalyticsPlot from '../../views/Community/CommunityTimeSeriesPlot';
 import GeoMap from '../../views/Community/GeoMap/index';
+import { CommunityQuickActionCard } from './communityQuickActionCard';
 import useStyles from './styles';
 
 // Reusable Header Component
@@ -146,7 +146,7 @@ const Community: React.FC = () => {
                 <GeoMap />
               </Paper>
               <div className={classes.quickActionCard}>
-                <QuickActionCard analyticsHome={false} nonAdmin />
+                <CommunityQuickActionCard />
               </div>
             </div>
           </div>
