@@ -13,7 +13,6 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
   maxValue,
   isInTable,
 }) => {
-  
   const resultValue = ((value as number) / (maxValue as number)) * 100;
 
   const classes = useStyle();

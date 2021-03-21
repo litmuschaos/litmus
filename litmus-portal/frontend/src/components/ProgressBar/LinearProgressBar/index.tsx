@@ -13,7 +13,6 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({
   isDefault,
   width,
 }) => {
-  
   const resultValue = (value as number) * 10;
 
   const classes = useStyle();
