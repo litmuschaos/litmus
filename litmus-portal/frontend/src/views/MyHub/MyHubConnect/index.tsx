@@ -17,7 +17,6 @@ import ButtonOutline from '../../../components/Button/ButtonOutline';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
-import QuickActionCard from '../../../components/QuickActionCard';
 import VideoCarousel from '../../../components/VideoCarousel';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import {
@@ -32,6 +31,7 @@ import {
   SSHKey,
   SSHKeys,
 } from '../../../models/graphql/user';
+import { HomePageQuickActionCard } from '../../../pages/HomePage/homePageQuickActionCard';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import { validateStartEmptySpacing } from '../../../utils/validate';
@@ -549,7 +549,7 @@ const MyHub = () => {
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div className={classes.quickActionDiv}>
-            <QuickActionCard analyticsHome={false} nonAdmin />
+            <HomePageQuickActionCard />
           </div>
         </div>
       </div>

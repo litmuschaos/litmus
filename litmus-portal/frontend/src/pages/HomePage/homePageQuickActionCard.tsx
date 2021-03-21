@@ -11,13 +11,13 @@ const HomePageQuickActionCard: React.FC = () => {
   const { t } = useTranslation();
   const quickActionDataAnalytics = [
     {
-      src: './icons/target.svg',
+      src: '/icons/target.svg',
       alt: 'agent',
       onClick: () => history.push('/target-connect'),
       text: t('quickActionCard.connectNewAgent'),
     },
     {
-      src: './icons/teamMember.svg',
+      src: '/icons/teamMember.svg',
       alt: 'team',
       onClick: () => {
         history.push('/settings');
@@ -26,13 +26,13 @@ const HomePageQuickActionCard: React.FC = () => {
       text: t('quickActionCard.inviteTeamMember'),
     },
     {
-      src: './icons/survey.svg',
+      src: '/icons/survey.svg',
       alt: 'survey',
       onClick: () => window.open('https://forms.gle/qMuVphRyEWCFqjD56'),
       text: t('quickActionCard.quickSurvey'),
     },
     {
-      src: './icons/docs.svg',
+      src: '/icons/docs.svg',
       alt: 'docs',
       onClick: () => window.open('https://docs.litmuschaos.io/docs/getstarted'),
       text: t('quickActionCard.readDocs'),

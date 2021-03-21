@@ -49,7 +49,7 @@ const AnalyticsQuickActionCard: React.FC = () => {
   return (
     <QuickActionCard
       quickActions={quickActionDataAnalytics}
-      title="Quick Actions"
+      title={t('quickActionCard.quickActions')}
     />
   );
 };
