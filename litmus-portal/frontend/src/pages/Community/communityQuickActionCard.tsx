@@ -35,9 +35,7 @@ const CommunityQuickActionCard: React.FC = () => {
       src: './icons/docs.svg',
       alt: 'docs',
       onClick: () =>
-        window.open(
-          'https://https://docs.litmus.com/docs/litmus-api-documentation'
-        ),
+        window.open('https://docs.litmus.com/docs/litmus-api-documentation'),
       text: t('quickActionCard.readAPIDocs'),
     },
   ];
