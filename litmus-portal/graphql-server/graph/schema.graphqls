@@ -80,7 +80,7 @@ input ClusterIdentity {
 
 type ClusterConfirmResponse {
   isClusterConfirmed: Boolean!
-  newClusterKey: String
+  newAccessKey: String
   cluster_id: String
 }
 

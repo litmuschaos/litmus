@@ -36,7 +36,7 @@ func sendMutation(server string, payload []byte) (string, error) {
 }
 
 func ClusterConfirm(clusterData map[string]string) ([]byte, error) {
-	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newClusterKey cluster_id}}"}`
+	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey cluster_id}}"}`
 	resp, err := sendMutation(clusterData["SERVER_ADDR"], []byte(payload))
 	if err != nil {
 		return nil, err

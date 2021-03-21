@@ -115,7 +115,7 @@ type ComplexityRoot struct {
 	ClusterConfirmResponse struct {
 		ClusterID          func(childComplexity int) int
 		IsClusterConfirmed func(childComplexity int) int
-		NewClusterKey      func(childComplexity int) int
+		NewAccessKey       func(childComplexity int) int
 	}
 
 	ClusterEvent struct {
@@ -873,12 +873,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClusterConfirmResponse.IsClusterConfirmed(childComplexity), true
 
-	case "ClusterConfirmResponse.newClusterKey":
-		if e.complexity.ClusterConfirmResponse.NewClusterKey == nil {
+	case "ClusterConfirmResponse.newAccessKey":
+		if e.complexity.ClusterConfirmResponse.NewAccessKey == nil {
 			break
 		}
 
-		return e.complexity.ClusterConfirmResponse.NewClusterKey(childComplexity), true
+		return e.complexity.ClusterConfirmResponse.NewAccessKey(childComplexity), true
 
 	case "ClusterEvent.cluster":
 		if e.complexity.ClusterEvent.Cluster == nil {
@@ -3015,7 +3015,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3191,7 +3191,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3365,7 +3365,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -3397,7 +3397,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -3479,7 +3479,7 @@ input ClusterIdentity {
 
 type ClusterConfirmResponse {
   isClusterConfirmed: Boolean!
-  newClusterKey: String
+  newAccessKey: String
   cluster_id: String
 }
 
@@ -3768,7 +3768,7 @@ type Subscription {
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -6131,7 +6131,7 @@ func (ec *executionContext) _ClusterConfirmResponse_isClusterConfirmed(ctx conte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterConfirmResponse_newClusterKey(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterConfirmResponse_newAccessKey(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6148,7 +6148,7 @@ func (ec *executionContext) _ClusterConfirmResponse_newClusterKey(ctx context.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.NewClusterKey, nil
+		return obj.NewAccessKey, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18909,8 +18909,8 @@ func (ec *executionContext) _ClusterConfirmResponse(ctx context.Context, sel ast
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "newClusterKey":
-			out.Values[i] = ec._ClusterConfirmResponse_newClusterKey(ctx, field, obj)
+		case "newAccessKey":
+			out.Values[i] = ec._ClusterConfirmResponse_newAccessKey(ctx, field, obj)
 		case "cluster_id":
 			out.Values[i] = ec._ClusterConfirmResponse_cluster_id(ctx, field, obj)
 		default:

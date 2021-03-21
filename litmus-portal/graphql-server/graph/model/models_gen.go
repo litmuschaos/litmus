@@ -105,7 +105,7 @@ type ClusterActionInput struct {
 
 type ClusterConfirmResponse struct {
 	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
-	NewClusterKey      *string `json:"newClusterKey"`
+	NewAccessKey       *string `json:"newAccessKey"`
 	ClusterID          *string `json:"cluster_id"`
 }
 
