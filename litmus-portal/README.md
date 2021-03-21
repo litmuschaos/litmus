@@ -61,11 +61,18 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/lit
 
 #### Retrieving external url to access the litmus portal
 
+##### GKE/Okteto Cloud/EKS
+
 ```bash
-export NODE_NAME=$(kubectl get pod -n litmus -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
-export EXTERNAL_IP=$(kubectl get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="ExternalIP")].address}')
-export NODE_PORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service -n litmus)
+export NODE_NAME=$(kubectl -n $LITMUS_PORTAL_NAMESPACE get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
+export EXTERNAL_IP=$(kubectl -n $LITMUS_PORTAL_NAMESPACE get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="ExternalIP")].address}')
+export NODE_PORT=$(kubectl -n $LITMUS_PORTAL_NAMESPACE get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
 echo "URL: http://$EXTERNAL_IP:$NODE_PORT"
+```
+
+#### Minikube
+```bash
+minikube -n $LITMUS_PORTAL_NAMESPACE --url litmusportal-frontend-service
 ```
 
 Note: Default `username: admin` and `password: litmus`
