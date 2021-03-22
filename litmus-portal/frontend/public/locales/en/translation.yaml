@@ -323,6 +323,8 @@ settings:
         done: Done
     accountsSettings:
       header: Password
+      passwordValidation: Should not start with empty space
+      passwordNotSame: Password is not same
       modal:
         header: Your password
         headerStrong: has been changed!
