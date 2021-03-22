@@ -1,21 +1,20 @@
 import { useQuery, useSubscription } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import useStyles from './styles';
 import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
 import {
-  PodLogRequest,
   PodLog,
+  PodLogRequest,
   PodLogVars,
 } from '../../../models/graphql/podLog';
 import {
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
+import useStyles from './styles';
 
 interface NodeLogsProps extends PodLogRequest {
   logsOpen: boolean;
@@ -39,13 +38,11 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+    { variables: { projectID } }
   );
 
   const workflow = workflow_data?.getWorkFlowRuns.filter(

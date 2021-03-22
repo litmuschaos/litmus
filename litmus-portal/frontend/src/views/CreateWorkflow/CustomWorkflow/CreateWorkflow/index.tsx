@@ -35,6 +35,10 @@ import * as TemplateSelectionActions from '../../../../redux/actions/template';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
 import { RootState } from '../../../../redux/reducers';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import { validateWorkflowName } from '../../../../utils/validate';
 import useStyles, { MenuProps } from './styles';
 
@@ -56,10 +60,8 @@ interface VerifyCommitProps {
 const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const workflowDetails = useSelector((state: RootState) => state.workflowData);
   const workflowAction = useActions(WorkflowActions);
-
-  const { selectedProjectID } = useSelector(
-    (state: RootState) => state.userData
-  );
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   const [workflowData, setWorkflowData] = useState<WorkflowDetails>({
     workflow_name: workflowDetails.name,
@@ -83,7 +85,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [getExperimentYaml] = useLazyQuery(GET_EXPERIMENT_YAML, {
     variables: {
       experimentInput: {
-        ProjectID: selectedProjectID,
+        ProjectID: projectID,
         HubName: selectedHub,
         ChartName: selectedExp.split('/')[0],
         ExperimentName: selectedExp.split('/')[1],
@@ -126,7 +128,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
 
   // Get all MyHubs with status
   const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: selectedProjectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
     onCompleted: (hubData) => {
       if (hubData.getHubStatus.length) {
@@ -134,7 +136,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         setAvailableHubs([...hubData.getHubStatus]);
         getCharts({
           variables: {
-            projectID: selectedProjectID,
+            projectID,
             HubName: hubData.getHubStatus[0].HubName,
           },
         });
@@ -157,7 +159,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     })[0];
     getCharts({
       variables: {
-        projectID: selectedProjectID,
+        projectID,
         HubName: hubname,
       },
     });
@@ -576,7 +578,10 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 ...workflowDetails,
                 yaml: YAML.stringify(parsedYaml),
               });
-              history.push('/create-workflow');
+              history.push({
+                pathname: '/create-workflow',
+                search: `?projectID=${projectID}&projectRole=${userRole}`,
+              });
               template.selectTemplate({ isDisable: false });
             }
             workflowAction.setWorkflowDetails({

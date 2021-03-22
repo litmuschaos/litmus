@@ -15,6 +15,10 @@ import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
 import { ReactComponent as Arrow } from '../../../../svg/arrow.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import { GetTimeDiff } from '../../../../utils/timeDifferenceString';
 import useStyles from '../styles';
 
@@ -27,6 +31,8 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const tabs = useActions(TabActions);
   const currentTime = new Date().valueOf();
   const dataSource = useActions(DataSourceActions);
@@ -44,7 +50,10 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
                   tabs.changeAnalyticsDashboardTabs(3);
-                  history.push('/analytics');
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 <Typography className={classes.seeAllText}>
@@ -107,7 +116,10 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
                         selectedDataSourceID: singleDataSource.ds_id,
                         selectedDataSourceName: singleDataSource.ds_name,
                       });
-                      history.push('/analytics/datasource/configure');
+                      history.push({
+                        pathname: '/analytics/datasource/configure',
+                        search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                      });
                     }}
                   >
                     <Typography className={classes.seeAllText}>

@@ -4,7 +4,6 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
 import { GET_PROJECT, GET_USER, REMOVE_INVITATION } from '../../../../graphql';
 import { MemberInvitation } from '../../../../models/graphql/invite';
@@ -14,8 +13,8 @@ import {
   Member,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
-import { RootState } from '../../../../redux/reducers';
-import userAvatar from '../../../../utils/user';
+import { getProjectID } from '../../../../utils/getSearchParams';
+import { userInitials } from '../../../../utils/user';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -32,7 +31,8 @@ const TableData: React.FC<TableDataProps> = ({
   open,
 }) => {
   const classes = useStyles();
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
+
   const { t } = useTranslation();
 
   // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
@@ -52,7 +52,7 @@ const TableData: React.FC<TableDataProps> = ({
       refetchQueries: [
         {
           query: GET_PROJECT,
-          variables: { projectID: userData.selectedProjectID },
+          variables: { projectID },
         },
       ],
     }
@@ -81,7 +81,7 @@ const TableData: React.FC<TableDataProps> = ({
             alt="User"
             className={classes.avatarBackground}
           >
-            {userAvatar(memberDetails ? memberDetails.username : '')}
+            {userInitials(memberDetails ? memberDetails.username : '')}
           </Avatar>
           {memberDetails ? memberDetails.username : ''}
         </div>
@@ -150,7 +150,7 @@ const TableData: React.FC<TableDataProps> = ({
                   removeMember({
                     variables: {
                       data: {
-                        project_id: userData.selectedProjectID,
+                        project_id: projectID,
                         user_id: row.user_id,
                         role: row.role,
                       },

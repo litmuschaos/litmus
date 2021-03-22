@@ -6,13 +6,13 @@ export const validateTextEmpty = (value: string) => {
 };
 
 export const validateStartEmptySpacing = (value: string) => {
-  if (value.charAt(0) === ' ') return true;
+  if (value?.charAt(0) === ' ') return true;
   return false;
 };
 
 export const validateEmail = (value: string) => {
   const emailValid = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if (value.length > 0) {
+  if (value?.length > 0) {
     if (value.match(emailValid)) return false;
     return true;
   }

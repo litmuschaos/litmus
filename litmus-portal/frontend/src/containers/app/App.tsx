@@ -1,14 +1,16 @@
+import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, Suspense, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
+import { LIST_PROJECTS } from '../../graphql';
+import { Member, Projects } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
-import { getToken } from '../../utils/auth';
-import useStyles from './App-styles';
+import { getToken, getUserId } from '../../utils/auth';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
+import Center from '../layouts/Center';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -50,156 +52,170 @@ const CreateCustomWorkflow = lazy(
   () => import('../../pages/CreateCustomWorkflow')
 );
 
-interface RoutesProps {
-  isOwner: boolean;
-  isProjectAvailable: boolean;
-}
+const Routes: React.FC = () => {
+  const baseRoute = window.location.pathname.split('/')[1];
+  const projectIDFromURL = getProjectID();
+  const projectRoleFromURL = getProjectRole();
+  const [projectID, setprojectID] = useState<string>(projectIDFromURL);
+  const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
+  const userID = getUserId();
 
-const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
-  const classes = useStyles();
+  useQuery<Projects>(LIST_PROJECTS, {
+    skip: projectID !== '' && projectID !== undefined,
+    onCompleted: (data) => {
+      if (data.listProjects) {
+        data.listProjects.forEach((project): void => {
+          project.members.forEach((member: Member): void => {
+            if (member.user_id === userID && member.role === 'Owner') {
+              setprojectID(project.id);
+              setprojectRole(member.role);
+              history.push({
+                pathname: `/${baseRoute}`,
+                search: `?projectID=${project.id}&projectRole=${member.role}`,
+              });
+            }
+          });
+        });
+      }
+    },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  history.listen((location) => {
+    if (location.pathname !== '/login') {
+      setprojectID(getProjectID());
+      setprojectRole(getProjectRole());
+    }
+  });
 
   if (getToken() === '') {
     return (
-      <div className={classes.content}>
-        <Switch>
-          <Route
-            exact
-            path="/api-doc"
-            render={() => <Redirect to="/api-doc/index.html" />}
-          />
-          <Route exact path="/login" component={LoginPage} />
-          <Route path="/" render={() => <Redirect to="/login" />} />
-        </Switch>
-      </div>
+      <Switch>
+        <Route exact path="/login" component={LoginPage} />
+        <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+        <Redirect to="/login" />
+      </Switch>
     );
   }
 
-  if (!isProjectAvailable) {
+  if (!projectID) {
     return (
-      <div className={classes.content}>
-        <Switch>
-          <Route exact path="/" component={HomePage} />
-          <Route
-            exact
-            path="/api-doc"
-            render={() => <Redirect to="/api-doc/index.html" />}
-          />
-          <Route path="/" render={() => <Redirect to="/" />} />
-        </Switch>
-      </div>
+      <Switch>
+        <Route exact path="/home" component={HomePage} />
+        <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+        <Redirect to="/home" />
+      </Switch>
     );
   }
 
   return (
-    <div className={classes.content}>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/workflows" component={Workflows} />
-        <Route exact path="/analytics" component={AnalyticsDashboard} />
-        <Route
-          exact
-          path="/analytics/datasource/select"
-          component={DataSourceSelectPage}
-        />
-        <Route
-          exact
-          path="/analytics/datasource/create"
-          component={() => <DataSourceConfigurePage configure={false} />}
-        />
-        <Route
-          exact
-          path="/analytics/datasource/configure"
-          component={() => <DataSourceConfigurePage configure />}
-        />
-        <Route
-          exact
-          path="/analytics/dashboard/select"
-          component={DashboardSelectPage}
-        />
-        <Route
-          exact
-          path="/analytics/dashboard/create"
-          component={() => <DashboardConfigurePage configure={false} />}
-        />
-        <Route
-          exact
-          path="/analytics/dashboard/configure"
-          component={() => <DashboardConfigurePage configure />}
-        />
-        <Route
-          exact
-          path="/analytics/dashboard"
-          component={() => <DashboardPage />}
-        />
-        <Route exact path="/create-workflow" component={CreateWorkflow} />
-        <Route
-          exact
-          path="/api-doc"
-          render={() => <Redirect to="/api-doc/index.html" />}
-        />
-        {/* Redirects */}
-        <Redirect exact path="/login" to="/" />
-        <Redirect exact path="/workflows/schedule" to="/workflows" />
-        <Redirect exact path="/workflows/template" to="/workflows" />
+    <Switch>
+      <Route exact path="/home" component={HomePage} />
+      <Redirect exact path="/" to="/home" />
+      <Route exact path="/workflows" component={Workflows} />
+      <Route exact path="/analytics" component={AnalyticsDashboard} />
+      <Route
+        exact
+        path="/analytics/datasource/select"
+        component={DataSourceSelectPage}
+      />
+      <Route
+        exact
+        path="/analytics/datasource/create"
+        component={() => <DataSourceConfigurePage configure={false} />}
+      />
+      <Route
+        exact
+        path="/analytics/datasource/configure"
+        component={() => <DataSourceConfigurePage configure />}
+      />
+      <Route
+        exact
+        path="/analytics/dashboard/select"
+        component={DashboardSelectPage}
+      />
+      <Route
+        exact
+        path="/analytics/dashboard/create"
+        component={() => <DashboardConfigurePage configure={false} />}
+      />
+      <Route
+        exact
+        path="/analytics/dashboard/configure"
+        component={() => <DashboardConfigurePage configure />}
+      />
+      <Route
+        exact
+        path="/analytics/dashboard"
+        component={() => <DashboardPage />}
+      />
+      <Route exact path="/create-workflow" component={CreateWorkflow} />
 
-        <Redirect exact path="/analytics/overview" to="/analytics" />
-        <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
-        <Redirect exact path="/analytics/kubernetesdashborad" to="/analytics" />
-        <Redirect exact path="/analytics/datasource" to="/analytics" />
+      <Route
+        exact
+        path="/workflows/:workflowRunId"
+        component={WorkflowDetails}
+      />
+      <Route
+        exact
+        path="/workflows/schedule/:scheduleProjectID/:workflowName" // Check
+        component={SchedulePage}
+      />
+      <Route
+        exact
+        path="/workflows/template/:templateName"
+        component={BrowseTemplate}
+      />
+      <Route
+        exact
+        path="/workflows/analytics/:workflowRunId"
+        component={AnalyticsPage}
+      />
+      <Route exact path="/community" component={Community} />
+      <Route exact path="/targets" component={Targets} />
+      <Route exact path="/target-connect" component={ConnectTargets} />
+      <Route exact path="/myhub" component={MyHub} />
+      <Route exact path="/myhub/connect" component={MyHubConnect} />
+      <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
+      <Route exact path="/myhub/:hubname" component={ChaosChart} />
+      <Route
+        exact
+        path="/myhub/:hubname/:chart/:experiment"
+        component={MyHubExperiment}
+      />
+      <Route
+        exact
+        path="/create-workflow/custom"
+        component={CreateCustomWorkflow}
+      />
+      {projectRole === 'Owner' ? (
+        <Route path="/settings" component={Settings} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: '/home',
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          }}
+        />
+      )}
+      <Route exact path="/404" component={ErrorPage} />
 
-        <Route
-          exact
-          path="/workflows/:workflowRunId"
-          component={WorkflowDetails}
-        />
-        <Route
-          exact
-          path="/workflows/schedule/:projectID/:workflowName"
-          component={SchedulePage}
-        />
-        <Route
-          exact
-          path="/workflows/template/:templateName"
-          component={BrowseTemplate}
-        />
-        <Route
-          exact
-          path="/workflows/analytics/:workflowRunId"
-          component={AnalyticsPage}
-        />
-        <Route exact path="/community" component={Community} />
-        <Route exact path="/targets" component={Targets} />
-        <Route exact path="/target-connect" component={ConnectTargets} />
-        <Route exact path="/myhub" component={MyHub} />
-        <Route exact path="/myhub/connect" component={MyHubConnect} />
-        <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
-        <Route exact path="/myhub/:hubname" component={ChaosChart} />
-        <Route
-          exact
-          path="/myhub/:hubname/:chart/:experiment"
-          component={MyHubExperiment}
-        />
-        <Route
-          exact
-          path="/create-workflow/custom"
-          component={CreateCustomWorkflow}
-        />
-        {isOwner ? (
-          <Route exact path="/settings" component={Settings} />
-        ) : (
-          <Redirect to="/" />
-        )}
-        <Route exact path="/404" component={ErrorPage} />
-        <Redirect to="/404" />
-      </Switch>
-    </div>
+      {/* Redirects */}
+      <Redirect exact path="/workflows/schedule" to="/workflows" />
+      <Redirect exact path="/workflows/template" to="/workflows" />
+
+      <Redirect exact path="/analytics/overview" to="/analytics" />
+      <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
+      <Redirect exact path="/analytics/kubernetesdashborad" to="/analytics" />
+      <Redirect exact path="/analytics/datasource" to="/analytics" />
+      <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+      <Redirect to="/404" />
+    </Switch>
   );
 };
 
 function App() {
-  const classes = useStyles();
   const analyticsAction = useActions(AnalyticsActions);
-  const userData = useSelector((state: RootState) => state.userData);
   const token = getToken();
   useEffect(() => {
     if (token !== '') {
@@ -208,17 +224,16 @@ function App() {
   }, [token]);
   return (
     <LitmusThemeProvider>
-      <Suspense fallback={<Loader />}>
+      <Suspense
+        fallback={
+          <Center>
+            <Loader />
+          </Center>
+        }
+      >
         <Router history={history}>
-          <div className={classes.root}>
-            <div className={classes.appFrame}>
-              {/* <Routes /> */}
-              <Routes
-                isOwner={userData.userRole === 'Owner'}
-                isProjectAvailable={!!userData.selectedProjectID}
-              />
-            </div>
-          </div>
+          {/* <Routes /> */}
+          <Routes />
         </Router>
       </Suspense>
     </LitmusThemeProvider>

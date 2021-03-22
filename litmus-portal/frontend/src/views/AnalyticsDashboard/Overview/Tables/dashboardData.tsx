@@ -14,7 +14,6 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import DashboardTemplatesList from '../../../../components/PreconfiguredDashboards/data';
@@ -47,8 +46,11 @@ import * as DashboardActions from '../../../../redux/actions/dashboards';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
-import { RootState } from '../../../../redux/reducers';
 import { ReactComponent as Arrow } from '../../../../svg/arrow.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import getEngineNameAndNamespace from '../../../../utils/promUtils';
 import { GetTimeDiff } from '../../../../utils/timeDifferenceString';
 import { validateWorkflowParameter } from '../../../../utils/validate';
@@ -71,16 +73,15 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // selecedProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
 
   // schedule data
   const { data: schedulesData } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
       variables: {
-        projectID: selectedProjectID,
+        projectID,
       },
     }
   );
@@ -350,7 +351,10 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
                   tabs.changeAnalyticsDashboardTabs(2);
-                  history.push('/analytics');
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 <Typography className={classes.seeAllText}>
@@ -393,7 +397,10 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                           selectedDataSourceID: '',
                           selectedDataSourceName: '',
                         });
-                        history.push('/analytics/dashboard');
+                        history.push({
+                          pathname: '/analytics/dashboard',
+                          search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                        });
                       });
                     }}
                   >

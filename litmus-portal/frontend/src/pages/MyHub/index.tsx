@@ -8,7 +8,6 @@ import {
 import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import ButtonOutline from '../../components/Button/ButtonOutline';
 import DeveloperGuide from '../../components/DeveloperGuide';
@@ -19,7 +18,7 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import CustomMyHubCard from './customMyHubCard';
 import useStyles from './styles';
 
@@ -33,13 +32,18 @@ interface RefreshState {
   refreshText: string;
 }
 
-const MyHub = () => {
-  // UserData from Redux
-  const userData = useSelector((state: RootState) => state.userData);
+const MyHub: React.FC = () => {
+  const classes = useStyles();
+  const { t } = useTranslation();
+
+  // Get selected projectID from the URL
+  const projectID = getProjectID();
+  // Set userRole
+  const userRole = getProjectRole();
 
   // Get MyHubs with Status
   const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.selectedProjectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -50,7 +54,7 @@ const MyHub = () => {
     refetchQueries: [
       {
         query: GET_HUB_STATUS,
-        variables: { data: userData.selectedProjectID },
+        variables: { data: projectID },
       },
     ],
     onError: () => {
@@ -78,8 +82,7 @@ const MyHub = () => {
   });
 
   const totalHubs = data && data.getHubStatus;
-  const classes = useStyles();
-  const { t } = useTranslation();
+
   const [github, setGithub] = useState(true);
   const [key, setKey] = useState('');
   const [deleteHub, setDeleteHub] = useState<DeleteHub>({
@@ -181,13 +184,14 @@ const MyHub = () => {
                             refreshLoader={refreshLoading}
                           />
                         ))}
-                      {userData.userRole !== 'Viewer' ? (
+                      {userRole !== 'Viewer' ? (
                         <Card
                           elevation={3}
                           className={classes.cardDiv}
                           onClick={() => {
                             history.push({
                               pathname: '/myhub/connect',
+                              search: `?projectID=${projectID}&projectRole=${userRole}`,
                             });
                           }}
                         >

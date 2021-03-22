@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 
 type Variant = 'homePage' | 'returningHome' | 'analytics' | 'community';
 
@@ -24,6 +25,8 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
 }) => {
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
   const homePage = variant === 'homePage';
   const returningHome = variant === 'returningHome';
   const analytics = variant === 'analytics';
@@ -38,7 +41,11 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: './icons/addDataSource.svg',
           alt: 'data source',
-          onClick: () => history.push('/analytics/datasource/select'),
+          onClick: () =>
+            history.push({
+              pathname: '/analytics/datasource/select',
+              search: `?projectID=${projectID}&projectRole=${userRole}`,
+            }),
           text: t('quickActionCard.addDataSource'),
         }
       : emptyData,
@@ -46,7 +53,11 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: '/icons/calendarWorkflowIcon.svg',
           alt: 'workflow',
-          onClick: () => history.push('/create-workflow'),
+          onClick: () =>
+            history.push({
+              pathname: '/create-workflow',
+              search: `?projectID=${projectID}&projectRole=${userRole}`,
+            }),
           text: t('quickActionCard.scheduleWorkflow'),
         }
       : emptyData,
@@ -54,17 +65,26 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: '/icons/target.svg',
           alt: 'agent',
-          onClick: () => history.push('/target-connect'),
+          onClick: () =>
+            history.push({
+              pathname: '/target-connect',
+              search: `?projectID=${projectID}&projectRole=${userRole}`,
+            }),
           text: t('quickActionCard.connectNewAgent'),
         }
       : emptyData,
+
+    // TODO: settings only accessible by Owner
     homePage || returningHome || community || analytics
       ? {
           src: '/icons/teamMember.svg',
           alt: 'team',
           onClick: () => {
-            history.push('/settings');
             tabs.changeSettingsTabs(1);
+            history.push({
+              pathname: '/settings',
+              search: `?projectID=${projectID}&projectRole=${userRole}`,
+            });
           },
           text: t('quickActionCard.inviteTeamMember'),
         }
