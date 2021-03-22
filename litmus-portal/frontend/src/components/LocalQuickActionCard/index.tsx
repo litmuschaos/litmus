@@ -34,21 +34,13 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
   const quickActionData: Array<QuickActionCardProps> = [
     analytics
       ? {
-          src: './icons/addDashboard.svg',
-          alt: 'dashboard',
-          onClick: () => history.push('/analytics/dashboard/select'),
-          text: t('quickActionCard.addDashboard'),
-        }
-      : emptyData,
-    analytics
-      ? {
           src: './icons/addDataSource.svg',
           alt: 'data source',
           onClick: () => history.push('/analytics/datasource/select'),
           text: t('quickActionCard.addDataSource'),
         }
       : emptyData,
-    returningHome || analytics
+    returningHome
       ? {
           src: '/icons/calendarWorkflowIcon.svg',
           alt: 'workflow',
