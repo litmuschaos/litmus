@@ -11,7 +11,7 @@ import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
-import { UpdateUser } from '../../../../models/redux/user';
+import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
 import { validateEmail } from '../../../../utils/validate';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
@@ -36,7 +36,7 @@ const PersonalDetails: React.FC = () => {
     { variables: { username } }
   );
   const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? ''; // Check if can be replaced with JWT based data.
+  const name: string = dataA?.getUser.name ?? ''; // TODO: Check if can be replaced with JWT based data.
   const email: string = dataA?.getUser.email ?? '';
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,
@@ -164,7 +164,7 @@ const PersonalDetails: React.FC = () => {
               <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
             }
           >
-            {error.length ? (
+            {!error.length ? (
               <div className={classes.errDiv}>
                 {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
                 <div className={classes.textError}>

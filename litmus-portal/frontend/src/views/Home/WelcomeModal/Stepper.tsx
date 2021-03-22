@@ -1,28 +1,24 @@
 import { useMutation } from '@apollo/client/react/hooks';
 import MobileStepper from '@material-ui/core/MobileStepper';
-import { InputField } from 'litmus-ui';
+import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import config from '../../config';
-import { CREATE_USER } from '../../graphql';
-import { CreateUserData } from '../../models/graphql/user';
-import useActions from '../../redux/actions';
-import * as UserActions from '../../redux/actions/user';
-import { RootState } from '../../redux/reducers';
+import ButtonOutline from '../../../components/Button/ButtonOutline';
+import config from '../../../config';
+import { CREATE_USER } from '../../../graphql';
+import { CreateUserData } from '../../../models/graphql/user';
 import {
   getToken,
+  getUserDetailsFromJwt,
   getUserEmail,
   getUserName,
   getUsername,
-} from '../../utils/auth';
+} from '../../../utils/auth';
 import {
   validateConfirmPassword,
   validateStartEmptySpacing,
-} from '../../utils/validate';
-import ButtonFilled from '../Button/ButtonFilled';
-import ButtonOutline from '../Button/ButtonOutline';
+} from '../../../utils/validate';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 
@@ -33,8 +29,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const userData = useSelector((state: RootState) => state.userData);
-  const userLoader = useActions(UserActions);
+  const userData = getUserDetailsFromJwt();
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const isError = useRef(true);
   const isSuccess = useRef(false);
@@ -53,21 +48,15 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
-  const rerender = () => {
-    window.location.reload();
-  };
 
   const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
     onCompleted: () => {
-      rerender();
       handleModal();
     },
   });
 
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
-    userLoader.updateUserDetails({ loader: true });
-
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
       headers: {
@@ -141,11 +130,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     if (activeStep === 0) {
       return (
         <div className={classes.buttonDiv} data-cy="Continue">
-          <ButtonFilled
-            isPrimary
-            isDisabled={isError.current}
-            handleClick={handleNext}
-          >
+          <ButtonFilled disabled={isError.current} onClick={handleNext}>
             <div>{t('welcomeModal.button.continue')}</div>
           </ButtonFilled>
         </div>
@@ -154,15 +139,14 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     return (
       <div className={classes.buttonDiv}>
         <div data-cy="backButton">
-          <ButtonOutline isDisabled={false} handleClick={handleBack}>
+          <ButtonOutline disabled={false} onClick={handleBack}>
             <>{t('welcomeModal.button.back')}</>
           </ButtonOutline>
         </div>
         <div data-cy="startButton">
           <ButtonFilled
-            isPrimary
-            isDisabled={isError.current}
-            handleClick={handleSubmit}
+            disabled={isError.current}
+            onClick={handleSubmit}
             data-cy="Start"
           >
             <div>{t('welcomeModal.button.letsStart')}</div>
@@ -234,7 +218,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 className={classes.passwordSetterDiv}
                 data-cy="InputPassword"
               >
-                <div aria-details="spacer" style={{ margin: '0.5rem 0' }} />
+                <div style={{ margin: '0.5rem 0' }} />
                 <div className={classes.passwordArea}>
                   <InputField
                     label={t('welcomeModal.case-2.label')}
@@ -250,7 +234,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     onKeyPress={keyPress}
                   />
                 </div>
-                <div aria-details="spacer" style={{ margin: '0.5rem 0' }} />
+                <div style={{ margin: '0.5rem 0' }} />
                 <div className={classes.passwordArea}>
                   <InputField
                     label={t('welcomeModal.case-2.cnfLabel')}
@@ -301,13 +285,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   */
   return (
     <div>
-      <div>
-        {activeStep === 1 ? (
-          <div>{getStepContent(activeStep)}</div>
-        ) : (
-          <div>{getStepContent(activeStep)}</div>
-        )}
-      </div>
+      <div>{getStepContent(activeStep)}</div>
       <MobileStepper
         className={classes.stepper}
         variant="dots"

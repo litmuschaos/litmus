@@ -18,6 +18,10 @@ import React, { ChangeEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import { history } from '../../../../redux/configureStore';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import useStyles, { useOutlinedInputStyles } from './styles';
 
 interface DataSourceTypeCallBackType {
@@ -60,6 +64,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   callbackToSetStatus,
 }) => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const outlinedInputClasses = useOutlinedInputStyles();
   const { t } = useTranslation();
   const [dataSourceType, setDataSourceType] = React.useState<String>('All');
@@ -199,7 +205,10 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       <div className={classes.addButton}>
         <ButtonFilled
           onClick={() => {
-            history.push('/analytics/datasource/select');
+            history.push({
+              pathname: '/analytics/datasource/select',
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
           }}
         >
           <Typography className={classes.dateRangeDefault}>

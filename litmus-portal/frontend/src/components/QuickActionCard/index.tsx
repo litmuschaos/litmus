@@ -2,16 +2,15 @@ import { List, ListItem, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
-import { RootState } from '../../redux/reducers';
+import { getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './style';
 
 interface QuickActionCardProps {
-  analyticsHome: boolean;
-  nonAdmin: boolean;
+  analyticsHome?: boolean;
+  nonAdmin?: boolean;
 }
 
 const QuickActionItems: React.FC = ({ children }) => {
@@ -24,10 +23,10 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
   nonAdmin,
 }) => {
   const classes = useStyles();
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
+  const userRole = getProjectRole();
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
-  const apiDocsUrl = `${window.location.href}api-doc/index.html`;
+  const apiDocsUrl = `/api-doc/index.html`;
 
   return (
     <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>

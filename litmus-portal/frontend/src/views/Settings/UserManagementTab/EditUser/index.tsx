@@ -48,81 +48,73 @@ const EditUser: React.FC<EditUserProps> = ({
   };
 
   return (
-    <div>
-      <div className={classes.headDiv}>
-        <div className={classes.createDiv}>
-          <IconButton
-            data-cy="backButton"
-            onClick={handleDiv}
-            className={classes.backButton}
-          >
-            <img src="./icons/BackArrow.svg" alt="back" />
-          </IconButton>
-          <Typography className={classes.divHeaderText}>
-            <strong>{t('settings.userManagementTab.editUser.header')}</strong>
-          </Typography>
-        </div>
-
-        <Typography className={classes.descText}>
-          {t('settings.userManagementTab.editUser.info')}
+    <div className={classes.headDiv}>
+      <div className={classes.createDiv}>
+        <IconButton
+          data-cy="backButton"
+          onClick={handleDiv}
+          className={classes.backButton}
+        >
+          <img src="./icons/BackArrow.svg" alt="back" />
+        </IconButton>
+        <Typography className={classes.divHeaderText}>
+          <strong>{t('settings.userManagementTab.editUser.header')}</strong>
         </Typography>
-        <div className={classes.container}>
+      </div>
+
+      <Typography className={classes.descText}>
+        {t('settings.userManagementTab.editUser.info')}
+      </Typography>
+      <div className={classes.container}>
+        {/* Personal Details */}
+        <UserDetails
+          isNameDisabled
+          isEmailDisabled
+          isUsernameDisabled
+          nameValue={fullName}
+          emailValue={email}
+          userValue={userName}
+        />
+
+        <Divider className={classes.divider} />
+
+        {/* Login Details */}
+
+        <div>
+          <Typography className={classes.headerText}>
+            <strong>{t('settings.userManagementTab.editUser.login')}</strong>
+          </Typography>
           <div>
-            <div className={classes.suSegments}>
-              {/* Personal Details */}
-              <UserDetails
-                isNameDisabled
-                isEmailDisabled
-                isUsernameDisabled
-                nameValue={fullName}
-                emailValue={email}
-                userValue={userName}
-              />
-
-              <Divider className={classes.divider} />
-
-              {/* Login Details */}
-
-              <div>
-                <Typography className={classes.headerText}>
-                  <strong>
-                    {t('settings.userManagementTab.editUser.login')}
-                  </strong>
-                </Typography>
-                <div>
-                  <form>
-                    <div data-cy="editPassword" className={classes.details1}>
-                      <InputField
-                        required
-                        onChange={handleCreatePassword('password')}
-                        type="password"
-                        label={t(
-                          'settings.userManagementTab.editUser.label.newPassword'
-                        )}
-                        value={createPAssword.password}
-                      />
-                    </div>
-                    <Divider className={classes.divider} />
-                    <DelUser
-                      handleModal={handleDiv}
-                      handleTable={() => {}}
-                      tableDelete={false}
-                      teammingDel={false}
-                    />
-                  </form>
-                </div>
+            <form>
+              <div data-cy="editPassword" className={classes.details1}>
+                <InputField
+                  required
+                  onChange={handleCreatePassword('password')}
+                  type="password"
+                  label={t(
+                    'settings.userManagementTab.editUser.label.newPassword'
+                  )}
+                  value={createPAssword.password}
+                />
               </div>
-            </div>
+              <Divider className={classes.divider} />
+              <DelUser
+                handleModal={handleDiv}
+                handleTable={() => {}}
+                tableDelete={false}
+                teammingDel={false}
+              />
+            </form>
           </div>
         </div>
-        <div className={classes.buttonGroup}>
-          <ResetModal
-            resetPossible={createPAssword.password.length > 0}
-            new_password={createPAssword.password}
-            username={userName}
-            handleModal={handleDiv}
-          />
-        </div>
+      </div>
+      <div className={classes.buttonGroup}>
+        <ResetModal
+          resetPossible={createPAssword.password.length > 0}
+          new_password={createPAssword.password}
+          username={userName}
+          handleModal={handleDiv}
+        />
       </div>
     </div>
   );

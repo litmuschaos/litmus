@@ -1,5 +1,3 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable consistent-return */
 import { useQuery } from '@apollo/client';
 import {
   Box,
@@ -17,7 +15,6 @@ import {
 import { Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Center from '../../../../containers/layouts/Center';
 import { ALL_USERS, GET_PROJECT, LIST_PROJECTS } from '../../../../graphql';
 import { UserInvite } from '../../../../models/graphql/invite';
@@ -28,8 +25,8 @@ import {
   ProjectDetailVars,
   Projects,
 } from '../../../../models/graphql/user';
-import { RootState } from '../../../../redux/reducers';
 import { getUserId } from '../../../../utils/auth';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import Invitation from '../Invitation';
 import InviteNew from '../InviteNew';
 import InvitedTable from './invitedTable';
@@ -83,7 +80,8 @@ const TeamingTab: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
+
   const [loading, setLoading] = useState(true);
 
   const userID = getUserId();
@@ -94,7 +92,8 @@ const TeamingTab: React.FC = () => {
 
   const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
 
-  const [activeTab, setActiveTab] = React.useState(0);
+  const [activeTab, setActiveTab] = useState<number>(0);
+  const [selectedProjectName, setselectedProjectName] = useState<string>('');
 
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
@@ -104,8 +103,8 @@ const TeamingTab: React.FC = () => {
     ProjectDetail,
     ProjectDetailVars
   >(GET_PROJECT, {
-    variables: { projectID: userData.selectedProjectID },
-
+    variables: { projectID },
+    onCompleted: (data) => setselectedProjectName(data.getProject.name),
     fetchPolicy: 'cache-and-network',
   });
 
@@ -210,7 +209,7 @@ const TeamingTab: React.FC = () => {
     let projectOwner = 0;
     let projectInvitation = 0;
     let projectOther = 0;
-    projects.map((project) => {
+    projects.forEach((project) => {
       project.members.forEach((member: Member) => {
         if (member.user_id === userID && member.role === 'Owner') {
           projectOwner++;
@@ -286,7 +285,8 @@ const TeamingTab: React.FC = () => {
                 <div className={classes.project}>
                   <img src="./icons/chaos-logo.svg" alt="Chaos Logo" />
                   <Typography className={classes.projectName}>
-                    {userData.selectedProjectName}
+                    {/* Check for removal of userData */}
+                    {selectedProjectName}
                   </Typography>
                 </div>
                 <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>

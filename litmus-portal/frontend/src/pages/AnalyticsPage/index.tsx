@@ -6,7 +6,6 @@ import { Typography } from '@material-ui/core';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
@@ -18,7 +17,7 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
-import { RootState } from '../../redux/reducers';
+import { getProjectID } from '../../utils/getSearchParams';
 import PopOver from '../../views/AnalyticsDashboard/LitmusDashboard/PopOver';
 import WorkflowDetailsTable from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowRunDetailsTable';
 import WorkflowRunsBarChart from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowRunsBarChart';
@@ -87,15 +86,13 @@ const AnalyticsPage: React.FC = () => {
   });
 
   // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
   const { data, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID, workflowIDs: [] },
+      variables: { projectID, workflowIDs: [] },
       pollInterval: 100,
     }
   );

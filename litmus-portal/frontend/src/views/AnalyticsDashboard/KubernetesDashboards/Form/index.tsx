@@ -38,6 +38,7 @@ import {
   ListDataSourceVars,
 } from '../../../../models/graphql/dataSourceDetails';
 import { RootState } from '../../../../redux/reducers';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import { validateTextEmpty } from '../../../../utils/validate';
 import useStyles from './styles';
 
@@ -54,9 +55,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
@@ -82,14 +81,14 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
   const { data: dataSourceList } = useQuery<DataSourceList, ListDataSourceVars>(
     LIST_DATASOURCE,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
 
   // Apollo query to get the agent data
   const { data: agentList } = useQuery<Clusters, ClusterVars>(GET_CLUSTER, {
-    variables: { project_id: selectedProjectID },
+    variables: { project_id: projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -97,7 +96,7 @@ const ConfigureDashboard: React.FC<ConfigureDashboardProps> = ({
   const { data: dashboardList } = useQuery<DashboardList, ListDashboardVars>(
     LIST_DASHBOARD,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );

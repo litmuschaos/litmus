@@ -6,7 +6,6 @@
 
 import { useQuery } from '@apollo/client';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import {
   LIST_DASHBOARD,
   LIST_DATASOURCE,
@@ -27,7 +26,7 @@ import {
   Schedules,
   ScheduleWorkflow,
 } from '../../../models/graphql/scheduleData';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import { sortNumAsc } from '../../../utils/sort';
 import { OverviewConfigureBanner } from './OverviewConfigureBanner';
 import { OverviewGlowCard } from './OverviewGlowActionCard';
@@ -40,16 +39,14 @@ import { TableScheduleWorkflow } from './Tables/worflowData';
 
 const Overview: React.FC = () => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled data
   const { data: schedulesData } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
       variables: {
-        projectID: selectedProjectID,
+        projectID,
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
@@ -69,7 +66,7 @@ const Overview: React.FC = () => {
     LIST_DASHBOARD,
     {
       variables: {
-        projectID: selectedProjectID,
+        projectID,
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
@@ -89,7 +86,7 @@ const Overview: React.FC = () => {
   const { data } = useQuery<DataSourceList, ListDataSourceVars>(
     LIST_DATASOURCE,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
     }
