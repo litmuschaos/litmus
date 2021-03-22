@@ -149,7 +149,9 @@ const AccountSettings: React.FC = () => {
               onChange={handleNewPassword('newPassword')}
               helperText={
                 validateStartEmptySpacing(password.newPassword)
-                  ? 'Should not start with empty space'
+                  ? t(
+                      'settings.accountsTab.accountsSettings.passwordValidation'
+                    )
                   : ''
               }
               label={t(
@@ -174,7 +176,7 @@ const AccountSettings: React.FC = () => {
                   password.newPassword,
                   password.confNewPassword
                 )
-                  ? 'Password is not same'
+                  ? t('settings.accountsTab.accountsSettings.passwordNotSame')
                   : ''
               }
               required
