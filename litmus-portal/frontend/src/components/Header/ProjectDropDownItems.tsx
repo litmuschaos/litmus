@@ -140,11 +140,16 @@ const ProjectDropdownItems: React.FC = () => {
       ) : (
         <List>
           <ListItem>
-            <ListItemText id="hint" primary="My Projects" />
+            <ListItemText
+              id="hint"
+              primary={t('header.projectDropdown.myProjects')}
+            />
           </ListItem>
           {myProjects.length === 0 ? (
             <ListItem data-cy="project">
-              <ListItemText primary={t('header.projectDropdown.myProjects')} />
+              <ListItemText
+                primary={t('header.projectDropdown.noMyProjects')}
+              />
             </ListItem>
           ) : (
             myProjects.map((project) => {
@@ -165,7 +170,10 @@ const ProjectDropdownItems: React.FC = () => {
             })
           )}
           <ListItem>
-            <ListItemText id="hint" primary="Other Projects" />
+            <ListItemText
+              id="hint"
+              primary={t('header.projectDropdown.otherProjects')}
+            />
           </ListItem>
           {otherProjects.length === 0 ? (
             <ListItem data-cy="project">

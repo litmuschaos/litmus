@@ -96,7 +96,9 @@ const ProfileDropdown: React.FC = () => {
                 }}
                 onClick={() => tabs.changeSettingsTabs(0)}
               >
-                <Typography title="Go to settings">
+                <Typography
+                  title={t('header.profileDropdown.goToSettingsTitle')}
+                >
                   {t('header.profileDropdown.emailSet')}
                 </Typography>
               </Link>
@@ -106,14 +108,14 @@ const ProfileDropdown: React.FC = () => {
             className={`${classes.profileDropdownRow} ${classes.profileButtons}`}
           >
             <ButtonFilled
-              title="Logout from the portal"
+              title={t('header.profileDropdown.logOutTitle')}
               onClick={() => logout()}
             >
               {t('header.profileDropdown.logout')}
               <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
             </ButtonFilled>
             <ButtonOutlined
-              title="Edit your profile"
+              title={t('header.profileDropdown.editProfileTitle')}
               onClick={() => {
                 tabs.changeSettingsTabs(0);
                 history.push({

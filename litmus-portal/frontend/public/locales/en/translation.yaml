@@ -34,11 +34,16 @@ sidebar:
 header:
   projectDropdown:
     myProjects: My Projects
+    noMyProjects: No projects owned by you
+    otherProjects: Other Projects
     noProjectsOther: You are not part of any projects not owned by you
   profileDropdown:
     signedIn: 'Signed in as:'
     emailUnset: Email not set
     emailSet: Set up your email
+    goToSettingsTitle: Go to settings
+    logOutTitle: Logout from the portal
+    editProfileTitle: Edit your profile
     logout: Logout
     editProfile: Edit Profile
 
