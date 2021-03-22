@@ -2,10 +2,7 @@ import { Avatar, Button, Typography } from '@material-ui/core';
 import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  validateEmail,
-  validateStartEmptySpacing,
-} from '../../../../../utils/validate';
+import { validateEmail, validateStartEmptySpacing } from '../../utils/validate';
 import ChooseAvatarModal from '../ChooseAvatarModal';
 import useStyles from './styles';
 

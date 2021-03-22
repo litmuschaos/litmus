@@ -68,7 +68,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
 
   return (
     <div>
-      <div data-cy="createNewUserButton" className={classes.button}>
+      <div data-cy="createNewUserButton">
         <ButtonFilled
           isPrimary={false}
           isDisabled={!(username.length > 0 && password.length > 0 && !loading)}
