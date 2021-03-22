@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/reducers';
 import { extractSteps } from '../ExtractSteps';
@@ -11,8 +11,6 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
-
-  useEffect(() => {}, [manifest]);
 
   if (manifest !== '') {
     extractSteps(isCustom, manifest);
