@@ -1,19 +1,23 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { CustomYAML } from '../../../../models/redux/customyaml';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../redux/reducers';
+import { extractSteps } from '../ExtractSteps';
 
 interface WorkflowPreviewProps {
   // nodes: Nodes;
-  crd?: CustomYAML;
 }
 
-const WorkflowPreview: React.FC<WorkflowPreviewProps> = () => {
+const WorkflowPreview: React.FC = () => {
   const { t } = useTranslation(); // eslint-disable-line
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
+
+  extractSteps(false, manifest);
 
   // Graph orientation
   const horizontal = false; // eslint-disable-line
-
-  // console.log(crd);
 
   return <div />;
 

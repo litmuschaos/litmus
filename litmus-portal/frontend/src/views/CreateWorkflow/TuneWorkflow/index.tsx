@@ -284,7 +284,7 @@ const TuneWorkflow: React.FC = () => {
         <Row>
           {/* Argo Workflow Graph */}
           <Width width="30%">
-            <WorkflowPreview crd={generatedYAML} />
+            <WorkflowPreview />
           </Width>
           {/* Workflow Table */}
           <Width width="70%">

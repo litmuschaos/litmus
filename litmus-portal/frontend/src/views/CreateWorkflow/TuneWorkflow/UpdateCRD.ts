@@ -110,9 +110,9 @@ export const updateCRD = (
     });
   });
 
+  // console.log(generatedYAML);
+  // console.log(customSteps);
   return generatedYAML;
 
   // Uncomment for Checking the Generated YAML and custom steps
-  // console.log(generatedYAML);
-  // console.log(customSteps);
 };
