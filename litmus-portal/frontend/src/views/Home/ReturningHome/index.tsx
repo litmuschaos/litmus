@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
+import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
 import { ExecutionData } from '../../../models/graphql/workflowData';
 import {
@@ -24,7 +25,6 @@ import AverageResilienceScore from '../AverageResilienceScore';
 import PassedVsFailed from '../PassedVsFailed';
 import ResilienceScoreComparisonPlot from '../ResilienceScoreComparisonPlot';
 import TotalWorkflows from '../TotalWorkflows';
-import { ReturningHomeQuickActionCard } from './returningHomeQuickActionCard';
 import useStyles from './style';
 
 interface DataPresentCallBackType {
@@ -503,7 +503,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                     </div>
                     */}
                   <div className={classes.quickActionDiv}>
-                    <ReturningHomeQuickActionCard />
+                    <LocalQuickActionCard variant="returningHome" />
                   </div>
                 </div>
               </div>

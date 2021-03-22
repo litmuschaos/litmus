@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import InfoFilledWrap from '../../components/InfoFilled';
 import Loader from '../../components/Loader';
+import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
 import WelcomeModal from '../../components/WelcomeModal';
 import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -30,7 +31,6 @@ import { RootState } from '../../redux/reducers';
 import { ReactComponent as Arrow } from '../../svg/arrow.svg';
 import { getUsername } from '../../utils/auth';
 import ReturningHome from '../../views/Home/ReturningHome';
-import { HomePageQuickActionCard } from './homePageQuickActionCard';
 import useStyles from './style';
 
 const CreateWorkflowCard: React.FC = () => {
@@ -227,7 +227,7 @@ const HomePage: React.FC = () => {
                     </div>
                   </div>
                   <div className={classes.quickActionDiv}>
-                    <HomePageQuickActionCard />
+                    <LocalQuickActionCard variant="homePage" />
                   </div>
                 </div>
               ) : (

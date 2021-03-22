@@ -7,6 +7,7 @@
 import { useQuery } from '@apollo/client';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import {
   LIST_DASHBOARD,
   LIST_DATASOURCE,
@@ -31,7 +32,6 @@ import { RootState } from '../../../redux/reducers';
 import { sortNumAsc } from '../../../utils/sort';
 import { OverviewConfigureBanner } from './OverviewConfigureBanner';
 import { OverviewGlowCard } from './OverviewGlowActionCard';
-import { AnalyticsQuickActionCard } from './OverviewQuickActionCard';
 import { AnalyticsScheduleWorkflowCard } from './OverviewScheduleBanner';
 import useStyles from './styles';
 import { TableDashboardData } from './Tables/dashboardData';
@@ -148,7 +148,7 @@ const Overview: React.FC = () => {
           )}
           <div className={classes.parentWrapper}>
             <div className={classes.analyticsQuickActionCard}>
-              <AnalyticsQuickActionCard />
+              <LocalQuickActionCard variant="analytics" />
             </div>
           </div>
         </div>
