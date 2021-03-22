@@ -112,17 +112,17 @@ const ReceivedInvitations: React.FC = () => {
                     style={{ alignContent: 'right' }}
                   >
                     {userInitials(
-                      allUsers?.filter((data) => {
+                      allUsers.filter((data) => {
                         return row.user_id === data.id;
-                      })[0]?.username
+                      })[0].username
                     )}
                   </Avatar>
                   <div>
                     <Typography className={classes.name}>
                       {
-                        allUsers?.filter((data) => {
+                        allUsers.filter((data) => {
                           return row.user_id === data.id;
-                        })[0]?.username
+                        })[0].username
                       }
                     </Typography>
                     <Typography className={classes.email}>
