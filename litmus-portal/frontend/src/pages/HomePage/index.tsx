@@ -5,7 +5,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateWorkflowCard } from '../../components/CreateWorkflowCard';
 import InfoFilledWrap from '../../components/InfoFilled';
-import QuickActionCard from '../../components/QuickActionCard';
+import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -102,7 +102,7 @@ const HomePage: React.FC = () => {
               </div>
             </div>
             <div className={classes.quickActionDiv}>
-              <QuickActionCard />
+              <LocalQuickActionCard variant="homePage" />
             </div>
           </div>
         </div>

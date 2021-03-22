@@ -16,7 +16,7 @@ import ButtonOutline from '../../../components/Button/ButtonOutline';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
-import QuickActionCard from '../../../components/QuickActionCard';
+import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import VideoCarousel from '../../../components/VideoCarousel';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import {
@@ -552,7 +552,7 @@ const MyHub: React.FC = () => {
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div className={classes.quickActionDiv}>
-            <QuickActionCard analyticsHome={false} nonAdmin />
+            <LocalQuickActionCard variant="homePage" />
           </div>
         </div>
       </div>
