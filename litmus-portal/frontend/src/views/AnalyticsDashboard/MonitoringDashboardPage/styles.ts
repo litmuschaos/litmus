@@ -2,11 +2,19 @@ import MuiAccordion from '@material-ui/core/Accordion';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
+  panelDiv: {
+    width: '48.5%',
+    [theme.breakpoints.down('sm')]: {
+      width: '98.5%',
+    },
+  },
+
   rootPanel: {
     display: 'inline-block',
     background: theme.palette.background.paper,
     padding: theme.spacing(2),
-    margin: theme.spacing(3, 1),
+    margin: theme.spacing(1.5, 0, 1),
+    width: '100%',
   },
 
   rootPanelGroup: {
@@ -42,22 +50,14 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     textAlign: 'center',
     backgroundColor: theme.palette.background.paper,
-    paddingTop: theme.spacing(2.5),
+    paddingTop: theme.spacing(2),
   },
 
   singleGraph: {
-    // TODO remove this later
     '& hr': {
       position: 'relative !important',
     },
-    width: '32.5vw',
     height: '27.5rem',
-    [theme.breakpoints.down(1200)]: {
-      width: '30vw',
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: '42.5vw',
-    },
   },
 }));
 

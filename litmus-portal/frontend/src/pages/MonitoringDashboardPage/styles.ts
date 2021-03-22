@@ -39,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   analyticsDiv: {
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
     minHeight: '26rem',
   },
@@ -58,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   dashboardSwitchIcon: {
     height: '2rem',
     width: '2rem',
+    color: theme.palette.text.primary,
   },
 
   weightedFont: {

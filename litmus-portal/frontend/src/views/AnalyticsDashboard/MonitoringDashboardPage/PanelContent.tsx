@@ -161,35 +161,35 @@ const PanelContent: React.FC<PanelResponse> = ({
     }
   };
 
-  useEffect(() => {
-    if (
-      synchronizer.firstLoad === true &&
-      synchronizer.updateQueries === false
-    ) {
-      if (prom_queries.length) {
-        generatePrometheusQueryData();
-        setSynchronizer({
-          updateQueries: true,
-          firstLoad: false,
-          fetch: true,
-        });
-      }
-    }
-    if (
-      synchronizer.updateQueries === true &&
-      synchronizer.firstLoad === false
-    ) {
-      setTimeout(() => {
-        if (prom_queries.length) {
-          generatePrometheusQueryData();
-          setSynchronizer({
-            ...synchronizer,
-            fetch: true,
-          });
-        }
-      }, selectedDashboard.refreshRate);
-    }
-  }, [prometheusQueryData]);
+  // useEffect(() => {
+  //   if (
+  //     synchronizer.firstLoad === true &&
+  //     synchronizer.updateQueries === false
+  //   ) {
+  //     if (prom_queries.length) {
+  //       generatePrometheusQueryData();
+  //       setSynchronizer({
+  //         updateQueries: true,
+  //         firstLoad: false,
+  //         fetch: true,
+  //       });
+  //     }
+  //   }
+  //   if (
+  //     synchronizer.updateQueries === true &&
+  //     synchronizer.firstLoad === false
+  //   ) {
+  //     setTimeout(() => {
+  //       if (prom_queries.length) {
+  //         generatePrometheusQueryData();
+  //         setSynchronizer({
+  //           ...synchronizer,
+  //           fetch: true,
+  //         });
+  //       }
+  //     }, selectedDashboard.refreshRate);
+  //   }
+  // }, [prometheusQueryData]);
 
   useEffect(() => {
     if (
