@@ -298,7 +298,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
         <Row>
           {/* Argo Workflow Graph */}
           <Width width="30%">
-            <WorkflowPreview crd={generatedYAML} />
+            <WorkflowPreview isCustom={customWorkflow} />
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
