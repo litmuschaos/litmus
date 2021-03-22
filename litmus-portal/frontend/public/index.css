@@ -1,3 +1,46 @@
-body > #root > div {
-  height: 100vh;
+.root {
+  background: #f5f6f8;
+}
+
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.loaderContainer p:first-child {
+  color: #000000cc;
+}
+
+.loader {
+  border: 8px solid #d9d9d9;
+  border-radius: 50%;
+  border-top: 8px solid #5b44ba;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
