@@ -7,10 +7,12 @@ import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 
 type Variant = 'homePage' | 'returningHome' | 'analytics' | 'community';
+
 interface LocalQuickActionCardProps {
   variant?: Variant;
 }
-export interface QuickActionCardProps {
+
+interface QuickActionCardProps {
   onClick?: () => void;
   src: string;
   alt: string;
