@@ -1,0 +1,203 @@
+name: Litmus-CI
+on:
+  issue_comment:
+    types: [created]
+    branches:
+      - master
+
+jobs:
+  tests:
+    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run')
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Notification for Starting Testing.
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: "${{ github.event.comment.id }}"
+          body: |
+            ****
+            **Test Status:** The testing has been started please wait for the results ...
+      #Using the last commit id of pull request
+      - uses: octokit/request-action@v2.x
+        id: get_PR_commits
+        with:
+          route: GET /repos/:repo/pulls/:pull_number/commits
+          repo: ${{ github.repository }}
+          pull_number: ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: set commit to output
+        id: getcommit
+        run: |
+           prsha=$(echo $response | jq '.[-1].sha'  | tr -d '"')
+           echo "::set-output name=sha::$prsha"
+        env:
+          response:  ${{ steps.get_PR_commits.outputs.data }}
+
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{steps.getcommit.outputs.sha}}
+          fetch-depth: 0
+
+      - uses: octokit/request-action@v2.x
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        name: Getting the files changed in current Pull-Request
+        id: get_files
+        with:
+          route: GET /repos/:repo/pulls/:pull_number/files
+          repo: ${{ github.repository }}
+          pull_number: ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setting up KinD Cluster
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: "v0.7.0"
+
+      - name: Configuring and Testing the Cluster Installation
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+          kubectl cluster-info --context kind-kind
+          kind get kubeconfig --internal >$HOME/.kube/config
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
+      - name: Filtering the file paths and building images on the basic of changed files
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+            chmod 755 ./.github/filter_and_build.sh
+            ./.github/filter_and_build.sh
+        env:
+          changed_data: ${{steps.get_files.outputs.data}}
+
+      - name: Deploying the litmus-portal for E2E testing
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+          wget https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
+          sed -i 's/Always/IfNotPresent/g' cluster-k8s-manifest.yml
+          kubectl apply -f cluster-k8s-manifest.yml
+          kubectl get pods -n litmus
+          kubectl get deployments -o wide -n litmus
+          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
+       
+      - name: Getting the ENV variables for using while testing
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+          export frontendPodName=$(kubectl get pods -l component=litmusportal-frontend --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' -n litmus)
+          export frontendPodPort=$(kubectl get pod $frontendPodName --template='{{(index (index .spec.containers 0).ports 0).containerPort}}{{"\n"}}' --namespace litmus)
+          kubectl port-forward $frontendPodName -n litmus 3001:$frontendPodPort &
+      
+      - name: Setting Dependencies
+        uses: actions/setup-node@v1
+        if: startsWith(github.event.comment.body, '/run-unit')
+        with:
+          working-directory: litmus-portal/frontend
+
+      - name: Installing Dependencies for frontend.
+        if: startsWith(github.event.comment.body, '/run-unit')
+        run: |
+          HUSKY_SKIP_INSTALL=1 npm i
+        working-directory: litmus-portal/frontend
+
+        # Step for running all frontend Cypress unit tests.
+      - name: Starting cypress unit tests
+        if: startsWith(github.event.comment.body, '/run-unit')
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          command: npm run unit:ci
+          install: false
+          working-directory: litmus-portal/frontend
+
+      # Cloning the litmus-e2e repo for E2E tests.
+      - name: Cloning the litmus-e2e Repo
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+           git clone https://github.com/litmuschaos/litmus-e2e.git -b litmus-portal
+
+      - name: Running basic tests (Login and Welcome Modal Tests)
+        if: startsWith(github.event.comment.body, '/run-e2e-AuthTests') || startsWith(github.event.comment.body, '/run-e2e')
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Basic_Setup/**/*.spec.js
+          working-directory: litmus-e2e/CypressE2E/
+          config-file: cypress.prod.json
+
+      - name: Teaming and Account Settings Tests
+        if: startsWith(github.event.comment.body, '/run-e2e-Settings')
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Parallel_Tests/Account_Settings/*.spec.js
+          working-directory: litmus-e2e/CypressE2E/
+          config-file: cypress.prod.json
+
+      - name: Run all E2E tests
+        if: startsWith(github.event.comment.body, '/run-e2e-all')
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Parallel_Tests/**/*.spec.js
+          working-directory: litmus-e2e/CypressE2E
+          config-file: cypress.prod.json
+
+      - name: Check the test run
+        if: |
+         startsWith(github.event.comment.body, '/run-unit') || startsWith(github.event.comment.body, '/run-e2e')
+        run: |
+          echo "TEST_RUN=true" >> $GITHUB_ENV
+
+      - name: Check for all the jobs are succeeded
+        if: ${{ success() && env.TEST_RUN == 'true' }}
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: "${{ github.event.comment.id }}"
+          body: |
+            **Test Result:** All tests are passed
+            **Run ID:** [${{ env.RUN_ID }}](https://github.com/litmuschaos/litmus/actions/runs/${{ env.RUN_ID }})
+          reactions: hooray
+        env:
+          RUN_ID: ${{ github.run_id }}
+
+      - name: Check for any job failed
+        if: ${{ failure() }}
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: "${{ github.event.comment.id }}"
+          body: |
+            **Test Failed:** Some tests are failed please check
+            **Run ID:** [${{ env.RUN_ID }}](https://github.com/litmuschaos/litmus/actions/runs/${{ env.RUN_ID }})
+          reactions: confused
+        env:
+          RUN_ID: ${{ github.run_id }}
+
+      - name: Check if any test ran or not
+        if: env.TEST_RUN != 'true'
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: "${{ github.event.comment.id }}"
+          body: |
+            **Test Result:** No test found
+            **Run ID:** [${{ env.RUN_ID }}](https://github.com/litmuschaos/litmus/actions/runs/${{ env.RUN_ID }})
+          reactions: eyes
+        env:
+          RUN_ID: ${{ github.run_id }}
+
+      - name: Deleting KinD cluster
+        if: startsWith(github.event.comment.body, '/run-e2e')
+        run: kind delete cluster
+
+  merge:
+    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/merge')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add a merge label when all jobs are passed
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          labels: merge
