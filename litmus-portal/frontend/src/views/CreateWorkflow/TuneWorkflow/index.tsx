@@ -22,7 +22,6 @@ import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
 import { Charts } from '../../../models/redux/myhub';
-import { WorkflowManifest } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
@@ -63,13 +62,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
     name: '',
   });
   const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
 
   // Actions
   const workflowAction = useActions(WorkflowActions);
-
-  const manifest: WorkflowManifest = useSelector(
-    (state: RootState) => state.workflowManifest
-  );
 
   const { t } = useTranslation();
 
@@ -172,7 +170,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     },
   };
   const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(
-    customWorkflow ? yamlTemplate : YAML.parse(manifest.manifest)
+    manifest === '' ? yamlTemplate : YAML.parse(manifest)
   );
   // Graphql Query for fetching Engine YAML
   const [
@@ -223,12 +221,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
   };
 
   useEffect(() => {
-    if (customWorkflow) {
-      setGeneratedYAML(updateCRD(generatedYAML, experiment));
-      workflowAction.setWorkflowManifest({
-        manifest: YAML.stringify(generatedYAML),
-      });
-    }
+    setGeneratedYAML(updateCRD(generatedYAML, experiment));
+    workflowAction.setWorkflowManifest({
+      manifest: YAML.stringify(generatedYAML),
+    });
   }, [experiment]);
 
   const onModalClose = () => {
@@ -324,7 +320,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            {experiment.length > 0 ? (
+            {experiment.length > 0 || manifest !== '' ? (
               <WorkflowTable isCustom />
             ) : (
               <WorkflowTable />
