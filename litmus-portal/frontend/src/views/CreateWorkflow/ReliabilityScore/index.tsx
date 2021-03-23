@@ -1,6 +1,12 @@
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useState } from 'react';
+import localforage from 'localforage';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import Center from '../../../containers/layouts/Center';
 import { experimentMap } from '../../../models/redux/workflow';
@@ -8,7 +14,7 @@ import WeightSlider from '../WeightSlider';
 import ResultTable from './ResultTable';
 import useStyles from './styles';
 
-const ReliablityScore = () => {
+const ReliablityScore = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -38,6 +44,23 @@ const ReliablityScore = () => {
     weights[index].weight = newValue;
     setWeights([...weights]);
   }
+
+  useEffect(() => {
+    localforage
+      .getItem('weights')
+      .then((value) =>
+        value !== null ? setWeights(value as experimentMap[]) : setWeights([])
+      );
+  }, []);
+
+  function onNext() {
+    localforage.setItem('weights', weights);
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <div>
@@ -120,6 +143,6 @@ const ReliablityScore = () => {
       </form>
     </div>
   );
-};
+});
 
 export default ReliablityScore;
