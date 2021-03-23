@@ -1,10 +1,19 @@
 import { Typography } from '@material-ui/core';
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { InputField } from 'litmus-ui';
 import useStyles from './styles';
 
-const General = () => {
+const General = forwardRef((_, ref) => {
   const classes = useStyles();
+
+  function onNext() {
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
+
   return (
     <div>
       <Typography>
@@ -20,6 +29,6 @@ const General = () => {
       <br />
     </div>
   );
-};
+});
 
 export default General;

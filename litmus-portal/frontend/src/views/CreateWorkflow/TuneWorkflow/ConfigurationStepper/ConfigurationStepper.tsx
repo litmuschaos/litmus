@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -6,16 +6,11 @@ import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { ButtonOutlined } from 'litmus-ui';
-import YAML from 'yaml';
-import { useSelector } from 'react-redux';
+
 import General from '../TuneWorkflowSteps/General';
 import SteadyState from '../TuneWorkflowSteps/SteadyState';
 import TargetApplication from '../TuneWorkflowSteps/TargetApplication';
 import useStyles from './styles';
-import { WorkflowManifest } from '../../../../models/redux/workflow';
-import { RootState } from '../../../../redux/reducers';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
-import useActions from '../../../../redux/actions';
 
 interface ConfigurationStepperProps {
   experimentIndex: number;
@@ -23,30 +18,34 @@ interface ConfigurationStepperProps {
   isCustom: boolean | undefined;
 }
 
+interface ChildRef {
+  onNext: () => void;
+}
+
 // getStepContent renders the stepper components
 // for custom and predefined workflows
 function getStepContent(
   step: number,
+  engineIndex: number,
   isCustom: boolean | undefined,
-  chaosEngine: any,
-  setChaosEngine: React.Dispatch<any>
-) {
+  childRef: React.MutableRefObject<ChildRef | undefined>
+): React.ReactNode {
   if (isCustom) {
     switch (step) {
       case 0:
-        return <General />;
+        return <General ref={childRef} />;
       case 1:
         return (
           <TargetApplication
             isCustom
-            chaosEngine={chaosEngine}
-            setChaosEngine={setChaosEngine}
+            engineIndex={engineIndex}
+            ref={childRef}
           />
         );
       case 2:
-        return <SteadyState />;
+        return <SteadyState engineIndex={engineIndex} ref={childRef} />;
       default:
-        return <General />;
+        return <General ref={childRef} />;
     }
   } else {
     switch (step) {
@@ -54,18 +53,18 @@ function getStepContent(
         return (
           <TargetApplication
             isCustom={false}
-            chaosEngine={chaosEngine}
-            setChaosEngine={setChaosEngine}
+            engineIndex={engineIndex}
+            ref={childRef}
           />
         );
       case 1:
-        return <SteadyState />;
+        return <SteadyState engineIndex={engineIndex} ref={childRef} />;
       default:
         return (
           <TargetApplication
             isCustom={false}
-            chaosEngine={chaosEngine}
-            setChaosEngine={setChaosEngine}
+            engineIndex={engineIndex}
+            ref={childRef}
           />
         );
     }
@@ -79,14 +78,7 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
 }) => {
   const classes = useStyles();
 
-  // Redux state for handling Workflow Manifests
-  const workflow = useActions(WorkflowActions);
-  const manifest: WorkflowManifest = useSelector(
-    (state: RootState) => state.workflowManifest
-  );
-  const [chaosEngine, setChaosEngine] = useState(
-    YAML.parse(manifest.engineYAML)
-  );
+  const childRef = useRef<ChildRef>();
 
   // State variable to handle Stepper Steps
   const [activeStep, setActiveStep] = React.useState(0);
@@ -102,26 +94,13 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
 
   // Handles the Next and Finish button operations.
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    const stringifiedYAML = YAML.stringify(chaosEngine);
-    workflow.setWorkflowManifest({
-      engineYAML: stringifiedYAML,
-    });
-
-    // If Finish button is clicked,
-    // Changes in the selected ChaosEngine will be
-    // added to the main manifest and
-    // the stepper will close
-    if (activeStep === steps.length - 1) {
-      const mainManifest = YAML.parse(manifest.manifest);
-      mainManifest.spec.templates[
-        experimentIndex
-      ].inputs.artifacts[0].raw.data = manifest.engineYAML;
-      workflow.setWorkflowManifest({
-        manifest: YAML.stringify(mainManifest),
-      });
-      closeStepper();
+    if (childRef.current && childRef.current.onNext) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
+    // the stepper will close
+    // if (activeStep === steps.length - 1) {
+    //   closeStepper();
+    // }
   };
 
   // Handle the Back button operations.
@@ -142,7 +121,7 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
             <StepLabel className={classes.stepperLabel}>{label}</StepLabel>
             <StepContent>
               <Typography>
-                {getStepContent(index, isCustom, chaosEngine, setChaosEngine)}
+                {getStepContent(index, experimentIndex, isCustom, childRef)}
               </Typography>
               <div className={classes.actionsContainer}>
                 <div>

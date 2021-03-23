@@ -22,6 +22,7 @@ import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
 import { Charts } from '../../../models/redux/myhub';
+import { WorkflowManifest } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
@@ -66,7 +67,42 @@ const TuneWorkflow = forwardRef((_, ref) => {
   // Actions
   const workflowAction = useActions(WorkflowActions);
 
+  const manifest: WorkflowManifest = useSelector(
+    (state: RootState) => state.workflowManifest
+  );
+
   const { t } = useTranslation();
+
+  const fetchYaml = (link: string) => {
+    fetch(link)
+      .then((data) => {
+        data.text().then((yamlText) => {
+          workflowAction.setWorkflowManifest({
+            manifest: yamlText,
+          });
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  // Graphql query to get charts
+  const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
+    onCompleted: (data) => {
+      const allExp: ChartName[] = [];
+      data.getCharts.forEach((data) => {
+        return data.Spec.Experiments?.forEach((experiment) => {
+          allExp.push({
+            ChaosName: data.Metadata.Name,
+            ExperimentName: experiment,
+          });
+        });
+      });
+      setAllExperiments([...allExp]);
+    },
+    fetchPolicy: 'cache-and-network',
+  });
 
   // Index DB Fetching for extracting selected Button and Workflow Details
   const getSelectedWorkflowDetails = () => {
@@ -75,6 +111,24 @@ const TuneWorkflow = forwardRef((_, ref) => {
         name: (workflow as WorkflowDetailsProps).name,
       })
     );
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      // Setting default data when MyHub is selected
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
+        setCustomWorkflow(false);
+        localforage.getItem('workflowCRDLink').then((value) => {
+          if (value !== null) fetchYaml(value as string);
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
+        setCustomWorkflow(true);
+        localforage.getItem('selectedHub').then((hub) => {
+          setHubName(hub as string);
+          getCharts({
+            variables: { projectID: selectedProjectID, HubName: hub as string },
+          });
+        });
+      }
+    });
   };
 
   useEffect(() => {
@@ -117,7 +171,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
       ],
     },
   };
-  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(yamlTemplate);
+  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(
+    customWorkflow ? yamlTemplate : YAML.parse(manifest.manifest)
+  );
   // Graphql Query for fetching Engine YAML
   const [
     getEngineYaml,
@@ -132,23 +188,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
     { data: experimentData, loading: experimentDataLoading },
   ] = useLazyQuery(GET_EXPERIMENT_YAML, {
     fetchPolicy: 'network-only',
-  });
-
-  // Graphql query to get charts
-  const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
-    onCompleted: (data) => {
-      const allExp: ChartName[] = [];
-      data.getCharts.forEach((data) => {
-        return data.Spec.Experiments?.forEach((experiment) => {
-          allExp.push({
-            ChaosName: data.Metadata.Name,
-            ExperimentName: experiment,
-          });
-        });
-      });
-      setAllExperiments([...allExp]);
-    },
-    fetchPolicy: 'cache-and-network',
   });
 
   /**
@@ -184,10 +223,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
   };
 
   useEffect(() => {
-    setGeneratedYAML(updateCRD(generatedYAML, experiment));
-    workflowAction.setWorkflowManifest({
-      manifest: YAML.stringify(generatedYAML),
-    });
+    if (customWorkflow) {
+      setGeneratedYAML(updateCRD(generatedYAML, experiment));
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(generatedYAML),
+      });
+    }
   }, [experiment]);
 
   const onModalClose = () => {
@@ -213,25 +254,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
       ]);
     }
   }, [engineDataLoading, experimentDataLoading]);
-
-  // Loading Workflow Related Data for Workflow Settings
-  useEffect(() => {
-    localforage.getItem('selectedScheduleOption').then((value) => {
-      // Setting default data when MyHub is selected
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
-        setCustomWorkflow(false);
-      }
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
-        setCustomWorkflow(true);
-        localforage.getItem('selectedHub').then((hub) => {
-          setHubName(hub as string);
-          getCharts({
-            variables: { projectID: selectedProjectID, HubName: hub as string },
-          });
-        });
-      }
-    });
-  }, []);
 
   // console.log(generatedYAML);
   function onNext() {
