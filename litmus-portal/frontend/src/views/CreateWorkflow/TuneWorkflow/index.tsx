@@ -62,6 +62,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
     name: '',
   });
   const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
 
   // Actions
   const workflowAction = useActions(WorkflowActions);
@@ -117,7 +120,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
       ],
     },
   };
-  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(yamlTemplate);
+  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(
+    manifest === '' ? yamlTemplate : YAML.parse(manifest)
+  );
   // Graphql Query for fetching Engine YAML
   const [
     getEngineYaml,
@@ -302,7 +307,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            {experiment.length > 0 ? (
+            {experiment.length > 0 || manifest !== '' ? (
               <WorkflowTable isCustom />
             ) : (
               <WorkflowTable />
