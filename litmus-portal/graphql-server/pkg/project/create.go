@@ -16,16 +16,20 @@ import (
 	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbSchemaProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
-	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 )
 
 // CreateProjectWithUser :creates a project for the user
-func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSchemaUserManagement.User) (*model.Project, error) {
+func CreateProjectWithUser(ctx context.Context, projectName string, userID string) (*model.Project, error) {
 
 	var (
 		self_cluster = os.Getenv("SELF_CLUSTER")
 	)
+	user, er := dbOperationsUserManagement.GetUserByUserID(ctx, userID)
+	if er != nil {
+		log.Print("ERROR", er)
+		return nil, er
+	}
 
 	uuid := uuid.New()
 	newProject := &dbSchemaProject.Project{

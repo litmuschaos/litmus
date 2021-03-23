@@ -16,6 +16,7 @@ const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
 const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
+const GetStarted = lazy(() => import('../../pages/GetStartedPage'));
 const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const BrowseTemplate = lazy(
   () => import('../../views/ChaosWorkflows/BrowseTemplate')
@@ -53,6 +54,7 @@ const CreateCustomWorkflow = lazy(
 );
 
 const Routes: React.FC = () => {
+  console.log('App-hit');
   const baseRoute = window.location.pathname.split('/')[1];
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
@@ -82,7 +84,9 @@ const Routes: React.FC = () => {
   });
 
   history.listen((location) => {
+    console.log('outside location condn');
     if (location.pathname !== '/login') {
+      console.log('inside location condn');
       setprojectID(getProjectID());
       setprojectRole(getProjectRole());
     }
@@ -91,6 +95,8 @@ const Routes: React.FC = () => {
   if (getToken() === '') {
     return (
       <Switch>
+        {console.log('no token-app hit')}
+
         <Route exact path="/login" component={LoginPage} />
         <Redirect exact path="/api-doc" to="/api-doc/index.html" />
         <Redirect to="/login" />
@@ -101,9 +107,10 @@ const Routes: React.FC = () => {
   if (!projectID) {
     return (
       <Switch>
-        <Route exact path="/home" component={HomePage} />
+        {console.log('no project app hit')}
+        <Route exact path="/getStarted" component={GetStarted} />
         <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-        <Redirect to="/home" />
+        <Redirect to="/getStarted" />
       </Switch>
     );
   }

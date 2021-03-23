@@ -22,7 +22,6 @@ import (
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
@@ -51,33 +50,8 @@ func (r *mutationResolver) CreateProject(ctx context.Context, projectName string
 	//fetching all the user's details from jwt token
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	userUID := claims["uid"].(string)
-	role := claims["role"].(string)
-	email := claims["email"]
-	fullname := claims["name"]
-	username := claims["username"].(string)
-
-	var emailID, name string
-
-	if email != nil {
-		emailID = email.(string)
-	} else {
-		emailID = ""
-	}
-
-	if fullname != nil {
-		name = fullname.(string)
-	} else {
-		name = ""
-	}
-	user := &dbSchemaUserManagement.User{
-		ID:        userUID,
-		Username:  username,
-		Role:      &role,
-		Email:     &emailID,
-		Name:      &name,
-		CreatedAt: time.Now().Format(time.RFC1123Z),
-	}
-	return project.CreateProjectWithUser(ctx, projectName, user)
+	
+	return project.CreateProjectWithUser(ctx, projectName, userUID)
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
