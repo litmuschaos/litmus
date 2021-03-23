@@ -238,7 +238,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           <div className={classes.weightDiv}>
             {data.weightages.map((expData) => {
               return (
-                <div style={{ marginBottom: 8 }}>
+                <div style={{ marginBottom: 20 }}>
                   <ExperimentPoints
                     expName={expData.experiment_name}
                     weight={expData.weightage}

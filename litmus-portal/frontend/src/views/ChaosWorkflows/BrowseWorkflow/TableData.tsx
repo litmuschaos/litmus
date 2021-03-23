@@ -74,13 +74,17 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
       </TableCell>
       <TableCell>
         <div className={classes.reliabiltyData}>
-          {exeData.phase === 'Failed' || exeData.phase === '' ? (
+          {exeData.finishedAt.length === 0 ? (
+            <Typography>
+              Overall RR: <span className={classes.failed}>NA</span>
+            </Typography>
+          ) : exeData.phase === 'Failed' || exeData.phase === '' ? (
             <>
               <Typography>
                 Overall RR: <span className={classes.failed}>0%</span>
               </Typography>
               <div className={classes.progressBar}>
-                <LinearProgressBar width={2} value={0} />
+                <LinearProgressBar width={0.1} value={0} />
               </div>
             </>
           ) : (
@@ -89,7 +93,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
                 Overall RR: <span className={classes.success}>100%</span>
               </Typography>
               <div className={classes.progressBar}>
-                <LinearProgressBar width={2} value={100} />
+                <LinearProgressBar width={0.1} value={10} />
               </div>
             </>
           )}
