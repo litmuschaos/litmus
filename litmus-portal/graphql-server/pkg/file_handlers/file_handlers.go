@@ -60,7 +60,7 @@ func GetManifest(token string) ([]byte, int, error) {
 	}
 
 	if os.Getenv("PORTAL_SCOPE") == "cluster" {
-		portalEndpoint, err = k8s.GetPortalEndpoint()
+		portalEndpoint, err = k8s.GetServerEndpoint()
 		if err != nil {
 			return nil, 500, err
 		}
@@ -69,6 +69,7 @@ func GetManifest(token string) ([]byte, int, error) {
 	}
 
 	subscriberConfiguration.GQLServerURI = portalEndpoint + "/query"
+
 	if !reqCluster.IsRegistered {
 		var respData []byte
 

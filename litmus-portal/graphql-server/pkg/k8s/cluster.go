@@ -4,8 +4,10 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
-	"k8s.io/apimachinery/pkg/api/errors"
+	"errors"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
@@ -56,7 +58,7 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 	}
 
 	response, err := dr.Create(obj, metaV1.CreateOptions{})
-	if errors.IsAlreadyExists(err) {
+	if k8serrors.IsAlreadyExists(err) {
 		// This doesnt ever happen even if it does already exist
 		log.Print("Already exists")
 		return nil, nil
@@ -70,13 +72,27 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 
 	return response, nil
 }
-
-func GetPortalEndpoint() (string, error) {
+/*
+	This function returns the endpoint of the server by which external agents can communicate.
+	The order of generating the endpoint is based on different network type:
+	- Ingress
+	- LoadBalancer > NodePort > ClusterIP
+ */
+func GetServerEndpoint() (string, error) {
 	var (
-		Nodeport       int32
-		ExternalIP     string
-		InternalIP     string
-		LitmusPortalNS = os.Getenv("LITMUS_PORTAL_NAMESPACE")
+		NodePort                int32
+		Port int32
+		ExternalIP         string
+		InternalIP         string
+		IngressPath        string
+		IPAddress          string
+		Scheme              string
+		FinalUrl           string
+		ServerServiceName = os.Getenv("SERVER_SERVICE_NAME")
+		ServerLabel        = os.Getenv("SERVER_LABEL") // component=litmusportal-server
+		LitmusPortalNS    = os.Getenv("LITMUS_PORTAL_NAMESPACE")
+		Ingress             = os.Getenv("INGRESS")
+		IngressName        = os.Getenv("INGRESS_NAME")
 	)
 
 	clientset, err := GetGenericK8sClient()
@@ -84,37 +100,99 @@ func GetPortalEndpoint() (string, error) {
 		return "", err
 	}
 
-	podList, _ := clientset.CoreV1().Pods(LitmusPortalNS).List(metaV1.ListOptions{
-		LabelSelector: "component=litmusportal-server",
-	})
-
-	svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get("litmusportal-server-service", metaV1.GetOptions{})
-	if err != nil {
-		return "", err
-	}
-
-	for _, port := range svc.Spec.Ports {
-		if port.Name == "graphql-server" {
-			Nodeport = port.NodePort
+	if Ingress == "true" {
+		getIng, err := clientset.ExtensionsV1beta1().Ingresses(LitmusPortalNS).Get(IngressName, metaV1.GetOptions{})
+		if err != nil {
+			return "", err
 		}
-	}
 
-	nodeIP, err := clientset.CoreV1().Nodes().Get(podList.Items[0].Spec.NodeName, metaV1.GetOptions{})
-	if err != nil {
-		return "", err
-	}
-
-	for _, addr := range nodeIP.Status.Addresses {
-		if addr.Type == "ExternalIP" && addr.Address != "" {
-			ExternalIP = addr.Address
-		} else if addr.Type == "InternalIP" && addr.Address != "" {
-			InternalIP = addr.Address
+		if getIng.Status.LoadBalancer.Ingress[0].Hostname == "" {
+			IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
+		} else {
+			IPAddress = getIng.Status.LoadBalancer.Ingress[0].Hostname
 		}
+
+		if ExternalIP == "" {
+			return "", errors.New("IP Address or Hostname is not available in the Ingress of " + IngressName)
+		}
+
+		for _, rule := range getIng.Spec.Rules {
+			for _, path := range rule.HTTP.Paths {
+				if path.Backend.ServiceName == ServerServiceName {
+					path_arr := strings.Split(path.Path, "/")
+					if path_arr[len(path_arr)-1] == "(.*)" {
+						path_arr[len(path_arr)-1] = "query"
+					} else {
+						path_arr = append(path_arr, "query")
+					}
+
+					for el, p := range path_arr {
+						if el == len(path_arr) {
+							IngressPath += p
+						} else {
+							IngressPath += p + "/"
+						}
+					}
+				}
+			}
+		}
+
+		if len(getIng.Spec.TLS) > 0 {
+			Scheme = "https"
+		} else {
+			Scheme = "http"
+		}
+
+		FinalUrl = Scheme + "://" + IPAddress + "/" + IngressPath
+
+	} else if Ingress == "false" {
+		podList, err := clientset.CoreV1().Pods(LitmusPortalNS).List(metaV1.ListOptions{
+			LabelSelector: ServerLabel,
+		})
+		if err != nil {
+			return "", err
+		}
+
+		svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ServerServiceName, metaV1.GetOptions{})
+		if err != nil {
+			return "", err
+		}
+
+		for _, selector := range svc.Spec.Selector {
+			if selector == ServerLabel {
+				NodePort = svc.Spec.Ports[0].NodePort
+				Port = svc.Spec.Ports[0].Port
+			}
+		}
+
+		if strings.ToLower(string(svc.Spec.Type)) == "loadbalancer" {
+			IPAddress = svc.Spec.LoadBalancerIP
+			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort))
+		} else if strings.ToLower(string(svc.Spec.Type)) == "nodeport" {
+			nodeIP, err := clientset.CoreV1().Nodes().Get(podList.Items[0].Spec.NodeName, metaV1.GetOptions{})
+			if err != nil {
+				return "", err
+			}
+
+			for _, addr := range nodeIP.Status.Addresses {
+				if strings.ToLower(string(addr.Type)) == "externalip" && addr.Address != "" {
+					ExternalIP = addr.Address
+				} else if strings.ToLower(string(addr.Type)) == "internalip" && addr.Address != "" {
+					InternalIP = addr.Address
+				}
+			}
+
+			if ExternalIP == "" {
+				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort))
+			} else {
+				FinalUrl = "http://" + ExternalIP + ":" + strconv.Itoa(int(NodePort))
+			}
+		} else if strings.ToLower(string(svc.Spec.Type)) == "clusterip" {
+			log.Print("External agents can't be connected to the server if the service type is set to ClusterIP\n")
+			FinalUrl = "http://" + svc.Spec.ClusterIP + ":" + strconv.Itoa(int(Port))
+		}
+
 	}
 
-	if ExternalIP == "" {
-		return "http://" + InternalIP + ":" + strconv.Itoa(int(Nodeport)), nil
-	} else {
-		return "http://" + ExternalIP + ":" + strconv.Itoa(int(Nodeport)), nil
-	}
+	return FinalUrl, nil
 }
