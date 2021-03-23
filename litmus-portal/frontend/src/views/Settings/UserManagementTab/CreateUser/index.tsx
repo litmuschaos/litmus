@@ -2,9 +2,9 @@ import { Divider, IconButton, Typography } from '@material-ui/core';
 import { InputField } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import UserDetails from '../../../../components/UserDetails';
 import NewUserModal from './NewUserModal';
 import useStyles from './styles';
-import UserDetails from './UserDetails';
 
 interface Password {
   password: string;
@@ -78,79 +78,74 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
         </Typography>
 
         <div className={classes.container}>
+          {/* Personal Details */}
+          <UserDetails
+            nameValue={personalData.fullName}
+            isUsernameDisabled={false}
+            handleNameChange={(e) => {
+              setPersonalData({
+                fullName: e.target.value,
+                userName: personalData.userName,
+                email: personalData.email,
+              });
+            }}
+            isEmailDisabled={false}
+            isNameDisabled={false}
+            emailValue={personalData.email}
+            handleEmailChange={(e) => {
+              setPersonalData({
+                fullName: personalData.fullName,
+                userName: personalData.userName,
+                email: e.target.value,
+              });
+            }}
+            userValue={personalData.userName}
+            handleUserChange={(e) => {
+              setPersonalData({
+                fullName: personalData.fullName,
+                userName: e.target.value,
+                email: personalData.email,
+              });
+            }}
+          />
+
+          <Divider className={classes.divider} />
+
+          {/* Login Details */}
+
           <div>
-            <div className={classes.suSegments}>
-              {/* Personal Details */}
-              <UserDetails
-                nameValue={personalData.fullName}
-                isUsernameDisabled={false}
-                handleNameChange={(e) => {
-                  setPersonalData({
-                    fullName: e.target.value,
-                    userName: personalData.userName,
-                    email: personalData.email,
-                  });
-                }}
-                isEmailDisabled={false}
-                isNameDisabled={false}
-                emailValue={personalData.email}
-                handleEmailChange={(e) => {
-                  setPersonalData({
-                    fullName: personalData.fullName,
-                    userName: personalData.userName,
-                    email: e.target.value,
-                  });
-                }}
-                userValue={personalData.userName}
-                handleUserChange={(e) => {
-                  setPersonalData({
-                    fullName: personalData.fullName,
-                    userName: e.target.value,
-                    email: personalData.email,
-                  });
-                }}
-              />
-
-              <Divider className={classes.divider} />
-
-              {/* Login Details */}
-
-              <div>
-                <Typography className={classes.headerText}>
-                  <strong>
-                    {t('settings.userManagementTab.createUser.login')}
-                  </strong>
-                </Typography>
-                <div>
-                  <form>
-                    <div className={classes.details1}>
-                      <div data-cy="userName">
-                        <InputField
-                          label={t(
-                            'settings.userManagementTab.createUser.label.username'
-                          )}
-                          value={personalData.userName}
-                          onChange={handleUsername}
-                          disabled
-                        />
-                      </div>
-                      <div style={{ width: '2rem' }} />
-
-                      <div data-cy="passwordInput">
-                        <InputField
-                          required
-                          type="password"
-                          onChange={handleCreatePassword('password')}
-                          value={createPassword.password}
-                          label={t(
-                            'settings.userManagementTab.createUser.label.newPassword'
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </form>
+            <Typography className={classes.headerText}>
+              <strong>
+                {t('settings.userManagementTab.createUser.login')}
+              </strong>
+            </Typography>
+            <div>
+              <form>
+                <div className={classes.details1}>
+                  <div data-cy="userName">
+                    <InputField
+                      label={t(
+                        'settings.userManagementTab.createUser.label.username'
+                      )}
+                      value={personalData.userName}
+                      onChange={handleUsername}
+                      disabled
+                    />
+                  </div>
+                  <div data-cy="passwordInput">
+                    <InputField
+                      className={classes.secondInputField}
+                      required
+                      type="password"
+                      onChange={handleCreatePassword('password')}
+                      value={createPassword.password}
+                      label={t(
+                        'settings.userManagementTab.createUser.label.newPassword'
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>

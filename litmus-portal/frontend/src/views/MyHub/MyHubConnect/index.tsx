@@ -10,14 +10,13 @@ import Done from '@material-ui/icons/DoneAllTwoTone';
 import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
-import QuickActionCard from '../../../components/QuickActionCard';
+import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import VideoCarousel from '../../../components/VideoCarousel';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import {
@@ -33,7 +32,7 @@ import {
   SSHKeys,
 } from '../../../models/graphql/user';
 import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
 
@@ -52,10 +51,11 @@ interface SaveLater {
   saveLater: boolean;
 }
 
-const MyHub = () => {
+const MyHub: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
   const [gitHub, setGitHub] = useState<GitHub>({
     HubName: '',
     GitURL: '',
@@ -103,7 +103,10 @@ const MyHub = () => {
   const handleClose = () => {
     setIsOpen(false);
     setIsSaveOpen(false);
-    history.push({ pathname: '/myhub' });
+    history.push({
+      pathname: '/myhub',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   // Mutation to generate SSH key
@@ -143,7 +146,7 @@ const MyHub = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: userData.selectedProjectID,
+        projectID,
       },
     });
     setCloningRepo(true);
@@ -176,7 +179,7 @@ const MyHub = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: userData.selectedProjectID,
+        projectID,
       },
     });
     setSavingHub(true);
@@ -549,7 +552,7 @@ const MyHub = () => {
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div className={classes.quickActionDiv}>
-            <QuickActionCard analyticsHome={false} nonAdmin />
+            <LocalQuickActionCard variant="homePage" />
           </div>
         </div>
       </div>

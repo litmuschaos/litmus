@@ -22,7 +22,6 @@ import * as _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
 import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
 import {
@@ -32,7 +31,7 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../../models/graphql/workflowListData';
-import { RootState } from '../../../../redux/reducers';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -129,15 +128,15 @@ const WorkflowComparisonTable = () => {
     totalValidWorkflowRunsCount,
     setTotalValidWorkflowRunsCount,
   ] = React.useState<number>(0);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
   const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID, workflowIDs: [] },
+      variables: { projectID, workflowIDs: [] },
+      fetchPolicy: 'cache-and-network',
     }
   );
 
@@ -315,24 +314,32 @@ const WorkflowComparisonTable = () => {
                   experimentTestResultsArrayPerWorkflowRun.length -
                   totalExperimentsPassed,
                 resilience_score: experimentTestResultsArrayPerWorkflowRun.length
-                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                      (a, b) => a + b,
-                      0
-                    ) /
-                      weightsSum) *
-                    100
+                  ? parseFloat(
+                      (
+                        (experimentTestResultsArrayPerWorkflowRun.reduce(
+                          (a, b) => a + b,
+                          0
+                        ) /
+                          weightsSum) *
+                        100
+                      ).toFixed(2)
+                    )
                   : 0,
                 test_details: testDetails,
               });
               workflowTimeSeriesData.push({
                 date: data.last_updated,
                 value: experimentTestResultsArrayPerWorkflowRun.length
-                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                      (a, b) => a + b,
-                      0
-                    ) /
-                      weightsSum) *
-                    100
+                  ? parseFloat(
+                      (
+                        (experimentTestResultsArrayPerWorkflowRun.reduce(
+                          (a, b) => a + b,
+                          0
+                        ) /
+                          weightsSum) *
+                        100
+                      ).toFixed(2)
+                    )
                   : 0,
               });
             }

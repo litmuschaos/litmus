@@ -1,4 +1,4 @@
-import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import { Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -31,7 +31,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box style={{ marginLeft: 15 }}>{children}</Box>}
+      {value === index && <div>{children}</div>}
     </div>
   );
 }
@@ -46,7 +46,6 @@ function tabProps(index: any) {
 
 const Settings: React.FC = () => {
   const classes = useStyles();
-
   const settingsTabValue = useSelector(
     (state: RootState) => state.tabNumber.settings
   );
@@ -68,6 +67,7 @@ const Settings: React.FC = () => {
         <Tabs
           data-cy="settingsTabPanel"
           value={settingsTabValue}
+          variant="fullWidth"
           onChange={handleChange}
           TabIndicatorProps={{
             style: {

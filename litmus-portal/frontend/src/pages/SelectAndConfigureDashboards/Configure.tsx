@@ -38,6 +38,7 @@ import {
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { validateWorkflowParameter } from '../../utils/validate';
 import {
   generateChaosQuery,
@@ -54,9 +55,8 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
   configure,
 }) => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const dashboardID = useSelector(
     (state: RootState) => state.selectDashboard.selectedDashboardID
   );
@@ -88,7 +88,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
   const { data: workflowSchedules } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -265,7 +265,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
       panel_groups: getPanelGroups(),
       end_time: `${Math.round(new Date().getTime() / 1000)}`,
       start_time: `${Math.round(new Date().getTime() / 1000) - 1800}`,
-      project_id: selectedProjectID,
+      project_id: projectID,
       cluster_id: dashboardVars.agentID,
       refresh_rate: '5',
     };
@@ -433,7 +433,12 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
           {success === true ? (
             <ButtonFilled
               variant="success"
-              onClick={() => history.push('/analytics')}
+              onClick={() => {
+                history.push({
+                  pathname: '/analytics',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
+              }}
             >
               <div>Back to Kubernetes Dashboard</div>
             </ButtonFilled>
@@ -451,7 +456,12 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
 
               <ButtonFilled
                 variant="error"
-                onClick={() => history.push('/analytics')}
+                onClick={() => {
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
+                }}
               >
                 <div>Back to Kubernetes Dashboard</div>
               </ButtonFilled>

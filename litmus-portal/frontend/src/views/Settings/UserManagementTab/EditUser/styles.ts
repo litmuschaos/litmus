@@ -26,19 +26,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(-2),
   },
   container: {
-    maxWidth: '63.75rem',
     marginTop: theme.spacing(3.75),
-    border: '1px solid ',
-    borderColor: theme.palette.border.main,
+    border: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.cards.background,
-    paddingBottom: theme.spacing(5),
-  },
-
-  suSegments: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-even',
-    marginLeft: theme.spacing(5),
+    padding: theme.spacing(5),
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
   },
   headerText: {
     marginTop: theme.spacing(7.5),
@@ -48,10 +43,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   // for login details
   details1: {
     display: 'flex',
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
     alignContent: 'flex-start',
     flexWrap: 'wrap',
   },
@@ -61,11 +52,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '58.75rem',
   },
   buttonGroup: {
-    maxWidth: '63.75rem',
     display: 'flex',
     flexDirection: 'row-reverse',
     marginTop: theme.spacing(3.75),
-    marginRight: theme.spacing(-4),
   },
 }));
 export default useStyles;

@@ -4,7 +4,7 @@ import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
-import { Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -32,6 +32,7 @@ import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { validateWorkflowName } from '../../utils/validate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
@@ -44,7 +45,7 @@ import { cronWorkflow, workflowOnce } from './templates';
 
 interface URLParams {
   workflowName: string;
-  projectID: string;
+  scheduleProjectID: string;
 }
 
 interface Weights {
@@ -135,7 +136,7 @@ function getStepContent(
   }
 }
 
-const EditScheduledWorkflow = () => {
+const EditScheduledWorkflow: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const template = useActions(TemplateSelectionActions);
@@ -145,12 +146,14 @@ const EditScheduledWorkflow = () => {
   const workflow = useActions(WorkflowActions);
   // Get Parameters from URL
   const paramData: URLParams = useParams();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   // Apollo query to get the scheduled data
   const { data, loading } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: paramData.projectID },
+      variables: { projectID: paramData.scheduleProjectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -212,13 +215,9 @@ const EditScheduledWorkflow = () => {
 
   const [activeStep, setActiveStep] = React.useState(4);
 
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
   const isDisable = useSelector(
     (state: RootState) => state.selectTemplate.isDisable
   );
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
   const tabs = useActions(TabActions);
   const scheduleOnce = workflowOnce;
   const scheduleMore = cronWorkflow;
@@ -390,7 +389,7 @@ const EditScheduledWorkflow = () => {
         workflow_description: description,
         isCustomWorkflow,
         weightages: weightData,
-        project_id: selectedProjectID,
+        project_id: projectID,
         cluster_id: clusterid,
       };
 
@@ -406,7 +405,10 @@ const EditScheduledWorkflow = () => {
   };
 
   const handleClose = () => {
-    history.push('/workflows');
+    history.push({
+      pathname: `/workflows`,
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
     setOpen(false);
   };
 
@@ -516,7 +518,10 @@ const EditScheduledWorkflow = () => {
                         handleClick={() => {
                           setOpen(false);
                           tabs.changeWorkflowsTabs(0);
-                          history.push('/workflows');
+                          history.push({
+                            pathname: `/workflows`,
+                            search: `?projectID=${projectID}&projectRole=${userRole}`,
+                          });
                         }}
                       >
                         <div>{t('workflowStepper.workflowBtn')}</div>

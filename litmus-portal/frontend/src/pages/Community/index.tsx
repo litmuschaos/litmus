@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import InfoFilledWrap from '../../components/InfoFilled/index';
 import Loader from '../../components/Loader';
-import QuickActionCard from '../../components/QuickActionCard';
+import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
 import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import { RootState } from '../../redux/reducers';
@@ -124,7 +124,7 @@ const Community: React.FC = () => {
                   <a
                     href="https://dev.to/litmus-chaos"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className={classes.devToLink}
                   >
                     <Button variant="contained" className={classes.followBtn}>
@@ -146,7 +146,7 @@ const Community: React.FC = () => {
                 <GeoMap />
               </Paper>
               <div className={classes.quickActionCard}>
-                <QuickActionCard analyticsHome={false} nonAdmin />
+                <LocalQuickActionCard variant="community" />
               </div>
             </div>
           </div>

@@ -3,11 +3,10 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { Cluster } from '../../../models/graphql/clusterData';
-import { RootState } from '../../../redux/reducers';
 import timeDifferenceForDate from '../../../utils/datesModifier';
+import { getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -27,12 +26,13 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     return 'Date not available';
   };
 
+  const userRole = getProjectRole();
+
   const [open, setOpen] = React.useState(false);
 
   const handleClick = () => {
     setOpen(true);
   };
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
 
   const handleClose = () => {
     deleteRow(data.cluster_id);
@@ -70,7 +70,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       <TableCell className={classes.stepsDataschedule}>
         <Typography>{data.no_of_schedules}</Typography>
       </TableCell>
-      <TableCell>
+      <TableCell className={classes.stepsData}>
         {data.last_workflow_timestamp === '0' ? (
           <Typography>Not Yet</Typography>
         ) : (
@@ -88,16 +88,16 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           title="Insufficient Permissions"
         >
           <div className={classes.deleteCluster}>
-            <div>
+            <div className={classes.targetsIcon}>
               <IconButton
                 disabled={userRole === 'Viewer'}
                 onClick={handleClick}
               >
-                <img alt="delete" src="./icons/bin-red.svg" />
+                <img alt="delete" src="./icons/ClusterDisconnect.svg" />
               </IconButton>
             </div>
             <div>
-              <Typography>{t('targets.modalDelete.delete')}</Typography>
+              <Typography>{t('targets.modalDelete.disconnect')}</Typography>
             </div>
           </div>
         </Tooltip>
@@ -121,15 +121,22 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 }
               >
                 <div className={classes.body}>
-                  <img src="/icons/bin-red-delete.svg" alt="Delete" />
+                  <img src="/icons/DisconnectIcon.svg" alt="disconnect" />
                   <div className={classes.text}>
                     <Typography className={classes.typo} align="center">
                       {t('targets.modalDelete.head1')} <br />
-                      <strong> {t('targets.modalDelete.head2')}</strong>
+                      {t('targets.modalDelete.head2')}
+                      <br />
+                      <strong>
+                        {data.cluster_name} {t('targets.modalDelete.head4')}
+                      </strong>
                     </Typography>
                   </div>
                   <div className={classes.textSecond}>
-                    <Typography className={classes.typoSub} align="center">
+                    <Typography
+                      className={classes.disconnectForever}
+                      align="center"
+                    >
                       {t('targets.modalDelete.head3')}
                     </Typography>
                   </div>

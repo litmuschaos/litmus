@@ -14,7 +14,6 @@ import {
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
 import { DELETE_CLUSTER, GET_CLUSTER } from '../../../graphql';
 import {
@@ -23,7 +22,7 @@ import {
   ClusterVars,
   DeleteCluster,
 } from '../../../models/graphql/clusterData';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -58,10 +57,7 @@ interface PaginationData {
 
 const BrowseCluster: React.FC = () => {
   const classes = useStyles();
-
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   const [filters, setFilters] = useState<FilterOptions>({
     search: '',
@@ -73,7 +69,7 @@ const BrowseCluster: React.FC = () => {
     GET_CLUSTER,
     {
       variables: {
-        project_id: selectedProjectID,
+        project_id: projectID,
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 3000,
@@ -253,7 +249,7 @@ const BrowseCluster: React.FC = () => {
                         })
                       }
                     >
-                      <div className={classes.sortDiv}>
+                      <div className={classes.targetsIcon}>
                         <img
                           src="/icons/arrow_downward.svg"
                           alt="ConnectTarget icon"
@@ -278,7 +274,7 @@ const BrowseCluster: React.FC = () => {
                         })
                       }
                     >
-                      <div className={classes.sortDiv}>
+                      <div className={classes.targetsIcon}>
                         <img
                           src="/icons/arrow_downward.svg"
                           alt="ConnectTarget icon"
@@ -294,12 +290,14 @@ const BrowseCluster: React.FC = () => {
                   </Typography>
                 </TableCell>
 
-                {/* Reliability */}
+                {/* No of Workflows */}
                 <TableCell className={classes.headData}>
-                  {t('workflowCluster.header.formControl.noWorkflows')}
+                  <Typography>
+                    {t('workflowCluster.header.formControl.noWorkflows')}
+                  </Typography>
                 </TableCell>
 
-                {/* No of Experiments */}
+                {/* No of Schedules */}
                 <TableCell className={classes.headData}>
                   <div className={classes.tableCell}>
                     <Typography>
@@ -321,7 +319,7 @@ const BrowseCluster: React.FC = () => {
                 <TableCell className={classes.headData}>
                   <div className={classes.tableCell}>
                     <Typography>
-                      {t('workflowCluster.header.formControl.delete')}
+                      {t('workflowCluster.header.formControl.disconnect')}
                     </Typography>
                   </div>
                 </TableCell>

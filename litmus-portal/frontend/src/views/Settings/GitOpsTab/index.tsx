@@ -9,7 +9,6 @@ import {
 import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import Loader from '../../../components/Loader';
 import {
@@ -19,12 +18,12 @@ import {
   UPDATE_GITOPS,
 } from '../../../graphql/mutations';
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
-import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
 import { GitOpsDetail } from '../../../models/graphql/gitOps';
-import { RootState } from '../../../redux/reducers';
-import SSHField from './sshField';
-import GitOpsInfo from './gitOpsInfo';
+import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
+import { getProjectID } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
+import GitOpsInfo from './gitOpsInfo';
+import SSHField from './sshField';
 import useStyles from './styles';
 
 interface GitHub {
@@ -40,7 +39,7 @@ interface GitOpsResult {
 const GitOpsTab = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState('disabled');
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
   const { t } = useTranslation();
   // Local State Variables for Github Data and GitOps result data
   const [gitHub, setGitHub] = useState<GitHub>({
@@ -86,7 +85,7 @@ const GitOpsTab = () => {
 
   // Query to fetch GitOps Data
   const { data, refetch, loading } = useQuery<GitOpsDetail>(GET_GITOPS_DATA, {
-    variables: { data: userData.selectedProjectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -239,7 +238,7 @@ const GitOpsTab = () => {
         enableGitOps({
           variables: {
             gitConfig: {
-              ProjectID: userData.selectedProjectID,
+              ProjectID: projectID,
               RepoURL: gitHub.GitURL,
               Branch: gitHub.GitBranch,
               AuthType:
@@ -260,7 +259,7 @@ const GitOpsTab = () => {
         updateGitOps({
           variables: {
             gitConfig: {
-              ProjectID: userData.selectedProjectID,
+              ProjectID: projectID,
               RepoURL: gitHub.GitURL,
               Branch: gitHub.GitBranch,
               AuthType:
@@ -328,7 +327,7 @@ const GitOpsTab = () => {
                         onClick={() =>
                           disableGitOps({
                             variables: {
-                              data: userData.selectedProjectID,
+                              data: projectID,
                             },
                           })
                         }

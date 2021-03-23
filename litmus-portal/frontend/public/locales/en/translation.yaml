@@ -32,12 +32,20 @@ sidebar:
   title: Litmus
 
 header:
-  notificationDropdown:
-    noNotifications: You don't have any new notification.
+  projectDropdown:
+    myProjects: My Projects
+    noMyProjects: No projects owned by you
+    otherProjects: Other Projects
+    noProjectsOther: You are not part of any projects not owned by you
   profileDropdown:
+    signedIn: 'Signed in as:'
+    emailUnset: Email not set
+    emailSet: Set up your email
+    goToSettingsTitle: Go to settings
+    logOutTitle: Logout from the portal
+    editProfileTitle: Edit your profile
+    logout: Logout
     editProfile: Edit Profile
-    logOut: Log Out
-    noProjects: You haven't created any projects yet.
 
 button:
   backButton: Back
@@ -265,7 +273,7 @@ error:
   whoops: Whoops!
   pageUnavailable: This page is unavailable
   pageDoesNotExist: The page does not exist, or please try again later.
-  backHome: Go back home
+  goBack: Go back
 
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow
@@ -315,6 +323,8 @@ settings:
         done: Done
     accountsSettings:
       header: Password
+      passwordValidation: Should not start with empty space
+      passwordNotSame: Password is not same
       modal:
         header: Your password
         headerStrong: has been changed!
@@ -649,9 +659,10 @@ targets:
     head3: Paste and Run the following command into the cluster console
   modalDelete:
     head1: Are you sure to
-    head2: remove the current Agent?
-    head3: It will be removed forever
-    delete: Delete
+    head2: disconnect the current
+    head3: It will be disconnect forever
+    head4: Agent?
+    disconnect: Disconnect
     yes: Yes
     no: No
 
@@ -693,7 +704,7 @@ workflowCluster:
       noSchedules: No. of Schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
-      delete: Delete
+      disconnect: Disconnect
       clusterInfo: Cluster information
       about: About Litmus Cluster
       back: Back

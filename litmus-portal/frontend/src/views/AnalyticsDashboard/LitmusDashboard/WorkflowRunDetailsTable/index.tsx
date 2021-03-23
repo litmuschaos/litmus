@@ -120,8 +120,10 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
     let totalWeight: number = 0;
     let weightedSum: number = 0;
     workflowRunDetails.forEach((test) => {
-      totalWeight += test.test_weight;
-      weightedSum += test.resulting_points;
+      if (test.test_result === 'Pass' || test.test_result === 'Fail') {
+        totalWeight += test.test_weight;
+        weightedSum += test.resulting_points;
+      }
     });
     setResilienceScore(
       parseFloat(((weightedSum / totalWeight) * 100).toFixed(2))
