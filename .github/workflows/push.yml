@@ -6,11 +6,6 @@ on:
       - v*
     tags:
       - '*'
-  pull_request:
-    branches:
-      - master
-      - v*
-
 jobs:
   backend-checks:
     runs-on: ubuntu-latest
@@ -53,7 +48,6 @@ jobs:
           NEW_IMG_TAG=`echo $img_tag | sed "s/\//-/g"`
           echo $NEW_IMG_TAG
           echo export IMG_TAG=$NEW_IMG_TAG >> env-vars
-          echo export REPONAME="chaosnative" >> env-vars
           echo export GRAPHQL_SERVER_IMAGE="litmusportal-server" >> env-vars
           echo export AUTHENTICATION_SERVER_IMAGE="litmusportal-auth-server" >> env-vars
           echo export FRONTEND_IMAGE="litmusportal-frontend" >> env-vars
@@ -77,17 +71,17 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: env_artifact
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build graphql server docker image
         shell: bash
         run: |
           source env-vars
           cd litmus-portal/graphql-server
-          docker build . -f build/Dockerfile -t ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMG_TAG}
+          docker build . -f build/Dockerfile -t ${{ secrets.REPONAME }}/${GRAPHQL_SERVER_IMAGE}:${IMG_TAG}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push graphql server docker image
         shell: bash
         run: |
@@ -96,7 +90,7 @@ jobs:
           if [ $branch == "master" ] || [ ${array[1]} == "tags" ] || [[ $branch =~ ^v[0-9]*.[0-9]*.x$ ]]
           then
             source env-vars
-            docker push ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMG_TAG}
+            docker push ${{ secrets.REPONAME }}/${GRAPHQL_SERVER_IMAGE}:${IMG_TAG}
           fi
 
   docker-build-authentication-server:
@@ -111,26 +105,26 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: env_artifact
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build auth server docker image
         shell: bash
         run: |
           source env-vars
           cd litmus-portal/authentication
-          docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMG_TAG}
+          docker images && docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${AUTHENTICATION_SERVER_IMAGE}:${IMG_TAG}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push auth server docker image
         shell: bash
         run: |
           branch=${GITHUB_REF#refs/*/}
           array=(`echo ${GITHUB_REF} | sed 's/\//\n/g'`)
-          if [ $branch == "master" ] || [ ${array[1]} == "tags" ] || [[ $branch =~ ^v[0-9]*.[0-9]*.x$ ]] || [[ $branch =~ ^TechPreview.*$ ]]
+          if [ $branch == "master" ] || [ ${array[1]} == "tags" ] || [[ $branch =~ ^v[0-9]*.[0-9]*.x$ ]]
           then
             source env-vars
-            docker push ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMG_TAG}
+            docker push ${{ secrets.REPONAME }}/${AUTHENTICATION_SERVER_IMAGE}:${IMG_TAG}
           fi
 
   docker-build-subscriber:
@@ -145,17 +139,17 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: env_artifact
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build subscriber docker image
         shell: bash
         run: |
           source env-vars
           cd litmus-portal/cluster-agents/subscriber
-          docker build . -f build/Dockerfile -t ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMG_TAG}
+          docker build . -f build/Dockerfile -t ${{ secrets.REPONAME }}/${SUBSCRIBER_IMAGE}:${IMG_TAG}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push subscriber docker image
         shell: bash
         run: |
@@ -164,7 +158,7 @@ jobs:
           if [ $branch == "master" ] || [ ${array[1]} == "tags" ] || [[ $branch =~ ^v[0-9]*.[0-9]*.x$ ]]
           then
             source env-vars
-            docker push ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMG_TAG}
+            docker push ${{ secrets.REPONAME }}/${SUBSCRIBER_IMAGE}:${IMG_TAG}
           fi
 
   docker-build-event-tracker:
@@ -179,17 +173,17 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: env_artifact
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build event tracker docker image
         shell: bash
         run: |
           source env-vars
           cd litmus-portal/cluster-agents/event-tracker
-          docker build . -f build/Dockerfile -t ${REPONAME}/${EVENT_TRACKER}:${IMG_TAG}
+          docker build . -f build/Dockerfile -t ${{ secrets.REPONAME }}/${EVENT_TRACKER}:${IMG_TAG}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push event tracker docker image
         shell: bash
         run: |
@@ -198,7 +192,7 @@ jobs:
           if [ $branch == "master" ] || [ ${array[1]} == "tags" ] || [[ $branch =~ ^v[0-9]*.[0-9]*.x$ ]]
           then
             source env-vars
-            docker push ${REPONAME}/${EVENT_TRACKER}:${IMG_TAG}
+            docker push ${{ secrets.REPONAME }}/${EVENT_TRACKER}:${IMG_TAG}
           fi
 
   docker-build-frontend:
@@ -213,17 +207,17 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: env_artifact
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build frontend docker image
         shell: bash
         run: |
           source env-vars
           cd litmus-portal/frontend
-          docker build . -f Dockerfile -t ${REPONAME}/${FRONTEND_IMAGE}:${IMG_TAG}
+          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${FRONTEND_IMAGE}:${IMG_TAG}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push frontend docker image
         shell: bash
         run: |
@@ -232,5 +226,5 @@ jobs:
           if [ $branch == "master" ] || [ ${array[1]} == "tags" ] || [[ $branch =~ ^v[0-9]*.[0-9]*.x$ ]]
           then
             source env-vars
-            docker push ${REPONAME}/${FRONTEND_IMAGE}:${IMG_TAG}
+            docker push ${{ secrets.REPONAME }}/${FRONTEND_IMAGE}:${IMG_TAG}
           fi

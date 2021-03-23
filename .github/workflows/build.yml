@@ -1,0 +1,93 @@
+name: Pipeline
+on:
+  pull_request:
+    branches:
+      - master
+      - v*
+      - litmus-v2
+
+jobs:
+  backend-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - shell: bash
+        run: |
+          cd litmus-portal
+          make backend-services-checks
+
+  frontend-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - shell: bash
+        run: |
+          cd litmus-portal
+          make frontend-services-checks
+
+  docker-build-graphql-server:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Build graphql server docker image
+        shell: bash
+        run: |
+          cd litmus-portal/graphql-server
+          docker build . -f build/Dockerfile
+
+  docker-build-authentication-server:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Build auth server docker image
+        shell: bash
+        run: |
+          cd litmus-portal/authentication
+          docker images && docker build . -f Dockerfile
+
+  docker-build-subscriber:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Build subscriber docker image
+        shell: bash
+        run: |
+          cd litmus-portal/cluster-agents/subscriber
+          docker build . -f build/Dockerfile
+
+  docker-build-event-tracker:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Build event tracker docker image
+        shell: bash
+        run: |
+          cd litmus-portal/cluster-agents/event-tracker
+          docker build . -f build/Dockerfile
+
+  docker-build-frontend:
+    runs-on: ubuntu-latest
+    needs:
+      - frontend-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Build frontend docker image
+        shell: bash
+        run: |
+          cd litmus-portal/frontend
+          docker build . -f Dockerfile
