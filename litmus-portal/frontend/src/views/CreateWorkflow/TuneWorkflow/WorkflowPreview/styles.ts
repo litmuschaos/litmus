@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Workflow Graph
   dagreGraph: {
     cursor: 'grab',
-    height: '100%',
+    height: '20rem',
     width: '100%',
 
     // Styles for nodes
