@@ -324,7 +324,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -407,7 +407,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -490,7 +490,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -573,7 +573,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -656,7 +656,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -739,7 +739,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -822,7 +822,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),

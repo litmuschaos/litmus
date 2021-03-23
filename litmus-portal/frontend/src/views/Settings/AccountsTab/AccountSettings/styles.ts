@@ -3,17 +3,14 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     marginTop: theme.spacing(3.75),
-    border: '1px solid ',
-    borderColor: theme.palette.border.main,
+    border: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.cards.background,
     borderRadius: '0.1875rem',
-    paddingBottom: theme.spacing(5),
-  },
-  suSegments: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-even',
-    marginLeft: theme.spacing(5),
+    padding: theme.spacing(5),
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
   },
 
   // Upper segment
@@ -25,7 +22,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   divider: {
     marginTop: theme.spacing(3.75),
-    maxWidth: '58.75rem',
   },
 
   // Lower segment
@@ -39,7 +35,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   innerPass: {
-    marginLeft: theme.spacing(-2),
     display: 'flex',
     flexDirection: 'column',
   },

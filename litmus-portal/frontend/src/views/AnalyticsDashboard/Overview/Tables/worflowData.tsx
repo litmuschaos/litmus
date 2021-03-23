@@ -13,6 +13,10 @@ import useActions from '../../../../redux/actions';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
 import { ReactComponent as Arrow } from '../../../../svg/arrow.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import { GetTimeDiff } from '../../../../utils/timeDifferenceString';
 import useStyles from '../styles';
 
@@ -25,6 +29,8 @@ const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const tabs = useActions(TabActions);
   const currentTime = new Date().valueOf();
 
@@ -41,7 +47,10 @@ const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
                   tabs.changeAnalyticsDashboardTabs(1);
-                  history.push('/analytics');
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 <Typography className={classes.seeAllText}>
@@ -77,11 +86,12 @@ const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
                     className={classes.seeAllBtn}
                     disableRipple
                     disableFocusRipple
-                    onClick={() =>
-                      history.push(
-                        `/workflows/analytics/${schedule.workflow_id}`
-                      )
-                    }
+                    onClick={() => {
+                      history.push({
+                        pathname: `/workflows/analytics/${schedule.workflow_id}`,
+                        search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                      });
+                    }}
                   >
                     <Typography className={classes.seeAllText}>
                       {t('analyticsDashboard.seeAnalytics')}

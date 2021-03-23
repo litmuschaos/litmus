@@ -20,6 +20,10 @@ import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../../svg/crossmark.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import useStyles, { StyledTableCell } from './styles';
 
 interface TableDataProps {
@@ -32,6 +36,8 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const dashboard = useActions(DashboardActions);
   const dataSource = useActions(DataSourceActions);
   const tabs = useActions(TabActions);
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const [mutate, setMutate] = React.useState(false);
   const [confirm, setConfirm] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
@@ -77,7 +83,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     setAnchorEl(null);
   };
 
-  const onDashboardLoadRoutine = async (data: ListDashboardResponse) => {
+  const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
       selectedDashboardName: data.db_name,
@@ -161,8 +167,11 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <MenuItem
             value="Analysis"
             onClick={() => {
-              onDashboardLoadRoutine(data).then(() => {
-                history.push('/analytics/dashboard');
+              onDashboardLoadRoutine().then(() => {
+                history.push({
+                  pathname: '/analytics/dashboard',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
               });
             }}
             className={classes.menuItem}
@@ -196,7 +205,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 selectedDashboardName: data.db_name,
                 selectedDashboardTemplateID: dashboardTemplateID,
               });
-              history.push('/analytics/dashboard/configure');
+              history.push({
+                pathname: '/analytics/dashboard/configure',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
             className={classes.menuItem}
           >
@@ -319,7 +331,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 setConfirm(false);
                 setOpenModal(false);
                 tabs.changeAnalyticsDashboardTabs(2);
-                window.location.reload(false);
+                window.location.reload();
               }}
             >
               <div>Back to Kubernetes Dashboard</div>
@@ -343,7 +355,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                   setConfirm(false);
                   setOpenModal(false);
                   tabs.changeAnalyticsDashboardTabs(2);
-                  window.location.reload(false);
+                  window.location.reload();
                 }}
               >
                 <div>Back to Kubernetes Dashboard</div>
@@ -379,7 +391,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 <ButtonOutlined
                   onClick={() => {
                     setOpenModal(false);
-                    history.push('/analytics');
+                    history.push({
+                      pathname: '/analytics',
+                      search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                    });
                   }}
                   disabled={false}
                 >

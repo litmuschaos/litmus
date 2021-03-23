@@ -3,37 +3,29 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   // Personal details
   headerText: {
-    marginTop: theme.spacing(7.5),
     fontSize: '1.5625rem',
   },
   details: {
-    maxWidth: '63.75rem',
     display: 'flex',
-    flexDirection: 'row',
-    alignContent: 'flex-start',
     marginTop: theme.spacing(7.5),
     [theme.breakpoints.down('sm')]: {
-      display: 'flex',
       flexDirection: 'column',
+      marginTop: theme.spacing(2.5),
     },
   },
   details1: {
     display: 'flex',
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-
-    alignContent: 'flex-start',
     flexWrap: 'wrap',
+    '& div': {
+      margin: theme.spacing(0, 1, 1, 0),
+      [theme.breakpoints.down('sm')]: {
+        width: 'unset',
+      },
+    },
   },
 
   edit: {
-    fontSize: '0.75rem',
-    color: theme.palette.secondary.dark,
-    marginTop: theme.spacing(0.75),
     [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(2.5),
       marginBottom: theme.spacing(2),
     },
   },
@@ -42,21 +34,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
   },
   dp: {
-    display: 'flex',
-    flexDirection: 'column',
-
     marginRight: theme.spacing(2.5),
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
-    backgroundColor: theme.palette.primary.light,
-    width: '4.81rem',
-    height: '4.81rem',
-    color: theme.palette.common.white,
-    marginBottom: theme.spacing(1.625),
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(2.5),
-    },
+    width: '4.815rem',
+    height: '4.815rem',
   },
 }));
 export default useStyles;

@@ -47,6 +47,7 @@ import * as DataSourceActions from '../../redux/actions/dataSource';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import {
   chaosEventDataParserForPrometheus,
   getChaosQueryPromInputAndID,
@@ -79,10 +80,8 @@ const DashboardPage: React.FC = () => {
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
-
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
@@ -135,7 +134,7 @@ const DashboardPage: React.FC = () => {
   const { data: dashboards } = useQuery<DashboardList, ListDashboardVars>(
     LIST_DASHBOARD,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'no-cache',
     }
   );
@@ -144,7 +143,7 @@ const DashboardPage: React.FC = () => {
   const { data: dataSources } = useQuery<DataSourceList, ListDataSourceVars>(
     LIST_DATASOURCE,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'no-cache',
     }
   );
@@ -153,7 +152,7 @@ const DashboardPage: React.FC = () => {
   const { data: analyticsData } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID, workflowIDs: [] },
+      variables: { projectID, workflowIDs: [] },
       fetchPolicy: 'no-cache',
     }
   );
@@ -415,7 +414,10 @@ const DashboardPage: React.FC = () => {
                     selectedDashboardName: selectedDashboardInformation.name,
                     selectedDashboardTemplateID: dashboardTemplateID,
                   });
-                  history.push('/analytics/dashboard/configure');
+                  history.push({
+                    pathname: '/analytics/dashboard/configure',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 {t(
@@ -425,7 +427,10 @@ const DashboardPage: React.FC = () => {
               <ButtonFilled
                 variant="success"
                 onClick={() => {
-                  history.push('/analytics/datasource/configure');
+                  history.push({
+                    pathname: '/analytics/datasource/configure',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 {t(

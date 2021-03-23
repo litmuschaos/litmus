@@ -1,19 +1,18 @@
-import { Backdrop, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { useSelector } from 'react-redux';
+import { Backdrop, Typography } from '@material-ui/core';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import moment from 'moment';
-import Scaffold from '../../../containers/layouts/Scaffold';
-import useStyles from './styles';
-import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../graphql';
-import { RootState } from '../../../redux/reducers';
-import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
-import HeaderSection from './headerSection';
+import Scaffold from '../../../containers/layouts/Scaffold';
+import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../graphql';
+import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ChartCard from './chartCard';
+import HeaderSection from './headerSection';
+import useStyles from './styles';
 
 interface ChartName {
   ChaosName: string;
@@ -24,18 +23,15 @@ interface URLParams {
   hubname: string;
 }
 
-const MyHub = () => {
-  // User Data from Redux
-  const userData = useSelector((state: RootState) => state.userData);
-
-  // Get all MyHubs with status
-  const { data: hubDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.selectedProjectID },
-    fetchPolicy: 'cache-and-network',
-  });
-
+const MyHub: React.FC = () => {
   // Get Parameters from URL
   const paramData: URLParams = useParams();
+  const projectID = getProjectID();
+  // Get all MyHubs with status
+  const { data: hubDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
+    variables: { data: projectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   // Filter the selected MyHub
   const UserHub = hubDetails?.getHubStatus.filter((myHub) => {
@@ -50,7 +46,7 @@ const MyHub = () => {
   const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
     variables: {
       HubName: paramData.hubname,
-      projectID: userData.selectedProjectID,
+      projectID,
     },
     fetchPolicy: 'cache-and-network',
   });
@@ -116,7 +112,8 @@ const MyHub = () => {
       <div className={classes.mainDiv}>
         <HeaderSection searchValue={search} changeSearch={changeSearch} />
         <div className={classes.chartsGroup}>
-          {totalExp && totalExp.length > 0 ? (
+          {totalExp &&
+            totalExp.length > 0 &&
             totalExp
               .filter(
                 (data) =>
@@ -130,13 +127,11 @@ const MyHub = () => {
                     expName={expName}
                     UserHub={UserHub}
                     setSearch={setSearch}
-                    projectID={userData.selectedProjectID}
+                    projectID={projectID}
+                    userRole={getProjectRole()}
                   />
                 );
-              })
-          ) : (
-            <></>
-          )}
+              })}
         </div>
       </div>
     </Scaffold>

@@ -7,12 +7,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import useActions from '../../redux/actions';
-import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
 import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
@@ -20,6 +16,7 @@ import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface CustomisedListItemProps {
@@ -50,8 +47,8 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 
 const SideBar: React.FC = () => {
   const classes = useStyles();
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
-  const tabs = useActions(TabActions);
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const { t } = useTranslation();
   const pathName = useLocation().pathname.split('/')[1];
   const version = process.env.REACT_APP_KB_CHAOS_VERSION;
@@ -86,10 +83,13 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="home"
           handleClick={() => {
-            history.push('/');
+            history.push({
+              pathname: `/home`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
           }}
           label="Home"
-          selected={pathName === ''}
+          selected={pathName === 'home'}
         >
           <HomeIcon />
         </CustomisedListItem>
@@ -97,11 +97,13 @@ const SideBar: React.FC = () => {
           <CustomisedListItem
             key="workflow"
             handleClick={() => {
-              history.push('/workflows');
-              tabs.changeWorkflowsTabs(0);
+              history.push({
+                pathname: `/workflows`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
             label="Workflows"
-            selected={pathName === 'workflows'}
+            selected={['workflows', 'create-workflow'].includes(pathName)}
           >
             <WorkflowsIcon />
           </CustomisedListItem>
@@ -110,7 +112,10 @@ const SideBar: React.FC = () => {
           <CustomisedListItem
             key="myhub"
             handleClick={() => {
-              history.push('/myhub');
+              history.push({
+                pathname: `/myhub`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
             label="MyHubs"
             selected={pathName === 'myhub'}
@@ -121,38 +126,37 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="targets"
           handleClick={() => {
-            history.push('/targets');
+            history.push({
+              pathname: `/targets`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
           }}
           label="Targets"
-          selected={pathName === 'targets'}
+          selected={['targets', 'target-connect'].includes(pathName)}
         >
           <TargetsIcon />
         </CustomisedListItem>
         <CustomisedListItem
           key="analytics"
           handleClick={() => {
-            history.push('/analytics');
+            history.push({
+              pathname: `/analytics`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
           }}
           label="Analytics"
           selected={pathName === 'analytics'}
         >
           <AnalyticsIcon />
         </CustomisedListItem>
-        <CustomisedListItem
-          key="community"
-          handleClick={() => {
-            history.push('/community');
-          }}
-          label="Community"
-          selected={pathName === 'community'}
-        >
-          <CommunityIcon />
-        </CustomisedListItem>
-        {userRole === 'Owner' && (
+        {projectRole === 'Owner' && (
           <CustomisedListItem
             key="settings"
             handleClick={() => {
-              history.push('/settings');
+              history.push({
+                pathname: `/settings`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
             label="Settings"
             selected={pathName === 'settings'}
@@ -160,6 +164,19 @@ const SideBar: React.FC = () => {
             <SettingsIcon />
           </CustomisedListItem>
         )}
+        <CustomisedListItem
+          key="community"
+          handleClick={() => {
+            history.push({
+              pathname: `/community`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
+          }}
+          label="Community"
+          selected={pathName === 'community'}
+        >
+          <CommunityIcon />
+        </CustomisedListItem>
       </List>
       <Typography className={classes.versionDiv}>
         <b>Version: </b> {version} <br />

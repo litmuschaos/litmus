@@ -10,7 +10,6 @@ import {
 import { ButtonFilled, ButtonOutlined, LightPills, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
 import {
   ALL_USERS,
@@ -31,8 +30,8 @@ import {
   Role,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
-import { RootState } from '../../../../redux/reducers';
-import userAvatar from '../../../../utils/user';
+import { getProjectID } from '../../../../utils/getSearchParams';
+import { userInitials } from '../../../../utils/user';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -49,11 +48,12 @@ const InvitedTableData: React.FC<TableDataProps> = ({
   open,
 }) => {
   const classes = useStyles();
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
+
   const { t } = useTranslation();
 
   const [role, setRole] = useState<string>(row.role);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -65,7 +65,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
     refetchQueries: [
       {
         query: GET_PROJECT,
-        variables: { projectID: userData.selectedProjectID },
+        variables: { projectID },
       },
       {
         query: ALL_USERS,
@@ -83,7 +83,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       refetchQueries: [
         {
           query: GET_PROJECT,
-          variables: { projectID: userData.selectedProjectID },
+          variables: { projectID },
         },
         {
           query: ALL_USERS,
@@ -99,6 +99,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
     variables: { username: row.user_name },
     onCompleted: (data) => {
       setMemberDetails({
+        // TODO: Check if all are being used
         name: data.getUser.name,
         uid: data.getUser.id,
         username: data.getUser.username,
@@ -116,7 +117,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             alt="User"
             className={classes.avatarBackground}
           >
-            {userAvatar(memberDetails ? memberDetails.username : '')}
+            {userInitials(memberDetails ? memberDetails.username : '')}
           </Avatar>
           {memberDetails ? memberDetails.username : ''}
         </div>
@@ -223,7 +224,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
               SendInvite({
                 variables: {
                   member: {
-                    project_id: userData.selectedProjectID,
+                    project_id: projectID,
                     user_id: row.user_id,
                     role,
                   },
@@ -281,7 +282,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
                   removeMember({
                     variables: {
                       data: {
-                        project_id: userData.selectedProjectID,
+                        project_id: projectID,
                         user_id: row.user_id,
                       },
                     },

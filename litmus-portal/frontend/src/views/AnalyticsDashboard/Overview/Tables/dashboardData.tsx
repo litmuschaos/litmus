@@ -20,6 +20,10 @@ import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
 import { ReactComponent as Arrow } from '../../../../svg/arrow.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import { GetTimeDiff } from '../../../../utils/timeDifferenceString';
 import useStyles from '../styles';
 
@@ -35,6 +39,8 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
   const currentTime = new Date().valueOf();
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
 
   const onDashboardLoadRoutine = async (data: ListDashboardResponse) => {
     dashboard.selectDashboard({
@@ -65,7 +71,10 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
                   tabs.changeAnalyticsDashboardTabs(2);
-                  history.push('/analytics');
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 <Typography className={classes.seeAllText}>
@@ -103,7 +112,10 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                     disableFocusRipple
                     onClick={() => {
                       onDashboardLoadRoutine(dashboard).then(() => {
-                        history.push('/analytics/dashboard');
+                        history.push({
+                          pathname: '/analytics/dashboard',
+                          search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                        });
                       });
                     }}
                   >

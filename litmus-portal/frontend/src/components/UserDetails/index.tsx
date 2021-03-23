@@ -2,10 +2,7 @@ import { Avatar, Button, Typography } from '@material-ui/core';
 import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  validateEmail,
-  validateStartEmptySpacing,
-} from '../../../../../utils/validate';
+import { validateEmail, validateStartEmptySpacing } from '../../utils/validate';
 import ChooseAvatarModal from '../ChooseAvatarModal';
 import useStyles from './styles';
 
@@ -101,7 +98,6 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 )}
               />
             </div>
-            <div style={{ width: '2rem' }} />
             <div data-cy="InputEmail">
               <InputField
                 helperText={
@@ -118,7 +114,6 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               />
             </div>
             {/* Username is not editable by non admin user */}
-            <div style={{ marginTop: '5rem' }} />
             <div data-cy="username">
               <InputField
                 helperText={

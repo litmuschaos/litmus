@@ -6,7 +6,7 @@
 
 import { useQuery } from '@apollo/client';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import {
   LIST_DASHBOARD,
   LIST_DATASOURCE,
@@ -27,11 +27,10 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../models/graphql/workflowListData';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import { sortNumAsc } from '../../../utils/sort';
 import { OverviewConfigureBanner } from './OverviewConfigureBanner';
 import { OverviewGlowCard } from './OverviewGlowActionCard';
-import { AnalyticsQuickActionCard } from './OverviewQuickActionCard';
 import { AnalyticsScheduleWorkflowCard } from './OverviewScheduleBanner';
 import useStyles from './styles';
 import { TableDashboardData } from './Tables/dashboardData';
@@ -40,16 +39,14 @@ import { TableScheduleWorkflow } from './Tables/worflowData';
 
 const Overview: React.FC = () => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
   const { data: schedulesData } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
       variables: {
-        projectID: selectedProjectID,
+        projectID,
         workflowIDs: [],
       },
       fetchPolicy: 'cache-and-network',
@@ -70,7 +67,7 @@ const Overview: React.FC = () => {
     LIST_DASHBOARD,
     {
       variables: {
-        projectID: selectedProjectID,
+        projectID,
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
@@ -90,7 +87,7 @@ const Overview: React.FC = () => {
   const { data } = useQuery<DataSourceList, ListDataSourceVars>(
     LIST_DATASOURCE,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
     }
@@ -149,7 +146,7 @@ const Overview: React.FC = () => {
           )}
           <div className={classes.parentWrapper}>
             <div className={classes.analyticsQuickActionCard}>
-              <AnalyticsQuickActionCard />
+              <LocalQuickActionCard variant="analytics" />
             </div>
           </div>
         </div>
