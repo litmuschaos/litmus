@@ -1,14 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
-import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { ButtonFilled, Modal } from 'litmus-ui';
+import { ButtonFilled, GraphMetric, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import Scaffold from '../../containers/layouts/Scaffold';
-import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../graphql';
+import {
+  LIST_DASHBOARD,
+  LIST_DATASOURCE,
+  PROM_QUERY,
+  WORKFLOW_LIST_DETAILS,
+} from '../../graphql';
+import { ChaosInformation } from '../../models/dashboardsData';
 import {
   DashboardList,
   ListDashboardResponse,
@@ -20,12 +32,25 @@ import {
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../models/graphql/dataSourceDetails';
+import {
+  PrometheusQueryInput,
+  PrometheusQueryVars,
+  PrometheusResponse,
+} from '../../models/graphql/prometheus';
+import {
+  WorkflowList,
+  WorkflowListDataVars,
+} from '../../models/graphql/workflowListData';
 import useActions from '../../redux/actions';
 import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
+import {
+  chaosEventDataParserForPrometheus,
+  getChaosQueryPromInputAndID,
+} from '../../utils/promUtils';
 import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DashboardPanelGroup';
 import useStyles from './styles';
 
@@ -40,9 +65,16 @@ interface SelectedDashboardInformation {
   dashboardKey: string;
 }
 
+interface PrometheusQueryDataInterface {
+  promInput: PrometheusQueryInput;
+  chaosInput: string[];
+  firstLoad: Boolean;
+}
+
 const DashboardPage: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const { palette } = useTheme();
   const ACTIVE: string = 'Active';
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
@@ -78,6 +110,20 @@ const DashboardPage: React.FC = () => {
     'ACTIVE'
   );
   const open = Boolean(anchorEl);
+  const [
+    prometheusQueryData,
+    setPrometheusQueryData,
+  ] = React.useState<PrometheusQueryDataInterface>({
+    promInput: {
+      url: '',
+      start: '',
+      end: '',
+      queries: [],
+    },
+    chaosInput: [],
+    firstLoad: true,
+  });
+  const [chaosData, setChaosData] = React.useState<Array<GraphMetric>>([]);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -102,6 +148,40 @@ const DashboardPage: React.FC = () => {
       fetchPolicy: 'no-cache',
     }
   );
+
+  // Apollo query to get the scheduled workflow data
+  const { data: analyticsData } = useQuery<WorkflowList, WorkflowListDataVars>(
+    WORKFLOW_LIST_DETAILS,
+    {
+      variables: { projectID: selectedProjectID, workflowIDs: [] },
+      fetchPolicy: 'no-cache',
+    }
+  );
+
+  // Apollo query to get the prometheus data
+  useQuery<PrometheusResponse, PrometheusQueryVars>(PROM_QUERY, {
+    variables: {
+      prometheusInput: prometheusQueryData?.promInput ?? {
+        url: '',
+        start: '',
+        end: '',
+        queries: [],
+      },
+    },
+    fetchPolicy: 'no-cache',
+    skip:
+      prometheusQueryData?.promInput.queries?.length === 0 ||
+      prometheusQueryData?.promInput.url === '',
+    onCompleted: (eventData) => {
+      let chaos_data: Array<GraphMetric> = [];
+      chaos_data = chaosEventDataParserForPrometheus(
+        eventData,
+        prometheusQueryData?.chaosInput,
+        palette.error.main
+      );
+      setChaosData(chaos_data);
+    },
+  });
 
   useEffect(() => {
     if (dashboards && dashboards.ListDashboard.length) {
@@ -164,6 +244,35 @@ const DashboardPage: React.FC = () => {
       }
     }
   }, [selectedDashboardInformation.dashboardKey, dataSources]);
+
+  const generateChaosQueries = () => {
+    let chaosInformation: ChaosInformation = {
+      promQueries: prometheusQueryData.promInput.queries,
+      chaosQueryIDs: prometheusQueryData.chaosInput,
+    };
+    if (prometheusQueryData.firstLoad && analyticsData?.ListWorkflow) {
+      chaosInformation = getChaosQueryPromInputAndID(
+        analyticsData,
+        selectedDashboardInformation.agentID
+      );
+    }
+    setPrometheusQueryData({
+      promInput: {
+        url: selectedDataSource.selectedDataSourceURL,
+        start: `${Math.round(new Date().getTime() / 1000) - 1800}`,
+        end: `${Math.round(new Date().getTime() / 1000)}`,
+        queries: chaosInformation.promQueries,
+      },
+      chaosInput: chaosInformation.chaosQueryIDs,
+      firstLoad: !analyticsData?.ListWorkflow,
+    });
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      generateChaosQueries();
+    }, selectedDashboard.refreshRate);
+  }, [prometheusQueryData]);
 
   return (
     <Scaffold>
@@ -259,6 +368,7 @@ const DashboardPage: React.FC = () => {
                       panel_group_id={panelGroup.panel_group_id}
                       panel_group_name={panelGroup.panel_group_name}
                       panels={panelGroup.panels}
+                      chaos_data={chaosData}
                     />
                   </div>
                 )

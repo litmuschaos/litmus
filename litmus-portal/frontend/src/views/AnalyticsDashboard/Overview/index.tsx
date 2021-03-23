@@ -121,10 +121,7 @@ const Overview: React.FC = () => {
                 <OverviewConfigureBanner variant="1" />
               ))}
           <TableDataSource dataSourceList={filteredDataSourceData} />
-          <TableDashboardData
-            dashboardDataList={filteredDashboardData}
-            analyticsData={schedulesData?.ListWorkflow ?? []}
-          />
+          <TableDashboardData dashboardDataList={filteredDashboardData} />
           <TableScheduleWorkflow scheduleWorkflowList={filteredScheduleData} />
 
           {((filteredScheduleData && filteredScheduleData.length === 0) ||

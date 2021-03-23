@@ -1,4 +1,5 @@
 import { PanelGroupResponse } from './graphql/dashboardsDetails';
+import { promQueryInput } from './graphql/prometheus';
 
 export interface PanelGroupMap {
   groupName: string;
@@ -35,4 +36,9 @@ export interface ChaosResultNamesAndNamespacesMap {
   workflowName: string;
   experimentName: string;
   isRemoved: string[];
+}
+
+export interface ChaosInformation {
+  promQueries: promQueryInput[];
+  chaosQueryIDs: string[];
 }

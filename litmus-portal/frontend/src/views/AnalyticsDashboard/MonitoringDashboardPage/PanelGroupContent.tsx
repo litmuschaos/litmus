@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { GraphMetric } from 'litmus-ui';
 import React from 'react';
 import { PanelResponse } from '../../../models/graphql/dashboardsDetails';
 import GraphPanel from './GraphPanel';
@@ -11,21 +12,20 @@ interface DashboardPanelGroupContentProps {
   panels: PanelResponse[];
   panel_group_name: string;
   panel_group_id: string;
+  chaos_data?: Array<GraphMetric>;
 }
 
 const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
   panels,
   panel_group_id,
   panel_group_name,
+  chaos_data,
 }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState<boolean>(true);
 
   return (
     <div className={classes.rootPanelGroup}>
-      {/* <Typography>panel_group_id: {panel_group_id}</Typography> */}
-      {/* <Typography>panel_group_name: {panel_group_name}</Typography> */}
-
       <div>
         <Accordion expanded={open}>
           <AccordionSummary
@@ -59,6 +59,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
                     y_axis_right={panel.y_axis_right}
                     x_axis_down={panel.x_axis_down}
                     unit={panel.unit}
+                    chaos_data={chaos_data}
                   />
                 </div>
               ))}

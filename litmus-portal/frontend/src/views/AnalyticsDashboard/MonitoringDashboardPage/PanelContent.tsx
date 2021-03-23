@@ -17,17 +17,8 @@ import {
   promQueryInput,
 } from '../../../models/graphql/prometheus';
 import { RootState } from '../../../redux/reducers';
+import { seriesDataParserForPrometheus } from '../../../utils/promUtils';
 import useStyles from './styles';
-
-interface PrometheusQueryDataInterface {
-  promInput: PrometheusQueryInput;
-  chaosInput: string[];
-}
-
-interface GraphDataInterface {
-  seriesData: Array<GraphMetric>;
-  eventData: Array<GraphMetric>;
-}
 
 interface SynchronizerInterface {
   updateQueries: Boolean;
@@ -41,9 +32,8 @@ const PanelContent: React.FC<PanelResponse> = ({
   panel_options,
   prom_queries,
   y_axis_left,
-  y_axis_right,
-  x_axis_down,
   unit,
+  chaos_data,
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
@@ -52,20 +42,14 @@ const PanelContent: React.FC<PanelResponse> = ({
   const [
     prometheusQueryData,
     setPrometheusQueryData,
-  ] = React.useState<PrometheusQueryDataInterface>({
-    promInput: {
-      url: '',
-      start: '',
-      end: '',
-      queries: [],
-    },
-    chaosInput: [],
+  ] = React.useState<PrometheusQueryInput>({
+    url: '',
+    start: '',
+    end: '',
+    queries: [],
   });
 
-  const [graphData, setGraphData] = React.useState<GraphDataInterface>({
-    seriesData: [],
-    eventData: [],
-  });
+  const [graphData, setGraphData] = React.useState<Array<GraphMetric>>([]);
 
   const [synchronizer, setSynchronizer] = React.useState<SynchronizerInterface>(
     {
@@ -88,17 +72,13 @@ const PanelContent: React.FC<PanelResponse> = ({
     PrometheusResponse,
     PrometheusQueryVars
   >(PROM_QUERY, {
-    variables: { prometheusInput: prometheusQueryData.promInput },
+    variables: { prometheusInput: prometheusQueryData },
     fetchPolicy: 'no-cache',
   });
 
   const generatePrometheusQueryData = () => {
     let promQueries: promQueryInput[] = [];
-    let chaosQueries: string[] = [];
     prom_queries.forEach((query: PromQuery) => {
-      if (query.prom_query_name.startsWith('litmuschaos_awaited_experiments')) {
-        chaosQueries.push(query.queryid);
-      }
       promQueries.push({
         queryid: query.queryid,
         query: query.prom_query_name,
@@ -113,83 +93,48 @@ const PanelContent: React.FC<PanelResponse> = ({
       end: `${Math.round(new Date().getTime() / 1000)}`,
       queries: promQueries,
     };
-    setPrometheusQueryData({
-      promInput: prometheusQueryInput,
-      chaosInput: chaosQueries,
-    });
+    setPrometheusQueryData(prometheusQueryInput);
     promQueries = [];
-    chaosQueries = [];
   };
 
   const updateGraphData = () => {
     let seriesData: Array<GraphMetric> = [];
-    let eventData: Array<GraphMetric> = [];
     if (prometheusData) {
-      prometheusData.GetPromQuery.forEach((queryResponse) => {
-        if (prometheusQueryData.chaosInput.includes(queryResponse.queryid)) {
-          if (queryResponse.legends && queryResponse.legends[0]) {
-            eventData.push(
-              ...queryResponse.legends.map((elem, index) => ({
-                metricName: elem[0] ?? 'chaos',
-                data: queryResponse.tsvs[index].map((dataPoint) => ({
-                  date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
-                  value: parseInt(dataPoint.value ?? '0', 10),
-                })),
-                baseColor: palette.error.main,
-              }))
-            );
-          }
-        } else if (queryResponse.legends && queryResponse.legends[0]) {
-          seriesData.push(
-            ...queryResponse.legends.map((elem, index) => ({
-              metricName: elem[0] ?? 'metric',
-              data: queryResponse.tsvs[index].map((dataPoint) => ({
-                date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
-                value: parseFloat(dataPoint.value ?? '0.0'),
-              })),
-              baseColor: lineGraph[index % lineGraph.length],
-            }))
-          );
-        }
-      });
-      setGraphData({
-        seriesData,
-        eventData,
-      });
+      seriesData = seriesDataParserForPrometheus(prometheusData, lineGraph);
+      setGraphData(seriesData);
       seriesData = [];
-      eventData = [];
     }
   };
 
-  // useEffect(() => {
-  //   if (
-  //     synchronizer.firstLoad === true &&
-  //     synchronizer.updateQueries === false
-  //   ) {
-  //     if (prom_queries.length) {
-  //       generatePrometheusQueryData();
-  //       setSynchronizer({
-  //         updateQueries: true,
-  //         firstLoad: false,
-  //         fetch: true,
-  //       });
-  //     }
-  //   }
-  //   if (
-  //     synchronizer.updateQueries === true &&
-  //     synchronizer.firstLoad === false
-  //   ) {
-  //     setTimeout(() => {
-  //       if (prom_queries.length) {
-  //         generatePrometheusQueryData();
-  //         setSynchronizer({
-  //           ...synchronizer,
-  //           fetch: true,
-  //         });
-  //       }
-  //     }, selectedDashboard.refreshRate);
-  //   }
-  // }, [prometheusQueryData]);
+  useEffect(() => {
+    if (
+      synchronizer.firstLoad === true &&
+      synchronizer.updateQueries === false
+    ) {
+      if (prom_queries.length) {
+        generatePrometheusQueryData();
+        setSynchronizer({
+          updateQueries: true,
+          firstLoad: false,
+          fetch: true,
+        });
+      }
+    }
+    if (
+      synchronizer.updateQueries === true &&
+      synchronizer.firstLoad === false
+    ) {
+      setTimeout(() => {
+        if (prom_queries.length) {
+          generatePrometheusQueryData();
+          setSynchronizer({
+            ...synchronizer,
+            fetch: true,
+          });
+        }
+      }, selectedDashboard.refreshRate);
+    }
+  }, [prometheusQueryData]);
 
   useEffect(() => {
     if (
@@ -213,30 +158,16 @@ const PanelContent: React.FC<PanelResponse> = ({
     <div className={classes.rootPanel}>
       <div>
         {/* <Typography>panel_id: {panel_id}</Typography>
-          <Typography>panel_name: {panel_name}</Typography>
           <Typography>
             panel_options: {JSON.stringify(panel_options)}
           </Typography>
-          <Typography>
-            panel_axes {y_axis_left}, {y_axis_right}, {x_axis_down}
-          </Typography>
-          <Typography>
-            panel_unit: {unit}
-          </Typography>
-          <Typography>prom_queries: {JSON.stringify(prom_queries)}</Typography>
-          <Typography>
-            data_for_graph: {JSON.stringify(prometheusData)}
-          </Typography> */}
+          */}
         <Typography className={classes.title}>{panel_name}</Typography>
-        {/* <Typography
-          style={{ display: 'none' }}
-        >{`${panel_id}-${panel_options.grids}`}</Typography> */}
-        {/* panel_id and panel_options has been used temporaryly will be removed later */}
         <div className={classes.singleGraph}>
           <LineAreaGraph
             legendTableHeight={120}
-            openSeries={graphData.seriesData}
-            eventSeries={graphData.eventData}
+            openSeries={graphData}
+            eventSeries={chaos_data}
             showPoints={false}
             showLegendTable
             showTips
@@ -247,9 +178,6 @@ const PanelContent: React.FC<PanelResponse> = ({
             margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
           />
         </div>
-        {/* <Typography>
-          data_for_graph: {JSON.stringify(prometheusData)}
-        </Typography> */}
       </div>
     </div>
   );
