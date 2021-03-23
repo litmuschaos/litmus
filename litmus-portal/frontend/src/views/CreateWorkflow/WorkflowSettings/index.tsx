@@ -81,8 +81,8 @@ const WorkflowSettings = forwardRef((_, ref) => {
         if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
           setName(w.title);
           setDescription(w.details);
-          workflowAction.setWorkflowManifest({ manifest: w.chaosWkfCRDLink });
           setIcon(w.urlToIcon);
+          localforage.setItem('workflowCRDLink', w.chaosWkfCRDLink);
         }
         return null;
       });

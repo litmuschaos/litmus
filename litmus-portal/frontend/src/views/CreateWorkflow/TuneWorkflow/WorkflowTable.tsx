@@ -6,12 +6,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import localforage from 'localforage';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import { experimentMap } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import parsed from '../../../utils/yamlUtils';
 import ConfigurationStepper from './ConfigurationStepper/ConfigurationStepper';
 import useStyles from './styles';
 
@@ -38,12 +41,27 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
     (state: RootState) => state.workflowManifest.manifest
   );
 
+  const addWeights = (manifest: string) => {
+    const arr: experimentMap[] = [];
+    const hashMap = new Map();
+    const tests = parsed(manifest);
+    tests.forEach((test) => {
+      let value = 10;
+      if (hashMap.has(test)) {
+        value = hashMap.get(test);
+      }
+      arr.push({ experimentName: test, weight: value });
+    });
+    localforage.setItem('weights', arr);
+  };
+
   const parsing = (yamlText: string) => {
     const parsedYaml = YAML.parse(yamlText);
     const expData: ChaosCRDTable[] = [];
     workflow.setWorkflowManifest({
       manifest: yamlText,
     });
+    addWeights(manifest);
     parsedYaml.spec.templates.forEach((template: any, index: number) => {
       if (template.inputs !== undefined) {
         template.inputs.artifacts.forEach((artifact: any) => {
@@ -64,27 +82,13 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
     setExperiments(expData);
   };
 
-  const fetchYaml = (link: string) => {
-    fetch(link)
-      .then((data) => {
-        data.text().then((yamlText) => {
-          parsing(yamlText);
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
-
   const closeConfigurationStepper = () => {
     setDisplayStepper(false);
   };
 
   useEffect(() => {
-    if (isCustom && manifest.length) {
+    if (manifest.length) {
       parsing(manifest);
-    } else if (manifest.length) {
-      fetchYaml(manifest);
     }
   }, [manifest]);
 

@@ -71,6 +71,37 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   const { t } = useTranslation();
 
+  const fetchYaml = (link: string) => {
+    fetch(link)
+      .then((data) => {
+        data.text().then((yamlText) => {
+          workflowAction.setWorkflowManifest({
+            manifest: yamlText,
+          });
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  // Graphql query to get charts
+  const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
+    onCompleted: (data) => {
+      const allExp: ChartName[] = [];
+      data.getCharts.forEach((data) => {
+        return data.Spec.Experiments?.forEach((experiment) => {
+          allExp.push({
+            ChaosName: data.Metadata.Name,
+            ExperimentName: experiment,
+          });
+        });
+      });
+      setAllExperiments([...allExp]);
+    },
+    fetchPolicy: 'cache-and-network',
+  });
+
   // Index DB Fetching for extracting selected Button and Workflow Details
   const getSelectedWorkflowDetails = () => {
     localforage.getItem('workflow').then((workflow) =>
@@ -78,6 +109,24 @@ const TuneWorkflow = forwardRef((_, ref) => {
         name: (workflow as WorkflowDetailsProps).name,
       })
     );
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      // Setting default data when MyHub is selected
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
+        setCustomWorkflow(false);
+        localforage.getItem('workflowCRDLink').then((value) => {
+          if (value !== null) fetchYaml(value as string);
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
+        setCustomWorkflow(true);
+        localforage.getItem('selectedHub').then((hub) => {
+          setHubName(hub as string);
+          getCharts({
+            variables: { projectID: selectedProjectID, HubName: hub as string },
+          });
+        });
+      }
+    });
   };
 
   useEffect(() => {
@@ -137,23 +186,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
     { data: experimentData, loading: experimentDataLoading },
   ] = useLazyQuery(GET_EXPERIMENT_YAML, {
     fetchPolicy: 'network-only',
-  });
-
-  // Graphql query to get charts
-  const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
-    onCompleted: (data) => {
-      const allExp: ChartName[] = [];
-      data.getCharts.forEach((data) => {
-        return data.Spec.Experiments?.forEach((experiment) => {
-          allExp.push({
-            ChaosName: data.Metadata.Name,
-            ExperimentName: experiment,
-          });
-        });
-      });
-      setAllExperiments([...allExp]);
-    },
-    fetchPolicy: 'cache-and-network',
   });
 
   /**
@@ -218,25 +250,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
       ]);
     }
   }, [engineDataLoading, experimentDataLoading]);
-
-  // Loading Workflow Related Data for Workflow Settings
-  useEffect(() => {
-    localforage.getItem('selectedScheduleOption').then((value) => {
-      // Setting default data when MyHub is selected
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
-        setCustomWorkflow(false);
-      }
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
-        setCustomWorkflow(true);
-        localforage.getItem('selectedHub').then((hub) => {
-          setHubName(hub as string);
-          getCharts({
-            variables: { projectID: selectedProjectID, HubName: hub as string },
-          });
-        });
-      }
-    });
-  }, []);
 
   // console.log(generatedYAML);
   function onNext() {
@@ -303,7 +316,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
         <Row>
           {/* Argo Workflow Graph */}
           <Width width="30%">
-            <WorkflowPreview crd={generatedYAML} />
+            <WorkflowPreview isCustom={customWorkflow} />
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
