@@ -46,9 +46,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   // styles for buttons
-  button: {
-    marginRight: theme.spacing(-2),
-  },
+
   buttonModal: {
     marginTop: theme.spacing(3.75),
   },

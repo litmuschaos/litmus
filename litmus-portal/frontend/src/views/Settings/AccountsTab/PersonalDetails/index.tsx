@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
+import UserDetails from '../../../../components/UserDetails';
 import config from '../../../../config';
 import { GET_USER, UPDATE_DETAILS } from '../../../../graphql';
 import {
@@ -14,7 +15,6 @@ import {
 import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
 import { validateEmail } from '../../../../utils/validate';
-import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
 interface personaData {
@@ -164,9 +164,8 @@ const PersonalDetails: React.FC = () => {
               <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
             }
           >
-            {!error.length ? (
+            {error.length ? (
               <div className={classes.errDiv}>
-                {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
                 <div className={classes.textError}>
                   <Typography className={classes.typo} align="center">
                     <strong>

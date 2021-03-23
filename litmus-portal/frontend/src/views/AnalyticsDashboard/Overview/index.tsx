@@ -6,6 +6,7 @@
 
 import { useQuery } from '@apollo/client';
 import React from 'react';
+import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import {
   LIST_DASHBOARD,
   LIST_DATASOURCE,
@@ -30,7 +31,6 @@ import { getProjectID } from '../../../utils/getSearchParams';
 import { sortNumAsc } from '../../../utils/sort';
 import { OverviewConfigureBanner } from './OverviewConfigureBanner';
 import { OverviewGlowCard } from './OverviewGlowActionCard';
-import { AnalyticsQuickActionCard } from './OverviewQuickActionCard';
 import { AnalyticsScheduleWorkflowCard } from './OverviewScheduleBanner';
 import useStyles from './styles';
 import { TableDashboardData } from './Tables/dashboardData';
@@ -145,7 +145,7 @@ const Overview: React.FC = () => {
           )}
           <div className={classes.parentWrapper}>
             <div className={classes.analyticsQuickActionCard}>
-              <AnalyticsQuickActionCard />
+              <LocalQuickActionCard variant="analytics" />
             </div>
           </div>
         </div>

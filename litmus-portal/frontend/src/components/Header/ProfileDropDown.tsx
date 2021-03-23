@@ -34,7 +34,7 @@ const ProfileDropdown: React.FC = () => {
 
   // Run query to get the data in case it is not present in the JWT
   useQuery<CurrentUserDetails>(GET_USER_INFO, {
-    skip: userEmail !== undefined,
+    skip: userEmail !== undefined && userEmail !== '',
     variables: { username },
     onCompleted: (data) => {
       setuserEmail(data.getUser.email);
@@ -96,9 +96,7 @@ const ProfileDropdown: React.FC = () => {
                 }}
                 onClick={() => tabs.changeSettingsTabs(0)}
               >
-                <Typography
-                  title={t('header.profileDropdown.goToSettingsTitle')}
-                >
+                <Typography title="Go to settings">
                   {t('header.profileDropdown.emailSet')}
                 </Typography>
               </Link>
@@ -108,14 +106,14 @@ const ProfileDropdown: React.FC = () => {
             className={`${classes.profileDropdownRow} ${classes.profileButtons}`}
           >
             <ButtonFilled
-              title={t('header.profileDropdown.logOutTitle')}
+              title="Logout from the portal"
               onClick={() => logout()}
             >
               {t('header.profileDropdown.logout')}
               <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
             </ButtonFilled>
             <ButtonOutlined
-              title={t('header.profileDropdown.editProfileTitle')}
+              title="Edit your profile"
               onClick={() => {
                 tabs.changeSettingsTabs(0);
                 history.push({

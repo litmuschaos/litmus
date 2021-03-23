@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { Paper, Typography } from '@material-ui/core';
+import { IconButton, Paper, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,16 +10,22 @@ import {
 } from '../../../../../graphql';
 import { MemberInvitation } from '../../../../../models/graphql/invite';
 import { Member, Project, Projects } from '../../../../../models/graphql/user';
+import { history } from '../../../../../redux/configureStore';
 import { getUserId, getUserRole } from '../../../../../utils/auth';
 import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './styles';
+
+interface OtherProjectsType {
+  projectDetails: Project;
+  currentUserProjectRole: string;
+}
 
 const AcceptedInvitations: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 
   const userID = getUserId();
-  const [projectOther, setProjectOther] = useState<Project[]>([]);
+  const [projectOther, setProjectOther] = useState<OtherProjectsType[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
     onCompleted: () => {
@@ -36,7 +42,9 @@ const AcceptedInvitations: React.FC = () => {
 
   const [leaveProject] = useMutation<MemberInvitation>(LEAVE_PROJECT, {
     onCompleted: () => {
-      setProjectOther(projectOther.filter((row) => row.id !== exitedMember));
+      setProjectOther(
+        projectOther.filter((row) => row.projectDetails.id !== exitedMember)
+      );
     },
     refetchQueries: [
       {
@@ -48,7 +56,7 @@ const AcceptedInvitations: React.FC = () => {
   });
 
   useEffect(() => {
-    const otherProject: Project[] = [];
+    const otherProject: OtherProjectsType[] = [];
     projects.map((project) => {
       return project.members.forEach((member: Member) => {
         if (
@@ -56,36 +64,15 @@ const AcceptedInvitations: React.FC = () => {
           member.role !== 'Owner' &&
           member.invitation === 'Accepted'
         ) {
-          otherProject.push(project);
+          otherProject.push({
+            projectDetails: project,
+            currentUserProjectRole: member.role,
+          });
         }
       });
     });
     setProjectOther([...otherProject]);
   }, [projects]);
-
-  // const setSelectedProjectID = (selectedProjectID: string) => {
-  //   return dataProject?.listProjects.forEach((project) => {
-  //     if (selectedProjectID === project.id) {
-  //       const memberList: Member[] = project.members;
-
-  //       memberList.forEach((member) => {
-  //         if (member.user_id === userID) {
-  //           user.updateUserDetails({
-  //             selectedProjectID,
-  //             userRole: member.role,
-  //             selectedProjectName: project.name,
-  //           });
-  //           // Flush data to persistor immediately
-  //           persistor.flush();
-
-  //           if (member.role !== 'Owner') {
-  //             history.push('/');
-  //           }
-  //         }
-  //       });
-  //     }
-  //   });
-  // };
 
   return (
     <>
@@ -100,26 +87,33 @@ const AcceptedInvitations: React.FC = () => {
               <div className={classes.projectDiv}>
                 <img src="./icons/litmus-icon.svg" alt="chaos" />
                 <Typography className={classes.projectName}>
-                  {project.name}
+                  {project.projectDetails.name}
                 </Typography>
-                {/* <IconButton onClick={() => setSelectedProjectID(project.id)}> */}
-                <Typography className={classes.viewProject}>
-                  {/* TODO:: Add translation */}
-                  View Project
-                </Typography>
-                {/* </IconButton> */}
+                <IconButton
+                  className={classes.viewProject}
+                  onClick={() => {
+                    history.push({
+                      pathname: `/home`,
+                      search: `?projectID=${project.projectDetails.id}&projectRole=${project.currentUserProjectRole}`,
+                    });
+                  }}
+                >
+                  <Typography>
+                    {/* TODO: Add translation */}
+                    View Project
+                  </Typography>
+                </IconButton>
               </div>
               <div className={classes.buttonDiv}>
                 <div data-cy="LeaveProject">
                   <ButtonFilled
                     className={classes.leaveProjectBtn}
                     onClick={() => {
-                      // TODO: CHECK if same project.id as in URL
-                      setExitedMember(project.id);
+                      setExitedMember(project.projectDetails.id);
                       leaveProject({
                         variables: {
                           data: {
-                            project_id: project.id,
+                            project_id: project.projectDetails.id,
                             user_id: getUserId(),
                             role: getUserRole(),
                           },

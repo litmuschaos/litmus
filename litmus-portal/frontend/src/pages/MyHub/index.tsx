@@ -12,7 +12,7 @@ import ButtonFilled from '../../components/Button/ButtonFilled';
 import ButtonOutline from '../../components/Button/ButtonOutline';
 import DeveloperGuide from '../../components/DeveloperGuide';
 import Loader from '../../components/Loader';
-import QuickActionCard from '../../components/QuickActionCard';
+import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
 import VideoCarousel from '../../components/VideoCarousel';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
@@ -270,7 +270,7 @@ const MyHub: React.FC = () => {
                 {t('myhub.mainPage.videoDescription')}
               </Typography>
               <div className={classes.quickActionDiv}>
-                <QuickActionCard analyticsHome={false} nonAdmin />
+                <LocalQuickActionCard variant="homePage" />
               </div>
             </div>
           </div>
