@@ -92,8 +92,6 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
     }
   }, [manifest]);
 
-  useEffect(() => {}, []);
-
   return (
     <div>
       {!displayStepper ? (
