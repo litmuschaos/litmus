@@ -15,7 +15,11 @@ import {
   ChaosInformation,
   ChaosResultNamesAndNamespacesMap,
 } from '../models/dashboardsData';
-import { PrometheusResponse } from '../models/graphql/prometheus';
+import { PromQuery } from '../models/graphql/dashboardsDetails';
+import {
+  PrometheusResponse,
+  promQueryInput,
+} from '../models/graphql/prometheus';
 import { Workflow, WorkflowList } from '../models/graphql/workflowListData';
 import { validateWorkflowParameter } from './validate';
 import { generateChaosQuery, getWorkflowParameter } from './yamlUtils';
@@ -145,6 +149,20 @@ export const getChaosQueryPromInputAndID = (
   });
 
   return chaosInformation;
+};
+
+export const getPromQueryInput = (prom_queries: PromQuery[]) => {
+  const promQueries: promQueryInput[] = [];
+  prom_queries.forEach((query: PromQuery) => {
+    promQueries.push({
+      queryid: query.queryid,
+      query: query.prom_query_name,
+      legend: query.legend,
+      resolution: query.resolution,
+      minstep: parseInt(query.minstep, 10),
+    });
+  });
+  return promQueries;
 };
 
 export const chaosEventDataParserForPrometheus = (

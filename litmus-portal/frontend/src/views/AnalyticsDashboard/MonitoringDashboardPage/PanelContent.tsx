@@ -6,10 +6,7 @@ import { GraphMetric, LineAreaGraph } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { PROM_QUERY } from '../../../graphql';
-import {
-  PanelResponse,
-  PromQuery,
-} from '../../../models/graphql/dashboardsDetails';
+import { PanelResponse } from '../../../models/graphql/dashboardsDetails';
 import {
   PrometheusQueryInput,
   PrometheusQueryVars,
@@ -17,13 +14,15 @@ import {
   promQueryInput,
 } from '../../../models/graphql/prometheus';
 import { RootState } from '../../../redux/reducers';
-import { seriesDataParserForPrometheus } from '../../../utils/promUtils';
+import {
+  getPromQueryInput,
+  seriesDataParserForPrometheus,
+} from '../../../utils/promUtils';
 import useStyles from './styles';
 
-interface SynchronizerInterface {
-  updateQueries: Boolean;
+interface PrometheusQueryDataInterface {
+  promInput: PrometheusQueryInput;
   firstLoad: Boolean;
-  fetch: Boolean;
 }
 
 const PanelContent: React.FC<PanelResponse> = ({
@@ -42,22 +41,17 @@ const PanelContent: React.FC<PanelResponse> = ({
   const [
     prometheusQueryData,
     setPrometheusQueryData,
-  ] = React.useState<PrometheusQueryInput>({
-    url: '',
-    start: '',
-    end: '',
-    queries: [],
+  ] = React.useState<PrometheusQueryDataInterface>({
+    promInput: {
+      url: '',
+      start: '',
+      end: '',
+      queries: [],
+    },
+    firstLoad: true,
   });
 
   const [graphData, setGraphData] = React.useState<Array<GraphMetric>>([]);
-
-  const [synchronizer, setSynchronizer] = React.useState<SynchronizerInterface>(
-    {
-      updateQueries: false,
-      firstLoad: true,
-      fetch: false,
-    }
-  );
 
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
@@ -68,91 +62,51 @@ const PanelContent: React.FC<PanelResponse> = ({
   );
 
   // Apollo query to get the prometheus data
-  const { data: prometheusData } = useQuery<
-    PrometheusResponse,
-    PrometheusQueryVars
-  >(PROM_QUERY, {
-    variables: { prometheusInput: prometheusQueryData },
+  useQuery<PrometheusResponse, PrometheusQueryVars>(PROM_QUERY, {
+    variables: {
+      prometheusInput: prometheusQueryData?.promInput ?? {
+        url: '',
+        start: '',
+        end: '',
+        queries: [],
+      },
+    },
     fetchPolicy: 'no-cache',
+    skip:
+      prometheusQueryData?.promInput.queries?.length === 0 ||
+      prometheusQueryData?.promInput.url === '',
+    onCompleted: (prometheusData) => {
+      let seriesData: Array<GraphMetric> = [];
+      if (prometheusData) {
+        seriesData = seriesDataParserForPrometheus(prometheusData, lineGraph);
+        setGraphData(seriesData);
+        seriesData = [];
+      }
+    },
   });
 
-  const generatePrometheusQueryData = () => {
-    let promQueries: promQueryInput[] = [];
-    prom_queries.forEach((query: PromQuery) => {
-      promQueries.push({
-        queryid: query.queryid,
-        query: query.prom_query_name,
-        legend: query.legend,
-        resolution: query.resolution,
-        minstep: parseInt(query.minstep, 10),
-      });
+  const generatePromQueries = () => {
+    let promQueries: promQueryInput[] = prometheusQueryData.promInput.queries;
+    if (prometheusQueryData.firstLoad) {
+      promQueries = getPromQueryInput(prom_queries);
+    }
+    setPrometheusQueryData({
+      promInput: {
+        url: selectedDataSource.selectedDataSourceURL,
+        start: `${Math.round(new Date().getTime() / 1000) - 1800}`,
+        end: `${Math.round(new Date().getTime() / 1000)}`,
+        queries: promQueries,
+      },
+      firstLoad: false,
     });
-    const prometheusQueryInput: PrometheusQueryInput = {
-      url: selectedDataSource.selectedDataSourceURL,
-      start: `${Math.round(new Date().getTime() / 1000) - 1800}`,
-      end: `${Math.round(new Date().getTime() / 1000)}`,
-      queries: promQueries,
-    };
-    setPrometheusQueryData(prometheusQueryInput);
     promQueries = [];
   };
 
-  const updateGraphData = () => {
-    let seriesData: Array<GraphMetric> = [];
-    if (prometheusData) {
-      seriesData = seriesDataParserForPrometheus(prometheusData, lineGraph);
-      setGraphData(seriesData);
-      seriesData = [];
-    }
-  };
-
   useEffect(() => {
-    if (
-      synchronizer.firstLoad === true &&
-      synchronizer.updateQueries === false
-    ) {
-      if (prom_queries.length) {
-        generatePrometheusQueryData();
-        setSynchronizer({
-          updateQueries: true,
-          firstLoad: false,
-          fetch: true,
-        });
-      }
-    }
-    if (
-      synchronizer.updateQueries === true &&
-      synchronizer.firstLoad === false
-    ) {
-      setTimeout(() => {
-        if (prom_queries.length) {
-          generatePrometheusQueryData();
-          setSynchronizer({
-            ...synchronizer,
-            fetch: true,
-          });
-        }
-      }, selectedDashboard.refreshRate);
-    }
+    setTimeout(() => {
+      generatePromQueries();
+    }, selectedDashboard.refreshRate);
   }, [prometheusQueryData]);
-
-  useEffect(() => {
-    if (
-      prometheusData &&
-      prometheusData.GetPromQuery.length &&
-      prometheusData.GetPromQuery[0].legends?.length &&
-      prometheusData.GetPromQuery[0].legends !== null &&
-      prometheusData.GetPromQuery[0].legends[0] !== null
-    ) {
-      if (synchronizer.fetch === true) {
-        updateGraphData();
-        setSynchronizer({
-          ...synchronizer,
-          fetch: false,
-        });
-      }
-    }
-  }, [prometheusData]);
 
   return (
     <div className={classes.rootPanel}>

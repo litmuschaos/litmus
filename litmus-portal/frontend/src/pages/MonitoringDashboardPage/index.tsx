@@ -173,12 +173,15 @@ const DashboardPage: React.FC = () => {
       prometheusQueryData?.promInput.url === '',
     onCompleted: (eventData) => {
       let chaos_data: Array<GraphMetric> = [];
-      chaos_data = chaosEventDataParserForPrometheus(
-        eventData,
-        prometheusQueryData?.chaosInput,
-        palette.error.main
-      );
-      setChaosData(chaos_data);
+      if (eventData) {
+        chaos_data = chaosEventDataParserForPrometheus(
+          eventData,
+          prometheusQueryData?.chaosInput,
+          palette.error.main
+        );
+        setChaosData(chaos_data);
+        chaos_data = [];
+      }
     },
   });
 
@@ -265,6 +268,10 @@ const DashboardPage: React.FC = () => {
       chaosInput: chaosInformation.chaosQueryIDs,
       firstLoad: !analyticsData?.ListWorkflow,
     });
+    chaosInformation = {
+      promQueries: [],
+      chaosQueryIDs: [],
+    };
   };
 
   useEffect(() => {
