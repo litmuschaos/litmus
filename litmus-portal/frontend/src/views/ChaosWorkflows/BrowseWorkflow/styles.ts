@@ -136,6 +136,9 @@ const useStyles = makeStyles((theme) => ({
   success: {
     color: theme.palette.success.main,
   },
+  warning: {
+    color: theme.palette.warning.main,
+  },
   // Menu option with icon
   expDiv: {
     display: 'flex',

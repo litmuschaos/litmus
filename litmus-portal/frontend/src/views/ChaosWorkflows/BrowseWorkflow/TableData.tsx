@@ -76,7 +76,10 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         <div className={classes.reliabiltyData}>
           {exeData.finishedAt.length === 0 ? (
             <Typography>
-              Overall RR: <span className={classes.failed}>NA</span>
+              Overall RR: <span className={classes.warning}>60%</span>
+              <div className={classes.progressBar}>
+                <LinearProgressBar width={0.1} value={6} />
+              </div>
             </Typography>
           ) : exeData.phase === 'Failed' || exeData.phase === '' ? (
             <>
