@@ -212,7 +212,8 @@ jobs:
         run: |
           source env-vars
           cd litmus-portal/frontend
-          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${FRONTEND_IMAGE}:${IMG_TAG}
+          timestamp=`date "+%s"`
+          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${FRONTEND_IMAGE}:${IMG_TAG} --build-arg REACT_APP_KB_CHAOS_VERSION=${IMG_TAG} --build-arg REACT_APP_BUILD_TIME="$timestamp"
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
