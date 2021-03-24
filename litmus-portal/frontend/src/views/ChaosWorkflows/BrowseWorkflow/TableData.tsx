@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 import {
   ExecutionData,
@@ -27,6 +28,8 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+
+  const { t } = useTranslation();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -76,15 +79,14 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         <div className={classes.reliabiltyData}>
           {exeData.finishedAt.length === 0 ? (
             <Typography>
-              Overall RR: <span className={classes.warning}>60%</span>
-              <div className={classes.progressBar}>
-                <LinearProgressBar width={0.1} value={6} />
-              </div>
+              {t('workflowDetails.overallRR')}
+              <span className={classes.failed}>NA</span>
             </Typography>
           ) : exeData.phase === 'Failed' || exeData.phase === '' ? (
             <>
               <Typography>
-                Overall RR: <span className={classes.failed}>0%</span>
+                {t('workflowDetails.overallRR')}
+                <span className={classes.failed}>0%</span>
               </Typography>
               <div className={classes.progressBar}>
                 <LinearProgressBar width={0.1} value={0} />
@@ -93,7 +95,8 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           ) : (
             <>
               <Typography>
-                Overall RR: <span className={classes.success}>100%</span>
+                {t('workflowDetails.overallRR')}
+                <span className={classes.success}>100%</span>
               </Typography>
               <div className={classes.progressBar}>
                 <LinearProgressBar width={0.1} value={10} />

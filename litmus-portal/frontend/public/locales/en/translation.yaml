@@ -278,6 +278,7 @@ error:
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow
   fetchError: An error has occurred while fetching the data
+  overallRR: 'Overall RR: '
 
 ######################################
 ############    Views    #############
