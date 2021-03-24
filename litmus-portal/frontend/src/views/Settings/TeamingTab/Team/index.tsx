@@ -283,7 +283,6 @@ const TeamingTab: React.FC = () => {
             <div>
               <Paper className={classes.myProject} elevation={0}>
                 <div className={classes.project}>
-                  <img src="./icons/chaos-logo.svg" alt="Chaos Logo" />
                   <Typography className={classes.projectName}>
                     {/* Check for removal of userData */}
                     {selectedProjectName}

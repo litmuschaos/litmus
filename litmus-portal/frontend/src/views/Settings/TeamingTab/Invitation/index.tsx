@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Box, Paper, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LIST_PROJECTS } from '../../../../graphql';
 import { Member, Project, Projects } from '../../../../models/graphql/user';
 import { getUserId } from '../../../../utils/auth';
@@ -45,7 +46,7 @@ function tabProps(index: any) {
 const Invitation: React.FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
@@ -96,29 +97,29 @@ const Invitation: React.FC = () => {
           }}
         >
           <Tab
-            data-cy="receivedTab"
+            data-cy="activeTab"
             label={
               <span
                 className={activeTab === 0 ? classes.active : classes.inActive}
               >
                 <span className={classes.invitationCount}>
-                  {invitationsCount}
+                  {projectOtherCount}
                 </span>{' '}
-                Invitations
+                {t('settings.teamingTab.active')}
               </span>
             }
             {...tabProps(0)}
           />
           <Tab
-            data-cy="sentTab"
+            data-cy="receivedTab"
             label={
               <span
                 className={activeTab === 1 ? classes.active : classes.inActive}
               >
                 <span className={classes.invitationCount}>
-                  {projectOtherCount}
+                  {invitationsCount}
                 </span>{' '}
-                Active
+                {t('settings.teamingTab.invitations')}
               </span>
             }
             {...tabProps(1)}
@@ -126,10 +127,10 @@ const Invitation: React.FC = () => {
         </Tabs>
       </Paper>
       <TabPanel value={activeTab} index={0}>
-        <ReceivedInvitations />
+        <AcceptedInvitations />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
-        <AcceptedInvitations />
+        <ReceivedInvitations />
       </TabPanel>
     </div>
   );

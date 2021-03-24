@@ -138,7 +138,6 @@ const ReceivedInvitations: React.FC = () => {
                   </div>
                 </div>
                 <div className={classes.projectDiv}>
-                  <img src="./icons/litmus-icon.svg" alt="chaos" />
                   <Typography className={classes.projectName}>
                     {row.projectName}
                   </Typography>
