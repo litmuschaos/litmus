@@ -60,7 +60,7 @@ const Routes: React.FC = () => {
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
   const userID = getUserId();
 
-  useQuery<Projects>(LIST_PROJECTS, {
+  const { loading } = useQuery<Projects>(LIST_PROJECTS, {
     skip: projectID !== '' && projectID !== undefined,
     onCompleted: (data) => {
       if (data.listProjects) {
@@ -90,21 +90,33 @@ const Routes: React.FC = () => {
 
   if (getToken() === '') {
     return (
-      <Switch>
-        <Route exact path="/login" component={LoginPage} />
-        <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-        <Redirect to="/login" />
-      </Switch>
+      <>
+        {loading ? (
+          <Loader />
+        ) : (
+          <Switch>
+            <Route exact path="/login" component={LoginPage} />
+            <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+            <Redirect to="/login" />
+          </Switch>
+        )}
+      </>
     );
   }
 
   if (!projectID) {
     return (
-      <Switch>
-        <Route exact path="/home" component={HomePage} />
-        <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-        <Redirect to="/home" />
-      </Switch>
+      <>
+        {loading ? (
+          <Loader />
+        ) : (
+          <Switch>
+            <Route exact path="/home" component={HomePage} />
+            <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+            <Redirect to="/home" />
+          </Switch>
+        )}
+      </>
     );
   }
 
