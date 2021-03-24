@@ -2,7 +2,7 @@ import { Divider, IconButton, Typography } from '@material-ui/core';
 import { InputField } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import UserDetails from '../CreateUser/UserDetails';
+import UserDetails from '../../../../components/UserDetails';
 import DelUser from './DelUser';
 import ResetModal from './ResetModal';
 import useStyles from './styles';
@@ -32,7 +32,7 @@ const EditUser: React.FC<EditUserProps> = ({
 
   // for conditional rendering of reset password div
 
-  const [createPAssword, setCreatePassword] = React.useState<Password>({
+  const [createPassword, setCreatePassword] = React.useState<Password>({
     password: '',
     showPassword: false,
   });
@@ -42,7 +42,7 @@ const EditUser: React.FC<EditUserProps> = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setCreatePassword({
-      ...createPAssword,
+      ...createPassword,
       [prop]: event.target.value,
     });
   };
@@ -94,7 +94,7 @@ const EditUser: React.FC<EditUserProps> = ({
                   label={t(
                     'settings.userManagementTab.editUser.label.newPassword'
                   )}
-                  value={createPAssword.password}
+                  value={createPassword.password}
                 />
               </div>
               <Divider className={classes.divider} />
@@ -110,8 +110,8 @@ const EditUser: React.FC<EditUserProps> = ({
       </div>
       <div className={classes.buttonGroup}>
         <ResetModal
-          resetPossible={createPAssword.password.length > 0}
-          new_password={createPAssword.password}
+          resetPossible={createPassword.password.length > 0}
+          new_password={createPassword.password}
           username={userName}
           handleModal={handleDiv}
         />

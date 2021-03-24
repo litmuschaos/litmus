@@ -26,21 +26,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(-2),
   },
   container: {
-    maxWidth: '63.75rem',
     marginTop: theme.spacing(3.75),
-    border: '1px solid ',
-    borderColor: theme.palette.border.main,
+    border: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.cards.background,
     borderRadius: '0.1875rem',
-    paddingBottom: theme.spacing(5),
+    padding: theme.spacing(5),
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
   },
 
-  suSegments: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-even',
-    marginLeft: theme.spacing(5),
-  },
   headerText: {
     marginTop: theme.spacing(7.5),
     fontSize: '1.5625rem',
@@ -49,17 +45,28 @@ const useStyles = makeStyles((theme: Theme) => ({
   // for login details
   details1: {
     display: 'flex',
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
     alignContent: 'flex-start',
+    '& div': {
+      margin: theme.spacing(0, 1, 1, 0),
+      [theme.breakpoints.down('sm')]: {
+        width: 'unset',
+      },
+    },
     flexWrap: 'wrap',
+  },
+
+  secondInputField: {
+    [theme.breakpoints.down('md')]: {
+      margin: theme.spacing(2.5, 0, 0, 0),
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: 'unset',
+    },
+    marginLeft: theme.spacing(3),
   },
 
   divider: {
     marginTop: theme.spacing(3.75),
-    maxWidth: '58.75rem',
   },
 
   txt1: {
@@ -91,11 +98,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(1),
   },
   buttonGroup: {
-    maxWidth: '63.75rem',
     display: 'flex',
     flexDirection: 'row-reverse',
     marginTop: theme.spacing(3.75),
-    marginRight: theme.spacing(-2),
   },
 }));
 export default useStyles;
