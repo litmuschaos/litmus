@@ -11,7 +11,6 @@ import {
   Project,
   UserRole,
 } from '../../../models/graphql/user';
-import { history } from '../../../redux/configureStore';
 import {
   getToken,
   getUserEmail,
@@ -19,7 +18,6 @@ import {
   getUsername,
   getUserRole,
 } from '../../../utils/auth';
-import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
 
@@ -38,9 +36,6 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
   const [projectName, setProjectName] = React.useState<string>('');
   const isError = useRef(true);
 
-  const projectID = getProjectID();
-  const projectRole = getProjectRole();
-
   if (projectName.length && !validateStartEmptySpacing(projectName)) {
     isError.current = false;
   } else {
@@ -49,11 +44,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
 
   const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
     onCompleted: () => {
-      // handleModal();
-      history.push({
-        pathname: '/home',
-        search: `?projectID=${projectID}&projectRole=${projectRole}`,
-      });
+      window.location.assign('/home');
     },
   });
 
@@ -67,8 +58,6 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
     },
   });
 
-  console.log(password);
-
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     fetch(`${config.auth.url}/update/details`, {
@@ -81,7 +70,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
         username: getUsername(),
         email: getUserEmail(),
         name: getUserName(),
-        password: password,
+        password,
       }),
     })
       .then((response) => response.json())

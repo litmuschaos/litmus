@@ -1,18 +1,10 @@
-/* eslint-disable react/no-danger */
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Center from '../../containers/layouts/Center';
 import PasswordSet from '../../views/GetStarted/PasswordSet';
 import ProjectSet from '../../views/GetStarted/ProjectSet';
 import useStyles from './styles';
 
-interface authData {
-  username: string;
-  password: string;
-}
-
 const GetStarted: React.FC = () => {
-  const { t } = useTranslation();
   const classes = useStyles();
   const [step, setStep] = useState<number>(1);
   const [password, setPassword] = useState<string>('');
@@ -25,7 +17,6 @@ const GetStarted: React.FC = () => {
       <Center>
         {step === 1 ? (
           <PasswordSet
-            password={password}
             setPassword={handlePassword}
             currentStep={1}
             totalStep={2}

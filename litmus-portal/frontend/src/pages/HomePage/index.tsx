@@ -12,7 +12,6 @@ import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { getUserDetailsFromJwt } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import WelcomeModal from '../../views/Home/WelcomeModal';
 import useStyles from './style';
 
 const HomePage: React.FC = () => {
@@ -23,13 +22,8 @@ const HomePage: React.FC = () => {
   const projectID = getProjectID();
   const userRole = getProjectRole();
 
-  const handleModal = () => {
-    window.location.reload();
-  };
-
   return (
     <Scaffold>
-      {!projectID && <WelcomeModal handleIsOpen={handleModal} />}
       <div className={classes.rootContainer}>
         <div>
           <Typography variant="h3" className={classes.userName}>

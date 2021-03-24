@@ -54,7 +54,6 @@ const CreateCustomWorkflow = lazy(
 );
 
 const Routes: React.FC = () => {
-  console.log('App-hit');
   const baseRoute = window.location.pathname.split('/')[1];
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
@@ -62,7 +61,7 @@ const Routes: React.FC = () => {
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
   const userID = getUserId();
 
-  useQuery<Projects>(LIST_PROJECTS, {
+  const { loading } = useQuery<Projects>(LIST_PROJECTS, {
     skip: projectID !== '' && projectID !== undefined,
     onCompleted: (data) => {
       if (data.listProjects) {
@@ -84,9 +83,7 @@ const Routes: React.FC = () => {
   });
 
   history.listen((location) => {
-    console.log('outside location condn');
     if (location.pathname !== '/login') {
-      console.log('inside location condn');
       setprojectID(getProjectID());
       setprojectRole(getProjectRole());
     }
@@ -94,24 +91,32 @@ const Routes: React.FC = () => {
 
   if (getToken() === '') {
     return (
-      <Switch>
-        {console.log('no token-app hit')}
-
-        <Route exact path="/login" component={LoginPage} />
-        <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-        <Redirect to="/login" />
-      </Switch>
+      <>
+        {loading ? (
+          <Loader />
+        ) : (
+          <Switch>
+            <Route exact path="/login" component={LoginPage} />
+            <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+            <Redirect to="/login" />
+          </Switch>
+        )}
+      </>
     );
   }
 
   if (!projectID) {
     return (
-      <Switch>
-        {console.log('no project app hit')}
-        <Route exact path="/getStarted" component={GetStarted} />
-        <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-        <Redirect to="/getStarted" />
-      </Switch>
+      <>
+        {loading ? (
+          <Loader />
+        ) : (
+          <Switch>
+            <Route exact path="/getStarted" component={GetStarted} />
+            <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+          </Switch>
+        )}
+      </>
     );
   }
 
@@ -208,6 +213,7 @@ const Routes: React.FC = () => {
       <Route exact path="/404" component={ErrorPage} />
 
       {/* Redirects */}
+      <Redirect exact path="/getStarted" to="/home" />
       <Redirect exact path="/workflows/schedule" to="/workflows" />
       <Redirect exact path="/workflows/template" to="/workflows" />
 

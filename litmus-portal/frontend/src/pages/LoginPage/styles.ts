@@ -2,20 +2,16 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   rootContainer: {
-    height: '100%',
+    position: 'fixed',
     width: '100%',
-
+    height: '100%',
     background: theme.palette.primary.main,
   },
   rootDiv: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  rootLitmusText: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+    padding: theme.spacing(2),
+    maxWidth: '49rem',
   },
   HeaderText: {
     maxWidth: '23.56rem',
@@ -26,21 +22,17 @@ const useStyles = makeStyles((theme) => ({
   },
   litmusText: {
     maxWidth: '23.56rem',
-    fontWeight: 400,
     fontSize: '1rem',
     color: theme.palette.text.secondary,
   },
   inputDiv: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    maxWidth: '20rem',
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(7.5),
+    maxWidth: '23.75rem',
+    margin: theme.spacing(6, 0, 0, 7.5),
   },
   inputValue: {
-    margin: theme.spacing(1.75, 0, 1.75, 0),
+    marginBottom: theme.spacing(1.75),
     width: '100%',
+    borderRadius: '0.25rem',
   },
   loginButton: {
     marginTop: theme.spacing(1.875),

@@ -1,8 +1,6 @@
-/* eslint-disable react/no-danger */
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import config from '../../config';
 import Center from '../../containers/layouts/Center';
@@ -15,8 +13,7 @@ interface authData {
   password: string;
 }
 
-const LoginPage = () => {
-  const { t } = useTranslation();
+const LoginPage: React.FC = () => {
   const classes = useStyles();
 
   const [isError, setIsError] = useState<boolean>(false);
@@ -65,8 +62,9 @@ const LoginPage = () => {
     <div className={classes.rootContainer}>
       <Center>
         <div className={classes.rootDiv}>
-          <div className={classes.rootLitmusText}>
+          <div>
             <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
+            {/* TODO: Add translations */}
             <Typography className={classes.HeaderText}>
               One-stop-shop for Chaos Engineering on kubernetes
             </Typography>

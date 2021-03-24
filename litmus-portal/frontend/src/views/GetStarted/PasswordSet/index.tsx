@@ -15,20 +15,18 @@ interface PasswordSetProps {
   handleNext: () => void;
   currentStep: number;
   totalStep: number;
-  password: string;
   setPassword: (e: any) => void;
 }
 const PasswordSet: React.FC<PasswordSetProps> = ({
   handleNext,
   currentStep,
   totalStep,
-  password,
   setPassword,
 }) => {
   const { t } = useTranslation();
   const classes = useStyles();
 
-  const [values, setValues] = React.useState({
+  const [values, setValues] = React.useState<PasswordReset>({
     password: '',
     confirmPassword: '',
   });
@@ -54,6 +52,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
     <div className={classes.rootDiv}>
       <div className={classes.rootLitmusText}>
         <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
+        {/* TODO: Add translations */}
         <Typography className={classes.HeaderText}>
           Set your new password
         </Typography>

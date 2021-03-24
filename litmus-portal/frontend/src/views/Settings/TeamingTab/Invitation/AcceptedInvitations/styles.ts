@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     width: '2.56rem',
     height: '2.56rem',
-    color: theme.palette.text.primary,
     marginRight: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
@@ -56,7 +55,6 @@ const useStyles = makeStyles((theme) => ({
       background: theme.palette.error.main,
     },
   },
-  userDetails: {},
   name: {
     fontSize: '0.875rem',
     fontWeight: 500,
@@ -68,12 +66,16 @@ const useStyles = makeStyles((theme) => ({
   projectDiv: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   projectName: {
     fontSize: '1.125rem',
     fontWeight: 500,
-    marginLeft: theme.spacing(1.5),
+  },
+  projectRole: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '0.875rem',
+    color: theme.palette.text.hint,
   },
   avatarDiv: {
     display: 'flex',
