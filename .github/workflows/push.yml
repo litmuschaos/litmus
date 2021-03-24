@@ -1,4 +1,4 @@
-name: Pipeline
+name: push-pipeline
 on:
   push:
     branches:
@@ -59,14 +59,14 @@ jobs:
           name: env_artifact
           path: env-vars
 
-  docker-build-graphql-server:
+  docker-build-and-push-graphql-server:
     runs-on: ubuntu-latest
     needs:
       - get-envs
       - backend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - name: Downloading image artficate
         uses: actions/download-artifact@v2
         with:
@@ -93,14 +93,14 @@ jobs:
             docker push ${{ secrets.REPONAME }}/${GRAPHQL_SERVER_IMAGE}:${IMG_TAG}
           fi
 
-  docker-build-authentication-server:
+  docker-build-and-push-authentication-server:
     runs-on: ubuntu-latest
     needs:
       - get-envs
       - backend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - name: Downloading image artficate
         uses: actions/download-artifact@v2
         with:
@@ -127,14 +127,14 @@ jobs:
             docker push ${{ secrets.REPONAME }}/${AUTHENTICATION_SERVER_IMAGE}:${IMG_TAG}
           fi
 
-  docker-build-subscriber:
+  docker-build-and-push-subscriber:
     runs-on: ubuntu-latest
     needs:
       - get-envs
       - backend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - name: Downloading image artficate
         uses: actions/download-artifact@v2
         with:
@@ -161,14 +161,14 @@ jobs:
             docker push ${{ secrets.REPONAME }}/${SUBSCRIBER_IMAGE}:${IMG_TAG}
           fi
 
-  docker-build-event-tracker:
+  docker-build-and-push-event-tracker:
     runs-on: ubuntu-latest
     needs:
       - get-envs
       - backend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - name: Downloading image artficate
         uses: actions/download-artifact@v2
         with:
@@ -195,14 +195,14 @@ jobs:
             docker push ${{ secrets.REPONAME }}/${EVENT_TRACKER}:${IMG_TAG}
           fi
 
-  docker-build-frontend:
+  docker-build-and-push-frontend:
     runs-on: ubuntu-latest
     needs:
       - get-envs
       - frontend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - name: Downloading image artficate
         uses: actions/download-artifact@v2
         with:
