@@ -35,6 +35,20 @@ const useStyles = makeStyles((theme) => ({
   inputValue: {
     margin: theme.spacing(1.875, 0, 1.875, 0),
     width: '100%',
+    background: theme.palette.background.paper,
+    '& .MuiInputLabel-filled': {
+      color: theme.palette.text.hint,
+    },
+    '& .MuiFilledInput-input': {
+      background: theme.palette.background.paper,
+    },
+    '& .MuiFormHelperText-root': {
+      background: theme.palette.primary.main,
+      marginTop: 0,
+    },
+    '& .MuiFormHelperText-contained': {
+      margin: 0,
+    },
   },
   submitButton: {
     marginTop: theme.spacing(1.875),

@@ -1,6 +1,6 @@
 /* eslint-disable react/no-danger */
-import { Typography } from '@material-ui/core';
-import { ButtonFilled, InputField } from 'litmus-ui';
+import { TextField, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { validateConfirmPassword } from '../../../utils/validate';
@@ -62,10 +62,11 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
         </Typography>
       </div>
       <form id="login-form" className={classes.inputDiv}>
-        <InputField
+        <TextField
           className={classes.inputValue}
           label={t('welcomeModal.case-2.label')}
           type="password"
+          variant="filled"
           required
           value={values.password}
           onChange={(event) => {
@@ -76,7 +77,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
             setPassword(event);
           }}
         />
-        <InputField
+        <TextField
           className={classes.inputValue}
           label={t('welcomeModal.case-2.cnfLabel')}
           type="password"
@@ -87,11 +88,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
               ? 'Password is not same'
               : ''
           }
-          variant={
-            validateConfirmPassword(values.password, values.confirmPassword)
-              ? 'error'
-              : 'primary'
-          }
+          variant="filled"
           onChange={(event) =>
             setValues({
               password: values.password,

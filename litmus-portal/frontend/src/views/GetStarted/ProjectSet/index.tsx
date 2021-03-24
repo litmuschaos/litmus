@@ -1,9 +1,10 @@
 /* eslint-disable react/no-danger */
 import { useMutation } from '@apollo/client';
-import { Typography } from '@material-ui/core';
-import { ButtonFilled, InputField } from 'litmus-ui';
-import React, { useRef } from 'react';
+import { TextField, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Loader from '../../../components/Loader';
 import config from '../../../config';
 import { CREATE_PROJECT, CREATE_USER } from '../../../graphql';
 import {
@@ -33,7 +34,8 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
 }) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const [projectName, setProjectName] = React.useState<string>('');
+  const [projectName, setProjectName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const isError = useRef(true);
 
   if (projectName.length && !validateStartEmptySpacing(projectName)) {
@@ -44,6 +46,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
 
   const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
     onCompleted: () => {
+      setIsLoading(false);
       window.location.assign('/home');
     },
   });
@@ -60,6 +63,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
 
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
+    setIsLoading(true);
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
       headers: {
@@ -102,6 +106,9 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
         console.error(err);
       });
   };
+
+  const loaderSize = 20;
+
   return (
     <div className={classes.rootDiv}>
       <div className={classes.rootLitmusText}>
@@ -119,7 +126,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
         // onSubmit={handleSubmit}
         className={classes.inputDiv}
       >
-        <InputField
+        <TextField
           className={classes.inputValue}
           label={t('welcomeModal.case-0.label')}
           value={projectName}
@@ -128,7 +135,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
               ? 'Should not start with an empty space'
               : ''
           }
-          variant={validateStartEmptySpacing(projectName) ? 'error' : 'primary'}
+          variant="filled"
           required
           onChange={(e) => setProjectName(e.target.value)}
         />
@@ -139,7 +146,11 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
             disabled={isError.current}
             onClick={handleSubmit}
           >
-            Continue to Portal
+            {isLoading ? (
+              <Loader size={loaderSize} />
+            ) : (
+              <Typography>Continue to Portal</Typography>
+            )}
           </ButtonFilled>
           <Typography>
             Step {currentStep} of {totalStep}

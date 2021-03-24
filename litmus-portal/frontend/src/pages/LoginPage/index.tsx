@@ -1,5 +1,5 @@
-import { Typography } from '@material-ui/core';
-import { ButtonFilled, InputField } from 'litmus-ui';
+import { TextField, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import Loader from '../../components/Loader';
 import config from '../../config';
@@ -79,7 +79,7 @@ const LoginPage: React.FC = () => {
             className={classes.inputDiv}
           >
             <div>
-              <InputField
+              <TextField
                 className={classes.inputValue}
                 label="Username"
                 value={authData.username}
@@ -88,11 +88,7 @@ const LoginPage: React.FC = () => {
                     ? 'Should not start with an empty space'
                     : ''
                 }
-                variant={
-                  validateStartEmptySpacing(authData.username)
-                    ? 'error'
-                    : 'primary'
-                }
+                variant="filled"
                 required
                 onChange={(e) =>
                   setAuthData({
@@ -101,7 +97,7 @@ const LoginPage: React.FC = () => {
                   })
                 }
               />
-              <InputField
+              <TextField
                 className={classes.inputValue}
                 label="Password"
                 type="password"
@@ -112,7 +108,7 @@ const LoginPage: React.FC = () => {
                     ? 'Wrong Credentials - Try again with correct username or password'
                     : ''
                 }
-                variant={isError ? 'error' : 'primary'}
+                variant="filled"
                 onChange={(e) =>
                   setAuthData({
                     username: authData.username,
