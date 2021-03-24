@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme: Theme) => ({
       '& g.node': {
         cursor: 'pointer',
         fill: 'none',
+        '& circle': {
+          fill: theme.palette.status.completed.text,
+        },
         '& g.label g': {
           transform: (props: StyleProps) =>
             props.horizontal ? 'translate(0, 0)' : 'translate(0, -5px)',
@@ -28,40 +31,13 @@ const useStyles = makeStyles((theme: Theme) => ({
           fill: theme.palette.text.primary,
         },
       },
-      '& path.pendingIcon': {
-        transform: (props: StyleProps) =>
-          `scale(1.8) translate(-5px, ${props.horizontal ? -5.6 : -2.8}px)`,
-      },
-      '& path.runningIcon': {
-        transformOrigin: '6.05px 6.55px',
-        animation: 'runningNodeSpinAnimation 2s ease-in-out infinite',
-      },
       '& path.succeededIcon': {
         transform: (props: StyleProps) =>
           `scale(1.8) translate(-5px, ${props.horizontal ? -3.6 : -1}px)`,
       },
-      '& path.failedIcon': {
-        transform: (props: StyleProps) =>
-          `scale(1.5) translate(-5px, ${props.horizontal ? -5.5 : -2.5}px)`,
-      },
       '& g.Succeeded': {
         '& circle': {
           fill: theme.palette.status.completed.text,
-        },
-      },
-      '& g.Running': {
-        '& circle': {
-          fill: theme.palette.highlight,
-        },
-      },
-      '& g.Pending': {
-        '& circle': {
-          fill: theme.palette.status.pending.text,
-        },
-      },
-      '& g.Failed': {
-        '& circle': {
-          fill: theme.palette.status.failed.text,
         },
       },
       '& g.StepGroup': {
@@ -79,34 +55,13 @@ const useStyles = makeStyles((theme: Theme) => ({
       '& g.StepGroup.Succeeded': {
         fill: theme.palette.status.completed.text,
       },
-      '& g.StepGroup.Running': {
-        fill: theme.palette.status.running.text,
-      },
-      '& g.StepGroup.Pending': {
-        fill: theme.palette.status.pending.text,
-      },
-      '& g.StepGroup.Failed': {
-        fill: theme.palette.status.failed.text,
-      },
     },
 
     // Styles for edges
     '& g g.edgePaths': {
-      '& g.Succeeded': {
+      '& g.succeeded': {
         fill: theme.palette.status.completed.text,
         stroke: theme.palette.status.completed.text,
-      },
-      '& g.Running': {
-        fill: theme.palette.highlight,
-        stroke: theme.palette.highlight,
-      },
-      '& g.Pending': {
-        fill: theme.palette.status.pending.text,
-        stroke: theme.palette.status.pending.text,
-      },
-      '& g.Failed': {
-        fill: theme.palette.status.failed.text,
-        stroke: theme.palette.status.failed.text,
       },
     },
   },
@@ -125,6 +80,11 @@ const useStyles = makeStyles((theme: Theme) => ({
           }px) rotate(360deg)`,
       },
     },
+  },
+  load: {
+    textAlign: 'center',
+    marginTop: '50%',
+    height: '10rem',
   },
 }));
 

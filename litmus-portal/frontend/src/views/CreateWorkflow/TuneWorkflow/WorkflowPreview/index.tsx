@@ -4,6 +4,7 @@ import DagreGraph, { d3Link, d3Node } from '../../../../components/DagreGraph';
 import { Steps } from '../../../../models/redux/customyaml';
 import { RootState } from '../../../../redux/reducers';
 import { extractSteps } from '../ExtractSteps';
+import { createLabel } from './createLabel';
 import useStyles from './styles';
 
 interface GraphData {
@@ -46,14 +47,28 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
         for (let j = 0; j < steps[i].length; j++) {
           data.nodes.push({
             id: i.toString(),
-            label: steps[i][j].name,
+            class: `${'succeeded'} ${'steps'}`,
+            label: createLabel({
+              label: steps[i][j].name,
+              tooltip: steps[i][j].name,
+              phase: 'succeeded',
+              horizontal,
+            }),
+            labelType: steps[i][j].name !== 'StepGroup' ? 'svg' : 'string',
             config: { fullName: steps[i][j].name },
           });
         }
       } else {
         data.nodes.push({
           id: i.toString(),
-          label: steps[i][0].name,
+          class: `${'succeeded'} ${'steps'}`,
+          label: createLabel({
+            label: steps[i][0].name,
+            tooltip: steps[i][0].name,
+            phase: 'succeeded',
+            horizontal,
+          }),
+          labelType: steps[i][0].name !== 'StepGroup' ? 'svg' : 'string',
           config: { fullName: steps[i][0].name },
         });
       }
@@ -63,6 +78,10 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
       data.links.push({
         source: i.toString(),
         target: (i + 1).toString(),
+        class: 'succeeded',
+        config: {
+          arrowhead: steps[i][0].name === 'StepGroup' ? 'undirected' : 'vee',
+        },
       });
     }
 
@@ -72,7 +91,7 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
     });
   }, [manifest]);
 
-  return (
+  return graphData.nodes.length ? (
     <DagreGraph
       className={classes.dagreGraph}
       nodes={graphData.nodes}
@@ -87,6 +106,8 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
       fitBoundaries
       zoomable
     />
+  ) : (
+    <div className={classes.load}>Visualizing your Workflow</div>
   );
 };
 
