@@ -62,7 +62,8 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
   });
 
   // Submit entered data to /update endpoint
-  const handleSubmit = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setIsLoading(true);
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
@@ -121,9 +122,9 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
           workflows, view analytics and also invite others to your project.
         </Typography>
       </div>
-      <div
-        // id="login-form"
-        // onSubmit={handleSubmit}
+      <form
+        id="login-form"
+        onSubmit={handleSubmit}
         className={classes.inputDiv}
       >
         <TextField
@@ -144,7 +145,6 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
             type="submit"
             className={classes.submitButton}
             disabled={isError.current}
-            onClick={handleSubmit}
           >
             {isLoading ? (
               <Loader size={loaderSize} />
@@ -156,7 +156,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
             Step {currentStep} of {totalStep}
           </Typography>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

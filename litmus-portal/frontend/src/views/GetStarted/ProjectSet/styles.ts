@@ -53,6 +53,14 @@ const useStyles = makeStyles((theme) => ({
   submitButton: {
     background: theme.palette.primary.light,
     color: theme.palette.text.secondary,
+    '&:disabled': {
+      PointerEvents: 'none',
+      background: theme.palette.primary.light,
+      color: theme.palette.text.secondary,
+    },
+    '&:hover': {
+      background: theme.palette.primary.light,
+    },
   },
   buttonGroup: {
     marginTop: theme.spacing(3.75),

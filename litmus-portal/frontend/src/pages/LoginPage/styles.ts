@@ -53,6 +53,12 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.primary.light,
     color: theme.palette.text.secondary,
     maxWidth: '8rem',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light,
+    },
+    '&:disabled': {
+      backgroundColor: theme.palette.primary.light,
+    },
   },
 }));
 export default useStyles;

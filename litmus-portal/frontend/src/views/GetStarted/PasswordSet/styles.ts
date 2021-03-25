@@ -55,6 +55,14 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.primary.light,
     color: theme.palette.text.secondary,
     maxWidth: '8rem',
+    '&:disabled': {
+      PointerEvents: 'none',
+      background: theme.palette.primary.light,
+      color: theme.palette.text.secondary,
+    },
+    '&:hover': {
+      background: theme.palette.primary.light,
+    },
   },
   buttonGroup: {
     width: '100%',
