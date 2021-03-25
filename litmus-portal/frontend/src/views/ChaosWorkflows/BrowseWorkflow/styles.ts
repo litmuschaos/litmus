@@ -101,6 +101,7 @@ const useStyles = makeStyles((theme) => ({
   },
   progressBar: {
     width: '6.5rem',
+    marginTop: theme.spacing(2),
   },
   steps: {
     marginLeft: theme.spacing(5.625),
@@ -134,6 +135,9 @@ const useStyles = makeStyles((theme) => ({
   },
   success: {
     color: theme.palette.success.main,
+  },
+  warning: {
+    color: theme.palette.warning.main,
   },
   // Menu option with icon
   expDiv: {

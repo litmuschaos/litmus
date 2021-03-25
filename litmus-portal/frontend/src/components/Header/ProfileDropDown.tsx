@@ -58,7 +58,7 @@ const ProfileDropdown: React.FC = () => {
   return (
     <div className={classes.profileDropdown} data-cy="headerProfileDropdown">
       <IconButton edge="end" onClick={handleClick}>
-        <Avatar>{initials}</Avatar>
+        <Avatar className={classes.avatarBackground}>{initials}</Avatar>
       </IconButton>
       <Popover
         id={id}

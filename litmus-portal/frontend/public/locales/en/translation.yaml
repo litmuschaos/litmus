@@ -278,6 +278,7 @@ error:
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow
   fetchError: An error has occurred while fetching the data
+  overallRR: 'Overall RR: '
 
 ######################################
 ############    Views    #############
@@ -345,6 +346,7 @@ settings:
     yourProject: Your Project
     projectInvite: Projects by invite
     invitations: Invitations
+    active: Active
     manageTeam: Manage your team, invite a member to your project or change the role of members in the team
     header: Members
     invitedProject: Projects you were invited to
@@ -417,6 +419,9 @@ settings:
           viewerRole:
             label: Viewer
             body: Can view the project
+      acceptedInvitation:
+        viewProject: View Project
+        role: Role
 
   userManagementTab:
     header: Members

@@ -31,7 +31,7 @@ const WorkflowDetails: React.FC = () => {
   const tabs = useActions(TabActions);
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
-  const workflowRunId = pathname.split('/')[3];
+  const workflowRunId = pathname.split('/')[2];
   const { t } = useTranslation();
 
   // get ProjectID
