@@ -268,6 +268,11 @@ analyticsDashboard:
     day: day
     days: days
     few: few
+  toolTip:
+    viewChaosMetric: View Chaos Metric Info
+    hideChaosMetric: Hide Chaos Metric Info
+    editPanel: Edit
+    popout: Popout
 
 error:
   whoops: Whoops!

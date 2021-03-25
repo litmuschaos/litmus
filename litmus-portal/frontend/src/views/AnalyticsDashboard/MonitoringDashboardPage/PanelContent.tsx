@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
-import { Typography } from '@material-ui/core';
+import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
-import { GraphMetric, LineAreaGraph } from 'litmus-ui';
+import { ButtonOutlined, GraphMetric, LineAreaGraph, Modal } from 'litmus-ui';
 import moment from 'moment';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { PROM_QUERY } from '../../../graphql';
-import { PanelResponse } from '../../../models/graphql/dashboardsDetails';
+import { GraphPanelProps } from '../../../models/dashboardsData';
 import {
   PrometheusQueryInput,
   PrometheusQueryVars,
@@ -15,6 +16,10 @@ import {
   promQueryInput,
 } from '../../../models/graphql/prometheus';
 import { RootState } from '../../../redux/reducers';
+import { ReactComponent as ViewChaosMetric } from '../../../svg/aligment.svg';
+import { ReactComponent as DisableViewChaosMetric } from '../../../svg/alignmentStriked.svg';
+import { ReactComponent as Expand } from '../../../svg/arrowsOut.svg';
+import { ReactComponent as Edit } from '../../../svg/edit.svg';
 import {
   getPromQueryInput,
   seriesDataParserForPrometheus,
@@ -26,7 +31,7 @@ interface PrometheusQueryDataInterface {
   firstLoad: Boolean;
 }
 
-const PanelContent: React.FC<PanelResponse> = ({
+const PanelContent: React.FC<GraphPanelProps> = ({
   panel_id,
   panel_name,
   panel_options,
@@ -34,11 +39,14 @@ const PanelContent: React.FC<PanelResponse> = ({
   y_axis_left,
   unit,
   chaos_data,
+  className,
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
+  const { t } = useTranslation();
   const lineGraph: string[] = palette.graph.line;
-
+  const [popout, setPopout] = useState(false);
+  const [viewEventMetric, setViewEventMetric] = useState(false);
   const [
     prometheusQueryData,
     setPrometheusQueryData,
@@ -127,20 +135,116 @@ const PanelContent: React.FC<PanelResponse> = ({
   }, [prometheusQueryData]);
 
   return (
-    <div className={classes.rootPanel}>
+    <div
+      className={` ${classes.rootPanel} ${className} ${
+        viewEventMetric ? classes.expand : ''
+      }`}
+    >
       <div>
         {/* <Typography>panel_id: {panel_id}</Typography>
           <Typography>
             panel_options: {JSON.stringify(panel_options)}
           </Typography>
           */}
-        <Typography className={classes.title}>{panel_name}</Typography>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography className={classes.title}>{panel_name}</Typography>
+          <div style={{ display: 'flex' }}>
+            {viewEventMetric ? (
+              <Tooltip
+                title={`${t('analyticsDashboard.toolTip.hideChaosMetric')}`}
+              >
+                <IconButton
+                  className={classes.pannelIconButton}
+                  onClick={() => {
+                    setViewEventMetric(false);
+                  }}
+                >
+                  <DisableViewChaosMetric className={classes.pannelIcon} />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip
+                title={`${t('analyticsDashboard.toolTip.viewChaosMetric')}`}
+              >
+                <IconButton
+                  className={classes.pannelIconButton}
+                  onClick={() => {
+                    setViewEventMetric(true);
+                  }}
+                >
+                  <ViewChaosMetric className={classes.pannelIcon} />
+                </IconButton>
+              </Tooltip>
+            )}
+            <Tooltip title={`${t('analyticsDashboard.toolTip.editPanel')}`}>
+              <IconButton
+                disabled
+                className={classes.pannelIconButton}
+                onClick={() => {}}
+              >
+                <Edit className={classes.pannelIcon} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={`${t('analyticsDashboard.toolTip.popout')}`}>
+              <IconButton
+                className={classes.pannelIconButton}
+                onClick={() => {
+                  setPopout(true);
+                }}
+              >
+                <Expand className={classes.pannelIcon} />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+        <div>
+          <Modal
+            open={popout}
+            onClose={() => setPopout(false)}
+            disableBackdropClick
+            disableEscapeKeyDown
+            modalActions={
+              <ButtonOutlined onClick={() => setPopout(false)}>
+                &#x2715;
+              </ButtonOutlined>
+            }
+            height="95% !important"
+            width="95%"
+          >
+            <div
+              style={{
+                width: '85%',
+                height: '95%',
+                padding: '2rem',
+                paddingLeft: '10%',
+              }}
+            >
+              <Typography className={classes.title}>{panel_name}</Typography>
+              <LineAreaGraph
+                legendTableHeight={120}
+                openSeries={graphData}
+                eventSeries={chaos_data}
+                showPoints={false}
+                showLegendTable
+                showEventTable
+                showTips
+                showEventMarkers
+                marginLeftEventTable={10}
+                unit={unit}
+                yLabel={y_axis_left}
+                yLabelOffset={55}
+                margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
+              />
+            </div>
+          </Modal>
+        </div>
         <div className={classes.singleGraph}>
           <LineAreaGraph
             legendTableHeight={120}
             openSeries={graphData}
             eventSeries={chaos_data}
             showPoints={false}
+            showEventTable={viewEventMetric}
             showLegendTable
             showTips
             showEventMarkers
