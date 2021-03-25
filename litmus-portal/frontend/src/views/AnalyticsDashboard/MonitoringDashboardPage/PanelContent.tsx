@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { GraphMetric, LineAreaGraph } from 'litmus-ui';
+import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { PROM_QUERY } from '../../../graphql';
@@ -93,8 +94,15 @@ const PanelContent: React.FC<PanelResponse> = ({
     setPrometheusQueryData({
       promInput: {
         url: selectedDataSource.selectedDataSourceURL,
-        start: `${Math.round(new Date().getTime() / 1000) - 1800}`,
-        end: `${Math.round(new Date().getTime() / 1000)}`,
+        start: `${
+          new Date(
+            moment(selectedDashboard.range.startDate).format()
+          ).getTime() / 1000
+        }`,
+        end: `${
+          new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+          1000
+        }`,
         queries: promQueries,
       },
       firstLoad: false,
@@ -103,9 +111,19 @@ const PanelContent: React.FC<PanelResponse> = ({
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    if (prometheusQueryData.firstLoad) {
       generatePromQueries();
-    }, selectedDashboard.refreshRate);
+    }
+    if (!prometheusQueryData.firstLoad) {
+      setTimeout(
+        () => {
+          generatePromQueries();
+        },
+        selectedDashboard.refreshRate !== 0
+          ? selectedDashboard.refreshRate
+          : 10000
+      );
+    }
   }, [prometheusQueryData]);
 
   return (

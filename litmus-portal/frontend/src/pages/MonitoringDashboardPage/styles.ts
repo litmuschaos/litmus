@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { fade, makeStyles, Theme } from '@material-ui/core/styles';
 
 // Component styles
 const useStyles = makeStyles((theme) => ({
@@ -10,9 +10,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   root: {
-    marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(6),
-    marginBottom: theme.spacing(8),
+    marginTop: theme.spacing(-1),
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(2.5),
   },
 
   headerDiv: {
@@ -68,9 +68,15 @@ const useStyles = makeStyles((theme) => ({
 
   // Menu option
   menuItem: {
+    minWidth: '10rem',
+    height: '2.5rem',
+  },
+
+  menuItemSelected: {
+    background: theme.palette.primary.light,
+    color: theme.palette.secondary.contrastText,
     '&:hover': {
       background: theme.palette.primary.light,
-      color: theme.palette.secondary.contrastText,
     },
     minWidth: '10rem',
     height: '2.5rem',
@@ -113,6 +119,113 @@ const useStyles = makeStyles((theme) => ({
   modal: {
     padding: theme.spacing(15, 0),
   },
+
+  selectDate: {
+    display: 'flex',
+    height: '2.9rem',
+    minWidth: '9rem',
+    border: `0.1px solid ${theme.palette.border.main}`,
+    background: theme.palette.background.paper,
+    borderRadius: 4,
+    textTransform: 'none',
+  },
+
+  displayDate: {
+    width: '100%',
+    color: theme.palette.text.primary,
+  },
+
+  rangeSelectorIcon: {
+    width: '0.625rem',
+    height: '0.625rem',
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(-1),
+  },
+
+  rangeSelectorClockIcon: {
+    width: '0.825rem',
+    height: '0.825rem',
+    marginLeft: theme.spacing(-1),
+    marginRight: theme.spacing(1),
+  },
+
+  rangeSelectorPopover: {
+    marginTop: theme.spacing(37.5),
+  },
+
+  formControl: {
+    width: '9rem',
+    '& .MuiSelect-outlined': {
+      padding: '0.925rem',
+      '&:focus': {
+        borderColor: theme.palette.primary.main,
+      },
+      '& .MuiInputLabel-root': {
+        color: `${theme.palette.text.hint} !important`,
+        marginTop: `${theme.spacing(2)} !important`,
+      },
+    },
+  },
+
+  inputLabel: {
+    color: theme.palette.text.hint,
+    marginTop: theme.spacing(-1),
+    '&.MuiInputLabel-shrink': {
+      marginTop: theme.spacing(1),
+    },
+  },
+
+  menuListItem: {
+    color: theme.palette.text.hint,
+    height: '2.4rem',
+  },
+
+  menuListItemSelected: {
+    height: '2.4rem',
+    background: `${theme.palette.primary.light} !important`,
+    color: theme.palette.secondary.contrastText,
+    '&:hover': {
+      background: `${theme.palette.primary.light} !important`,
+    },
+  },
+
+  refreshIcon: {
+    marginRight: theme.spacing(1),
+  },
+
+  refreshText: {
+    marginTop: theme.spacing(-2.75),
+    marginLeft: theme.spacing(3.5),
+  },
+}));
+
+export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
+  root: {
+    '& $notchedOutline': {
+      borderColor: theme.palette.border.main,
+    },
+    '&:hover $notchedOutline': {
+      borderColor: theme.palette.primary.main,
+      boxShadow: `0px 4px 5px -2px ${fade(
+        theme.palette.highlight,
+        0.2
+      )},0px 7px 10px 1px ${fade(
+        theme.palette.highlight,
+        0.14
+      )},0px 2px 16px 1px ${fade(theme.palette.highlight, 0.12)}`,
+    },
+    '&$focused $notchedOutline': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& .MuiInputLabel-root': {
+      color: `${theme.palette.text.hint} !important`,
+      marginTop: `${theme.spacing(2)} !important`,
+    },
+    color: theme.palette.text.hint,
+    background: theme.palette.background.paper,
+  },
+  focused: {},
+  notchedOutline: {},
 }));
 
 export default useStyles;

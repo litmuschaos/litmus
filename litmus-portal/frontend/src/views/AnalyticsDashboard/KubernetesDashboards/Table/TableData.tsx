@@ -90,6 +90,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       selectedDashboardTemplateName: data.db_type,
       selectedAgentID: data.cluster_id,
       selectedAgentName: data.cluster_name,
+      refreshRate: 0,
     });
     dataSource.selectDataSource({
       selectedDataSourceURL: '',

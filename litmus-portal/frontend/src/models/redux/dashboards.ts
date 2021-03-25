@@ -3,6 +3,11 @@ export interface PanelGroupMap {
   panels: string[];
 }
 
+export interface RangeType {
+  startDate: string;
+  endDate: string;
+}
+
 export interface DashboardData {
   selectedDashboardID: string;
   selectedDashboardName?: string;
@@ -13,6 +18,7 @@ export interface DashboardData {
   selectedAgentID?: string;
   selectedAgentName?: string;
   refreshRate?: number;
+  range: RangeType;
 }
 
 export enum DashboardSelectionActions {

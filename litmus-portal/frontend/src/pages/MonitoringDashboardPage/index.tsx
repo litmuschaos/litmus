@@ -1,18 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
 import {
+  FormControl,
   IconButton,
+  InputLabel,
   Menu,
   MenuItem,
+  OutlinedInput,
+  Select,
   Typography,
   useTheme,
 } from '@material-ui/core';
+import AutorenewOutlinedIcon from '@material-ui/icons/AutorenewOutlined';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { ButtonFilled, GraphMetric, Modal } from 'litmus-ui';
+import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
+import { ButtonOutlined, GraphMetric } from 'litmus-ui';
+import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
+import DateRangeSelector from '../../components/DateRangeSelector';
 import Scaffold from '../../containers/layouts/Scaffold';
 import {
   LIST_DASHBOARD,
@@ -41,19 +49,19 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
+import { RangeType } from '../../models/redux/dashboards';
 import useActions from '../../redux/actions';
 import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
-import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import {
   chaosEventDataParserForPrometheus,
   getChaosQueryPromInputAndID,
 } from '../../utils/promUtils';
 import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DashboardPanelGroup';
-import useStyles from './styles';
+import refreshData from './refreshData';
+import useStyles, { useOutlinedInputStyles } from './styles';
 
 interface SelectedDashboardInformation {
   id: string;
@@ -72,8 +80,14 @@ interface PrometheusQueryDataInterface {
   firstLoad: Boolean;
 }
 
+interface RefreshObjectType {
+  label: string;
+  value: number;
+}
+
 const DashboardPage: React.FC = () => {
   const classes = useStyles();
+  const outlinedInputClasses = useOutlinedInputStyles();
   const { t } = useTranslation();
   const { palette } = useTheme();
   const ACTIVE: string = 'Active';
@@ -104,7 +118,9 @@ const DashboardPage: React.FC = () => {
     dashboardKey: 'Default',
   });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [refreshRate, setRefreshRate] = React.useState<number>(10000);
+  const [refreshRate, setRefreshRate] = React.useState<number>(
+    selectedDashboard.refreshRate ? selectedDashboard.refreshRate : 0
+  );
   const [dataSourceStatus, setDataSourceStatus] = React.useState<string>(
     'ACTIVE'
   );
@@ -128,6 +144,49 @@ const DashboardPage: React.FC = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const dateRangeSelectorRef = React.useRef<HTMLButtonElement>(null);
+  const [range, setRange] = React.useState<RangeType>(
+    selectedDashboard.range &&
+      selectedDashboard.range.startDate !== '' &&
+      selectedDashboard.range.endDate !== ''
+      ? selectedDashboard.range
+      : {
+          startDate: moment
+            .unix(Math.round(new Date().getTime() / 1000) - 1800)
+            .format(),
+          endDate: moment
+            .unix(Math.round(new Date().getTime() / 1000))
+            .format(),
+        }
+  );
+  const [
+    isDateRangeSelectorPopoverOpen,
+    setDateRangeSelectorPopoverOpen,
+  ] = React.useState(false);
+
+  const CallbackFromRangeSelector = (
+    selectedStartDate: string,
+    selectedEndDate: string
+  ) => {
+    const startDateFormatted: string = moment(selectedStartDate).format();
+    const endDateFormatted: string = moment(selectedEndDate)
+      .add(23, 'hours')
+      .add(59, 'minutes')
+      .add(59, 'seconds')
+      .format();
+    dashboard.selectDashboard({
+      range: { startDate: startDateFormatted, endDate: endDateFormatted },
+    });
+    setRange({ startDate: startDateFormatted, endDate: endDateFormatted });
+  };
+  const [openRefresh, setOpenRefresh] = React.useState(false);
+  const handleCloseRefresh = () => {
+    setOpenRefresh(false);
+  };
+
+  const handleOpenRefresh = () => {
+    setOpenRefresh(true);
   };
 
   // Apollo query to get the dashboards data
@@ -201,6 +260,12 @@ const DashboardPage: React.FC = () => {
             return data.db_id === selectedDashboardInformation.id;
           }
         )[0];
+        dashboard.selectDashboard({
+          selectedDashboardID: selectedDashboardInformation.id,
+          selectedDashboardName: selectedDashboard.db_name,
+          selectedDashboardTemplateName: selectedDashboard.db_type,
+          refreshRate: 0,
+        });
         setSelectedDashboardInformation({
           ...selectedDashboardInformation,
           dashboardListForAgent: availableDashboards,
@@ -261,8 +326,15 @@ const DashboardPage: React.FC = () => {
     setPrometheusQueryData({
       promInput: {
         url: selectedDataSource.selectedDataSourceURL,
-        start: `${Math.round(new Date().getTime() / 1000) - 1800}`,
-        end: `${Math.round(new Date().getTime() / 1000)}`,
+        start: `${
+          new Date(
+            moment(selectedDashboard.range.startDate).format()
+          ).getTime() / 1000
+        }`,
+        end: `${
+          new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+          1000
+        }`,
         queries: chaosInformation.promQueries,
       },
       chaosInput: chaosInformation.chaosQueryIDs,
@@ -275,9 +347,29 @@ const DashboardPage: React.FC = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    if (prometheusQueryData.firstLoad) {
       generateChaosQueries();
-    }, selectedDashboard.refreshRate);
+      dashboard.selectDashboard({
+        range: {
+          startDate: moment
+            .unix(Math.round(new Date().getTime() / 1000) - 1800)
+            .format(),
+          endDate: moment
+            .unix(Math.round(new Date().getTime() / 1000))
+            .format(),
+        },
+      });
+    }
+    if (!prometheusQueryData.firstLoad) {
+      setTimeout(
+        () => {
+          generateChaosQueries();
+        },
+        selectedDashboard.refreshRate !== 0
+          ? selectedDashboard.refreshRate
+          : 10000
+      );
+    }
   }, [prometheusQueryData]);
 
   return (
@@ -287,10 +379,10 @@ const DashboardPage: React.FC = () => {
           <div className={classes.button}>
             <BackButton />
           </div>
-          <Typography variant="h3" className={classes.weightedFont}>
+          <Typography variant="h4" className={classes.weightedFont}>
             {selectedDashboardInformation.agentName} /{' '}
             <Typography
-              variant="h3"
+              variant="h4"
               display="inline"
               className={classes.italic}
             >
@@ -331,15 +423,20 @@ const DashboardPage: React.FC = () => {
                           selectedDataSourceID: '',
                           selectedDataSourceName: '',
                         });
+                        setRefreshRate(0);
                         setAnchorEl(null);
                       }}
-                      className={classes.menuItem}
+                      className={
+                        data.db_id === selectedDashboardInformation.id
+                          ? classes.menuItemSelected
+                          : classes.menuItem
+                      }
                     >
                       <div className={classes.expDiv}>
                         <Typography
                           data-cy="switchDashboard"
-                          className={classes.btnText}
-                          variant="h6"
+                          className={`${classes.btnText} ${classes.italic}`}
+                          variant="h5"
                         >
                           {data.db_name}
                         </Typography>
@@ -351,12 +448,121 @@ const DashboardPage: React.FC = () => {
             </Menu>
           </Typography>
           <div className={classes.headerDiv}>
-            <Typography
+            {/* <Typography
               variant="h5"
               className={`${classes.weightedFont} ${classes.dashboardType}`}
             >
               {selectedDashboardInformation.type}
+            </Typography> */}
+            <Typography>
+              {`View the chaos events and metrics in a given \n time interval by
+              selecting a time interval.`}
             </Typography>
+            <ButtonOutlined
+              className={classes.selectDate}
+              onClick={() => setDateRangeSelectorPopoverOpen(true)}
+              ref={dateRangeSelectorRef}
+              aria-label="time range"
+              aria-haspopup="true"
+            >
+              <Typography className={classes.displayDate}>
+                <IconButton className={classes.rangeSelectorClockIcon}>
+                  <WatchLaterRoundedIcon />
+                </IconButton>
+                {selectedDashboard.range.startDate === ' '
+                  ? 'Select Period'
+                  : `${selectedDashboard.range.startDate.split('-')[0]}-${
+                      selectedDashboard.range.startDate.split('-')[1]
+                    }-${selectedDashboard.range.startDate.substring(
+                      selectedDashboard.range.startDate.lastIndexOf('-') + 1,
+                      selectedDashboard.range.startDate.lastIndexOf('T')
+                    )} 
+                    
+                  ${selectedDashboard.range.startDate.substring(
+                    selectedDashboard.range.startDate.lastIndexOf('T') + 1,
+                    selectedDashboard.range.startDate.lastIndexOf('+')
+                  )} 
+                    
+                  to ${selectedDashboard.range.endDate.split('-')[0]}-${
+                      selectedDashboard.range.endDate.split('-')[1]
+                    }-${selectedDashboard.range.endDate.substring(
+                      selectedDashboard.range.endDate.lastIndexOf('-') + 1,
+                      selectedDashboard.range.endDate.lastIndexOf('T')
+                    )} 
+                    
+                  ${selectedDashboard.range.endDate.substring(
+                    selectedDashboard.range.endDate.lastIndexOf('T') + 1,
+                    selectedDashboard.range.endDate.lastIndexOf('+')
+                  )}`}
+
+                <IconButton className={classes.rangeSelectorIcon}>
+                  <KeyboardArrowDownIcon />
+                </IconButton>
+              </Typography>
+            </ButtonOutlined>
+            <DateRangeSelector
+              anchorEl={dateRangeSelectorRef.current as HTMLElement}
+              isOpen={isDateRangeSelectorPopoverOpen}
+              onClose={() => {
+                setDateRangeSelectorPopoverOpen(false);
+              }}
+              callbackToSetRange={CallbackFromRangeSelector}
+              className={classes.rangeSelectorPopover}
+            />
+
+            <FormControl className={classes.formControl} variant="outlined">
+              <InputLabel
+                id="refresh-controlled-open-select-label"
+                className={classes.inputLabel}
+              >
+                <AutorenewOutlinedIcon className={classes.refreshIcon} />
+                <Typography className={classes.refreshText}>Refresh</Typography>
+              </InputLabel>
+              <Select
+                labelId="refresh-controlled-open-select-label"
+                id="refresh-controlled-open-select"
+                open={openRefresh}
+                onClose={handleCloseRefresh}
+                onOpen={handleOpenRefresh}
+                value={refreshRate !== 0 ? refreshRate : null}
+                onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                  setRefreshRate(event.target.value as number);
+                  dashboard.selectDashboard({
+                    refreshRate: event.target.value as number,
+                  });
+                  setTimeout(() => {
+                    window.location.reload(false);
+                  }, 1000);
+                }}
+                input={<OutlinedInput classes={outlinedInputClasses} />}
+                IconComponent={KeyboardArrowDownIcon}
+              >
+                <MenuItem
+                  key="Off-refresh-option"
+                  value={2147483647}
+                  className={
+                    refreshRate === 2147483647
+                      ? classes.menuListItemSelected
+                      : classes.menuListItem
+                  }
+                >
+                  Off
+                </MenuItem>
+                {refreshData.map((data: RefreshObjectType) => (
+                  <MenuItem
+                    key={`${data.label}-refresh-option`}
+                    value={data.value}
+                    className={
+                      refreshRate === data.value
+                        ? classes.menuListItemSelected
+                        : classes.menuListItem
+                    }
+                  >
+                    {data.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
           <div
             className={classes.analyticsDiv}
@@ -382,74 +588,7 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
-      {dataSourceStatus !== 'ACTIVE' ? (
-        <Modal open onClose={() => {}} width="60%">
-          <div className={classes.modal}>
-            <Typography align="center">
-              <CrossMarkIcon className={classes.icon} />
-            </Typography>
-            <Typography
-              className={classes.modalHeading}
-              align="center"
-              variant="h3"
-            >
-              Data source is {dataSourceStatus}
-            </Typography>
-            <Typography
-              align="center"
-              variant="body1"
-              className={classes.modalBody}
-            >
-              {t('analyticsDashboard.monitoringDashboardPage.dataSourceError')}
-            </Typography>
-            <div className={classes.flexButtons}>
-              <ButtonFilled
-                variant="success"
-                onClick={() => {
-                  let dashboardTemplateID: number = -1;
-                  if (
-                    selectedDashboardInformation.type === 'Kubernetes Platform'
-                  ) {
-                    dashboardTemplateID = 0;
-                  } else if (
-                    selectedDashboardInformation.type === 'Sock Shop'
-                  ) {
-                    dashboardTemplateID = 1;
-                  }
-                  dashboard.selectDashboard({
-                    selectedDashboardID: selectedDashboardInformation.id,
-                    selectedDashboardName: selectedDashboardInformation.name,
-                    selectedDashboardTemplateID: dashboardTemplateID,
-                  });
-                  history.push({
-                    pathname: '/analytics/dashboard/configure',
-                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                  });
-                }}
-              >
-                {t(
-                  'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
-                )}
-              </ButtonFilled>
-              <ButtonFilled
-                variant="success"
-                onClick={() => {
-                  history.push({
-                    pathname: '/analytics/datasource/configure',
-                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                  });
-                }}
-              >
-                {t(
-                  'analyticsDashboard.monitoringDashboardPage.updateDataSource'
-                )}
-              </ButtonFilled>
-            </div>
-          </div>
-        </Modal>
-      ) : (
-        <div />
-      )}
+      {}
     </Scaffold>
   );
 };
