@@ -6,7 +6,6 @@ import { ButtonOutlined, GraphMetric, LineAreaGraph, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { PROM_QUERY } from '../../../graphql';
-import { PanelResponse } from '../../../models/graphql/dashboardsDetails';
 import {
   PrometheusQueryInput,
   PrometheusQueryVars,
@@ -22,6 +21,7 @@ import {
   getPromQueryInput,
   seriesDataParserForPrometheus,
 } from '../../../utils/promUtils';
+import { GraphPanelProps } from './base';
 import useStyles from './styles';
 
 interface PrometheusQueryDataInterface {
@@ -29,7 +29,7 @@ interface PrometheusQueryDataInterface {
   firstLoad: Boolean;
 }
 
-const PanelContent: React.FC<PanelResponse> = ({
+const PanelContent: React.FC<GraphPanelProps> = ({
   panel_id,
   panel_name,
   panel_options,
@@ -37,6 +37,7 @@ const PanelContent: React.FC<PanelResponse> = ({
   y_axis_left,
   unit,
   chaos_data,
+  className,
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
@@ -114,7 +115,11 @@ const PanelContent: React.FC<PanelResponse> = ({
   }, [prometheusQueryData]);
 
   return (
-    <div className={classes.rootPanel}>
+    <div
+      className={` ${classes.rootPanel} ${className} ${
+        viewEventMetric ? classes.expand : ''
+      }`}
+    >
       <div>
         {/* <Typography>panel_id: {panel_id}</Typography>
           <Typography>
@@ -171,15 +176,15 @@ const PanelContent: React.FC<PanelResponse> = ({
                 &#x2715;
               </ButtonOutlined>
             }
-            height="100%"
-            width="100%"
+            height="95% !important"
+            width="95%"
           >
             <div
               style={{
-                width: '90%',
-                height: '90%',
+                width: '85%',
+                height: '95%',
                 padding: '2rem',
-                paddingLeft: '5%',
+                paddingLeft: '10%',
               }}
             >
               <Typography className={classes.title}>{panel_name}</Typography>
@@ -207,6 +212,7 @@ const PanelContent: React.FC<PanelResponse> = ({
             openSeries={graphData}
             eventSeries={chaos_data}
             showPoints={false}
+            showEventTable={viewEventMetric}
             showLegendTable
             showTips
             showEventMarkers

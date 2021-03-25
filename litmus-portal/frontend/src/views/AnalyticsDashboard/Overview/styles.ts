@@ -1,9 +1,5 @@
 import { makeStyles, Theme } from '@material-ui/core';
 
-interface StyleProps {
-  viewEventMetric?: boolean;
-}
-
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
