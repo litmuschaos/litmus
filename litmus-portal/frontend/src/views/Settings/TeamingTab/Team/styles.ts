@@ -1,4 +1,10 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { TableCell } from '@material-ui/core';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles,
+} from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   UMDiv: {
@@ -140,10 +146,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 'auto',
   },
   avatarBackground: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.light,
     width: '2.56rem',
     height: '2.56rem',
-    color: theme.palette.text.primary,
+    color: theme.palette.secondary.contrastText,
     alignContent: 'right',
     marginRight: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
@@ -376,4 +382,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 }));
+
+// StyledTableCell used to create custom table cell
+export const StyledTableCell = withStyles((theme: Theme) =>
+  createStyles({
+    head: {
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.disabled,
+      borderBottom: `1px solid ${theme.palette.border.main}`,
+    },
+    body: {
+      backgroundColor: theme.palette.background.paper,
+      fontSize: '0.875rem',
+    },
+  })
+)(TableCell);
+
 export default useStyles;

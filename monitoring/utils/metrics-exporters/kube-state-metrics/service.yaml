@@ -3,22 +3,22 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/version: 1.9.5
+    app.kubernetes.io/version: latest
   name: kube-state-metrics
   namespace: monitoring
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/path: "/metrics"
-    prometheus.io/port: "9091"
+    prometheus.io/port: "8080"
     prometheus.io/scheme: "http"
 spec:
   clusterIP: None
   ports:
-  - name: https-main
-    port: 8443
-    targetPort: https-main
-  - name: https-self
-    port: 9443
-    targetPort: https-self
+    - name: http-metrics
+      port: 8080
+      targetPort: http-metrics
+    - name: telemetry
+      port: 8081
+      targetPort: telemetry
   selector:
     app.kubernetes.io/name: kube-state-metrics

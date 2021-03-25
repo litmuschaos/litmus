@@ -226,8 +226,13 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
   },
+
   buttonOutlineWarning: {
     borderColor: theme.palette.error.dark,
+  },
+
+  modal: {
+    padding: theme.spacing(15, 0),
   },
 }));
 

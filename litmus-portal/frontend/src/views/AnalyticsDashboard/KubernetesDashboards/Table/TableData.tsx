@@ -9,7 +9,6 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import DashboardList from '../../../../components/PreconfiguredDashboards/data';
@@ -22,7 +21,7 @@ import {
   Template,
   WorkflowYaml,
 } from '../../../../models/chaosWorkflowYaml';
-import { ChaosEngineNamesAndNamespacesMap } from '../../../../models/dashboardsData';
+import { ChaosResultNamesAndNamespacesMap } from '../../../../models/dashboardsData';
 import {
   DeleteDashboardInput,
   ListDashboardResponse,
@@ -44,8 +43,11 @@ import * as DashboardActions from '../../../../redux/actions/dashboards';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
-import { RootState } from '../../../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../../../svg/crossmark.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import getEngineNameAndNamespace from '../../../../utils/promUtils';
 import { validateWorkflowParameter } from '../../../../utils/validate';
 import {
@@ -64,9 +66,8 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const dashboard = useActions(DashboardActions);
   const dataSource = useActions(DataSourceActions);
   const tabs = useActions(TabActions);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const [mutate, setMutate] = React.useState(false);
   const [confirm, setConfirm] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
@@ -81,7 +82,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const { data: workflowSchedules } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -127,7 +128,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   };
 
   const reSyncChaosQueries = () => {
-    const chaosEngineNamesAndNamespacesMap: ChaosEngineNamesAndNamespacesMap[] = [];
+    const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
     workflowSchedules?.getScheduledWorkflows.forEach(
       (schedule: ScheduleWorkflow) => {
         if (schedule.cluster_id === data.cluster_id && !schedule.isRemoved) {
@@ -178,11 +179,13 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                     engineNamespace = parsedEmbeddedYaml.metadata.namespace;
                   }
                   let matchIndex: number = -1;
-                  const check: number = chaosEngineNamesAndNamespacesMap.filter(
+                  const check: number = chaosResultNamesAndNamespacesMap.filter(
                     (data, index) => {
                       if (
-                        data.engineName === parsedEmbeddedYaml.metadata.name &&
-                        data.engineNamespace === engineNamespace
+                        data.resultName.includes(
+                          parsedEmbeddedYaml.metadata.name
+                        ) &&
+                        data.resultNamespace === engineNamespace
                       ) {
                         matchIndex = index;
                         return true;
@@ -191,15 +194,17 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                     }
                   ).length;
                   if (check === 0) {
-                    chaosEngineNamesAndNamespacesMap.push({
-                      engineName: parsedEmbeddedYaml.metadata.name,
-                      engineNamespace,
+                    chaosResultNamesAndNamespacesMap.push({
+                      resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
+                      resultNamespace: engineNamespace,
                       workflowName: workflowYaml.metadata.name,
+                      experimentName:
+                        parsedEmbeddedYaml.spec.experiments[0].name,
                     });
                   } else {
-                    chaosEngineNamesAndNamespacesMap[
+                    chaosResultNamesAndNamespacesMap[
                       matchIndex
-                    ].workflowName = `${chaosEngineNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                    ].workflowName = `${chaosResultNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
                   }
                 }
               });
@@ -210,29 +215,30 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     );
 
     const isChaosQueryPresent: number[] = Array(
-      chaosEngineNamesAndNamespacesMap.length
+      chaosResultNamesAndNamespacesMap.length
     ).fill(0);
 
     data.panel_groups[0].panels[0].prom_queries.forEach(
       (existingPromQuery: PromQuery) => {
         if (
           existingPromQuery.prom_query_name.startsWith(
-            'heptio_eventrouter_normal_total{reason="ChaosInject"'
+            'litmuschaos_awaited_experiments'
           )
         ) {
-          const chaosDetails: ChaosEngineNamesAndNamespacesMap = getEngineNameAndNamespace(
+          const chaosDetails: ChaosResultNamesAndNamespacesMap = getEngineNameAndNamespace(
             existingPromQuery.prom_query_name
           );
-          chaosEngineNamesAndNamespacesMap.forEach(
+          chaosResultNamesAndNamespacesMap.forEach(
             (
-              chaosDetailsFomSchedule: ChaosEngineNamesAndNamespacesMap,
+              chaosDetailsFomSchedule: ChaosResultNamesAndNamespacesMap,
               index: number
             ) => {
               if (
-                chaosDetailsFomSchedule.engineName ===
-                  chaosDetails.engineName &&
-                chaosDetailsFomSchedule.engineNamespace ===
-                  chaosDetails.engineNamespace
+                chaosDetailsFomSchedule.resultName.includes(
+                  chaosDetails.resultName
+                ) &&
+                chaosDetailsFomSchedule.resultNamespace ===
+                  chaosDetails.resultNamespace
               ) {
                 isChaosQueryPresent[index] = 1;
               }
@@ -254,20 +260,19 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         panel.prom_queries.forEach((query: PromQuery) => {
           let updatedLegend: string = query.legend;
           if (
-            query.prom_query_name.startsWith(
-              'heptio_eventrouter_normal_total{reason="ChaosInject"'
-            )
+            query.prom_query_name.startsWith('litmuschaos_awaited_experiments')
           ) {
-            const chaosDetails: ChaosEngineNamesAndNamespacesMap = getEngineNameAndNamespace(
+            const chaosDetails: ChaosResultNamesAndNamespacesMap = getEngineNameAndNamespace(
               query.prom_query_name
             );
-            chaosEngineNamesAndNamespacesMap.forEach(
-              (chaosDetailsFomSchedule: ChaosEngineNamesAndNamespacesMap) => {
+            chaosResultNamesAndNamespacesMap.forEach(
+              (chaosDetailsFomSchedule: ChaosResultNamesAndNamespacesMap) => {
                 if (
-                  chaosDetailsFomSchedule.engineName ===
-                    chaosDetails.engineName &&
-                  chaosDetailsFomSchedule.engineNamespace ===
-                    chaosDetails.engineNamespace &&
+                  chaosDetailsFomSchedule.resultName.includes(
+                    chaosDetails.resultName
+                  ) &&
+                  chaosDetailsFomSchedule.resultNamespace ===
+                    chaosDetails.resultNamespace &&
                   !query.legend.includes(chaosDetailsFomSchedule.workflowName)
                 ) {
                   updatedLegend = `${chaosDetailsFomSchedule.workflowName}, \n${query.legend}`;
@@ -286,17 +291,17 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           };
           updatedQueries.push(updatedQuery);
         });
-        chaosEngineNamesAndNamespacesMap.forEach(
-          (keyValue: ChaosEngineNamesAndNamespacesMap, index: number) => {
+        chaosResultNamesAndNamespacesMap.forEach(
+          (keyValue: ChaosResultNamesAndNamespacesMap, index: number) => {
             if (isChaosQueryPresent[index] === 0) {
               updatedQueries.push({
                 queryid: uuidv4(),
                 prom_query_name: generateChaosQuery(
                   DashboardList[dashboardTemplateID].chaosEventQueryTemplate,
-                  keyValue.engineName,
-                  keyValue.engineNamespace
+                  keyValue.resultName,
+                  keyValue.resultNamespace
                 ),
-                legend: `${keyValue.workflowName}- \n${keyValue.engineName}`,
+                legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
                 resolution: '1/1',
                 minstep: '1',
                 line: false,
@@ -440,7 +445,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                   selectedDataSourceID: '',
                   selectedDataSourceName: '',
                 });
-                history.push('/analytics/dashboard');
+                history.push({
+                  pathname: '/analytics/dashboard',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
               });
             }}
             className={classes.menuItem}
@@ -474,7 +482,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 selectedDashboardName: data.db_name,
                 selectedDashboardTemplateID: dashboardTemplateID,
               });
-              history.push('/analytics/dashboard/configure');
+              history.push({
+                pathname: '/analytics/dashboard/configure',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
             className={classes.menuItem}
           >
@@ -525,6 +536,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           setConfirm(false);
           setOpenModal(false);
         }}
+        width="60%"
         modalActions={
           <ButtonOutlined
             className={classes.closeButton}
@@ -537,7 +549,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           </ButtonOutlined>
         }
       >
-        <div>
+        <div className={classes.modal}>
           {confirm === true ? (
             <Typography align="center">
               {success === true ? (
@@ -596,7 +608,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 setConfirm(false);
                 setOpenModal(false);
                 tabs.changeAnalyticsDashboardTabs(2);
-                window.location.reload(false);
+                window.location.reload();
               }}
             >
               <div>Back to Kubernetes Dashboard</div>
@@ -620,7 +632,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                   setConfirm(false);
                   setOpenModal(false);
                   tabs.changeAnalyticsDashboardTabs(2);
-                  window.location.reload(false);
+                  window.location.reload();
                 }}
               >
                 <div>Back to Kubernetes Dashboard</div>
@@ -656,7 +668,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 <ButtonOutlined
                   onClick={() => {
                     setOpenModal(false);
-                    history.push('/analytics');
+                    history.push({
+                      pathname: '/analytics',
+                      search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                    });
                   }}
                   disabled={false}
                 >

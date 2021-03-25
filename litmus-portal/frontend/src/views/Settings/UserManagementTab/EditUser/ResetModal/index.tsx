@@ -67,89 +67,84 @@ const ResetModal: React.FC<ResetModalProps> = ({
 
   return (
     <div>
-      <div>
-        <div data-cy="edit" className={classes.buttonFilled}>
-          <ButtonFilled
-            disabled={!(new_password.length && !loading)}
-            onClick={handleClick}
-          >
-            {loading ? (
-              <div>
-                <Loader size={20} />
-              </div>
-            ) : (
-              <>
-                {t(
-                  'settings.userManagementTab.editUser.resetModal.button.save'
-                )}
-              </>
-            )}
-          </ButtonFilled>
-        </div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          modalActions={
-            <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
-          }
+      <div data-cy="edit">
+        <ButtonFilled
+          variant="success"
+          disabled={!(new_password.length && !loading)}
+          onClick={handleClick}
         >
-          {error.length ? (
-            <div className={classes.errDiv}>
-              <div className={classes.textError}>
-                <Typography className={classes.typo} align="center">
-                  <strong>
-                    {t('settings.userManagementTab.editUser.resetModal.error')}
-                  </strong>{' '}
-                  {t(
-                    'settings.userManagementTab.editUser.resetModal.headerErr'
-                  )}
-                </Typography>
-              </div>
-              <div className={classes.textSecondError}>
-                <Typography className={classes.typoSub}>
-                  {t('settings.userManagementTab.editUser.resetModal.error')}:{' '}
-                  {error}
-                </Typography>
-              </div>
-              <div data-cy="done" className={classes.buttonModal}>
-                <ButtonFilled onClick={handleClose}>
-                  <>
-                    {t(
-                      'settings.userManagementTab.editUser.resetModal.button.done'
-                    )}
-                  </>
-                </ButtonFilled>
-              </div>
+          {loading ? (
+            <div>
+              <Loader size={20} />
             </div>
           ) : (
-            <div className={classes.body}>
-              <img src="./icons/checkmark.svg" alt="checkmark" />
-              <div className={classes.textSucess}>
-                <Typography className={classes.typo} align="center">
-                  {t('settings.userManagementTab.editUser.resetModal.header')}{' '}
-                  <strong>
-                    {t(
-                      'settings.userManagementTab.editUser.resetModal.headerStrong'
-                    )}
-                  </strong>
-                </Typography>
-              </div>
-              <div className={classes.text1Sucess}>
-                <Typography className={classes.typoSub} align="center">
-                  {t('settings.userManagementTab.editUser.resetModal.info')}
-                </Typography>
-              </div>
-              <div data-cy="done">
-                <ButtonFilled onClick={handleModal}>
+            <>
+              {t('settings.userManagementTab.editUser.resetModal.button.save')}
+            </>
+          )}
+        </ButtonFilled>
+      </div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        modalActions={
+          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+        }
+      >
+        {error.length ? (
+          <div className={classes.errDiv}>
+            <div className={classes.textError}>
+              <Typography className={classes.typo} align="center">
+                <strong>
+                  {t('settings.userManagementTab.editUser.resetModal.error')}
+                </strong>{' '}
+                {t('settings.userManagementTab.editUser.resetModal.headerErr')}
+              </Typography>
+            </div>
+            <div className={classes.textSecondError}>
+              <Typography className={classes.typoSub}>
+                {t('settings.userManagementTab.editUser.resetModal.error')}:{' '}
+                {error}
+              </Typography>
+            </div>
+            <div data-cy="done" className={classes.buttonModal}>
+              <ButtonFilled disabled={false} onClick={handleClose}>
+                <>
                   {t(
                     'settings.userManagementTab.editUser.resetModal.button.done'
                   )}
-                </ButtonFilled>
-              </div>
+                </>
+              </ButtonFilled>
             </div>
-          )}
-        </Modal>
-      </div>
+          </div>
+        ) : (
+          <div className={classes.body}>
+            <img src="./icons/checkmark.svg" alt="checkmark" />
+            <div className={classes.textSucess}>
+              <Typography className={classes.typo} align="center">
+                {t('settings.userManagementTab.editUser.resetModal.header')}{' '}
+                <strong>
+                  {t(
+                    'settings.userManagementTab.editUser.resetModal.headerStrong'
+                  )}
+                </strong>
+              </Typography>
+            </div>
+            <div className={classes.text1Sucess}>
+              <Typography className={classes.typoSub} align="center">
+                {t('settings.userManagementTab.editUser.resetModal.info')}
+              </Typography>
+            </div>
+            <div data-cy="done">
+              <ButtonFilled disabled={false} onClick={handleModal}>
+                {t(
+                  'settings.userManagementTab.editUser.resetModal.button.done'
+                )}
+              </ButtonFilled>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

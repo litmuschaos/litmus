@@ -104,13 +104,15 @@ const WeightSlider: React.FC<CustomSliderProps> = ({
   const classes = useStyles();
   const theme = useTheme();
   return (
-    <div className="App">
+    <div className="App" data-cy="ExperimentWeightSlider">
       <div className={classes.mainDiv}>
         <Typography className={classes.testType}>{testName}</Typography>
         <Typography>-</Typography>
-        <Typography className={classes.testResult}>{weight} points</Typography>
+        <Typography className={classes.testResult} data-cy="ExperimentWeight">
+          {weight} points
+        </Typography>
       </div>
-      <div className={classes.sliderDiv}>
+      <div className={classes.sliderDiv} data-cy="WeightSlider">
         <PrettoSlider
           defaultValue={weight}
           aria-labelledby="discrete-slider-small-steps"

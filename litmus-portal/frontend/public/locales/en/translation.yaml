@@ -33,12 +33,23 @@ sidebar:
   version: 'Version: 1.13'
 
 header:
-  notificationDropdown:
-    noNotifications: You don't have any new notification.
+  projectDropdown:
+    myProjects: My Projects
+    noMyProjects: No projects owned by you
+    otherProjects: Other Projects
+    noProjectsOther: You are not part of any projects not owned by you
   profileDropdown:
+    signedIn: 'Signed in as:'
+    emailUnset: Email not set
+    emailSet: Set up your email
+    goToSettingsTitle: Go to settings
+    logOutTitle: Logout from the portal
+    editProfileTitle: Edit your profile
+    logout: Logout
     editProfile: Edit Profile
-    logOut: Log Out
-    noProjects: You haven't created any projects yet.
+
+button:
+  backButton: Back
 
 quickActionCard:
   quickActions: Quick Actions
@@ -46,6 +57,7 @@ quickActionCard:
   quickSurvey: Take a quick survey
   readDocs: Read the Litmus docs
   readAPIDocs: Read the Litmus Portal API docs
+  addDashboard: Add a Dashboard
   addDataSource: Add a Data Source
   addAgent: Add an agent
   connectNewAgent: Connect a new agent
@@ -62,6 +74,8 @@ workflowStepper:
   successful: is successfully created!
   congratulationsSub1: Congratulations on creating your workflow! Now information about
   congratulationsSub2: it will be displayed on the workflow schedules.
+  error: Error
+  workflowFailed: Failed to create a new workflow.
   workflowBtn: Go to Workflow
   step1:
     errorSnackbar: You haven't selected any Target Agent
@@ -71,6 +85,7 @@ workflowStepper:
     errorSnackbar: Please provide a valid Workflow Name
   finish: Finish
   next: Next
+  backBtn: Back
 
 ######################################
 ############    Pages    #############
@@ -140,9 +155,6 @@ schedule:
   workflowBtn: Go to Workflow
   backBtn: Go Back
 
-workflowUnderground:
-  heading: 'Click on Info to see details of your workflow'
-
 community:
   title: 'Community'
   heading: 'Litmus Insights'
@@ -180,6 +192,10 @@ analytics:
 analyticsDashboard:
   heading: Analytics
   overview: Overview
+  monitoringDashboardPage:
+    dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
+    reConfigureDashboard: Re-configure dashboard
+    updateDataSource: Update data source
   workflowClusterDashboard:
     title: Dashboard
     tab1: Hourly
@@ -211,7 +227,7 @@ analyticsDashboard:
   overviewTabdataSourceTable: Connected Data Sources
   applicationDashboard: Application Dashboards
   connectedDataSources: Connected Data Sources
-  datasource: Data source
+  dataSource: Data sources
   dataSourceTable:
     tableHead1: Status
     tableHead2: Data Source Name
@@ -249,21 +265,28 @@ analyticsDashboard:
       description: To configure your first Kubernets dashboard use the connect Data sources of this project
   timeText:
     lastRun: Last run
+    lastOpened: Last opened
+    lastConfigured: Last configured
     ago: ago
     seconds: seconds
+    minute: minute
     minutes: minutes
+    hour: hour
     hours: hours
+    day: day
+    days: days
     few: few
 
 error:
   whoops: Whoops!
   pageUnavailable: This page is unavailable
   pageDoesNotExist: The page does not exist, or please try again later.
-  backHome: Go back home
+  goBack: Go back
 
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow
   fetchError: An error has occurred while fetching the data
+
 ######################################
 ############    Views    #############
 ######################################
@@ -308,6 +331,8 @@ settings:
         done: Done
     accountsSettings:
       header: Password
+      passwordValidation: Should not start with empty space
+      passwordNotSame: Password is not same
       modal:
         header: Your password
         headerStrong: has been changed!
@@ -389,7 +414,7 @@ settings:
         receivedHeading:
           You have been invited to the following projects. Once accepted,
           they will be available to browse on the top right section of
-          this portal.
+          the portal.
       sentInvitation:
         resend: Resend
         noInvites: There is no one waiting for your invitation.
@@ -444,13 +469,13 @@ settings:
         headerInfo: was successfully created
         headerErr: while creating a new user.
         error: Error
-        info: Now information about it will be displayed on the user management screen of the application.
+        info: Now information about the user will be displayed on the user management screen of the application.
         button:
           done: Done
           create: Create
     editUser:
       header: Edit user profile
-      info: Edit the user's personal and login details
+      info: Edit the user's login details
       login: Login Details
       label:
         newPassword: New Password
@@ -488,6 +513,9 @@ workflowDetailsView:
   headerMiniDesc: Description of the workflow
   argoWorkflow:
     loading: Loading Graph...
+    controls:
+      horizontal: Horizontal
+      vertical: Vertical
   nodeLogs:
     fetching: Fetching Logs...
     mainLogs: Main logs unavailable
@@ -722,21 +750,18 @@ targets:
   copy:
     copy: Copy
     copied: Copied
-    copying: Command copied to clickboard
+    copying: Command copied to clipboard
   newTarget:
     head: Connect a new target on your devices
-    head1: 1. Open the cluster console
-    head2: 2. Copy the command
-    head3: 3. Paste it into the cluster console
-    head4: 4. Click on the button
-    head5: Connect the target
-    conformation: Kuberenetes Agent is confirming, Please wait...
-    clusterDetails: Cluster Details
+    head1: Open the cluster console
+    head2: Download litmusctl
+    head3: Paste and Run the following command into the cluster console
   modalDelete:
     head1: Are you sure to
-    head2: remove the current Agent?
-    head3: It will be removed forever
-    delete: Delete
+    head2: disconnect the current
+    head3: It will be disconnect forever
+    head4: Agent?
+    disconnect: Disconnect
     yes: Yes
     no: No
 
@@ -778,7 +803,7 @@ workflowCluster:
       noSchedules: No. of Schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
-      delete: Delete
+      disconnect: Disconnect
       clusterInfo: Cluster information
       about: About Litmus Cluster
       back: Back
@@ -809,7 +834,7 @@ internetIssues:
 ############     MyHub     ###########
 ######################################
 myhub:
-  title: My Hubs
+  title: MyHubs
   connectTarget: Connect the target
   viewMyHub: View My Hub
   error: '[Error: could not connect]'
@@ -820,7 +845,7 @@ myhub:
   refresh: Refresh Hub
   disconnect: Disconnect Hub
   mainPage:
-    header: My Hub
+    header: MyHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
@@ -832,13 +857,13 @@ myhub:
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
     sync: Syncing Repo...
     retry: Retry Connection
-    disconnectHeader: Are you sure you want to disconnect My Hub?
+    disconnectHeader: Are you sure you want to disconnect MyHub?
     disconnectDesc: Action is not revertable
     cancel: Cancel
     deleteHub: Delete Hub
     syncError: Failed while syncing repo, try again!
   myhubChart:
-    header: My Hub
+    header: MyHub
     github: github.com/
     syncingRepo: Loading Charts, Please Wait...!
   connectHubPage:
@@ -851,14 +876,15 @@ myhub:
     creatingHub: while creating MyHub
     newHub: A new chaos hub
     success: is successfully created
-    newHubCreated: A new chaos hub will be added to the main page of the My hubs section
-    myHub: Back to my hubs
+    newHubCreated: A new chaos hub will be added to the main page of the MyHubs section
+    myHub: Back to MyHubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
+    sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
-    updateHub: Update the My Hub with correct details from the My Hubs section
+    updateHub: Update the MyHub with correct details from the MyHubs section
   videoCarousel:
     video: Video Tips
   installChaos:
@@ -877,12 +903,12 @@ myhub:
   editPage:
     edit: Edit the Hub
     click: Then click on the update button
-    submit: Update My Hub
+    submit: Update MyHub
     wait: Please wait while we are updating your repo!
-    updating: while updating My Hub
-    success: My Hub successfully updated
-    desc: My Hub will be updated in the main page of the My Hubs section
-    error: Error while updating My Hub
+    updating: while updating MyHub
+    success: MyHub successfully updated
+    desc: MyHub will be updated in the main page of the MyHubs section
+    error: Error while updating MyHub
 
 ######################################
 ########   Custom Workflow     #######
@@ -890,7 +916,7 @@ myhub:
 customWorkflow:
   createWorkflow:
     create: Creating a new chaos workflow
-    createDesc: Add new experiments from your ChaosHubs defined at MyHub section
+    createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
     workflowInfo: Workflow information
     workflowName: Workflow Name
     workflowDesc: Description
@@ -899,7 +925,7 @@ customWorkflow:
     selectHub: Select the hub
     public: Public Hub
     configure: Construct your workflow
-    construct: Using experiments from MyHub
+    construct: Using experiments from MyHubs
     upload: Upload your
     yaml: YAML
     uploadFile: Select YAML file from your device
@@ -944,5 +970,3 @@ customWorkflow:
     addExp: Add experiment
   viewYAML:
     view: View the YAML here
-  backBtn:
-    back: Back

@@ -120,7 +120,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         if (count !== 0) {
           averageDateWiseResilienceScores.Hourly.dates.push(date);
           averageDateWiseResilienceScores.Hourly.avgResilienceScores.push(
-            sum / count
+            parseFloat((sum / count).toFixed(2))
           );
         }
       }
@@ -143,7 +143,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         if (count !== 0) {
           averageDateWiseResilienceScores.Daily.dates.push(date);
           averageDateWiseResilienceScores.Daily.avgResilienceScores.push(
-            sum / count
+            parseFloat((sum / count).toFixed(2))
           );
         }
       }
@@ -166,7 +166,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         if (count !== 0) {
           averageDateWiseResilienceScores.Monthly.dates.push(date);
           averageDateWiseResilienceScores.Monthly.avgResilienceScores.push(
-            sum / count
+            parseFloat((sum / count).toFixed(2))
           );
         }
       }
@@ -269,8 +269,8 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     const min = Math.min(...normalized);
     const minID = normalized.indexOf(min);
     setEdgeData({
-      highScore: max,
-      lowScore: min,
+      highScore: parseFloat(max.toFixed(2)),
+      lowScore: parseFloat(min.toFixed(2)),
       highColor: colors[maxID],
       lowColor: colors[minID],
       highName: labels ? labels[maxID] : '',

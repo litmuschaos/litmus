@@ -1,46 +1,10 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_DS_PROMETHEUS",
-      "label": "DS_PROMETHEUS",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "7.2.2"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    }
-  ],
   "annotations": {
     "list": [
       {
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "enable": true,
-        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\", chaosresult_namespace=\"litmus\"}",
         "hide": false,
         "iconColor": "#F2CC0C",
         "limit": 100,
@@ -54,11 +18,11 @@
         "type": "tags"
       },
       {
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "enable": true,
-        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\", chaosresult_namespace=\"litmus\"}",
         "hide": false,
-        "iconColor": "#E0B400",
+        "iconColor": "#E02F44",
         "limit": 100,
         "name": "catalogue-pod-cpu-hog",
         "showIn": 0,
@@ -69,11 +33,11 @@
         "type": "tags"
       },
       {
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "enable": true,
-        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"litmus\"}",
         "hide": false,
-        "iconColor": "#E0B400",
+        "iconColor": "#3274D9",
         "limit": 100,
         "name": "catalogue-node-cpu-hog",
         "showIn": 0,
@@ -84,11 +48,11 @@
         "type": "tags"
       },
       {
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "enable": true,
-        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "expr": "litmuschaos_awaited_experiments{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"litmus\"}",
         "hide": false,
-        "iconColor": "#E0B400",
+        "iconColor": "#56A64B",
         "limit": 100,
         "name": "orders-node-memory-hog",
         "showIn": 0,
@@ -101,7 +65,7 @@
       {
         "$$hashKey": "object:258",
         "builtIn": 1,
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -115,12 +79,12 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
+  "id": 5,
   "links": [],
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -138,7 +102,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -173,74 +137,20 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:485",
-          "alias": "catalogue-pod-cpu-hog",
-          "color": "#C4162A",
-          "fillGradient": 5,
-          "stack": "A",
-          "steppedLine": true
-        },
-        {
-          "$$hashKey": "object:486",
-          "alias": "orders-pod-memory-hog",
-          "color": "#C4162A",
-          "fillGradient": 5,
-          "stack": "B",
-          "steppedLine": true
-        },
-        {
-          "$$hashKey": "object:676",
-          "alias": "catalogue-node-cpu-hog",
-          "color": "#C4162A",
-          "fillGradient": 5,
-          "stack": "C",
-          "steppedLine": true
-        },
-        {
-          "$$hashKey": "object:681",
-          "alias": "orders-node-memory-hog",
-          "color": "#C4162A",
-          "fillGradient": 5,
-          "stack": "D",
-          "steppedLine": true
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": true,
       "targets": [
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "instant": false,
+          "expr": "litmuschaos_awaited_experiments",
           "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "catalogue-pod-cpu-hog",
+          "legendFormat": "{{chaosresult_name}}",
           "refId": "A"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "orders-pod-memory-hog",
-          "refId": "B"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "catalogue-node-cpu-hog",
-          "refId": "C"
-        },
-        {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
-          "interval": "",
-          "legendFormat": "orders-node-memory-hog",
-          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -278,7 +188,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -288,12 +198,11 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -331,13 +240,14 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "sum(chaosengine_experiments_count{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
-          "instant": true,
+          "expr": "sum(litmuschaos_passed_experiments + litmuschaos_failed_experiments)",
+          "instant": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -352,12 +262,11 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -395,13 +304,14 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "sum(chaosengine_passed_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
-          "instant": true,
+          "expr": "sum(litmuschaos_passed_experiments)",
+          "instant": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -416,12 +326,11 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -459,13 +368,14 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "sum(chaosengine_failed_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
-          "instant": true,
+          "expr": "sum(litmuschaos_failed_experiments)",
+          "instant": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -478,12 +388,11 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -521,12 +430,13 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "sum(chaosengine_waiting_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "expr": "sum(litmuschaos_awaited_experiments)",
           "instant": true,
           "interval": "",
           "intervalFactor": 3,
@@ -539,7 +449,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -557,7 +467,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -592,7 +502,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -635,18 +545,18 @@
           "expr": "sum(rate(request_duration_seconds_count{job=\"orders\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "4xx/5xx",
+          "legendFormat": "4xx\/5xx",
           "refId": "B",
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "F"
@@ -700,7 +610,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -735,7 +645,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -793,7 +703,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{job=\"orders\"}[1m])) / sum(rate(request_duration_seconds_count{job=\"orders\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{job=\"orders\"}[1m])) \/ sum(rate(request_duration_seconds_count{job=\"orders\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -801,13 +711,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"orders-pod-memory-hog-pod-memory-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "E"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"orders-node-memory-hog-node-memory-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "G"
@@ -856,7 +766,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -874,7 +784,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -911,7 +821,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -956,18 +866,18 @@
           "expr": "sum(rate(request_duration_seconds_count{job=\"catalogue\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "4xx/5xx",
+          "legendFormat": "4xx\/5xx",
           "refId": "B",
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "C"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "E"
@@ -1021,7 +931,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1056,7 +966,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1116,7 +1026,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{job=\"catalogue\"}[1m])) / sum(rate(request_duration_seconds_count{job=\"catalogue\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{job=\"catalogue\"}[1m])) \/ sum(rate(request_duration_seconds_count{job=\"catalogue\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -1124,13 +1034,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"catalogue-pod-cpu-hog-pod-cpu-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "litmuschaos_experiment_chaos_injected_time{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"kubera\"} - on () (litmuschaos_experiment_end_time{chaosresult_name=\"catalogue-node-cpu-hog-node-cpu-hog\",chaosresult_namespace=\"kubera\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "F"
@@ -1179,7 +1089,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1197,7 +1107,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1232,7 +1142,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1253,7 +1163,7 @@
           "expr": "sum(rate(request_duration_seconds_count{job=\"payment\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "4xx/5xx",
+          "legendFormat": "4xx\/5xx",
           "refId": "B",
           "step": 2
         }
@@ -1304,7 +1214,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1339,7 +1249,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1365,7 +1275,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{job=\"payment\"}[1m])) / sum(rate(request_duration_seconds_count{job=\"payment\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{job=\"payment\"}[1m])) \/ sum(rate(request_duration_seconds_count{job=\"payment\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -1411,7 +1321,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1429,7 +1339,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1464,7 +1374,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1485,7 +1395,7 @@
           "expr": "sum(rate(request_duration_seconds_count{job=\"shipping\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "4xx/5xx",
+          "legendFormat": "4xx\/5xx",
           "refId": "B",
           "step": 10
         }
@@ -1537,7 +1447,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1572,7 +1482,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1598,7 +1508,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{job=\"shipping\"}[1m])) / sum(rate(request_duration_seconds_count{job=\"shipping\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{job=\"shipping\"}[1m])) \/ sum(rate(request_duration_seconds_count{job=\"shipping\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -1644,7 +1554,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1662,7 +1572,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1697,7 +1607,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1718,7 +1628,7 @@
           "expr": "sum(rate(request_duration_seconds_count{job=\"user\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "4xx/5xx",
+          "legendFormat": "4xx\/5xx",
           "refId": "B",
           "step": 10
         }
@@ -1765,7 +1675,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1800,7 +1710,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1826,7 +1736,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{job=\"user\"}[1m])) / sum(rate(request_duration_seconds_count{job=\"user\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{job=\"user\"}[1m])) \/ sum(rate(request_duration_seconds_count{job=\"user\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -1872,7 +1782,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1890,7 +1800,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1925,7 +1835,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1946,7 +1856,7 @@
           "expr": "sum(rate(request_duration_seconds_count{job=\"front-end\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "4xx/5xx",
+          "legendFormat": "4xx\/5xx",
           "refId": "B",
           "step": 10
         }
@@ -1993,7 +1903,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -2028,7 +1938,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2054,7 +1964,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{job=\"front-end\"}[1m])) / sum(rate(request_duration_seconds_count{job=\"front-end\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{job=\"front-end\"}[1m])) \/ sum(rate(request_duration_seconds_count{job=\"front-end\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -2100,7 +2010,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2118,7 +2028,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -2153,7 +2063,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2174,7 +2084,7 @@
           "expr": "sum(rate(request_duration_seconds_count{job=\"carts\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "4xx/5xx",
+          "legendFormat": "4xx\/5xx",
           "refId": "B",
           "step": 10
         }
@@ -2221,7 +2131,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -2256,7 +2166,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "7.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2282,7 +2192,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{job=\"carts\"}[1m])) / sum(rate(request_duration_seconds_count{job=\"carts\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{job=\"carts\"}[1m])) \/ sum(rate(request_duration_seconds_count{job=\"carts\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -2328,7 +2238,7 @@
     }
   ],
   "refresh": "10s",
-  "schemaVersion": 26,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {

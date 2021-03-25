@@ -21,16 +21,15 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
-import { SCHEDULE_DETAILS, DELETE_SCHEDULE } from '../../../graphql';
+import { DELETE_SCHEDULE, SCHEDULE_DETAILS } from '../../../graphql';
 import {
   DeleteSchedule,
   ScheduleDataVars,
   Schedules,
   ScheduleWorkflow,
 } from '../../../models/graphql/scheduleData';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -53,26 +52,22 @@ interface SortData {
   name: { sort: boolean; ascending: boolean };
 }
 
-const BrowseSchedule = () => {
+const BrowseSchedule: React.FC = () => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled data
   const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
 
   // Apollo mutation to delete the selected schedule
   const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_SCHEDULE, {
-    refetchQueries: [
-      { query: SCHEDULE_DETAILS, variables: { projectID: selectedProjectID } },
-    ],
+    refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
   });
 
   // State for search and filtering
@@ -139,7 +134,7 @@ const BrowseSchedule = () => {
     });
   };
   return (
-    <div>
+    <div data-cy="workflowSchedulesTable">
       <section className="Heading section">
         <div className={classes.headerSection}>
           {/* Search Field */}
@@ -313,7 +308,7 @@ const BrowseSchedule = () => {
                   )
                   .map((data: ScheduleWorkflow) => (
                     <TableRow
-                      data-cy="browseScheduleData"
+                      data-cy="workflowSchedulesTableRow"
                       key={data.workflow_id}
                     >
                       <TableData data={data} deleteRow={deleteRow} />

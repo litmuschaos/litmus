@@ -20,7 +20,7 @@ type Member {
 
 input MemberInput {
   project_id: ID!
-  user_name: String!
+  user_id: String!
   role: MemberRole
 }
 

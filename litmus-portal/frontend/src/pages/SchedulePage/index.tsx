@@ -24,6 +24,7 @@ import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { validateWorkflowName } from '../../utils/validate';
 import parsed from '../../utils/yamlUtils';
 import ChooseAWorkflowAgent from '../../views/CreateWorkflow/ChooseAWorkflowAgent';
@@ -36,7 +37,7 @@ import { cronWorkflow, workflowOnce } from './templates';
 
 interface URLParams {
   workflowName: string;
-  projectID: string;
+  scheduleProjectID: string;
 }
 
 interface Weights {
@@ -82,7 +83,7 @@ function getStepContent(
   }
 }
 
-const EditScheduledWorkflow = () => {
+const EditScheduledWorkflow: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const template = useActions(TemplateSelectionActions);
@@ -92,12 +93,14 @@ const EditScheduledWorkflow = () => {
   const workflow = useActions(WorkflowActions);
   // Get Parameters from URL
   const paramData: URLParams = useParams();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   // Apollo query to get the scheduled data
   const { data, loading } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: paramData.projectID },
+      variables: { projectID: paramData.scheduleProjectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -159,13 +162,9 @@ const EditScheduledWorkflow = () => {
 
   const [activeStep, setActiveStep] = React.useState(4);
 
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
   const isDisable = useSelector(
     (state: RootState) => state.selectTemplate.isDisable
   );
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
   const scheduleOnce = workflowOnce;
   const scheduleMore = cronWorkflow;
   const [invalidYaml, setinValidYaml] = React.useState(false);
@@ -330,7 +329,7 @@ const EditScheduledWorkflow = () => {
         workflow_description: description,
         isCustomWorkflow,
         weightages: weightData,
-        project_id: selectedProjectID,
+        project_id: projectID,
         cluster_id: clusterid,
       };
 

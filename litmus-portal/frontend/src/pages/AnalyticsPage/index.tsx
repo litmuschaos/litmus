@@ -6,7 +6,6 @@ import { Typography } from '@material-ui/core';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
@@ -18,7 +17,7 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
-import { RootState } from '../../redux/reducers';
+import { getProjectID } from '../../utils/getSearchParams';
 import PopOver from '../../views/AnalyticsDashboard/LitmusDashboard/PopOver';
 import WorkflowDetailsTable from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowRunDetailsTable';
 import WorkflowRunsBarChart from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowRunsBarChart';
@@ -87,15 +86,13 @@ const AnalyticsPage: React.FC = () => {
   });
 
   // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
   const { data, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID, workflowIDs: [] },
+      variables: { projectID, workflowIDs: [] },
       pollInterval: 100,
     }
   );
@@ -152,16 +149,17 @@ const AnalyticsPage: React.FC = () => {
                     }
                     if (chaosData.experimentVerdict === 'Fail') {
                       experimentTestResultsArray.push(0);
-                      experimentTestResultsArrayPerWorkflowRun.push(0);
                     }
                     if (
                       chaosData.experimentVerdict === 'Pass' ||
                       chaosData.experimentVerdict === 'Fail'
                     ) {
                       experimentTestResultsArrayPerWorkflowRun.push(
-                        (weightage.weightage *
-                          parseInt(chaosData.probeSuccessPercentage, 10)) /
-                          100
+                        chaosData.experimentVerdict === 'Fail'
+                          ? 0
+                          : (weightage.weightage *
+                              parseInt(chaosData.probeSuccessPercentage, 10)) /
+                              100
                       );
                       weightsSum += weightage.weightage;
                       isValid = true;
@@ -272,9 +270,12 @@ const AnalyticsPage: React.FC = () => {
                     test_result: chaosData.experimentVerdict,
                     test_weight: weightage.weightage,
                     resulting_points:
-                      (weightage.weightage *
-                        parseInt(chaosData.probeSuccessPercentage, 10)) /
-                      100,
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                        ? (weightage.weightage *
+                            parseInt(chaosData.probeSuccessPercentage, 10)) /
+                          100
+                        : 0,
                     last_run: chaosData.lastUpdatedAt,
                   });
                 }
@@ -308,7 +309,7 @@ const AnalyticsPage: React.FC = () => {
             <div className={classes.rootContainer}>
               <div className={classes.root}>
                 <div className={classes.button}>
-                  <BackButton isDisabled={false} />
+                  <BackButton />
                 </div>
                 <Typography variant="h4">
                   <strong>Workflow Analytics</strong>

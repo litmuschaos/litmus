@@ -10,17 +10,23 @@ const GetTimeDiff = (startTime: number, endTime: number, t: TFunction) => {
   let timeDiffString: string = '';
   if (days > 0) {
     timeDiffString = timeDiffString.concat(
-      `${days} ${t('analyticsDashboard.timeText.days')} `
+      days === 1
+        ? `${days} ${t('analyticsDashboard.timeText.day')} `
+        : `${days} ${t('analyticsDashboard.timeText.days')} `
     );
   }
   if (hours > 0) {
     timeDiffString = timeDiffString.concat(
-      `${hours} ${t('analyticsDashboard.timeText.hours')} `
+      hours === 1
+        ? `${hours} ${t('analyticsDashboard.timeText.hour')} `
+        : `${hours} ${t('analyticsDashboard.timeText.hours')} `
     );
   }
   if (minutes > 0) {
     timeDiffString = timeDiffString.concat(
-      `${minutes} ${t('analyticsDashboard.timeText.minutes')}`
+      minutes === 1
+        ? `${minutes} ${t('analyticsDashboard.timeText.minute')} `
+        : `${minutes} ${t('analyticsDashboard.timeText.minutes')} `
     );
   }
   if (timeDiffString === '') {

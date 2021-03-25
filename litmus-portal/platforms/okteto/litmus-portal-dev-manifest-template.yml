@@ -35,7 +35,7 @@ spec:
               memory: 100Mi
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
@@ -165,6 +165,8 @@ spec:
               value: "litmuschaos/chaos-operator:1.13.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:1.13.0"
+            - name: LITMUS_CHAOS_EXPORTER_IMAGE
+              value: "litmuschaos/chaos-exporter:1.13.0"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
@@ -221,16 +223,17 @@ spec:
     component: litmusportal-server
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mongo
   labels:
     app: mongo
 spec:
-  replicas: 1
   selector:
     matchLabels:
       component: database
+  serviceName: mongo
+  replicas: 1
   template:
     metadata:
       labels:
@@ -260,23 +263,15 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
-      volumes:
-        - name: mongo-persistent-storage
-          persistentVolumeClaim:
-            claimName: mongo-pv-claim
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mongo-pv-claim
-  labels:
-    app: mongo
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
 ---
 apiVersion: v1
 kind: Service
@@ -316,7 +311,7 @@ spec:
               memory: 100Mi
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service

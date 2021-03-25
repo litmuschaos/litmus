@@ -3,19 +3,16 @@ import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import localforage from 'localforage';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
 import { MyHubDetail } from '../../../models/graphql/user';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { HubStatus } from '../../../models/redux/myhub';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles, { MenuProps } from './styles';
 
 const SelectMyHub = () => {
   const { t } = useTranslation();
-  const { selectedProjectID } = useSelector(
-    (state: RootState) => state.userData
-  );
+  const selectedProjectID = getProjectID();
   const [selectedHub, setSelectedHub] = useState('');
   const [availableHubs, setAvailableHubs] = useState<MyHubDetail[]>([]);
 

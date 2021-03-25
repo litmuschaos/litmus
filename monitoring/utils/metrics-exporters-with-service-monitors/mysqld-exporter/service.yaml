@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: mysql-exporter
+  name: mysql-exporter
+  namespace: monitoring
+spec:
+  ports:
+    - name: mysql-metrics
+      port: 9104
+      protocol: TCP
+      targetPort: 9104
+  selector:
+    k8s-app: mysql-exporter

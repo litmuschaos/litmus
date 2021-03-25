@@ -1,4 +1,4 @@
-import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import { Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -31,7 +31,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box style={{ marginLeft: 15 }}>{children}</Box>}
+      {value === index && <div>{children}</div>}
     </div>
   );
 }
@@ -46,7 +46,6 @@ function tabProps(index: any) {
 
 const Settings: React.FC = () => {
   const classes = useStyles();
-
   const settingsTabValue = useSelector(
     (state: RootState) => state.tabNumber.settings
   );
@@ -68,6 +67,7 @@ const Settings: React.FC = () => {
         <Tabs
           data-cy="settingsTabPanel"
           value={settingsTabValue}
+          variant="fullWidth"
           onChange={handleChange}
           TabIndicatorProps={{
             style: {
@@ -77,16 +77,18 @@ const Settings: React.FC = () => {
         >
           <Tab data-cy="my-account" label="My Account" {...tabProps(0)} />
           <Tab data-cy="teaming" label="Team" {...tabProps(1)} />
-          {role === 'admin' ? (
+          {role === 'admin' && (
             <Tab
               data-cy="user-management"
               label="User Management"
               {...tabProps(2)}
             />
-          ) : (
-            <></>
           )}
-          <Tab data-cy="gitOps" label="GitOps" {...tabProps(3)} />
+          <Tab
+            data-cy="gitOps"
+            label="GitOps"
+            {...tabProps(role === 'admin' ? 3 : 2)}
+          />
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
@@ -97,15 +99,13 @@ const Settings: React.FC = () => {
           <TeamingTab />
         </TabPanel>
       </div>
-      {role === 'admin' ? (
+      {role === 'admin' && (
         <TabPanel value={settingsTabValue} index={2}>
           <UserManagement />
         </TabPanel>
-      ) : (
-        <></>
       )}
       <div data-cy="GitOpsPanel">
-        <TabPanel value={settingsTabValue} index={3}>
+        <TabPanel value={settingsTabValue} index={role === 'admin' ? 3 : 2}>
           <GitOpsTab />
         </TabPanel>
       </div>

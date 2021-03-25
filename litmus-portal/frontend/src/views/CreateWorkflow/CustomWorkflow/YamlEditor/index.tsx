@@ -1,8 +1,8 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import BackButton from '../BackButton';
+import { useSelector } from 'react-redux';
+import BackButton from '../../../../components/Button/BackButton';
 import YamlEditor from '../../../../components/YamlEditor/Editor';
 import { WorkflowData } from '../../../../models/redux/workflow';
 import { RootState } from '../../../../redux/reducers';
@@ -24,7 +24,7 @@ const ExperimentEditor: React.FC<ExperimentEditorProps> = ({ gotoStep }) => {
   return (
     <div className={classes.root}>
       <div className={classes.tuneDiv}>
-        <BackButton isDisabled={false} onClick={() => gotoStep(2)} />
+        <BackButton onClick={() => gotoStep(2)} />
         <Typography className={classes.headerText} variant="h4">
           {customWorkflow.experiment_name}
         </Typography>
