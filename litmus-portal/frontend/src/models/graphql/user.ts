@@ -119,4 +119,5 @@ export interface ProjectDetailVars {
 export enum Role {
   viewer = 'Viewer',
   editor = 'Editor',
+  owner = 'Owner',
 }
