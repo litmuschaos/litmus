@@ -3,8 +3,8 @@ import { LitmusThemeProvider } from 'litmus-ui';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import { LIST_PROJECTS } from '../../graphql';
-import { Member, Projects } from '../../models/graphql/user';
+import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
+import { Member, ProjectDetail, Projects } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
@@ -58,6 +58,7 @@ const Routes: React.FC = () => {
   const projectRoleFromURL = getProjectRole();
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
+  const [isProjectMember, setIsProjectMember] = useState<boolean>(false);
   const userID = getUserId();
 
   const { loading } = useQuery<Projects>(LIST_PROJECTS, {
@@ -86,6 +87,27 @@ const Routes: React.FC = () => {
       setprojectID(getProjectID());
       setprojectRole(getProjectRole());
     }
+  });
+
+  useQuery<ProjectDetail>(GET_PROJECT, {
+    variables: { projectID },
+    onCompleted: (data) => {
+      if (data?.getProject) {
+        data.getProject.members.forEach((member: Member) => {
+          if (member.user_id === userID && member.role !== projectRole) {
+            setIsProjectMember(true);
+            setprojectID('');
+            setprojectRole('');
+          }
+        });
+      }
+    },
+    onError: () => {
+      if (!isProjectMember) {
+        setprojectID('');
+        setprojectRole('');
+      }
+    },
   });
 
   if (getToken() === '') {
