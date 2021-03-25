@@ -50,7 +50,7 @@ func (r *mutationResolver) CreateProject(ctx context.Context, projectName string
 	//fetching all the user's details from jwt token
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	userUID := claims["uid"].(string)
-	
+
 	return project.CreateProjectWithUser(ctx, projectName, userUID)
 }
 
