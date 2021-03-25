@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     background: theme.palette.cards.header,
     display: 'inline-grid',
-    gridTemplateColumns: '50% 50%',
-    gridGgap: theme.spacing(2),
+    gridTemplateColumns: '48.5% 48.5%',
+    gridGap: theme.spacing(3),
     padding: theme.spacing(1),
   },
 
@@ -51,8 +51,22 @@ const useStyles = makeStyles((theme) => ({
   },
 
   singleGraph: {
+    backgroundColor: theme.palette.background.paper,
     position: 'relative',
     height: '27.5rem',
+  },
+  popoutModal: {
+    width: '85%',
+    height: '95%',
+    padding: '2rem',
+    paddingLeft: '10%',
+  },
+  wrapperParentIconsTitle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  wrapperIcons: {
+    display: 'flex',
   },
   pannelIcon: {
     width: '0.9rem',

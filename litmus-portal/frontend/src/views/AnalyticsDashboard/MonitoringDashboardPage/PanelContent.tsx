@@ -146,9 +146,9 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             panel_options: {JSON.stringify(panel_options)}
           </Typography>
           */}
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div className={classes.wrapperParentIconsTitle}>
           <Typography className={classes.title}>{panel_name}</Typography>
-          <div style={{ display: 'flex' }}>
+          <div className={classes.wrapperIcons}>
             {viewEventMetric ? (
               <Tooltip
                 title={`${t('analyticsDashboard.toolTip.hideChaosMetric')}`}
@@ -211,14 +211,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             height="95% !important"
             width="95%"
           >
-            <div
-              style={{
-                width: '85%',
-                height: '95%',
-                padding: '2rem',
-                paddingLeft: '10%',
-              }}
-            >
+            <div className={classes.popoutModal}>
               <Typography className={classes.title}>{panel_name}</Typography>
               <LineAreaGraph
                 legendTableHeight={120}

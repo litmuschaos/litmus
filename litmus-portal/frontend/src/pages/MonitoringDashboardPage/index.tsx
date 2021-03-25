@@ -469,7 +469,7 @@ const DashboardPage: React.FC = () => {
                 <IconButton className={classes.rangeSelectorClockIcon}>
                   <WatchLaterRoundedIcon />
                 </IconButton>
-                {selectedDashboard.range.startDate === ' '
+                {selectedDashboard.range?.startDate === ' '
                   ? 'Select Period'
                   : `${selectedDashboard.range.startDate.split('-')[0]}-${
                       selectedDashboard.range.startDate.split('-')[1]
