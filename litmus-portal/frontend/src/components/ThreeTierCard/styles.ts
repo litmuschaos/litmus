@@ -16,11 +16,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '60%',
     margin: '0 3rem',
     alignSelf: 'center',
+    minWidth: '20rem',
   },
 
   mainHeading: {
     fontSize: '1.4rem',
-    lineHeight: '1rem',
     width: '95%',
     display: 'inline-block',
     marginBottom: theme.spacing(2),

@@ -1,14 +1,9 @@
 import React from 'react';
-import { PanelResponse } from '../../../models/graphql/dashboardsDetails';
-import PanelContainer from './PanelContainer';
+import { GraphPanelProps } from '../../../models/dashboardsData';
 import PanelContent from './PanelContent';
 
-const GraphPanel: React.FC<PanelResponse> = ({ ...props }) => {
-  return (
-    <PanelContainer>
-      <PanelContent {...props} />
-    </PanelContainer>
-  );
+const GraphPanel: React.FC<GraphPanelProps> = ({ ...props }) => {
+  return <PanelContent {...props} />;
 };
 
 export default GraphPanel;

@@ -1,4 +1,4 @@
-import { PanelGroupResponse } from './graphql/dashboardsDetails';
+import { PanelGroupResponse, PanelResponse } from './graphql/dashboardsDetails';
 import { promQueryInput } from './graphql/prometheus';
 
 export interface PanelGroupMap {
@@ -41,4 +41,8 @@ export interface ChaosResultNamesAndNamespacesMap {
 export interface ChaosInformation {
   promQueries: promQueryInput[];
   chaosQueryIDs: string[];
+}
+
+export interface GraphPanelProps extends PanelResponse {
+  className?: string;
 }
