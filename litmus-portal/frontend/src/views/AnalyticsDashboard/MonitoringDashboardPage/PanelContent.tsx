@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { ButtonOutlined, GraphMetric, LineAreaGraph, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { PROM_QUERY } from '../../../graphql';
+import { GraphPanelProps } from '../../../models/dashboardsData';
 import {
   PrometheusQueryInput,
   PrometheusQueryVars,
@@ -21,7 +23,6 @@ import {
   getPromQueryInput,
   seriesDataParserForPrometheus,
 } from '../../../utils/promUtils';
-import { GraphPanelProps } from './base';
 import useStyles from './styles';
 
 interface PrometheusQueryDataInterface {
@@ -41,6 +42,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
+  const { t } = useTranslation();
   const lineGraph: string[] = palette.graph.line;
   const [popout, setPopout] = useState(false);
   const [viewEventMetric, setViewEventMetric] = useState(false);
@@ -130,39 +132,51 @@ const PanelContent: React.FC<GraphPanelProps> = ({
           <Typography className={classes.title}>{panel_name}</Typography>
           <div style={{ display: 'flex' }}>
             {viewEventMetric ? (
-              <IconButton
-                className={classes.pannelIconButton}
-                onClick={() => {
-                  setViewEventMetric(false);
-                }}
+              <Tooltip
+                title={`${t('analyticsDashboard.toolTip.hideChaosMetric')}`}
               >
-                <DisableViewChaosMetric className={classes.pannelIcon} />
-              </IconButton>
+                <IconButton
+                  className={classes.pannelIconButton}
+                  onClick={() => {
+                    setViewEventMetric(false);
+                  }}
+                >
+                  <DisableViewChaosMetric className={classes.pannelIcon} />
+                </IconButton>
+              </Tooltip>
             ) : (
+              <Tooltip
+                title={`${t('analyticsDashboard.toolTip.viewChaosMetric')}`}
+              >
+                <IconButton
+                  className={classes.pannelIconButton}
+                  onClick={() => {
+                    setViewEventMetric(true);
+                  }}
+                >
+                  <ViewChaosMetric className={classes.pannelIcon} />
+                </IconButton>
+              </Tooltip>
+            )}
+            <Tooltip title={`${t('analyticsDashboard.toolTip.editPanel')}`}>
+              <IconButton
+                disabled
+                className={classes.pannelIconButton}
+                onClick={() => {}}
+              >
+                <Edit className={classes.pannelIcon} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={`${t('analyticsDashboard.toolTip.popout')}`}>
               <IconButton
                 className={classes.pannelIconButton}
                 onClick={() => {
-                  setViewEventMetric(true);
+                  setPopout(true);
                 }}
               >
-                <ViewChaosMetric className={classes.pannelIcon} />
+                <Expand className={classes.pannelIcon} />
               </IconButton>
-            )}
-            <IconButton
-              disabled
-              className={classes.pannelIconButton}
-              onClick={() => {}}
-            >
-              <Edit className={classes.pannelIcon} />
-            </IconButton>
-            <IconButton
-              className={classes.pannelIconButton}
-              onClick={() => {
-                setPopout(true);
-              }}
-            >
-              <Expand className={classes.pannelIcon} />
-            </IconButton>
+            </Tooltip>
           </div>
         </div>
         <div>
