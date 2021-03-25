@@ -54,10 +54,19 @@ const useStyles = makeStyles((theme) => ({
   },
 
   singleGraph: {
-    '& hr': {
-      position: 'relative !important',
-    },
+    position: 'relative',
     height: '27.5rem',
+  },
+  pannelIcon: {
+    width: '0.9rem',
+    height: '0.9rem',
+  },
+  pannelIconButton: {
+    backgroundColor: 'transparent !important',
+    cursor: 'pointer',
+    display: 'flex',
+    padding: theme.spacing(0.5),
+    paddingBottom: 0,
   },
 }));
 

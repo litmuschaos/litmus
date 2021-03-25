@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
-import { Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
-import { GraphMetric, LineAreaGraph } from 'litmus-ui';
-import React, { useEffect } from 'react';
+import { ButtonOutlined, GraphMetric, LineAreaGraph, Modal } from 'litmus-ui';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { PROM_QUERY } from '../../../graphql';
 import { PanelResponse } from '../../../models/graphql/dashboardsDetails';
@@ -14,6 +14,10 @@ import {
   promQueryInput,
 } from '../../../models/graphql/prometheus';
 import { RootState } from '../../../redux/reducers';
+import { ReactComponent as ViewChaosMetric } from '../../../svg/aligment.svg';
+import { ReactComponent as DisableViewChaosMetric } from '../../../svg/alignmentStriked.svg';
+import { ReactComponent as Expand } from '../../../svg/arrowsOut.svg';
+import { ReactComponent as Edit } from '../../../svg/edit.svg';
 import {
   getPromQueryInput,
   seriesDataParserForPrometheus,
@@ -37,7 +41,8 @@ const PanelContent: React.FC<PanelResponse> = ({
   const { palette } = useTheme();
   const classes = useStyles();
   const lineGraph: string[] = palette.graph.line;
-
+  const [popout, setPopout] = useState(false);
+  const [viewEventMetric, setViewEventMetric] = useState(false);
   const [
     prometheusQueryData,
     setPrometheusQueryData,
@@ -116,7 +121,86 @@ const PanelContent: React.FC<PanelResponse> = ({
             panel_options: {JSON.stringify(panel_options)}
           </Typography>
           */}
-        <Typography className={classes.title}>{panel_name}</Typography>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography className={classes.title}>{panel_name}</Typography>
+          <div style={{ display: 'flex' }}>
+            {viewEventMetric ? (
+              <IconButton
+                className={classes.pannelIconButton}
+                onClick={() => {
+                  setViewEventMetric(false);
+                }}
+              >
+                <DisableViewChaosMetric className={classes.pannelIcon} />
+              </IconButton>
+            ) : (
+              <IconButton
+                className={classes.pannelIconButton}
+                onClick={() => {
+                  setViewEventMetric(true);
+                }}
+              >
+                <ViewChaosMetric className={classes.pannelIcon} />
+              </IconButton>
+            )}
+            <IconButton
+              disabled
+              className={classes.pannelIconButton}
+              onClick={() => {}}
+            >
+              <Edit className={classes.pannelIcon} />
+            </IconButton>
+            <IconButton
+              className={classes.pannelIconButton}
+              onClick={() => {
+                setPopout(true);
+              }}
+            >
+              <Expand className={classes.pannelIcon} />
+            </IconButton>
+          </div>
+        </div>
+        <div>
+          <Modal
+            open={popout}
+            onClose={() => setPopout(false)}
+            disableBackdropClick
+            disableEscapeKeyDown
+            modalActions={
+              <ButtonOutlined onClick={() => setPopout(false)}>
+                &#x2715;
+              </ButtonOutlined>
+            }
+            height="100%"
+            width="100%"
+          >
+            <div
+              style={{
+                width: '90%',
+                height: '90%',
+                padding: '2rem',
+                paddingLeft: '5%',
+              }}
+            >
+              <Typography className={classes.title}>{panel_name}</Typography>
+              <LineAreaGraph
+                legendTableHeight={120}
+                openSeries={graphData}
+                eventSeries={chaos_data}
+                showPoints={false}
+                showLegendTable
+                showEventTable
+                showTips
+                showEventMarkers
+                marginLeftEventTable={10}
+                unit={unit}
+                yLabel={y_axis_left}
+                yLabelOffset={55}
+                margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
+              />
+            </div>
+          </Modal>
+        </div>
         <div className={classes.singleGraph}>
           <LineAreaGraph
             legendTableHeight={120}

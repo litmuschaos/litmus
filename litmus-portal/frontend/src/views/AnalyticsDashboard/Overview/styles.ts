@@ -1,5 +1,9 @@
 import { makeStyles, Theme } from '@material-ui/core';
 
+interface StyleProps {
+  viewEventMetric?: boolean;
+}
+
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
@@ -56,7 +60,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     background: 'transparent',
   },
   banner: {
-    height: '18rem',
+    height: 'fit-content',
+    minHeight: '18rem',
     width: '100%',
     overflow: 'hidden',
   },
