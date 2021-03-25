@@ -43,6 +43,10 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
     workflowName: 'Personal Workflow Name',
     workflowDesc: 'Personal Description',
   });
+  const [prevWorkflowDetails, setPrevWorkflowData] = useState({
+    workflowName: 'Personal Workflow Name',
+    workflowDesc: 'Personal Description',
+  });
 
   const WorkflowNameChangeHandler = (
     event: React.ChangeEvent<{ value: string }>
@@ -183,6 +187,10 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
             <ButtonFilled
               data-cy="EditWorkflowButton"
               onClick={() => {
+                setPrevWorkflowData({
+                  workflowName: workflowDetails.workflowName,
+                  workflowDesc: workflowDetails.workflowDesc,
+                });
                 setOpen(true);
               }}
               variant="success"
@@ -210,10 +218,24 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
       <Modal
         data-cy="WorkflowDetailsModal"
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setWorkflowData({
+            workflowName: prevWorkflowDetails.workflowName,
+            workflowDesc: prevWorkflowDetails.workflowDesc,
+          });
+          setOpen(false);
+        }}
         width="70%"
         modalActions={
-          <ButtonOutlined onClick={() => setOpen(false)}>
+          <ButtonOutlined
+            onClick={() => {
+              setWorkflowData({
+                workflowName: prevWorkflowDetails.workflowName,
+                workflowDesc: prevWorkflowDetails.workflowDesc,
+              });
+              setOpen(false);
+            }}
+          >
             &#x2715;
           </ButtonOutlined>
         }

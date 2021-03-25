@@ -600,11 +600,6 @@ github.com/lithammer/dedent v1.1.0/go.mod h1:jrXYCQtgg0nJiN+StA2KgR7w6CiQNv9Fd/Z
 github.com/litmuschaos/chaos-operator v0.0.0-20210126054859-85bb0ad85bfa h1:lBEvg10ZPndmBUMtVaMRVCqeKnKYmjtRSg2SF4iTQ7o=
 github.com/litmuschaos/chaos-operator v0.0.0-20210126054859-85bb0ad85bfa/go.mod h1:Z2GpYjqXwFd8bx+kv58YEQFxynx1v9PMGCGTQFRVnFQ=
 github.com/litmuschaos/elves v0.0.0-20201107015738-552d74669e3c/go.mod h1:DsbHGNUq/78NZozWVVI9Q6eBei4I+JjlkkD5aibJ3MQ=
-github.com/litmuschaos/litmus v0.0.0-20210306045605-168ad20bbffd h1:Hew5K9G6vlKLqlPrvZjh1QJpI5iOPJRjSX8FEDmHtF8=
-github.com/litmuschaos/litmus v0.0.0-20210315081558-440ebe97ff9f h1:rOKi2ODJUeImH2oLXQ9qRBwCl04fKJlt1XwhRRCMNKE=
-github.com/litmuschaos/litmus v0.0.0-20210315181451-ae16761f4d5e h1:vqQcPQG8ea7vmpotqtQfN5bacqrLM9gmOnU1MVamRfk=
-github.com/litmuschaos/litmus v0.0.0-20210316074346-9f2b475ae54a h1:THMGvnxitotUmnOza+zuAPSZbMXCQcUm3eQzxNxsCBQ=
-github.com/litmuschaos/litmus v0.0.0-20210316185312-f458dd061071 h1:lMjyFNLZWDp2bSpeAXASa7VbpPrKVw+k1K5nXmAfMzs=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=
 github.com/lucas-clemente/aes12 v0.0.0-20171027163421-cd47fb39b79f/go.mod h1:JpH9J1c9oX6otFSgdUHwUBUizmKlrMjxWnIAjff4m04=
