@@ -21,25 +21,26 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({
     <LinearProgress
       variant="determinate"
       value={resultValue}
-      classes={
-        isDefault
-          ? resultValue > 60
-            ? {
-                root: classes.root,
-                barColorPrimary: classes.greenColorPrimary,
-              }
-            : resultValue > 30
-            ? {
-                root: classes.root,
-                barColorPrimary: classes.yellowColorPrimary,
-              }
-            : {
-                root: classes.root,
-                barColorPrimary: classes.redColorPrimary,
-              }
-          : {}
-      }
-      style={{ height: `${width}rem`, borderRadius: '5rem' }}
+      style={{
+        height: `${width}rem`,
+        borderRadius: '5rem',
+      }}
+      classes={{
+        colorPrimary: isDefault
+          ? classes.greenColorSecondary
+          : resultValue > 60
+          ? classes.greenColorSecondary
+          : resultValue > 30
+          ? classes.yellowColorSecondary
+          : classes.redColorSecondary,
+        barColorPrimary: isDefault
+          ? classes.greenColorPrimary
+          : resultValue > 60
+          ? classes.greenColorPrimary
+          : resultValue > 30
+          ? classes.yellowColorPrimary
+          : classes.redColorPrimary,
+      }}
     />
   );
 };

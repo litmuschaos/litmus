@@ -66,7 +66,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         <div className={classes.reliabiltyData}>
           <Typography>{data.resulting_points} Points</Typography>
           <div className={classes.progressBar}>
-            <LinearProgressBar width={2} value={data.resulting_points ?? 0} />
+            <LinearProgressBar width={0.2} value={data.resulting_points ?? 0} />
           </div>
         </div>
       </StyledTableCell>

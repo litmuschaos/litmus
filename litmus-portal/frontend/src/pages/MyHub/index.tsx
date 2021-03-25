@@ -145,9 +145,6 @@ const MyHub: React.FC = () => {
             <Typography variant="h3" gutterBottom>
               {t('myhub.mainPage.header')}
             </Typography>
-            <Typography variant="h4">
-              <strong>{t('myhub.mainPage.github')}</strong>
-            </Typography>
           </div>
           {/* Charts Div */}
           <div className={classes.mainDiv}>
