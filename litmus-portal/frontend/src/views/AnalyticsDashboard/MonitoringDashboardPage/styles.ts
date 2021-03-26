@@ -52,8 +52,22 @@ const useStyles = makeStyles((theme) => ({
   },
 
   singleGraph: {
+    backgroundColor: theme.palette.background.paper,
     position: 'relative',
     height: '27.5rem',
+  },
+  popoutModal: {
+    width: '85%',
+    height: '95%',
+    padding: '2rem',
+    paddingLeft: '10%',
+  },
+  wrapperParentIconsTitle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  wrapperIcons: {
+    display: 'flex',
   },
   pannelIcon: {
     width: '0.9rem',
