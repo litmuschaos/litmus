@@ -1,4 +1,5 @@
-import { fade, makeStyles, Theme } from '@material-ui/core/styles';
+import MuiAccordion from '@material-ui/core/Accordion';
+import { fade, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 
 // Component styles
 const useStyles = makeStyles((theme) => ({
@@ -17,8 +18,9 @@ const useStyles = makeStyles((theme) => ({
 
   headerDiv: {
     display: 'flex',
-    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: theme.spacing(5),
+    paddingTop: theme.spacing(2.15),
     backgroundColor: theme.palette.disabledBackground,
     minHeight: '5rem',
   },
@@ -84,7 +86,6 @@ const useStyles = makeStyles((theme) => ({
 
   expDiv: {
     display: 'flex',
-    flexDirection: 'row',
   },
 
   btnText: {
@@ -108,7 +109,6 @@ const useStyles = makeStyles((theme) => ({
 
   flexButtons: {
     display: 'flex',
-    flexDirection: 'row',
     justifyContent: 'space-evenly',
   },
 
@@ -124,6 +124,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     height: '2.9rem',
     minWidth: '9rem',
+    marginLeft: theme.spacing(3.75),
     border: `0.1px solid ${theme.palette.border.main}`,
     background: theme.palette.background.paper,
     borderRadius: 4,
@@ -155,6 +156,10 @@ const useStyles = makeStyles((theme) => ({
 
   formControl: {
     width: '9rem',
+    marginLeft: theme.spacing(1.5),
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: theme.spacing(3.75),
+    },
     '& .MuiSelect-outlined': {
       padding: '0.925rem',
       '&:focus': {
@@ -194,8 +199,51 @@ const useStyles = makeStyles((theme) => ({
   },
 
   refreshText: {
-    marginTop: theme.spacing(-2.75),
+    marginTop: theme.spacing(-2.85),
     marginLeft: theme.spacing(3.5),
+  },
+
+  headerInfoText: {
+    fontWeight: 500,
+    fontSize: '0.95rem',
+    lineHeight: '1rem',
+    width: '35%',
+    marginLeft: theme.spacing(2.5),
+  },
+
+  controls: {
+    marginRight: theme.spacing(2.25),
+    display: 'flex',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      marginRight: 0,
+    },
+  },
+
+  chaosTableSection: {
+    padding: theme.spacing(2.5, 2, 0),
+  },
+
+  /// /
+  panelGroup: {
+    display: 'flex',
+    alignContent: 'left',
+    background: theme.palette.disabledBackground,
+  },
+
+  panelGroupContainer: {
+    width: '100%',
+    background: theme.palette.cards.header,
+    display: 'inline-grid',
+    gridTemplateColumns: '49% 49%',
+    gridGap: theme.spacing(1.75),
+    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(1.75),
+  },
+
+  panelGroupTitle: {
+    fontWeight: 700,
+    fontSize: '1rem',
   },
 }));
 
@@ -227,5 +275,30 @@ export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
   focused: {},
   notchedOutline: {},
 }));
+
+export const Accordion = withStyles({
+  root: {
+    border: 0,
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+    '& .MuiAccordionSummary-root.Mui-expanded': {
+      minHeight: '1rem !important',
+      height: '3rem',
+    },
+    '& .MuiAccordionSummary-root': {
+      minHeight: '1rem !important',
+      height: '3rem',
+    },
+  },
+  expanded: {},
+})(MuiAccordion);
 
 export default useStyles;

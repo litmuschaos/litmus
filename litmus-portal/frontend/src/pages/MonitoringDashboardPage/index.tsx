@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useQuery } from '@apollo/client';
+import { ApolloError, useQuery } from '@apollo/client';
 import {
+  AccordionDetails,
+  AccordionSummary,
   FormControl,
   IconButton,
   InputLabel,
@@ -12,6 +14,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import AutorenewOutlinedIcon from '@material-ui/icons/AutorenewOutlined';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
 import { ButtonOutlined, GraphMetric } from 'litmus-ui';
@@ -28,7 +31,10 @@ import {
   PROM_QUERY,
   WORKFLOW_LIST_DETAILS,
 } from '../../graphql';
-import { ChaosInformation } from '../../models/dashboardsData';
+import {
+  ChaosEventDetails,
+  ChaosInformation,
+} from '../../models/dashboardsData';
 import {
   DashboardList,
   ListDashboardResponse,
@@ -54,14 +60,15 @@ import useActions from '../../redux/actions';
 import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
 import { RootState } from '../../redux/reducers';
-import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
+import { getProjectID } from '../../utils/getSearchParams';
 import {
   chaosEventDataParserForPrometheus,
   getChaosQueryPromInputAndID,
 } from '../../utils/promUtils';
+import ChaosTable from '../../views/AnalyticsDashboard/MonitoringDashboardPage/ChaosTable';
 import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DashboardPanelGroup';
 import refreshData from './refreshData';
-import useStyles, { useOutlinedInputStyles } from './styles';
+import useStyles, { Accordion, useOutlinedInputStyles } from './styles';
 
 interface SelectedDashboardInformation {
   id: string;
@@ -78,6 +85,8 @@ interface PrometheusQueryDataInterface {
   promInput: PrometheusQueryInput;
   chaosInput: string[];
   firstLoad: Boolean;
+  chaosEvents: ChaosEventDetails[];
+  eventsToShow: string[];
 }
 
 interface RefreshObjectType {
@@ -90,12 +99,12 @@ const DashboardPage: React.FC = () => {
   const outlinedInputClasses = useOutlinedInputStyles();
   const { t } = useTranslation();
   const { palette } = useTheme();
+  const areaGraph: string[] = palette.graph.area;
   const ACTIVE: string = 'Active';
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // get ProjectID
   const projectID = getProjectID();
-  const projectRole = getProjectRole();
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
@@ -136,6 +145,8 @@ const DashboardPage: React.FC = () => {
       queries: [],
     },
     chaosInput: [],
+    chaosEvents: [],
+    eventsToShow: [],
     firstLoad: true,
   });
   const [chaosData, setChaosData] = React.useState<Array<GraphMetric>>([]);
@@ -188,6 +199,7 @@ const DashboardPage: React.FC = () => {
   const handleOpenRefresh = () => {
     setOpenRefresh(true);
   };
+  const [chaosTableOpen, setChaosTableOpen] = React.useState<boolean>(true);
 
   // Apollo query to get the dashboards data
   const { data: dashboards } = useQuery<DashboardList, ListDashboardVars>(
@@ -235,11 +247,24 @@ const DashboardPage: React.FC = () => {
       if (eventData) {
         chaos_data = chaosEventDataParserForPrometheus(
           eventData,
-          prometheusQueryData?.chaosInput,
-          palette.error.main
+          prometheusQueryData?.eventsToShow,
+          prometheusQueryData?.chaosEvents
         );
         setChaosData(chaos_data);
         chaos_data = [];
+      }
+    },
+    onError: (error: ApolloError) => {
+      if (
+        error.message ===
+        `bad_data: exceeded maximum resolution of 11,000 points per timeseries. Try decreasing the query resolution (?step=XX)`
+      ) {
+        if (selectedDashboard.refreshRate !== 2147483647) {
+          dashboard.selectDashboard({
+            refreshRate: 2147483647,
+          });
+        }
+        setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
       }
     },
   });
@@ -316,14 +341,23 @@ const DashboardPage: React.FC = () => {
     let chaosInformation: ChaosInformation = {
       promQueries: prometheusQueryData.promInput.queries,
       chaosQueryIDs: prometheusQueryData.chaosInput,
+      chaosEventList: prometheusQueryData.chaosEvents,
     };
     if (prometheusQueryData.firstLoad && analyticsData?.ListWorkflow) {
+      const timeRangeDiff: number =
+        new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+          1000 -
+        new Date(moment(selectedDashboard.range.startDate).format()).getTime() /
+          1000;
       chaosInformation = getChaosQueryPromInputAndID(
         analyticsData,
-        selectedDashboardInformation.agentID
+        selectedDashboardInformation.agentID,
+        areaGraph,
+        timeRangeDiff
       );
     }
     setPrometheusQueryData({
+      ...prometheusQueryData,
       promInput: {
         url: selectedDataSource.selectedDataSourceURL,
         start: `${
@@ -338,29 +372,56 @@ const DashboardPage: React.FC = () => {
         queries: chaosInformation.promQueries,
       },
       chaosInput: chaosInformation.chaosQueryIDs,
+      chaosEvents: chaosInformation.chaosEventList,
       firstLoad: !analyticsData?.ListWorkflow,
     });
     chaosInformation = {
       promQueries: [],
       chaosQueryIDs: [],
+      chaosEventList: [],
     };
   };
 
   useEffect(() => {
     if (prometheusQueryData.firstLoad) {
       generateChaosQueries();
-      dashboard.selectDashboard({
-        range: {
-          startDate: moment
-            .unix(Math.round(new Date().getTime() / 1000) - 1800)
-            .format(),
-          endDate: moment
-            .unix(Math.round(new Date().getTime() / 1000))
-            .format(),
-        },
-      });
+      if (selectedDashboard.refreshRate !== 2147483647) {
+        dashboard.selectDashboard({
+          range: {
+            startDate: moment
+              .unix(Math.round(new Date().getTime() / 1000) - 1800)
+              .format(),
+            endDate: moment
+              .unix(Math.round(new Date().getTime() / 1000))
+              .format(),
+          },
+        });
+      }
     }
     if (!prometheusQueryData.firstLoad) {
+      // check and update range for the default relative time selection
+      // for user selections / check with entire range of relative time differences
+      // for absolute time no updates to the range therefore no data refresh / feature disabled
+      if (
+        new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+          1000 -
+          new Date(
+            moment(selectedDashboard.range.startDate).format()
+          ).getTime() /
+            1000 ===
+        1800
+      ) {
+        dashboard.selectDashboard({
+          range: {
+            startDate: moment
+              .unix(Math.round(new Date().getTime() / 1000) - 1800)
+              .format(),
+            endDate: moment
+              .unix(Math.round(new Date().getTime() / 1000))
+              .format(),
+          },
+        });
+      }
       setTimeout(
         () => {
           generateChaosQueries();
@@ -454,29 +515,30 @@ const DashboardPage: React.FC = () => {
             >
               {selectedDashboardInformation.type}
             </Typography> */}
-            <Typography>
+            <Typography className={classes.headerInfoText}>
               {`View the chaos events and metrics in a given \n time interval by
               selecting a time interval.`}
             </Typography>
-            <ButtonOutlined
-              className={classes.selectDate}
-              onClick={() => setDateRangeSelectorPopoverOpen(true)}
-              ref={dateRangeSelectorRef}
-              aria-label="time range"
-              aria-haspopup="true"
-            >
-              <Typography className={classes.displayDate}>
-                <IconButton className={classes.rangeSelectorClockIcon}>
-                  <WatchLaterRoundedIcon />
-                </IconButton>
-                {selectedDashboard.range.startDate === ' '
-                  ? 'Select Period'
-                  : `${selectedDashboard.range.startDate.split('-')[0]}-${
-                      selectedDashboard.range.startDate.split('-')[1]
-                    }-${selectedDashboard.range.startDate.substring(
-                      selectedDashboard.range.startDate.lastIndexOf('-') + 1,
-                      selectedDashboard.range.startDate.lastIndexOf('T')
-                    )} 
+            <div className={classes.controls}>
+              <ButtonOutlined
+                className={classes.selectDate}
+                onClick={() => setDateRangeSelectorPopoverOpen(true)}
+                ref={dateRangeSelectorRef}
+                aria-label="time range"
+                aria-haspopup="true"
+              >
+                <Typography className={classes.displayDate}>
+                  <IconButton className={classes.rangeSelectorClockIcon}>
+                    <WatchLaterRoundedIcon />
+                  </IconButton>
+                  {selectedDashboard.range.startDate === ' '
+                    ? 'Select Period'
+                    : `${selectedDashboard.range.startDate.split('-')[0]}-${
+                        selectedDashboard.range.startDate.split('-')[1]
+                      }-${selectedDashboard.range.startDate.substring(
+                        selectedDashboard.range.startDate.lastIndexOf('-') + 1,
+                        selectedDashboard.range.startDate.lastIndexOf('T')
+                      )} 
                     
                   ${selectedDashboard.range.startDate.substring(
                     selectedDashboard.range.startDate.lastIndexOf('T') + 1,
@@ -484,90 +546,119 @@ const DashboardPage: React.FC = () => {
                   )} 
                     
                   to ${selectedDashboard.range.endDate.split('-')[0]}-${
-                      selectedDashboard.range.endDate.split('-')[1]
-                    }-${selectedDashboard.range.endDate.substring(
-                      selectedDashboard.range.endDate.lastIndexOf('-') + 1,
-                      selectedDashboard.range.endDate.lastIndexOf('T')
-                    )} 
+                        selectedDashboard.range.endDate.split('-')[1]
+                      }-${selectedDashboard.range.endDate.substring(
+                        selectedDashboard.range.endDate.lastIndexOf('-') + 1,
+                        selectedDashboard.range.endDate.lastIndexOf('T')
+                      )} 
                     
                   ${selectedDashboard.range.endDate.substring(
                     selectedDashboard.range.endDate.lastIndexOf('T') + 1,
                     selectedDashboard.range.endDate.lastIndexOf('+')
                   )}`}
 
-                <IconButton className={classes.rangeSelectorIcon}>
-                  <KeyboardArrowDownIcon />
-                </IconButton>
-              </Typography>
-            </ButtonOutlined>
-            <DateRangeSelector
-              anchorEl={dateRangeSelectorRef.current as HTMLElement}
-              isOpen={isDateRangeSelectorPopoverOpen}
-              onClose={() => {
-                setDateRangeSelectorPopoverOpen(false);
-              }}
-              callbackToSetRange={CallbackFromRangeSelector}
-              className={classes.rangeSelectorPopover}
-            />
-
-            <FormControl className={classes.formControl} variant="outlined">
-              <InputLabel
-                id="refresh-controlled-open-select-label"
-                className={classes.inputLabel}
-              >
-                <AutorenewOutlinedIcon className={classes.refreshIcon} />
-                <Typography className={classes.refreshText}>Refresh</Typography>
-              </InputLabel>
-              <Select
-                labelId="refresh-controlled-open-select-label"
-                id="refresh-controlled-open-select"
-                open={openRefresh}
-                onClose={handleCloseRefresh}
-                onOpen={handleOpenRefresh}
-                value={refreshRate !== 0 ? refreshRate : null}
-                onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                  setRefreshRate(event.target.value as number);
-                  dashboard.selectDashboard({
-                    refreshRate: event.target.value as number,
-                  });
-                  setTimeout(() => {
-                    window.location.reload(false);
-                  }, 1000);
+                  <IconButton className={classes.rangeSelectorIcon}>
+                    <KeyboardArrowDownIcon />
+                  </IconButton>
+                </Typography>
+              </ButtonOutlined>
+              <DateRangeSelector
+                anchorEl={dateRangeSelectorRef.current as HTMLElement}
+                isOpen={isDateRangeSelectorPopoverOpen}
+                onClose={() => {
+                  setDateRangeSelectorPopoverOpen(false);
                 }}
-                input={<OutlinedInput classes={outlinedInputClasses} />}
-                IconComponent={KeyboardArrowDownIcon}
-              >
-                <MenuItem
-                  key="Off-refresh-option"
-                  value={2147483647}
-                  className={
-                    refreshRate === 2147483647
-                      ? classes.menuListItemSelected
-                      : classes.menuListItem
-                  }
+                callbackToSetRange={CallbackFromRangeSelector}
+                className={classes.rangeSelectorPopover}
+              />
+
+              <FormControl className={classes.formControl} variant="outlined">
+                <InputLabel
+                  id="refresh-controlled-open-select-label"
+                  className={classes.inputLabel}
                 >
-                  Off
-                </MenuItem>
-                {refreshData.map((data: RefreshObjectType) => (
+                  <AutorenewOutlinedIcon className={classes.refreshIcon} />
+                  <Typography className={classes.refreshText}>
+                    Refresh
+                  </Typography>
+                </InputLabel>
+                <Select
+                  labelId="refresh-controlled-open-select-label"
+                  id="refresh-controlled-open-select"
+                  open={openRefresh}
+                  onClose={handleCloseRefresh}
+                  onOpen={handleOpenRefresh}
+                  value={refreshRate !== 0 ? refreshRate : null}
+                  onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                    dashboard.selectDashboard({
+                      refreshRate: event.target.value as number,
+                    });
+                    setRefreshRate(event.target.value as number);
+                  }}
+                  input={<OutlinedInput classes={outlinedInputClasses} />}
+                  IconComponent={KeyboardArrowDownIcon}
+                >
                   <MenuItem
-                    key={`${data.label}-refresh-option`}
-                    value={data.value}
+                    key="Off-refresh-option"
+                    value={2147483647}
                     className={
-                      refreshRate === data.value
+                      refreshRate === 2147483647
                         ? classes.menuListItemSelected
                         : classes.menuListItem
                     }
                   >
-                    {data.label}
+                    Off
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                  {refreshData.map((data: RefreshObjectType) => (
+                    <MenuItem
+                      key={`${data.label}-refresh-option`}
+                      value={data.value}
+                      className={
+                        refreshRate === data.value
+                          ? classes.menuListItemSelected
+                          : classes.menuListItem
+                      }
+                    >
+                      {data.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
           </div>
           <div
             className={classes.analyticsDiv}
             key={selectedDashboardInformation.dashboardKey}
           >
+            <div className={classes.chaosTableSection}>
+              <Accordion expanded={chaosTableOpen}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                  className={classes.panelGroup}
+                  key={`chaos-table-${selectedDashboardInformation.dashboardKey}`}
+                  onClick={() => {
+                    setChaosTableOpen(!chaosTableOpen);
+                  }}
+                >
+                  <Typography className={classes.panelGroupTitle}>
+                    Show Chaos during this interval
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails className={classes.panelGroupContainer}>
+                  <ChaosTable
+                    chaosList={prometheusQueryData?.chaosEvents}
+                    selectEvents={(selectedEvents: string[]) => {
+                      setPrometheusQueryData({
+                        ...prometheusQueryData,
+                        eventsToShow: selectedEvents,
+                      });
+                    }}
+                  />
+                </AccordionDetails>
+              </Accordion>
+            </div>
             {selectedDashboardInformation.metaData[0] &&
               selectedDashboardInformation.metaData[0].panel_groups.map(
                 (panelGroup: PanelGroupResponse) => (

@@ -38,9 +38,19 @@ export interface ChaosResultNamesAndNamespacesMap {
   isRemoved: string[];
 }
 
+export interface ChaosEventDetails {
+  id: string;
+  legend: string;
+  workflow: string;
+  experiment: string;
+  target: string;
+  result: string;
+}
+
 export interface ChaosInformation {
   promQueries: promQueryInput[];
   chaosQueryIDs: string[];
+  chaosEventList: ChaosEventDetails[];
 }
 
 export interface GraphPanelProps extends PanelResponse {

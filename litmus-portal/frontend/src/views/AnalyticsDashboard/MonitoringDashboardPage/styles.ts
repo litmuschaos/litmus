@@ -26,9 +26,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     background: theme.palette.cards.header,
     display: 'inline-grid',
-    gridTemplateColumns: '50% 50%',
-    gridGgap: theme.spacing(2),
+    gridTemplateColumns: '49% 49%',
+    gridGap: theme.spacing(1.75),
     padding: theme.spacing(1),
+    paddingLeft: theme.spacing(1.75),
   },
 
   expand: {
@@ -79,6 +80,14 @@ export const Accordion = withStyles({
     },
     '&$expanded': {
       margin: 'auto',
+    },
+    '& .MuiAccordionSummary-root.Mui-expanded': {
+      minHeight: '1rem !important',
+      height: '2.5rem',
+    },
+    '& .MuiAccordionSummary-root': {
+      minHeight: '1rem !important',
+      height: '2.5rem',
     },
   },
   expanded: {},

@@ -26,42 +26,40 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
 
   return (
     <div className={classes.rootPanelGroup}>
-      <div>
-        <Accordion expanded={open}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-            className={classes.panelGroup}
-            key={`${panel_group_id}`}
-            onClick={() => {
-              setOpen(!open);
-            }}
-          >
-            <Typography className={classes.panelGroupTitle}>
-              {panel_group_name}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails className={classes.panelGroupContainer}>
-            {panels &&
-              panels.map((panel: PanelResponse) => (
-                <GraphPanel
-                  key={panel.panel_id}
-                  data-cy="dashboardPanel"
-                  panel_id={panel.panel_id}
-                  panel_name={panel.panel_name}
-                  panel_options={panel.panel_options}
-                  prom_queries={panel.prom_queries}
-                  y_axis_left={panel.y_axis_left}
-                  y_axis_right={panel.y_axis_right}
-                  x_axis_down={panel.x_axis_down}
-                  unit={panel.unit}
-                  chaos_data={chaos_data}
-                />
-              ))}
-          </AccordionDetails>
-        </Accordion>
-      </div>
+      <Accordion expanded={open}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+          className={classes.panelGroup}
+          key={`${panel_group_id}`}
+          onClick={() => {
+            setOpen(!open);
+          }}
+        >
+          <Typography className={classes.panelGroupTitle}>
+            {panel_group_name}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails className={classes.panelGroupContainer}>
+          {panels &&
+            panels.map((panel: PanelResponse) => (
+              <GraphPanel
+                key={panel.panel_id}
+                data-cy="dashboardPanel"
+                panel_id={panel.panel_id}
+                panel_name={panel.panel_name}
+                panel_options={panel.panel_options}
+                prom_queries={panel.prom_queries}
+                y_axis_left={panel.y_axis_left}
+                y_axis_right={panel.y_axis_right}
+                x_axis_down={panel.x_axis_down}
+                unit={panel.unit}
+                chaos_data={chaos_data}
+              />
+            ))}
+        </AccordionDetails>
+      </Accordion>
     </div>
   );
 };

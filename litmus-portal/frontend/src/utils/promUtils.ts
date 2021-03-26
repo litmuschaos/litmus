@@ -12,6 +12,7 @@ import {
   WorkflowYaml,
 } from '../models/chaosWorkflowYaml';
 import {
+  ChaosEventDetails,
   ChaosInformation,
   ChaosResultNamesAndNamespacesMap,
 } from '../models/dashboardsData';
@@ -45,11 +46,14 @@ export const getResultNameAndNamespace = (chaosQueryString: string) => {
 
 export const getChaosQueryPromInputAndID = (
   analyticsData: WorkflowList,
-  agentID: string
+  agentID: string,
+  areaGraph: string[],
+  timeRangeDiff: number
 ) => {
   const chaosInformation: ChaosInformation = {
     promQueries: [],
     chaosQueryIDs: [],
+    chaosEventList: [],
   };
   const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
   analyticsData?.ListWorkflow.forEach((schedule: Workflow) => {
@@ -132,7 +136,7 @@ export const getChaosQueryPromInputAndID = (
     }
   });
 
-  chaosResultNamesAndNamespacesMap.forEach((keyValue) => {
+  chaosResultNamesAndNamespacesMap.forEach((keyValue, index) => {
     const queryID: string = uuidv4();
     chaosInformation.promQueries.push({
       queryid: queryID,
@@ -143,32 +147,33 @@ export const getChaosQueryPromInputAndID = (
       ),
       legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
       resolution: '1/2',
-      minstep: 1,
+      minstep:
+        timeRangeDiff * chaosResultNamesAndNamespacesMap.length < 10999
+          ? 1
+          : Math.floor(
+              (timeRangeDiff * chaosResultNamesAndNamespacesMap.length) / 11001
+            ),
     });
     chaosInformation.chaosQueryIDs.push(queryID);
+    chaosInformation.chaosEventList.push({
+      id: queryID,
+      legend: areaGraph[index % areaGraph.length],
+      workflow: keyValue.workflowName,
+      experiment: keyValue.experimentName,
+      target: 't',
+      result: 'r',
+      // add run wise these data with unix time of expt. run start and end/last update
+      // resilience score + expt. status + workflow status + probe success percentage
+    });
   });
 
   return chaosInformation;
 };
 
-export const getPromQueryInput = (prom_queries: PromQuery[]) => {
-  const promQueries: promQueryInput[] = [];
-  prom_queries.forEach((query: PromQuery) => {
-    promQueries.push({
-      queryid: query.queryid,
-      query: query.prom_query_name,
-      legend: query.legend,
-      resolution: query.resolution,
-      minstep: parseInt(query.minstep, 10),
-    });
-  });
-  return promQueries;
-};
-
 export const chaosEventDataParserForPrometheus = (
   eventData: PrometheusResponse,
   chaosInput: string[],
-  color: string
+  chaosEventList: ChaosEventDetails[]
 ) => {
   const chaos_data: Array<GraphMetric> = [];
   eventData?.GetPromQuery.forEach((queryResponse) => {
@@ -181,13 +186,48 @@ export const chaosEventDataParserForPrometheus = (
               date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
               value: parseInt(dataPoint.value ?? '0', 10),
             })),
-            baseColor: color,
+            baseColor: chaosEventList.filter(
+              (e) => queryResponse.queryid === e.id
+            )[0].legend,
+            // Filter subData with start and end time of experiment run / update in graph based on hover time frame.
+            // Add two extra subData fields - start and end timeStamp to filter subData in graph.
+            // This method sends the latest run details as the subData.
+            // Need to update this to send every run detail with timestamps in the two extra fields.
+            /* 
+              subData: [
+                { subDataName: "subData-1-1", value: "1-1" },
+                { subDataName: "subData-1-2", value: "1-2" },
+              ],
+            - resilience score + expt status + workflow status + probe success percentage (filter with start and end time)
+            */
           }))
         );
       }
     }
   });
   return chaos_data;
+};
+
+export const getPromQueryInput = (
+  prom_queries: PromQuery[],
+  timeRangeDiff: number
+) => {
+  const promQueries: promQueryInput[] = [];
+  prom_queries.forEach((query: PromQuery) => {
+    promQueries.push({
+      queryid: query.queryid,
+      query: query.prom_query_name,
+      legend: query.legend,
+      resolution: query.resolution,
+      minstep:
+        Math.floor(timeRangeDiff / parseInt(query.minstep, 10)) *
+          prom_queries.length <
+        10999
+          ? parseInt(query.minstep, 10)
+          : Math.floor((timeRangeDiff * prom_queries.length) / 11001),
+    });
+  });
+  return promQueries;
 };
 
 export const seriesDataParserForPrometheus = (

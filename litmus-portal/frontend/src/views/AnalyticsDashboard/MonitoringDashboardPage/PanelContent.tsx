@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useQuery } from '@apollo/client';
+import { ApolloError, useQuery } from '@apollo/client';
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { ButtonOutlined, GraphMetric, LineAreaGraph, Modal } from 'litmus-ui';
@@ -15,6 +15,8 @@ import {
   PrometheusResponse,
   promQueryInput,
 } from '../../../models/graphql/prometheus';
+import useActions from '../../../redux/actions';
+import * as DashboardActions from '../../../redux/actions/dashboards';
 import { RootState } from '../../../redux/reducers';
 import { ReactComponent as ViewChaosMetric } from '../../../svg/aligment.svg';
 import { ReactComponent as DisableViewChaosMetric } from '../../../svg/alignmentStriked.svg';
@@ -44,6 +46,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   const { palette } = useTheme();
   const classes = useStyles();
   const { t } = useTranslation();
+  const dashboard = useActions(DashboardActions);
   const lineGraph: string[] = palette.graph.line;
   const [popout, setPopout] = useState(false);
   const [viewEventMetric, setViewEventMetric] = useState(false);
@@ -92,12 +95,30 @@ const PanelContent: React.FC<GraphPanelProps> = ({
         seriesData = [];
       }
     },
+    onError: (error: ApolloError) => {
+      if (
+        error.message ===
+        `bad_data: exceeded maximum resolution of 11,000 points per timeseries. Try decreasing the query resolution (?step=XX)`
+      ) {
+        if (selectedDashboard.refreshRate !== 2147483647) {
+          dashboard.selectDashboard({
+            refreshRate: 2147483647,
+          });
+        }
+        setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
+      }
+    },
   });
 
   const generatePromQueries = () => {
     let promQueries: promQueryInput[] = prometheusQueryData.promInput.queries;
     if (prometheusQueryData.firstLoad) {
-      promQueries = getPromQueryInput(prom_queries);
+      const timeRangeDiff: number =
+        new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+          1000 -
+        new Date(moment(selectedDashboard.range.startDate).format()).getTime() /
+          1000;
+      promQueries = getPromQueryInput(prom_queries, timeRangeDiff);
     }
     setPrometheusQueryData({
       promInput: {
