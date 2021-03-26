@@ -1,17 +1,15 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  rootContainer: {
-    position: 'fixed',
-    width: '100%',
-    height: '100%',
-    background: theme.palette.primary.main,
-  },
   rootDiv: {
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(2),
-    maxWidth: '49rem',
+    justifyContent: 'space-around',
+  },
+  rootLitmusText: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   HeaderText: {
     maxWidth: '23.56rem',
@@ -22,17 +20,21 @@ const useStyles = makeStyles((theme) => ({
   },
   litmusText: {
     maxWidth: '23.56rem',
+    fontWeight: 400,
     fontSize: '1rem',
     color: theme.palette.text.secondary,
   },
   inputDiv: {
-    maxWidth: '23.75rem',
-    margin: theme.spacing(6, 0, 0, 7.5),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    maxWidth: '20rem',
+    marginTop: theme.spacing(5),
+    marginLeft: theme.spacing(7.5),
   },
   inputValue: {
-    marginBottom: theme.spacing(1.75),
+    margin: theme.spacing(1.875, 0, 1.875, 0),
     width: '100%',
-    borderRadius: '0.25rem',
     background: theme.palette.background.paper,
     '& .MuiInputLabel-filled': {
       color: theme.palette.text.hint,
@@ -48,17 +50,25 @@ const useStyles = makeStyles((theme) => ({
       margin: 0,
     },
   },
-  loginButton: {
-    marginTop: theme.spacing(1.875),
+  submitButton: {
     background: theme.palette.primary.light,
     color: theme.palette.text.secondary,
-    maxWidth: '8rem',
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-    },
     '&:disabled': {
-      backgroundColor: theme.palette.primary.light,
+      PointerEvents: 'none',
+      background: theme.palette.primary.light,
+      color: theme.palette.text.secondary,
     },
+    '&:hover': {
+      background: theme.palette.primary.light,
+    },
+  },
+  buttonGroup: {
+    marginTop: theme.spacing(3.75),
+    width: '100%',
+    color: theme.palette.text.secondary,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 }));
 export default useStyles;

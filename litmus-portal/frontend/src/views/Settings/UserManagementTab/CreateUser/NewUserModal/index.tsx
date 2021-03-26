@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
@@ -5,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
+import { CREATE_USER } from '../../../../../graphql';
+import { CreateUserData } from '../../../../../models/graphql/user';
 import { getToken } from '../../../../../utils/auth';
 import useStyles from './styles';
 
@@ -31,11 +34,24 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
   const role = 'user';
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = useState<string>('');
+
   const handleClose = () => {
     setOpen(false);
     handleDiv();
   };
-  const [error, setError] = useState<string>('');
+
+  const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
+    onError: (err) => {
+      console.error(err);
+    },
+    onCompleted: () => {
+      setLoading(false);
+      setOpen(true);
+      setError('');
+    },
+  });
+
   const handleOpen = () => {
     setLoading(true);
     fetch(`${config.auth.url}/create`, {
@@ -53,10 +69,18 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
         if ('error' in data) {
           setError(data.error_description as string);
         } else {
-          setError('');
+          CreateUser({
+            variables: {
+              user: {
+                username,
+                email,
+                name,
+                role: 'user',
+                userID: data._id,
+              },
+            },
+          });
         }
-        setLoading(false);
-        setOpen(true);
       })
       .catch((err) => {
         console.error(err);

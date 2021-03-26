@@ -16,6 +16,7 @@ const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
 const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
+const GetStarted = lazy(() => import('../../pages/GetStartedPage'));
 const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const BrowseTemplate = lazy(
   () => import('../../views/ChaosWorkflows/BrowseTemplate')
@@ -137,9 +138,8 @@ const Routes: React.FC = () => {
           <Loader />
         ) : (
           <Switch>
-            <Route exact path="/home" component={HomePage} />
+            <Route exact path="/getStarted" component={GetStarted} />
             <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-            <Redirect to="/home" />
           </Switch>
         )}
       </>
@@ -243,6 +243,7 @@ const Routes: React.FC = () => {
           <Route exact path="/404" component={ErrorPage} />
 
           {/* Redirects */}
+          <Redirect exact path="/getStarted" to="/home" />
           <Redirect exact path="/workflows/schedule" to="/workflows" />
           <Redirect exact path="/workflows/template" to="/workflows" />
 
