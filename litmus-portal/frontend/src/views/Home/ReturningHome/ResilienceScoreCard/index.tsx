@@ -52,7 +52,7 @@ const ResilienceScoreCard: React.FC<AverageResilienceScoreProps> = ({
           iconSize="1rem"
           imageSrc="./icons/radialIcon.svg"
           radialData={{
-            value: value,
+            value,
             label: 'pass',
             baseColor: '#5B44BA',
           }}

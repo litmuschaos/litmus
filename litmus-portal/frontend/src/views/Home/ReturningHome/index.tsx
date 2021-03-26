@@ -110,7 +110,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                 );
 
                 const { nodes } = executionData;
-                const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+                const workflowsRunResults: number[] = [];
                 let totalExperimentsPassed: number = 0;
                 let weightsSum: number = 0;
                 let isValid: boolean = false;
@@ -126,12 +126,13 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                       const weightageMap: WeightageMap[] = workflowData
                         ? workflowData.weightages
                         : [];
+                      // eslint-disable-next-line
                       weightageMap.forEach((weightage) => {
                         if (
                           weightage.experiment_name === chaosData.experimentName
                         ) {
                           if (chaosData.experimentVerdict === 'Pass') {
-                            experimentTestResultsArrayPerWorkflowRun.push(
+                            workflowsRunResults.push(
                               (weightage.weightage *
                                 parseInt(
                                   chaosData.probeSuccessPercentage,
@@ -142,7 +143,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                             totalExperimentsPassed += 1;
                           }
                           if (chaosData.experimentVerdict === 'Fail') {
-                            experimentTestResultsArrayPerWorkflowRun.push(0);
+                            workflowsRunResults.push(0);
                           }
                           if (
                             chaosData.experimentVerdict === 'Pass' ||
@@ -161,34 +162,24 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
 
                   totalValidWorkflowRuns.tests_passed += totalExperimentsPassed;
                   totalValidWorkflowRuns.tests_failed +=
-                    experimentTestResultsArrayPerWorkflowRun.length -
-                    totalExperimentsPassed;
-                  totalValidWorkflowRuns.resilience_score += experimentTestResultsArrayPerWorkflowRun.length
-                    ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                        (a, b) => a + b,
-                        0
-                      ) /
+                    workflowsRunResults.length - totalExperimentsPassed;
+                  totalValidWorkflowRuns.resilience_score += workflowsRunResults.length
+                    ? (workflowsRunResults.reduce((a, b) => a + b, 0) /
                         weightsSum) *
                       100
                     : 0;
                   workflowTimeSeriesData.push({
                     date: data.last_updated,
-                    value: experimentTestResultsArrayPerWorkflowRun.length
-                      ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                          (a, b) => a + b,
-                          0
-                        ) /
+                    value: workflowsRunResults.length
+                      ? (workflowsRunResults.reduce((a, b) => a + b, 0) /
                           weightsSum) *
                         100
                       : 0,
                   });
                   timeSeriesArrayForAveragePerWeek.push({
                     date: data.last_updated,
-                    value: experimentTestResultsArrayPerWorkflowRun.length
-                      ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                          (a, b) => a + b,
-                          0
-                        ) /
+                    value: workflowsRunResults.length
+                      ? (workflowsRunResults.reduce((a, b) => a + b, 0) /
                           weightsSum) *
                         100
                       : 0,
@@ -205,7 +196,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
       }
     }
 
-    //checks for presence of valid workflow data
+    // checks for presence of valid workflow data
     if (totalValidRuns === 0) {
       setWorkflowDataPresent(false);
     }
