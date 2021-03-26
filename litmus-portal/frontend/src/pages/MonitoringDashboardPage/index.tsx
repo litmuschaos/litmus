@@ -361,13 +361,18 @@ const DashboardPage: React.FC = () => {
       promInput: {
         url: selectedDataSource.selectedDataSourceURL,
         start: `${
-          new Date(
-            moment(selectedDashboard.range.startDate).format()
-          ).getTime() / 1000
+          selectedDashboard.range
+            ? new Date(
+                moment(selectedDashboard.range.startDate).format()
+              ).getTime() / 1000
+            : Math.round(new Date().getTime() / 1000) - 1800
         }`,
         end: `${
-          new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-          1000
+          selectedDashboard.range
+            ? new Date(
+                moment(selectedDashboard.range.endDate).format()
+              ).getTime() / 1000
+            : Math.round(new Date().getTime() / 1000)
         }`,
         queries: chaosInformation.promQueries,
       },
@@ -531,7 +536,8 @@ const DashboardPage: React.FC = () => {
                   <IconButton className={classes.rangeSelectorClockIcon}>
                     <WatchLaterRoundedIcon />
                   </IconButton>
-                  {selectedDashboard.range.startDate === ' '
+                  {!selectedDashboard.range ||
+                  selectedDashboard.range.startDate === ' '
                     ? 'Select Period'
                     : `${selectedDashboard.range.startDate.split('-')[0]}-${
                         selectedDashboard.range.startDate.split('-')[1]
