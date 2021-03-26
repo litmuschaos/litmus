@@ -122,3 +122,8 @@ export enum Role {
   editor = 'Editor',
   owner = 'Owner',
 }
+
+export enum UserRole {
+  admin = 'admin',
+  user = 'user',
+}

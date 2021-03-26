@@ -194,7 +194,10 @@ const LandingHome: React.FC = () => {
             </IconButton>
           </div>
         </Paper>
-        <LocalQuickActionCard variant="homePage" />
+        <LocalQuickActionCard
+          className={classes.quickActionCard}
+          variant="homePage"
+        />
       </div>
     </>
   );

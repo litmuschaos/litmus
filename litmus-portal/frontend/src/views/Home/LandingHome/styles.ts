@@ -67,14 +67,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     marginTop: theme.spacing(3.125),
     '& #rowTwoSecondPaper': {
-      margin: theme.spacing(0, 4.75, 0, 5.35),
+      margin: theme.spacing(0, 5.625, 0, 5.35),
       minWidth: '15.6875rem',
       [theme.breakpoints.down('md')]: {
         margin: theme.spacing(3.125, 0, 3.125, 0),
       },
     },
     [theme.breakpoints.down('md')]: {
-      display: 'flex',
       flexDirection: 'column',
     },
   },
@@ -136,6 +135,7 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(0, 0, 0, 1),
     },
   },
+
   projectInfoProjectStats: {
     display: 'flex',
     paddingBottom: theme.spacing(1),
@@ -150,17 +150,13 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(0, 0, 2.875, 2.5),
     },
   },
-  //if workflow exists
-  headingDiv: {
-    display: 'flex',
-    flexDirection: 'row',
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-  },
+
   predefinedBtn: {
     marginTop: theme.spacing(2.5),
+  },
+
+  quickActionCard: {
+    marginRight: theme.spacing(3.125),
   },
 }));
 

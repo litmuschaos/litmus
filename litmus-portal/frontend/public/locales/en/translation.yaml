@@ -112,7 +112,9 @@ home:
     agent: Agent
     chaosAgentInfo: Cloud native chaos engineering can be setup on this cluster using LitmusChaos
     deployFirst: Deploy your first Agent
-    toProjects: To projects
+    toProjects: To Projects
+    toAnalytics: To Analytics
+    deploy: Deploy another Agent
 
 login:
   heading: Welcome to <strong>Litmus!</strong>

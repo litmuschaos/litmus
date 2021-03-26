@@ -49,7 +49,9 @@ const AgentCard: React.FC = () => {
           });
         }}
       >
-        {t('home.NonAdmin.deployFirst')}
+        {agentList?.getCluster.length === 0
+          ? t('home.NonAdmin.deployFirst')
+          : t('home.NonAdmin.deploy')}
       </ButtonFilled>
     </Paper>
   );
