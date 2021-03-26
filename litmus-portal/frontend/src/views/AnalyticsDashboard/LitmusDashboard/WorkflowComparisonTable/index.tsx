@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-loop-func */
-/* eslint-disable no-console */
 import { useQuery } from '@apollo/client';
 import {
   IconButton,
@@ -355,7 +354,7 @@ const WorkflowComparisonTable = () => {
           timeSeriesArray.push(workflowTimeSeriesData);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     });
 
@@ -541,7 +540,7 @@ const WorkflowComparisonTable = () => {
             showHead: 'firstPage',
           });
         } catch (err) {
-          console.log(err);
+          console.error(err);
         }
         doc.addPage();
         doc.addImage(

@@ -246,7 +246,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
       nodeStyle.left = '29%';
       nodeStyle.transform = 'translateY(110%)';
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }, [workflowRunData]);
 
@@ -260,7 +260,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
       nodeStyle.left = '29%';
       nodeStyle.transform = 'translateY(110%)';
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }, []);
 
@@ -273,7 +273,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
       nodeStyle.left = '29%';
       nodeStyle.transform = 'translateY(110%)';
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }, [colorsPassed, colorsFailed]);
 
