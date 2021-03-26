@@ -57,8 +57,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
           Set your new password
         </Typography>
         <Typography className={classes.litmusText}>
-          The password should be of 8 characters and should not be same as the
-          password shared by admin.
+          Set a new password which will be used when you login next time
         </Typography>
       </div>
       <form id="login-form" className={classes.inputDiv}>
