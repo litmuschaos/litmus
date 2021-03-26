@@ -1,7 +1,6 @@
 import { Paper, Typography } from '@material-ui/core';
 import { PassFailBar } from 'litmus-ui';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface PassedVsFailedProps {
@@ -10,7 +9,6 @@ interface PassedVsFailedProps {
 
 const PassFailCard: React.FC<PassedVsFailedProps> = ({ passed }) => {
   const classes = useStyles();
-  const { t } = useTranslation();
 
   return (
     <Paper id="totWorkflows" className={classes.totWorkFlow}>

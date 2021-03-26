@@ -12,7 +12,7 @@ import { Member, Project, Projects } from '../../../models/graphql/user';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
-import { getUserId, getUsername } from '../../../utils/auth';
+import { getUserId } from '../../../utils/auth';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -71,13 +71,8 @@ const LandingHome: React.FC = () => {
   });
 
   return (
-    <div>
-      <Typography variant="h3" className={classes.userName}>
-        {t('home.heading')} {getUsername()}
-      </Typography>
-
+    <>
       {/* Row 1 */}
-
       <div className={classes.firstRow}>
         <Paper className={classes.mainDiv}>
           <div className={classes.paperContent}>
@@ -201,7 +196,7 @@ const LandingHome: React.FC = () => {
         </Paper>
         <LocalQuickActionCard variant="homePage" />
       </div>
-    </div>
+    </>
   );
 };
 

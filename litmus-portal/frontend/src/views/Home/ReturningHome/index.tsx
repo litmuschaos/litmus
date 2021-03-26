@@ -1,10 +1,9 @@
 import { useQuery } from '@apollo/client';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import * as _ from 'lodash';
 import moment from 'moment';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
 import {
@@ -53,7 +52,6 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
   currentStatus,
 }) => {
   const classes = useStyles();
-  const { t } = useTranslation();
   const [workflowDataPresent, setWorkflowDataPresent] = useState<boolean>(
     currentStatus
   );
@@ -101,7 +99,6 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
         sortedWorkflowsData.forEach((workflowData: Workflow) => {
           const runs = workflowData ? workflowData.workflow_runs : [];
           const workflowTimeSeriesData: DatedResilienceScore[] = [];
-          let isWorkflowValid: boolean = false;
           if (data?.ListWorkflow.length === 1 && runs === null) {
             setWorkflowDataPresent(false);
           }
@@ -153,7 +150,6 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                           ) {
                             weightsSum += weightage.weightage;
                             isValid = true;
-                            isWorkflowValid = true;
                           }
                         }
                       });
@@ -203,7 +199,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
               }
             });
           } catch (error) {
-            console.log(error);
+            console.error(error);
           }
         });
       }
@@ -264,10 +260,6 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
 
   return (
     <div>
-      <Typography variant="h3" className={classes.userName}>
-        {t('home.heading')}
-      </Typography>
-
       {/* Row 1 */}
       {isChecking ? (
         <div className={classes.loader}>
