@@ -14,6 +14,11 @@ const useStyles = makeStyles((theme) => ({
     },
     flexGrow: 1,
   },
+  loader: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+  },
 }));
 
 export default useStyles;

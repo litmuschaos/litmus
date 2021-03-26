@@ -109,6 +109,7 @@ home:
     agentDeployInfo: To configure your workflow you need to deploy an agent. Click on “Deploy your first Agent” to continue.
     chaosAgent: Deploy LitmusChaos agent on your Kubernetes clusters.
     agents: Agents
+    agent: Agent
     chaosAgentInfo: Cloud native chaos engineering can be setup on this cluster using LitmusChaos
     deployFirst: Deploy your first Agent
     toProjects: To projects

@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.875rem',
   },
   detailsDiv: {
+    width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',

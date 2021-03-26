@@ -148,7 +148,11 @@ const LandingHome: React.FC = () => {
             <Typography className={classes.agentCount}>
               {agentList?.getCluster.length}
             </Typography>
-            <Typography>{t('home.NonAdmin.agents')}</Typography>
+            <Typography>
+              {agentList?.getCluster.length !== 1
+                ? t('home.NonAdmin.agents')
+                : t('home.NonAdmin.agent')}
+            </Typography>
             <div className={classes.agentDesc}>
               <Typography>{t('home.NonAdmin.chaosAgentInfo')}</Typography>
             </div>

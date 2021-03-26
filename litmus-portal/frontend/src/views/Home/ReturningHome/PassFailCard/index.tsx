@@ -4,7 +4,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
-const PassFailCard: React.FC = () => {
+interface PassedVsFailedProps {
+  passed: number;
+}
+
+const PassFailCard: React.FC<PassedVsFailedProps> = ({ passed }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -16,7 +20,7 @@ const PassFailCard: React.FC = () => {
         </Typography>
       </div>
       <div style={{ height: '4rem', width: '18rem' }}>
-        <PassFailBar passPercentage={90} />
+        <PassFailBar passPercentage={passed} />
       </div>
       <Typography className={classes.wfText}>
         Statistics taken from all test results

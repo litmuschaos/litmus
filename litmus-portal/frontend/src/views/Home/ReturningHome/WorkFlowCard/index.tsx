@@ -2,8 +2,17 @@ import { Paper, Typography } from '@material-ui/core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
+interface WorkflowCardProps {
+  workflow: number;
+  average: number;
+  max: number;
+}
 
-const WorkflowCard: React.FC = () => {
+const WorkflowCard: React.FC<WorkflowCardProps> = ({
+  workflow,
+  average,
+  max,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 

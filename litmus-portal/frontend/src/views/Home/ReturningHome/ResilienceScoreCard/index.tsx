@@ -3,9 +3,13 @@ import { RadialProgressChart } from 'litmus-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
-import { testRadialChartData } from './testData';
+interface AverageResilienceScoreProps {
+  value: number;
+}
 
-const ResilienceScoreCard: React.FC = () => {
+const ResilienceScoreCard: React.FC<AverageResilienceScoreProps> = ({
+  value,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -28,7 +32,11 @@ const ResilienceScoreCard: React.FC = () => {
           arcWidth={10}
           iconSize="1rem"
           imageSrc="./icons/radialIcon.svg"
-          radialData={testRadialChartData}
+          radialData={{
+            value: value,
+            label: 'pass',
+            baseColor: '#5B44BA',
+          }}
           semiCircle
           heading="Based on test results"
           unit="%"
