@@ -22,7 +22,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - shell: bash
+      - name: Frontend checks
+        uses: dorny/paths-filter@v2
+        id: changes
+        shell: bash
+        with:
+          filters: |
+            src:
+              - 'litmus-portal/frontend/**'
+        # run only if some file in 'src' folder was changed
+        if: steps.changes.outputs.src == 'true'
         run: |
           cd litmus-portal
           make frontend-services-checks
@@ -35,7 +44,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build graphql server docker image
+        uses: dorny/paths-filter@v2
+        id: changes
         shell: bash
+        with:
+          filters: |
+            src:
+              - 'litmus-portal/graphql-server/**'
+        # run only if some file in 'src' folder was changed
+        if: steps.changes.outputs.src == 'true'
         run: |
           cd litmus-portal/graphql-server
           docker build . -f build/Dockerfile
@@ -48,7 +65,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build auth server docker image
+        uses: dorny/paths-filter@v2
+        id: changes
         shell: bash
+        with:
+          filters: |
+            src:
+              - 'litmus-portal/authentication/**'
+        # run only if some file in 'src' folder was changed
+        if: steps.changes.outputs.src == 'true'
         run: |
           cd litmus-portal/authentication
           docker images && docker build . -f Dockerfile
@@ -61,7 +86,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build subscriber docker image
+        uses: dorny/paths-filter@v2
+        id: changes
         shell: bash
+        with:
+          filters: |
+            src:
+              - 'litmus-portal/cluster-agents/subscriber/**'
+        # run only if some file in 'src' folder was changed
+        if: steps.changes.outputs.src == 'true'
         run: |
           cd litmus-portal/cluster-agents/subscriber
           docker build . -f build/Dockerfile
@@ -87,7 +120,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build frontend docker image
+        uses: dorny/paths-filter@v2
+        id: changes
         shell: bash
+        with:
+          filters: |
+            src:
+              - 'litmus-portal/frontend/**'
+        # run only if some file in 'src' folder was changed
+        if: steps.changes.outputs.src == 'true'
         run: |
           cd litmus-portal/frontend
           docker build . -f Dockerfile
