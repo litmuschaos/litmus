@@ -16,6 +16,8 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
 
+  const [httpMethod, setHttpMethod] = React.useState('get');
+
   const handleHttp = (
     e: React.ChangeEvent<
       | HTMLInputElement
@@ -23,25 +25,47 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
       | { name?: string | undefined; value: unknown }
     >
   ) => {
-    if (e.target.name === 'url' || e.target.name === 'insecureSkipVerify') {
+    if (
+      e.target.name === 'url' ||
+      e.target.name === 'insecureSkipVerify' ||
+      e.target.name === 'responseTimeout'
+    ) {
       setProbeData({
         ...probeData,
-        inputs: {
-          ...probeData.inputs,
+        'httpProbe/inputs': {
+          ...probeData['httpProbe/inputs'],
           [e.target.name]: e.target.value,
         },
       });
     } else {
-      setProbeData({
-        ...probeData,
-        inputs: {
-          ...probeData.inputs,
-          request: {
-            ...probeData.inputs.request,
-            [e.target.name as string]: e.target.value,
+      if (httpMethod === 'get') {
+        setProbeData({
+          ...probeData,
+          'httpProbe/inputs': {
+            ...probeData['httpProbe/inputs'],
+            method: {
+              ...probeData['httpProbe/inputs'].method,
+              get: {
+                [e.target.name as string]: e.target.value,
+              },
+            },
           },
-        },
-      });
+        });
+      }
+      if (httpMethod === 'post') {
+        setProbeData({
+          ...probeData,
+          'httpProbe/inputs': {
+            ...probeData['httpProbe/inputs'],
+            method: {
+              ...probeData['httpProbe/inputs'].method,
+              post: {
+                [e.target.name as string]: e.target.value,
+              },
+            },
+          },
+        });
+      }
     }
   };
 
@@ -51,18 +75,18 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
     if (e.target.name === 'command' || e.target.name === 'source') {
       setProbeData({
         ...probeData,
-        inputs: {
-          ...probeData.inputs,
+        'cmdProbe/inputs': {
+          ...probeData['cmdProbe/inputs'],
           [e.target.name]: e.target.value,
         },
       });
     } else {
       setProbeData({
         ...probeData,
-        inputs: {
-          ...probeData.inputs,
+        'cmdProbe/inputs': {
+          ...probeData['cmdProbe/inputs'],
           comparator: {
-            ...probeData.inputs.comparator,
+            ...probeData['cmdProbe/inputs'].comparator,
             [e.target.name]: e.target.value,
           },
         },
@@ -76,10 +100,10 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
     if (e.target.name !== 'operation') {
       setProbeData({
         ...probeData,
-        inputs: {
-          ...probeData.inputs,
+        'k8sProbe/inputs': {
+          ...probeData['k8sProbe/inputs'],
           command: {
-            ...probeData.inputs.command,
+            ...probeData['k8sProbe/inputs'].command,
             [e.target.name]: e.target.value,
           },
         },
@@ -87,8 +111,8 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
     } else {
       setProbeData({
         ...probeData,
-        inputs: {
-          ...probeData.inputs,
+        'k8sProbe/inputs': {
+          ...probeData['k8sProbe/inputs'],
           [e.target.name]: e.target.value,
         },
       });
@@ -101,18 +125,18 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
     if (e.target.name === 'endpoint' || e.target.name === 'query') {
       setProbeData({
         ...probeData,
-        inputs: {
-          ...probeData.inputs,
+        'promProbe/inputs': {
+          ...probeData['promProbe/inputs'],
           [e.target.name]: e.target.value,
         },
       });
     } else {
       setProbeData({
         ...probeData,
-        inputs: {
-          ...probeData.inputs,
+        'promProbe/inputs': {
+          ...probeData['promProbe/inputs'],
           comparator: {
-            ...probeData.inputs.comparator,
+            ...probeData['promProbe/inputs'].comparator,
             [e.target.name]: e.target.value,
           },
         },
@@ -122,7 +146,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
 
   return (
     <>
-      {probeData.type === 'http' && (
+      {probeData.type === 'httpProbe' && (
         <>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="url">
@@ -134,7 +158,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="url"
               name="url"
               type="text"
-              value={probeData.inputs?.url}
+              value={probeData['httpProbe/inputs']?.url}
               onChange={handleHttp}
             />
           </div>
@@ -143,7 +167,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.insecure')}
             </InputLabel>
             <Select
-              value={probeData.inputs?.insecureSkipVerify}
+              value={probeData['httpProbe/inputs']?.insecureSkipVerify}
               className={classes.inputSelect}
               variant="outlined"
               onChange={handleHttp}
@@ -156,6 +180,20 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               <MenuItem value="false">False</MenuItem>
             </Select>
           </div>
+          <div className={classes.formField}>
+            <InputLabel className={classes.formLabel} htmlFor="responseTimeout">
+              Response Timeout
+            </InputLabel>
+            <InputField
+              variant="primary"
+              width="50%"
+              id="responseTimeout"
+              name="responseTimeout"
+              type="text"
+              value={probeData['httpProbe/inputs']?.responseTimeout}
+              onChange={handleHttp}
+            />
+          </div>
           <div className={classes.inputSub}>
             {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.request')}
           </div>
@@ -164,10 +202,10 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.method')}
             </InputLabel>
             <Select
-              value={probeData.inputs?.request?.method}
+              value={httpMethod}
               className={classes.inputSelect}
               variant="outlined"
-              onChange={handleHttp}
+              onChange={(e) => setHttpMethod(e.target.value as string)}
               inputProps={{
                 id: 'method',
                 name: 'method',
@@ -177,7 +215,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               <MenuItem value="post">POST</MenuItem>
             </Select>
           </div>
-          {probeData.inputs?.request?.method === 'post' && (
+          {httpMethod === 'post' && (
             <>
               <div className={classes.inputFormField}>
                 <InputLabel className={classes.formLabel} htmlFor="body">
@@ -244,7 +282,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
         </>
       )}
 
-      {probeData.type === 'cmd' && (
+      {probeData.type === 'cmdProbe' && (
         <>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="command">
@@ -317,7 +355,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
         </>
       )}
 
-      {probeData.type === 'k8s' && (
+      {probeData.type === 'k8sProbe' && (
         <>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="operation">
@@ -423,7 +461,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
         </>
       )}
 
-      {probeData.type === 'prom' && (
+      {probeData.type === 'promProbe' && (
         <>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="endpoint">

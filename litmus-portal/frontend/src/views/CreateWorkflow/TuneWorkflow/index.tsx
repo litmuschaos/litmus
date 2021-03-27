@@ -114,7 +114,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
         setCustomWorkflow(false);
         localforage.getItem('workflowCRDLink').then((value) => {
-          if (value !== null) fetchYaml(value as string);
+          if (value !== null && manifest === '') fetchYaml(value as string);
         });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
@@ -320,11 +320,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            {experiment.length > 0 || manifest !== '' ? (
-              <WorkflowTable isCustom />
-            ) : (
-              <WorkflowTable />
-            )}
+            <WorkflowTable isCustom={customWorkflow} />
           </Width>
         </Row>
       </div>
