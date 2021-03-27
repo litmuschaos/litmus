@@ -182,13 +182,26 @@ const DashboardPage: React.FC = () => {
       new Date(moment(endDateFormatted).format()).getTime() / 1000;
     const now: number = Math.round(new Date().getTime() / 1000);
     const diff: number = Math.abs(now - endDate);
-    if (!(diff >= 0 && diff < 13)) {
-      if (selectedDashboard.refreshRate === 2147483647) {
-        setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
-      } else {
-        setRefreshRate(2147483647);
-      }
+    const maxLim: number =
+      (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
+        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
+        : 11;
+    if (
+      !(diff >= 0 && diff <= maxLim) &&
+      selectedDashboard.refreshRate !== 2147483647
+    ) {
+      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
+      setRefreshRate(2147483647);
+    } else if (!(diff >= 0 && diff <= maxLim)) {
+      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
+    } else if (
+      diff >= 0 &&
+      diff <= maxLim &&
+      selectedDashboard.refreshRate === 2147483647
+    ) {
+      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
     }
+    // If none of the above conditions match, then user has selected a relative time range.
   };
   const [openRefresh, setOpenRefresh] = React.useState(false);
   const handleCloseRefresh = () => {
@@ -424,9 +437,13 @@ const DashboardPage: React.FC = () => {
         1000;
       const now: number = Math.round(new Date().getTime() / 1000);
       const diff: number = Math.abs(now - endDate);
+      const maxLim: number =
+        (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
+          ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
+          : 11;
       if (
         diff >= 0 &&
-        diff < 13 &&
+        diff <= maxLim &&
         selectedDashboard.refreshRate !== 2147483647
       ) {
         const startDate: number =
@@ -455,6 +472,27 @@ const DashboardPage: React.FC = () => {
       );
     }
   }, [prometheusQueryData]);
+
+  const getRefreshRateStatus = () => {
+    const endDate: number =
+      new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+      1000;
+    const now: number = Math.round(new Date().getTime() / 1000);
+    const diff: number = Math.abs(now - endDate);
+    const maxLim: number =
+      (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
+        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
+        : 11;
+    if (!(diff >= 0 && diff <= maxLim)) {
+      // A non relative time range has been selected.
+      // Refresh rate switch is not acknowledged and it's state is locked.
+      // Select a relative time range to unlock again.
+      return true;
+    }
+
+    // For relative time ranges.
+    return false;
+  };
 
   return (
     <Scaffold>
@@ -604,10 +642,18 @@ const DashboardPage: React.FC = () => {
                   labelId="refresh-controlled-open-select-label"
                   id="refresh-controlled-open-select"
                   open={openRefresh}
+                  disabled={getRefreshRateStatus()}
                   onClose={handleCloseRefresh}
                   onOpen={handleOpenRefresh}
                   value={refreshRate !== 0 ? refreshRate : null}
                   onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                    // For a selected non-relative time range, switching refresh rate has no effect.
+                    // Select refresh rate option is disabled for this scenario.
+                    // User needs to first switch to a relative time range then refresh rate can be changed.
+                    // When viewing data for non-relative time range, refresh should be OFF
+                    // UI can auto detect if it is not OFF and switches it off.
+                    // Now the user can try to view the non-relative time range data again.
+                    // Manual re-selection of the non-relative time range via the calendar is required.
                     dashboard.selectDashboard({
                       refreshRate: event.target.value as number,
                     });
