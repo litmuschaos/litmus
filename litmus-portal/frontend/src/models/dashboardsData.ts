@@ -1,5 +1,7 @@
+import { GraphMetric } from 'litmus-ui';
 import { PanelGroupResponse, PanelResponse } from './graphql/dashboardsDetails';
 import { promQueryInput } from './graphql/prometheus';
+import { ChaosData } from './graphql/workflowListData';
 
 export interface PanelGroupMap {
   groupName: string;
@@ -35,7 +37,37 @@ export interface ChaosResultNamesAndNamespacesMap {
   resultNamespace: string;
   workflowName: string;
   experimentName: string;
-  isRemoved: string[];
+  selectedWorkflowIds: string[];
+}
+
+export interface RunWiseChaosMetrics {
+  runIndex: number;
+  lastUpdatedTimeStamp: number;
+  probeSuccessPercentage: string;
+  experimentStatus: string;
+  experimentVerdict: string;
+  resilienceScore: string;
+  workflowStatus: string;
+}
+
+export interface WorkflowAndExperimentMetaDataMap {
+  workflowID: string;
+  workflowName: string;
+  experimentName: string;
+  targetApp: string;
+  targetNamespace: string;
+  runWiseChaosMetrics: RunWiseChaosMetrics[];
+}
+
+export interface ExperimentNameAndChaosDataMap {
+  experimentName: string;
+  chaosData: ChaosData;
+}
+
+export interface WorkflowRunWiseDetails {
+  resilienceScoreForWorkflowRuns: number[];
+  statusOfWorkflowRuns: string[];
+  experimentNameWiseChaosDataOfWorkflowRuns: ExperimentNameAndChaosDataMap[][];
 }
 
 export interface ChaosEventDetails {
@@ -45,6 +77,7 @@ export interface ChaosEventDetails {
   experiment: string;
   target: string;
   result: string;
+  chaosMetrics: WorkflowAndExperimentMetaDataMap;
 }
 
 export interface ChaosInformation {
@@ -53,6 +86,18 @@ export interface ChaosInformation {
   chaosEventList: ChaosEventDetails[];
 }
 
+export interface EventMetric extends GraphMetric {
+  subData?: Array<{
+    subDataName: string;
+    value: string;
+  }>;
+}
+
 export interface GraphPanelProps extends PanelResponse {
   className?: string;
+  chaos_data?: Array<EventMetric>;
+}
+
+export interface GraphPanelGroupProps extends PanelGroupResponse {
+  chaos_data?: Array<EventMetric>;
 }

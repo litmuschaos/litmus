@@ -2,8 +2,8 @@ import { Typography } from '@material-ui/core';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { GraphMetric } from 'litmus-ui';
 import React from 'react';
+import { EventMetric } from '../../../models/dashboardsData';
 import { PanelResponse } from '../../../models/graphql/dashboardsDetails';
 import GraphPanel from './GraphPanel';
 import useStyles, { Accordion } from './styles';
@@ -12,7 +12,7 @@ interface DashboardPanelGroupContentProps {
   panels: PanelResponse[];
   panel_group_name: string;
   panel_group_id: string;
-  chaos_data?: Array<GraphMetric>;
+  chaos_data?: Array<EventMetric>;
 }
 
 const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({

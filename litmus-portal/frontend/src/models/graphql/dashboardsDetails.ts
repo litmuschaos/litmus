@@ -1,5 +1,3 @@
-import { GraphMetric } from 'litmus-ui';
-
 export interface PanelOption {
   points: boolean;
   grids: boolean;
@@ -44,14 +42,12 @@ export interface PanelResponse {
   y_axis_right: string;
   x_axis_down: string;
   unit: string;
-  chaos_data?: Array<GraphMetric>;
 }
 
 export interface PanelGroupResponse {
   panels: PanelResponse[];
   panel_group_name: string;
   panel_group_id: string;
-  chaos_data?: Array<GraphMetric>;
 }
 
 export interface CreateDashboardInput {

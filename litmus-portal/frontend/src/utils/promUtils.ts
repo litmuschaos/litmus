@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable prefer-destructuring */
+/* eslint-disable no-loop-func */
+/* eslint-disable no-console */
 import { GraphMetric } from 'litmus-ui';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
@@ -15,13 +17,25 @@ import {
   ChaosEventDetails,
   ChaosInformation,
   ChaosResultNamesAndNamespacesMap,
+  EventMetric,
+  ExperimentNameAndChaosDataMap,
+  RunWiseChaosMetrics,
+  WorkflowAndExperimentMetaDataMap,
+  WorkflowRunWiseDetails,
 } from '../models/dashboardsData';
 import { PromQuery } from '../models/graphql/dashboardsDetails';
 import {
   PrometheusResponse,
   promQueryInput,
 } from '../models/graphql/prometheus';
-import { Workflow, WorkflowList } from '../models/graphql/workflowListData';
+import {
+  ChaosData,
+  ExecutionData,
+  WeightageMap,
+  Workflow,
+  WorkflowList,
+  WorkflowRun,
+} from '../models/graphql/workflowListData';
 import { validateWorkflowParameter } from './validate';
 import { generateChaosQuery, getWorkflowParameter } from './yamlUtils';
 
@@ -39,16 +53,154 @@ export const getResultNameAndNamespace = (chaosQueryString: string) => {
       .slice(1, -1),
     workflowName: '',
     experimentName: '',
-    isRemoved: [],
+    selectedWorkflowIds: [],
   };
   return parsedChaosInfoMap;
+};
+
+const getWorkflowRunWiseDetails = (schedule: Workflow) => {
+  const workflowRunWiseDetailsForSchedule: WorkflowRunWiseDetails = {
+    resilienceScoreForWorkflowRuns: [],
+    statusOfWorkflowRuns: [],
+    experimentNameWiseChaosDataOfWorkflowRuns: [],
+  };
+  schedule.workflow_runs.forEach((data: WorkflowRun, runIndex) => {
+    try {
+      const executionData: ExecutionData = JSON.parse(data.execution_data);
+      workflowRunWiseDetailsForSchedule.statusOfWorkflowRuns[runIndex] =
+        executionData.finishedAt.length === 0 ? 'Running' : executionData.phase;
+      const { nodes } = executionData;
+      const workflowsRunResults: number[] = [];
+      let weightsSum: number = 0;
+      let isValid: boolean = false;
+      for (const key of Object.keys(nodes)) {
+        const node = nodes[key];
+        if (node.chaosData) {
+          const { chaosData } = node;
+          if (
+            !workflowRunWiseDetailsForSchedule
+              .experimentNameWiseChaosDataOfWorkflowRuns[runIndex]
+          ) {
+            workflowRunWiseDetailsForSchedule.experimentNameWiseChaosDataOfWorkflowRuns[
+              runIndex
+            ] = [];
+          }
+          workflowRunWiseDetailsForSchedule.experimentNameWiseChaosDataOfWorkflowRuns[
+            runIndex
+          ].push({
+            experimentName: chaosData.experimentName,
+            chaosData,
+          });
+          if (
+            chaosData.experimentVerdict === 'Pass' ||
+            chaosData.experimentVerdict === 'Fail'
+          ) {
+            const weightageMap: WeightageMap[] = schedule.weightages;
+            weightageMap.forEach((weightage) => {
+              if (weightage.experiment_name === chaosData.experimentName) {
+                if (chaosData.experimentVerdict === 'Pass') {
+                  workflowsRunResults.push(
+                    (weightage.weightage *
+                      parseInt(chaosData.probeSuccessPercentage, 10)) /
+                      100
+                  );
+                }
+                if (chaosData.experimentVerdict === 'Fail') {
+                  workflowsRunResults.push(0);
+                }
+                if (
+                  chaosData.experimentVerdict === 'Pass' ||
+                  chaosData.experimentVerdict === 'Fail'
+                ) {
+                  weightsSum += weightage.weightage;
+                  isValid = true;
+                }
+              }
+            });
+          }
+        }
+      }
+      if (executionData.event_type === 'UPDATE' && isValid) {
+        workflowRunWiseDetailsForSchedule.resilienceScoreForWorkflowRuns[
+          runIndex
+        ] = workflowsRunResults.length
+          ? (workflowsRunResults.reduce((a, b) => a + b, 0) / weightsSum) * 100
+          : 0;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+  return workflowRunWiseDetailsForSchedule;
+};
+
+const getRunWiseChaosMetrics = (
+  experimentNameWiseChaosDataOfWorkflowRuns: ExperimentNameAndChaosDataMap[][],
+  experimentNameFromYaml: string,
+  resilienceScoreForWorkflowRuns: number[],
+  statusOfWorkflowRuns: string[]
+) => {
+  const workflowRunMetricsPerExperiment: RunWiseChaosMetrics[] = [];
+  experimentNameWiseChaosDataOfWorkflowRuns.forEach(
+    (dataArray: ExperimentNameAndChaosDataMap[], runIndex) => {
+      try {
+        let runWiseChaosMetrics: RunWiseChaosMetrics = {
+          runIndex: 0,
+          lastUpdatedTimeStamp: 0,
+          probeSuccessPercentage: '',
+          experimentStatus: '',
+          experimentVerdict: '',
+          resilienceScore: '',
+          workflowStatus: '',
+        };
+        let selectedChaosData: ChaosData = {
+          engineName: '',
+          engineUID: '',
+          experimentName: '',
+          experimentPod: '',
+          experimentStatus: '',
+          experimentVerdict: '',
+          failStep: '',
+          lastUpdatedAt: '',
+          namespace: '',
+          probeSuccessPercentage: '',
+          runnerPod: '',
+        };
+        dataArray.forEach(
+          (experimentNameAndChaosData: ExperimentNameAndChaosDataMap) => {
+            if (
+              experimentNameAndChaosData.experimentName ===
+              experimentNameFromYaml
+            ) {
+              selectedChaosData = experimentNameAndChaosData.chaosData;
+            }
+          }
+        );
+        runWiseChaosMetrics = {
+          runIndex,
+          lastUpdatedTimeStamp: parseInt(selectedChaosData.lastUpdatedAt, 10),
+          probeSuccessPercentage: `${selectedChaosData.probeSuccessPercentage}%`,
+          experimentStatus: selectedChaosData.experimentStatus,
+          experimentVerdict: selectedChaosData.experimentVerdict,
+          resilienceScore: `${resilienceScoreForWorkflowRuns[runIndex]}%`,
+          workflowStatus: statusOfWorkflowRuns[runIndex],
+        };
+        workflowRunMetricsPerExperiment.push(runWiseChaosMetrics);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  );
+  return workflowRunMetricsPerExperiment;
 };
 
 export const getChaosQueryPromInputAndID = (
   analyticsData: WorkflowList,
   agentID: string,
   areaGraph: string[],
-  timeRangeDiff: number
+  timeRangeDiff: number,
+  selectedStartTime: number,
+  selectedEndTime: number
 ) => {
   const chaosInformation: ChaosInformation = {
     promQueries: [],
@@ -56,8 +208,12 @@ export const getChaosQueryPromInputAndID = (
     chaosEventList: [],
   };
   const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
+  const workflowAndExperimentMetaDataMap: WorkflowAndExperimentMetaDataMap[] = [];
   analyticsData?.ListWorkflow.forEach((schedule: Workflow) => {
     if (schedule.cluster_id === agentID && !schedule.isRemoved) {
+      const workflowRunWiseDetails: WorkflowRunWiseDetails = getWorkflowRunWiseDetails(
+        schedule
+      );
       let workflowYaml: WorkflowYaml | CronWorkflowYaml;
       let parametersMap: Parameter[];
       let workflowYamlCheck: boolean = true;
@@ -122,12 +278,46 @@ export const getChaosQueryPromInputAndID = (
                   resultNamespace: engineNamespace,
                   workflowName: workflowYaml.metadata.name,
                   experimentName: parsedEmbeddedYaml.spec.experiments[0].name,
-                  isRemoved: [],
+                  selectedWorkflowIds: [schedule.workflow_id],
+                });
+                workflowAndExperimentMetaDataMap.push({
+                  workflowID: schedule.workflow_id,
+                  workflowName: workflowYaml.metadata.name,
+                  experimentName: parsedEmbeddedYaml.spec.experiments[0].name,
+                  targetApp: parsedEmbeddedYaml.spec.appinfo.applabel.split(
+                    '='
+                  )[1],
+                  targetNamespace: parsedEmbeddedYaml.spec.appinfo.appns,
+                  runWiseChaosMetrics: getRunWiseChaosMetrics(
+                    workflowRunWiseDetails.experimentNameWiseChaosDataOfWorkflowRuns,
+                    parsedEmbeddedYaml.spec.experiments[0].name,
+                    workflowRunWiseDetails.resilienceScoreForWorkflowRuns,
+                    workflowRunWiseDetails.statusOfWorkflowRuns
+                  ),
                 });
               } else {
                 chaosResultNamesAndNamespacesMap[
                   matchIndex
                 ].workflowName = `${chaosResultNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                chaosResultNamesAndNamespacesMap[
+                  matchIndex
+                ].selectedWorkflowIds.push(schedule.workflow_id);
+                workflowAndExperimentMetaDataMap.push({
+                  workflowID: schedule.workflow_id,
+                  workflowName: workflowYaml.metadata.name,
+                  experimentName:
+                    chaosResultNamesAndNamespacesMap[matchIndex].experimentName,
+                  targetApp: parsedEmbeddedYaml.spec.appinfo.applabel.split(
+                    '='
+                  )[1],
+                  targetNamespace: parsedEmbeddedYaml.spec.appinfo.appns,
+                  runWiseChaosMetrics: getRunWiseChaosMetrics(
+                    workflowRunWiseDetails.experimentNameWiseChaosDataOfWorkflowRuns,
+                    chaosResultNamesAndNamespacesMap[matchIndex].experimentName,
+                    workflowRunWiseDetails.resilienceScoreForWorkflowRuns,
+                    workflowRunWiseDetails.statusOfWorkflowRuns
+                  ),
+                });
               }
             }
           });
@@ -155,15 +345,31 @@ export const getChaosQueryPromInputAndID = (
             ),
     });
     chaosInformation.chaosQueryIDs.push(queryID);
+
+    const chaosEventMetrics: WorkflowAndExperimentMetaDataMap = workflowAndExperimentMetaDataMap.filter(
+      (data) =>
+        keyValue.selectedWorkflowIds.includes(data.workflowID) &&
+        data.experimentName === keyValue.experimentName
+    )[0];
+
+    const availableRunMetrics: RunWiseChaosMetrics[] = chaosEventMetrics.runWiseChaosMetrics.filter(
+      (eventMetric) =>
+        eventMetric.lastUpdatedTimeStamp >= selectedStartTime &&
+        eventMetric.lastUpdatedTimeStamp <= selectedEndTime
+    );
+
+    const latestResult: string = availableRunMetrics.length
+      ? availableRunMetrics[availableRunMetrics.length - 1].experimentVerdict
+      : '';
+
     chaosInformation.chaosEventList.push({
       id: queryID,
       legend: areaGraph[index % areaGraph.length],
       workflow: keyValue.workflowName,
       experiment: keyValue.experimentName,
-      target: 't',
-      result: 'r',
-      // add run wise these data with unix time of expt. run start and end/last update
-      // resilience score + expt. status + workflow status + probe success percentage
+      target: `${chaosEventMetrics.targetNamespace} / ${chaosEventMetrics.targetApp}`,
+      result: latestResult,
+      chaosMetrics: chaosEventMetrics,
     });
   });
 
@@ -173,38 +379,89 @@ export const getChaosQueryPromInputAndID = (
 export const chaosEventDataParserForPrometheus = (
   eventData: PrometheusResponse,
   chaosInput: string[],
-  chaosEventList: ChaosEventDetails[]
+  chaosEventList: ChaosEventDetails[],
+  selectedStartTime: number,
+  selectedEndTime: number
 ) => {
-  const chaos_data: Array<GraphMetric> = [];
+  const chaos_data: Array<EventMetric> = [];
   eventData?.GetPromQuery.forEach((queryResponse) => {
-    if (chaosInput.includes(queryResponse.queryid)) {
-      if (queryResponse.legends && queryResponse.legends[0]) {
-        chaos_data.push(
-          ...queryResponse.legends.map((elem, index) => ({
-            metricName: elem[0] ?? 'chaos',
-            data: queryResponse.tsvs[index].map((dataPoint) => ({
-              date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
-              value: parseInt(dataPoint.value ?? '0', 10),
-            })),
-            baseColor: chaosEventList.filter(
-              (e) => queryResponse.queryid === e.id
-            )[0].legend,
-            // Filter subData with start and end time of experiment run / update in graph based on hover time frame.
-            // Add two extra subData fields - start and end timeStamp to filter subData in graph.
-            // This method sends the latest run details as the subData.
-            // Need to update this to send every run detail with timestamps in the two extra fields.
-            /* 
-              subData: [
-                { subDataName: "subData-1-1", value: "1-1" },
-                { subDataName: "subData-1-2", value: "1-2" },
+    console.log('chaosInput', chaosInput);
+    console.log('queryResponse', queryResponse);
+    // if (chaosInput.includes(queryResponse.queryid)) {
+    if (queryResponse.legends && queryResponse.legends[0]) {
+      const chaosEventDetails: ChaosEventDetails = chaosEventList.filter(
+        (e) => queryResponse.queryid === e.id
+      )[0];
+      console.log('chaosEventDetails', chaosEventDetails);
+      const availableRunMetrics: RunWiseChaosMetrics[] = chaosEventDetails.chaosMetrics.runWiseChaosMetrics.filter(
+        (eventMetric) =>
+          eventMetric.lastUpdatedTimeStamp >= selectedStartTime &&
+          eventMetric.lastUpdatedTimeStamp <= selectedEndTime
+      );
+      console.log('availableRunMetrics', availableRunMetrics);
+      const latestRunMetric: RunWiseChaosMetrics =
+        availableRunMetrics[availableRunMetrics.length - 1];
+      chaos_data.push(
+        ...queryResponse.legends.map((elem, index) => ({
+          metricName: elem[0] ?? 'chaos',
+          data: queryResponse.tsvs[index].map((dataPoint) => ({
+            date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
+            value: parseInt(dataPoint.value ?? '0', 10),
+          })),
+          baseColor: chaosEventDetails.legend,
+          subData: [
+            {
+              subDataName: 'Workflow Status',
+              value: latestRunMetric
+                ? latestRunMetric.workflowStatus
+                : 'Running',
+            },
+            {
+              subDataName: 'Experiment Status',
+              value: latestRunMetric
+                ? latestRunMetric.experimentStatus
+                : 'Waiting to start',
+            },
+            {
+              subDataName: 'Resilience Score',
+              value: latestRunMetric ? latestRunMetric.resilienceScore : '-',
+            },
+            {
+              subDataName: 'Probe Success Percentage',
+              value: latestRunMetric
+                ? latestRunMetric.probeSuccessPercentage
+                : '-',
+            },
+            {
+              subDataName: 'Experiment Verdict',
+              value: latestRunMetric ? latestRunMetric.experimentVerdict : '-',
+            },
+          ],
+          // Filter subData within the start and end time of interleaving on experiment's lastUpdatedTimeStamp.
+          // Add one extra subData field - lastUpdatedTimeStamp to filter subData in graph.
+          // This method sends the latest run details within selected dashboard time range as the subData.
+          // Needs to be updated to send every run detail with lastUpdatedTimeStamp in the ${NEW_SUBDATA_FIELD}.
+          /* 
+            Schema: 
+            (to be updated as)
+            - subData: [
+                { subDataName: "subData-1-1", value: "1-1", lastUpdatedTimeStamp: 1616832979 },
+                { subDataName: "subData-1-2", value: "1-2", lastUpdatedTimeStamp: 1616833006 },
               ],
-            - resilience score + expt status + workflow status + probe success percentage (filter with start and end time)
+            subData: 
+            (to be filtered by lastUpdatedTimeStamp in litmus-ui graph on hovering over chaos events)
+            - Workflow Status 
+            - Experiment Status
+            - Resilience Score
+            - Probe Success Percentage
+            - Experiment Verdict
             */
-          }))
-        );
-      }
+        }))
+      );
     }
+    // }
   });
+  console.log('chaos_data', chaos_data);
   return chaos_data;
 };
 

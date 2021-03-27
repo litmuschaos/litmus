@@ -1,8 +1,8 @@
 import React from 'react';
-import { PanelGroupResponse } from '../../../models/graphql/dashboardsDetails';
+import { GraphPanelGroupProps } from '../../../models/dashboardsData';
 import PanelGroupContent from './PanelGroupContent';
 
-const DashboardPanelGroup: React.FC<PanelGroupResponse> = ({ ...props }) => {
+const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({ ...props }) => {
   return <PanelGroupContent {...props} />;
 };
 

@@ -34,6 +34,7 @@ import {
 import {
   ChaosEventDetails,
   ChaosInformation,
+  EventMetric,
 } from '../../models/dashboardsData';
 import {
   DashboardList,
@@ -224,7 +225,7 @@ const DashboardPage: React.FC = () => {
     WORKFLOW_LIST_DETAILS,
     {
       variables: { projectID, workflowIDs: [] },
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'cache-and-network',
     }
   );
 
@@ -243,12 +244,21 @@ const DashboardPage: React.FC = () => {
       prometheusQueryData?.promInput.queries?.length === 0 ||
       prometheusQueryData?.promInput.url === '',
     onCompleted: (eventData) => {
-      let chaos_data: Array<GraphMetric> = [];
+      let chaos_data: Array<EventMetric> = [];
       if (eventData) {
+        const selectedEndTime: number =
+          new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+          1000;
+        const selectedStartTime: number =
+          new Date(
+            moment(selectedDashboard.range.startDate).format()
+          ).getTime() / 1000;
         chaos_data = chaosEventDataParserForPrometheus(
           eventData,
           prometheusQueryData?.eventsToShow,
-          prometheusQueryData?.chaosEvents
+          prometheusQueryData?.chaosEvents,
+          selectedStartTime,
+          selectedEndTime
         );
         setChaosData(chaos_data);
         chaos_data = [];
@@ -344,16 +354,20 @@ const DashboardPage: React.FC = () => {
       chaosEventList: prometheusQueryData.chaosEvents,
     };
     if (prometheusQueryData.firstLoad && analyticsData?.ListWorkflow) {
-      const timeRangeDiff: number =
+      const selectedEndTime: number =
         new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-          1000 -
+        1000;
+      const selectedStartTime: number =
         new Date(moment(selectedDashboard.range.startDate).format()).getTime() /
-          1000;
+        1000;
+      const timeRangeDiff: number = selectedEndTime - selectedStartTime;
       chaosInformation = getChaosQueryPromInputAndID(
         analyticsData,
         selectedDashboardInformation.agentID,
         areaGraph,
-        timeRangeDiff
+        timeRangeDiff,
+        selectedStartTime,
+        selectedEndTime
       );
     }
     setPrometheusQueryData({
@@ -514,12 +528,6 @@ const DashboardPage: React.FC = () => {
             </Menu>
           </Typography>
           <div className={classes.headerDiv}>
-            {/* <Typography
-              variant="h5"
-              className={`${classes.weightedFont} ${classes.dashboardType}`}
-            >
-              {selectedDashboardInformation.type}
-            </Typography> */}
             <Typography className={classes.headerInfoText}>
               {`View the chaos events and metrics in a given \n time interval by
               selecting a time interval.`}
