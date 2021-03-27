@@ -155,6 +155,19 @@ const PanelContent: React.FC<GraphPanelProps> = ({
     }
   }, [prometheusQueryData]);
 
+  useEffect(() => {
+    const endDate: number =
+      new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+      1000;
+    const now: number = Math.round(new Date().getTime() / 1000);
+    const diff: number = Math.abs(now - endDate);
+    if (!(diff >= 0 && diff < 13)) {
+      if (selectedDashboard.refreshRate === 2147483647) {
+        setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
+      }
+    }
+  }, [selectedDashboard.range]);
+
   return (
     <div
       className={` ${classes.rootPanel} ${className} ${

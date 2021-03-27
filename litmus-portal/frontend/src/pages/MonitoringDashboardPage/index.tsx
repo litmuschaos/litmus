@@ -17,7 +17,7 @@ import AutorenewOutlinedIcon from '@material-ui/icons/AutorenewOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
-import { ButtonOutlined, GraphMetric } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, GraphMetric, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,12 +56,13 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
-import { RangeType } from '../../models/redux/dashboards';
 import useActions from '../../redux/actions';
 import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
+import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { getProjectID } from '../../utils/getSearchParams';
+import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import {
   chaosEventDataParserForPrometheus,
   getChaosQueryPromInputAndID,
@@ -106,6 +107,7 @@ const DashboardPage: React.FC = () => {
   const dashboard = useActions(DashboardActions);
   // get ProjectID
   const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
@@ -158,20 +160,6 @@ const DashboardPage: React.FC = () => {
     setAnchorEl(null);
   };
   const dateRangeSelectorRef = React.useRef<HTMLButtonElement>(null);
-  const [range, setRange] = React.useState<RangeType>(
-    selectedDashboard.range &&
-      selectedDashboard.range.startDate !== '' &&
-      selectedDashboard.range.endDate !== ''
-      ? selectedDashboard.range
-      : {
-          startDate: moment
-            .unix(Math.round(new Date().getTime() / 1000) - 1800)
-            .format(),
-          endDate: moment
-            .unix(Math.round(new Date().getTime() / 1000))
-            .format(),
-        }
-  );
   const [
     isDateRangeSelectorPopoverOpen,
     setDateRangeSelectorPopoverOpen,
@@ -190,7 +178,17 @@ const DashboardPage: React.FC = () => {
     dashboard.selectDashboard({
       range: { startDate: startDateFormatted, endDate: endDateFormatted },
     });
-    setRange({ startDate: startDateFormatted, endDate: endDateFormatted });
+    const endDate: number =
+      new Date(moment(endDateFormatted).format()).getTime() / 1000;
+    const now: number = Math.round(new Date().getTime() / 1000);
+    const diff: number = Math.abs(now - endDate);
+    if (!(diff >= 0 && diff < 13)) {
+      if (selectedDashboard.refreshRate === 2147483647) {
+        setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
+      } else {
+        setRefreshRate(2147483647);
+      }
+    }
   };
   const [openRefresh, setOpenRefresh] = React.useState(false);
   const handleCloseRefresh = () => {
@@ -421,19 +419,25 @@ const DashboardPage: React.FC = () => {
       // check and update range for the default relative time selection
       // for user selections / check with entire range of relative time differences
       // for absolute time no updates to the range therefore no data refresh / feature disabled
-      if (
+      const endDate: number =
         new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-          1000 -
+        1000;
+      const now: number = Math.round(new Date().getTime() / 1000);
+      const diff: number = Math.abs(now - endDate);
+      if (
+        diff >= 0 &&
+        diff < 13 &&
+        selectedDashboard.refreshRate !== 2147483647
+      ) {
+        const startDate: number =
           new Date(
             moment(selectedDashboard.range.startDate).format()
-          ).getTime() /
-            1000 ===
-        1800
-      ) {
+          ).getTime() / 1000;
+        const interval: number = endDate - startDate;
         dashboard.selectDashboard({
           range: {
             startDate: moment
-              .unix(Math.round(new Date().getTime() / 1000) - 1800)
+              .unix(Math.round(new Date().getTime() / 1000) - interval)
               .format(),
             endDate: moment
               .unix(Math.round(new Date().getTime() / 1000))
@@ -693,7 +697,74 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
-      {}
+      {dataSourceStatus !== 'ACTIVE' ? (
+        <Modal open onClose={() => {}} width="60%">
+          <div className={classes.modal}>
+            <Typography align="center">
+              <CrossMarkIcon className={classes.icon} />
+            </Typography>
+            <Typography
+              className={classes.modalHeading}
+              align="center"
+              variant="h3"
+            >
+              Data source is {dataSourceStatus}
+            </Typography>
+            <Typography
+              align="center"
+              variant="body1"
+              className={classes.modalBody}
+            >
+              {t('analyticsDashboard.monitoringDashboardPage.dataSourceError')}
+            </Typography>
+            <div className={classes.flexButtons}>
+              <ButtonFilled
+                variant="success"
+                onClick={() => {
+                  let dashboardTemplateID: number = -1;
+                  if (
+                    selectedDashboardInformation.type === 'Kubernetes Platform'
+                  ) {
+                    dashboardTemplateID = 0;
+                  } else if (
+                    selectedDashboardInformation.type === 'Sock Shop'
+                  ) {
+                    dashboardTemplateID = 1;
+                  }
+                  dashboard.selectDashboard({
+                    selectedDashboardID: selectedDashboardInformation.id,
+                    selectedDashboardName: selectedDashboardInformation.name,
+                    selectedDashboardTemplateID: dashboardTemplateID,
+                  });
+                  history.push({
+                    pathname: '/analytics/dashboard/configure',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
+                }}
+              >
+                {t(
+                  'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
+                )}
+              </ButtonFilled>
+              <ButtonFilled
+                variant="success"
+                onClick={() => {
+                  history.push({
+                    pathname: '/analytics/datasource/configure',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
+                }}
+              >
+                {t(
+                  'analyticsDashboard.monitoringDashboardPage.updateDataSource'
+                )}
+              </ButtonFilled>
+            </div>
+          </div>
+        </Modal>
+      ) : (
+        <div />
+      )}
     </Scaffold>
   );
 };
