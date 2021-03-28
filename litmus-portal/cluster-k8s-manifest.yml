@@ -1,3 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  name: kubera-chaos-ingress
+  namespace: litmus
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              serviceName: kubera-chaos-server-service
+              servicePort: 9002
+            path: kubera.product.path/api/graphql/(.*)
+          - backend:
+              serviceName: kubera-chaos-frontend-service
+              servicePort: 9091
+            path: kubera.product.path/(.*)
+      host: kubera.domain
 ---
 apiVersion: v1
 kind: Namespace

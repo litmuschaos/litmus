@@ -3015,7 +3015,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3191,7 +3191,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3365,7 +3365,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -3397,7 +3397,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -3675,7 +3675,7 @@ type Query {
 
 type Mutation {
   #It is used to create external cluster.
-  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
+  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse!
 
   #It is used to create chaosworkflow
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
@@ -3768,7 +3768,7 @@ type Subscription {
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -7720,28 +7720,8 @@ func (ec *executionContext) _Mutation_userClusterReg(ctx context.Context, field 
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UserClusterReg(rctx, args["clusterInput"].(model.ClusterInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.ClusterRegResponse); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ClusterRegResponse`, tmp)
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UserClusterReg(rctx, args["clusterInput"].(model.ClusterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

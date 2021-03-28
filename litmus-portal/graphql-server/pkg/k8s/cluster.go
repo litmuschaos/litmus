@@ -89,10 +89,10 @@ func GetServerEndpoint() (string, error) {
 		Scheme              string
 		FinalUrl           string
 		ServerServiceName = os.Getenv("SERVER_SERVICE_NAME")
-		ServerLabel        = os.Getenv("SERVER_LABEL") // component=litmusportal-server
+		ServerLabel       = os.Getenv("SERVER_LABEL") // component=litmusportal-server
 		LitmusPortalNS    = os.Getenv("LITMUS_PORTAL_NAMESPACE")
-		Ingress             = os.Getenv("INGRESS")
-		IngressName        = os.Getenv("INGRESS_NAME")
+		Ingress           = os.Getenv("INGRESS")
+		IngressName       = os.Getenv("INGRESS_NAME")
 	)
 
 	clientset, err := GetGenericK8sClient()
@@ -145,7 +145,7 @@ func GetServerEndpoint() (string, error) {
 
 		FinalUrl = Scheme + "://" + IPAddress + "/" + IngressPath
 
-	} else if Ingress == "false" {
+	} else if Ingress == "false" || Ingress == "" {
 		podList, err := clientset.CoreV1().Pods(LitmusPortalNS).List(metaV1.ListOptions{
 			LabelSelector: ServerLabel,
 		})
@@ -158,15 +158,19 @@ func GetServerEndpoint() (string, error) {
 			return "", err
 		}
 
-		for _, selector := range svc.Spec.Selector {
-			if selector == ServerLabel {
-				NodePort = svc.Spec.Ports[0].NodePort
-				Port = svc.Spec.Ports[0].Port
+		for _, port := range svc.Spec.Ports {
+			if port.Name == "graphql-server" {
+				NodePort = port.NodePort
+				Port = port.Port
 			}
 		}
-
+		
 		if strings.ToLower(string(svc.Spec.Type)) == "loadbalancer" {
+			log.Print("loadbalance")
 			IPAddress = svc.Spec.LoadBalancerIP
+			if IPAddress == "" {
+				return "", errors.New("ExternalIP is not present for loadbalancer service type")
+			}
 			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort))
 		} else if strings.ToLower(string(svc.Spec.Type)) == "nodeport" {
 			nodeIP, err := clientset.CoreV1().Nodes().Get(podList.Items[0].Spec.NodeName, metaV1.GetOptions{})
@@ -184,15 +188,23 @@ func GetServerEndpoint() (string, error) {
 
 			if ExternalIP == "" {
 				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort))
-			} else {
+			} else if InternalIP == ""{
 				FinalUrl = "http://" + ExternalIP + ":" + strconv.Itoa(int(NodePort))
+			} else{
+				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
 		} else if strings.ToLower(string(svc.Spec.Type)) == "clusterip" {
 			log.Print("External agents can't be connected to the server if the service type is set to ClusterIP\n")
+			if svc.Spec.ClusterIP == "" {
+				return "", errors.New("ClusterIP is not present")
+			}
 			FinalUrl = "http://" + svc.Spec.ClusterIP + ":" + strconv.Itoa(int(Port))
+		} else {
+			return "", errors.New("No service type found")
 		}
-
 	}
+
+	log.Print(FinalUrl)
 
 	return FinalUrl, nil
 }

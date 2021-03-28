@@ -276,7 +276,7 @@ type Query {
 
 type Mutation {
   #It is used to create external cluster.
-  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
+  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse!
 
   #It is used to create chaosworkflow
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
