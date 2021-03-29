@@ -97,6 +97,12 @@ interface RefreshObjectType {
   value: number;
 }
 
+interface ChaosDataSet {
+  queryIDs: string[];
+  chaosData: Array<GraphMetric>;
+  visibleChaos: Array<GraphMetric>;
+}
+
 const DashboardPage: React.FC = () => {
   const classes = useStyles();
   const outlinedInputClasses = useOutlinedInputStyles();
@@ -157,7 +163,11 @@ const DashboardPage: React.FC = () => {
   );
   const open = Boolean(anchorEl);
 
-  const [chaosData, setChaosData] = React.useState<Array<GraphMetric>>([]);
+  const [chaosDataSet, setChaosDataSet] = React.useState<ChaosDataSet>({
+    queryIDs: [],
+    chaosData: [],
+    visibleChaos: [],
+  });
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -198,8 +208,8 @@ const DashboardPage: React.FC = () => {
     const diff: number = Math.abs(now - endDate);
     const maxLim: number =
       (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
-        : 11;
+        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 4
+        : 14;
     if (
       !(diff >= 0 && diff <= maxLim) &&
       selectedDashboard.refreshRate !== 2147483647
@@ -284,6 +294,7 @@ const DashboardPage: React.FC = () => {
     skip: prometheusQueryData?.promInput.url === '',
     onCompleted: (eventData) => {
       let chaosDataUpdates: ChaosDataUpdates = {
+        queryIDs: [],
         chaosData: [],
         reGenerate: false,
       };
@@ -299,7 +310,6 @@ const DashboardPage: React.FC = () => {
           prometheusQueryData?.numOfWorkflows,
           analyticsData,
           eventData,
-          prometheusQueryData?.eventsToShow,
           prometheusQueryData?.chaosEvents,
           selectedStartTime,
           selectedEndTime
@@ -321,9 +331,14 @@ const DashboardPage: React.FC = () => {
               forceUpdate: false,
             });
           }
-          setChaosData(chaosDataUpdates.chaosData);
+          setChaosDataSet({
+            queryIDs: chaosDataUpdates.queryIDs,
+            chaosData: chaosDataUpdates.chaosData,
+            visibleChaos: chaosDataUpdates.chaosData,
+          });
         }
         chaosDataUpdates = {
+          queryIDs: [],
           chaosData: [],
           reGenerate: false,
         };
@@ -460,6 +475,7 @@ const DashboardPage: React.FC = () => {
       chaosInput: chaosInformation.chaosQueryIDs,
       chaosEvents: chaosInformation.chaosEventList,
       numOfWorkflows: chaosInformation.numberOfWorkflowsUnderConsideration,
+      eventsToShow: chaosInformation.chaosEventList.map(({ id }) => id),
       firstLoad: !analyticsData?.ListWorkflow,
     });
     chaosInformation = {
@@ -497,8 +513,8 @@ const DashboardPage: React.FC = () => {
       const diff: number = Math.abs(now - endDate);
       const maxLim: number =
         (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-          ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
-          : 11;
+          ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 4
+          : 14;
       if (
         diff >= 0 &&
         diff <= maxLim &&
@@ -537,6 +553,18 @@ const DashboardPage: React.FC = () => {
     }
   }, [selectedDashboard.forceUpdate]);
 
+  useEffect(() => {
+    if (selectedDashboard.refreshRate === 2147483647) {
+      const filteredChaosData: Array<GraphMetric> = chaosDataSet.chaosData.filter(
+        (data, index) =>
+          prometheusQueryData?.eventsToShow.includes(
+            chaosDataSet.queryIDs[index]
+          )
+      );
+      setChaosDataSet({ ...chaosDataSet, visibleChaos: filteredChaosData });
+    }
+  }, [prometheusQueryData?.eventsToShow]);
+
   const getRefreshRateStatus = () => {
     if (selectedDashboard.range) {
       const endDate: number =
@@ -546,12 +574,12 @@ const DashboardPage: React.FC = () => {
       const diff: number = Math.abs(now - endDate);
       const maxLim: number =
         (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-          ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
-          : 11;
+          ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 4
+          : 14;
       if (!(diff >= 0 && diff <= maxLim)) {
         // A non relative time range has been selected.
-        // Refresh rate switch is not acknowledged and it's state is locked.
-        // Select a relative time range to unlock again.
+        // Refresh rate switch is not acknowledged and it's state is locked (Off).
+        // Select a relative time range or select a different refresh rate to unlock again.
         return true;
       }
     }
@@ -712,17 +740,27 @@ const DashboardPage: React.FC = () => {
                   onOpen={handleOpenRefresh}
                   value={refreshRate !== 0 ? refreshRate : null}
                   onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                    // For a selected non-relative time range, switching refresh rate has no effect.
-                    // Select refresh rate option is disabled for this scenario.
-                    // User needs to first switch to a relative time range then refresh rate can be changed.
-                    // When viewing data for non-relative time range, refresh should be OFF
-                    // UI can auto detect if it is not OFF and switches it off.
+                    // When viewing data for non-relative time range, refresh should be Off ideally.
+                    // UI can auto detect if it is not Off and switches it to Off.
                     // Now the user can try to view the non-relative time range data again.
-                    // Manual re-selection of the non-relative time range via the calendar is required.
-                    dashboard.selectDashboard({
-                      refreshRate: event.target.value as number,
-                    });
-                    setRefreshRate(event.target.value as number);
+                    if (selectedDashboard.refreshRate !== 2147483647) {
+                      dashboard.selectDashboard({
+                        refreshRate: event.target.value as number,
+                      });
+                      setRefreshRate(event.target.value as number);
+                    } else {
+                      dashboard.selectDashboard({
+                        refreshRate: event.target.value as number,
+                      });
+                      setRefreshRate(event.target.value as number);
+                      dashboard.selectDashboard({
+                        forceUpdate: true,
+                      });
+                      setPrometheusQueryData({
+                        ...prometheusQueryData,
+                        firstLoad: true,
+                      });
+                    }
                   }}
                   input={<OutlinedInput classes={outlinedInputClasses} />}
                   IconComponent={KeyboardArrowDownIcon}
@@ -781,11 +819,16 @@ const DashboardPage: React.FC = () => {
                       (event) => event.showOnTable
                     )}
                     selectEvents={(selectedEvents: string[]) => {
-                      setPrometheusQueryData({
-                        ...prometheusQueryData,
-                        eventsToShow: selectedEvents,
-                      });
+                      if (selectedDashboard.refreshRate === 2147483647) {
+                        setPrometheusQueryData({
+                          ...prometheusQueryData,
+                          eventsToShow: selectedEvents,
+                        });
+                      }
                     }}
+                    showCheckBoxes={
+                      selectedDashboard.refreshRate === 2147483647
+                    }
                   />
                 </AccordionDetails>
               </Accordion>
@@ -802,7 +845,7 @@ const DashboardPage: React.FC = () => {
                       panel_group_id={panelGroup.panel_group_id}
                       panel_group_name={panelGroup.panel_group_name}
                       panels={panelGroup.panels}
-                      chaos_data={chaosData}
+                      chaos_data={chaosDataSet.visibleChaos}
                     />
                   </div>
                 )

@@ -5,6 +5,7 @@ import CheckBox from '../../../../components/CheckBox';
 import useStyles, { StyledTableCell } from './styles';
 
 interface TableHeaderProps {
+  showCheckBox: Boolean;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   numSelected: number;
   rowCount: number;
@@ -14,6 +15,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   onSelectAllClick,
   numSelected,
   rowCount,
+  showCheckBox,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -21,14 +23,18 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   return (
     <TableHead>
       <TableRow className={classes.tableHead}>
-        <StyledTableCell padding="checkbox" className={classes.checkbox}>
-          <CheckBox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all desserts' }}
-          />
-        </StyledTableCell>
+        {showCheckBox ? (
+          <StyledTableCell padding="checkbox" className={classes.checkbox}>
+            <CheckBox
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{ 'aria-label': 'select all desserts' }}
+            />
+          </StyledTableCell>
+        ) : (
+          <div />
+        )}
         <StyledTableCell className={classes.workflowName}>
           <div className={classes.nameContent}>
             <div className={classes.workflowNameHead}>

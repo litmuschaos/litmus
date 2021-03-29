@@ -91,6 +91,7 @@ export interface ChaosInformation {
 }
 
 export interface ChaosDataUpdates {
+  queryIDs: string[];
   chaosData: Array<EventMetric>;
   reGenerate: Boolean;
 }

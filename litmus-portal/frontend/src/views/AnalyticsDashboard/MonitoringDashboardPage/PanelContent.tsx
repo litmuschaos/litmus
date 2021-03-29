@@ -163,8 +163,8 @@ const PanelContent: React.FC<GraphPanelProps> = ({
     const diff: number = Math.abs(now - endDate);
     const maxLim: number =
       (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
-        : 11;
+        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 4
+        : 14;
     if (
       !(diff >= 0 && diff <= maxLim) &&
       selectedDashboard.refreshRate !== 2147483647

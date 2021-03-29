@@ -387,12 +387,12 @@ export const chaosEventDataParserForPrometheus = (
   numOfWorkflows: number,
   workflowAnalyticsData: WorkflowList,
   eventData: PrometheusResponse,
-  chaosInput: string[],
   chaosEventList: ChaosEventDetails[],
   selectedStartTime: number,
   selectedEndTime: number
 ) => {
   const chaosDataUpdates: ChaosDataUpdates = {
+    queryIDs: [],
     chaosData: [],
     reGenerate: false,
   };
@@ -405,7 +405,6 @@ export const chaosEventDataParserForPrometheus = (
 
   const workflowCheckList: string[] = [];
   eventData?.GetPromQuery.forEach((queryResponse) => {
-    // if (chaosInput.includes(queryResponse.queryid)) {
     if (queryResponse.legends && queryResponse.legends[0]) {
       const chaosEventDetails: ChaosEventDetails = chaosEventList.filter(
         (e) => queryResponse.queryid === e.id
@@ -509,6 +508,7 @@ export const chaosEventDataParserForPrometheus = (
         );
         latestRunMetric = availableRunMetrics[availableRunMetrics.length - 1];
       }
+      chaosDataUpdates.queryIDs.push(queryResponse.queryid);
       chaosDataUpdates.chaosData.push(
         ...queryResponse.legends.map((elem, index) => ({
           metricName: elem[0] ?? 'chaos',
@@ -567,7 +567,6 @@ export const chaosEventDataParserForPrometheus = (
         }))
       );
     }
-    // }
   });
 
   if (workflowAnalyticsData.ListWorkflow) {
