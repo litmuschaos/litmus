@@ -130,14 +130,6 @@ const DashboardPage: React.FC = () => {
     metaData: [],
     dashboardKey: 'Default',
   });
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [refreshRate, setRefreshRate] = React.useState<number>(
-    selectedDashboard.refreshRate ? selectedDashboard.refreshRate : 0
-  );
-  const [dataSourceStatus, setDataSourceStatus] = React.useState<string>(
-    'ACTIVE'
-  );
-  const open = Boolean(anchorEl);
   const [
     prometheusQueryData,
     setPrometheusQueryData,
@@ -154,6 +146,17 @@ const DashboardPage: React.FC = () => {
     numOfWorkflows: 0,
     firstLoad: true,
   });
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [refreshRate, setRefreshRate] = React.useState<number>(
+    selectedDashboard.refreshRate && !prometheusQueryData.firstLoad
+      ? selectedDashboard.refreshRate
+      : 0
+  );
+  const [dataSourceStatus, setDataSourceStatus] = React.useState<string>(
+    'ACTIVE'
+  );
+  const open = Boolean(anchorEl);
+
   const [chaosData, setChaosData] = React.useState<Array<GraphMetric>>([]);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -258,18 +261,14 @@ const DashboardPage: React.FC = () => {
   );
 
   // Apollo query to get the scheduled workflow data
-  const { data: analyticsData } = useQuery<WorkflowList, WorkflowListDataVars>(
-    WORKFLOW_LIST_DETAILS,
-    {
-      variables: { projectID, workflowIDs: [] },
-      fetchPolicy: 'no-cache',
-      pollInterval:
-        selectedDashboard.refreshRate &&
-        selectedDashboard.refreshRate !== 2147483647
-          ? selectedDashboard.refreshRate - 1000
-          : 9000,
-    }
-  );
+  const { data: analyticsData, refetch } = useQuery<
+    WorkflowList,
+    WorkflowListDataVars
+  >(WORKFLOW_LIST_DETAILS, {
+    variables: { projectID, workflowIDs: [] },
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'no-cache',
+  });
 
   // Apollo query to get the prometheus data
   useQuery<PrometheusResponse, PrometheusQueryVars>(PROM_QUERY, {
@@ -305,13 +304,15 @@ const DashboardPage: React.FC = () => {
           selectedStartTime,
           selectedEndTime
         );
-        if (chaosDataUpdates.reGenerate && !prometheusQueryData.firstLoad) {
+        if (
+          chaosDataUpdates.reGenerate &&
+          !prometheusQueryData.firstLoad &&
+          !selectedDashboard.forceUpdate
+        ) {
           clearTimeOuts().then(() => {
-            if (!selectedDashboard.forceUpdate) {
-              dashboard.selectDashboard({
-                forceUpdate: true,
-              });
-            }
+            dashboard.selectDashboard({
+              forceUpdate: true,
+            });
           });
         }
         if (!chaosDataUpdates.reGenerate) {
@@ -377,10 +378,10 @@ const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     if (dataSources && dataSources.ListDataSource.length) {
+      dashboard.selectDashboard({
+        refreshRate: 0,
+      });
       if (selectedDataSource.selectedDataSourceID === '') {
-        dashboard.selectDashboard({
-          refreshRate,
-        });
         if (
           selectedDashboardInformation.metaData &&
           selectedDashboardInformation.metaData[0] &&
@@ -412,6 +413,7 @@ const DashboardPage: React.FC = () => {
   }, [selectedDashboardInformation.dashboardKey, dataSources]);
 
   const generateChaosQueries = () => {
+    refetch();
     let chaosInformation: ChaosInformation = {
       promQueries: prometheusQueryData.promInput.queries,
       chaosQueryIDs: prometheusQueryData.chaosInput,

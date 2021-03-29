@@ -359,43 +359,38 @@ export const getChaosQueryPromInputAndID = (
       ? availableRunMetrics[availableRunMetrics.length - 1].experimentVerdict
       : '-';
 
-    if (
-      availableRunMetrics.length ||
-      chaosEventMetrics.runWiseChaosMetrics.length === 0
-    ) {
-      chaosInformation.promQueries.push({
-        queryid: queryID,
-        query: generateChaosQuery(
-          DashboardListData[0].chaosEventQueryTemplate,
-          keyValue.resultName,
-          keyValue.resultNamespace
-        ),
-        legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
-        resolution: '1/2',
-        minstep:
-          timeRangeDiff * chaosResultNamesAndNamespacesMap.length < 10999
-            ? 1
-            : Math.floor(
-                (timeRangeDiff * chaosResultNamesAndNamespacesMap.length) /
-                  11001
-              ),
-      });
-      chaosInformation.chaosQueryIDs.push(queryID);
-      chaosInformation.chaosEventList.push({
-        id: queryID,
-        legend: areaGraph[index % areaGraph.length],
-        workflow: keyValue.workflowName,
-        experiment: keyValue.experimentName,
-        target: `${chaosEventMetrics.targetNamespace} / ${chaosEventMetrics.targetApp}`,
-        result: latestResult,
-        chaosMetrics: chaosEventMetrics,
-        showOnTable: availableRunMetrics.length > 0,
-      });
-    }
+    chaosInformation.promQueries.push({
+      queryid: queryID,
+      query: generateChaosQuery(
+        DashboardListData[0].chaosEventQueryTemplate,
+        keyValue.resultName,
+        keyValue.resultNamespace
+      ),
+      legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
+      resolution: '1/2',
+      minstep:
+        timeRangeDiff * chaosResultNamesAndNamespacesMap.length < 10999
+          ? 1
+          : Math.floor(
+              (timeRangeDiff * chaosResultNamesAndNamespacesMap.length) / 11001
+            ),
+    });
+    chaosInformation.chaosQueryIDs.push(queryID);
+    chaosInformation.chaosEventList.push({
+      id: queryID,
+      legend: areaGraph[index % areaGraph.length],
+      workflow: keyValue.workflowName,
+      experiment: keyValue.experimentName,
+      target: `${chaosEventMetrics.targetNamespace} / ${chaosEventMetrics.targetApp}`,
+      result: latestResult,
+      chaosMetrics: chaosEventMetrics,
+      showOnTable: availableRunMetrics.length > 0,
+    });
   });
 
   chaosInformation.numberOfWorfklowsUnderConsideration =
     analyticsData?.ListWorkflow.length;
+
   return chaosInformation;
 };
 
@@ -413,6 +408,13 @@ export const chaosEventDataParserForPrometheus = (
     reGenerate: false,
   };
 
+  if (workflowAnalyticsData.ListWorkflow) {
+    if (numOfWorfklows !== workflowAnalyticsData.ListWorkflow.length) {
+      chaosDataUpdates.reGenerate = true;
+    }
+  }
+
+  const workflowCheckList: string[] = [];
   eventData?.GetPromQuery.forEach((queryResponse) => {
     // if (chaosInput.includes(queryResponse.queryid)) {
     if (queryResponse.legends && queryResponse.legends[0]) {
@@ -432,6 +434,37 @@ export const chaosEventDataParserForPrometheus = (
         const updatedWorkflowRunWiseDetailsFromAnalytics: WorkflowRunWiseDetails = getWorkflowRunWiseDetails(
           updatedWorkflowDetails
         );
+
+        if (!workflowCheckList.includes(workflowAndExperiments.workflowID)) {
+          workflowCheckList.push(workflowAndExperiments.workflowID);
+          updatedWorkflowRunWiseDetailsFromAnalytics.experimentNameWiseChaosDataOfWorkflowRuns.forEach(
+            (mapList: ExperimentNameAndChaosDataMap[], index) => {
+              const workflowRunID: string =
+                updatedWorkflowRunWiseDetailsFromAnalytics.idsOfWorkflowRuns[
+                  index
+                ];
+
+              const filteredChaosEventDetails: ChaosEventDetails[] = chaosEventList.filter(
+                (e) =>
+                  workflowAndExperiments.workflowID ===
+                  e.chaosMetrics.workflowID
+              );
+
+              filteredChaosEventDetails.forEach((event: ChaosEventDetails) => {
+                const experimentInWorfklowRunEvent: RunWiseChaosMetrics[] = event.chaosMetrics.runWiseChaosMetrics.filter(
+                  (runWiseMetric) => runWiseMetric.runID === workflowRunID
+                );
+
+                if (
+                  experimentInWorfklowRunEvent.length === 0 &&
+                  !event.showOnTable
+                ) {
+                  chaosDataUpdates.reGenerate = true;
+                }
+              });
+            }
+          );
+        }
 
         const updatedRunWiseMetricsPerExperiment: RunWiseChaosMetrics[] = getRunWiseChaosMetrics(
           updatedWorkflowRunWiseDetailsFromAnalytics.idsOfWorkflowRuns,
@@ -547,14 +580,17 @@ export const chaosEventDataParserForPrometheus = (
     }
     // }
   });
-  if (eventData?.GetPromQuery.length > chaosDataUpdates.chaosData.length) {
-    chaosDataUpdates.reGenerate = true;
-  }
-  if (
-    numOfWorfklows !== workflowAnalyticsData.ListWorkflow.length &&
-    workflowAnalyticsData.ListWorkflow.length !== 0
-  ) {
-    chaosDataUpdates.reGenerate = true;
+
+  if (workflowAnalyticsData.ListWorkflow) {
+    if (eventData?.GetPromQuery.length < chaosDataUpdates.chaosData.length) {
+      chaosDataUpdates.reGenerate = true;
+    }
+    if (
+      numOfWorfklows !== workflowAnalyticsData.ListWorkflow.length &&
+      workflowAnalyticsData.ListWorkflow.length !== 0
+    ) {
+      chaosDataUpdates.reGenerate = true;
+    }
   }
   return chaosDataUpdates;
 };
