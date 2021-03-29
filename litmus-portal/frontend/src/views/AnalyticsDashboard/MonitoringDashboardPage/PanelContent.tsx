@@ -183,6 +183,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
     }
   }, [selectedDashboard.range]);
 
+  useEffect(() => {
+    if (selectedDashboard.forceUpdate) {
+      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
+    }
+  }, [selectedDashboard.forceUpdate]);
+
   return (
     <div
       className={` ${classes.rootPanel} ${className} ${

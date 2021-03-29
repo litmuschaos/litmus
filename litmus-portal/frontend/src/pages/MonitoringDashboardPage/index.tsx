@@ -32,9 +32,9 @@ import {
   WORKFLOW_LIST_DETAILS,
 } from '../../graphql';
 import {
+  ChaosDataUpdates,
   ChaosEventDetails,
   ChaosInformation,
-  EventMetric,
 } from '../../models/dashboardsData';
 import {
   DashboardList,
@@ -86,6 +86,7 @@ interface SelectedDashboardInformation {
 interface PrometheusQueryDataInterface {
   promInput: PrometheusQueryInput;
   chaosInput: string[];
+  numOfWorkflows: number;
   firstLoad: Boolean;
   chaosEvents: ChaosEventDetails[];
   eventsToShow: string[];
@@ -150,6 +151,7 @@ const DashboardPage: React.FC = () => {
     chaosInput: [],
     chaosEvents: [],
     eventsToShow: [],
+    numOfWorkflows: 0,
     firstLoad: true,
   });
   const [chaosData, setChaosData] = React.useState<Array<GraphMetric>>([]);
@@ -164,6 +166,15 @@ const DashboardPage: React.FC = () => {
     isDateRangeSelectorPopoverOpen,
     setDateRangeSelectorPopoverOpen,
   ] = React.useState(false);
+
+  const clearTimeOuts = async () => {
+    let id = window.setTimeout(function () {}, 0);
+    while (id--) {
+      window.clearTimeout(id);
+    }
+
+    return Promise.resolve(id === 0);
+  };
 
   const CallbackFromRangeSelector = (
     selectedStartDate: string,
@@ -190,16 +201,31 @@ const DashboardPage: React.FC = () => {
       !(diff >= 0 && diff <= maxLim) &&
       selectedDashboard.refreshRate !== 2147483647
     ) {
-      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
-      setRefreshRate(2147483647);
+      clearTimeOuts().then(() => {
+        setPrometheusQueryData({
+          ...prometheusQueryData,
+          firstLoad: true,
+        });
+        setRefreshRate(2147483647);
+      });
     } else if (!(diff >= 0 && diff <= maxLim)) {
-      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
+      clearTimeOuts().then(() => {
+        setPrometheusQueryData({
+          ...prometheusQueryData,
+          firstLoad: true,
+        });
+      });
     } else if (
       diff >= 0 &&
       diff <= maxLim &&
       selectedDashboard.refreshRate === 2147483647
     ) {
-      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
+      clearTimeOuts().then(() => {
+        setPrometheusQueryData({
+          ...prometheusQueryData,
+          firstLoad: true,
+        });
+      });
     }
     // If none of the above conditions match, then user has selected a relative time range.
   };
@@ -236,7 +262,12 @@ const DashboardPage: React.FC = () => {
     WORKFLOW_LIST_DETAILS,
     {
       variables: { projectID, workflowIDs: [] },
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'no-cache',
+      pollInterval:
+        selectedDashboard.refreshRate &&
+        selectedDashboard.refreshRate !== 2147483647
+          ? selectedDashboard.refreshRate - 1000
+          : 9000,
     }
   );
 
@@ -251,12 +282,13 @@ const DashboardPage: React.FC = () => {
       },
     },
     fetchPolicy: 'no-cache',
-    skip:
-      prometheusQueryData?.promInput.queries?.length === 0 ||
-      prometheusQueryData?.promInput.url === '',
+    skip: prometheusQueryData?.promInput.url === '',
     onCompleted: (eventData) => {
-      let chaos_data: Array<EventMetric> = [];
-      if (eventData) {
+      let chaosDataUpdates: ChaosDataUpdates = {
+        chaosData: [],
+        reGenerate: false,
+      };
+      if (eventData && analyticsData) {
         const selectedEndTime: number =
           new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
           1000;
@@ -264,15 +296,36 @@ const DashboardPage: React.FC = () => {
           new Date(
             moment(selectedDashboard.range.startDate).format()
           ).getTime() / 1000;
-        chaos_data = chaosEventDataParserForPrometheus(
+        chaosDataUpdates = chaosEventDataParserForPrometheus(
+          prometheusQueryData?.numOfWorkflows,
+          analyticsData,
           eventData,
           prometheusQueryData?.eventsToShow,
           prometheusQueryData?.chaosEvents,
           selectedStartTime,
           selectedEndTime
         );
-        setChaosData(chaos_data);
-        chaos_data = [];
+        if (chaosDataUpdates.reGenerate && !prometheusQueryData.firstLoad) {
+          clearTimeOuts().then(() => {
+            if (!selectedDashboard.forceUpdate) {
+              dashboard.selectDashboard({
+                forceUpdate: true,
+              });
+            }
+          });
+        }
+        if (!chaosDataUpdates.reGenerate) {
+          if (selectedDashboard.forceUpdate) {
+            dashboard.selectDashboard({
+              forceUpdate: false,
+            });
+          }
+          setChaosData(chaosDataUpdates.chaosData);
+        }
+        chaosDataUpdates = {
+          chaosData: [],
+          reGenerate: false,
+        };
       }
     },
     onError: (error: ApolloError) => {
@@ -363,6 +416,7 @@ const DashboardPage: React.FC = () => {
       promQueries: prometheusQueryData.promInput.queries,
       chaosQueryIDs: prometheusQueryData.chaosInput,
       chaosEventList: prometheusQueryData.chaosEvents,
+      numberOfWorfklowsUnderConsideration: prometheusQueryData.numOfWorkflows,
     };
     if (prometheusQueryData.firstLoad && analyticsData?.ListWorkflow) {
       const selectedEndTime: number =
@@ -403,12 +457,14 @@ const DashboardPage: React.FC = () => {
       },
       chaosInput: chaosInformation.chaosQueryIDs,
       chaosEvents: chaosInformation.chaosEventList,
+      numOfWorkflows: chaosInformation.numberOfWorfklowsUnderConsideration,
       firstLoad: !analyticsData?.ListWorkflow,
     });
     chaosInformation = {
       promQueries: [],
       chaosQueryIDs: [],
       chaosEventList: [],
+      numberOfWorfklowsUnderConsideration: 0,
     };
   };
 
@@ -473,23 +529,30 @@ const DashboardPage: React.FC = () => {
     }
   }, [prometheusQueryData]);
 
-  const getRefreshRateStatus = () => {
-    const endDate: number =
-      new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-      1000;
-    const now: number = Math.round(new Date().getTime() / 1000);
-    const diff: number = Math.abs(now - endDate);
-    const maxLim: number =
-      (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
-        : 11;
-    if (!(diff >= 0 && diff <= maxLim)) {
-      // A non relative time range has been selected.
-      // Refresh rate switch is not acknowledged and it's state is locked.
-      // Select a relative time range to unlock again.
-      return true;
+  useEffect(() => {
+    if (selectedDashboard.forceUpdate) {
+      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
     }
+  }, [selectedDashboard.forceUpdate]);
 
+  const getRefreshRateStatus = () => {
+    if (selectedDashboard.range) {
+      const endDate: number =
+        new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+        1000;
+      const now: number = Math.round(new Date().getTime() / 1000);
+      const diff: number = Math.abs(now - endDate);
+      const maxLim: number =
+        (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
+          ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 2
+          : 11;
+      if (!(diff >= 0 && diff <= maxLim)) {
+        // A non relative time range has been selected.
+        // Refresh rate switch is not acknowledged and it's state is locked.
+        // Select a relative time range to unlock again.
+        return true;
+      }
+    }
     // For relative time ranges.
     return false;
   };

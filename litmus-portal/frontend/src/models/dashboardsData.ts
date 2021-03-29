@@ -42,6 +42,7 @@ export interface ChaosResultNamesAndNamespacesMap {
 
 export interface RunWiseChaosMetrics {
   runIndex: number;
+  runID: string;
   lastUpdatedTimeStamp: number;
   probeSuccessPercentage: string;
   experimentStatus: string;
@@ -65,6 +66,7 @@ export interface ExperimentNameAndChaosDataMap {
 }
 
 export interface WorkflowRunWiseDetails {
+  idsOfWorkflowRuns: string[];
   resilienceScoreForWorkflowRuns: number[];
   statusOfWorkflowRuns: string[];
   experimentNameWiseChaosDataOfWorkflowRuns: ExperimentNameAndChaosDataMap[][];
@@ -84,6 +86,12 @@ export interface ChaosInformation {
   promQueries: promQueryInput[];
   chaosQueryIDs: string[];
   chaosEventList: ChaosEventDetails[];
+  numberOfWorfklowsUnderConsideration: number;
+}
+
+export interface ChaosDataUpdates {
+  chaosData: Array<EventMetric>;
+  reGenerate: Boolean;
 }
 
 export interface EventMetric extends GraphMetric {

@@ -19,6 +19,7 @@ export interface DashboardData {
   selectedAgentName?: string;
   refreshRate?: number;
   range: RangeType;
+  forceUpdate: Boolean;
 }
 
 export enum DashboardSelectionActions {

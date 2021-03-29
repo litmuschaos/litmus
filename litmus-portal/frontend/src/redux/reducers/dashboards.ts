@@ -13,6 +13,7 @@ const initialState: DashboardData = {
     startDate: '',
     endDate: '',
   },
+  forceUpdate: false,
 };
 
 export const selectDashboard = createReducer<DashboardData>(initialState, {
