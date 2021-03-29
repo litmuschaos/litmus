@@ -181,7 +181,7 @@ const DashboardPage: React.FC = () => {
   ] = React.useState(false);
 
   const clearTimeOuts = async () => {
-    let id = window.setTimeout(function () {}, 0);
+    let id = window.setTimeout(() => {}, 0);
     while (id--) {
       window.clearTimeout(id);
     }

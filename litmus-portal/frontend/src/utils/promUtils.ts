@@ -2,6 +2,7 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-console */
+/* eslint-disable max-len */
 import { GraphMetric } from 'litmus-ui';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
