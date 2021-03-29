@@ -87,7 +87,7 @@ export interface ChaosInformation {
   promQueries: promQueryInput[];
   chaosQueryIDs: string[];
   chaosEventList: ChaosEventDetails[];
-  numberOfWorfklowsUnderConsideration: number;
+  numberOfWorkflowsUnderConsideration: number;
 }
 
 export interface ChaosDataUpdates {

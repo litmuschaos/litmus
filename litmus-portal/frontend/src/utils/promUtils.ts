@@ -153,16 +153,6 @@ const getRunWiseChaosMetrics = (
   experimentNameWiseChaosDataOfWorkflowRuns.forEach(
     (dataArray: ExperimentNameAndChaosDataMap[], runIndex) => {
       try {
-        let runWiseChaosMetrics: RunWiseChaosMetrics = {
-          runIndex: 0,
-          runID: '',
-          lastUpdatedTimeStamp: 0,
-          probeSuccessPercentage: '',
-          experimentStatus: '',
-          experimentVerdict: '',
-          resilienceScore: '',
-          workflowStatus: '',
-        };
         let selectedChaosData: ChaosData = {
           engineName: '',
           engineUID: '',
@@ -186,7 +176,7 @@ const getRunWiseChaosMetrics = (
             }
           }
         );
-        runWiseChaosMetrics = {
+        workflowRunMetricsPerExperiment.push({
           runIndex,
           runID: idsOfWorkflowRuns[runIndex],
           lastUpdatedTimeStamp: parseInt(selectedChaosData.lastUpdatedAt, 10),
@@ -195,8 +185,7 @@ const getRunWiseChaosMetrics = (
           experimentVerdict: selectedChaosData.experimentVerdict,
           resilienceScore: `${resilienceScoreForWorkflowRuns[runIndex]}%`,
           workflowStatus: statusOfWorkflowRuns[runIndex],
-        };
-        workflowRunMetricsPerExperiment.push(runWiseChaosMetrics);
+        });
       } catch (error) {
         console.error(error);
       }
@@ -217,7 +206,7 @@ export const getChaosQueryPromInputAndID = (
     promQueries: [],
     chaosQueryIDs: [],
     chaosEventList: [],
-    numberOfWorfklowsUnderConsideration: 0,
+    numberOfWorkflowsUnderConsideration: 0,
   };
   const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
   const workflowAndExperimentMetaDataMap: WorkflowAndExperimentMetaDataMap[] = [];
@@ -388,14 +377,14 @@ export const getChaosQueryPromInputAndID = (
     });
   });
 
-  chaosInformation.numberOfWorfklowsUnderConsideration =
+  chaosInformation.numberOfWorkflowsUnderConsideration =
     analyticsData?.ListWorkflow.length;
 
   return chaosInformation;
 };
 
 export const chaosEventDataParserForPrometheus = (
-  numOfWorfklows: number,
+  numOfWorkflows: number,
   workflowAnalyticsData: WorkflowList,
   eventData: PrometheusResponse,
   chaosInput: string[],
@@ -409,7 +398,7 @@ export const chaosEventDataParserForPrometheus = (
   };
 
   if (workflowAnalyticsData.ListWorkflow) {
-    if (numOfWorfklows !== workflowAnalyticsData.ListWorkflow.length) {
+    if (numOfWorkflows !== workflowAnalyticsData.ListWorkflow.length) {
       chaosDataUpdates.reGenerate = true;
     }
   }
@@ -451,12 +440,12 @@ export const chaosEventDataParserForPrometheus = (
               );
 
               filteredChaosEventDetails.forEach((event: ChaosEventDetails) => {
-                const experimentInWorfklowRunEvent: RunWiseChaosMetrics[] = event.chaosMetrics.runWiseChaosMetrics.filter(
+                const experimentInWorkflowRunEvent: RunWiseChaosMetrics[] = event.chaosMetrics.runWiseChaosMetrics.filter(
                   (runWiseMetric) => runWiseMetric.runID === workflowRunID
                 );
 
                 if (
-                  experimentInWorfklowRunEvent.length === 0 &&
+                  experimentInWorkflowRunEvent.length === 0 &&
                   !event.showOnTable
                 ) {
                   chaosDataUpdates.reGenerate = true;
@@ -586,7 +575,7 @@ export const chaosEventDataParserForPrometheus = (
       chaosDataUpdates.reGenerate = true;
     }
     if (
-      numOfWorfklows !== workflowAnalyticsData.ListWorkflow.length &&
+      numOfWorkflows !== workflowAnalyticsData.ListWorkflow.length &&
       workflowAnalyticsData.ListWorkflow.length !== 0
     ) {
       chaosDataUpdates.reGenerate = true;

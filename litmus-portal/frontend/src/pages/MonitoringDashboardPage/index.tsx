@@ -418,7 +418,7 @@ const DashboardPage: React.FC = () => {
       promQueries: prometheusQueryData.promInput.queries,
       chaosQueryIDs: prometheusQueryData.chaosInput,
       chaosEventList: prometheusQueryData.chaosEvents,
-      numberOfWorfklowsUnderConsideration: prometheusQueryData.numOfWorkflows,
+      numberOfWorkflowsUnderConsideration: prometheusQueryData.numOfWorkflows,
     };
     if (prometheusQueryData.firstLoad && analyticsData?.ListWorkflow) {
       const selectedEndTime: number =
@@ -459,14 +459,14 @@ const DashboardPage: React.FC = () => {
       },
       chaosInput: chaosInformation.chaosQueryIDs,
       chaosEvents: chaosInformation.chaosEventList,
-      numOfWorkflows: chaosInformation.numberOfWorfklowsUnderConsideration,
+      numOfWorkflows: chaosInformation.numberOfWorkflowsUnderConsideration,
       firstLoad: !analyticsData?.ListWorkflow,
     });
     chaosInformation = {
       promQueries: [],
       chaosQueryIDs: [],
       chaosEventList: [],
-      numberOfWorfklowsUnderConsideration: 0,
+      numberOfWorkflowsUnderConsideration: 0,
     };
   };
 
