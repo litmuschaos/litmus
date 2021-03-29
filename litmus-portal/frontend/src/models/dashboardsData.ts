@@ -80,6 +80,7 @@ export interface ChaosEventDetails {
   target: string;
   result: string;
   chaosMetrics: WorkflowAndExperimentMetaDataMap;
+  showOnTable: Boolean;
 }
 
 export interface ChaosInformation {

@@ -65,75 +65,80 @@ export const getWorkflowRunWiseDetails = (schedule: Workflow) => {
     statusOfWorkflowRuns: [],
     experimentNameWiseChaosDataOfWorkflowRuns: [],
   };
-  schedule.workflow_runs.forEach((data: WorkflowRun, runIndex) => {
-    try {
-      const executionData: ExecutionData = JSON.parse(data.execution_data);
-      workflowRunWiseDetailsForSchedule.idsOfWorkflowRuns[runIndex] =
-        data.workflow_run_id;
-      workflowRunWiseDetailsForSchedule.statusOfWorkflowRuns[runIndex] =
-        executionData.finishedAt.length === 0 ? 'Running' : executionData.phase;
-      const { nodes } = executionData;
-      const workflowsRunResults: number[] = [];
-      let weightsSum: number = 0;
-      let isValid: boolean = false;
-      for (const key of Object.keys(nodes)) {
-        const node = nodes[key];
-        if (node.chaosData) {
-          const { chaosData } = node;
-          if (
-            !workflowRunWiseDetailsForSchedule
-              .experimentNameWiseChaosDataOfWorkflowRuns[runIndex]
-          ) {
+  if (schedule.workflow_runs) {
+    schedule.workflow_runs.forEach((data: WorkflowRun, runIndex) => {
+      try {
+        const executionData: ExecutionData = JSON.parse(data.execution_data);
+        workflowRunWiseDetailsForSchedule.idsOfWorkflowRuns[runIndex] =
+          data.workflow_run_id;
+        workflowRunWiseDetailsForSchedule.statusOfWorkflowRuns[runIndex] =
+          executionData.finishedAt.length === 0
+            ? 'Running'
+            : executionData.phase;
+        const { nodes } = executionData;
+        const workflowsRunResults: number[] = [];
+        let weightsSum: number = 0;
+        let isValid: boolean = false;
+        for (const key of Object.keys(nodes)) {
+          const node = nodes[key];
+          if (node.chaosData) {
+            const { chaosData } = node;
+            if (
+              !workflowRunWiseDetailsForSchedule
+                .experimentNameWiseChaosDataOfWorkflowRuns[runIndex]
+            ) {
+              workflowRunWiseDetailsForSchedule.experimentNameWiseChaosDataOfWorkflowRuns[
+                runIndex
+              ] = [];
+            }
             workflowRunWiseDetailsForSchedule.experimentNameWiseChaosDataOfWorkflowRuns[
               runIndex
-            ] = [];
-          }
-          workflowRunWiseDetailsForSchedule.experimentNameWiseChaosDataOfWorkflowRuns[
-            runIndex
-          ].push({
-            experimentName: chaosData.experimentName,
-            chaosData,
-          });
-          if (
-            chaosData.experimentVerdict === 'Pass' ||
-            chaosData.experimentVerdict === 'Fail'
-          ) {
-            const weightageMap: WeightageMap[] = schedule.weightages;
-            weightageMap.forEach((weightage) => {
-              if (weightage.experiment_name === chaosData.experimentName) {
-                if (chaosData.experimentVerdict === 'Pass') {
-                  workflowsRunResults.push(
-                    (weightage.weightage *
-                      parseInt(chaosData.probeSuccessPercentage, 10)) /
-                      100
-                  );
-                }
-                if (chaosData.experimentVerdict === 'Fail') {
-                  workflowsRunResults.push(0);
-                }
-                if (
-                  chaosData.experimentVerdict === 'Pass' ||
-                  chaosData.experimentVerdict === 'Fail'
-                ) {
-                  weightsSum += weightage.weightage;
-                  isValid = true;
-                }
-              }
+            ].push({
+              experimentName: chaosData.experimentName,
+              chaosData,
             });
+            if (
+              chaosData.experimentVerdict === 'Pass' ||
+              chaosData.experimentVerdict === 'Fail'
+            ) {
+              const weightageMap: WeightageMap[] = schedule.weightages;
+              weightageMap.forEach((weightage) => {
+                if (weightage.experiment_name === chaosData.experimentName) {
+                  if (chaosData.experimentVerdict === 'Pass') {
+                    workflowsRunResults.push(
+                      (weightage.weightage *
+                        parseInt(chaosData.probeSuccessPercentage, 10)) /
+                        100
+                    );
+                  }
+                  if (chaosData.experimentVerdict === 'Fail') {
+                    workflowsRunResults.push(0);
+                  }
+                  if (
+                    chaosData.experimentVerdict === 'Pass' ||
+                    chaosData.experimentVerdict === 'Fail'
+                  ) {
+                    weightsSum += weightage.weightage;
+                    isValid = true;
+                  }
+                }
+              });
+            }
           }
         }
+        if (executionData.event_type === 'UPDATE' && isValid) {
+          workflowRunWiseDetailsForSchedule.resilienceScoreForWorkflowRuns[
+            runIndex
+          ] = workflowsRunResults.length
+            ? (workflowsRunResults.reduce((a, b) => a + b, 0) / weightsSum) *
+              100
+            : 0;
+        }
+      } catch (error) {
+        console.error(error);
       }
-      if (executionData.event_type === 'UPDATE' && isValid) {
-        workflowRunWiseDetailsForSchedule.resilienceScoreForWorkflowRuns[
-          runIndex
-        ] = workflowsRunResults.length
-          ? (workflowsRunResults.reduce((a, b) => a + b, 0) / weightsSum) * 100
-          : 0;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  });
+    });
+  }
   return workflowRunWiseDetailsForSchedule;
 };
 
@@ -384,6 +389,7 @@ export const getChaosQueryPromInputAndID = (
         target: `${chaosEventMetrics.targetNamespace} / ${chaosEventMetrics.targetApp}`,
         result: latestResult,
         chaosMetrics: chaosEventMetrics,
+        showOnTable: availableRunMetrics.length > 0,
       });
     }
   });

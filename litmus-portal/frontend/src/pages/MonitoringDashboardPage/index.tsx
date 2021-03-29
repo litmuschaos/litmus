@@ -775,7 +775,9 @@ const DashboardPage: React.FC = () => {
                 </AccordionSummary>
                 <AccordionDetails className={classes.panelGroupContainer}>
                   <ChaosTable
-                    chaosList={prometheusQueryData?.chaosEvents}
+                    chaosList={prometheusQueryData?.chaosEvents.filter(
+                      (event) => event.showOnTable
+                    )}
                     selectEvents={(selectedEvents: string[]) => {
                       setPrometheusQueryData({
                         ...prometheusQueryData,
