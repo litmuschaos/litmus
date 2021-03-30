@@ -3,6 +3,10 @@ import { DashboardData } from '../../../../models/dashboardsData';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { history } from '../../../../redux/configureStore';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import DashboardCard from './index';
 import useStyles from '../../DataSource/Cards/styles';
 
@@ -12,6 +16,8 @@ interface DashboardCardsProps {
 
 const DashboardCards: React.FC<DashboardCardsProps> = ({ dashboards }) => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const dashboard = useActions(DashboardActions);
   return (
     <div className={classes.root}>
@@ -29,7 +35,10 @@ const DashboardCards: React.FC<DashboardCardsProps> = ({ dashboards }) => {
                   selectedDashboardDescription: d.information,
                   selectedDashboardPanelGroupMap: d.panelGroupMap,
                 });
-                history.push('/analytics/dashboard/create');
+                history.push({
+                  pathname: '/analytics/dashboard/create',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
               }}
               description={d.description}
             />

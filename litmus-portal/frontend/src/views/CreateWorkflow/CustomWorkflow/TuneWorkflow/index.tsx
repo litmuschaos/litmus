@@ -5,12 +5,13 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import BackButton from '../../../../components/Button/BackButton';
 import Loader from '../../../../components/Loader';
 import { GET_ENGINE_YAML } from '../../../../graphql/queries';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
-import BackButton from '../BackButton';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface EnvValues {
@@ -30,6 +31,8 @@ interface AppInfo {
 
 const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+  const projectID = getProjectID();
   const [overrideEnvs, setOverrideEnvs] = useState<EnvValues[]>([
     { name: '', value: '' },
   ]);
@@ -47,9 +50,8 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [loadingEnv, setLoadingEnv] = useState(true);
   const [jobCleanup, setJobCleanup] = useState('delete');
 
-  const { t } = useTranslation();
-  const userData = useSelector((state: RootState) => state.userData);
   const [getEngineYaml] = useLazyQuery(GET_ENGINE_YAML, {
+    fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       const parsedYaml = YAML.parse(data.getYAMLData);
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
@@ -101,7 +103,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       getEngineYaml({
         variables: {
           experimentInput: {
-            ProjectID: userData.selectedProjectID,
+            ProjectID: projectID,
             HubName: customWorkflow.hubName,
             ChartName: customWorkflow.experiment_name.split('/')[0],
             ExperimentName: customWorkflow.experiment_name.split('/')[1],
@@ -210,7 +212,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     <div className={classes.root}>
       <div className={classes.headerDiv}>
         {customWorkflow.index === -1 ? (
-          <BackButton isDisabled={false} onClick={() => gotoStep(0)} />
+          <BackButton onClick={() => gotoStep(0)} />
         ) : null}
         <Typography variant="h3" className={classes.headerText} gutterBottom>
           {t('customWorkflow.tuneExperiment.headerText')}
@@ -228,7 +230,10 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography variant="h6" className={classes.mainText}>
               {t('customWorkflow.tuneExperiment.expName')}:
             </Typography>
-            <Typography className={classes.mainDetail}>
+            <Typography
+              className={classes.mainDetail}
+              data-cy="selectedExperimentName"
+            >
               {customWorkflow.experiment_name}
             </Typography>
           </div>
@@ -245,7 +250,10 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography variant="h6" className={classes.mainText}>
               {t('customWorkflow.tuneExperiment.sequence')}:
             </Typography>
-            <Typography className={classes.mainDetail}>
+            <Typography
+              className={classes.mainDetail}
+              data-cy="experimentSequence"
+            >
               {experimentSequence()}
             </Typography>
           </div>
@@ -254,7 +262,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         {loadingEnv ? (
           <Loader />
         ) : (
-          <div className={classes.appInfoMainDiv}>
+          <div className={classes.appInfoMainDiv} data-cy="envVariables">
             <Typography className={classes.appInfoHeader}>
               {t('customWorkflow.tuneExperiment.appInfo')}
             </Typography>
@@ -277,7 +285,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            <div style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.appinfo?.applabel ? (
               <div className={classes.appInfoDiv}>
                 <Typography className={classes.appInfoText}>
@@ -299,7 +307,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            <div style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.appinfo?.appkind ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>
@@ -321,7 +329,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            <div style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.annotationCheck ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>
@@ -338,7 +346,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            <div style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.jobCleanUpPolicy ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>
@@ -416,7 +424,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           ))}
         </div>
       </div>
-      <div className={classes.nextBtn}>
+      <div className={classes.nextBtn} data-cy="addExperimentButton">
         <ButtonFilled
           onClick={() => {
             handleEnvModification();

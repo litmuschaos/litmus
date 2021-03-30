@@ -1,15 +1,15 @@
 import { useQuery } from '@apollo/client';
 import { AppBar, Typography, useTheme } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs/Tabs';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { ButtonOutlined } from 'litmus-ui';
 import { useLocation } from 'react-router-dom';
+import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
-import BackButton from '../../components/Button/BackButton';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../graphql';
 import {
   ExecutionData,
@@ -20,12 +20,13 @@ import {
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
+import { getProjectID } from '../../utils/getSearchParams';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
-import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
-import useStyles from './styles';
-import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
-import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
+import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
+import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
+import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
+import useStyles from './styles';
 
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
@@ -35,10 +36,9 @@ const WorkflowDetails: React.FC = () => {
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
 
   const tabs = useActions(TabActions);
+
   // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   const workflowDetailsTabValue = useSelector(
     (state: RootState) => state.tabNumber.node
@@ -51,7 +51,7 @@ const WorkflowDetails: React.FC = () => {
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+    { variables: { projectID } }
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
@@ -67,7 +67,7 @@ const WorkflowDetails: React.FC = () => {
     ) {
       subscribeToMore<WorkflowSubscription>({
         document: WORKFLOW_EVENTS,
-        variables: { projectID: selectedProjectID },
+        variables: { projectID },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           const modifiedWorkflows = prev.getWorkFlowRuns.slice();
@@ -108,7 +108,7 @@ const WorkflowDetails: React.FC = () => {
     <Scaffold>
       <div className={classes.root}>
         <div className={classes.button}>
-          <BackButton isDisabled={false} />
+          <BackButton />
         </div>
         {/* If workflow data is present then display the workflow details */}
         {workflow ? (

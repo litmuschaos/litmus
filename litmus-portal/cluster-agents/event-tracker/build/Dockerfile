@@ -15,7 +15,7 @@ LABEL maintainer="LitmusChaos"
 
 COPY --from=builder /output/event-tracker /
 
-RUN addgroup -S kubera && adduser -S -G kubera 1001
+RUN addgroup -S litmus && adduser -S -G litmus 1001
 USER 1001
 
 CMD ["./event-tracker"]

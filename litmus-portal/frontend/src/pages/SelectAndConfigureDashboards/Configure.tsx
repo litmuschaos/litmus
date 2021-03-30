@@ -19,7 +19,7 @@ import {
   WorkflowYaml,
 } from '../../models/chaosWorkflowYaml';
 import {
-  ChaosEngineNamesAndNamespacesMap,
+  ChaosResultNamesAndNamespacesMap,
   DashboardDetails,
 } from '../../models/dashboardsData';
 import {
@@ -38,6 +38,7 @@ import {
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { validateWorkflowParameter } from '../../utils/validate';
 import {
   generateChaosQuery,
@@ -54,9 +55,8 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
   configure,
 }) => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const dashboardID = useSelector(
     (state: RootState) => state.selectDashboard.selectedDashboardID
   );
@@ -88,7 +88,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
   const { data: workflowSchedules } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -124,7 +124,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
 
   const getPanelGroups = () => {
     if (configure === false) {
-      const chaosEngineNamesAndNamespacesMap: ChaosEngineNamesAndNamespacesMap[] = [];
+      const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
       workflowSchedules?.getScheduledWorkflows.forEach(
         (schedule: ScheduleWorkflow) => {
           if (
@@ -178,12 +178,13 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                       engineNamespace = parsedEmbeddedYaml.metadata.namespace;
                     }
                     let matchIndex: number = -1;
-                    const check: number = chaosEngineNamesAndNamespacesMap.filter(
+                    const check: number = chaosResultNamesAndNamespacesMap.filter(
                       (data, index) => {
                         if (
-                          data.engineName ===
-                            parsedEmbeddedYaml.metadata.name &&
-                          data.engineNamespace === engineNamespace
+                          data.resultName.includes(
+                            parsedEmbeddedYaml.metadata.name
+                          ) &&
+                          data.resultNamespace === engineNamespace
                         ) {
                           matchIndex = index;
                           return true;
@@ -192,15 +193,17 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
                       }
                     ).length;
                     if (check === 0) {
-                      chaosEngineNamesAndNamespacesMap.push({
-                        engineName: parsedEmbeddedYaml.metadata.name,
-                        engineNamespace,
+                      chaosResultNamesAndNamespacesMap.push({
+                        resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
+                        resultNamespace: engineNamespace,
                         workflowName: workflowYaml.metadata.name,
+                        experimentName:
+                          parsedEmbeddedYaml.spec.experiments[0].name,
                       });
                     } else {
-                      chaosEngineNamesAndNamespacesMap[
+                      chaosResultNamesAndNamespacesMap[
                         matchIndex
-                      ].workflowName = `${chaosEngineNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                      ].workflowName = `${chaosResultNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
                     }
                   }
                 });
@@ -216,16 +219,16 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
           const selectedPanels: Panel[] = [];
           panelGroup.panels.forEach((panel) => {
             const selectedPanel: Panel = panel;
-            chaosEngineNamesAndNamespacesMap.forEach((keyValue) => {
+            chaosResultNamesAndNamespacesMap.forEach((keyValue) => {
               selectedPanel.prom_queries.push({
                 queryid: uuidv4(),
                 prom_query_name: generateChaosQuery(
                   DashboardList[DashboardTemplateID ?? 0]
                     .chaosEventQueryTemplate,
-                  keyValue.engineName,
-                  keyValue.engineNamespace
+                  keyValue.resultName,
+                  keyValue.resultNamespace
                 ),
-                legend: `${keyValue.workflowName}- \n${keyValue.engineName}`,
+                legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
                 resolution: '1/1',
                 minstep: '1',
                 line: false,
@@ -262,7 +265,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
       panel_groups: getPanelGroups(),
       end_time: `${Math.round(new Date().getTime() / 1000)}`,
       start_time: `${Math.round(new Date().getTime() / 1000) - 1800}`,
-      project_id: selectedProjectID,
+      project_id: projectID,
       cluster_id: dashboardVars.agentID,
       refresh_rate: '5',
     };
@@ -375,6 +378,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
       <Modal
         open={open}
         onClose={() => setOpen(false)}
+        width="60%"
         modalActions={
           <ButtonOutlined
             className={classes.closeButton}
@@ -384,7 +388,7 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
           </ButtonOutlined>
         }
       >
-        <div>
+        <div className={classes.modal}>
           <Typography align="center">
             {success === true ? (
               <img
@@ -429,7 +433,12 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
           {success === true ? (
             <ButtonFilled
               variant="success"
-              onClick={() => history.push('/analytics')}
+              onClick={() => {
+                history.push({
+                  pathname: '/analytics',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
+              }}
             >
               <div>Back to Kubernetes Dashboard</div>
             </ButtonFilled>
@@ -447,7 +456,12 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
 
               <ButtonFilled
                 variant="error"
-                onClick={() => history.push('/analytics')}
+                onClick={() => {
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
+                }}
               >
                 <div>Back to Kubernetes Dashboard</div>
               </ButtonFilled>

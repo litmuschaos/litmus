@@ -12,4 +12,5 @@ type SubscriberConfigurationVars struct {
 	ChaosOperatorImage      string
 	WorkflowExecutorImage   string
 	ChaosRunnerImage        string
+	ChaosExporterImage      string
 }

@@ -24,6 +24,7 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	ChaosOperatorImage:      os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE"),
 	WorkflowExecutorImage:   os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE"),
 	ChaosRunnerImage:        os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
+	ChaosExporterImage:      os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE"),
 }
 
 // FileHandler dynamically generates the manifest file and sends it as a response

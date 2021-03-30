@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mysql-exporter
+  labels:
+    k8s-app: mysql-exporter
+  namespace: monitoring
+spec:
+  jobLabel: k8s-app
+  selector:
+    matchLabels:
+      k8s-app: mysql-exporter
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  endpoints:
+    - port: mysql-metrics
+      scheme: http
+      interval: 30s
+      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+      tlsConfig:
+        insecureSkipVerify: true

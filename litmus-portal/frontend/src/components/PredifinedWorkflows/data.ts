@@ -47,7 +47,8 @@ export default [
     details:
       'This experiment causes CPU resource exhaustion on the Kubernetes node.' +
       'The experiment aims to verify resiliency of applications whose replicas may be ' +
-      'evicted on account on nodes turning unschedulable (Not Ready) due to lack of CPU resources.',
+      'evicted on account on nodes turning unschedulable (Not Ready) due to lack of CPU resources.' +
+      ' Uses kube-proxy for identification of pod.',
     recommendation:
       'Check whether the application is resilient to the CPU hog, once the experiment (job) is completed.',
     experimentinfo:
@@ -77,7 +78,8 @@ export default [
       'The Memory chaos is injected using a job running the linux stress-ng tool (a workload generator). ' +
       'The chaos is effected for a period equalling the TOTAL_CHAOS_DURATION and upto ' +
       'MEMORY_PERCENTAGE(out of 100). Application implies services. Can be reframed as: Tests application ' +
-      'resiliency upon replica evictions caused due to lack of Memory resources ',
+      'resiliency upon replica evictions caused due to lack of Memory resources.' +
+      ' Uses kube-proxy for identification of pod.',
     recommendation:
       'Check whether the application is resilient to the Memory hog, once the experiment (job) is completed',
     experimentinfo:
@@ -87,7 +89,7 @@ export default [
   {
     workflowID: 3,
     title: 'kube-proxy-chaos',
-    chaosinfra: false,
+    chaosinfra: true,
     urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',

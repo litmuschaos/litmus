@@ -16,6 +16,10 @@ import { history } from '../../../../redux/configureStore';
 import { ReactComponent as CogWheelIcon } from '../../../../svg/cogwheel.svg';
 import { ReactComponent as CrossMarkIcon } from '../../../../svg/crossmark.svg';
 import { ReactComponent as BinIcon } from '../../../../svg/delete.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import useStyles, { StyledTableCell } from './styles';
 
 interface TableDataProps {
@@ -24,6 +28,8 @@ interface TableDataProps {
 
 const TableData: React.FC<TableDataProps> = ({ data }) => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const dataSource = useActions(DataSourceActions);
   const tabs = useActions(TabActions);
   const [mutate, setMutate] = React.useState(false);
@@ -103,7 +109,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             selectedDataSourceID: data.ds_id,
             selectedDataSourceName: data.ds_name,
           });
-          history.push('/analytics/datasource/configure');
+          history.push({
+            pathname: '/analytics/datasource/configure',
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
         }}
       >
         <Typography variant="body2" align="center">
@@ -136,6 +145,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           setOpen(false);
           setConfirm(false);
         }}
+        width="60%"
         modalActions={
           <ButtonOutlined
             className={classes.closeButton}
@@ -148,7 +158,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           </ButtonOutlined>
         }
       >
-        <div>
+        <div className={classes.modal}>
           {confirm === true ? (
             <Typography align="center">
               {success === true ? (
@@ -216,7 +226,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 setConfirm(false);
                 setOpen(false);
                 tabs.changeAnalyticsDashboardTabs(3);
-                window.location.reload(false);
+                window.location.reload();
               }}
             >
               <div>Back to Data Source</div>
@@ -255,7 +265,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                   setConfirm(false);
                   setOpen(false);
                   tabs.changeAnalyticsDashboardTabs(3);
-                  window.location.reload(false);
+                  window.location.reload();
                 }}
               >
                 <div>Back to Data Source</div>
@@ -291,7 +301,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 <ButtonOutlined
                   onClick={() => {
                     setOpen(false);
-                    history.push('/analytics');
+                    history.push({
+                      pathname: '/analytics',
+                      search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                    });
                   }}
                   disabled={false}
                 >

@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: theme.spacing(3),
     },
     height: '1.5rem',
-    width: '17.5rem',
+    width: '15rem',
   },
 
   selectText: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 'auto',
     marginLeft: theme.spacing(6),
     justifyContent: 'space-between',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
       height: '100%',
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(5),
-    width: '17.5rem',
+    width: '15rem',
     [theme.breakpoints.down('sm')]: {
       marginLeft: 0,
     },

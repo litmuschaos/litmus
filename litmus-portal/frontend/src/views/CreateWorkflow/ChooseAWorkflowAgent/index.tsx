@@ -14,6 +14,7 @@ import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface Cluster {
@@ -29,12 +30,11 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
 
   const workflow = useActions(WorkflowActions);
   const alert = useActions(AlertActions);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+
   const clusterid: string = useSelector(
     (state: RootState) => state.workflowData.clusterid
   );
+  const selectedProjectID = getProjectID();
 
   const [clusterData, setClusterData] = useState<Cluster[]>([]);
   const [search, setSearch] = useState<string | null>(null);

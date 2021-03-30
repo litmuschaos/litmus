@@ -8,20 +8,16 @@ import useStyles from './styles';
 // NewUserModal displays a modal on creating a new user
 interface InviteNewProps {
   showModal: () => void;
+  handleOpen: () => void;
+  open: boolean;
 }
-const InviteNew: React.FC<InviteNewProps> = ({ showModal }) => {
+const InviteNew: React.FC<InviteNewProps> = ({
+  showModal,
+  handleOpen,
+  open,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
-
-  const [open, setOpen] = React.useState(false);
-
-  const handleClose = () => {
-    setOpen(false);
-    showModal();
-  };
-  const handleOpen = () => {
-    setOpen(true);
-  };
 
   return (
     <div data-cy="inviteNewMemberButton">
@@ -37,17 +33,17 @@ const InviteNew: React.FC<InviteNewProps> = ({ showModal }) => {
         width="43.75rem"
         disableBackdropClick
         disableEscapeKeyDown
-        onClose={handleClose}
+        onClose={showModal}
         modalActions={
           <div className={classes.closeModal}>
-            <IconButton onClick={handleClose}>
+            <IconButton onClick={showModal}>
               <img src="./icons/closeBtn.svg" alt="close" />
             </IconButton>
           </div>
         }
       >
         <div data-cy="inviteNewMemberModal" className={classes.body}>
-          <Invite handleModal={handleClose} />
+          <Invite handleModal={showModal} />
         </div>
       </Modal>
     </div>

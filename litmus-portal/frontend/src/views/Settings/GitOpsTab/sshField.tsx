@@ -1,8 +1,8 @@
 import { Typography } from '@material-ui/core';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Done } from '@material-ui/icons';
 import { ButtonOutlined } from 'litmus-ui';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import useStyles from './styles';
 
@@ -22,7 +22,10 @@ const SSHField: React.FC<SSHFieldProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
   return (
-    <div className={classes.sshDiv}>
+    <div className={classes.sshDiv} data-cy="sshKeyBox">
+      <Typography className={classes.sshAlert}>
+        {t('myhub.connectHubPage.sshAlert')}
+      </Typography>
       <Typography className={classes.alertText}>
         {t('myhub.connectHubPage.sshText')}
       </Typography>

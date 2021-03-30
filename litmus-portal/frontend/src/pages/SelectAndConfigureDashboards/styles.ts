@@ -95,6 +95,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
   },
+
+  modal: {
+    padding: theme.spacing(15, 0),
+  },
 }));
 
 export default useStyles;

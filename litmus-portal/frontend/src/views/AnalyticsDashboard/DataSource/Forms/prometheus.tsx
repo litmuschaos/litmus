@@ -9,7 +9,7 @@ import {
 import Divider from '@material-ui/core/Divider';
 import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import CheckBox from '../../../../components/CheckBox';
 import { LIST_DATASOURCE } from '../../../../graphql';
 import { DataSourceDetails } from '../../../../models/dataSourceData';
 import {
@@ -17,13 +17,13 @@ import {
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../../../models/graphql/dataSourceDetails';
-import { RootState } from '../../../../redux/reducers';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   isValidWebUrl,
   validateTextEmpty,
   validateTimeInSeconds,
 } from '../../../../utils/validate';
-import useStyles, { StyledCheckbox } from './styles';
+import useStyles from './styles';
 
 interface ConfigurePrometheusProps {
   configure: boolean;
@@ -37,9 +37,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
   CallbackToSetVars,
 }) => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
   const [dataSourceDetails, setDataSourceDetails] = useState<DataSourceDetails>(
     {
       id: '',
@@ -65,7 +63,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
   const { data } = useQuery<DataSourceList, ListDataSourceVars>(
     LIST_DATASOURCE,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -256,7 +254,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
           <div className={classes.inputDivCheckBox}>
             <FormControlLabel
               control={
-                <StyledCheckbox
+                <CheckBox
                   color="primary"
                   checked={dataSourceDetails.noAuth}
                   onChange={handleAuthChange}
@@ -268,7 +266,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             <FormControlLabel
               className={classes.basicAuth}
               control={
-                <StyledCheckbox
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.basicAuth}

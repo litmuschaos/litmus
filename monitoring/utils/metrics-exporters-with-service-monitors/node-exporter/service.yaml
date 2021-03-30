@@ -3,14 +3,14 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/name: node-exporter
-    app.kubernetes.io/version: v0.18.1
+    app.kubernetes.io/version: latest
   name: node-exporter
   namespace: monitoring
 spec:
   clusterIP: None
   ports:
-  - name: https
-    port: 9100
-    targetPort: https
+    - name: https
+      port: 9100
+      targetPort: https
   selector:
     app.kubernetes.io/name: node-exporter

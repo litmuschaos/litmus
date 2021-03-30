@@ -16,6 +16,10 @@ import * as TemplateSelectionActions from '../../../../redux/actions/template';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
 import { RootState } from '../../../../redux/reducers';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface VerifyCommitProps {
@@ -34,6 +38,8 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [draggedItem, setDraggedItem] = useState<customWorkflow>();
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
   // Function for drag operation
   const onDragOperation = (
     e: React.DragEvent<HTMLDivElement>,
@@ -247,7 +253,10 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     template.selectTemplate({
       isDisable: false,
     });
-    history.push('/create-workflow');
+    history.push({
+      pathname: '/create-workflow',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   const handleModalClose = () => {
@@ -274,6 +283,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               return (
                 <li
                   key={data.index}
+                  data-cy="experimentRow"
                   className={classes.listItem}
                   onDragOver={() => onDragOver(index)}
                 >
@@ -337,13 +347,17 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </li>
               );
             })}
-            <Typography className={classes.addExp} onClick={() => gotoStep(0)}>
+            <Typography
+              className={classes.addExp}
+              data-cy="addMoreExperimentsButton"
+              onClick={() => gotoStep(0)}
+            >
               + {t('customWorkflow.scheduleWorkflow.addExp')}
             </Typography>
           </div>
         </div>
       </div>
-      <div className={classes.nextButtonDiv}>
+      <div className={classes.nextButtonDiv} data-cy="finishConstruction">
         <ButtonFilled
           onClick={() => {
             customYAMLGenerator();
@@ -362,6 +376,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
       {/* Revert Chaos Confirmation Modal */}
       <Modal
+        data-cy="revertChaosVerifyModal"
         open={confirmModal}
         onClose={handleModalClose}
         width="60%"
@@ -410,7 +425,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <ButtonOutlined onClick={() => setConfirmModal(false)}>
                 {t('customWorkflow.scheduleWorkflow.cancel')}
               </ButtonOutlined>
-              <div className={classes.constructBtn}>
+              <div className={classes.constructBtn} data-cy="constructButton">
                 <ButtonFilled
                   onClick={customYAMLGenerator}
                   disabled={workflows.length === 0}

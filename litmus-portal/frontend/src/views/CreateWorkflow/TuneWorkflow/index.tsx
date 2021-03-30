@@ -26,6 +26,7 @@ import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
+import { getProjectID } from '../../../utils/getSearchParams';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import { updateCRD } from './UpdateCRD';
@@ -54,9 +55,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]);
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
   const [selectedExp, setSelectedExp] = useState('');
-  const { selectedProjectID } = useSelector(
-    (state: RootState) => state.userData
-  );
+  const selectedProjectID = getProjectID();
   const [addExpModal, setAddExpModal] = useState(false);
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
@@ -114,7 +113,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
         setCustomWorkflow(false);
         localforage.getItem('workflowCRDLink').then((value) => {
-          if (value !== null) fetchYaml(value as string);
+          if (value !== null && manifest === '') fetchYaml(value as string);
         });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
@@ -320,11 +319,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            {experiment.length > 0 || manifest !== '' ? (
-              <WorkflowTable isCustom />
-            ) : (
-              <WorkflowTable />
-            )}
+            <WorkflowTable isCustom={customWorkflow} />
           </Width>
         </Row>
       </div>

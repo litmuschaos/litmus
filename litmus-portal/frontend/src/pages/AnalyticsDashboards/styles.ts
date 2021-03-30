@@ -16,9 +16,6 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'none',
     paddingLeft: theme.spacing(1.5),
   },
-  dataSourceTable: {
-    marginTop: theme.spacing(10),
-  },
 }));
 
 export default useStyles;

@@ -14,7 +14,6 @@ import {
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../../../components/Loader';
 import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../../graphql';
 import {
@@ -25,7 +24,7 @@ import {
   ProjectDetail,
   ProjectDetailVars,
 } from '../../../../../models/graphql/user';
-import { RootState } from '../../../../../redux/reducers';
+import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './styles';
 import TableData from './TableData';
 
@@ -39,7 +38,7 @@ interface InviteProps {
 
 interface SelectedUser {
   user_name: string;
-  user_uid: string;
+  user_id: string;
   role: string;
 }
 
@@ -56,7 +55,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // for response data
   const [rows, setRows] = useState<UserInvite[]>([]);
 
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
 
   // for setting the role of the user while sending invitation
   const [roles, setRoles] = useState<Role[]>([]);
@@ -67,7 +66,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // Sets the user role while inviting
   const setUserRole = (user_uid: string, role: string) => {
     setSelected(
-      selected.map((r) => (r.user_uid === user_uid ? { ...r, role } : r))
+      selected.map((r) => (r.user_id === user_uid ? { ...r, role } : r))
     );
     if (roles.find((ele) => ele.user_uid === user_uid)) {
       setRoles(
@@ -81,7 +80,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const { loading, data: dataB } = useQuery<ProjectDetail, ProjectDetailVars>(
     GET_PROJECT,
     {
-      variables: { projectID: userData.selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -118,7 +117,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     refetchQueries: [
       {
         query: GET_PROJECT,
-        variables: { projectID: userData.selectedProjectID },
+        variables: { projectID },
       },
     ],
   });
@@ -126,7 +125,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // Checks if the user the already selected or not
   const isSelected = (user: UserInvite) => {
     const user_uids = new Map();
-    selected.map((el) => user_uids.set(el.user_uid, el.role));
+    selected.map((el) => user_uids.set(el.user_id, el.role));
     return user_uids.has(user.id);
   };
 
@@ -134,7 +133,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     event: React.MouseEvent<unknown>,
     selectedUser: UserInvite
   ) => {
-    const selectedIds = selected.map((el) => el.user_uid);
+    const selectedIds = selected.map((el) => el.user_id);
     const isUserAlreadySelected = selectedIds.indexOf(selectedUser.id);
     let newSelected: SelectedUser[] = [];
     if (isUserAlreadySelected === -1) {
@@ -147,7 +146,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       };
       newSelected = newSelected.concat(selected, {
         user_name: selectedUser.username,
-        user_uid: selectedUser.id,
+        user_id: selectedUser.id,
         role: userrole(),
       });
     } else if (isUserAlreadySelected === 0) {
@@ -281,8 +280,8 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                         SendInvite({
                           variables: {
                             member: {
-                              project_id: userData.selectedProjectID,
-                              user_name: s.user_name,
+                              project_id: projectID,
+                              user_id: s.user_id,
                               role: s.role,
                             },
                           },
