@@ -1,18 +1,14 @@
-import { Typography } from '@material-ui/core';
-import React, { forwardRef, useImperativeHandle } from 'react';
+import { Button, Typography } from '@material-ui/core';
+import React from 'react';
 import { InputField } from 'litmus-ui';
 import useStyles from './styles';
 
-const General = forwardRef((_, ref) => {
+interface GeneralProps {
+  gotoStep: (page: number) => void;
+}
+
+const General: React.FC<GeneralProps> = ({ gotoStep }) => {
   const classes = useStyles();
-
-  function onNext() {
-    return true;
-  }
-
-  useImperativeHandle(ref, () => ({
-    onNext,
-  }));
 
   return (
     <div>
@@ -27,8 +23,16 @@ const General = forwardRef((_, ref) => {
         <InputField label="Experiment Name" value="Experiment Name" />
       </div>
       <br />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => gotoStep(1)}
+        className={classes.button}
+      >
+        Next
+      </Button>
     </div>
   );
-});
+};
 
 export default General;

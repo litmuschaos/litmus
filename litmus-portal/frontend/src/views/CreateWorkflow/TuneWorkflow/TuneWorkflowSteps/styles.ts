@@ -41,8 +41,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '25rem',
   },
   annotationToggleBtn: {
-    width: 72,
-    height: 35,
+    width: '4.5rem',
+    height: '2.187rem',
   },
   text: {
     textTransform: 'none',
@@ -50,20 +50,24 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Probes Table
   table: {
-    minWidth: 650,
+    minWidth: '40.625rem',
     minHeight: '9rem',
   },
 
   // Probes Popover
   probePopOver: {
-    marginTop: 10,
+    marginTop: theme.spacing(1.25),
   },
   popOverDiv: {
     maxWidth: 'fit-content',
-    padding: 20,
+    padding: theme.spacing(2.5),
   },
   probeText: {
-    fontSize: 14,
+    fontSize: '1rem',
+  },
+  deleteIcon: {
+    width: '1.25rem',
+    height: '1.25rem',
   },
 }));
 export default useStyles;
