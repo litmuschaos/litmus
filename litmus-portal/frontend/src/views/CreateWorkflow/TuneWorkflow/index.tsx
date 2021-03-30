@@ -72,6 +72,20 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   const { t } = useTranslation();
 
+  const fetchYaml = (link: string) => {
+    fetch(link)
+      .then((data) => {
+        data.text().then((yamlText) => {
+          workflowAction.setWorkflowManifest({
+            manifest: yamlText,
+          });
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   // Graphql query to get charts
   const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
     onCompleted: (data) => {
@@ -101,6 +115,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
       // Setting default data when MyHub is selected
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
         setCustomWorkflow(false);
+        localforage.getItem('workflow').then((value) => {
+          if (value !== null && (value as WorkflowDetailsProps).CRDLink !== '')
+            fetchYaml((value as WorkflowDetailsProps).CRDLink);
+        });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
         setCustomWorkflow(true);

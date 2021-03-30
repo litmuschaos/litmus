@@ -1,84 +1,93 @@
+import { useMutation } from '@apollo/client';
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, EditableText, Modal } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../../components/YamlEditor/Validations';
+import { CREATE_WORKFLOW } from '../../../graphql';
+import {
+  CreateWorkFlowInput,
+  CreateWorkflowResponse,
+  WeightMap,
+} from '../../../models/graphql/createWorkflowData';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
+import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
-
-interface VerifyCommitProps {
-  isEditable?: boolean;
-}
 
 interface WorkflowProps {
   name: string;
   description: string;
+  crd: string;
 }
 
-const VerifyCommit: React.FC<VerifyCommitProps> = ({ isEditable }) => {
+const VerifyCommit = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [workflowDetails, setWorkflowDetails] = useState<WorkflowProps>({
+  const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
     description: '',
+    crd: '',
   });
-  const [CRDLink, setCRDLink] = useState<string>('');
   const [weights, setWeights] = useState<experimentMap[]>([
-    {
-      experimentName: '',
-      weight: 0,
-    },
     {
       experimentName: '',
       weight: 0,
     },
   ]);
 
-  const workflow = useActions(WorkflowActions);
+  const [open, setOpen] = useState(false);
+
+  // Modal States
+  const [finishModalOpen, setFinishModalOpen] = useState(false);
+  const [errorModal, setErrorModal] = useState(false);
+
+  const tabs = useActions(TabActions);
+  const workflowAction = useActions(WorkflowActions);
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
 
-  const { id, cronSyntax, isDisabled, clustername } = workflowData;
+  const { id, clusterid, cronSyntax, isDisabled, clustername } = workflowData;
 
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
 
-  // Index DB Fetching for extracting selected Button and Workflow Details
-  const getSelectedWorkflowDetails = () => {
-    localforage.getItem('workflow').then((workflow) =>
-      setWorkflowDetails({
-        ...workflowDetails,
-        name: (workflow as WorkflowDetailsProps).name,
-        description: (workflow as WorkflowDetailsProps).description,
-      })
+  useEffect(() => {
+    localforage.getItem('workflow').then(
+      (workflow) =>
+        workflow !== null &&
+        setWorkflow({
+          name: (workflow as WorkflowDetailsProps).name,
+          description: (workflow as WorkflowDetailsProps).description,
+          crd: (workflow as WorkflowDetailsProps).CRDLink,
+        })
     );
     localforage
-      .getItem('workflowCRDLink')
-      .then((crd) => setCRDLink(crd as string));
-    localforage
       .getItem('weights')
-      .then((weight) => setWeights(weight as experimentMap[]));
-  };
-
-  useEffect(() => {
-    getSelectedWorkflowDetails();
+      .then(
+        (weight) => weight !== null && setWeights(weight as experimentMap[])
+      );
   }, []);
-
-  const [open, setOpen] = React.useState(false);
 
   const [yamlStatus, setYamlStatus] = React.useState(
     'Your code is fine. You can move on!'
@@ -100,14 +109,14 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ isEditable }) => {
     const parsedYaml = YAML.parse(manifest);
     parsedYaml.metadata.name = changedName;
     const nameMappedYaml = YAML.stringify(parsedYaml);
-    workflow.setWorkflowDetails({
+    workflowAction.setWorkflowDetails({
       name: changedName,
       yaml: nameMappedYaml,
     });
   };
 
   const handleDescChange = ({ changedDesc }: { changedDesc: string }) => {
-    workflow.setWorkflowDetails({
+    workflowAction.setWorkflowDetails({
       description: changedDesc,
     });
   };
@@ -126,6 +135,67 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ isEditable }) => {
       setYamlStatus(`${t('createWorkflow.verifyCommit.codeIsFine')}`);
     }
   }, [modified]);
+
+  // Create Workflow Mutation
+  const [createChaosWorkFlow, { error: workflowError }] = useMutation<
+    CreateWorkflowResponse,
+    CreateWorkFlowInput
+  >(CREATE_WORKFLOW, {
+    onError: () => {
+      setErrorModal(true);
+    },
+    onCompleted: () => {
+      setFinishModalOpen(true);
+    },
+  });
+
+  const handleMutation = () => {
+    if (
+      workflow.name.length !== 0 &&
+      workflow.description.length !== 0 &&
+      weights.length !== 0
+    ) {
+      const weightData: WeightMap[] = [];
+
+      weights.forEach((data) => {
+        weightData.push({
+          experiment_name: data.experimentName,
+          weightage: data.weight,
+        });
+      });
+
+      /* JSON.stringify takes 3 parameters [object to be converted,
+        a function to alter the conversion, spaces to be shown in final result for indentation ] */
+      const yml = YAML.parse(manifest);
+      const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
+
+      const chaosWorkFlowInputs = {
+        workflow_manifest: yamlJson,
+        cronSyntax,
+        workflow_name: workflowData.name,
+        workflow_description: workflow.description,
+        isCustomWorkflow: false,
+        weightages: weightData,
+        project_id: getProjectID(),
+        cluster_id: clusterid,
+      };
+      createChaosWorkFlow({
+        variables: { ChaosWorkFlowInput: chaosWorkFlowInputs },
+      });
+    }
+  };
+
+  const handleErrorModalClose = () => {
+    setErrorModal(false);
+  };
+
+  function onNext() {
+    handleMutation();
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   // const preventDefault = (event: React.SyntheticEvent) =>
   //  event.preventDefault();
@@ -162,7 +232,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ isEditable }) => {
             </div>
             <div className={classes.col2} data-cy="WorkflowName">
               <EditableText
-                value={workflowDetails.name}
+                value={workflow.name}
                 id="name"
                 fullWidth
                 onChange={(e) =>
@@ -192,13 +262,12 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ isEditable }) => {
             </div>
             <div className={classes.col2}>
               <EditableText
-                value={workflowDetails.description}
+                value={workflow.description}
                 id="desc"
                 fullWidth
                 onChange={(e) =>
                   handleDescChange({ changedDesc: e.target.value })
                 }
-                disabled={!isEditable}
               />
             </div>
           </div>
@@ -311,15 +380,96 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ isEditable }) => {
       >
         <YamlEditor
           content={manifest}
-          filename={workflowDetails.name}
-          yamlLink={CRDLink}
+          filename={workflow.name}
+          yamlLink={workflow.crd}
           id={id}
-          description={workflowDetails.description}
+          description={workflow.description}
           readOnly
         />
       </Modal>
+
+      {/* Finish Modal */}
+      <div>
+        <Modal
+          data-cy="FinishModal"
+          open={finishModalOpen}
+          onClose={() => setFinishModalOpen(false)}
+          width="60%"
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          modalActions={
+            <div data-cy="GoToWorkflowButton">
+              <ButtonOutlined onClick={() => setFinishModalOpen(false)}>
+                &#x2715;
+              </ButtonOutlined>
+            </div>
+          }
+        >
+          <div className={classes.modal}>
+            <img src="/icons/finish.svg" alt="mark" />
+            <div className={classes.heading}>
+              {t('workflowStepper.aNewChaosWorkflow')}
+              <br />
+              <span className={classes.successful}>{workflow.name}</span>,
+              <br />
+              <strong>{t('workflowStepper.successful')}</strong>
+            </div>
+            <div className={classes.headWorkflow}>
+              {t('workflowStepper.congratulationsSub1')} <br />{' '}
+              {t('workflowStepper.congratulationsSub2')}
+            </div>
+            <div className={classes.button}>
+              <ButtonFilled
+                data-cy="selectFinish"
+                onClick={() => {
+                  setOpen(false);
+                  tabs.changeWorkflowsTabs(0);
+                  history.push({
+                    pathname: '/workflows',
+                    search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
+                  });
+                }}
+              >
+                <div>{t('workflowStepper.workflowBtn')}</div>
+              </ButtonFilled>
+            </div>
+          </div>
+        </Modal>
+        <Modal
+          open={errorModal}
+          onClose={handleErrorModalClose}
+          width="60%"
+          modalActions={
+            <ButtonOutlined onClick={handleErrorModalClose}>
+              &#x2715;
+            </ButtonOutlined>
+          }
+        >
+          <div className={classes.modal}>
+            <img src="/icons/red-cross.svg" alt="mark" />
+            <div className={classes.heading}>
+              <strong>{t('workflowStepper.workflowFailed')}</strong>
+            </div>
+            <div className={classes.headWorkflow}>
+              <Typography>
+                {t('workflowStepper.error')} : {workflowError?.message}
+              </Typography>
+            </div>
+            <div className={classes.button}>
+              <ButtonFilled
+                data-cy="selectFinish"
+                onClick={() => {
+                  setErrorModal(false);
+                }}
+              >
+                <div>{t('workflowStepper.backBtn')}</div>
+              </ButtonFilled>
+            </div>
+          </div>
+        </Modal>
+      </div>
     </div>
   );
-};
+});
 
 export default VerifyCommit;

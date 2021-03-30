@@ -154,5 +154,37 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(-6),
     marginRight: theme.spacing(-2.5),
   },
+
+  // Modal
+  modal: {
+    [theme.breakpoints.up('lg')]: {
+      padding: theme.spacing(10),
+    },
+    padding: theme.spacing(3),
+  },
+  heading: {
+    fontSize: '2rem',
+    textalign: 'center',
+    marginTop: theme.spacing(3),
+    color: theme.palette.text.primary,
+  },
+  headWorkflow: {
+    fontsize: '2rem',
+    textalign: 'center',
+    color: theme.palette.text.primary,
+    marginTop: theme.spacing(3),
+  },
+  button: {
+    color: theme.palette.text.primary,
+    textAlign: 'center',
+    marginTop: theme.spacing(5),
+  },
+  closeButton: {
+    borderColor: theme.palette.border.main,
+  },
+  successful: {
+    fontSize: '2.2rem',
+    fontWeight: 'bold',
+  },
 }));
 export default useStyles;
