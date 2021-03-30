@@ -2,13 +2,15 @@ import { Divider, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, EditableText, Modal } from 'litmus-ui';
-import React, { useEffect } from 'react';
+import localforage from 'localforage';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../../components/YamlEditor/Validations';
+import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -16,16 +18,32 @@ import { RootState } from '../../../redux/reducers';
 import useStyles from './styles';
 
 interface VerifyCommitProps {
-  gotoStep: (page: number) => void;
   isEditable?: boolean;
 }
 
-const VerifyCommit: React.FC<VerifyCommitProps> = ({
-  gotoStep,
-  isEditable,
-}) => {
+interface WorkflowProps {
+  name: string;
+  description: string;
+}
+
+const VerifyCommit: React.FC<VerifyCommitProps> = ({ isEditable }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const [workflowDetails, setWorkflowDetails] = useState<WorkflowProps>({
+    name: '',
+    description: '',
+  });
+  const [CRDLink, setCRDLink] = useState<string>('');
+  const [weights, setWeights] = useState<experimentMap[]>([
+    {
+      experimentName: '',
+      weight: 0,
+    },
+    {
+      experimentName: '',
+      weight: 0,
+    },
+  ]);
 
   const workflow = useActions(WorkflowActions);
 
@@ -33,17 +51,32 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
     (state: RootState) => state.workflowData
   );
 
-  const {
-    name,
-    link,
-    yaml,
-    id,
-    description,
-    weights,
-    cronSyntax,
-    isDisabled,
-    clustername,
-  } = workflowData;
+  const { id, cronSyntax, isDisabled, clustername } = workflowData;
+
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
+
+  // Index DB Fetching for extracting selected Button and Workflow Details
+  const getSelectedWorkflowDetails = () => {
+    localforage.getItem('workflow').then((workflow) =>
+      setWorkflowDetails({
+        ...workflowDetails,
+        name: (workflow as WorkflowDetailsProps).name,
+        description: (workflow as WorkflowDetailsProps).description,
+      })
+    );
+    localforage
+      .getItem('workflowCRDLink')
+      .then((crd) => setCRDLink(crd as string));
+    localforage
+      .getItem('weights')
+      .then((weight) => setWeights(weight as experimentMap[]));
+  };
+
+  useEffect(() => {
+    getSelectedWorkflowDetails();
+  }, []);
 
   const [open, setOpen] = React.useState(false);
 
@@ -64,7 +97,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
   };
 
   const handleNameChange = ({ changedName }: { changedName: string }) => {
-    const parsedYaml = YAML.parse(yaml);
+    const parsedYaml = YAML.parse(manifest);
     parsedYaml.metadata.name = changedName;
     const nameMappedYaml = YAML.stringify(parsedYaml);
     workflow.setWorkflowDetails({
@@ -82,7 +115,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
   const WorkflowTestData: experimentMap[] = weights as any;
 
   useEffect(() => {
-    const editorValidations = parseYamlValidations(yaml, classes);
+    const editorValidations = parseYamlValidations(manifest, classes);
     const stateObject = {
       markers: editorValidations.markers,
       annotations: editorValidations.annotations,
@@ -129,7 +162,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
             </div>
             <div className={classes.col2} data-cy="WorkflowName">
               <EditableText
-                value={name}
+                value={workflowDetails.name}
                 id="name"
                 fullWidth
                 onChange={(e) =>
@@ -159,7 +192,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
             </div>
             <div className={classes.col2}>
               <EditableText
-                value={description}
+                value={workflowDetails.description}
                 id="desc"
                 fullWidth
                 onChange={(e) =>
@@ -198,7 +231,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
               )}
 
               <div className={classes.editButton1}>
-                <IconButton onClick={() => gotoStep(4)}>
+                <IconButton>
                   <EditIcon className={classes.editbtn} data-cy="edit" />
                 </IconButton>
               </div>
@@ -232,7 +265,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 {/* <div className={classes.editButton2}> */}
                 <ButtonOutlined
                   disabled={workflowData.isRecurring}
-                  onClick={() => gotoStep(3)}
                   data-cy="testRunButton"
                 >
                   <Typography className={classes.buttonOutlineText}>
@@ -278,11 +310,11 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
         }
       >
         <YamlEditor
-          content={yaml}
-          filename={name}
-          yamlLink={link}
+          content={manifest}
+          filename={workflowDetails.name}
+          yamlLink={CRDLink}
           id={id}
-          description={description}
+          description={workflowDetails.description}
           readOnly
         />
       </Modal>

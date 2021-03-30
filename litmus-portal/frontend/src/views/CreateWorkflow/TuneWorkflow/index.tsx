@@ -35,6 +35,7 @@ import WorkflowTable from './WorkflowTable';
 
 interface WorkflowProps {
   name: string;
+  crd: string;
 }
 
 interface WorkflowExperiment {
@@ -59,6 +60,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [addExpModal, setAddExpModal] = useState(false);
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
+    crd: '',
   });
   const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
   const manifest = useSelector(
@@ -69,20 +71,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const workflowAction = useActions(WorkflowActions);
 
   const { t } = useTranslation();
-
-  const fetchYaml = (link: string) => {
-    fetch(link)
-      .then((data) => {
-        data.text().then((yamlText) => {
-          workflowAction.setWorkflowManifest({
-            manifest: yamlText,
-          });
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   // Graphql query to get charts
   const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
@@ -106,15 +94,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
     localforage.getItem('workflow').then((workflow) =>
       setWorkflow({
         name: (workflow as WorkflowDetailsProps).name,
+        crd: (workflow as WorkflowDetailsProps).CRDLink,
       })
     );
     localforage.getItem('selectedScheduleOption').then((value) => {
       // Setting default data when MyHub is selected
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
         setCustomWorkflow(false);
-        localforage.getItem('workflowCRDLink').then((value) => {
-          if (value !== null) fetchYaml(value as string);
-        });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
         setCustomWorkflow(true);

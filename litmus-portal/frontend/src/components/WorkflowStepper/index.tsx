@@ -15,6 +15,7 @@ import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
 import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
 import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
+import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
 import WorkflowSettings from '../../views/CreateWorkflow/WorkflowSettings';
 import { LitmusStepper } from '../LitmusStepper';
 import useStyles from './styles';
@@ -61,12 +62,9 @@ function getStepContent(
     case 4:
       return <ReliablityScore ref={childRef} />;
     case 5:
-      return <ScheduleWorkflow />;
+      return <ScheduleWorkflow ref={childRef} />;
     case 6:
-      return (
-        // <VerifyCommit isEditable gotoStep={(page: number) => gotoStep(page)} />
-        <ScheduleWorkflow />
-      );
+      return <VerifyCommit isEditable />;
     default:
       return <ChooseAWorkflowAgent />;
   }

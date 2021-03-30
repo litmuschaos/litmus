@@ -30,6 +30,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
   );
   const [description, setDescription] = useState<string>('');
   const [icon, setIcon] = useState<string>('');
+  const [CRDLink, setCRDLink] = useState<string>('');
 
   // Actions
   const workflowAction = useActions(WorkflowActions);
@@ -82,7 +83,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
           setName(w.title);
           setDescription(w.details);
           setIcon(w.urlToIcon);
-          localforage.setItem('workflowCRDLink', w.chaosWkfCRDLink);
+          setCRDLink(w.chaosWkfCRDLink);
         }
         return null;
       });
@@ -142,6 +143,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
       name,
       description,
       icon,
+      CRDLink,
     };
     localforage.setItem('workflow', workflowDetails);
     if (validateWorkflowName(name)) {
