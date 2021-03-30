@@ -62,6 +62,10 @@ const AnalyticsDashboard = () => {
             label={t('analyticsDashboard.applicationDashboard')}
             data-cy="kubernetesDashboard"
           />
+          <StyledTab
+            label={t('analyticsDashboard.dataSource')}
+            data-cy="data source"
+          />
         </Tabs>
       </AppBar>
 
@@ -73,9 +77,9 @@ const AnalyticsDashboard = () => {
       </TabPanel>
       <TabPanel value={analyticsTabValue} index={2}>
         <DashboardTable />
-        <div className={classes.dataSourceTable}>
-          <DataSourceTable />
-        </div>
+      </TabPanel>
+      <TabPanel value={analyticsTabValue} index={3}>
+        <DataSourceTable />
       </TabPanel>
     </Scaffold>
   );

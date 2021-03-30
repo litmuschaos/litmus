@@ -1,37 +1,38 @@
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
-import React from 'react';
+import localforage from 'localforage';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Center from '../../../containers/layouts/Center';
-import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
-import useActions from '../../../redux/actions';
-import * as WorkflowActions from '../../../redux/actions/workflow';
-import { RootState } from '../../../redux/reducers';
+import { experimentMap } from '../../../models/redux/workflow';
 import WeightSlider from '../WeightSlider';
 import ResultTable from './ResultTable';
 import useStyles from './styles';
-// import InfoTooltip from '../../../components/InfoTooltip';
 
-const ReliablityScore = () => {
+const ReliablityScore = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const workflowData: WorkflowData = useSelector(
-    (state: RootState) => state.workflowData
-  );
-  const workflow = useActions(WorkflowActions);
-
-  const { weights } = workflowData;
+  const [weights, setWeights] = useState<experimentMap[]>([
+    {
+      experimentName: 'pod-delete',
+      weight: 10,
+    },
+    {
+      experimentName: 'pod-cpu-hog',
+      weight: 10,
+    },
+  ]);
 
   const [open, setOpen] = React.useState(false);
 
   const testNames: string[] = [];
   const testWeights: number[] = [];
-  weights.forEach((weight) => {
-    testNames.push(weight.experimentName);
-    testWeights.push(weight.weight);
-  });
 
   function handleChange({
     newValue,
@@ -40,11 +41,26 @@ const ReliablityScore = () => {
     newValue: number;
     index: number;
   }) {
-    (weights as any)[index].weight = newValue;
-    workflow.setWorkflowDetails({
-      weights,
-    });
+    weights[index].weight = newValue;
+    setWeights([...weights]);
   }
+
+  useEffect(() => {
+    localforage
+      .getItem('weights')
+      .then((value) =>
+        value !== null ? setWeights(value as experimentMap[]) : setWeights([])
+      );
+  }, []);
+
+  function onNext() {
+    localforage.setItem('weights', weights);
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <div>
@@ -70,7 +86,7 @@ const ReliablityScore = () => {
               </strong>
             </Typography>
           </div>
-          {(weights as any).map((Data: experimentMap, index: number) => (
+          {weights.map((Data: experimentMap, index: number) => (
             <WeightSlider
               key={Data.experimentName + index.toString()}
               index={index}
@@ -127,6 +143,6 @@ const ReliablityScore = () => {
       </form>
     </div>
   );
-};
+});
 
 export default ReliablityScore;

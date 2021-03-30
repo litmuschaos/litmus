@@ -15,9 +15,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   typoSub: {
     fontSize: '1rem',
   },
-  buttonFilled: {
-    marginRight: theme.spacing(-2),
-  },
   text1Sucess: {
     width: '27.5rem',
     height: '1.6875rem',

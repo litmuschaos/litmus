@@ -14,8 +14,8 @@ import {
   UserInvite,
 } from '../../../../../models/graphql/invite';
 import { Projects } from '../../../../../models/graphql/user';
-import { getUserId, getUsername } from '../../../../../utils/auth';
-import userAvatar from '../../../../../utils/user';
+import { getUserId } from '../../../../../utils/auth';
+import { userInitials } from '../../../../../utils/user';
 import useStyles from './styles';
 
 interface ReceivedInvitation {
@@ -111,18 +111,18 @@ const ReceivedInvitations: React.FC = () => {
                     className={classes.avatarBackground}
                     style={{ alignContent: 'right' }}
                   >
-                    {userAvatar(
-                      allUsers?.filter((data) => {
+                    {userInitials(
+                      allUsers.filter((data) => {
                         return row.user_id === data.id;
-                      })[0]?.name
+                      })[0].username
                     )}
                   </Avatar>
                   <div>
                     <Typography className={classes.name}>
                       {
-                        allUsers?.filter((data) => {
+                        allUsers.filter((data) => {
                           return row.user_id === data.id;
-                        })[0]?.name
+                        })[0].username
                       }
                     </Typography>
                     <Typography className={classes.email}>
@@ -152,7 +152,7 @@ const ReceivedInvitations: React.FC = () => {
                         variables: {
                           member: {
                             project_id: row.projectID,
-                            user_name: getUsername(),
+                            user_id: getUserId(),
                             role: row.role,
                           },
                         },
@@ -174,7 +174,7 @@ const ReceivedInvitations: React.FC = () => {
                           variables: {
                             member: {
                               project_id: row.projectID,
-                              user_name: getUsername(),
+                              user_id: getUserId(),
                               role: row.role,
                             },
                           },

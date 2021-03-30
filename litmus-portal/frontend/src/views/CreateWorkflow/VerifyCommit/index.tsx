@@ -127,7 +127,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 {t('createWorkflow.verifyCommit.summary.workflowName')}:
               </Typography>
             </div>
-            <div className={classes.col2}>
+            <div className={classes.col2} data-cy="WorkflowName">
               <EditableText
                 value={name}
                 id="name"
@@ -272,7 +272,9 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
         onClose={handleClose}
         width="60%"
         modalActions={
-          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+          <ButtonOutlined onClick={handleClose} className={classes.closeBtn}>
+            &#x2715;
+          </ButtonOutlined>
         }
       >
         <YamlEditor

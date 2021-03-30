@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { ThreeTierCard } from '../../../../components/ThreeTierCard';
 import { GET_CLUSTER } from '../../../../graphql';
 import { Clusters, ClusterVars } from '../../../../models/graphql/clusterData';
@@ -9,7 +8,10 @@ import useActions from '../../../../redux/actions';
 import * as TemplateSelectionActions from '../../../../redux/actions/template';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
-import { RootState } from '../../../../redux/reducers';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import useStyles from '../styles';
 
 const AnalyticsScheduleWorkflowCard: React.FC = () => {
@@ -17,10 +19,12 @@ const AnalyticsScheduleWorkflowCard: React.FC = () => {
   const classes = useStyles();
   const template = useActions(TemplateSelectionActions);
   const workflowAction = useActions(WorkflowActions);
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectRole = getProjectRole();
+  const projectID = getProjectID();
+
   // Apollo query to get the agent data
   const { data: agentList } = useQuery<Clusters, ClusterVars>(GET_CLUSTER, {
-    variables: { project_id: userData.selectedProjectID },
+    variables: { project_id: projectID },
     fetchPolicy: 'network-only',
   });
   const handleCreateWorkflow = () => {
@@ -29,7 +33,10 @@ const AnalyticsScheduleWorkflowCard: React.FC = () => {
       customWorkflows: [],
     });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
-    history.push('/create-workflow');
+    history.push({
+      pathname: '/create-workflow',
+      search: `?projectID=${projectID}&projectRole=${projectRole}`,
+    });
   };
   return (
     <div className={classes.banner}>

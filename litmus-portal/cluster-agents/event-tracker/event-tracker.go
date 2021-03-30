@@ -57,7 +57,7 @@ func getK8sClient() (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-// Function to send request to kubera chaos graphql server
+// Function to send request to litmus graphql server
 func SendRequest(workflowID string) (string, error) {
 	payload := `{"query": "mutation { gitopsNotifer(clusterInfo: { cluster_id: \"` + ClusterID + `\", access_key: \"` + ClusterKey + `\"}, workflow_id: \"` + workflowID + `\")\n}"}`
 	req, err := http.NewRequest("POST", GQL_SERVER, bytes.NewBuffer([]byte(payload)))

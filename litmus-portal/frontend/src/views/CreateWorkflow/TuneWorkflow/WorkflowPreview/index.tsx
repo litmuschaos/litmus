@@ -1,95 +1,143 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { CustomYAML } from '../../../../models/redux/customyaml';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import DagreGraph, { d3Link, d3Node } from '../../../../components/DagreGraph';
+import { Steps } from '../../../../models/redux/customyaml';
+import { RootState } from '../../../../redux/reducers';
+import { extractSteps } from '../ExtractSteps';
+import { createLabel } from './createLabel';
+import useStyles from './styles';
 
-interface WorkflowPreviewProps {
-  // nodes: Nodes;
-  crd?: CustomYAML;
+interface GraphData {
+  nodes: d3Node[];
+  links: d3Link[];
 }
 
-const WorkflowPreview: React.FC<WorkflowPreviewProps> = () => {
-  const { t } = useTranslation(); // eslint-disable-line
+interface WorkflowPreviewProps {
+  isCustomWorkflow: boolean;
+}
+
+const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
+  isCustomWorkflow,
+}) => {
+  let steps: Steps[][] = [];
+  const updatedSteps: Steps[][] = [];
+
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
 
   // Graph orientation
-  const horizontal = false; // eslint-disable-line
+  const horizontal = false;
+  const classes = useStyles({ horizontal });
 
-  // console.log(crd);
+  const [graphData, setGraphData] = useState<GraphData>({
+    nodes: [],
+    links: [],
+  });
 
-  return <div />;
+  if (manifest !== '') {
+    steps = extractSteps(isCustomWorkflow, manifest);
+  }
 
-  // const classes = useStyles({ horizontal });
+  useEffect(() => {
+    const data: GraphData = {
+      nodes: [],
+      links: [],
+    };
 
-  // const [graphData, setGraphData] = useState<GraphData>({
-  //   nodes: [],
-  //   links: [],
-  // });
+    for (let i = 0; i < steps.length; i++) {
+      updatedSteps.push(steps[i]);
+      if (i !== steps.length - 1) {
+        updatedSteps.push([
+          {
+            name: 'StepGroup',
+            template: 'StepGroup',
+          },
+        ]);
+      }
+    }
 
-  // useEffect(() => {
-  //   const data: GraphData = {
-  //     nodes: [],
-  //     links: [],
-  //   };
+    for (let i = 0; i < steps.length; i++) {
+      if (steps[i].length > 1) {
+        for (let j = 0; j < steps[i].length; j++) {
+          data.nodes.push({
+            id: i.toString(),
+            class: `${'succeeded'} ${'steps'}`,
+            label: createLabel({
+              label: steps[i][j].name,
+              tooltip: steps[i][j].name,
+              phase: 'succeeded',
+              horizontal,
+            }),
+            labelType: steps[i][j].name !== 'StepGroup' ? 'svg' : 'string',
+            config: { fullName: steps[i][j].name },
+          });
+        }
+      } else {
+        data.nodes.push({
+          id: i.toString(),
+          class: `${'succeeded'} ${'steps'}`,
+          label: createLabel({
+            label: steps[i][0].name,
+            tooltip: steps[i][0].name,
+            phase: 'succeeded',
+            horizontal,
+          }),
+          labelType: steps[i][0].name !== 'StepGroup' ? 'svg' : 'string',
+          config: { fullName: steps[i][0].name },
+        });
+      }
+    }
 
-  //   for (const key of Object.keys(nodes)) {
-  //     const node = nodes[key];
+    for (let i = 0; i < steps.length - 1; i++) {
+      if (steps[i].length > 1) {
+        for (let j = 0; j < steps[i].length; j++) {
+          data.links.push({
+            source: i.toString(),
+            target: (i + 1).toString(),
+            class: 'succeeded',
+            config: {
+              arrowhead:
+                steps[i][0].name === 'StepGroup' ? 'undirected' : 'vee',
+            },
+          });
+        }
+      } else {
+        data.links.push({
+          source: i.toString(),
+          target: (i + 1).toString(),
+          class: 'succeeded',
+          config: {
+            arrowhead: steps[i][0].name === 'StepGroup' ? 'undirected' : 'vee',
+          },
+        });
+      }
+    }
 
-  //     data.nodes.push({
-  //       id: key,
-  //       class: `${node.phase} ${node.type}`,
-  //       label:
-  //         node.type !== 'StepGroup'
-  //           ? createLabel({
-  //               label: node.name,
-  //               tooltip: node.name,
-  //               phase: node.phase.toLowerCase(),
-  //               horizontal,
-  //             })
-  //           : '',
-  //       labelType: node.type !== 'StepGroup' ? 'svg' : 'string',
-  //       config: { fullName: node.name },
-  //     });
+    setGraphData({
+      nodes: [...data.nodes],
+      links: [...data.links],
+    });
+  }, [manifest]);
 
-  //     if (node.children) {
-  //       node.children.map((child) =>
-  //         data.links.push({
-  //           source: key,
-  //           target: child,
-  //           class: nodes[child].phase,
-  //           config: {
-  //             arrowhead:
-  //               nodes[child].type === 'StepGroup' ? 'undirected' : 'vee',
-  //           },
-  //         })
-  //       );
-  //     }
-  //   }
-
-  //   setGraphData({
-  //     nodes: [...data.nodes],
-  //     links: [...data.links],
-  //   });
-  // }, [nodes, horizontal]);
-
-  // return graphData.nodes.length ? (
-  //   <>
-  //     <DagreGraph
-  //       className={classes.dagreGraph}
-  //       nodes={graphData.nodes}
-  //       links={graphData.links}
-  //       config={{
-  //         rankdir: horizontal ? 'LR' : 'TB',
-  //         // align: 'UR',
-  //         ranker: 'tight-tree',
-  //       }}
-  //       animate={1000}
-  //       shape="rect"
-  //       fitBoundaries
-  //       zoomable
-  //     />
-  //   </>
-  // ) : (
-  //   <div>{t('workflowDetailsView.argoWorkFlow.loading')}</div>
-  // );
+  return graphData.nodes.length ? (
+    <DagreGraph
+      className={classes.dagreGraph}
+      nodes={graphData.nodes}
+      links={graphData.links}
+      config={{
+        rankdir: horizontal ? 'LR' : 'TB',
+        // align: 'UR',
+        ranker: 'tight-tree',
+      }}
+      animate={1000}
+      shape="rect"
+      fitBoundaries
+      zoomable
+    />
+  ) : (
+    <div className={classes.load}>Visualizing your Workflow</div>
+  );
 };
 
 export default WorkflowPreview;

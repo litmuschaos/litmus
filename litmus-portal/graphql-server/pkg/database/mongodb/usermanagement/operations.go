@@ -47,6 +47,19 @@ func GetUserByUserName(ctx context.Context, username string) (*User, error) {
 	return user, err
 }
 
+// GetUserByUserID :returns user details based on userID
+func GetUserByUserID(ctx context.Context, userID string) (*User, error) {
+	var user = new(User)
+	query := bson.M{"_id": userID}
+	err := userCollection.FindOne(ctx, query).Decode(user)
+	if err != nil {
+		log.Print("Error getting user with userID: ", userID, " error: ", err)
+		return nil, err
+	}
+
+	return user, err
+}
+
 // GetUsers ...
 func GetUsers(ctx context.Context) ([]User, error) {
 	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)

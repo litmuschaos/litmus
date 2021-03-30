@@ -39,13 +39,17 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: 700,
     fontSize: '0.9rem',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
     textAlign: 'center',
     backgroundColor: theme.palette.background.paper,
     paddingTop: theme.spacing(2.5),
   },
 
   singleGraph: {
+    // TODO remove this later
+    '& hr': {
+      position: 'relative !important',
+    },
     width: '32.5vw',
     height: '27.5rem',
     [theme.breakpoints.down(1200)]: {

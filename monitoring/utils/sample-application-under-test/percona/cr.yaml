@@ -1,0 +1,438 @@
+apiVersion: pxc.percona.com/v1-6-0
+kind: PerconaXtraDBCluster
+metadata:
+  name: cluster1
+  finalizers:
+    - delete-pxc-pods-in-order
+#    - delete-proxysql-pvc
+#    - delete-pxc-pvc
+#  annotations:
+#    percona.com/issue-vault-token: "true"
+spec:
+  crVersion: 1.6.0
+  secretsName: my-cluster-secrets
+  vaultSecretName: keyring-secret-vault
+  sslSecretName: my-cluster-ssl
+  sslInternalSecretName: my-cluster-ssl-internal
+  logCollectorSecretName: my-log-collector-secrets
+  disableHookValidation: true
+  #  tls:
+  #    SANs:
+  #      - pxc-1.example.com
+  #      - pxc-2.example.com
+  #      - pxc-3.example.com
+  #    issuerConf:
+  #      name: special-selfsigned-issuer
+  #      kind: ClusterIssuer
+  #      group: cert-manager.io
+  allowUnsafeConfigurations: false
+  #  pause: false
+  updateStrategy: SmartUpdate
+  upgradeOptions:
+    versionServiceEndpoint: https://check.percona.com
+    apply: recommended
+    schedule: "0 4 * * *"
+  pxc:
+    size: 3
+    image: percona/percona-xtradb-cluster:8.0.20-11.1
+    #    autoRecovery: false
+    #    schedulerName: mycustom-scheduler
+    #    readinessDelaySec: 15
+    #    livenessDelaySec: 600
+    #    forceUnsafeBootstrap: false
+    #    configuration: |
+    #      [mysqld]
+    #      wsrep_debug=ON
+    #      wsrep_provider_options="gcache.size=1G; gcache.recover=yes"
+    #      [sst]
+    #      xbstream-opts=--decompress
+    #      [xtrabackup]
+    #      compress=lz4
+    #      for PXC 5.7
+    #      [xtrabackup]
+    #      compress
+    #    imagePullSecrets:
+    #      - name: private-registry-credentials
+    #    priorityClassName: high-priority
+    #    annotations:
+    #      iam.amazonaws.com/role: role-arn
+    #    labels:
+    #      rack: rack-22
+    #    containerSecurityContext:
+    #      privileged: false
+    #    podSecurityContext:
+    #      runAsUser: 1001
+    #      runAsGroup: 1001
+    #      supplementalGroups: [1001]
+    #    serviceAccountName: percona-xtradb-cluster-operator-workload
+    #    imagePullPolicy: Always
+    resources:
+      requests:
+        memory: 1G
+        cpu: 600m
+    #        ephemeral-storage: 1Gi
+    #      limits:
+    #        memory: 1G
+    #        cpu: "1"
+    #        ephemeral-storage: 1Gi
+    #    nodeSelector:
+    #      disktype: ssd
+    affinity:
+      antiAffinityTopologyKey: "kubernetes.io/hostname"
+    #      advanced:
+    #        nodeAffinity:
+    #          requiredDuringSchedulingIgnoredDuringExecution:
+    #            nodeSelectorTerms:
+    #            - matchExpressions:
+    #              - key: kubernetes.io/e2e-az-name
+    #                operator: In
+    #                values:
+    #                - e2e-az1
+    #                - e2e-az2
+    #    tolerations:
+    #    - key: "node.alpha.kubernetes.io/unreachable"
+    #      operator: "Exists"
+    #      effect: "NoExecute"
+    #      tolerationSeconds: 6000
+    podDisruptionBudget:
+      maxUnavailable: 1
+    #      minAvailable: 0
+    volumeSpec:
+      #      emptyDir: {}
+      #      hostPath:
+      #        path: /data
+      #        type: Directory
+      persistentVolumeClaim:
+        #        storageClassName: standard
+        #        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 6Gi
+    gracePeriod: 600
+  haproxy:
+    enabled: true
+    size: 3
+    image: percona/percona-xtradb-cluster-operator:1.6.0-haproxy
+    #    imagePullPolicy: Always
+    #    schedulerName: mycustom-scheduler
+    #    configuration: |
+    #      global
+    #        maxconn 2048
+    #        external-check
+    #        stats socket /var/run/haproxy.sock mode 600 expose-fd listeners level user
+    #
+    #      defaults
+    #        log global
+    #        mode tcp
+    #        retries 10
+    #        timeout client 28800s
+    #        timeout connect 100500
+    #        timeout server 28800s
+    #
+    #      frontend galera-in
+    #        bind *:3309 accept-proxy
+    #        bind *:3306 accept-proxy
+    #        mode tcp
+    #        option clitcpka
+    #        default_backend galera-nodes
+    #
+    #      frontend galera-replica-in
+    #        bind *:3307
+    #        mode tcp
+    #        option clitcpka
+    #        default_backend galera-replica-nodes
+    #    imagePullSecrets:
+    #      - name: private-registry-credentials
+    #    annotations:
+    #      iam.amazonaws.com/role: role-arn
+    #    labels:
+    #      rack: rack-22
+    #    serviceType: ClusterIP
+    #    externalTrafficPolicy: Cluster
+    #    replicasServiceType: ClusterIP
+    #    replicasExternalTrafficPolicy: Cluster
+    #    schedulerName: "default"
+    resources:
+      requests:
+        memory: 1G
+        cpu: 600m
+    #      limits:
+    #        memory: 1G
+    #        cpu: 700m
+    #    priorityClassName: high-priority
+    #    nodeSelector:
+    #      disktype: ssd
+    #    sidecarResources:
+    #      requests:
+    #        memory: 1G
+    #        cpu: 500m
+    #      limits:
+    #        memory: 2G
+    #        cpu: 600m
+    #    serviceAccountName: percona-xtradb-cluster-operator-workload
+    affinity:
+      antiAffinityTopologyKey: "kubernetes.io/hostname"
+    #      advanced:
+    #        nodeAffinity:
+    #          requiredDuringSchedulingIgnoredDuringExecution:
+    #            nodeSelectorTerms:
+    #            - matchExpressions:
+    #              - key: kubernetes.io/e2e-az-name
+    #                operator: In
+    #                values:
+    #                - e2e-az1
+    #                - e2e-az2
+    #    tolerations:
+    #    - key: "node.alpha.kubernetes.io/unreachable"
+    #      operator: "Exists"
+    #      effect: "NoExecute"
+    #      tolerationSeconds: 6000
+    podDisruptionBudget:
+      maxUnavailable: 1
+    #      minAvailable: 0
+    gracePeriod: 30
+  #   loadBalancerSourceRanges:
+  #     - 10.0.0.0/8
+  #   serviceAnnotations:
+  #     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+  proxysql:
+    enabled: false
+    size: 3
+    image: percona/percona-xtradb-cluster-operator:1.6.0-proxysql
+    #    imagePullPolicy: Always
+    #    configuration: |
+    #      datadir="/var/lib/proxysql"
+    #
+    #      admin_variables =
+    #      {
+    #        admin_credentials="proxyadmin:admin_password"
+    #        mysql_ifaces="0.0.0.0:6032"
+    #        refresh_interval=2000
+    #
+    #        cluster_username="proxyadmin"
+    #        cluster_password="admin_password"
+    #        cluster_check_interval_ms=200
+    #        cluster_check_status_frequency=100
+    #        cluster_mysql_query_rules_save_to_disk=true
+    #        cluster_mysql_servers_save_to_disk=true
+    #        cluster_mysql_users_save_to_disk=true
+    #        cluster_proxysql_servers_save_to_disk=true
+    #        cluster_mysql_query_rules_diffs_before_sync=1
+    #        cluster_mysql_servers_diffs_before_sync=1
+    #        cluster_mysql_users_diffs_before_sync=1
+    #        cluster_proxysql_servers_diffs_before_sync=1
+    #      }
+    #
+    #      mysql_variables=
+    #      {
+    #        monitor_password="monitor"
+    #        monitor_galera_healthcheck_interval=1000
+    #        threads=2
+    #        max_connections=2048
+    #        default_query_delay=0
+    #        default_query_timeout=10000
+    #        poll_timeout=2000
+    #        interfaces="0.0.0.0:3306"
+    #        default_schema="information_schema"
+    #        stacksize=1048576
+    #        connect_timeout_server=10000
+    #        monitor_history=60000
+    #        monitor_connect_interval=20000
+    #        monitor_ping_interval=10000
+    #        ping_timeout_server=200
+    #        commands_stats=true
+    #        sessions_sort=true
+    #        have_ssl=true
+    #        ssl_p2s_ca="/etc/proxysql/ssl-internal/ca.crt"
+    #        ssl_p2s_cert="/etc/proxysql/ssl-internal/tls.crt"
+    #        ssl_p2s_key="/etc/proxysql/ssl-internal/tls.key"
+    #        ssl_p2s_cipher="ECDHE-RSA-AES128-GCM-SHA256"
+    #      }
+    #    schedulerName: mycustom-scheduler
+    #    imagePullSecrets:
+    #      - name: private-registry-credentials
+    #    annotations:
+    #      iam.amazonaws.com/role: role-arn
+    #    labels:
+    #      rack: rack-22
+    #    serviceType: ClusterIP
+    #    externalTrafficPolicy: Cluster
+    #    schedulerName: "default"
+    resources:
+      requests:
+        memory: 1G
+        cpu: 600m
+    #      limits:
+    #        memory: 1G
+    #        cpu: 700m
+    #    priorityClassName: high-priority
+    #    nodeSelector:
+    #      disktype: ssd
+    #    sidecarResources:
+    #      requests:
+    #        memory: 1G
+    #        cpu: 500m
+    #      limits:
+    #        memory: 2G
+    #        cpu: 600m
+    #    serviceAccountName: percona-xtradb-cluster-operator-workload
+    affinity:
+      antiAffinityTopologyKey: "kubernetes.io/hostname"
+    #      advanced:
+    #        nodeAffinity:
+    #          requiredDuringSchedulingIgnoredDuringExecution:
+    #            nodeSelectorTerms:
+    #            - matchExpressions:
+    #              - key: kubernetes.io/e2e-az-name
+    #                operator: In
+    #                values:
+    #                - e2e-az1
+    #                - e2e-az2
+    #    tolerations:
+    #    - key: "node.alpha.kubernetes.io/unreachable"
+    #      operator: "Exists"
+    #      effect: "NoExecute"
+    #      tolerationSeconds: 6000
+    volumeSpec:
+      #      emptyDir: {}
+      #      hostPath:
+      #        path: /data
+      #        type: Directory
+      persistentVolumeClaim:
+        #        storageClassName: standard
+        #        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 2Gi
+    podDisruptionBudget:
+      maxUnavailable: 1
+    #      minAvailable: 0
+    gracePeriod: 30
+  #   loadBalancerSourceRanges:
+  #     - 10.0.0.0/8
+  #   serviceAnnotations:
+  #     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+  logcollector:
+    enabled: true
+    image: percona/percona-xtradb-cluster-operator:1.6.0-logcollector
+  #    configuration: |
+  #      [OUTPUT]
+  #           Name  es
+  #           Match *
+  #           Host  192.168.2.3
+  #           Port  9200
+  #           Index my_index
+  #           Type  my_type
+  #    resources:
+  #      requests:
+  #        memory: 200M
+  #        cpu: 500m
+  pmm:
+    enabled: true #Switch to false for non-PMM setup.
+    image: percona/pmm-client:2.12.0
+    serverHost: monitoring-service
+    serverUser: admin
+  #    pxcParams: "--disable-tablestats-limit=2000"
+  #    proxysqlParams: "--custom-labels=CUSTOM-LABELS"
+  #    resources:
+  #      requests:
+  #        memory: 200M
+  #        cpu: 500m
+  backup:
+    image: percona/percona-xtradb-cluster-operator:1.6.0-pxc8.0-backup
+    #    serviceAccountName: percona-xtradb-cluster-operator
+    #    imagePullSecrets:
+    #      - name: private-registry-credentials
+    pitr:
+      enabled: false
+      storageName: STORAGE-NAME-HERE
+      timeBetweenUploads: 60
+    storages:
+      s3-us-west:
+        type: s3
+        #        nodeSelector:
+        #          storage: tape
+        #          backupWorker: 'True'
+        #        resources:
+        #          requests:
+        #            memory: 1G
+        #            cpu: 600m
+        #        affinity:
+        #          nodeAffinity:
+        #            requiredDuringSchedulingIgnoredDuringExecution:
+        #              nodeSelectorTerms:
+        #              - matchExpressions:
+        #                - key: backupWorker
+        #                  operator: In
+        #                  values:
+        #                  - 'True'
+        #        tolerations:
+        #          - key: "backupWorker"
+        #            operator: "Equal"
+        #            value: "True"
+        #            effect: "NoSchedule"
+        #        annotations:
+        #          testName: scheduled-backup
+        #        labels:
+        #          backupWorker: 'True'
+        #        schedulerName: 'default-scheduler'
+        #        priorityClassName: 'high-priority'
+        #        containerSecurityContext:
+        #          privileged: true
+        #        podSecurityContext:
+        #          fsGroup: 1001
+        #          supplementalGroups: [1001, 1002, 1003]
+        s3:
+          bucket: S3-BACKUP-BUCKET-NAME-HERE
+          credentialsSecret: my-cluster-name-backup-s3
+          region: us-west-2
+      fs-pvc:
+        type: filesystem
+        #        nodeSelector:
+        #          storage: tape
+        #          backupWorker: 'True'
+        #        resources:
+        #          requests:
+        #            memory: 1G
+        #            cpu: 600m
+        #        affinity:
+        #          nodeAffinity:
+        #            requiredDuringSchedulingIgnoredDuringExecution:
+        #              nodeSelectorTerms:
+        #              - matchExpressions:
+        #                - key: backupWorker
+        #                  operator: In
+        #                  values:
+        #                  - 'True'
+        #        tolerations:
+        #          - key: "backupWorker"
+        #            operator: "Equal"
+        #            value: "True"
+        #            effect: "NoSchedule"
+        #        annotations:
+        #          testName: scheduled-backup
+        #        labels:
+        #          backupWorker: 'True'
+        #        schedulerName: 'default-scheduler'
+        #        priorityClassName: 'high-priority'
+        #        containerSecurityContext:
+        #          privileged: true
+        #        podSecurityContext:
+        #          fsGroup: 1001
+        #          supplementalGroups: [1001, 1002, 1003]
+        volume:
+          persistentVolumeClaim:
+            #            storageClassName: standard
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 6Gi
+    schedule:
+      - name: "sat-night-backup"
+        schedule: "0 0 * * 6"
+        keep: 3
+        storageName: s3-us-west
+      - name: "daily-backup"
+        schedule: "0 0 * * *"
+        keep: 5
+        storageName: fs-pvc

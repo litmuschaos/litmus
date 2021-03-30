@@ -1,16 +1,17 @@
 import { Divider, Typography } from '@material-ui/core';
-import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { preDefinedWorkflowData } from '../../../models/predefinedWorkflow';
 import { LocationState } from '../../../models/routerModel';
+import useActions from '../../../redux/actions';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentDetails from './ExperimentDetails';
 import Head from './Head';
 import Recommendation from './Recommendation';
 import useStyles from './styles';
-import useActions from '../../../redux/actions';
-import * as WorkflowActions from '../../../redux/actions/workflow';
 
 interface LocationObjectProps {
   workflowData: preDefinedWorkflowData;
@@ -24,6 +25,8 @@ interface BrowseTemplateProps {
 
 const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
   const workflowAction = useActions(WorkflowActions);
   const { workflowData, testNames, testWeights } = location.state;
 
@@ -70,7 +73,10 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
                   isCustomWorkflow: false,
                   customWorkflows: [],
                 });
-                history.push('/create-workflow');
+                history.push({
+                  pathname: '/create-workflow',
+                  search: `?projectID=${projectID}&projectRole=${userRole}`,
+                });
               }}
             >
               <>Schedule this template</>

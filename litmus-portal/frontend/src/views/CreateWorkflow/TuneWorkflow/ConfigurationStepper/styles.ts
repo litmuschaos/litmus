@@ -44,5 +44,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 72,
     height: 35,
   },
+
+  // Stepper styles
+  stepperLabel: {
+    '& .MuiStepLabel-label': {
+      color: theme.palette.common.black,
+    },
+  },
 }));
 export default useStyles;

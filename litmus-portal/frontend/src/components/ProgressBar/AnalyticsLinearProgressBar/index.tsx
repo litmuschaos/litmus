@@ -1,6 +1,6 @@
-import { useTheme } from '@material-ui/core/styles';
-import { Line } from 'rc-progress';
 import React from 'react';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import useStyle from './styles';
 
 interface LinearProgressBarProps {
   value: number;
@@ -13,17 +13,32 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
   maxValue,
   isInTable,
 }) => {
-  const width: number = 2;
   const resultValue = ((value as number) / (maxValue as number)) * 100;
 
-  const { palette } = useTheme();
+  const classes = useStyle();
 
   return (
-    <Line
-      percent={resultValue}
-      strokeWidth={width}
-      trailWidth={width}
-      strokeColor={isInTable ? palette.success.main : palette.primary.main}
+    <LinearProgress
+      variant="determinate"
+      value={resultValue}
+      classes={
+        isInTable
+          ? resultValue > 60
+            ? {
+                root: classes.root,
+                barColorPrimary: classes.greenColorPrimary,
+              }
+            : resultValue > 30
+            ? {
+                root: classes.root,
+                barColorPrimary: classes.yellowColorPrimary,
+              }
+            : {
+                root: classes.root,
+                barColorPrimary: classes.redColorPrimary,
+              }
+          : {}
+      }
     />
   );
 };

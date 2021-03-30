@@ -330,6 +330,7 @@ const ScheduleWorkflow: React.FC = () => {
         <div className={classes.scFormControl}>
           <FormControl component="fieldset" className={classes.formControl}>
             <RadioGroup
+              data-cy="ScheduleOptions"
               aria-label="schedule"
               name="schedule"
               value={value}

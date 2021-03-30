@@ -13,6 +13,7 @@ import {
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
+import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
 import { RootState } from '../../../redux/reducers';
@@ -79,13 +80,11 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
 
   const classes = useStyles();
   const { t } = useTranslation();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+    { variables: { projectID } }
   );
 
   const workflow = workflow_data?.getWorkFlowRuns.filter(

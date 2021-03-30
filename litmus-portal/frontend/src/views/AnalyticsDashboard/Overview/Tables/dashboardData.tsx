@@ -14,7 +14,6 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import DashboardTemplatesList from '../../../../components/PreconfiguredDashboards/data';
@@ -26,7 +25,7 @@ import {
   Template,
   WorkflowYaml,
 } from '../../../../models/chaosWorkflowYaml';
-import { ChaosEngineNamesAndNamespacesMap } from '../../../../models/dashboardsData';
+import { ChaosResultNamesAndNamespacesMap } from '../../../../models/dashboardsData';
 import {
   ListDashboardResponse,
   Panel,
@@ -47,8 +46,11 @@ import * as DashboardActions from '../../../../redux/actions/dashboards';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
-import { RootState } from '../../../../redux/reducers';
 import { ReactComponent as Arrow } from '../../../../svg/arrow.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import getEngineNameAndNamespace from '../../../../utils/promUtils';
 import { GetTimeDiff } from '../../../../utils/timeDifferenceString';
 import { validateWorkflowParameter } from '../../../../utils/validate';
@@ -71,16 +73,15 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // selecedProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
 
   // schedule data
   const { data: schedulesData } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
       variables: {
-        projectID: selectedProjectID,
+        projectID,
       },
     }
   );
@@ -95,7 +96,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
   // reSyncChaos
 
   const reSyncChaosQueries = (data: ListDashboardResponse) => {
-    const chaosEngineNamesAndNamespacesMap: ChaosEngineNamesAndNamespacesMap[] = [];
+    const chaosResultNamesAndNamespacesMap: ChaosResultNamesAndNamespacesMap[] = [];
     schedulesData?.getScheduledWorkflows.forEach(
       (schedule: ScheduleWorkflow) => {
         if (schedule.cluster_id === data.cluster_id && !schedule.isRemoved) {
@@ -146,11 +147,13 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                     engineNamespace = parsedEmbeddedYaml.metadata.namespace;
                   }
                   let matchIndex: number = -1;
-                  const check: number = chaosEngineNamesAndNamespacesMap.filter(
+                  const check: number = chaosResultNamesAndNamespacesMap.filter(
                     (data, index) => {
                       if (
-                        data.engineName === parsedEmbeddedYaml.metadata.name &&
-                        data.engineNamespace === engineNamespace
+                        data.resultName.includes(
+                          parsedEmbeddedYaml.metadata.name
+                        ) &&
+                        data.resultNamespace === engineNamespace
                       ) {
                         matchIndex = index;
                         return true;
@@ -159,15 +162,17 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                     }
                   ).length;
                   if (check === 0) {
-                    chaosEngineNamesAndNamespacesMap.push({
-                      engineName: parsedEmbeddedYaml.metadata.name,
-                      engineNamespace,
+                    chaosResultNamesAndNamespacesMap.push({
+                      resultName: `${parsedEmbeddedYaml.metadata.name}-${parsedEmbeddedYaml.spec.experiments[0].name}`,
+                      resultNamespace: engineNamespace,
                       workflowName: workflowYaml.metadata.name,
+                      experimentName:
+                        parsedEmbeddedYaml.spec.experiments[0].name,
                     });
                   } else {
-                    chaosEngineNamesAndNamespacesMap[
+                    chaosResultNamesAndNamespacesMap[
                       matchIndex
-                    ].workflowName = `${chaosEngineNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
+                    ].workflowName = `${chaosResultNamesAndNamespacesMap[matchIndex].workflowName}, \n${workflowYaml.metadata.name}`;
                   }
                 }
               });
@@ -178,29 +183,30 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
     );
 
     const isChaosQueryPresent: number[] = Array(
-      chaosEngineNamesAndNamespacesMap.length
+      chaosResultNamesAndNamespacesMap.length
     ).fill(0);
 
     data.panel_groups[0].panels[0].prom_queries.forEach(
       (existingPromQuery: PromQuery) => {
         if (
           existingPromQuery.prom_query_name.startsWith(
-            'heptio_eventrouter_normal_total{reason="ChaosInject"'
+            'litmuschaos_awaited_experiments'
           )
         ) {
-          const chaosDetails: ChaosEngineNamesAndNamespacesMap = getEngineNameAndNamespace(
+          const chaosDetails: ChaosResultNamesAndNamespacesMap = getEngineNameAndNamespace(
             existingPromQuery.prom_query_name
           );
-          chaosEngineNamesAndNamespacesMap.forEach(
+          chaosResultNamesAndNamespacesMap.forEach(
             (
-              chaosDetailsFomSchedule: ChaosEngineNamesAndNamespacesMap,
+              chaosDetailsFomSchedule: ChaosResultNamesAndNamespacesMap,
               index: number
             ) => {
               if (
-                chaosDetailsFomSchedule.engineName ===
-                  chaosDetails.engineName &&
-                chaosDetailsFomSchedule.engineNamespace ===
-                  chaosDetails.engineNamespace
+                chaosDetailsFomSchedule.resultName.includes(
+                  chaosDetails.resultName
+                ) &&
+                chaosDetailsFomSchedule.resultNamespace ===
+                  chaosDetails.resultNamespace
               ) {
                 isChaosQueryPresent[index] = 1;
               }
@@ -222,20 +228,19 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
         panel.prom_queries.forEach((query: PromQuery) => {
           let updatedLegend: string = query.legend;
           if (
-            query.prom_query_name.startsWith(
-              'heptio_eventrouter_normal_total{reason="ChaosInject"'
-            )
+            query.prom_query_name.startsWith('litmuschaos_awaited_experiments')
           ) {
-            const chaosDetails: ChaosEngineNamesAndNamespacesMap = getEngineNameAndNamespace(
+            const chaosDetails: ChaosResultNamesAndNamespacesMap = getEngineNameAndNamespace(
               query.prom_query_name
             );
-            chaosEngineNamesAndNamespacesMap.forEach(
-              (chaosDetailsFomSchedule: ChaosEngineNamesAndNamespacesMap) => {
+            chaosResultNamesAndNamespacesMap.forEach(
+              (chaosDetailsFomSchedule: ChaosResultNamesAndNamespacesMap) => {
                 if (
-                  chaosDetailsFomSchedule.engineName ===
-                    chaosDetails.engineName &&
-                  chaosDetailsFomSchedule.engineNamespace ===
-                    chaosDetails.engineNamespace &&
+                  chaosDetailsFomSchedule.resultName.includes(
+                    chaosDetails.resultName
+                  ) &&
+                  chaosDetailsFomSchedule.resultNamespace ===
+                    chaosDetails.resultNamespace &&
                   !query.legend.includes(chaosDetailsFomSchedule.workflowName)
                 ) {
                   updatedLegend = `${chaosDetailsFomSchedule.workflowName}, \n${query.legend}`;
@@ -254,18 +259,18 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
           };
           updatedQueries.push(updatedQuery);
         });
-        chaosEngineNamesAndNamespacesMap.forEach(
-          (keyValue: ChaosEngineNamesAndNamespacesMap, index: number) => {
+        chaosResultNamesAndNamespacesMap.forEach(
+          (keyValue: ChaosResultNamesAndNamespacesMap, index: number) => {
             if (isChaosQueryPresent[index] === 0) {
               updatedQueries.push({
                 queryid: uuidv4(),
                 prom_query_name: generateChaosQuery(
                   DashboardTemplatesList[dashboardTemplateID]
                     .chaosEventQueryTemplate,
-                  keyValue.engineName,
-                  keyValue.engineNamespace
+                  keyValue.resultName,
+                  keyValue.resultNamespace
                 ),
-                legend: `${keyValue.workflowName}- \n${keyValue.engineName}`,
+                legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
                 resolution: '1/1',
                 minstep: '1',
                 line: false,
@@ -346,7 +351,10 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
                   tabs.changeAnalyticsDashboardTabs(2);
-                  history.push('/analytics');
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
                 }}
               >
                 <Typography className={classes.seeAllText}>
@@ -368,7 +376,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                 </TableCell>
                 <TableCell>
                   <Typography className={classes.dateText}>
-                    {t('analyticsDashboard.timeText.lastRun')}:{' '}
+                    {t('analyticsDashboard.timeText.lastOpened')}:{' '}
                     {GetTimeDiff(
                       currentTime / 1000,
                       parseInt(dashboard.updated_at, 10),
@@ -389,7 +397,10 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                           selectedDataSourceID: '',
                           selectedDataSourceName: '',
                         });
-                        history.push('/analytics/dashboard');
+                        history.push({
+                          pathname: '/analytics/dashboard',
+                          search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                        });
                       });
                     }}
                   >

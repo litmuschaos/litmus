@@ -23,8 +23,9 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
+import { LightPills, ButtonFilled } from 'litmus-ui';
 import moment from 'moment';
-import { ButtonFilled } from 'litmus-ui';
+
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import config from '../../../../config';
@@ -286,22 +287,24 @@ const UserManagement: React.FC = () => {
                                 >
                                   <div className={classes.firstCol}>
                                     {row.logged_in ? (
-                                      <div className={classes.Signed}>
-                                        {t(
+                                      <LightPills
+                                        variant="success"
+                                        label={t(
                                           'settings.userManagementTab.label.options.signedIn'
                                         )}
-                                      </div>
+                                      />
                                     ) : (
-                                      <div className={classes.NotSigned}>
-                                        {t(
+                                      <LightPills
+                                        variant="danger"
+                                        label={t(
                                           'settings.userManagementTab.label.options.notSignedIn'
                                         )}
-                                      </div>
+                                      />
                                     )}
-
                                     {row.name}
                                   </div>
                                 </TableCell>
+
                                 <TableCell className={classes.otherTC}>
                                   {row.username}
                                 </TableCell>
@@ -318,7 +321,6 @@ const UserManagement: React.FC = () => {
                                     {formatDate(row.created_at)}
                                   </div>
                                 </TableCell>
-
                                 <TableCell
                                   className={classes.lastTC}
                                   key={row.username}
@@ -381,8 +383,8 @@ const UserManagement: React.FC = () => {
                             ))
                         ) : (
                           <TableRow>
-                            <TableCell colSpan={5}>
-                              <Typography align="center">
+                            <TableCell colSpan={5} align="center">
+                              <Typography>
                                 {t('settings.userManagementTab.noUsers')}
                               </Typography>
                             </TableCell>

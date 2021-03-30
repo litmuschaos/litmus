@@ -2,7 +2,12 @@ import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonOutlined } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
@@ -21,6 +26,7 @@ import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
+import { getProjectID } from '../../../utils/getSearchParams';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import { updateCRD } from './UpdateCRD';
@@ -41,27 +47,59 @@ interface ChartName {
   ExperimentName: string;
 }
 
-const TuneWorkflow: React.FC = () => {
+const TuneWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
 
   // State Variables for Tune Workflow
   const [hubName, setHubName] = useState<string>('');
-  const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]); // eslint-disable-line
+  const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]);
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
   const [selectedExp, setSelectedExp] = useState('');
-  const { selectedProjectID } = useSelector(
-    (state: RootState) => state.userData
-  );
+  const selectedProjectID = getProjectID();
   const [addExpModal, setAddExpModal] = useState(false);
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
   });
   const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
 
   // Actions
   const workflowAction = useActions(WorkflowActions);
 
   const { t } = useTranslation();
+
+  const fetchYaml = (link: string) => {
+    fetch(link)
+      .then((data) => {
+        data.text().then((yamlText) => {
+          workflowAction.setWorkflowManifest({
+            manifest: yamlText,
+          });
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  // Graphql query to get charts
+  const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
+    onCompleted: (data) => {
+      const allExp: ChartName[] = [];
+      data.getCharts.forEach((data) => {
+        return data.Spec.Experiments?.forEach((experiment) => {
+          allExp.push({
+            ChaosName: data.Metadata.Name,
+            ExperimentName: experiment,
+          });
+        });
+      });
+      setAllExperiments([...allExp]);
+    },
+    fetchPolicy: 'cache-and-network',
+  });
 
   // Index DB Fetching for extracting selected Button and Workflow Details
   const getSelectedWorkflowDetails = () => {
@@ -70,6 +108,24 @@ const TuneWorkflow: React.FC = () => {
         name: (workflow as WorkflowDetailsProps).name,
       })
     );
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      // Setting default data when MyHub is selected
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
+        setCustomWorkflow(false);
+        localforage.getItem('workflowCRDLink').then((value) => {
+          if (value !== null) fetchYaml(value as string);
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
+        setCustomWorkflow(true);
+        localforage.getItem('selectedHub').then((hub) => {
+          setHubName(hub as string);
+          getCharts({
+            variables: { projectID: selectedProjectID, HubName: hub as string },
+          });
+        });
+      }
+    });
   };
 
   useEffect(() => {
@@ -112,7 +168,9 @@ const TuneWorkflow: React.FC = () => {
       ],
     },
   };
-  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(yamlTemplate);
+  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(
+    manifest === '' ? yamlTemplate : YAML.parse(manifest)
+  );
   // Graphql Query for fetching Engine YAML
   const [
     getEngineYaml,
@@ -127,23 +185,6 @@ const TuneWorkflow: React.FC = () => {
     { data: experimentData, loading: experimentDataLoading },
   ] = useLazyQuery(GET_EXPERIMENT_YAML, {
     fetchPolicy: 'network-only',
-  });
-
-  // Graphql query to get charts
-  const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
-    onCompleted: (data) => {
-      const allExp: ChartName[] = [];
-      data.getCharts.forEach((data) => {
-        return data.Spec.Experiments?.forEach((experiment) => {
-          allExp.push({
-            ChaosName: data.Metadata.Name,
-            ExperimentName: experiment,
-          });
-        });
-      });
-      setAllExperiments([...allExp]);
-    },
-    fetchPolicy: 'cache-and-network',
   });
 
   /**
@@ -209,24 +250,14 @@ const TuneWorkflow: React.FC = () => {
     }
   }, [engineDataLoading, experimentDataLoading]);
 
-  // Loading Workflow Related Data for Workflow Settings
-  useEffect(() => {
-    localforage.getItem('selectedScheduleOption').then((value) => {
-      // Setting default data when MyHub is selected
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
-        setCustomWorkflow(false);
-      }
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
-        setCustomWorkflow(true);
-        localforage.getItem('selectedHub').then((hub) => {
-          setHubName(hub as string);
-          getCharts({
-            variables: { projectID: selectedProjectID, HubName: hub as string },
-          });
-        });
-      }
-    });
-  }, []);
+  // console.log(generatedYAML);
+  function onNext() {
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <div className={classes.root}>
@@ -284,20 +315,16 @@ const TuneWorkflow: React.FC = () => {
         <Row>
           {/* Argo Workflow Graph */}
           <Width width="30%">
-            <WorkflowPreview crd={generatedYAML} />
+            <WorkflowPreview isCustomWorkflow={customWorkflow} />
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            {experiment.length > 0 ? (
-              <WorkflowTable isCustom />
-            ) : (
-              <WorkflowTable />
-            )}
+            <WorkflowTable isCustom={customWorkflow} />
           </Width>
         </Row>
       </div>
     </div>
   );
-};
+});
 
 export default TuneWorkflow;

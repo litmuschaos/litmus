@@ -4,6 +4,7 @@
 .nyc_output
 __pycache__/
 **/node_modules/
+**/build/
 **/cypress/videos/
 **/cypress/screenshots/
 **/.nyc_output/

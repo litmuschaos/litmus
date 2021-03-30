@@ -255,7 +255,7 @@ type Member struct {
 
 type MemberInput struct {
 	ProjectID string      `json:"project_id"`
-	UserName  string      `json:"user_name"`
+	UserID    string      `json:"user_id"`
 	Role      *MemberRole `json:"role"`
 }
 

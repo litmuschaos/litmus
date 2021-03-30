@@ -1,4 +1,4 @@
-import { Checkbox, makeStyles, withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,12 +64,5 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
   },
 }));
-
-export const StyledCheckbox = withStyles((theme) => ({
-  root: {
-    color: theme.palette.text.hint,
-  },
-  checked: {},
-}))(Checkbox);
 
 export default useStyles;

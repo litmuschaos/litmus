@@ -84,8 +84,6 @@ export const updateCRD = (
     ).metadata.name;
     ChaosEngine.metadata.namespace =
       '{{workflow.parameters.adminModeNamespace}}';
-    ChaosEngine.spec.appinfo.appns =
-      '{{workflow.parameters.adminModeNamespace}}';
 
     generatedYAML.spec.templates.push({
       name: ChaosEngine.metadata.name,
@@ -110,9 +108,9 @@ export const updateCRD = (
     });
   });
 
+  // console.log(generatedYAML);
+  // console.log(customSteps);
   return generatedYAML;
 
   // Uncomment for Checking the Generated YAML and custom steps
-  // console.log(generatedYAML);
-  // console.log(customSteps);
 };

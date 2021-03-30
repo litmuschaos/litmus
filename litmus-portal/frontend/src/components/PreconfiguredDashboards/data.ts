@@ -9,7 +9,7 @@ export default [
     information:
       'This dashboard visualizes Node and Pod level CPU and memory utilization metrics interleaved with chaos events.',
     chaosEventQueryTemplate:
-      'heptio_eventrouter_normal_total{reason="ChaosInject", involved_object_name="#{}", involved_object_namespace="*{}", involved_object_kind="ChaosEngine"} - on () (heptio_eventrouter_normal_total{reason="ChaosEngineCompleted", involved_object_name="#{}", involved_object_namespace="*{}", involved_object_kind="ChaosEngine"} OR on() vector(0))',
+      'litmuschaos_awaited_experiments{chaosresult_name="#{}",chaosresult_namespace="*{}", job="chaos-exporter"}',
     panelGroupMap: [
       {
         groupName: 'CPU Usage Metrics',
@@ -52,7 +52,7 @@ export default [
             prom_queries: [
               {
                 queryid: uuidv4(),
-                prom_query_name: 'instance:node_cpu_utilisation:rate1m',
+                prom_query_name: 'instance:node_cpu_utilisation:rate1m*100',
                 legend: '{{instance}}',
                 resolution: '1/2',
                 minstep: '5',
@@ -104,7 +104,7 @@ export default [
             prom_queries: [
               {
                 queryid: uuidv4(),
-                prom_query_name: 'instance:node_memory_utilisation:ratio',
+                prom_query_name: 'instance:node_memory_utilisation:ratio*100',
                 legend: '{{instance}}',
                 resolution: '1/2',
                 minstep: '5',
@@ -279,7 +279,7 @@ export default [
     information:
       'This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics.',
     chaosEventQueryTemplate:
-      'heptio_eventrouter_normal_total{reason="ChaosInject", involved_object_name="#{}", involved_object_namespace="*{}", involved_object_kind="ChaosEngine"} - on () (heptio_eventrouter_normal_total{reason="ChaosEngineCompleted", involved_object_name="#{}", involved_object_namespace="*{}", involved_object_kind="ChaosEngine"} OR on() vector(0))',
+      'litmuschaos_awaited_experiments{chaosresult_name="#{}",chaosresult_namespace="*{}", job="chaos-exporter"}',
     panelGroupMap: [
       {
         groupName: 'Orders Metrics',
@@ -324,7 +324,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -407,7 +407,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -490,7 +490,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -573,7 +573,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -656,7 +656,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -739,7 +739,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),
@@ -822,7 +822,7 @@ export default [
             y_axis_left: 'QPS (1 min)',
             y_axis_right: 'CHAOS',
             x_axis_down: 'Time',
-            unit: 'ops',
+            unit: 'qps',
             prom_queries: [
               {
                 queryid: uuidv4(),

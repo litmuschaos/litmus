@@ -4,15 +4,15 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
+import UserDetails from '../../../../components/UserDetails';
 import config from '../../../../config';
 import { GET_USER, UPDATE_DETAILS } from '../../../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
-import { UpdateUser } from '../../../../models/redux/user';
+import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
-import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
 interface personaData {
@@ -34,7 +34,7 @@ const PersonalDetails: React.FC = () => {
     { variables: { username } }
   );
   const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? ''; // Check if can be replaced with JWT based data.
+  const name: string = dataA?.getUser.name ?? ''; // TODO: Check if can be replaced with JWT based data.
   const email: string = dataA?.getUser.email ?? '';
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,
@@ -124,12 +124,14 @@ const PersonalDetails: React.FC = () => {
       <form>
         <UserDetails
           nameValue={personaData.fullName}
-          usernameIsDisabled
+          isUsernameDisabled
           handleNameChange={handleNameChange}
           emailValue={personaData.email}
           handleEmailChange={handleEmailChange}
           userValue={personaData.userName}
           handleUserChange={handleUserChange}
+          isNameDisabled={false}
+          isEmailDisabled={false}
         />
         <div className={classes.saveButton}>
           <div data-cy="save">
@@ -157,7 +159,6 @@ const PersonalDetails: React.FC = () => {
           >
             {error.length ? (
               <div className={classes.errDiv}>
-                {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
                 <div className={classes.textError}>
                   <Typography className={classes.typo} align="center">
                     <strong>

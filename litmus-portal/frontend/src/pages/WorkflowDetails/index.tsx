@@ -25,9 +25,9 @@ import {
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
+import { getProjectID } from '../../utils/getSearchParams';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
-import useStyles from './styles';
 import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
@@ -41,6 +41,7 @@ import {
   ScheduleWorkflow,
 } from '../../models/graphql/scheduleData';
 import * as NodeSelectionActions from '../../redux/actions/nodeSelection';
+import useStyles from './styles';
 
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
@@ -56,10 +57,9 @@ const WorkflowDetails: React.FC = () => {
 
   const tabs = useActions(TabActions);
   const nodeSelection = useActions(NodeSelectionActions);
+
   // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   const workflowDetailsTabValue = useSelector(
     (state: RootState) => state.tabNumber.node
@@ -74,7 +74,7 @@ const WorkflowDetails: React.FC = () => {
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+    { variables: { projectID } }
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
@@ -87,7 +87,7 @@ const WorkflowDetails: React.FC = () => {
     WorkflowListDataVars
   >(WORKFLOW_LIST_DETAILS, {
     variables: {
-      projectID: selectedProjectID,
+      projectID,
       workflowIDs: [workflow?.workflow_id as string],
     },
     pollInterval: 100,
@@ -97,7 +97,7 @@ const WorkflowDetails: React.FC = () => {
   const { data: SchedulesData } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -111,7 +111,7 @@ const WorkflowDetails: React.FC = () => {
     ) {
       subscribeToMore<WorkflowSubscription>({
         document: WORKFLOW_EVENTS,
-        variables: { projectID: selectedProjectID },
+        variables: { projectID },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           const modifiedWorkflows = prev.getWorkFlowRuns.slice();
@@ -214,7 +214,7 @@ const WorkflowDetails: React.FC = () => {
     <Scaffold>
       <div className={classes.root}>
         <div className={classes.button}>
-          <BackButton isDisabled={false} />
+          <BackButton />
         </div>
         {/* If workflow data is present then display the workflow details */}
         {workflow && pod_name !== '' ? (

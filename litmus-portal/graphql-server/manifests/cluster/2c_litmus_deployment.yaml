@@ -48,3 +48,43 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "chaos-operator"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chaos-exporter
+  name: chaos-exporter
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chaos-exporter
+  template:
+    metadata:
+      labels:
+        app: chaos-exporter
+    spec:
+      containers:
+        - image: #{LITMUS-CHAOS-EXPORTER}
+          imagePullPolicy: Always
+          name: chaos-exporter
+      serviceAccountName: litmus-cluster-scope
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: chaos-exporter
+  name: chaos-exporter
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  ports:
+    - port: 8080
+      name: tcp
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: chaos-exporter
+  type: ClusterIP

@@ -69,6 +69,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
 
+  // Table
+  table: {
+    minWidth: '40rem',
+    minHeight: '20rem',
+  },
+
   // Styles for Add Experiment Modal
   addExpModal: {
     textAlign: 'left',

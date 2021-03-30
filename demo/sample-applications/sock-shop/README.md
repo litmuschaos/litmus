@@ -1,6 +1,6 @@
 # Monitor Chaos on Sock-Shop
 
-Chaos experiments on sock-shop app with grafana dashboard to monitor it. 
+Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 ## Step-0: Obtain the demo artefacts
 
@@ -10,7 +10,6 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
   git clone https://github.com/litmuschaos/litmus.git
   cd litmus/demo/sample-applications/sock-shop
   ```
-
 
 ## Step-1: Setup Sock-Shop Microservices Application
 
@@ -30,7 +29,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 ## Step-2: Setup the LitmusChaos Infrastructure
 
-- Install the litmus chaos operator and CRDs 
+- Install the litmus chaos operator and CRDs
 
   ```
   kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.6.1.yaml
@@ -45,15 +44,13 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 - Install the chaos experiments in admin(litmus) namespace
 
   ```
-  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.6.1?file=charts/generic/experiments.yaml -n litmus 
+  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.6.1?file=charts/generic/experiments.yaml -n litmus
   ```
 
 - Install the chaos experiment metrics exporter and chaos event exporter
 
   ```
-  kubectl apply -f deploy/litmus-metrics/01-event-router-cm.yaml
-  kubectl apply -f deploy/litmus-metrics/02-event-router.yaml
-  kubectl apply -f deploy/litmus-metrics/03-chaos-exporter.yaml
+  kubectl apply -f deploy/litmus-metrics/chaos-exporter.yaml
   ```
 
 ## Step-3: Setup the Monitoring Infrastructure
@@ -73,11 +70,11 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 - Access the grafana dashboard via the NodePort (or loadbalancer) service IP or via a port-forward operation on localhost
 
-  Note: To change the service type to Loadbalancer, perform a `kubectl edit svc prometheus -n monitoring` and replace 
+  Note: To change the service type to Loadbalancer, perform a `kubectl edit svc prometheus -n monitoring` and replace
   `type: NodePort` to `type: LoadBalancer`
 
   ```
-  kubectl get svc -n monitoring 
+  kubectl get svc -n monitoring
   ```
 
   Default username/password credentials: `admin/admin`
@@ -92,10 +89,8 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 ## Step-4: Execute the Chaos Experiments
 
-
-- For the sake of illustration, let us execute a CPU hog experiment on the `catalogue` microservice & a Memory Hog experiment on 
+- For the sake of illustration, let us execute a CPU hog experiment on the `catalogue` microservice & a Memory Hog experiment on
   the `orders` microservice in a staggered manner
- 
 
   ```
   kubectl apply -f chaos/catalogue/catalogue-cpu-hog.yaml
@@ -106,20 +101,19 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
   ```
   kubectl apply -f chaos/orders/orders-memory-hog.yaml
   ```
-  
+
 - Verify execution of chaos experiments
 
   ```
   kubectl describe chaosengine catalogue-cpu-hog -n litmus
   kubectl describe chaosengine orders-memory-hog -n litmus
   ```
-  
+
 ## Step-5: Visualize Chaos Impact
 
-- Observe the impact of chaos injection through increased Latency & reduced QPS (queries per second) on the microservices 
-  under test. 
+- Observe the impact of chaos injection through increased Latency & reduced QPS (queries per second) on the microservices
+  under test.
 
   ![image](https://user-images.githubusercontent.com/21166217/87426747-4d26af00-c5fd-11ea-8d82-dabf6bc9048a.png)
 
   ![image](https://user-images.githubusercontent.com/21166217/87426820-6cbdd780-c5fd-11ea-88de-1fe8a1b5b503.png)
-

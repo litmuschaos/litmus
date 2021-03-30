@@ -1,0 +1,193 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: perconaxtradbclusters.pxc.percona.com
+spec:
+  group: pxc.percona.com
+  names:
+    kind: PerconaXtraDBCluster
+    listKind: PerconaXtraDBClusterList
+    plural: perconaxtradbclusters
+    singular: perconaxtradbcluster
+    shortNames:
+      - pxc
+      - pxcs
+  scope: Namespaced
+  versions:
+    - name: v1
+      storage: false
+      served: true
+    - name: v1-1-0
+      storage: false
+      served: true
+    - name: v1-2-0
+      storage: false
+      served: true
+    - name: v1-3-0
+      storage: false
+      served: true
+    - name: v1-4-0
+      storage: false
+      served: true
+    - name: v1-5-0
+      storage: false
+      served: true
+    - name: v1-6-0
+      storage: false
+      served: true
+    - name: v1-7-0
+      storage: true
+      served: true
+    - name: v1alpha1
+      storage: false
+      served: true
+  additionalPrinterColumns:
+    - name: Endpoint
+      type: string
+      JSONPath: .status.host
+    - name: Status
+      type: string
+      JSONPath: .status.state
+    - name: PXC
+      type: string
+      description: Ready pxc nodes
+      JSONPath: .status.pxc.ready
+    - name: proxysql
+      type: string
+      description: Ready proxysql nodes
+      JSONPath: .status.proxysql.ready
+    - name: haproxy
+      type: string
+      description: Ready haproxy nodes
+      JSONPath: .status.haproxy.ready
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp
+  subresources:
+    status: {}
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: perconaxtradbclusterbackups.pxc.percona.com
+spec:
+  group: pxc.percona.com
+  names:
+    kind: PerconaXtraDBClusterBackup
+    listKind: PerconaXtraDBClusterBackupList
+    plural: perconaxtradbclusterbackups
+    singular: perconaxtradbclusterbackup
+    shortNames:
+      - pxc-backup
+      - pxc-backups
+  scope: Namespaced
+  versions:
+    - name: v1
+      storage: true
+      served: true
+  additionalPrinterColumns:
+    - name: Cluster
+      type: string
+      description: Cluster name
+      JSONPath: .spec.pxcCluster
+    - name: Storage
+      type: string
+      description: Storage name from pxc spec
+      JSONPath: .status.storageName
+    - name: Destination
+      type: string
+      description: Backup destination
+      JSONPath: .status.destination
+    - name: Status
+      type: string
+      description: Job status
+      JSONPath: .status.state
+    - name: Completed
+      description: Completed time
+      type: date
+      JSONPath: .status.completed
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp
+  subresources:
+    status: {}
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: perconaxtradbclusterrestores.pxc.percona.com
+spec:
+  group: pxc.percona.com
+  names:
+    kind: PerconaXtraDBClusterRestore
+    listKind: PerconaXtraDBClusterRestoreList
+    plural: perconaxtradbclusterrestores
+    singular: perconaxtradbclusterrestore
+    shortNames:
+      - pxc-restore
+      - pxc-restores
+  scope: Namespaced
+  versions:
+    - name: v1
+      storage: true
+      served: true
+  additionalPrinterColumns:
+    - name: Cluster
+      type: string
+      description: Cluster name
+      JSONPath: .spec.pxcCluster
+    - name: Status
+      type: string
+      description: Job status
+      JSONPath: .status.state
+    - name: Completed
+      description: Completed time
+      type: date
+      JSONPath: .status.completed
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp
+  subresources:
+    status: {}
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: perconaxtradbbackups.pxc.percona.com
+spec:
+  group: pxc.percona.com
+  names:
+    kind: PerconaXtraDBBackup
+    listKind: PerconaXtraDBBackupList
+    plural: perconaxtradbbackups
+    singular: perconaxtradbbackup
+    shortNames: []
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      storage: true
+      served: true
+  additionalPrinterColumns:
+    - name: Cluster
+      type: string
+      description: Cluster name
+      JSONPath: .spec.pxcCluster
+    - name: Storage
+      type: string
+      description: Storage name from pxc spec
+      JSONPath: .status.storageName
+    - name: Destination
+      type: string
+      description: Backup destination
+      JSONPath: .status.destination
+    - name: Status
+      type: string
+      description: Job status
+      JSONPath: .status.state
+    - name: Completed
+      description: Completed time
+      type: date
+      JSONPath: .status.completed
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp

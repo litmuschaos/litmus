@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: theme.spacing(1.5),
+    overflowX: 'hidden',
   },
   mainHeader: {
     color: theme.palette.text.primary,
@@ -44,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
-      marginLeft: theme.spacing(8),
     },
   },
   paper: {
@@ -137,7 +137,9 @@ const useStyles = makeStyles((theme) => ({
 
   quickActionCard: {
     height: '21.25rem',
-    width: '20rem',
+    width: '15rem',
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(7),
     [theme.breakpoints.down('md')]: {
       display: 'flex',
       width: '15rem',
@@ -145,8 +147,9 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
+      margin: 0,
       marginTop: theme.spacing(5),
-      width: '25rem',
+      width: '20rem',
       flexDirection: 'column',
     },
   },

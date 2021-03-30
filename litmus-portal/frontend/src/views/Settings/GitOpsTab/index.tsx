@@ -9,7 +9,6 @@ import {
 import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import Loader from '../../../components/Loader';
 import {
@@ -21,10 +20,10 @@ import {
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
 import { GitOpsDetail } from '../../../models/graphql/gitOps';
 import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
-import { RootState } from '../../../redux/reducers';
-import SSHField from './sshField';
-import GitOpsInfo from './gitOpsInfo';
+import { getProjectID } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
+import GitOpsInfo from './gitOpsInfo';
+import SSHField from './sshField';
 import useStyles from './styles';
 
 interface GitHub {
@@ -40,7 +39,7 @@ interface GitOpsResult {
 const GitOpsTab = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState('disabled');
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
   const { t } = useTranslation();
   // Local State Variables for Github Data and GitOps result data
   const [gitHub, setGitHub] = useState<GitHub>({
@@ -86,7 +85,7 @@ const GitOpsTab = () => {
 
   // Query to fetch GitOps Data
   const { data, refetch, loading } = useQuery<GitOpsDetail>(GET_GITOPS_DATA, {
-    variables: { data: userData.selectedProjectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -104,6 +103,8 @@ const GitOpsTab = () => {
   );
 
   const [copying, setCopying] = useState(false);
+
+  // State variable to check if gitops is enable or not (required for edit gitops)
   const [isGitOpsEnabled, setIsGitOpsEnabled] = useState(false);
 
   // Function to copy the SSH key
@@ -134,6 +135,7 @@ const GitOpsTab = () => {
         type: 'success',
         message: 'Successfully enabled GitOps!',
       });
+      setIsGitOpsEnabled(true);
     },
   });
 
@@ -154,7 +156,7 @@ const GitOpsTab = () => {
           type: 'success',
           message: 'Successfully updated GitOps!',
         });
-        setIsGitOpsEnabled(false);
+        setIsGitOpsEnabled(true);
       },
     }
   );
@@ -190,7 +192,6 @@ const GitOpsTab = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    setIsGitOpsEnabled(true);
     refetch();
   };
   const onEditClicked = () => {
@@ -237,7 +238,7 @@ const GitOpsTab = () => {
         enableGitOps({
           variables: {
             gitConfig: {
-              ProjectID: userData.selectedProjectID,
+              ProjectID: projectID,
               RepoURL: gitHub.GitURL,
               Branch: gitHub.GitBranch,
               AuthType:
@@ -258,7 +259,7 @@ const GitOpsTab = () => {
         updateGitOps({
           variables: {
             gitConfig: {
-              ProjectID: userData.selectedProjectID,
+              ProjectID: projectID,
               RepoURL: gitHub.GitURL,
               Branch: gitHub.GitBranch,
               AuthType:
@@ -307,6 +308,7 @@ const GitOpsTab = () => {
                         }}
                       />
                     }
+                    data-cy="localRadioButton"
                     label={
                       <Typography className={classes.locallyText}>
                         {t('settings.gitopsTab.locally')}
@@ -320,11 +322,12 @@ const GitOpsTab = () => {
                         {t('settings.gitopsTab.disconnect')}
                       </Typography>
                       <ButtonFilled
+                        data-cy="disableGitopsButton"
                         disabled={disableGitOpsLoader}
                         onClick={() =>
                           disableGitOps({
                             variables: {
-                              data: userData.selectedProjectID,
+                              data: projectID,
                             },
                           })
                         }
@@ -346,6 +349,7 @@ const GitOpsTab = () => {
                           }}
                         />
                       }
+                      data-cy="gitopsRadioButton"
                       label={
                         <Typography style={{ fontSize: '20px' }}>
                           {t('settings.gitopsTab.repo')}
@@ -358,121 +362,127 @@ const GitOpsTab = () => {
                         <Typography className={classes.infoText}>
                           {t('settings.gitopsTab.desc')}
                         </Typography>
-                        <div className={classes.mainPrivateRepo}>
-                          <div className={classes.privateToggleDiv}>
-                            <div className={classes.privateRepoDetails}>
-                              <GithubInputFields
-                                gitURL={gitHub.GitURL}
-                                gitBranch={gitHub.GitBranch}
-                                setGitURL={handleGitURL}
-                                setGitBranch={handleGitBranch}
-                              />
-                            </div>
-                            <FormControl
-                              component="fieldset"
-                              className={classes.formControl}
-                            >
-                              <RadioGroup
-                                aria-label="privateHub"
-                                name="privateHub"
-                                value={privateHub}
-                                onChange={(e) => {
-                                  if (e.target.value === 'ssh') {
-                                    generateSSHKey();
-                                  }
-                                  if (e.target.value === 'token') {
-                                    setSshKey({
-                                      privateKey: '',
-                                      publicKey: '',
-                                    });
-                                  }
-                                  setPrivateHub(e.target.value);
-                                }}
+                        {value === 'enabled' ? (
+                          <div className={classes.mainPrivateRepo}>
+                            <div className={classes.privateToggleDiv}>
+                              <div className={classes.privateRepoDetails}>
+                                <GithubInputFields
+                                  gitURL={gitHub.GitURL}
+                                  gitBranch={gitHub.GitBranch}
+                                  setGitURL={handleGitURL}
+                                  setGitBranch={handleGitBranch}
+                                />
+                              </div>
+                              <FormControl
+                                component="fieldset"
+                                className={classes.formControl}
                               >
-                                <FormControlLabel
-                                  value="token"
-                                  control={
-                                    <Radio
-                                      classes={{
-                                        root: classes.radio,
-                                        checked: classes.checked,
-                                      }}
-                                    />
-                                  }
-                                  label={
-                                    <Typography>
-                                      {t('myhub.connectHubPage.accessToken')}
-                                    </Typography>
-                                  }
-                                />
-                                {privateHub === 'token' ? (
-                                  <InputField
-                                    label="Access Token"
-                                    value={accessToken}
-                                    helperText={
-                                      validateStartEmptySpacing(accessToken)
-                                        ? t('myhub.validationEmptySpace')
-                                        : ''
+                                <RadioGroup
+                                  aria-label="privateHub"
+                                  name="privateHub"
+                                  value={privateHub}
+                                  onChange={(e) => {
+                                    if (e.target.value === 'ssh') {
+                                      generateSSHKey();
                                     }
-                                    variant={
-                                      validateStartEmptySpacing(accessToken)
-                                        ? 'error'
-                                        : 'primary'
+                                    if (e.target.value === 'token') {
+                                      setSshKey({
+                                        privateKey: '',
+                                        publicKey: '',
+                                      });
                                     }
-                                    onChange={(e) =>
-                                      setAccessToken(e.target.value)
+                                    setPrivateHub(e.target.value);
+                                  }}
+                                >
+                                  <FormControlLabel
+                                    value="token"
+                                    control={
+                                      <Radio
+                                        classes={{
+                                          root: classes.radio,
+                                          checked: classes.checked,
+                                        }}
+                                      />
                                     }
-                                  />
-                                ) : null}
-                                <FormControlLabel
-                                  className={classes.sshRadioBtn}
-                                  value="ssh"
-                                  control={
-                                    <Radio
-                                      classes={{
-                                        root: classes.radio,
-                                        checked: classes.checked,
-                                      }}
-                                    />
-                                  }
-                                  label={
-                                    <Typography>
-                                      {t('myhub.connectHubPage.ssh')}
-                                    </Typography>
-                                  }
-                                />
-                                {privateHub === 'ssh' ? (
-                                  <SSHField
-                                    sshLoading={sshLoading}
-                                    copying={copying}
-                                    publicKey={sshKey.publicKey}
-                                    copyPublicKey={copyTextToClipboard}
-                                  />
-                                ) : null}
-                                <div className={classes.submitBtnDiv}>
-                                  <ButtonFilled
-                                    type="submit"
-                                    disabled={
-                                      gitOpsLoader ||
-                                      value !== 'enabled' ||
-                                      updateGitOpsLoader
-                                    }
-                                  >
-                                    {updateGitOpsLoader || gitOpsLoader ? (
-                                      <Loader size={20} />
-                                    ) : (
+                                    data-cy="accessTokenRadioButton"
+                                    label={
                                       <Typography>
-                                        {data?.getGitOpsDetails.Enabled
-                                          ? 'Update'
-                                          : t('settings.gitopsTab.connect')}
+                                        {t('myhub.connectHubPage.accessToken')}
                                       </Typography>
-                                    )}
-                                  </ButtonFilled>
-                                </div>
-                              </RadioGroup>
-                            </FormControl>
+                                    }
+                                  />
+                                  {privateHub === 'token' ? (
+                                    <InputField
+                                      data-cy="accessTokenInput"
+                                      label="Access Token"
+                                      value={accessToken}
+                                      helperText={
+                                        validateStartEmptySpacing(accessToken)
+                                          ? t('myhub.validationEmptySpace')
+                                          : ''
+                                      }
+                                      variant={
+                                        validateStartEmptySpacing(accessToken)
+                                          ? 'error'
+                                          : 'primary'
+                                      }
+                                      onChange={(e) =>
+                                        setAccessToken(e.target.value)
+                                      }
+                                    />
+                                  ) : null}
+                                  <FormControlLabel
+                                    className={classes.sshRadioBtn}
+                                    data-cy="sshKeyRadioButton"
+                                    value="ssh"
+                                    control={
+                                      <Radio
+                                        classes={{
+                                          root: classes.radio,
+                                          checked: classes.checked,
+                                        }}
+                                      />
+                                    }
+                                    label={
+                                      <Typography>
+                                        {t('myhub.connectHubPage.ssh')}
+                                      </Typography>
+                                    }
+                                  />
+                                  {privateHub === 'ssh' ? (
+                                    <SSHField
+                                      sshLoading={sshLoading}
+                                      copying={copying}
+                                      publicKey={sshKey.publicKey}
+                                      copyPublicKey={copyTextToClipboard}
+                                    />
+                                  ) : null}
+                                  <div
+                                    className={classes.submitBtnDiv}
+                                    data-cy="connectButton"
+                                  >
+                                    <ButtonFilled
+                                      type="submit"
+                                      disabled={
+                                        gitOpsLoader || updateGitOpsLoader
+                                      }
+                                    >
+                                      {updateGitOpsLoader || gitOpsLoader ? (
+                                        <Loader size={20} />
+                                      ) : (
+                                        <Typography>
+                                          {data?.getGitOpsDetails.Enabled
+                                            ? 'Update'
+                                            : t('settings.gitopsTab.connect')}
+                                        </Typography>
+                                      )}
+                                    </ButtonFilled>
+                                  </div>
+                                </RadioGroup>
+                              </FormControl>
+                            </div>
                           </div>
-                        </div>
+                        ) : null}
                       </div>
                     ) : isGitOpsEnabled === true ? (
                       <GitOpsInfo
@@ -494,6 +504,7 @@ const GitOpsTab = () => {
             </FormControl>
           </form>
           <Modal
+            data-cy="gitopsModal"
             open={isOpen}
             onClose={handleClose}
             modalActions={
@@ -512,7 +523,7 @@ const GitOpsTab = () => {
                     <Typography gutterBottom className={classes.modalHeading}>
                       <strong>Error: {gitopsResult.message}</strong>
                     </Typography>
-                    <ButtonFilled onClick={handleClose}>
+                    <ButtonFilled onClick={handleClose} data-cy="closeButton">
                       {t('settings.gitopsTab.setting')}
                     </ButtonFilled>
                   </div>
@@ -529,7 +540,7 @@ const GitOpsTab = () => {
                         {gitopsResult.message}
                       </Typography>
 
-                      <ButtonFilled onClick={handleClose}>
+                      <ButtonFilled onClick={handleClose} data-cy="closeButton">
                         {t('settings.gitopsTab.setting')}
                       </ButtonFilled>
                     </>

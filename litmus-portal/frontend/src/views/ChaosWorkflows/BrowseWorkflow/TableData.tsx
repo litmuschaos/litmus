@@ -14,6 +14,7 @@ import {
 } from '../../../models/graphql/workflowData';
 import { history } from '../../../redux/configureStore';
 import timeDifferenceForDate from '../../../utils/datesModifier';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
 import useActions from '../../../redux/actions';
@@ -26,6 +27,8 @@ interface TableDataProps {
 
 const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -52,7 +55,16 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           status={exeData.finishedAt.length === 0 ? 'Running' : exeData.phase}
         />
       </TableCell>
-      <TableCell className={classes.workflowNameData}>
+      <TableCell
+        className={classes.workflowNameData}
+        style={{ cursor: 'pointer' }}
+        onClick={() => {
+          history.push({
+            pathname: `/workflows/${data.workflow_run_id}`,
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
+        }}
+      >
         <Typography data-cy="workflowName">
           <strong>{data.workflow_name}</strong>
         </Typography>
@@ -117,7 +129,10 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
               nodeSelection.selectNode({
                 pod_name: '',
               });
-              history.push(`/workflows/${data.workflow_run_id}`);
+              history.push({
+                pathname: `/workflows/${data.workflow_run_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
@@ -133,9 +148,12 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           </MenuItem>
           <MenuItem
             value="Analysis"
-            onClick={() =>
-              history.push(`/workflows/analytics/${data.workflow_id}`)
-            }
+            onClick={() => {
+              history.push({
+                pathname: `/workflows/analytics/${data.workflow_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
           >
             <div className={classes.expDiv} data-cy="workflowAnalytics">
               <img

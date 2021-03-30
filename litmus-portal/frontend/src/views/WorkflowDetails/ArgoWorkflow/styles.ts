@@ -5,11 +5,27 @@ interface StyleProps {
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
+  // Graph options
+  graphOptions: {
+    color: theme.palette.text.disabled,
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: theme.spacing(2),
+  },
+  layoutButton: {
+    minWidth: 0,
+    borderColor: theme.palette.text.hint,
+    marginRight: theme.spacing(2),
+    '& svg': {
+      fill: theme.palette.text.disabled,
+    },
+  },
+
   // Workflow Graph
   dagreGraph: {
-    cursor: 'grab',
-    height: '100%',
     width: '100%',
+    height: '90%',
+    cursor: 'grab',
 
     // Styles for nodes
     '& g g.nodes': {
@@ -20,11 +36,10 @@ const useStyles = makeStyles((theme: Theme) => ({
           transform: (props: StyleProps) =>
             props.horizontal ? 'translate(0, 0)' : 'translate(0, -5px)',
           '& path': {
-            fill: theme.palette.text.secondary,
+            fill: theme.palette.common.white,
           },
         },
         '& text': {
-          fontSize: '0.5rem',
           fill: theme.palette.text.primary,
         },
       },
@@ -46,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Succeeded': {
         '& circle': {
-          fill: theme.palette.status.completed.text,
+          fill: theme.palette.success.main,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
@@ -68,7 +83,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Pending': {
         '& circle': {
-          fill: theme.palette.status.pending.text,
+          fill: theme.palette.horizontalStepper.completed,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
@@ -79,7 +94,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Failed': {
         '& circle': {
-          fill: theme.palette.status.failed.text,
+          fill: theme.palette.error.dark,
         },
         '& circle.selected': {
           strokeDasharray: '6,3',
@@ -92,8 +107,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         fill: theme.palette.status.completed.text,
         cursor: 'default',
         '& rect': {
-          x: -1.5,
-          y: -1.5,
+          x: '-1.5px',
+          y: '-1.5px',
           width: '0.2rem',
           height: '0.2rem',
           rx: '0.625rem !important',
