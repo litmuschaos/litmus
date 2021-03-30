@@ -68,6 +68,8 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
       .then((data) => {
         if ('error' in data) {
           setError(data.error_description as string);
+          setLoading(false);
+          setOpen(true);
         } else {
           CreateUser({
             variables: {
