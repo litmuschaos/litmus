@@ -382,3 +382,41 @@ func ReRunWorkflow(workflowID string) (string, error) {
 
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
 }
+
+// KubeObjHandler receives Kubernetes Object data from subscriber
+func KubeObjHandler(kubeData model.KubeObjectData, r store.StateData) (string, error) {
+	_, err := cluster.VerifyCluster(*kubeData.ClusterID)
+	if err != nil {
+		log.Print("Error", err)
+		return "", err
+	}
+	if reqChan, ok := r.KubeObjectData[kubeData.ClusterID.ClusterID]; ok {
+		resp := model.KubeObjectResponse{
+			ClusterID: kubeData.ClusterID.ClusterID,
+			KubeObj:   kubeData.KubeObj,
+		}
+		reqChan <- &resp
+		close(reqChan)
+		return "KubeData sent successfully", nil
+	}
+	return "KubeData sent successfully", nil
+}
+
+func GetKubeObjData(kubeObject model.KubeObjectRequest, r store.StateData) {
+	reqType := kubeObject.ObjectType
+	payload := model.ClusterAction{
+		Action: &model.ActionPayload{
+			RequestType: reqType,
+		},
+	}
+	if clusterChan, ok := r.ConnectedCluster[kubeObject.ClusterID]; ok {
+		clusterChan <- &payload
+	} else if reqChan, ok := r.KubeObjectData[kubeObject.ClusterID]; ok {
+		resp := model.KubeObjectResponse{
+			ClusterID: kubeObject.ClusterID,
+			KubeObj:   "Data not available",
+		}
+		reqChan <- &resp
+		close(reqChan)
+	}
+}

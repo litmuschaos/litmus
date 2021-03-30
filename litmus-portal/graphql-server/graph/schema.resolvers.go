@@ -94,6 +94,10 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 	return wfHandler.LogsHandler(log, *data_store.Store)
 }
 
+func (r *mutationResolver) KubeObj(ctx context.Context, kubeData model.KubeObjectData) (string, error) {
+	return wfHandler.KubeObjHandler(kubeData, *data_store.Store)
+}
+
 func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
 	return myhub.AddMyHub(ctx, myhubInput, projectID)
 }
@@ -343,6 +347,21 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	verifiedCluster.IsActive = true
 	clusterHandler.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *data_store.Store)
 	return clusterAction, nil
+}
+
+func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
+	log.Print("NEW KUBEOBJECT REQUEST", kubeObjectRequest.ClusterID)
+	kubeObjData := make(chan *model.KubeObjectResponse)
+	data_store.Store.Mutex.Lock()
+	data_store.Store.KubeObjectData[kubeObjectRequest.ClusterID] = kubeObjData
+	data_store.Store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		log.Println("Closed KubeObj Listener")
+		delete(data_store.Store.KubeObjectData, kubeObjectRequest.ClusterID)
+	}()
+	go wfHandler.GetKubeObjData(kubeObjectRequest, *data_store.Store)
+	return kubeObjData, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

@@ -73,6 +73,14 @@ func ClusterConnect(clusterData map[string]string) {
 			logrus.Fatal("gql error : ", string(message))
 		}
 
+		if strings.Index("pods deployments statefulsets daemonsets deploymentconfig rollout", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType) ) >= 0 {
+			err = SendKubeObjects(clusterData,r.Payload.Data.ClusterConnect.Action.RequestType)
+			if err != nil {
+				logrus.WithError(err).Println("error getting kubernetes object data")
+				continue
+			}
+		}
+
 		if strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType) == "logs" {
 			podRequest := types.PodLogRequest{
 				RequestID: r.Payload.Data.ClusterConnect.ProjectID,

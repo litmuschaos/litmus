@@ -16,3 +16,4 @@ type PodLog struct {
 	MainPod  string            `json:"main_logs"`
 	ChaosPod map[string]string `json:"chaos_logs",omitempty`
 }
+
