@@ -6,18 +6,28 @@ import useStyles from './styles';
 import ProbeDetails from './ProbeDetails';
 
 interface AddProbeProps {
+  probesData: any;
+  setProbesData: React.Dispatch<any>;
   addProbe: () => void;
   handleClose: () => void;
   open: boolean;
 }
 
-const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
+const AddProbe: React.FC<AddProbeProps> = ({
+  probesData,
+  setProbesData,
+  addProbe,
+  handleClose,
+  open,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
+  const allProbes = probesData;
+  const [probeType, setProbeType] = React.useState('httpProbe/inputs');
   const [probeData, setProbeData] = React.useState({
     name: '',
-    type: 'http',
+    type: 'httpProbe',
     mode: 'Continuous',
     runProperties: {
       probeTimeout: '',
@@ -26,9 +36,8 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
       probePollingInterval: '',
       initialDelaySeconds: '',
     },
-    inputs: {},
+    'httpProbe/inputs': {},
   });
-
   const handleRunProps = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -41,19 +50,34 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
     });
   };
 
+  const renameKey = (object: any, key: string, newKey: string) => {
+    const clonedObj = { ...object };
+    const targetKey = clonedObj[key];
+    delete clonedObj[key];
+    clonedObj[newKey] = targetKey;
+    return clonedObj;
+  };
+
   const onTypeChange = (
     e: React.ChangeEvent<{
       name?: string | undefined;
       value: unknown;
     }>
   ) => {
+    const newProbe = `${e.target.value}/inputs`;
+    const a = renameKey(probeData, probeType, newProbe);
     setProbeData({
-      ...probeData,
+      ...a,
       type: e.target.value as string,
-      inputs: {},
     });
+    setProbeType(newProbe);
   };
 
+  const handleAddProbe = () => {
+    allProbes.push(probeData);
+    setProbesData(allProbes);
+    addProbe();
+  };
   return (
     <Modal
       open={open}
@@ -69,7 +93,7 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
       }
     >
       <div className={classes.modal}>
-        <form onSubmit={addProbe} className={classes.form}>
+        <form onSubmit={handleAddProbe} className={classes.form}>
           <div className={classes.heading}>
             {t('createWorkflow.tuneWorkflow.addProbe.heading')}
             <strong>
@@ -106,16 +130,16 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
                 name: 'type',
               }}
             >
-              <MenuItem value="http">
+              <MenuItem value="httpProbe">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.http')}
               </MenuItem>
-              <MenuItem value="cmd">
+              <MenuItem value="cmdProbe">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.cmd')}
               </MenuItem>
-              <MenuItem value="k8s">
+              <MenuItem value="k8sProbe">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.k8s')}
               </MenuItem>
-              <MenuItem value="prom">
+              <MenuItem value="promProbe">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.prom')}
               </MenuItem>
             </Select>
