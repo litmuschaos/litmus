@@ -113,7 +113,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
         setCustomWorkflow(false);
         localforage.getItem('workflowCRDLink').then((value) => {
-          if (value !== null && manifest === '') fetchYaml(value as string);
+          if (value !== null) fetchYaml(value as string);
         });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
@@ -315,7 +315,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
         <Row>
           {/* Argo Workflow Graph */}
           <Width width="30%">
-            <WorkflowPreview isCustom={customWorkflow} />
+            <WorkflowPreview isCustomWorkflow={customWorkflow} />
           </Width>
           {/* Workflow Table */}
           <Width width="70%">

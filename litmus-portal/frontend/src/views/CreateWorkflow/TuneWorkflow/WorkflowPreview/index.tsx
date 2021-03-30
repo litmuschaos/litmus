@@ -13,10 +13,12 @@ interface GraphData {
 }
 
 interface WorkflowPreviewProps {
-  isCustom: boolean;
+  isCustomWorkflow: boolean;
 }
 
-const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
+const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
+  isCustomWorkflow,
+}) => {
   let steps: Steps[][] = [];
   const updatedSteps: Steps[][] = [];
 
@@ -34,7 +36,7 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
   });
 
   if (manifest !== '') {
-    steps = extractSteps(isCustom, manifest);
+    steps = extractSteps(isCustomWorkflow, manifest);
   }
 
   useEffect(() => {
