@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme: Theme) => ({
           },
         },
         '& text': {
-          fontSize: '0.5rem',
           fill: theme.palette.text.primary,
         },
       },

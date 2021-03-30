@@ -67,6 +67,7 @@ const useStepIconStyles = makeStyles((theme) => ({
   },
   completed: {
     background: theme.palette.text.primary,
+    color: theme.palette.text.secondary,
   },
   innerCircle: {
     borderRadius: '50%',

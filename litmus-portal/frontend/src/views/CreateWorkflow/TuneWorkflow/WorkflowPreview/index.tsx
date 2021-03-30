@@ -18,6 +18,7 @@ interface WorkflowPreviewProps {
 
 const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
   let steps: Steps[][] = [];
+  const updatedSteps: Steps[][] = [];
 
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
@@ -41,6 +42,18 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
       nodes: [],
       links: [],
     };
+
+    for (let i = 0; i < steps.length; i++) {
+      updatedSteps.push(steps[i]);
+      if (i !== steps.length - 1) {
+        updatedSteps.push([
+          {
+            name: 'StepGroup',
+            template: 'StepGroup',
+          },
+        ]);
+      }
+    }
 
     for (let i = 0; i < steps.length; i++) {
       if (steps[i].length > 1) {
@@ -75,14 +88,28 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({ isCustom }) => {
     }
 
     for (let i = 0; i < steps.length - 1; i++) {
-      data.links.push({
-        source: i.toString(),
-        target: (i + 1).toString(),
-        class: 'succeeded',
-        config: {
-          arrowhead: steps[i][0].name === 'StepGroup' ? 'undirected' : 'vee',
-        },
-      });
+      if (steps[i].length > 1) {
+        for (let j = 0; j < steps[i].length; j++) {
+          data.links.push({
+            source: i.toString(),
+            target: (i + 1).toString(),
+            class: 'succeeded',
+            config: {
+              arrowhead:
+                steps[i][0].name === 'StepGroup' ? 'undirected' : 'vee',
+            },
+          });
+        }
+      } else {
+        data.links.push({
+          source: i.toString(),
+          target: (i + 1).toString(),
+          class: 'succeeded',
+          config: {
+            arrowhead: steps[i][0].name === 'StepGroup' ? 'undirected' : 'vee',
+          },
+        });
+      }
     }
 
     setGraphData({
