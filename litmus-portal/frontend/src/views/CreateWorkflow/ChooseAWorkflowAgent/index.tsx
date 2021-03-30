@@ -71,10 +71,6 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
               },
               workflowIcon: '',
             });
-            workflow.setWorkflowManifest({
-              manifest: '',
-              engineYAML: '',
-            });
           }
         });
         setClusterData(clusters);
