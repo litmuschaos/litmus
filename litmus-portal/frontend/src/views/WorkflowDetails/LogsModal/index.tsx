@@ -10,10 +10,10 @@ import timeDifference from '../../../utils/datesModifier';
 import { RootState } from '../../../redux/reducers';
 import { ExecutionData, Node } from '../../../models/graphql/workflowData';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
-import NodeLogs from '../NodeLogs';
 import trimstring from '../../../utils/trim';
 import useActions from '../../../redux/actions';
 import WorkflowStatus from '../WorkflowStatus';
+import LogsSwitcher from '../LogsSwitcher';
 
 interface NodeLogsModalProps {
   logsOpen: boolean;
@@ -40,21 +40,15 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [selectedNodeID, setSelectedNodeID] = useState<string>(
-    Object.keys(data.nodes)[1]
-  );
   const nodeSelection = useActions(NodeSelectionActions);
   const [nodesArray, setNodesArray] = useState<SelectedNodeType[]>([]);
 
-  const { name, phase, pod_name, type, startedAt, finishedAt } = useSelector(
-    (state: RootState) => state.selectedNode
-  );
+  const { pod_name } = useSelector((state: RootState) => state.selectedNode);
 
   const changeNodeLogs = (selectedKey: string) => {
-    nodesArray.forEach((node) => {
-      if (node.id === selectedKey) {
-        setSelectedNodeID(node.id);
-      }
+    nodeSelection.selectNode({
+      ...data.nodes[selectedKey],
+      pod_name: selectedKey,
     });
   };
 
@@ -70,13 +64,6 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
     });
     setNodesArray([...filteredNodes]);
   }, [data]);
-
-  useEffect(() => {
-    nodeSelection.selectNode({
-      ...data.nodes[selectedNodeID],
-      pod_name: selectedNodeID,
-    });
-  }, [selectedNodeID]);
 
   return (
     <Modal
@@ -97,12 +84,12 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
             {t('workflowDetailsView.headerDesc')} {workflow_name}
           </Typography>
         </div>
-        <hr />
         <div className={classes.section}>
           <div className={classes.nodesData}>
             {nodesArray.map((node: SelectedNodeType) => (
               <div
-                className={classes.nodeData}
+                className={`${classes.nodeData}
+                  ${node.id === pod_name && classes.selectedNode}`}
                 onClick={() => changeNodeLogs(node.id)}
                 key={node.id}
               >
@@ -117,7 +104,9 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                     {trimstring(node.name, 20)}
                   </Typography>
                 </div>
-                <WorkflowStatus phase={node.phase} />
+                <div className={classes.statusWidth}>
+                  <WorkflowStatus phase={node.phase} />
+                </div>
               </div>
             ))}
           </div>
@@ -128,17 +117,19 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                   <img src="/icons/experiment_icon.svg" alt="Experiment Icon" />
                 </span>
                 <Typography className={classes.nodeName}>
-                  <strong>{trimstring(name, 30)}</strong>
+                  <strong>{trimstring(data.nodes[pod_name].name, 30)}</strong>
                 </Typography>
               </div>
-              <WorkflowStatus phase={phase} />
+              <WorkflowStatus phase={data.nodes[pod_name].phase} />
               <div>
                 <Typography className={classes.subLogsHeader}>
                   <strong>
                     {t('workflowDetailsView.workflowInfo.runTime.startTime')}
                   </strong>
                 </Typography>
-                <Typography>{timeDifference(startedAt)}</Typography>
+                <Typography>
+                  {timeDifference(data.nodes[pod_name].startedAt)}
+                </Typography>
               </div>
               <div>
                 <Typography className={classes.subLogsHeader}>
@@ -146,16 +137,24 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                     {t('workflowDetailsView.workflowInfo.runTime.endTime')}
                   </strong>
                 </Typography>
-                <Typography>{timeDifference(finishedAt)}</Typography>
+                <Typography>
+                  {data.nodes[pod_name].finishedAt === '' ? (
+                    <span>Not Yet Finished</span>
+                  ) : (
+                    <span>
+                      {timeDifference(data.nodes[pod_name].finishedAt)}
+                    </span>
+                  )}
+                </Typography>
               </div>
             </div>
             <div className={classes.logsHeight}>
-              <NodeLogs
+              <LogsSwitcher
                 cluster_id={cluster_id}
                 workflow_run_id={workflow_run_id}
                 pod_namespace={pod_namespace}
                 pod_name={pod_name}
-                pod_type={type}
+                pod_type={data.nodes[pod_name].type}
               />
             </div>
           </div>

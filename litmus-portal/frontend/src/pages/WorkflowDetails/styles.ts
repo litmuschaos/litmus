@@ -41,16 +41,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   nodesTable: {
     marginLeft: theme.spacing(-1.5),
   },
-
-  infoDashboard: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(2),
-  },
-
-  closeButton: {
-    borderColor: theme.palette.border.main,
-    float: 'right',
-  },
 }));
 
 export default useStyles;

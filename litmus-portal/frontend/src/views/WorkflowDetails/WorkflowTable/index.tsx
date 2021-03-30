@@ -11,10 +11,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import useStyles, { StyledTableCell } from './styles';
+import useActions from '../../../redux/actions';
+import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import TableData from './TableData';
 import { ExecutionData, Node } from '../../../models/graphql/workflowData';
+import { stepEmbeddedYAMLExtractor } from '../../../utils/yamlUtils';
 
 interface NodeTableProps {
+  manifest: string;
   data: ExecutionData;
   handleClose: () => void;
 }
@@ -28,7 +32,11 @@ interface PaginationData {
   rowsPerPage: number;
 }
 
-const NodeTable: React.FC<NodeTableProps> = ({ data, handleClose }) => {
+const NodeTable: React.FC<NodeTableProps> = ({
+  data,
+  handleClose,
+  manifest,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -38,6 +46,14 @@ const NodeTable: React.FC<NodeTableProps> = ({ data, handleClose }) => {
   });
 
   const [nodesArray, setNodesArray] = useState<SelectedNodeType[]>([]);
+  const nodeSelection = useActions(NodeSelectionActions);
+
+  const changeNodeLogs = (selectedKey: string) => {
+    nodeSelection.selectNode({
+      ...data.nodes[selectedKey],
+      pod_name: selectedKey,
+    });
+  };
 
   useEffect(() => {
     const filteredNodes: SelectedNodeType[] = [];
@@ -114,11 +130,22 @@ const NodeTable: React.FC<NodeTableProps> = ({ data, handleClose }) => {
                   paginationData.pageNo * paginationData.rowsPerPage +
                     paginationData.rowsPerPage
                 )
-                .map((node: SelectedNodeType) => (
-                  <TableRow key={node.id}>
-                    <TableData data={node} handleClose={() => handleClose()} />
-                  </TableRow>
-                ))}
+                .map((node: SelectedNodeType) => {
+                  const stepYAML = stepEmbeddedYAMLExtractor(
+                    manifest,
+                    node.name
+                  );
+                  return (
+                    <TableRow key={node.id}>
+                      <TableData
+                        onViewLogsClick={() => changeNodeLogs(node.id)}
+                        embeddedYAML={stepYAML}
+                        data={node}
+                        handleClose={() => handleClose()}
+                      />
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>

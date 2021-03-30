@@ -2,15 +2,16 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    height: '40rem',
-    padding: theme.spacing(0, 2, 2, 2),
+    height: '43rem',
   },
 
   // Header
   header: {
-    alignItems: 'center',
     display: 'flex',
+    alignItems: 'center',
     height: '8rem',
+    padding: theme.spacing(1, 0, 1, 2),
+    borderBottom: `1px solid ${theme.palette.border.main}`,
   },
 
   // Header title
@@ -22,22 +23,28 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Section
   section: {
     display: 'flex',
-    height: '25rem',
-    width: '100%',
-    padding: theme.spacing(2, 2, 2, 2),
+    height: '35rem',
   },
 
   // Left side panel for Nodes data
   nodesData: {
-    margin: theme.spacing(5, 2, 2, 0),
+    paddingTop: theme.spacing(13),
     width: '35%',
+    height: '100%',
+  },
+
+  selectedNode: {
+    backgroundColor: theme.palette.cards.header,
   },
 
   // One Node data
   nodeData: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginTop: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
+    height: '4rem',
+    alignItems: 'center',
+    cursor: 'pointer',
   },
 
   // Experiment
@@ -48,7 +55,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Node Title
   nodeName: {
-    cursor: 'pointer',
     fontSize: '1rem',
   },
 
@@ -57,10 +63,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(1),
   },
 
+  statusWidth: {
+    width: '30%',
+    textAlign: 'left',
+  },
+
   // Right side panel for Logs
   logsPanel: {
     width: '100%',
     textAlign: 'left',
+    borderLeft: `1px solid ${theme.palette.border.main}`,
   },
 
   // Close Button
@@ -77,11 +89,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: theme.spacing(0, 0, 0, 2),
+    padding: theme.spacing(2, 2, 0, 2),
   },
 
   logsHeight: {
-    height: '100%',
+    height: '27rem',
   },
 }));
 

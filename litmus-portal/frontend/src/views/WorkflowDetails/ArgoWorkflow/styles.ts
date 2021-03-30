@@ -48,24 +48,48 @@ const useStyles = makeStyles((theme: Theme) => ({
         '& circle': {
           fill: theme.palette.status.completed.text,
         },
+        '& circle.selected': {
+          strokeDasharray: '5,2',
+          stroke: theme.palette.status.failed.text,
+          fill: 'none',
+          strokeWidth: '1.5',
+        },
       },
       '& g.Running': {
         '& circle': {
           fill: theme.palette.highlight,
+        },
+        '& circle.selected': {
+          strokeDasharray: '5,2',
+          stroke: theme.palette.highlight,
+          fill: 'none',
+          strokeWidth: '1.5',
         },
       },
       '& g.Pending': {
         '& circle': {
           fill: theme.palette.status.pending.text,
         },
+        '& circle.selected': {
+          strokeDasharray: '5,2',
+          stroke: theme.palette.status.pending.text,
+          fill: 'none',
+          strokeWidth: '1.5',
+        },
       },
       '& g.Failed': {
         '& circle': {
           fill: theme.palette.status.failed.text,
         },
+        '& circle.selected': {
+          strokeDasharray: '6,3',
+          stroke: theme.palette.status.failed.text,
+          fill: 'none',
+          strokeWidth: '0.5',
+        },
       },
       '& g.StepGroup': {
-        fill: theme.palette.status.pending.text,
+        fill: theme.palette.status.completed.text,
         cursor: 'default',
         '& rect': {
           x: -1.5,
@@ -76,40 +100,17 @@ const useStyles = makeStyles((theme: Theme) => ({
           ry: '0.625rem !important',
         },
       },
-      '& g.StepGroup.Succeeded': {
-        fill: theme.palette.status.completed.text,
-      },
-      '& g.StepGroup.Running': {
-        fill: theme.palette.status.running.text,
-      },
-      '& g.StepGroup.Pending': {
-        fill: theme.palette.status.pending.text,
-      },
-      '& g.StepGroup.Failed': {
-        fill: theme.palette.status.failed.text,
-      },
     },
 
     // Styles for edges
     '& g g.edgePaths': {
-      '& g.Succeeded': {
+      '& g.link': {
         fill: theme.palette.status.completed.text,
         stroke: theme.palette.status.completed.text,
       },
-      '& g.Running': {
-        fill: theme.palette.highlight,
-        stroke: theme.palette.highlight,
-      },
-      '& g.Pending': {
-        fill: theme.palette.status.pending.text,
-        stroke: theme.palette.status.pending.text,
-      },
-      '& g.Failed': {
-        fill: theme.palette.status.failed.text,
-        stroke: theme.palette.status.failed.text,
-      },
     },
   },
+
   '@global': {
     '@keyframes runningNodeSpinAnimation': {
       from: {
