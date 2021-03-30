@@ -5,11 +5,20 @@ jobs:
     name: reviewdog
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.13
+        id: go
+      - name: Check out code.
+        uses: actions/checkout@v1
+      - name: Install linters
+        run: '( mkdir linters && cd linters && go get golang.org/x/lint/golint )'
       - uses: reviewdog/action-setup@v1
         with:
           reviewdog_version: latest
       - name: Run reviewdog
         env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEW_DOG_GH_TOKEN }}
         run: |
-          reviewdog -reporter=github-pr-check -runners=golint,govet
+          reviewdog -reporter=github-pr-review

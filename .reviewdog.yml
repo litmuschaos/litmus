@@ -1,0 +1,11 @@
+runner:
+  # examples
+  golint:
+    cmd: golint ./...
+    errorformat:
+      - "%f:%l:%c: %m"
+    level: warning
+  gofmt:
+    cmd: gofmt -l .
+    errorformat:
+      - "%f:%l:%c: %m"
