@@ -22,7 +22,8 @@ function getStepContent(
   step: number,
   engineIndex: number,
   isCustom: boolean | undefined,
-  gotoStep: (page: number) => void
+  gotoStep: (page: number) => void,
+  closeStepper: () => void
 ): React.ReactNode {
   if (isCustom) {
     switch (step) {
@@ -38,7 +39,12 @@ function getStepContent(
         );
       case 2:
         return (
-          <SteadyState isCustom engineIndex={engineIndex} gotoStep={gotoStep} />
+          <SteadyState
+            isCustom
+            engineIndex={engineIndex}
+            gotoStep={gotoStep}
+            closeStepper={closeStepper}
+          />
         );
       default:
         return <General gotoStep={gotoStep} />;
@@ -59,6 +65,7 @@ function getStepContent(
             isCustom={false}
             engineIndex={engineIndex}
             gotoStep={gotoStep}
+            closeStepper={closeStepper}
           />
         );
       default:
@@ -109,7 +116,13 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
             <StepLabel className={classes.stepperLabel}>{label}</StepLabel>
             <StepContent>
               <Typography>
-                {getStepContent(index, experimentIndex, isCustom, gotoStep)}
+                {getStepContent(
+                  index,
+                  experimentIndex,
+                  isCustom,
+                  gotoStep,
+                  closeStepper
+                )}
               </Typography>
             </StepContent>
           </Step>

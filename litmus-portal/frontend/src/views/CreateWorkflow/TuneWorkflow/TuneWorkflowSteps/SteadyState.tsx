@@ -26,12 +26,14 @@ interface SteadyStateProps {
   engineIndex: number;
   gotoStep: (page: number) => void;
   isCustom: boolean;
+  closeStepper: () => void;
 }
 
 const SteadyState: React.FC<SteadyStateProps> = ({
   engineIndex,
   gotoStep,
   isCustom,
+  closeStepper,
 }) => {
   const classes = useStyles();
   const workflow = useActions(WorkflowActions);
@@ -50,6 +52,8 @@ const SteadyState: React.FC<SteadyStateProps> = ({
     setAddProbe(false);
   };
 
+  // handleManiYAMLChange allows to update the main manifest
+  // with the changes in individual Chaos Engines
   const handleMainYAMLChange = () => {
     const mainManifest = YAML.parse(manifest.manifest);
     mainManifest.spec.templates[
@@ -61,35 +65,45 @@ const SteadyState: React.FC<SteadyStateProps> = ({
     });
   };
 
-  const handleAddProbe = () => {
-    chaosEngine.spec.experiments[0].spec.probe = probesData;
-    setProbesData(probesData);
-    handleMainYAMLChange();
-    setAddProbe(false);
-  };
-
   // State variable to store Probe Data
   const [probeDetails, setProbeDetails] = useState<object>();
+  const [probeProperties, setProbeProperties] = useState({});
 
   // State variable to handle the Probe Details Popover
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
     null
   );
+  const [
+    propertyAnchorEl,
+    setPropertyPopAnchorEl,
+  ] = React.useState<null | HTMLElement>(null);
   const isOpen = Boolean(popAnchorEl);
+  const isPropertyOpen = Boolean(propertyAnchorEl);
   const id = isOpen ? 'simple-popover' : undefined;
-  const handlePopOverClose = () => {
-    setPopAnchorEl(null);
-  };
+  const propertyid = isPropertyOpen ? 'simple-popover' : undefined;
 
+  // Event handler for Details and Properties PopOvers
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
   };
+  const handlePropertyPopOverClick = (event: React.MouseEvent<HTMLElement>) => {
+    setPropertyPopAnchorEl(event.currentTarget);
+  };
 
+  // Funtion to handle delete probe operation
   const deleteProbe = (index: number) => {
     probesData.splice(index, 1);
     chaosEngine.spec.experiments[0].spec.probe = probesData;
     setProbesData(probesData);
     handleMainYAMLChange();
+  };
+
+  // Function to handle add probes operation
+  const handleAddProbe = () => {
+    chaosEngine.spec.experiments[0].spec.probe = probesData;
+    setProbesData(probesData);
+    handleMainYAMLChange();
+    setAddProbe(false);
   };
 
   return (
@@ -101,8 +115,8 @@ const SteadyState: React.FC<SteadyStateProps> = ({
               <TableCell>Probe Name</TableCell>
               <TableCell align="left">Type</TableCell>
               <TableCell align="left">Mode</TableCell>
-              <TableCell align="left">Properties</TableCell>
               <TableCell align="left">Probe Details</TableCell>
+              <TableCell align="left">Properties</TableCell>
               <TableCell align="left" />
             </TableRow>
           </TableHead>
@@ -125,14 +139,16 @@ const SteadyState: React.FC<SteadyStateProps> = ({
                       }}
                       className={classes.btn1}
                     >
-                      <Typography> Show Properties </Typography>
+                      <Typography> Show Details </Typography>
                     </ButtonOutlined>
                   </TableCell>
+
+                  {/* Probe Details PopOver */}
                   <Popover
                     id={id}
                     open={isOpen}
                     anchorEl={popAnchorEl}
-                    onClose={handlePopOverClose}
+                    onClose={() => setPopAnchorEl(null)}
                     anchorOrigin={{
                       vertical: 'bottom',
                       horizontal: 'center',
@@ -149,7 +165,40 @@ const SteadyState: React.FC<SteadyStateProps> = ({
                       </Typography>
                     </div>
                   </Popover>
-                  <TableCell align="left">Probe Details</TableCell>
+                  <TableCell align="left">
+                    <ButtonOutlined
+                      onClick={(event) => {
+                        setProbeProperties(probe.runProperties);
+                        handlePropertyPopOverClick(event);
+                      }}
+                      className={classes.btn1}
+                    >
+                      <Typography> Show Properties </Typography>
+                    </ButtonOutlined>
+                  </TableCell>
+
+                  {/* Probe Properties PopOver */}
+                  <Popover
+                    id={propertyid}
+                    open={isPropertyOpen}
+                    anchorEl={propertyAnchorEl}
+                    onClose={() => setPropertyPopAnchorEl(null)}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'center',
+                    }}
+                    className={classes.probePopOver}
+                  >
+                    <div className={classes.popOverDiv}>
+                      <Typography className={classes.probeText}>
+                        <pre>{YAML.stringify(probeProperties)}</pre>
+                      </Typography>
+                    </div>
+                  </Popover>
                   <TableCell>
                     <IconButton
                       onClick={() => {
@@ -159,7 +208,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({
                       <img
                         src="/icons/bin-red-delete.svg"
                         alt="delete"
-                        style={{ width: 20, height: 20 }}
+                        className={classes.deleteIcon}
                       />
                     </IconButton>
                   </TableCell>
@@ -203,7 +252,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({
         <Button
           variant="contained"
           color="primary"
-          onClick={() => gotoStep(0)}
+          onClick={() => closeStepper()}
           className={classes.button}
         >
           Finish
