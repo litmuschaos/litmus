@@ -48,7 +48,8 @@ export interface CreateUserData {
   username: string;
   email: string;
   name: string;
-  project_name: string;
+  userID: string;
+  role: string;
 }
 
 export interface UpdateUser {
@@ -119,4 +120,10 @@ export interface ProjectDetailVars {
 export enum Role {
   viewer = 'Viewer',
   editor = 'Editor',
+  owner = 'Owner',
+}
+
+export enum UserRole {
+  admin = 'admin',
+  user = 'user',
 }

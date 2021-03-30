@@ -18,7 +18,8 @@ input CreateUserInput {
   email: String
   company_name: String
   name: String
-  project_name: String!
+  userID: String!
+  role: String!
 }
 
 input UpdateUserInput {
