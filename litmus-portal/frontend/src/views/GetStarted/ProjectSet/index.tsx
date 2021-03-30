@@ -115,7 +115,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
       <div className={classes.rootLitmusText}>
         <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
         <Typography className={classes.HeaderText}>
-          You’re almost there! Set your project named
+          You’re almost there! Set your project name
         </Typography>
         <Typography className={classes.litmusText}>
           The project will be yours with owner access where you can create

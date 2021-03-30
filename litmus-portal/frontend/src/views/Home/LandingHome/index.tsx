@@ -8,7 +8,7 @@ import { CreateWorkflowCard } from '../../../components/CreateWorkflowCard';
 import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import { GET_CLUSTER, LIST_PROJECTS } from '../../../graphql';
 import { Clusters, ClusterVars } from '../../../models/graphql/clusterData';
-import { Member, Project, Projects } from '../../../models/graphql/user';
+import { Member, Project, Projects, Role } from '../../../models/graphql/user';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
@@ -179,20 +179,22 @@ const LandingHome: React.FC = () => {
               <Typography>{t('settings.teamingTab.project')}</Typography>
             )}
           </div>
-          <div className={classes.flexEnd}>
-            {t('home.NonAdmin.toProjects')}
-            <IconButton
-              onClick={() => {
-                tabs.changeSettingsTabs(1);
-                history.push({
-                  pathname: '/settings',
-                  search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
-                });
-              }}
-            >
-              <img src="./icons/goToIcon.svg" alt="go to" />
-            </IconButton>
-          </div>
+          {getProjectRole() === Role.owner && (
+            <div className={classes.flexEnd}>
+              {t('home.NonAdmin.toProjects')}
+              <IconButton
+                onClick={() => {
+                  tabs.changeSettingsTabs(1);
+                  history.push({
+                    pathname: '/settings',
+                    search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
+                  });
+                }}
+              >
+                <img src="./icons/goToIcon.svg" alt="go to" />
+              </IconButton>
+            </div>
+          )}
         </Paper>
         <LocalQuickActionCard
           className={classes.quickActionCard}
