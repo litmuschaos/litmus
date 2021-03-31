@@ -65,7 +65,7 @@ const ReliablityScore = forwardRef((_, ref) => {
   return (
     <div>
       <form className={classes.root}>
-        <div className={classes.mainDiv}>
+        <div className={classes.innerContainer}>
           <div>
             <Typography className={classes.headerText}>
               <strong>{t('createWorkflow.reliabilityScore.header')}</strong>

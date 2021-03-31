@@ -35,6 +35,7 @@ import WorkflowTable from './WorkflowTable';
 
 interface WorkflowProps {
   name: string;
+  crd: string;
 }
 
 interface WorkflowExperiment {
@@ -59,6 +60,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [addExpModal, setAddExpModal] = useState(false);
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
+    crd: '',
   });
   const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
   const manifest = useSelector(
@@ -106,14 +108,16 @@ const TuneWorkflow = forwardRef((_, ref) => {
     localforage.getItem('workflow').then((workflow) =>
       setWorkflow({
         name: (workflow as WorkflowDetailsProps).name,
+        crd: (workflow as WorkflowDetailsProps).CRDLink,
       })
     );
     localforage.getItem('selectedScheduleOption').then((value) => {
       // Setting default data when MyHub is selected
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
         setCustomWorkflow(false);
-        localforage.getItem('workflowCRDLink').then((value) => {
-          if (value !== null) fetchYaml(value as string);
+        localforage.getItem('workflow').then((value) => {
+          if (value !== null && (value as WorkflowDetailsProps).CRDLink !== '')
+            fetchYaml((value as WorkflowDetailsProps).CRDLink);
         });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {

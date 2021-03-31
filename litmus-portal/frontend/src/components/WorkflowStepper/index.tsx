@@ -15,6 +15,7 @@ import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
 import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
 import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
+import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
 import WorkflowSettings from '../../views/CreateWorkflow/WorkflowSettings';
 import { LitmusStepper } from '../LitmusStepper';
 import useStyles from './styles';
@@ -61,14 +62,11 @@ function getStepContent(
     case 4:
       return <ReliablityScore ref={childRef} />;
     case 5:
-      return <ScheduleWorkflow />;
+      return <ScheduleWorkflow ref={childRef} />;
     case 6:
-      return (
-        // <VerifyCommit isEditable gotoStep={(page: number) => gotoStep(page)} />
-        <ScheduleWorkflow />
-      );
+      return <VerifyCommit ref={childRef} />;
     default:
-      return <ChooseAWorkflowAgent />;
+      return <ChooseAWorkflowAgent ref={childRef} />;
   }
 }
 
@@ -127,7 +125,7 @@ const WorkflowStepper = () => {
           position !== 'top' ? (
           <></>
         ) : activeStep === steps.length - 1 ? ( // Show Finish button at Bottom for Last Step
-          <ButtonFilled onClick={() => {}}>Finish</ButtonFilled>
+          <ButtonFilled onClick={() => handleNext()}>Finish</ButtonFilled>
         ) : position === 'top' ? ( // Apply headerButtonWrapper style for top button's div
           <div className={classes.headerButtonWrapper} aria-label="buttons">
             <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
@@ -211,10 +209,6 @@ const WorkflowStepper = () => {
       >
         {getStepContent(activeStep, childRef)}
       </LitmusStepper>
-      {/* Control Buttons */}
-      {/* <div className={classes.bottomWrapper}>
-        <ControlButton position="bottom" />
-      </div> */}
     </div>
   );
 };

@@ -16,11 +16,16 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right top',
   },
-  headerDiv: {
-    marginLeft: theme.spacing(2.5),
+  // Inner Container
+  innerContainer: {
+    margin: theme.spacing(4, 'auto'),
+    width: '95%', // Inner width of the container
   },
   header: {
-    fontSize: '1.5rem',
+    fontSize: '1.2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1.4rem',
+    },
     fontWeight: 700,
   },
   modalHeaderFont: {

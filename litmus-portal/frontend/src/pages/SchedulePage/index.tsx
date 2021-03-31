@@ -56,10 +56,7 @@ function getSteps(): string[] {
   ];
 }
 
-function getStepContent(
-  stepIndex: number,
-  gotoStep: (page: number) => void
-): React.ReactNode {
+function getStepContent(stepIndex: number): React.ReactNode {
   switch (stepIndex) {
     case 0:
       return <ChooseAWorkflowAgent />;
@@ -72,12 +69,7 @@ function getStepContent(
     case 4:
       return <ScheduleWorkflow />;
     case 5:
-      return (
-        <VerifyCommit
-          isEditable={false}
-          gotoStep={(page: number) => gotoStep(page)}
-        />
-      );
+      return <VerifyCommit />;
     default:
       return <ChooseAWorkflowAgent />;
   }
@@ -343,10 +335,6 @@ const EditScheduledWorkflow: React.FC = () => {
     handleMutation();
   };
 
-  function gotoStep({ page }: { page: number }) {
-    setActiveStep(page);
-  }
-
   // Check correct permissions for user
   if (userRole === 'Viewer')
     return (
@@ -394,7 +382,7 @@ const EditScheduledWorkflow: React.FC = () => {
             handleNext={handleNext}
             finishAction={() => {}}
           >
-            {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
+            {getStepContent(activeStep)}
           </LitmusStepper>
 
           {/* Control Buttons */}
