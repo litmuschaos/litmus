@@ -2,6 +2,8 @@ import { getNode } from '../../../utils/createSVGNode';
 import { getIcon } from './icons';
 
 interface CreateLabelProps {
+  currentNodeID: string;
+  selectedNodeID: string;
   label: string;
   tooltip?: string;
   phase: string;
@@ -16,7 +18,14 @@ interface CreateLabel {
 // @ts-ignore
 const isFirefox = typeof InstallTrigger !== 'undefined';
 
-const createLabel: CreateLabel = ({ label, tooltip, phase, horizontal }) => {
+const createLabel: CreateLabel = ({
+  currentNodeID,
+  selectedNodeID,
+  label,
+  tooltip,
+  phase,
+  horizontal,
+}) => {
   const g = getNode('g');
 
   const circle = getNode('circle', {
@@ -24,7 +33,19 @@ const createLabel: CreateLabel = ({ label, tooltip, phase, horizontal }) => {
     cy: 0,
     r: 15,
   });
+
   g.appendChild(circle);
+
+  // If Current Node is selected, then selection circle gets appended
+  if (currentNodeID === selectedNodeID) {
+    const outerCircle = getNode('circle', {
+      cx: 0,
+      cy: 0,
+      r: 18,
+      class: 'selected',
+    });
+    g.appendChild(outerCircle);
+  }
 
   if (tooltip) {
     const title = getNode('title');

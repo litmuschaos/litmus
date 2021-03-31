@@ -1,20 +1,25 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ButtonOutlined } from 'litmus-ui';
 import { ExecutionData } from '../../../models/graphql/workflowData';
 import timeDifference from '../../../utils/datesModifier';
 import useStyles from './styles';
 
 interface WorkflowInfoProps {
+  setIsInfoToggled?: React.Dispatch<React.SetStateAction<boolean>>;
   tab: number;
   data: ExecutionData;
   cluster_name: string;
+  resiliencyScore: number;
 }
 
 const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
+  setIsInfoToggled,
   tab,
   data,
   cluster_name,
+  resiliencyScore,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -28,9 +33,21 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
       {/* Workflow Information */}
 
       {/* Header Section */}
-      <Typography className={classes.header}>
-        <strong>{t('workflowDetailsView.workflowInfo.header')}</strong>
-      </Typography>
+      <div className={classes.header}>
+        <Typography className={classes.title}>
+          <strong>{t('workflowDetailsView.workflowInfo.header')}</strong>
+        </Typography>
+        {tab === 1 && setIsInfoToggled && (
+          <ButtonOutlined
+            className={classes.closeButton}
+            onClick={() => {
+              setIsInfoToggled(false);
+            }}
+          >
+            &#x2715;
+          </ButtonOutlined>
+        )}
+      </div>
 
       {/* Body Section divided in 4 parts */}
       <div className={classes.section}>
@@ -40,7 +57,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
             {t('workflowDetailsView.workflowInfo.resilienceScore')}
           </Typography>
           {/* Static data, will be changed with API response */}
-          <Typography className={classes.resilliencyScore}>100%</Typography>
+          <Typography className={classes.resilliencyScore}>
+            {`${resiliencyScore}%`}
+          </Typography>
         </div>
 
         {/* 2. Run Time Sub Section */}

@@ -46,11 +46,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2),
   },
-
-  closeButton: {
-    borderColor: theme.palette.border.main,
-    float: 'right',
-  },
 }));
 
 export default useStyles;

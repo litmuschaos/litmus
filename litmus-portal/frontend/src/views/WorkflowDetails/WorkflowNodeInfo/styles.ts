@@ -2,21 +2,36 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    height: '25rem',
     width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
     backgroundColor: theme.palette.cards.background,
-    padding: '1rem 1rem',
-  },
-
-  leftPanel: {
-    marginRight: theme.spacing(2),
-    width: '45%',
+    padding: theme.spacing(4, 6, 6, 6),
   },
 
   header: {
-    fontSize: '1rem',
-    marginBottom: theme.spacing(1),
+    height: '2rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+
+  title: {
+    fontSize: '1.5rem',
+    margin: 'auto,0',
+  },
+
+  section: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+
+  leftPanel: {
+    margin: theme.spacing(3, 2, 0, 0),
+    width: '25%',
+  },
+
+  rightPanel: {
+    width: '100%',
+    height: '16rem',
   },
 
   subSection: {
@@ -25,26 +40,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: theme.spacing(0, 0, 1, 0),
   },
 
-  text: {
+  textMargin: {
     fontSize: '1rem',
-  },
-
-  topMarginBox: {
-    display: 'flex',
-    marginTop: theme.spacing(1),
+    margin: theme.spacing(1, 0),
   },
 
   icon: {
     marginRight: theme.spacing(1),
   },
 
-  logsHeight: {
-    width: '100%',
-    height: '15rem',
-  },
-
   runningStatusText: {
     color: theme.palette.highlight,
+  },
+
+  closeButton: {
+    borderColor: theme.palette.border.main,
+    float: 'right',
   },
 }));
 

@@ -89,4 +89,50 @@ export const generateChaosQuery = (
   return queryStringWithEngineName.replaceAll('*{}', namespace);
 };
 
+export const stepEmbeddedYAMLExtractor = (
+  manifest: string,
+  stepName: string
+) => {
+  const file = manifest;
+  let embeddedYaml = '';
+  try {
+    const parsedYaml = YAML.parse(file as string);
+    try {
+      if (parsedYaml.kind === 'CronWorkflow') {
+        const totalSteps = parsedYaml.spec.workflowSpec.templates.length - 1; // Total Steps in CronWorkflow
+        for (let i = 0; i < totalSteps; i++) {
+          if (
+            parsedYaml.spec.workflowSpec.templates[1 + i].inputs.artifacts[0]
+              .name === stepName
+          ) {
+            embeddedYaml =
+              parsedYaml.spec.workflowSpec.templates[1 + i].inputs.artifacts[0]
+                .raw.data;
+            break;
+          }
+        }
+      } else {
+        const totalSteps = parsedYaml.spec.templates.length - 1; // Total Steps in Workflow
+        for (let i = 0; i < totalSteps; i++) {
+          if (
+            parsedYaml.spec.templates[1 + i].inputs.artifacts[0].name ===
+            stepName
+          ) {
+            embeddedYaml =
+              parsedYaml.spec.templates[1 + i].inputs.artifacts[0].raw.data;
+            break;
+          }
+        }
+      }
+    } catch (err) {
+      embeddedYaml = '';
+    } finally {
+      return embeddedYaml;
+    }
+  } catch (err) {
+    embeddedYaml = '';
+    return embeddedYaml;
+  }
+};
+
 export default parsed;

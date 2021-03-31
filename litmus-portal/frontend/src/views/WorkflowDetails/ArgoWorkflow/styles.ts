@@ -63,23 +63,49 @@ const useStyles = makeStyles((theme: Theme) => ({
         '& circle': {
           fill: theme.palette.success.main,
         },
+        '& circle.selected': {
+          strokeDasharray: '5,2',
+          stroke: theme.palette.success.main,
+          fill: 'none',
+          strokeWidth: '1.5',
+        },
       },
       '& g.Running': {
         '& circle': {
-          fill: theme.palette.warning.main,
+          fill: theme.palette.highlight,
+        },
+        '& circle.selected': {
+          strokeDasharray: '5,2',
+          stroke: theme.palette.highlight,
+          fill: 'none',
+          strokeWidth: '1.5',
         },
       },
       '& g.Pending': {
         '& circle': {
           fill: theme.palette.horizontalStepper.completed,
         },
+        '& circle.selected': {
+          strokeDasharray: '5,2',
+          stroke: theme.palette.horizontalStepper.completed,
+          fill: 'none',
+          strokeWidth: '1.5',
+        },
       },
       '& g.Failed': {
         '& circle': {
-          fill: theme.palette.error.dark,
+          fill: theme.palette.status.failed.text,
+        },
+        '& circle.selected': {
+          strokeDasharray: '5,2',
+          stroke: theme.palette.status.failed.text,
+          fill: 'none',
+          strokeWidth: '1.5',
         },
       },
       '& g.StepGroup': {
+        fill: theme.palette.status.completed.text,
+        cursor: 'default',
         '& rect': {
           x: '-1.5px',
           y: '-1.5px',
@@ -89,37 +115,13 @@ const useStyles = makeStyles((theme: Theme) => ({
           ry: '0.625rem !important',
         },
       },
-      '& g.StepGroup.Succeeded': {
-        fill: theme.palette.success.main,
-      },
-      '& g.StepGroup.Running': {
-        fill: theme.palette.warning.main,
-      },
-      '& g.StepGroup.Pending': {
-        fill: theme.palette.horizontalStepper.completed,
-      },
-      '& g.StepGroup.Failed': {
-        fill: theme.palette.error.dark,
-      },
     },
 
     // Styles for edges
     '& g g.edgePaths': {
-      '& g.Succeeded': {
-        fill: theme.palette.success.main,
-        stroke: theme.palette.success.main,
-      },
-      '& g.Running': {
-        fill: theme.palette.warning.main,
-        stroke: theme.palette.warning.main,
-      },
-      '& g.Pending': {
-        fill: theme.palette.horizontalStepper.completed,
-        stroke: theme.palette.horizontalStepper.completed,
-      },
-      '& g.Failed': {
-        fill: theme.palette.error.dark,
-        stroke: theme.palette.error.dark,
+      '& g.link': {
+        fill: theme.palette.status.completed.text,
+        stroke: theme.palette.status.completed.text,
       },
     },
   },
