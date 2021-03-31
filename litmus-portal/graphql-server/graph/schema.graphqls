@@ -80,7 +80,7 @@ input ClusterIdentity {
 
 type ClusterConfirmResponse {
   isClusterConfirmed: Boolean!
-  newClusterKey: String
+  newAccessKey: String
   cluster_id: String
 }
 
@@ -279,8 +279,7 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 

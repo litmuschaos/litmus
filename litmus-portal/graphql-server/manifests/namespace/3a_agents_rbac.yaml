@@ -2,10 +2,10 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: subscriber-namespace
+  name: subscriber-role
   namespace: #{AGENT-NAMESPACE}
   labels:
-    name: subscriber-namespace
+    name: subscriber-role
 rules:
   - apiGroups:
       - ""
@@ -15,6 +15,7 @@ rules:
       - get
       - create
       - delete
+      - update
   - apiGroups:
       - litmuschaos.io
     resources:
@@ -56,7 +57,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: subscriber-namespace-rb
+  name: subscriber-role-binding
   namespace: #{AGENT-NAMESPACE}
 subjects:
   - kind: ServiceAccount
@@ -64,7 +65,7 @@ subjects:
     namespace: #{AGENT-NAMESPACE}
 roleRef:
   kind: Role
-  name: subscriber-namespace
+  name: subscriber-role
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1

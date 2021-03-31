@@ -16,8 +16,8 @@ import (
 )
 
 func ClusterConnect(clusterData map[string]string) {
-	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CID"] + `\", access_key: \"` + clusterData["KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     namespace\n     }\n  }\n}\n"}`
-	serverURL, err := url.Parse(clusterData["GQL_SERVER"])
+	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     namespace\n     }\n  }\n}\n"}`
+	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
 	scheme := "ws"
 	if serverURL.Scheme == "https" {
 		scheme = "wss"
