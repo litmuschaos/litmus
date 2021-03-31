@@ -44,6 +44,7 @@ type ResolverRoot interface {
 
 type DirectiveRoot struct {
 	Authorized func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	HasRole    func(ctx context.Context, obj interface{}, next graphql.Resolver, role model.Role) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -3463,6 +3464,13 @@ enum MemberRole {
 # https://gqlgen.com/getting-started/
 
 directive @authorized on FIELD_DEFINITION
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+enum Role {
+  Owner
+  Editor
+  Viewer
+}
 
 type Cluster {
   cluster_id: ID!
@@ -3777,7 +3785,7 @@ type Mutation {
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
   #Used for sending invitation
-  sendInvitation(member: MemberInput!): Member @authorized
+  sendInvitation(member: MemberInput!): Member @hasRole(role: Owner)
 
   #Used for accepting invitation
   acceptInvitation(member: MemberInput!): String! @authorized
@@ -3898,6 +3906,20 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) dir_hasRole_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.Role
+	if tmp, ok := rawArgs["role"]; ok {
+		arg0, err = ec.unmarshalNRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐRole(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["role"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_acceptInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -8356,10 +8378,14 @@ func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field 
 			return ec.resolvers.Mutation().SendInvitation(rctx, args["member"].(model.MemberInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐRole(ctx, "Owner")
+			if err != nil {
+				return nil, err
 			}
-			return ec.directives.Authorized(ctx, nil, directive0)
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
 		tmp, err := directive1(rctx)
@@ -22428,6 +22454,15 @@ func (ec *executionContext) marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitm
 		return graphql.Null
 	}
 	return ec._Project(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐRole(ctx context.Context, v interface{}) (model.Role, error) {
+	var res model.Role
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐRole(ctx context.Context, sel ast.SelectionSet, v model.Role) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNSSHKey2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSSHKey(ctx context.Context, sel ast.SelectionSet, v model.SSHKey) graphql.Marshaler {
