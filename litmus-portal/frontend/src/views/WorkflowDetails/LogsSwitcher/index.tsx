@@ -226,7 +226,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
           {data !== undefined ? (
             <div>{parseLogs(data.getPodLog.log)}</div>
           ) : (
-            <Typography variant="h5">
+            <Typography className={classes.text} variant="h5">
               {t('workflowDetailsView.nodeLogs.fetching')}
             </Typography>
           )}

@@ -86,7 +86,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   popoverItems: {
-    margin: 'auto',
+    textAlign: 'left',
+    marginTop: 'auto',
+    marginBottom: 'auto',
   },
 }));
 

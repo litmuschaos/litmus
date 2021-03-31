@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: theme.palette.status.failed.text,
+          stroke: theme.palette.success.main,
           fill: 'none',
           strokeWidth: '1.5',
         },
@@ -87,14 +87,14 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: theme.palette.status.pending.text,
+          stroke: theme.palette.horizontalStepper.completed,
           fill: 'none',
           strokeWidth: '1.5',
         },
       },
       '& g.Failed': {
         '& circle': {
-          fill: theme.palette.error.dark,
+          fill: theme.palette.status.failed.text,
         },
         '& circle.selected': {
           strokeDasharray: '6,3',

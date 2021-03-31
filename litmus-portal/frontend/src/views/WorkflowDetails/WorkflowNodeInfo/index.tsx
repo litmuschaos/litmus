@@ -75,7 +75,11 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
               {t('workflowDetailsView.workflowNodeInfo.startTime')}:
             </strong>
             &nbsp;&nbsp;&nbsp;
-            <span>{timeDifference(selectedNode.startedAt)}</span>
+            <span>
+              {selectedNode.phase !== 'Pending'
+                ? timeDifference(selectedNode.startedAt)
+                : '- -'}
+            </span>
           </Typography>
           {/*End Time */}
           <Typography className={classes.textMargin}>
@@ -86,7 +90,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
             {selectedNode.finishedAt !== '' ? (
               <span>{timeDifference(selectedNode.finishedAt)}</span>
             ) : (
-              <span>Not Yet Finished</span>
+              <span>- -</span>
             )}
           </Typography>
           {/*Duration */}

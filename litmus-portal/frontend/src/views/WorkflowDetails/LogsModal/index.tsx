@@ -128,7 +128,9 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                   </strong>
                 </Typography>
                 <Typography>
-                  {timeDifference(data.nodes[pod_name].startedAt)}
+                  {data.nodes[pod_name].phase === 'Pending'
+                    ? '- -'
+                    : timeDifference(data.nodes[pod_name].startedAt)}
                 </Typography>
               </div>
               <div>
@@ -139,7 +141,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                 </Typography>
                 <Typography>
                   {data.nodes[pod_name].finishedAt === '' ? (
-                    <span>Not Yet Finished</span>
+                    <span>- -</span>
                   ) : (
                     <span>
                       {timeDifference(data.nodes[pod_name].finishedAt)}
