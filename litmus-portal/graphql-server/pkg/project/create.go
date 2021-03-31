@@ -11,6 +11,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 
 	"github.com/google/uuid"
+	validate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rbac"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
@@ -97,6 +98,12 @@ func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, 
 
 // SendInvitation :Send an invitation
 func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+	permission := validate.ValidateRole(ctx, member.ProjectID, "Owner")
+
+	if permission != nil {
+		return nil, permission
+	}
+
 	invitation, err := getInvitation(ctx, member)
 	if err != nil {
 		return nil, err

@@ -3,13 +3,6 @@
 # https://gqlgen.com/getting-started/
 
 directive @authorized on FIELD_DEFINITION
-directive @hasRole(role: Role!) on FIELD_DEFINITION
-
-enum Role {
-  Owner
-  Editor
-  Viewer
-}
 
 type Cluster {
   cluster_id: ID!
@@ -324,7 +317,7 @@ type Mutation {
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
   #Used for sending invitation
-  sendInvitation(member: MemberInput!): Member @hasRole(role: Owner)
+  sendInvitation(member: MemberInput!): Member! @authorized
 
   #Used for accepting invitation
   acceptInvitation(member: MemberInput!): String! @authorized
