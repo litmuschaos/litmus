@@ -1,22 +1,25 @@
 /* eslint-disable */
 import { Typography } from '@material-ui/core';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
-import NodeLogs from '../NodeLogs';
 import ChaosResult from '../ChaosResult';
+import NodeLogs from '../NodeLogs';
 import useStyles from './styles';
+import trimstring from '../../../utils/trim';
+import WorkflowStatus from '../WorkflowStatus';
 
 interface WorkflowNodeInfoProps {
+  workflow_name: string;
   cluster_id: string;
   workflow_run_id: string;
   pod_namespace: string;
 }
 
 const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
+  workflow_name,
   cluster_id,
   workflow_run_id,
   pod_namespace,
@@ -24,128 +27,89 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const [logsOpen, setLogsOpen] = useState<boolean>(false);
-  const [resultModal, setResultModal] = useState(false);
   // Get the nelected node from redux
-  const { name, phase, pod_name, type, startedAt, finishedAt } = useSelector(
+  const { phase, pod_name, type, startedAt, finishedAt } = useSelector(
     (state: RootState) => state.selectedNode
   );
 
-  const handleClose = () => {
-    setLogsOpen(false);
-  };
-  const handleResultClose = () => {
-    setResultModal(false);
-  };
   return (
     <div className={classes.root}>
-      {/* Logs Modal */}
-      {logsOpen ? (
+      {/* Node Details */}
+      <div className={classes.leftPanel}>
+        <Typography className={classes.header}>
+          <strong>{t('workflowDetailsView.workflowInfo.header')}:</strong>
+        </Typography>
+        <div className={classes.subSection}>
+          <Typography className={classes.text}>
+            {trimstring(workflow_name, 30)}
+          </Typography>
+          <WorkflowStatus phase={phase} />
+        </div>
+        <hr />
+        <div className={classes.subSection}>
+          <div>
+            <Typography className={classes.text}>
+              <strong>
+                {t('workflowDetailsView.workflowNodeInfo.startTime')}:
+              </strong>
+              &nbsp;&nbsp;&nbsp;
+              <span>{timeDifference(startedAt)}</span>
+            </Typography>
+          </div>
+          <div>
+            <Typography className={classes.text}>
+              <strong>
+                {t('workflowDetailsView.workflowNodeInfo.endTime')}:
+              </strong>
+              &nbsp;&nbsp;&nbsp;
+              {finishedAt !== '' ? (
+                <span>{timeDifference(finishedAt)}</span>
+              ) : (
+                <span className={classes.runningStatusText}>Running</span>
+              )}
+            </Typography>
+          </div>
+        </div>
+        <Typography className={classes.text}>
+          <strong>{t('workflowDetailsView.workflowNodeInfo.duration')}:</strong>
+          &nbsp;&nbsp;&nbsp;
+          {finishedAt !== ''
+            ? (
+                (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
+                60
+              ).toFixed(1)
+            : (
+                (new Date().getTime() / 1000 - parseInt(startedAt, 10)) /
+                60
+              ).toFixed(1)}{' '}
+          minutes
+        </Typography>
+        <div className={classes.topMarginBox}>
+          <img className={classes.icon} src={'/icons/filledDownArrow.svg'} />
+          <Typography className={classes.text}>
+            <strong>
+              {t('workflowDetailsView.workflowNodeInfo.viewPairs')}
+            </strong>
+          </Typography>
+        </div>
+        <div className={classes.topMarginBox}>
+          <img className={classes.icon} src={'/icons/filledDownArrow.svg'} />
+          <Typography className={classes.text}>
+            <strong>
+              {t('workflowDetailsView.workflowNodeInfo.viewApplicationDetails')}
+            </strong>
+          </Typography>
+        </div>
+      </div>
+      {/* Node Logs*/}
+      <div className={classes.logsHeight}>
         <NodeLogs
-          logsOpen={logsOpen}
-          handleClose={handleClose}
           cluster_id={cluster_id}
           workflow_run_id={workflow_run_id}
           pod_namespace={pod_namespace}
           pod_name={pod_name}
           pod_type={type}
         />
-      ) : (
-        <></>
-      )}
-      {/* Chaos Result Modal */}
-      {resultModal ? (
-        <ChaosResult
-          chaosResultOpen={resultModal}
-          handleResultClose={handleResultClose}
-          workflow_run_id={workflow_run_id}
-          pod_name={pod_name}
-        />
-      ) : null}
-      {/* Node Type */}
-      <div className={classes.heightMaintainer}>
-        <Typography className={classes.nodeSpacing}>
-          <span className={classes.bold}>
-            {t('workflowDetailsView.workflowNodeInfo.type')}:
-          </span>{' '}
-          {type}
-        </Typography>
-      </div>
-      <hr />
-
-      {/* Node Phase */}
-      <div className={classes.nodeSpacing}>
-        <div className={classes.heightMaintainer}>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.phase')}:
-            </span>{' '}
-            {phase}
-          </Typography>
-        </div>
-      </div>
-      <hr />
-
-      {/* Node Durations */}
-      <div className={classes.nodeSpacing}>
-        <div className={classes.heightMaintainer}>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.startTime')}:
-            </span>{' '}
-            {timeDifference(startedAt)}
-          </Typography>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.endTime')}:
-            </span>{' '}
-            {finishedAt !== ''
-              ? timeDifference(finishedAt)
-              : 'Not yet finished'}
-          </Typography>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.duration')}:{' '}
-            </span>{' '}
-            {finishedAt !== ''
-              ? (
-                  (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
-                  60
-                ).toFixed(1)
-              : (
-                  (new Date().getTime() / 1000 - parseInt(startedAt, 10)) /
-                  60
-                ).toFixed(1)}{' '}
-            minutes
-          </Typography>
-        </div>
-      </div>
-      <hr />
-      {/* Step Name */}
-      <div className={classes.nodeSpacing}>
-        <div className={classes.heightMaintainer}>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.nodeName')}:
-            </span>{' '}
-            {name}
-          </Typography>
-        </div>
-      </div>
-      <div className={classes.footerButton}>
-        <ButtonOutline isDisabled={false} handleClick={() => setLogsOpen(true)}>
-          {t('workflowDetailsView.workflowNodeInfo.button.logs')}
-        </ButtonOutline>
-        <div className={classes.resultBtn}>
-          {type === 'ChaosEngine' ? (
-            <ButtonOutline
-              isDisabled={false}
-              handleClick={() => setResultModal(true)}
-            >
-              {t('workflowDetailsView.workflowNodeInfo.button.result')}
-            </ButtonOutline>
-          ) : null}
-        </div>
       </div>
     </div>
   );

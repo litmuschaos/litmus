@@ -1,12 +1,11 @@
 import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { InputField } from 'litmus-ui';
+import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import BackButton from '../../../../components/Button/BackButton';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import { GET_ENGINE_YAML } from '../../../../graphql/queries';
 import useActions from '../../../../redux/actions';
@@ -369,7 +368,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               {t('customWorkflow.tuneExperiment.envText')}
             </Typography>
             {env.map((data, index) => (
-              <div className={classes.inputDiv}>
+              <div key={data.name} className={classes.inputDiv}>
                 <Typography className={classes.envName}>{data.name}</Typography>
                 <InputField
                   label="Value"
@@ -388,7 +387,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             {t('customWorkflow.tuneExperiment.customEnvText')}
           </Typography>
           {overrideEnvs.map((data, index) => (
-            <div className={classes.inputDivEnv}>
+            <div key={data.name} className={classes.inputDivEnv}>
               <InputField
                 label="Key"
                 data-cy="inputWorkflow"
@@ -406,11 +405,11 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               {overrideEnvs[index + 1] ? null : (
                 <div className={classes.addEnvBtn}>
                   <ButtonFilled
-                    handleClick={() => {
+                    onClick={() => {
                       AddEnvPair();
                     }}
-                    isPrimary={false}
-                    isDisabled={
+                    variant="success"
+                    disabled={
                       !!(
                         overrideEnvs[index].name === '' ||
                         overrideEnvs[index].value === ''
@@ -427,12 +426,11 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
       <div className={classes.nextBtn} data-cy="addExperimentButton">
         <ButtonFilled
-          handleClick={() => {
+          onClick={() => {
             handleEnvModification();
             gotoStep(2);
           }}
-          isPrimary
-          isDisabled={loadingEnv}
+          disabled={loadingEnv}
         >
           <div>
             <img

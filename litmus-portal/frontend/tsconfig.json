@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "types": ["node", "cypress"],
+    "types": ["node"],
     "typeRoots": ["../node_modules/@types"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -17,5 +17,5 @@
     "noEmit": true,
     "jsx": "preserve"
   },
-  "include": ["src","cypress/component/*.tsx"]
+  "include": ["src"]
 }

@@ -5,11 +5,9 @@ import {
   CardContent,
   Typography,
 } from '@material-ui/core';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../components/Button/ButtonFilled';
-import ButtonOutline from '../../components/Button/ButtonOutline';
 import DeveloperGuide from '../../components/DeveloperGuide';
 import Loader from '../../components/Loader';
 import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
@@ -213,8 +211,8 @@ const MyHub: React.FC = () => {
                     <strong>{t('myhub.mainPage.noGithubCredentials')}</strong>
                   </Typography>
                   <ButtonFilled
-                    isPrimary={false}
-                    handleClick={() => {
+                    variant="success"
+                    onClick={() => {
                       setGithub(true);
                     }}
                   >
@@ -241,17 +239,10 @@ const MyHub: React.FC = () => {
                       {t('myhub.mainPage.disconnectDesc')}
                     </Typography>
                     <div className={classes.disconnectBtns}>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={handleClose}
-                      >
+                      <ButtonOutlined onClick={handleClose}>
                         {t('myhub.mainPage.cancel')}
-                      </ButtonOutline>
-                      <ButtonFilled
-                        isPrimary={false}
-                        isWarning
-                        handleClick={handleHubDelete}
-                      >
+                      </ButtonOutlined>
+                      <ButtonFilled variant="error" onClick={handleHubDelete}>
                         {t('myhub.mainPage.deleteHub')}
                       </ButtonFilled>
                     </div>

@@ -3,7 +3,6 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { Cluster } from '../../../models/graphql/clusterData';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectRole } from '../../../utils/getSearchParams';
@@ -141,14 +140,13 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                     </Typography>
                   </div>
                   <div className={classes.buttonGroup}>
-                    <ButtonOutline
-                      isDisabled={false}
-                      handleClick={() => {
+                    <ButtonOutlined
+                      onClick={() => {
                         setOpen(false);
                       }}
                     >
                       <> {t('targets.modalDelete.no')}</>
-                    </ButtonOutline>
+                    </ButtonOutlined>
 
                     <ButtonFilled
                       disabled={userRole === 'Viewer'}

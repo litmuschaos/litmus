@@ -7,12 +7,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import Done from '@material-ui/icons/DoneAllTwoTone';
-import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BackButton from '../../../components/Button/BackButton';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
@@ -238,7 +236,7 @@ const MyHub: React.FC = () => {
             ? t('myhub.connectHubPage.updateHub')
             : t('myhub.connectHubPage.newHubCreated')}
         </Typography>
-        <ButtonFilled isPrimary={false} handleClick={handleClose}>
+        <ButtonFilled variant="success" onClick={handleClose}>
           {t('myhub.connectHubPage.myHub')}
         </ButtonFilled>
       </>
@@ -409,9 +407,8 @@ const MyHub: React.FC = () => {
                                       {sshKey.publicKey}
                                     </Typography>
                                     <div className={classes.copyBtn}>
-                                      <ButtonOutline
-                                        isDisabled={false}
-                                        handleClick={() =>
+                                      <ButtonOutlined
+                                        onClick={() =>
                                           copyTextToClipboard(sshKey.publicKey)
                                         }
                                       >
@@ -434,7 +431,7 @@ const MyHub: React.FC = () => {
                                             </Typography>
                                           </div>
                                         )}
-                                      </ButtonOutline>
+                                      </ButtonOutlined>
                                     </div>
                                   </>
                                 )}
@@ -448,7 +445,7 @@ const MyHub: React.FC = () => {
                 </div>
               </div>
               <div className={classes.submitBtnDiv}>
-                <ButtonFilled isPrimary={false} type="submit">
+                <ButtonFilled variant="success" type="submit">
                   {t('myhub.connectHubPage.submitBtn')}
                 </ButtonFilled>
               </div>
@@ -487,10 +484,7 @@ const MyHub: React.FC = () => {
                           </Typography>
                           {error.toLowerCase() ===
                           'hubname already exists' ? null : (
-                            <ButtonFilled
-                              isPrimary={false}
-                              handleClick={handleSave}
-                            >
+                            <ButtonFilled onClick={handleSave}>
                               {t('myhub.connectHubPage.saveLater')}
                             </ButtonFilled>
                           )}

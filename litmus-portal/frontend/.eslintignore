@@ -1,5 +1,4 @@
 **/node_modules/
 **/*.md
-**/cypress/
 **/geo.json
 **/public/api-doc

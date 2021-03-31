@@ -7,7 +7,12 @@ import {
   Select,
   Typography,
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
@@ -29,7 +34,7 @@ interface ScheduleSyntax {
   day_week: string;
 }
 
-const ScheduleWorkflow: React.FC = () => {
+const ScheduleWorkflow = forwardRef((_, ref) => {
   // Initial Cron State
   const [cronValue, setCronValue] = useState<ScheduleSyntax>({
     minute: '*',
@@ -302,9 +307,17 @@ const ScheduleWorkflow: React.FC = () => {
     });
   }, [valueDef, value]);
 
+  function onNext() {
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
+
   return (
     <div className={classes.root}>
-      <div className={classes.scHeader}>
+      <div className={classes.innerContainer}>
         {/* Upper segment */}
         <div className={classes.scSegments}>
           <div>
@@ -686,6 +699,6 @@ const ScheduleWorkflow: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default ScheduleWorkflow;

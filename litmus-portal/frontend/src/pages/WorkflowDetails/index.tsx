@@ -1,10 +1,12 @@
 import { useQuery } from '@apollo/client';
 import { AppBar, Typography, useTheme } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs/Tabs';
-import React, { useEffect } from 'react';
+import { ButtonOutlined } from 'litmus-ui';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -20,29 +22,31 @@ import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
+import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
+import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
 import useStyles from './styles';
-import TopNavButtons from './TopNavButtons';
 
 const WorkflowDetails: React.FC = () => {
+  const theme = useTheme();
+  const { t } = useTranslation();
   const classes = useStyles();
+  const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
+  const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
 
   const tabs = useActions(TabActions);
-  const { pathname } = useLocation();
-  // Getting the workflow nome from the pathname
-  const workflowRunId = pathname.split('/')[2];
-  const { t } = useTranslation();
 
   // get ProjectID
   const projectID = getProjectID();
 
-  const isInfoToggled = useSelector(
-    (state: RootState) => state.toggleInfoButton.isInfoToggled
-  );
   const workflowDetailsTabValue = useSelector(
     (state: RootState) => state.tabNumber.node
   );
+
+  // Getting the workflow nome from the pathname
+  const { pathname } = useLocation();
+  const workflowRunId = pathname.split('/')[2];
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -89,11 +93,11 @@ const WorkflowDetails: React.FC = () => {
     }
   }, [data]);
 
-  const theme = useTheme();
-
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     tabs.changeWorkflowDetailsTabs(newValue);
   };
+
+  const { pod_name } = useSelector((state: RootState) => state.selectedNode);
 
   // On fresh screen refresh 'Workflow' Tab would be selected
   useEffect(() => {
@@ -102,81 +106,125 @@ const WorkflowDetails: React.FC = () => {
 
   return (
     <Scaffold>
-      <TopNavButtons />
-      {/* If workflow data is present then display the workflow details */}
-      {workflow ? (
-        <div className={classes.root}>
-          <div className={classes.workflowGraph}>
-            <Typography data-cy="wfName" className={classes.heading}>
-              {workflow.workflow_name}
-            </Typography>
-            <Typography>{t('workflowDetails.detailedLog')}</Typography>
-
-            {/* Argo Workflow DAG Graph */}
-            <ArgoWorkflow
-              nodes={
-                (JSON.parse(workflow.execution_data) as ExecutionData).nodes
-              }
-            />
-          </div>
-          {isInfoToggled ? (
-            <div className={classes.workflowSideBar}>
-              <AppBar
-                position="static"
-                color="default"
-                className={classes.appBar}
-              >
-                <Tabs
-                  value={workflowDetailsTabValue || 0}
-                  onChange={handleChange}
-                  TabIndicatorProps={{
-                    style: {
-                      backgroundColor: theme.palette.primary.main,
-                    },
-                  }}
-                  variant="fullWidth"
-                >
-                  <StyledTab label="Workflow" />
-                  <StyledTab label="Steps" />
-                </Tabs>
-              </AppBar>
-              <TabPanel value={workflowDetailsTabValue} index={0}>
-                <div data-cy="browseWorkflow">
-                  <WorkflowInfo
-                    workflow_name={workflow.workflow_name}
-                    execution_data={
-                      JSON.parse(workflow?.execution_data) as ExecutionData
-                    }
-                    cluster_name={workflow.cluster_name}
-                  />
-                </div>
-              </TabPanel>
-              <TabPanel
-                data-cy="scheduleWorkflow"
-                value={workflowDetailsTabValue}
-                index={1}
-              >
-                <div data-cy="browseWorkflow">
-                  <WorkflowNodeInfo
-                    cluster_id={workflow.cluster_id}
-                    workflow_run_id={workflow.workflow_run_id}
-                    pod_namespace={
-                      (JSON.parse(workflow.execution_data) as ExecutionData)
-                        .namespace
-                    }
-                  />
-                </div>
-              </TabPanel>
-            </div>
-          ) : (
-            <></>
-          )}
+      <div className={classes.root}>
+        <div className={classes.button}>
+          <BackButton />
         </div>
-      ) : error ? (
-        <Typography>{t('workflowDetails.fetchError')}</Typography>
-      ) : (
-        <Loader />
-      )}
+        {/* If workflow data is present then display the workflow details */}
+        {workflow ? (
+          <div>
+            <Typography data-cy="wfName" className={classes.title}>
+              {t('workflowDetailsView.headerDesc')} {workflow.workflow_name}
+            </Typography>
+            <Typography className={classes.subtitle}>
+              {t('workflowDetailsView.headerMiniDesc')}
+            </Typography>
+
+            {/* AppBar */}
+            <AppBar
+              position="static"
+              color="default"
+              className={classes.appBar}
+            >
+              <Tabs
+                value={workflowDetailsTabValue || 0}
+                onChange={handleChange}
+                TabIndicatorProps={{
+                  style: {
+                    backgroundColor: theme.palette.secondary.dark,
+                  },
+                }}
+                variant="fullWidth"
+              >
+                <StyledTab label="Graph View" />
+                <StyledTab label="Table View" />
+              </Tabs>
+            </AppBar>
+            <TabPanel value={workflowDetailsTabValue} index={0}>
+              <div className={classes.graphView}>
+                {/* Argo Workflow DAG Graph */}
+                <ArgoWorkflow
+                  nodes={
+                    (JSON.parse(workflow.execution_data) as ExecutionData).nodes
+                  }
+                  setIsInfoToggled={setIsInfoToggled}
+                />
+                {/* Workflow Details and Experiment Logs */}
+                {isInfoToggled ? (
+                  <div className={classes.infoDashboard}>
+                    <ButtonOutlined
+                      className={classes.closeButton}
+                      onClick={() => {
+                        setIsInfoToggled(false);
+                      }}
+                    >
+                      &#x2715;
+                    </ButtonOutlined>
+                    {pod_name !==
+                    JSON.parse(workflow.execution_data).nodes[
+                      Object.keys(
+                        JSON.parse(workflow.execution_data as string).nodes
+                      )[0]
+                    ].name ? (
+                      /* Node details and Logs */
+                      <WorkflowNodeInfo
+                        workflow_name={workflow.workflow_name}
+                        cluster_id={workflow.cluster_id}
+                        workflow_run_id={workflow.workflow_run_id}
+                        pod_namespace={
+                          (JSON.parse(workflow.execution_data) as ExecutionData)
+                            .namespace
+                        }
+                      />
+                    ) : (
+                      /* Workflow Details */
+                      <WorkflowInfo
+                        tab={1}
+                        cluster_name={workflow.cluster_name}
+                        data={
+                          JSON.parse(workflow.execution_data) as ExecutionData
+                        }
+                      />
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            </TabPanel>
+            <TabPanel value={workflowDetailsTabValue} index={1}>
+              <div className={classes.nodesTable}>
+                {/* Workflow Info */}
+                <WorkflowInfo
+                  tab={2}
+                  cluster_name={workflow.cluster_name}
+                  data={JSON.parse(workflow.execution_data) as ExecutionData}
+                />
+                {/* Table for all Node details */}
+                <NodeTable
+                  data={JSON.parse(workflow.execution_data) as ExecutionData}
+                  handleClose={() => setLogsModalOpen(true)}
+                />
+              </div>
+              {/* Modal for viewing logs of a node */}
+              <NodeLogsModal
+                logsOpen={logsModalOpen}
+                handleClose={() => setLogsModalOpen(false)}
+                cluster_id={workflow.cluster_id}
+                workflow_run_id={workflow.workflow_run_id}
+                pod_namespace={
+                  (JSON.parse(workflow.execution_data) as ExecutionData)
+                    .namespace
+                }
+                data={JSON.parse(workflow.execution_data) as ExecutionData}
+                workflow_name={workflow.workflow_name}
+              />
+            </TabPanel>
+          </div>
+        ) : error ? (
+          <Typography>{t('workflowDetails.fetchError')}</Typography>
+        ) : (
+          <Loader />
+        )}
+      </div>
     </Scaffold>
   );
 };

@@ -19,7 +19,6 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
@@ -236,7 +235,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           <div className={classes.weightDiv}>
             {data.weightages.map((expData) => {
               return (
-                <div style={{ marginBottom: 20 }}>
+                <div key={expData.experiment_name} style={{ marginBottom: 8 }}>
                   <ExperimentPoints
                     expName={expData.experiment_name}
                     weight={expData.weightage}
@@ -347,12 +346,9 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               {t('createWorkflow.scheduleWorkflow.modalSubheader')}
             </Typography>
             <div className={classes.modalBtns}>
-              <ButtonOutline
-                isDisabled={false}
-                handleClick={() => setIsModalOpen(false)}
-              >
+              <ButtonOutlined onClick={() => setIsModalOpen(false)}>
                 {t('createWorkflow.scheduleWorkflow.cancelBtn')}
-              </ButtonOutline>
+              </ButtonOutlined>
               <ButtonFilled
                 variant="error"
                 className={classes.w7}

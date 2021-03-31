@@ -4,13 +4,11 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import { CustomYAML, Steps } from '../../../../models/redux/customyaml';
 import { customWorkflow } from '../../../../models/redux/workflow';
 import useActions from '../../../../redux/actions';
@@ -284,6 +282,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             {workflows.map((data, index) => {
               return (
                 <li
+                  key={data.index}
                   data-cy="experimentRow"
                   className={classes.listItem}
                   onDragOver={() => onDragOver(index)}
@@ -303,9 +302,8 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     </Typography>
 
                     <div className={classes.buttonsDiv}>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={() => {
+                      <ButtonOutlined
+                        onClick={() => {
                           viewYaml(index);
                         }}
                       >
@@ -315,10 +313,9 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                             {t('customWorkflow.scheduleWorkflow.viewYAML')}
                           </Typography>
                         </div>
-                      </ButtonOutline>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={() => {
+                      </ButtonOutlined>
+                      <ButtonOutlined
+                        onClick={() => {
                           editExperiment(index);
                         }}
                       >
@@ -328,10 +325,9 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                             {t('customWorkflow.scheduleWorkflow.editBtn')}
                           </Typography>
                         </div>
-                      </ButtonOutline>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={() => {
+                      </ButtonOutlined>
+                      <ButtonOutlined
+                        onClick={() => {
                           deleteExperiment(index);
                         }}
                       >
@@ -345,7 +341,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                             {t('customWorkflow.scheduleWorkflow.deleteBtn')}
                           </Typography>
                         </div>
-                      </ButtonOutline>
+                      </ButtonOutlined>
                     </div>
                   </Paper>
                 </li>
@@ -363,11 +359,10 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
       <div className={classes.nextButtonDiv} data-cy="finishConstruction">
         <ButtonFilled
-          handleClick={() => {
-            setConfirmModal(true);
+          onClick={() => {
+            customYAMLGenerator();
           }}
-          isPrimary
-          isDisabled={workflows.length === 0}
+          disabled={workflows.length === 0}
         >
           <div>
             <img
@@ -432,9 +427,8 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               </ButtonOutlined>
               <div className={classes.constructBtn} data-cy="constructButton">
                 <ButtonFilled
-                  isPrimary
-                  handleClick={customYAMLGenerator}
-                  isDisabled={workflows.length === 0}
+                  onClick={customYAMLGenerator}
+                  disabled={workflows.length === 0}
                 >
                   {t('customWorkflow.scheduleWorkflow.construct')}
                 </ButtonFilled>

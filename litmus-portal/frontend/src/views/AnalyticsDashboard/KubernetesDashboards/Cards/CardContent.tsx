@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import { DashboardData } from '../../../../models/dashboardsData';
-import useStyles from './styles';
+import useStyles from '../../DataSource/Cards/styles';
 
 const CardContent: React.FC<DashboardData> = ({
   name,
