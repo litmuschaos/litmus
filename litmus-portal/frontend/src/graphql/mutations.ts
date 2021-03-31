@@ -23,6 +23,22 @@ export const CREATE_USER = gql`
   }
 `;
 
+export const CREATE_PROJECT = gql`
+  mutation createProject($projectName: String!) {
+    createProject(projectName: $projectName) {
+      members {
+        user_id
+        role
+        user_name
+        invitation
+        joined_at
+      }
+      name
+      id
+    }
+  }
+`;
+
 export const SEND_INVITE = gql`
   mutation sendInvite($member: MemberInput!) {
     sendInvitation(member: $member) {

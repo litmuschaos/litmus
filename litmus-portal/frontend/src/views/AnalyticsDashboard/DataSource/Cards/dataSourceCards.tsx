@@ -1,10 +1,14 @@
 import React from 'react';
 import { DataSourceData } from '../../../../models/dataSourceData';
-import DataSourceCard from './index';
-import useStyles from './styles';
 import useActions from '../../../../redux/actions';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import { history } from '../../../../redux/configureStore';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
+import DataSourceCard from './index';
+import useStyles from './styles';
 
 interface DataSourceCardsProps {
   dataSources: DataSourceData[];
@@ -12,6 +16,8 @@ interface DataSourceCardsProps {
 
 const DataSourceCards: React.FC<DataSourceCardsProps> = ({ dataSources }) => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const dataSource = useActions(DataSourceActions);
   return (
     <div className={classes.root}>
@@ -24,7 +30,10 @@ const DataSourceCards: React.FC<DataSourceCardsProps> = ({ dataSources }) => {
               urlToIcon={d.urlToIcon}
               handleClick={() => {
                 dataSource.selectDataSource({ selectedDataSourceID: index });
-                history.push('/analytics/datasource/create');
+                history.push({
+                  pathname: '/analytics/datasource/create',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
               }}
               description={d.description}
             />

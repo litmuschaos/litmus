@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -9,7 +8,6 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import DashboardList from '../../../../components/PreconfiguredDashboards/data';
@@ -44,8 +42,11 @@ import * as DashboardActions from '../../../../redux/actions/dashboards';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
-import { RootState } from '../../../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../../../svg/crossmark.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import getEngineNameAndNamespace from '../../../../utils/promUtils';
 import { validateWorkflowParameter } from '../../../../utils/validate';
 import {
@@ -64,9 +65,8 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const dashboard = useActions(DashboardActions);
   const dataSource = useActions(DataSourceActions);
   const tabs = useActions(TabActions);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const [mutate, setMutate] = React.useState(false);
   const [confirm, setConfirm] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
@@ -81,14 +81,14 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const { data: workflowSchedules } = useQuery<Schedules, ScheduleDataVars>(
     SCHEDULE_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
 
   const [updatePanel] = useMutation<UpdatePanelInput>(UPDATE_PANEL, {
     onError: () => {
-      console.log('error updating dashboard details');
+      console.error('error updating dashboard details');
     },
   });
 
@@ -444,7 +444,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                   selectedDataSourceID: '',
                   selectedDataSourceName: '',
                 });
-                history.push('/analytics/dashboard');
+                history.push({
+                  pathname: '/analytics/dashboard',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
               });
             }}
             className={classes.menuItem}
@@ -478,7 +481,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 selectedDashboardName: data.db_name,
                 selectedDashboardTemplateID: dashboardTemplateID,
               });
-              history.push('/analytics/dashboard/configure');
+              history.push({
+                pathname: '/analytics/dashboard/configure',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
             className={classes.menuItem}
           >
@@ -601,7 +607,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 setConfirm(false);
                 setOpenModal(false);
                 tabs.changeAnalyticsDashboardTabs(2);
-                window.location.reload(false);
+                window.location.reload();
               }}
             >
               <div>Back to Kubernetes Dashboard</div>
@@ -625,7 +631,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                   setConfirm(false);
                   setOpenModal(false);
                   tabs.changeAnalyticsDashboardTabs(2);
-                  window.location.reload(false);
+                  window.location.reload();
                 }}
               >
                 <div>Back to Kubernetes Dashboard</div>
@@ -661,7 +667,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 <ButtonOutlined
                   onClick={() => {
                     setOpenModal(false);
-                    history.push('/analytics');
+                    history.push({
+                      pathname: '/analytics',
+                      search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                    });
                   }}
                   disabled={false}
                 >

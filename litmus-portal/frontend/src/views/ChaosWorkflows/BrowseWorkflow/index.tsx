@@ -15,7 +15,6 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../graphql';
 import {
   ExecutionData,
@@ -24,7 +23,7 @@ import {
   WorkflowRun,
   WorkflowSubscription,
 } from '../../../models/graphql/workflowData';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID } from '../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -60,15 +59,13 @@ interface DateData {
 
 const BrowseWorkflow: React.FC = () => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -77,7 +74,7 @@ const BrowseWorkflow: React.FC = () => {
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const modifiedWorkflows = prev.getWorkFlowRuns.slice();

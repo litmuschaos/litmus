@@ -7,6 +7,10 @@ import { useTranslation } from 'react-i18next';
 import CheckBox from '../../../../components/CheckBox';
 import { Workflow } from '../../../../models/graphql/workflowListData';
 import { history } from '../../../../redux/configureStore';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import useStyles, { StyledTableCell } from './styles';
 
 interface TableDataProps {
@@ -24,6 +28,8 @@ const TableData: React.FC<TableDataProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -35,13 +41,11 @@ const TableData: React.FC<TableDataProps> = ({
   return (
     <>
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
-        {comparisonState === false ? (
+        {comparisonState === false && (
           <CheckBox
             checked={itemSelectionStatus}
             inputProps={{ 'aria-labelledby': labelIdentifier }}
           />
-        ) : (
-          <div />
         )}
       </StyledTableCell>
       <StyledTableCell className={classes.workflowName}>
@@ -84,9 +88,12 @@ const TableData: React.FC<TableDataProps> = ({
             edge="end"
             aria-label="analytics for workflow id"
             aria-haspopup="true"
-            onClick={() =>
-              history.push(`/workflows/analytics/${data.workflow_id}`)
-            }
+            onClick={() => {
+              history.push({
+                pathname: `/workflows/analytics/${data.workflow_id}`,
+                search: `?projectID=${projectID}&projectRole=${userRole}`,
+              });
+            }}
             className={classes.buttonSeeAnalytics}
           >
             <ExpandMoreTwoToneIcon htmlColor="black" />

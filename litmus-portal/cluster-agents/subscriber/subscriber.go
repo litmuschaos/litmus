@@ -22,7 +22,9 @@ var (
 		"CLUSTER_ID":           os.Getenv("CLUSTER_ID"),
 		"SERVER_ADDR":          os.Getenv("SERVER_ADDR"),
 		"IS_CLUSTER_CONFIRMED": os.Getenv("IS_CLUSTER_CONFIRMED"),
+		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
 	}
+
 	err error
 )
 
@@ -33,7 +35,14 @@ func init() {
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()
 
-	if clusterData["IS_CLUSTER_CONFIRMED"] == "false" {
+	isConfirmed, newKey, err := k8s.IsClusterConfirmed()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if isConfirmed == true {
+		clusterData["ACCESS_KEY"] = newKey
+	} else if isConfirmed == false {
 		clusterConfirmByte, err := gql.ClusterConfirm(clusterData)
 		if err != nil {
 			log.Fatal(err)

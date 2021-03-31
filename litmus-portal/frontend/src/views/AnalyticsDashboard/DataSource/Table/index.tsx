@@ -13,7 +13,6 @@ import {
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
 import { LIST_DATASOURCE } from '../../../../graphql/queries';
 import {
@@ -21,7 +20,7 @@ import {
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../../../models/graphql/dataSourceDetails';
-import { RootState } from '../../../../redux/reducers';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -70,9 +69,7 @@ const DataSourceTable: React.FC = () => {
   });
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -89,7 +86,7 @@ const DataSourceTable: React.FC = () => {
   const { data, loading, error } = useQuery<DataSourceList, ListDataSourceVars>(
     LIST_DATASOURCE,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
     }

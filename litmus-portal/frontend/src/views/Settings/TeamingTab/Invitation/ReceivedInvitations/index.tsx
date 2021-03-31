@@ -15,7 +15,7 @@ import {
 } from '../../../../../models/graphql/invite';
 import { Projects } from '../../../../../models/graphql/user';
 import { getUserId } from '../../../../../utils/auth';
-import userAvatar from '../../../../../utils/user';
+import { userInitials } from '../../../../../utils/user';
 import useStyles from './styles';
 
 interface ReceivedInvitation {
@@ -111,18 +111,18 @@ const ReceivedInvitations: React.FC = () => {
                     className={classes.avatarBackground}
                     style={{ alignContent: 'right' }}
                   >
-                    {userAvatar(
-                      allUsers?.filter((data) => {
+                    {userInitials(
+                      allUsers.filter((data) => {
                         return row.user_id === data.id;
-                      })[0]?.username
+                      })[0].username
                     )}
                   </Avatar>
                   <div>
                     <Typography className={classes.name}>
                       {
-                        allUsers?.filter((data) => {
+                        allUsers.filter((data) => {
                           return row.user_id === data.id;
-                        })[0]?.username
+                        })[0].username
                       }
                     </Typography>
                     <Typography className={classes.email}>
@@ -138,7 +138,6 @@ const ReceivedInvitations: React.FC = () => {
                   </div>
                 </div>
                 <div className={classes.projectDiv}>
-                  <img src="./icons/litmus-icon.svg" alt="chaos" />
                   <Typography className={classes.projectName}>
                     {row.projectName}
                   </Typography>

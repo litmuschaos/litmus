@@ -1,24 +1,28 @@
 import {
-  Typography,
-  Paper,
-  FormControlLabel,
   Checkbox,
+  FormControlLabel,
+  Paper,
+  Typography,
 } from '@material-ui/core';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import { useTranslation } from 'react-i18next';
-import { ButtonOutlined, Modal } from 'litmus-ui';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
+import { CustomYAML, Steps } from '../../../../models/redux/customyaml';
 import { customWorkflow } from '../../../../models/redux/workflow';
-import { RootState } from '../../../../redux/reducers';
-import useStyles from './styles';
 import useActions from '../../../../redux/actions';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
 import * as TemplateSelectionActions from '../../../../redux/actions/template';
-import { Steps, CustomYAML } from '../../../../models/redux/customyaml';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
+import { RootState } from '../../../../redux/reducers';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
+import useStyles from './styles';
 
 interface VerifyCommitProps {
   gotoStep: (page: number) => void;
@@ -36,6 +40,8 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [draggedItem, setDraggedItem] = useState<customWorkflow>();
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
   // Function for drag operation
   const onDragOperation = (
     e: React.DragEvent<HTMLDivElement>,
@@ -183,7 +189,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       container: {
         args: [`${installAllExp}sleep 30`],
         command: ['sh', '-c'],
-        image: 'alpine/k8s:1.18.2',
+        image: 'litmuschaos/k8s:latest',
       },
     };
     workflows.forEach((data) => {
@@ -236,7 +242,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             `kubectl delete chaosengine ${removeChaosEngine} -n {{workflow.parameters.adminModeNamespace}}`,
           ],
           command: ['sh', '-c'],
-          image: 'alpine/k8s:1.18.2',
+          image: 'litmuschaos/k8s:latest',
         },
       };
     }
@@ -249,7 +255,10 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     template.selectTemplate({
       isDisable: false,
     });
-    history.push('/create-workflow');
+    history.push({
+      pathname: '/create-workflow',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   const handleModalClose = () => {

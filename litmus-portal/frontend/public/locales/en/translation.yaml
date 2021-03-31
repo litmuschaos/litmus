@@ -32,12 +32,20 @@ sidebar:
   title: Litmus
 
 header:
-  notificationDropdown:
-    noNotifications: You don't have any new notification.
+  projectDropdown:
+    myProjects: My Projects
+    noMyProjects: No projects owned by you
+    otherProjects: Other Projects
+    noProjectsOther: You are not part of any projects not owned by you
   profileDropdown:
+    signedIn: 'Signed in as:'
+    emailUnset: Email not set
+    emailSet: Set up your email
+    goToSettingsTitle: Go to settings
+    logOutTitle: Logout from the portal
+    editProfileTitle: Edit your profile
+    logout: Logout
     editProfile: Edit Profile
-    logOut: Log Out
-    noProjects: You haven't created any projects yet.
 
 button:
   backButton: Back
@@ -101,9 +109,12 @@ home:
     agentDeployInfo: To configure your workflow you need to deploy an agent. Click on “Deploy your first Agent” to continue.
     chaosAgent: Deploy LitmusChaos agent on your Kubernetes clusters.
     agents: Agents
+    agent: Agent
     chaosAgentInfo: Cloud native chaos engineering can be setup on this cluster using LitmusChaos
     deployFirst: Deploy your first Agent
-    toProjects: To projects
+    toProjects: To Projects
+    toAnalytics: To Analytics
+    deploy: Deploy another Agent
 
 login:
   heading: Welcome to <strong>Litmus!</strong>
@@ -265,11 +276,12 @@ error:
   whoops: Whoops!
   pageUnavailable: This page is unavailable
   pageDoesNotExist: The page does not exist, or please try again later.
-  backHome: Go back home
+  goBack: Go back
 
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow
   fetchError: An error has occurred while fetching the data
+  overallRR: 'Overall RR: '
 
 ######################################
 ############    Views    #############
@@ -315,6 +327,8 @@ settings:
         done: Done
     accountsSettings:
       header: Password
+      passwordValidation: Should not start with empty space
+      passwordNotSame: Password is not same
       modal:
         header: Your password
         headerStrong: has been changed!
@@ -335,6 +349,7 @@ settings:
     yourProject: Your Project
     projectInvite: Projects by invite
     invitations: Invitations
+    active: Active
     manageTeam: Manage your team, invite a member to your project or change the role of members in the team
     header: Members
     invitedProject: Projects you were invited to
@@ -407,6 +422,9 @@ settings:
           viewerRole:
             label: Viewer
             body: Can view the project
+      acceptedInvitation:
+        viewProject: View Project
+        role: Role
 
   userManagementTab:
     header: Members

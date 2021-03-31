@@ -3,11 +3,10 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { Cluster } from '../../../models/graphql/clusterData';
-import { RootState } from '../../../redux/reducers';
 import timeDifferenceForDate from '../../../utils/datesModifier';
+import { getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -27,12 +26,13 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     return 'Date not available';
   };
 
+  const userRole = getProjectRole();
+
   const [open, setOpen] = React.useState(false);
 
   const handleClick = () => {
     setOpen(true);
   };
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
 
   const handleClose = () => {
     deleteRow(data.cluster_id);

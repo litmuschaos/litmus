@@ -18,6 +18,7 @@ import {
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
+import { getProjectID } from '../../utils/getSearchParams';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
@@ -34,9 +35,8 @@ const WorkflowDetails: React.FC = () => {
   const { t } = useTranslation();
 
   // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
+
   const isInfoToggled = useSelector(
     (state: RootState) => state.toggleInfoButton.isInfoToggled
   );
@@ -47,7 +47,7 @@ const WorkflowDetails: React.FC = () => {
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+    { variables: { projectID } }
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
@@ -63,7 +63,7 @@ const WorkflowDetails: React.FC = () => {
     ) {
       subscribeToMore<WorkflowSubscription>({
         document: WORKFLOW_EVENTS,
-        variables: { projectID: selectedProjectID },
+        variables: { projectID },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           const modifiedWorkflows = prev.getWorkFlowRuns.slice();

@@ -13,7 +13,6 @@ import {
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
 import { LIST_DASHBOARD } from '../../../../graphql/queries';
 import {
@@ -21,7 +20,7 @@ import {
   ListDashboardResponse,
   ListDashboardVars,
 } from '../../../../models/graphql/dashboardsDetails';
-import { RootState } from '../../../../redux/reducers';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -74,9 +73,7 @@ const DashboardTable: React.FC = () => {
   });
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -93,7 +90,7 @@ const DashboardTable: React.FC = () => {
   const { data, loading, error } = useQuery<DashboardList, ListDashboardVars>(
     LIST_DASHBOARD,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );

@@ -1,9 +1,9 @@
 import { Card, CardContent, Link, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import useStyles from './styles';
-import { history } from '../../../redux/configureStore';
-import { HubDetails } from '../../../models/redux/myhub';
 import config from '../../../config';
+import { HubDetails } from '../../../models/redux/myhub';
+import { history } from '../../../redux/configureStore';
+import useStyles from './styles';
 
 interface ChartName {
   ChaosName: string;
@@ -15,6 +15,7 @@ interface ChartCardProps {
   UserHub: HubDetails | undefined;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   projectID: string;
+  userRole: string;
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({
@@ -22,6 +23,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
   UserHub,
   setSearch,
   projectID,
+  userRole,
 }) => {
   const classes = useStyles();
   const experimentDefaultImagePath = `${config.grahqlEndpoint}/icon`;
@@ -36,11 +38,12 @@ const ChartCard: React.FC<ChartCardProps> = ({
         key={expName.ExperimentName}
         elevation={3}
         className={classes.cardDiv}
-        onClick={() =>
-          history.push(
-            `${UserHub?.HubName}/${expName.ChaosName}/${expName.ExperimentName}`
-          )
-        }
+        onClick={() => {
+          history.push({
+            pathname: `${UserHub?.HubName}/${expName.ChaosName}/${expName.ExperimentName}`,
+            search: `?projectID=${projectID}&projectRole=${userRole}`,
+          });
+        }}
       >
         <CardContent className={classes.cardContent}>
           <img

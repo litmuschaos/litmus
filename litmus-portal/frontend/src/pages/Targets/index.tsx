@@ -2,22 +2,24 @@ import { Tooltip, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { history } from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import BrowseCluster from '../../views/Targets/BrowseCluster';
 import useStyles from './styles';
 
 const Targets: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   const handleCluster = () => {
-    history.push('/target-connect');
+    history.push({
+      pathname: '/target-connect',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
-
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
 
   return (
     <Scaffold>

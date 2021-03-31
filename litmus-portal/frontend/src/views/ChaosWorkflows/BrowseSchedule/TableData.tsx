@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client';
 import {
   Button,
   IconButton,
@@ -11,24 +12,22 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ReplayIcon from '@material-ui/icons/Replay';
 import cronstrue from 'cronstrue';
-import { ButtonFilled, Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import ReplayIcon from '@material-ui/icons/Replay';
-import { useMutation } from '@apollo/client';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
-import * as TabActions from '../../../redux/actions/tabs';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
 
@@ -40,6 +39,10 @@ interface TableDataProps {
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
+
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
@@ -55,7 +58,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   };
 
   const workflow = useActions(WorkflowActions);
-  const userData = useSelector((state: RootState) => state.userData);
 
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
@@ -94,9 +96,10 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   };
 
   const editSchedule = () => {
-    history.push(
-      `/workflows/schedule/${data.project_id}/${data.workflow_name}`
-    );
+    history.push({
+      pathname: `/workflows/schedule/${data.project_id}/${data.workflow_name}`,
+      search: `?projectID=${projectID}&projectRole=${projectRole}`,
+    });
   };
 
   // If regularity is not Once then set recurring schedule state to true
@@ -233,7 +236,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           <div className={classes.weightDiv}>
             {data.weightages.map((expData) => {
               return (
-                <div style={{ marginBottom: 8 }}>
+                <div style={{ marginBottom: 20 }}>
                   <ExperimentPoints
                     expName={expData.experiment_name}
                     weight={expData.weightage}
@@ -279,7 +282,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           ) : (
             <></>
           )}
-          {data.cronSyntax === '' ? (
+          {projectRole !== 'Viewer' && data.cronSyntax === '' ? (
             <MenuItem value="Rerun_Schedule" onClick={() => reRunSchedule()}>
               <div className={classes.expDiv}>
                 <ReplayIcon className={classes.rerunBtn} />
@@ -307,7 +310,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               </Typography>
             </div>
           </MenuItem>
-          {userData.userRole !== 'Viewer' ? (
+          {projectRole !== 'Viewer' ? (
             <MenuItem value="Analysis" onClick={() => setIsModalOpen(true)}>
               <div className={classes.expDiv}>
                 <img

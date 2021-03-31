@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 import {
   ExecutionData,
@@ -14,6 +15,7 @@ import {
 } from '../../../models/graphql/workflowData';
 import { history } from '../../../redux/configureStore';
 import timeDifferenceForDate from '../../../utils/datesModifier';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
 
@@ -24,6 +26,10 @@ interface TableDataProps {
 
 const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
+
+  const { t } = useTranslation();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -54,7 +60,10 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         className={classes.workflowNameData}
         style={{ cursor: 'pointer' }}
         onClick={() => {
-          history.push(`/workflows/${data.workflow_run_id}`);
+          history.push({
+            pathname: `/workflows/${data.workflow_run_id}`,
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
         }}
       >
         <Typography data-cy="workflowName">
@@ -68,22 +77,29 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
       </TableCell>
       <TableCell>
         <div className={classes.reliabiltyData}>
-          {exeData.phase === 'Failed' || exeData.phase === '' ? (
+          {exeData.finishedAt.length === 0 ? (
+            <Typography>
+              {t('workflowDetails.overallRR')}
+              <span className={classes.failed}>NA</span>
+            </Typography>
+          ) : exeData.phase === 'Failed' || exeData.phase === '' ? (
             <>
               <Typography>
-                Overall RR: <span className={classes.failed}>0%</span>
+                {t('workflowDetails.overallRR')}
+                <span className={classes.failed}>0%</span>
               </Typography>
               <div className={classes.progressBar}>
-                <LinearProgressBar width={2} value={0} />
+                <LinearProgressBar width={0.1} value={0} />
               </div>
             </>
           ) : (
             <>
               <Typography>
-                Overall RR: <span className={classes.success}>100%</span>
+                {t('workflowDetails.overallRR')}
+                <span className={classes.success}>100%</span>
               </Typography>
               <div className={classes.progressBar}>
-                <LinearProgressBar width={2} value={100} />
+                <LinearProgressBar width={0.1} value={10} />
               </div>
             </>
           )}
@@ -118,7 +134,10 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() => {
-              history.push(`/workflows/${data.workflow_run_id}`);
+              history.push({
+                pathname: `/workflows/${data.workflow_run_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
@@ -134,9 +153,12 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           </MenuItem>
           <MenuItem
             value="Analysis"
-            onClick={() =>
-              history.push(`/workflows/analytics/${data.workflow_id}`)
-            }
+            onClick={() => {
+              history.push({
+                pathname: `/workflows/analytics/${data.workflow_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
           >
             <div className={classes.expDiv} data-cy="workflowAnalytics">
               <img

@@ -285,6 +285,9 @@ type Mutation {
 
   createUser(user: CreateUserInput!): User! @authorized
 
+  #It is used to create a project
+  createProject(projectName: String!): Project! @authorized
+
   updateUser(user: UpdateUserInput!): String! @authorized
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
@@ -320,7 +323,8 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
 

@@ -10,12 +10,11 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import Loader from '../../components/Loader';
 import { HubDetails } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
-import { RootState } from '../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface customMyHubCardProp {
@@ -39,9 +38,6 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
 }) => {
   const classes = useStyles();
 
-  // UserData from Redux
-  const userData = useSelector((state: RootState) => state.userData);
-
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -55,6 +51,8 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
   };
 
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -73,7 +71,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
           >
             {hub.IsAvailable ? 'Connected' : 'Error'}
           </Typography>
-          {userData.userRole !== 'Viewer' && (
+          {userRole !== 'Viewer' && (
             <>
               <IconButton
                 aria-label="more"
@@ -112,7 +110,10 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                 <MenuItem
                   value="View"
                   onClick={() => {
-                    history.push(`/myhub/edit/${hub.HubName}`);
+                    history.push({
+                      pathname: `/myhub/edit/${hub.HubName}`,
+                      search: `?projectID=${projectID}&projectRole=${userRole}`,
+                    });
                   }}
                 >
                   <div className={classes.cardMenu}>
@@ -183,7 +184,10 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                   width: '100%',
                 }}
                 handleClick={() => {
-                  history.push(`/myhub/${hub.HubName}`);
+                  history.push({
+                    pathname: `/myhub/${hub.HubName}`,
+                    search: `?projectID=${projectID}&projectRole=${userRole}`,
+                  });
                 }}
                 isPrimary
               >

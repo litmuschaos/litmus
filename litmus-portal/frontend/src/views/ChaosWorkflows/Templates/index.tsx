@@ -4,11 +4,14 @@ import workflowData from '../../../components/PredifinedWorkflows/data';
 import useActions from '../../../redux/actions';
 import * as TemplateSelectionActions from '../../../redux/actions/template';
 import { history } from '../../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import parsed from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 const Templates = () => {
   const classes = useStyles();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
 
   const template = useActions(TemplateSelectionActions);
   const testNames: string[] = [];
@@ -37,6 +40,7 @@ const Templates = () => {
           });
           history.push({
             pathname: `/workflows/template/${workflowData[index].title}`,
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
             state: {
               workflowData: workflowData[index],
               testNames,
@@ -52,15 +56,6 @@ const Templates = () => {
 
   return (
     <div className={classes.root}>
-      {/* Sort div with the sort icon (To be used in later updates) */}
-      {/* <div className={classes.sort} onClick={() => {}}>
-          <div className={classes.sortIcon}>
-            <div className={`${classes.line} ${classes.first}`} />
-            <div className={`${classes.line} ${classes.second}`} />
-            <div className={`${classes.line} ${classes.third}`} />
-          </div>
-          <Typography className={classes.headerSize}>Sort</Typography>
-        </div> */}
       <div data-cy="templatesPage" className={classes.predefinedCards}>
         <PredifinedWorkflows
           callbackOnSelectWorkflow={(index: number) => {
