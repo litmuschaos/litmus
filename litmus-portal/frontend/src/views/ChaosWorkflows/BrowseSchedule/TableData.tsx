@@ -26,7 +26,6 @@ import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
-import { getUserRole } from '../../../utils/auth';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
@@ -40,7 +39,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const userRole = getUserRole();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
 
@@ -283,7 +281,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           ) : (
             <></>
           )}
-          {data.cronSyntax === '' ? (
+          {projectRole !== 'Viewer' && data.cronSyntax === '' ? (
             <MenuItem value="Rerun_Schedule" onClick={() => reRunSchedule()}>
               <div className={classes.expDiv}>
                 <ReplayIcon className={classes.rerunBtn} />
@@ -311,7 +309,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               </Typography>
             </div>
           </MenuItem>
-          {userRole !== 'Viewer' ? (
+          {projectRole !== 'Viewer' ? (
             <MenuItem value="Analysis" onClick={() => setIsModalOpen(true)}>
               <div className={classes.expDiv}>
                 <img

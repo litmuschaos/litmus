@@ -60,7 +60,7 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 			return 0, errors.New("workflow not found")
 		}
 	} else if count == 1 {
-		filter := bson.M{"workflow_id": workflowID, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID, "workflow_runs.completed": false}
+		filter := bson.M{"workflow_id": workflowID, "workflow_runs": bson.M{"$elemMatch": bson.M{"workflow_run_id": wfRun.WorkflowRunID, "completed": false}}}
 		update := bson.M{"$set": bson.M{"workflow_runs.$.last_updated": wfRun.LastUpdated, "workflow_runs.$.execution_data": wfRun.ExecutionData, "workflow_runs.$.completed": wfRun.Completed}}
 		updateResp, err := workflowCollection.UpdateOne(ctx, filter, update)
 		if err != nil {

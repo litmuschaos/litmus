@@ -18,12 +18,14 @@ import (
 
 var (
 	clusterData = map[string]string{
-		"KEY":        os.Getenv("KEY"),
-		"CID":        os.Getenv("CID"),
-		"GQL_SERVER": os.Getenv("GQL_SERVER"),
+		"ACCESS_KEY":           os.Getenv("ACCESS_KEY"),
+		"CLUSTER_ID":           os.Getenv("CLUSTER_ID"),
+		"SERVER_ADDR":          os.Getenv("SERVER_ADDR"),
+		"IS_CLUSTER_CONFIRMED": os.Getenv("IS_CLUSTER_CONFIRMED"),
+		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
 	}
-	err    error
-	newKey string
+
+	err error
 )
 
 func init() {
@@ -39,31 +41,32 @@ func init() {
 	}
 
 	if isConfirmed == true {
-		clusterData["KEY"] = newKey
+		clusterData["ACCESS_KEY"] = newKey
 	} else if isConfirmed == false {
-
-		bodyText, err := gql.ClusterConfirm(clusterData)
+		clusterConfirmByte, err := gql.ClusterConfirm(clusterData)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		var responseInterface types.Payload
-		err = json.Unmarshal(bodyText, &responseInterface)
+		var clusterConfirmInterface types.Payload
+		err = json.Unmarshal(clusterConfirmByte, &clusterConfirmInterface)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		if responseInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
-			clusterData["KEY"] = responseInterface.Data.ClusterConfirm.NewClusterKey
+		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
+			clusterData["ACCESS_KEY"] = clusterConfirmInterface.Data.ClusterConfirm.NewAccessKey
+			clusterData["IS_CLUSTER_CONFIRMED"] = "true"
 			_, err = k8s.ClusterRegister(clusterData)
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Println("cluster confirmed")
+			log.Println(clusterData["CLUSTER_ID"] + " has been confirmed")
 		} else {
-			log.Fatal("Cluster not confirmed")
+			log.Fatal(clusterData["CLUSTER_ID"] + " hasn't been confirmed")
 		}
 	}
+
 }
 
 func main() {

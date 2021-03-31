@@ -43,11 +43,15 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID st
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
+	return usermanagement.CreateUser(ctx, user)
+}
+
+func (r *mutationResolver) CreateProject(ctx context.Context, projectName string) (*model.Project, error) {
+	//fetching all the user's details from jwt token
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	userUID := claims["uid"].(string)
-	role := claims["role"].(string)
 
-	return usermanagement.CreateUser(ctx, user, userUID, role)
+	return project.CreateProjectWithUser(ctx, projectName, userUID)
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {

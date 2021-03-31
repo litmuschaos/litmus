@@ -21,24 +21,25 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
     <LinearProgress
       variant="determinate"
       value={resultValue}
-      classes={
-        isInTable
+      style={{
+        height: '0.2rem',
+      }}
+      classes={{
+        colorPrimary: isInTable
           ? resultValue > 60
-            ? {
-                root: classes.root,
-                barColorPrimary: classes.greenColorPrimary,
-              }
+            ? classes.greenColorSecondary
             : resultValue > 30
-            ? {
-                root: classes.root,
-                barColorPrimary: classes.yellowColorPrimary,
-              }
-            : {
-                root: classes.root,
-                barColorPrimary: classes.redColorPrimary,
-              }
-          : {}
-      }
+            ? classes.yellowColorSecondary
+            : classes.redColorSecondary
+          : classes.greenColorSecondary,
+        barColorPrimary: isInTable
+          ? resultValue > 60
+            ? classes.greenColorPrimary
+            : resultValue > 30
+            ? classes.yellowColorPrimary
+            : classes.redColorPrimary
+          : classes.greenColorSecondary,
+      }}
     />
   );
 };

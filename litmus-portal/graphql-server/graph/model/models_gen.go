@@ -105,7 +105,7 @@ type ClusterActionInput struct {
 
 type ClusterConfirmResponse struct {
 	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
-	NewClusterKey      *string `json:"newClusterKey"`
+	NewAccessKey       *string `json:"newAccessKey"`
 	ClusterID          *string `json:"cluster_id"`
 }
 
@@ -160,7 +160,8 @@ type CreateUserInput struct {
 	Email       *string `json:"email"`
 	CompanyName *string `json:"company_name"`
 	Name        *string `json:"name"`
-	ProjectName string  `json:"project_name"`
+	UserID      string  `json:"userID"`
+	Role        string  `json:"role"`
 }
 
 type DSInput struct {

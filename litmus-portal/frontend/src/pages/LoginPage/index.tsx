@@ -1,10 +1,9 @@
-/* eslint-disable react/no-danger */
-import { Typography } from '@material-ui/core';
-import { ButtonFilled, InputField } from 'litmus-ui';
+import { TextField, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import config from '../../config';
+import Center from '../../containers/layouts/Center';
 import { setUserDetails } from '../../utils/auth';
 import { validateStartEmptySpacing } from '../../utils/validate';
 import useStyles from './styles';
@@ -14,8 +13,7 @@ interface authData {
   password: string;
 }
 
-const LoginPage = () => {
-  const { t } = useTranslation();
+const LoginPage: React.FC = () => {
   const classes = useStyles();
 
   const [isError, setIsError] = useState<boolean>(false);
@@ -52,7 +50,7 @@ const LoginPage = () => {
         } else {
           setUserDetails(data.access_token);
           setIsLoading(false);
-          window.location.assign('/home');
+          window.location.assign('/getStarted');
         }
       })
       .catch((err) => {
@@ -62,94 +60,76 @@ const LoginPage = () => {
 
   return (
     <div className={classes.rootContainer}>
-      <div className={classes.mainDiv}>
-        <div className={classes.box}>
-          <img src="icons/LitmusLogo.svg" alt="litmus logo" />
-          <Typography variant="h2" className={classes.heading}>
-            <div dangerouslySetInnerHTML={{ __html: t('login.heading') }} />
-          </Typography>
-          <Typography className={classes.description} gutterBottom>
-            {t('login.subHeading1')}
-            <img
-              src="icons/kubernetes.png"
-              alt="Kubernetes"
-              className={classes.descImg}
-            />
-            {t('login.subHeading2')}
-            <br />
-          </Typography>
-          <Typography className={classes.description}>
-            {t('login.subHeading3')}
-          </Typography>
-          <form id="login-form" autoComplete="on" onSubmit={handleSubmit}>
-            <div className={classes.inputDiv}>
-              <div className={classes.inputValue} data-cy="inputName">
-                <InputField
-                  label="Username"
-                  value={authData.username}
-                  helperText={
-                    validateStartEmptySpacing(authData.username)
-                      ? 'Should not start with an empty space'
-                      : ''
-                  }
-                  variant={
-                    validateStartEmptySpacing(authData.username)
-                      ? 'error'
-                      : 'primary'
-                  }
-                  required
-                  onChange={(e) =>
-                    setAuthData({
-                      username: e.target.value,
-                      password: authData.password,
-                    })
-                  }
-                />
-              </div>
-              <div style={{ margin: '0.4rem 0' }} />
-              <div className={classes.inputValue} data-cy="inputPassword">
-                <InputField
-                  label="Password"
-                  type="password"
-                  required
-                  value={authData.password}
-                  helperText={
-                    isError
-                      ? 'Wrong Credentials - Try again with correct username or password'
-                      : ''
-                  }
-                  variant={isError ? 'error' : 'primary'}
-                  onChange={(e) =>
-                    setAuthData({
-                      username: authData.username,
-                      password: e.target.value,
-                    })
-                  }
-                />
-              </div>
+      <Center>
+        <div className={classes.rootDiv}>
+          <div>
+            <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
+            {/* TODO: Add translations */}
+            <Typography className={classes.HeaderText}>
+              One-stop-shop for Chaos Engineering on kubernetes
+            </Typography>
+            <Typography className={classes.litmusText}>
+              Browse, create, manage monitor and analyze your chaos workflows
+            </Typography>
+          </div>
+          <form
+            id="login-form"
+            autoComplete="on"
+            onSubmit={handleSubmit}
+            className={classes.inputDiv}
+          >
+            <div>
+              <TextField
+                className={classes.inputValue}
+                label="Username"
+                value={authData.username}
+                helperText={
+                  validateStartEmptySpacing(authData.username)
+                    ? 'Should not start with an empty space'
+                    : ''
+                }
+                variant="filled"
+                required
+                onChange={(e) =>
+                  setAuthData({
+                    username: e.target.value,
+                    password: authData.password,
+                  })
+                }
+              />
+              <TextField
+                className={classes.inputValue}
+                label="Password"
+                type="password"
+                required
+                value={authData.password}
+                helperText={
+                  isError
+                    ? 'Wrong Credentials - Try again with correct username or password'
+                    : ''
+                }
+                variant="filled"
+                onChange={(e) =>
+                  setAuthData({
+                    username: authData.username,
+                    password: e.target.value,
+                  })
+                }
+              />
             </div>
-            <div className={classes.loginDiv}>
-              <ButtonFilled
-                className={classes.w20}
-                type="submit"
-                disabled={isLoading}
-              >
-                <div data-cy="loginButton">
-                  {isLoading ? <Loader size={loaderSize} /> : 'Login'}
-                </div>
-              </ButtonFilled>
-            </div>
+
+            <ButtonFilled
+              className={classes.loginButton}
+              type="submit"
+              disabled={isLoading}
+            >
+              <div data-cy="loginButton">
+                {isLoading ? <Loader size={loaderSize} /> : 'Login'}
+              </div>
+            </ButtonFilled>
           </form>
         </div>
-      </div>
-
-      <div className={classes.imageDiv}>
-        <img
-          src="/icons/login.svg"
-          alt="Login screen"
-          className={classes.loginImage}
-        />
-      </div>
+      </Center>
     </div>
   );
 };

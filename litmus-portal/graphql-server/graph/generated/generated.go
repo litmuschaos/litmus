@@ -115,7 +115,7 @@ type ComplexityRoot struct {
 	ClusterConfirmResponse struct {
 		ClusterID          func(childComplexity int) int
 		IsClusterConfirmed func(childComplexity int) int
-		NewClusterKey      func(childComplexity int) int
+		NewAccessKey       func(childComplexity int) int
 	}
 
 	ClusterEvent struct {
@@ -196,6 +196,7 @@ type ComplexityRoot struct {
 		CreateChaosWorkFlow func(childComplexity int, input model.ChaosWorkFlowInput) int
 		CreateDashBoard     func(childComplexity int, dashboard *model.CreateDBInput) int
 		CreateDataSource    func(childComplexity int, datasource *model.DSInput) int
+		CreateProject       func(childComplexity int, projectName string) int
 		CreateUser          func(childComplexity int, user model.CreateUserInput) int
 		DeclineInvitation   func(childComplexity int, member model.MemberInput) int
 		DeleteChaosWorkflow func(childComplexity int, workflowid string) int
@@ -480,6 +481,7 @@ type MutationResolver interface {
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error)
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
+	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error)
 	SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error)
@@ -873,12 +875,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClusterConfirmResponse.IsClusterConfirmed(childComplexity), true
 
-	case "ClusterConfirmResponse.newClusterKey":
-		if e.complexity.ClusterConfirmResponse.NewClusterKey == nil {
+	case "ClusterConfirmResponse.newAccessKey":
+		if e.complexity.ClusterConfirmResponse.NewAccessKey == nil {
 			break
 		}
 
-		return e.complexity.ClusterConfirmResponse.NewClusterKey(childComplexity), true
+		return e.complexity.ClusterConfirmResponse.NewAccessKey(childComplexity), true
 
 	case "ClusterEvent.cluster":
 		if e.complexity.ClusterEvent.Cluster == nil {
@@ -1285,6 +1287,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateDataSource(childComplexity, args["datasource"].(*model.DSInput)), true
+
+	case "Mutation.createProject":
+		if e.complexity.Mutation.CreateProject == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createProject_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateProject(childComplexity, args["projectName"].(string)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -3015,7 +3029,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3191,7 +3205,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3365,7 +3379,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -3397,7 +3411,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -3479,7 +3493,7 @@ input ClusterIdentity {
 
 type ClusterConfirmResponse {
   isClusterConfirmed: Boolean!
-  newClusterKey: String
+  newAccessKey: String
   cluster_id: String
 }
 
@@ -3684,6 +3698,9 @@ type Mutation {
 
   createUser(user: CreateUserInput!): User! @authorized
 
+  #It is used to create a project
+  createProject(projectName: String!): Project! @authorized
+
   updateUser(user: UpdateUserInput!): String! @authorized
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
@@ -3719,7 +3736,8 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
 
@@ -3768,7 +3786,7 @@ type Subscription {
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -3788,7 +3806,8 @@ input CreateUserInput {
   email: String
   company_name: String
   name: String
-  project_name: String!
+  userID: String!
+  role: String!
 }
 
 input UpdateUserInput {
@@ -3908,6 +3927,20 @@ func (ec *executionContext) field_Mutation_createDataSource_args(ctx context.Con
 		}
 	}
 	args["datasource"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectName"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectName"] = arg0
 	return args, nil
 }
 
@@ -6131,7 +6164,7 @@ func (ec *executionContext) _ClusterConfirmResponse_isClusterConfirmed(ctx conte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterConfirmResponse_newClusterKey(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterConfirmResponse_newAccessKey(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6148,7 +6181,7 @@ func (ec *executionContext) _ClusterConfirmResponse_newClusterKey(ctx context.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.NewClusterKey, nil
+		return obj.NewAccessKey, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7939,6 +7972,67 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createProject_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateProject(rctx, args["projectName"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Project); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Project`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Project)
+	fc.Result = res
+	return ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -17581,9 +17675,15 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "project_name":
+		case "userID":
 			var err error
-			it.ProjectName, err = ec.unmarshalNString2string(ctx, v)
+			it.UserID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "role":
+			var err error
+			it.Role, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -18909,8 +19009,8 @@ func (ec *executionContext) _ClusterConfirmResponse(ctx context.Context, sel ast
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "newClusterKey":
-			out.Values[i] = ec._ClusterConfirmResponse_newClusterKey(ctx, field, obj)
+		case "newAccessKey":
+			out.Values[i] = ec._ClusterConfirmResponse_newAccessKey(ctx, field, obj)
 		case "cluster_id":
 			out.Values[i] = ec._ClusterConfirmResponse_cluster_id(ctx, field, obj)
 		default:
@@ -19302,6 +19402,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createUser":
 			out.Values[i] = ec._Mutation_createUser(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createProject":
+			out.Values[i] = ec._Mutation_createProject(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

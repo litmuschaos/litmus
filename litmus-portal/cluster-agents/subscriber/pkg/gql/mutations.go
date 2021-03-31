@@ -15,14 +15,6 @@ func init() {
 	eventMap = make(map[string]types.WorkflowEvent)
 }
 
-func CommonHeaders(req *http.Request) {
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("Dnt", "1")
-}
-
 func sendMutation(server string, payload []byte) (string, error) {
 	req, err := http.NewRequest("POST", server, bytes.NewBuffer(payload))
 	if err != nil {
@@ -44,8 +36,8 @@ func sendMutation(server string, payload []byte) (string, error) {
 }
 
 func ClusterConfirm(clusterData map[string]string) ([]byte, error) {
-	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CID"] + `\", access_key: \"` + clusterData["KEY"] + `\"}){isClusterConfirmed newClusterKey cluster_id}}"}`
-	resp, err := sendMutation(clusterData["GQL_SERVER"], []byte(payload))
+	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey cluster_id}}"}`
+	resp, err := sendMutation(clusterData["SERVER_ADDR"], []byte(payload))
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +66,10 @@ func SendWorkflowUpdates(clusterData map[string]string, event chan types.Workflo
 		eventMap[eventData.UID] = eventData
 
 		// generate gql payload
-		payload, err := GenerateWorkflowPayload(clusterData["CID"], clusterData["KEY"], "false", eventData)
+		payload, err := GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "false", eventData)
 
 		if eventData.FinishedAt != "" {
-			payload, err = GenerateWorkflowPayload(clusterData["CID"], clusterData["KEY"], "true", eventData)
+			payload, err = GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "true", eventData)
 			delete(eventMap, eventData.UID)
 		}
 
@@ -85,7 +77,7 @@ func SendWorkflowUpdates(clusterData map[string]string, event chan types.Workflo
 			logrus.WithError(err).Print("ERROR PARSING WORKFLOW EVENT")
 		}
 
-		body, err := sendMutation(clusterData["GQL_SERVER"], payload)
+		body, err := sendMutation(clusterData["SERVER_ADDR"], payload)
 		if err != nil {
 			logrus.Print(err.Error())
 		}
@@ -96,11 +88,11 @@ func SendWorkflowUpdates(clusterData map[string]string, event chan types.Workflo
 //SendPodLogs generates gql mutation to send workflow updates to gql server
 func SendPodLogs(clusterData map[string]string, podLog types.PodLogRequest) {
 	// generate gql payload
-	payload, err := GenerateLogPayload(clusterData["CID"], clusterData["KEY"], podLog)
+	payload, err := GenerateLogPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], podLog)
 	if err != nil {
 		logrus.WithError(err).Print("ERROR GETTING WORKFLOW LOG")
 	}
-	body, err := sendMutation(clusterData["GQL_SERVER"], payload)
+	body, err := sendMutation(clusterData["SERVER_ADDR"], payload)
 	if err != nil {
 		logrus.Print(err.Error())
 	}

@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
   drawerList: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(8.375),
   },
   versionlogo: {
     width: '1.25rem',
