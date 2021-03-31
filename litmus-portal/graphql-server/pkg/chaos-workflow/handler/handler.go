@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -264,6 +265,38 @@ func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
 	return result, nil
 }
 
+func resiliencyScoreCalculator(execData string, wfid string) string {
+	var resiliency_score int
+	var weightSum int = 0
+	var totalTestResult int = 0
+	var jsonData map[string]map[string]map[string]interface{}
+	json.Unmarshal([]byte(execData), &jsonData)
+	for _, value := range jsonData["nodes"] {
+		if value["type"] == "ChaosEngine" {
+			chaosData := value["chaosData"].(map[string]interface{})
+			var wfids [1]*string
+			wfids[0] = &wfid
+			chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": wfids}}})
+			for _, workflow := range chaosWorkflows {
+				var Weightages []*model.Weightages
+				copier.Copy(&Weightages, &workflow.Weightages)
+				for _, weightEntry := range Weightages {
+					if weightEntry.ExperimentName == chaosData["experimentName"] {
+						x, _ := strconv.Atoi(chaosData["probeSuccessPercentage"].(string))
+						totalTestResult += weightEntry.Weightage * x
+						weightSum += weightEntry.Weightage
+					}
+				}
+			}
+
+		}
+	}
+	resiliency_score = (totalTestResult / weightSum)
+	execData = "{" + `"resiliency_score":` + `"` + strconv.Itoa(resiliency_score) + `",` + execData[1:]
+	fmt.Println(execData)
+	return execData
+}
+
 // WorkFlowRunHandler Updates or Inserts a new Workflow Run into the DB
 func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string, error) {
 	cluster, err := cluster.VerifyCluster(*input.ClusterID)
@@ -272,11 +305,16 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
+	var executionData string = input.ExecutionData
+	if input.Completed {
+		executionData = resiliencyScoreCalculator(input.ExecutionData, input.WorkflowID)
+	}
+
 	// err = dbOperationsWorkflow.UpdateWorkflowRun(dbOperationsWorkflow.WorkflowRun(newWorkflowRun))
 	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
-		ExecutionData: input.ExecutionData,
+		ExecutionData: executionData,
 		Completed:     input.Completed,
 	})
 	if err != nil {
@@ -295,7 +333,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
 		WorkflowRunID: input.WorkflowRunID,
 		WorkflowName:  input.WorkflowName,
-		ExecutionData: input.ExecutionData,
+		ExecutionData: executionData,
 		WorkflowID:    input.WorkflowID,
 	}, &r)
 
