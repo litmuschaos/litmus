@@ -35,6 +35,7 @@ import {
   ChaosDataUpdates,
   ChaosEventDetails,
   ChaosInformation,
+  EventMetric,
 } from '../../models/dashboardsData';
 import {
   DashboardList,
@@ -89,6 +90,7 @@ interface PrometheusQueryDataInterface {
   numOfWorkflows: number;
   firstLoad: Boolean;
   chaosEvents: ChaosEventDetails[];
+  chaosEventsToBeShown: ChaosEventDetails[];
   eventsToShow: string[];
 }
 
@@ -99,8 +101,8 @@ interface RefreshObjectType {
 
 interface ChaosDataSet {
   queryIDs: string[];
-  chaosData: Array<GraphMetric>;
-  visibleChaos: Array<GraphMetric>;
+  chaosData: Array<EventMetric>;
+  visibleChaos: Array<EventMetric>;
 }
 
 const DashboardPage: React.FC = () => {
@@ -148,6 +150,7 @@ const DashboardPage: React.FC = () => {
     },
     chaosInput: [],
     chaosEvents: [],
+    chaosEventsToBeShown: [],
     eventsToShow: [],
     numOfWorkflows: 0,
     firstLoad: true,
@@ -474,6 +477,9 @@ const DashboardPage: React.FC = () => {
       },
       chaosInput: chaosInformation.chaosQueryIDs,
       chaosEvents: chaosInformation.chaosEventList,
+      chaosEventsToBeShown: chaosInformation.chaosEventList.filter(
+        (event) => event.showOnTable
+      ),
       numOfWorkflows: chaosInformation.numberOfWorkflowsUnderConsideration,
       eventsToShow: chaosInformation.chaosEventList.map(({ id }) => id),
       firstLoad: !analyticsData?.ListWorkflow,
@@ -546,6 +552,47 @@ const DashboardPage: React.FC = () => {
       );
     }
   }, [prometheusQueryData]);
+
+  useEffect(() => {
+    if (
+      chaosDataSet.chaosData.length !==
+      prometheusQueryData?.chaosEventsToBeShown.length
+    ) {
+      if (
+        chaosDataSet.chaosData.length <
+        prometheusQueryData?.chaosEventsToBeShown.length
+      ) {
+        clearTimeOuts().then(() => {
+          dashboard.selectDashboard({
+            forceUpdate: true,
+          });
+        });
+      } else {
+        chaosDataSet.queryIDs.forEach((chaosQueryID: string, index: number) => {
+          const latestSubDataValueForEvent: string =
+            chaosDataSet.chaosData[index].subData?.filter(
+              (subDataElement) =>
+                subDataElement.subDataName === 'Experiment Verdict'
+            )[0].value ?? '';
+          if (
+            latestSubDataValueForEvent === 'Pass' ||
+            latestSubDataValueForEvent === 'Fail'
+          ) {
+            const matchingEventsFound: number = prometheusQueryData?.chaosEventsToBeShown.filter(
+              (event: ChaosEventDetails) => event.id === chaosQueryID
+            ).length;
+            if (!matchingEventsFound) {
+              clearTimeOuts().then(() => {
+                dashboard.selectDashboard({
+                  forceUpdate: true,
+                });
+              });
+            }
+          }
+        });
+      }
+    }
+  }, [chaosDataSet]);
 
   useEffect(() => {
     if (selectedDashboard.forceUpdate) {
@@ -815,9 +862,7 @@ const DashboardPage: React.FC = () => {
                 </AccordionSummary>
                 <AccordionDetails className={classes.panelGroupContainer}>
                   <ChaosTable
-                    chaosList={prometheusQueryData?.chaosEvents.filter(
-                      (event) => event.showOnTable
-                    )}
+                    chaosList={prometheusQueryData?.chaosEventsToBeShown}
                     selectEvents={(selectedEvents: string[]) => {
                       if (selectedDashboard.refreshRate === 2147483647) {
                         setPrometheusQueryData({
