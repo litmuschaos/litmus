@@ -180,14 +180,12 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
             )}
           </div>
           <div>
-            {podLogs?.chaos_logs != null ? (
+            {podLogs?.chaos_logs && (
               <div style={{ whiteSpace: 'pre-wrap' }}>
                 <Typography className={classes.text}>
-                  {chaosLogs(podLogs?.chaos_logs)}
+                  {chaosLogs(podLogs.chaos_logs)}
                 </Typography>
               </div>
-            ) : (
-              <></>
             )}
           </div>
         </div>

@@ -200,11 +200,11 @@ const WorkflowDetails: React.FC = () => {
   // Setting NodeId of first Node in redux for selection of first node in Argo graph by default
   useEffect(() => {
     if (workflow && pod_name === '') {
-      const firstNodeId = JSON.parse(workflow?.execution_data as string).nodes[
-        Object.keys(JSON.parse(workflow?.execution_data as string).nodes)[0]
+      const firstNodeId = JSON.parse(workflow.execution_data as string).nodes[
+        Object.keys(JSON.parse(workflow.execution_data as string).nodes)[0]
       ].name;
       nodeSelection.selectNode({
-        ...JSON.parse(workflow?.execution_data as string).nodes[firstNodeId],
+        ...JSON.parse(workflow.execution_data as string).nodes[firstNodeId],
         pod_name: firstNodeId,
       });
     }
@@ -259,11 +259,11 @@ const WorkflowDetails: React.FC = () => {
                 {isInfoToggled ? (
                   <div>
                     {pod_name !==
-                      JSON.parse(workflow.execution_data).nodes[
-                        Object.keys(
-                          JSON.parse(workflow.execution_data as string).nodes
-                        )[0]
-                      ].name && pod_name !== '' ? (
+                    JSON.parse(workflow.execution_data).nodes[
+                      Object.keys(
+                        JSON.parse(workflow.execution_data as string).nodes
+                      )[0]
+                    ].name ? (
                       /* Node details and Logs */
                       <WorkflowNodeInfo
                         manifest={
