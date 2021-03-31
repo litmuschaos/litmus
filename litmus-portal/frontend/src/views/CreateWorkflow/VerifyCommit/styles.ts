@@ -5,56 +5,56 @@ const useStyles = makeStyles((theme: Theme) => ({
     background: theme.palette.border.main,
   },
   root: {
-    backgroundColor: theme.palette.background.paper,
-    borderColor: theme.palette.text.disabled,
-    borderRadius: '0.1875rem',
-    flexDirection: 'column',
-    height: '100%',
+    background: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    padding: theme.spacing(0, 2),
     margin: '0 auto',
-    padding: theme.spacing(3.75, 6, 3.75, 3.75),
-    width: '80%',
+    width: '98%',
+    height: '100%',
+    flexDirection: 'column',
+    [theme.breakpoints.up('lg')]: {
+      width: '99%',
+    },
   },
+
+  // Inner Container
+  innerContainer: {
+    margin: theme.spacing(4, 'auto'),
+    width: '95%', // Inner width of the container
+  },
+
   suHeader: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-even',
+    justifyContent: 'space-between',
   },
   headerText: {
-    marginTop: theme.spacing(2.75),
-    fontSize: '1.5625rem',
+    fontSize: '1.2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1.4rem',
+    },
   },
   description: {
     marginTop: theme.spacing(3.25),
     marginBottom: theme.spacing(7.5),
-    fontSize: '1.0625rem',
-  },
-  suBody: {
-    width: '65%',
+    fontSize: '1rem',
   },
   bfinIcon: {
     width: '7rem',
     height: '6.31rem',
-    marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(12),
   },
   outerSum: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(3),
     display: 'flex',
     flexDirection: 'column',
   },
   summaryDiv: {
     display: 'flex',
     flexDirection: 'row',
-    width: '100%',
     justifyContent: 'flex-start',
     alignItems: 'baseline',
-    marginTop: theme.spacing(3),
   },
   innerSumDiv: {
     alignContent: 'center',
     display: 'table-cell',
-    height: '100%',
     verticalAlign: 'middle',
     width: '20%',
   },
@@ -134,11 +134,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     marginLeft: theme.spacing(7),
-  },
-  yamlButton: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    width: theme.spacing(1.5),
   },
   progress: {
     display: 'flex',

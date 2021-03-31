@@ -317,7 +317,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.scHeader}>
+      <div className={classes.innerContainer}>
         {/* Upper segment */}
         <div className={classes.scSegments}>
           <div>

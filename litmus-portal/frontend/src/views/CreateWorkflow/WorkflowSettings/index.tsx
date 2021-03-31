@@ -159,67 +159,69 @@ const WorkflowSettings = forwardRef((_, ref) => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.headerDiv}>
-        <Typography className={classes.header}>
-          {t('createWorkflow.chooseWorkflow.settings')}
-        </Typography>
-        <Typography className={classes.description}>
-          {descriptionHeader}
-          <i>
-            <strong>
-              {name.split('-').map((text) => `${capitalize(text)} `)}
-            </strong>
-          </i>
-          <br />
-          {t('createWorkflow.chooseWorkflow.description2')}
-        </Typography>
-      </div>
-      <div className={classes.avatarDiv}>
-        <div className={classes.avatarImgDiv}>
-          <Avatar
-            variant="square"
-            className={classes.avatar}
-            data-cy="avatar"
-            alt="User"
-            src={icon}
-          />
-          <Typography
-            className={classes.editText}
-            onClick={() => setAvatarModal(true)}
-          >
-            {t('createWorkflow.chooseWorkflow.edit')}
+      <div className={classes.innerContainer}>
+        <div>
+          <Typography className={classes.header}>
+            {t('createWorkflow.chooseWorkflow.settings')}
+          </Typography>
+          <Typography className={classes.description}>
+            {descriptionHeader}
+            <i>
+              <strong>
+                {name.split('-').map((text) => `${capitalize(text)} `)}
+              </strong>
+            </i>
+            <br />
+            {t('createWorkflow.chooseWorkflow.description2')}
           </Typography>
         </div>
-        <div className={classes.inputDiv}>
-          <div aria-details="spacer" style={{ width: '60%' }}>
+        <div className={classes.avatarDiv}>
+          <div className={classes.avatarImgDiv}>
+            <Avatar
+              variant="square"
+              className={classes.avatar}
+              data-cy="avatar"
+              alt="User"
+              src={icon}
+            />
+            <Typography
+              className={classes.editText}
+              onClick={() => setAvatarModal(true)}
+            >
+              {t('createWorkflow.chooseWorkflow.edit')}
+            </Typography>
+          </div>
+          <div className={classes.inputDiv}>
+            <div aria-details="spacer" style={{ width: '60%' }}>
+              <InputField
+                label={t('createWorkflow.chooseWorkflow.label.workflowName')}
+                data-cy="inputWorkflow"
+                fullWidth
+                helperText={
+                  validateWorkflowName(name)
+                    ? t('createWorkflow.chooseWorkflow.validate')
+                    : ''
+                }
+                variant={validateWorkflowName(name) ? 'error' : 'primary'}
+                onChange={nameChangeHandle}
+                value={name}
+              />
+            </div>
+            <div aria-details="spacer" style={{ margin: '3rem 0' }} />
             <InputField
-              label={t('createWorkflow.chooseWorkflow.label.workflowName')}
-              data-cy="inputWorkflow"
+              id="filled-workflowdescription-input"
+              label={t('createWorkflow.chooseWorkflow.label.desc')}
               fullWidth
-              helperText={
-                validateWorkflowName(name)
-                  ? t('createWorkflow.chooseWorkflow.validate')
-                  : ''
-              }
-              variant={validateWorkflowName(name) ? 'error' : 'primary'}
-              onChange={nameChangeHandle}
-              value={name}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              data-cy="inputWorkflowDescription"
+              value={description}
+              onChange={descriptionChangeHandle}
+              multiline
+              rows={8}
             />
           </div>
-          <div aria-details="spacer" style={{ margin: '3rem 0' }} />
-          <InputField
-            id="filled-workflowdescription-input"
-            label={t('createWorkflow.chooseWorkflow.label.desc')}
-            fullWidth
-            InputProps={{
-              disableUnderline: true,
-            }}
-            data-cy="inputWorkflowDescription"
-            value={description}
-            onChange={descriptionChangeHandle}
-            multiline
-            rows={8}
-          />
         </div>
       </div>
       {avatarModal ? (

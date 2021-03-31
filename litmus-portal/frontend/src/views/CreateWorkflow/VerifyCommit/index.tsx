@@ -22,6 +22,7 @@ import {
   CreateWorkflowResponse,
   WeightMap,
 } from '../../../models/graphql/createWorkflowData';
+import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
@@ -72,6 +73,26 @@ const VerifyCommit = forwardRef((_, ref) => {
     (state: RootState) => state.workflowManifest.manifest
   );
 
+  const saveWorkflowGenerateName = (manifest: string) => {
+    const parsedManifest = YAML.parse(manifest);
+    delete parsedManifest.metadata.generateName;
+    parsedManifest.metadata.name = `${workflow.name}-${Math.round(
+      new Date().getTime() / 1000
+    )}`;
+    if (parsedManifest.metadata.name.split('-').length > 1) {
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(parsedManifest),
+      });
+    }
+  };
+  const fetchWorkflowNameFromManifest = (manifest: string) => {
+    return YAML.parse(manifest).metadata.name;
+  };
+
+  useEffect(() => {
+    saveWorkflowGenerateName(manifest);
+  }, [workflow.name]);
+
   useEffect(() => {
     localforage.getItem('workflow').then(
       (workflow) =>
@@ -109,15 +130,43 @@ const VerifyCommit = forwardRef((_, ref) => {
     const parsedYaml = YAML.parse(manifest);
     parsedYaml.metadata.name = changedName;
     const nameMappedYaml = YAML.stringify(parsedYaml);
-    workflowAction.setWorkflowDetails({
-      name: changedName,
-      yaml: nameMappedYaml,
+    localforage.getItem('selectedScheduleOption').then((option) => {
+      if (option !== null && (option as ChooseWorkflowRadio).selected === 'A') {
+        localforage.getItem('workflow').then((w) => {
+          const data: WorkflowDetailsProps = {
+            name: changedName,
+            description: (w as WorkflowDetailsProps).description,
+            icon: (w as WorkflowDetailsProps).icon,
+            CRDLink: nameMappedYaml,
+          };
+          localforage.setItem('workflow', data);
+        });
+      } else {
+        localforage.getItem('workflow').then((w) => {
+          const data: WorkflowDetailsProps = {
+            name: changedName,
+            description: (w as WorkflowDetailsProps).description,
+            icon: (w as WorkflowDetailsProps).icon,
+            CRDLink: '',
+          };
+          localforage.setItem('workflow', data);
+        });
+        workflowAction.setWorkflowManifest({
+          manifest: nameMappedYaml,
+        });
+      }
     });
   };
 
   const handleDescChange = ({ changedDesc }: { changedDesc: string }) => {
-    workflowAction.setWorkflowDetails({
-      description: changedDesc,
+    localforage.getItem('workflow').then((w) => {
+      const data: WorkflowDetailsProps = {
+        name: (w as WorkflowDetailsProps).name,
+        description: changedDesc,
+        icon: (w as WorkflowDetailsProps).icon,
+        CRDLink: (w as WorkflowDetailsProps).CRDLink,
+      };
+      localforage.setItem('workflow', data);
     });
   };
 
@@ -172,7 +221,7 @@ const VerifyCommit = forwardRef((_, ref) => {
       const chaosWorkFlowInputs = {
         workflow_manifest: yamlJson,
         cronSyntax,
-        workflow_name: workflowData.name,
+        workflow_name: fetchWorkflowNameFromManifest(manifest),
         workflow_description: workflow.description,
         isCustomWorkflow: false,
         weightages: weightData,
@@ -189,6 +238,16 @@ const VerifyCommit = forwardRef((_, ref) => {
     setErrorModal(false);
   };
 
+  const handleFinishModal = () => {
+    workflowAction.setWorkflowManifest({ manifest: '', engineYAML: '' });
+    localforage.removeItem('workflow');
+    localforage.removeItem('selectedScheduleOption');
+    localforage.removeItem('hasSetWorkflowData');
+    localforage.removeItem('weights');
+    localforage.removeItem('selectedHub');
+    setFinishModalOpen(false);
+  };
+
   function onNext() {
     handleMutation();
   }
@@ -200,172 +259,171 @@ const VerifyCommit = forwardRef((_, ref) => {
   // const preventDefault = (event: React.SyntheticEvent) =>
   //  event.preventDefault();
   return (
-    <div>
+    <>
       <div className={classes.root}>
-        <div className={classes.suHeader}>
-          <div className={classes.suBody}>
-            <Typography className={classes.headerText}>
-              <strong> {t('createWorkflow.verifyCommit.header')}</strong>
-            </Typography>
-            <Typography className={classes.description}>
-              {t('createWorkflow.verifyCommit.info')}
-            </Typography>
-          </div>
-          <img
-            src="/icons/b-finance.png"
-            alt="bfinance"
-            className={classes.bfinIcon}
-          />
-        </div>
-        <Divider />
-
-        <Typography className={classes.sumText}>
-          <strong>{t('createWorkflow.verifyCommit.summary.header')}</strong>
-        </Typography>
-
-        <div className={classes.outerSum}>
-          <div className={classes.summaryDiv}>
-            <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>
-                {t('createWorkflow.verifyCommit.summary.workflowName')}:
+        <div className={classes.innerContainer}>
+          <div className={classes.suHeader}>
+            <div>
+              <Typography className={classes.headerText}>
+                <strong> {t('createWorkflow.verifyCommit.header')}</strong>
+              </Typography>
+              <Typography className={classes.description}>
+                {t('createWorkflow.verifyCommit.info')}
               </Typography>
             </div>
-            <div className={classes.col2} data-cy="WorkflowName">
-              <EditableText
-                value={workflow.name}
-                id="name"
-                fullWidth
-                onChange={(e) =>
-                  handleNameChange({ changedName: e.target.value })
-                }
-                disabled={workflowData.isRecurring}
-              />
-            </div>
+            <img
+              src="/icons/b-finance.png"
+              alt="bfinance"
+              className={classes.bfinIcon}
+            />
           </div>
+          <Divider />
 
-          <div className={classes.summaryDiv}>
-            <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>
-                {t('createWorkflow.verifyCommit.summary.clustername')}:
-              </Typography>
-            </div>
-            <Typography className={classes.clusterName}>
-              {clustername}
-            </Typography>
-          </div>
+          <Typography className={classes.sumText}>
+            <strong>{t('createWorkflow.verifyCommit.summary.header')}</strong>
+          </Typography>
 
-          <div className={classes.summaryDiv}>
-            <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>
-                {t('createWorkflow.verifyCommit.summary.desc')}:
+          <div className={classes.outerSum}>
+            <div className={classes.summaryDiv}>
+              <div className={classes.innerSumDiv}>
+                <Typography className={classes.col1}>
+                  {t('createWorkflow.verifyCommit.summary.workflowName')}:
+                </Typography>
+              </div>
+              <div className={classes.col2} data-cy="WorkflowName">
+                <EditableText
+                  value={fetchWorkflowNameFromManifest(manifest)}
+                  id="name"
+                  fullWidth
+                  onChange={(e) =>
+                    handleNameChange({ changedName: e.target.value })
+                  }
+                  disabled={workflowData.isRecurring}
+                />
+              </div>
+            </div>
+
+            <div className={classes.summaryDiv}>
+              <div className={classes.innerSumDiv}>
+                <Typography className={classes.col1}>
+                  {t('createWorkflow.verifyCommit.summary.clustername')}:
+                </Typography>
+              </div>
+              <Typography className={classes.clusterName}>
+                {clustername}
               </Typography>
             </div>
-            <div className={classes.col2}>
-              <EditableText
-                value={workflow.description}
-                id="desc"
-                fullWidth
-                onChange={(e) =>
-                  handleDescChange({ changedDesc: e.target.value })
-                }
-              />
+
+            <div className={classes.summaryDiv}>
+              <div className={classes.innerSumDiv}>
+                <Typography className={classes.col1}>
+                  {t('createWorkflow.verifyCommit.summary.desc')}:
+                </Typography>
+              </div>
+              <div className={classes.col2}>
+                <EditableText
+                  value={workflow.description}
+                  id="desc"
+                  fullWidth
+                  onChange={(e) =>
+                    handleDescChange({ changedDesc: e.target.value })
+                  }
+                />
+              </div>
             </div>
-          </div>
-          <div className={classes.summaryDiv}>
-            <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>
-                {t('createWorkflow.verifyCommit.summary.schedule')}:
-              </Typography>
-            </div>
-            <div className={classes.schCol2}>
-              {/* <CustomDate disabled={edit} />
+            <div className={classes.summaryDiv}>
+              <div className={classes.innerSumDiv}>
+                <Typography className={classes.col1}>
+                  {t('createWorkflow.verifyCommit.summary.schedule')}:
+                </Typography>
+              </div>
+              <div className={classes.schCol2}>
+                {/* <CustomDate disabled={edit} />
               <CustomTime
                 handleDateChange={handleDateChange}
                 value={selectedDate}
                 ampm
                 disabled={edit}
               /> */}
-              {isDisabled ? (
-                <Typography className={classes.schedule}>
-                  {t('createWorkflow.verifyCommit.summary.disabled')}
-                </Typography>
-              ) : cronSyntax === '' ? (
-                <Typography className={classes.schedule}>
-                  {t('createWorkflow.verifyCommit.summary.schedulingNow')}
-                </Typography>
-              ) : (
-                <Typography className={classes.schedule}>
-                  {cronstrue.toString(cronSyntax)}
-                </Typography>
-              )}
-
-              <div className={classes.editButton1}>
-                <IconButton>
-                  <EditIcon className={classes.editbtn} data-cy="edit" />
-                </IconButton>
-              </div>
-            </div>
-          </div>
-          <div className={classes.summaryDiv}>
-            <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>
-                {t('createWorkflow.verifyCommit.summary.adjustedWeights')}:
-              </Typography>
-            </div>
-            {weights.length === 0 ? (
-              <div>
-                <Typography className={classes.errorText}>
-                  <strong>{t('createWorkflow.verifyCommit.error')}</strong>
-                </Typography>
-              </div>
-            ) : (
-              <div className={classes.adjWeights}>
-                <div className={classes.progress} style={{ flexWrap: 'wrap' }}>
-                  {WorkflowTestData.map((Test) => (
-                    <AdjustedWeights
-                      key={Test.weight}
-                      testName={`${Test.experimentName} test`}
-                      testValue={Test.weight}
-                      spacing={false}
-                      icon={false}
-                    />
-                  ))}
-                </div>
-                {/* <div className={classes.editButton2}> */}
-                <ButtonOutlined
-                  disabled={workflowData.isRecurring}
-                  data-cy="testRunButton"
-                >
-                  <Typography className={classes.buttonOutlineText}>
-                    {t('createWorkflow.verifyCommit.button.edit')}
+                {isDisabled ? (
+                  <Typography className={classes.schedule}>
+                    {t('createWorkflow.verifyCommit.summary.disabled')}
                   </Typography>
-                </ButtonOutlined>
-                {/* </div> */}
+                ) : cronSyntax === '' ? (
+                  <Typography className={classes.schedule}>
+                    {t('createWorkflow.verifyCommit.summary.schedulingNow')}
+                  </Typography>
+                ) : (
+                  <Typography className={classes.schedule}>
+                    {cronstrue.toString(cronSyntax)}
+                  </Typography>
+                )}
+
+                <div className={classes.editButton1}>
+                  <IconButton>
+                    <EditIcon className={classes.editbtn} data-cy="edit" />
+                  </IconButton>
+                </div>
               </div>
-            )}
-          </div>
-          <div className={classes.summaryDiv}>
-            <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>YAML:</Typography>
             </div>
-            <div className={classes.yamlFlex}>
-              {weights.length === 0 ? (
-                <Typography>
-                  {' '}
-                  {t('createWorkflow.verifyCommit.errYaml')}{' '}
+            <div className={classes.summaryDiv}>
+              <div className={classes.innerSumDiv}>
+                <Typography className={classes.col1}>
+                  {t('createWorkflow.verifyCommit.summary.adjustedWeights')}:
                 </Typography>
+              </div>
+              {weights.length === 0 ? (
+                <div>
+                  <Typography className={classes.errorText}>
+                    <strong>{t('createWorkflow.verifyCommit.error')}</strong>
+                  </Typography>
+                </div>
               ) : (
-                <Typography>{yamlStatus}</Typography>
+                <div className={classes.adjWeights}>
+                  <div
+                    className={classes.progress}
+                    style={{ flexWrap: 'wrap' }}
+                  >
+                    {WorkflowTestData.map((Test) => (
+                      <AdjustedWeights
+                        key={Test.weight}
+                        testName={`${Test.experimentName} test`}
+                        testValue={Test.weight}
+                        spacing={false}
+                        icon={false}
+                      />
+                    ))}
+                  </div>
+                  <ButtonOutlined
+                    disabled={workflowData.isRecurring}
+                    data-cy="testRunButton"
+                  >
+                    {t('createWorkflow.verifyCommit.button.edit')}
+                  </ButtonOutlined>
+                </div>
               )}
-              <div className={classes.yamlButton}>
-                <ButtonFilled onClick={handleOpen}>
-                  <div>{t('createWorkflow.verifyCommit.button.viewYaml')}</div>
+            </div>
+            <div className={classes.summaryDiv}>
+              <div className={classes.innerSumDiv}>
+                <Typography className={classes.col1}>YAML:</Typography>
+              </div>
+              <div className={classes.yamlFlex}>
+                {weights.length === 0 ? (
+                  <Typography>
+                    {' '}
+                    {t('createWorkflow.verifyCommit.errYaml')}{' '}
+                  </Typography>
+                ) : (
+                  <Typography>{yamlStatus}</Typography>
+                )}
+                <br />
+                <ButtonFilled style={{ width: '60%' }} onClick={handleOpen}>
+                  {t('createWorkflow.verifyCommit.button.viewYaml')}
                 </ButtonFilled>
               </div>
             </div>
           </div>
         </div>
-        <Divider />
       </div>
 
       <Modal
@@ -393,13 +451,13 @@ const VerifyCommit = forwardRef((_, ref) => {
         <Modal
           data-cy="FinishModal"
           open={finishModalOpen}
-          onClose={() => setFinishModalOpen(false)}
+          onClose={handleFinishModal}
           width="60%"
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           modalActions={
             <div data-cy="GoToWorkflowButton">
-              <ButtonOutlined onClick={() => setFinishModalOpen(false)}>
+              <ButtonOutlined onClick={handleFinishModal}>
                 &#x2715;
               </ButtonOutlined>
             </div>
@@ -422,7 +480,7 @@ const VerifyCommit = forwardRef((_, ref) => {
               <ButtonFilled
                 data-cy="selectFinish"
                 onClick={() => {
-                  setOpen(false);
+                  handleFinishModal();
                   tabs.changeWorkflowsTabs(0);
                   history.push({
                     pathname: '/workflows',
@@ -468,7 +526,7 @@ const VerifyCommit = forwardRef((_, ref) => {
           </div>
         </Modal>
       </div>
-    </div>
+    </>
   );
 });
 

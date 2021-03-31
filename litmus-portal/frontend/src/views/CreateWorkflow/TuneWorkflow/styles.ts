@@ -11,23 +11,25 @@ const useStyles = makeStyles((theme) => ({
 
   // Header
   headerWrapper: {
-    padding: theme.spacing(0, 4),
-    width: '98%',
-    [theme.breakpoints.up('lg')]: {
-      width: '99%',
-    },
+    padding: theme.spacing(0, 7),
   },
 
   heading: {
     marginTop: theme.spacing(3),
-    fontSize: '1.5rem',
+    fontSize: '1.2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1.4rem',
+    },
     fontWeight: 'bold',
   },
 
   headerBtn: {
     display: 'flex',
-    justifyContent: 'space-around',
-    width: '30%',
+    justifyContent: 'space-between',
+    width: '40%',
+    [theme.breakpoints.up('lg')]: {
+      width: '20%',
+    },
   },
 
   descriptionWrapper: {
@@ -36,8 +38,11 @@ const useStyles = makeStyles((theme) => ({
   },
 
   description: {
-    width: '70%',
+    width: '50%',
     fontSize: '1rem',
+    [theme.breakpoints.up('lg')]: {
+      width: '70%',
+    },
   },
 
   // Header Buttons [View YAML, Add Exp]
@@ -49,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   // Experiment Section
   experimentWrapper: {
     background: theme.palette.cards.header,
-    padding: theme.spacing(2, 4),
+    padding: theme.spacing(2, 7),
   },
 
   // Modal
