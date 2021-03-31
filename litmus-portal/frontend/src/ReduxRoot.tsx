@@ -19,7 +19,7 @@ const ReduxRoot = () => {
     <ApolloProvider client={client}>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-          <App />
+          <App data-testid="app" />
         </PersistGate>
       </Provider>
     </ApolloProvider>
