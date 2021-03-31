@@ -99,31 +99,36 @@ export const getWorkflowRunWiseDetails = (schedule: Workflow) => {
               chaosData,
             });
             if (
-              chaosData.experimentVerdict === 'Pass' ||
-              chaosData.experimentVerdict === 'Fail'
+              executionData.finishedAt.length !== 0 &&
+              executionData.phase !== 'Running'
             ) {
-              const weightageMap: WeightageMap[] = schedule.weightages;
-              weightageMap.forEach((weightage) => {
-                if (weightage.experiment_name === chaosData.experimentName) {
-                  if (chaosData.experimentVerdict === 'Pass') {
-                    workflowsRunResults.push(
-                      (weightage.weightage *
-                        parseInt(chaosData.probeSuccessPercentage, 10)) /
-                        100
-                    );
+              if (
+                chaosData.experimentVerdict === 'Pass' ||
+                chaosData.experimentVerdict === 'Fail'
+              ) {
+                const weightageMap: WeightageMap[] = schedule.weightages;
+                weightageMap.forEach((weightage) => {
+                  if (weightage.experiment_name === chaosData.experimentName) {
+                    if (chaosData.experimentVerdict === 'Pass') {
+                      workflowsRunResults.push(
+                        (weightage.weightage *
+                          parseInt(chaosData.probeSuccessPercentage, 10)) /
+                          100
+                      );
+                    }
+                    if (chaosData.experimentVerdict === 'Fail') {
+                      workflowsRunResults.push(0);
+                    }
+                    if (
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                    ) {
+                      weightsSum += weightage.weightage;
+                      isValid = true;
+                    }
                   }
-                  if (chaosData.experimentVerdict === 'Fail') {
-                    workflowsRunResults.push(0);
-                  }
-                  if (
-                    chaosData.experimentVerdict === 'Pass' ||
-                    chaosData.experimentVerdict === 'Fail'
-                  ) {
-                    weightsSum += weightage.weightage;
-                    isValid = true;
-                  }
-                }
-              });
+                });
+              }
             }
           }
         }
@@ -134,6 +139,13 @@ export const getWorkflowRunWiseDetails = (schedule: Workflow) => {
             ? (workflowsRunResults.reduce((a, b) => a + b, 0) / weightsSum) *
               100
             : 0;
+        } else if (
+          executionData.finishedAt.length === 0 ||
+          executionData.phase === 'Running'
+        ) {
+          workflowRunWiseDetailsForSchedule.resilienceScoreForWorkflowRuns[
+            runIndex
+          ] = -1;
         }
       } catch (error) {
         console.error(error);
@@ -347,7 +359,7 @@ export const getChaosQueryPromInputAndID = (
 
     const latestResult: string = availableRunMetrics.length
       ? availableRunMetrics[availableRunMetrics.length - 1].experimentVerdict
-      : '-';
+      : '--';
 
     chaosInformation.promQueries.push({
       queryid: queryID,
@@ -533,17 +545,28 @@ export const chaosEventDataParserForPrometheus = (
             },
             {
               subDataName: 'Resilience Score',
-              value: latestRunMetric ? latestRunMetric.resilienceScore : '-',
+              value:
+                latestRunMetric &&
+                latestRunMetric.workflowStatus !== 'Running' &&
+                latestRunMetric.resilienceScore !== '-1%'
+                  ? latestRunMetric.resilienceScore
+                  : '--',
             },
             {
               subDataName: 'Probe Success Percentage',
               value: latestRunMetric
                 ? latestRunMetric.probeSuccessPercentage
-                : '-',
+                : '--',
             },
             {
               subDataName: 'Experiment Verdict',
-              value: latestRunMetric ? latestRunMetric.experimentVerdict : '-',
+              value: latestRunMetric
+                ? latestRunMetric.experimentVerdict +
+                  (latestRunMetric.experimentVerdict === 'Pass' ||
+                  latestRunMetric.experimentVerdict === 'Fail'
+                    ? 'ed'
+                    : '')
+                : '--',
             },
           ],
           // Filter subData within the start and end time of interleaving on experiment's lastUpdatedTimeStamp.
