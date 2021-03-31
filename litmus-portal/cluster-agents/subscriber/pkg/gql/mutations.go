@@ -121,6 +121,6 @@ func SendKubeObjects(clusterData map[string]string, requestType string) error {
 		logrus.Print(err.Error())
 		return err
 	}
-	logrus.Println("Response",body)
+	logrus.Println("Response", body)
 	return nil
 }
