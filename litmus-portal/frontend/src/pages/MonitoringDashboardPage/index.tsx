@@ -555,42 +555,37 @@ const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     if (
-      chaosDataSet.chaosData.length !==
+      chaosDataSet.chaosData.length <
       prometheusQueryData?.chaosEventsToBeShown.length
     ) {
-      if (
-        chaosDataSet.chaosData.length <
-        prometheusQueryData?.chaosEventsToBeShown.length
-      ) {
-        clearTimeOuts().then(() => {
-          dashboard.selectDashboard({
-            forceUpdate: true,
-          });
+      clearTimeOuts().then(() => {
+        dashboard.selectDashboard({
+          forceUpdate: true,
         });
-      } else {
-        chaosDataSet.queryIDs.forEach((chaosQueryID: string, index: number) => {
-          const latestSubDataValueForEvent: string =
-            chaosDataSet.chaosData[index].subData?.filter(
-              (subDataElement) =>
-                subDataElement.subDataName === 'Experiment Verdict'
-            )[0].value ?? '';
-          if (
-            latestSubDataValueForEvent === 'Pass' ||
-            latestSubDataValueForEvent === 'Fail'
-          ) {
-            const matchingEventsFound: number = prometheusQueryData?.chaosEventsToBeShown.filter(
-              (event: ChaosEventDetails) => event.id === chaosQueryID
-            ).length;
-            if (!matchingEventsFound) {
-              clearTimeOuts().then(() => {
-                dashboard.selectDashboard({
-                  forceUpdate: true,
-                });
+      });
+    } else {
+      chaosDataSet.queryIDs.forEach((chaosQueryID: string, index: number) => {
+        const latestSubDataValueForEvent: string =
+          chaosDataSet.chaosData[index].subData?.filter(
+            (subDataElement) =>
+              subDataElement.subDataName === 'Experiment Verdict'
+          )[0].value ?? '';
+        if (
+          latestSubDataValueForEvent === 'Pass' ||
+          latestSubDataValueForEvent === 'Fail'
+        ) {
+          const matchingEventsFound: number = prometheusQueryData?.chaosEventsToBeShown.filter(
+            (event: ChaosEventDetails) => event.id === chaosQueryID
+          ).length;
+          if (!matchingEventsFound) {
+            clearTimeOuts().then(() => {
+              dashboard.selectDashboard({
+                forceUpdate: true,
               });
-            }
+            });
           }
-        });
-      }
+        }
+      });
     }
   }, [chaosDataSet]);
 
