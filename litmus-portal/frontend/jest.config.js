@@ -1,8 +1,5 @@
 module.exports = {
   preset: 'ts-jest/presets/js-with-ts',
-  transform: {
-    '^.+\\.(css|scss|sass)$': '<rootDir>/mocks/styleMock.js',
-  },
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}',
