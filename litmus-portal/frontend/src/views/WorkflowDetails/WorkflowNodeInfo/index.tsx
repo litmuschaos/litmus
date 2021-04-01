@@ -137,8 +137,8 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
                   {embeddedYAMLString &&
                     Object.keys(
                       YAML.parse(embeddedYAMLString).spec.appinfo
-                    ).map((key) => (
-                      <div>
+                    ).map((key, index) => (
+                      <div key={index.toString()}>
                         <strong>{key} :</strong>
                         <span>
                           &nbsp;&nbsp;
