@@ -35,6 +35,7 @@ type ClusterConnect struct {
 }
 
 type KubeObjRequest struct {
+	RequestID      string
 	ClusterID      string         `json:"cluster_id"`
 	ObjectType     string         `json:"object_type"`
 	KubeGVRRequest KubeGVRRequest `json:"kube_obj_request"`

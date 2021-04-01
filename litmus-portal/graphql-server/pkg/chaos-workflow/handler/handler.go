@@ -390,7 +390,7 @@ func KubeObjHandler(kubeData model.KubeObjectData, r store.StateData) (string, e
 		log.Print("Error", err)
 		return "", err
 	}
-	if reqChan, ok := r.KubeObjectData[kubeData.ClusterID.ClusterID]; ok {
+	if reqChan, ok := r.KubeObjectData[kubeData.RequestID]; ok {
 		resp := model.KubeObjectResponse{
 			ClusterID: kubeData.ClusterID.ClusterID,
 			KubeObj:   kubeData.KubeObj,
@@ -402,7 +402,7 @@ func KubeObjHandler(kubeData model.KubeObjectData, r store.StateData) (string, e
 	return "KubeData sent successfully", nil
 }
 
-func GetKubeObjData(kubeObject model.KubeObjectRequest, r store.StateData) {
+func GetKubeObjData(reqID string, kubeObject model.KubeObjectRequest, r store.StateData) {
 	reqType := kubeObject.ObjectType
 	data, err := json.Marshal(kubeObject)
 	if err != nil {
@@ -410,6 +410,7 @@ func GetKubeObjData(kubeObject model.KubeObjectRequest, r store.StateData) {
 	}
 	externalData := string(data)
 	payload := model.ClusterAction{
+		ProjectID: reqID,
 		Action: &model.ActionPayload{
 			RequestType:  reqType,
 			ExternalData: &externalData,
@@ -417,7 +418,7 @@ func GetKubeObjData(kubeObject model.KubeObjectRequest, r store.StateData) {
 	}
 	if clusterChan, ok := r.ConnectedCluster[kubeObject.ClusterID]; ok {
 		clusterChan <- &payload
-	} else if reqChan, ok := r.KubeObjectData[kubeObject.ClusterID]; ok {
+	} else if reqChan, ok := r.KubeObjectData[reqID]; ok {
 		resp := model.KubeObjectResponse{
 			ClusterID: kubeObject.ClusterID,
 			KubeObj:   "Data not available",

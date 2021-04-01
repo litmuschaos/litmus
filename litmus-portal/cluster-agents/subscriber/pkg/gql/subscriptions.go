@@ -72,7 +72,9 @@ func ClusterConnect(clusterData map[string]string) {
 			logrus.Fatal("gql error : ", string(message))
 		}
 		if strings.Index("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
-			var KubeObjRequest types.KubeObjRequest
+			KubeObjRequest := types.KubeObjRequest{
+				RequestID: r.Payload.Data.ClusterConnect.ProjectID,
+			}
 			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData.(string)), &KubeObjRequest)
 			err = SendKubeObjects(clusterData, KubeObjRequest)
 			if err != nil {

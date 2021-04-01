@@ -241,6 +241,7 @@ type KubeGVRRequest struct {
 }
 
 type KubeObjectData struct {
+	RequestID string           `json:"request_id"`
 	ClusterID *ClusterIdentity `json:"cluster_id"`
 	KubeObj   string           `json:"kube_obj"`
 }

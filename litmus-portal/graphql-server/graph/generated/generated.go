@@ -3702,6 +3702,7 @@ type KubeObjectResponse{
 }
 
 input KubeObjectData{
+    request_id: ID!
     cluster_id: ClusterIdentity!
     kube_obj: String!
 }
@@ -18197,6 +18198,12 @@ func (ec *executionContext) unmarshalInputKubeObjectData(ctx context.Context, ob
 
 	for k, v := range asMap {
 		switch k {
+		case "request_id":
+			var err error
+			it.RequestID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "cluster_id":
 			var err error
 			it.ClusterID, err = ec.unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)

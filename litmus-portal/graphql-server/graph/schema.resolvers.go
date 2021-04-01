@@ -356,15 +356,16 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
 	log.Print("NEW KUBEOBJECT REQUEST", kubeObjectRequest.ClusterID)
 	kubeObjData := make(chan *model.KubeObjectResponse)
+	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
-	data_store.Store.KubeObjectData[kubeObjectRequest.ClusterID] = kubeObjData
+	data_store.Store.KubeObjectData[reqID.String()] = kubeObjData
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		log.Println("Closed KubeObj Listener")
-		delete(data_store.Store.KubeObjectData, kubeObjectRequest.ClusterID)
+		delete(data_store.Store.KubeObjectData, reqID.String())
 	}()
-	go wfHandler.GetKubeObjData(kubeObjectRequest, *data_store.Store)
+	go wfHandler.GetKubeObjData(reqID.String(), kubeObjectRequest, *data_store.Store)
 	return kubeObjData, nil
 }
 

@@ -2,7 +2,7 @@ package gql
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/objects"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/objects"
 	"strconv"
 	"strings"
 
@@ -102,7 +102,8 @@ func GenerateKubeObject(cid string, accessKey string, kubeobjectrequest types.Ku
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ cluster_id: ` + clusterID + `, kube_obj:\"` + processed[1:len(processed)-1] + `\"}`
+	mutation := `{ cluster_id: ` + clusterID + `, request_id:\"` + kubeobjectrequest.RequestID + `\", kube_obj:\"` + processed[1:len(processed)-1] + `\"}`
+
 	var payload = []byte(`{"query":"mutation { kubeObj(kubeData:` + mutation + ` )}"}`)
 	return payload, nil
 }

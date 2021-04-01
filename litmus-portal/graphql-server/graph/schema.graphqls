@@ -242,6 +242,7 @@ type KubeObjectResponse{
 }
 
 input KubeObjectData{
+    request_id: ID!
     cluster_id: ClusterIdentity!
     kube_obj: String!
 }
