@@ -1,19 +1,18 @@
-/* eslint-disable */
 import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import YAML from 'yaml';
+import { ButtonOutlined } from 'litmus-ui';
+import { useSelector } from 'react-redux';
 import timeDifference from '../../../utils/datesModifier';
 import useStyles from './styles';
 import trimstring from '../../../utils/trim';
 import WorkflowStatus from '../WorkflowStatus';
 import LogsSwitcher from '../LogsSwitcher';
 import { stepEmbeddedYAMLExtractor } from '../../../utils/yamlUtils';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import YAML from 'yaml';
-import { ButtonOutlined } from 'litmus-ui';
 import { Node } from '../../../models/graphql/workflowData';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/reducers';
 
 interface WorkflowNodeInfoProps {
@@ -48,7 +47,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
     <div className={classes.root}>
       {/* Node Details */}
 
-      {/* Header*/}
+      {/* Header */}
       <div className={classes.header}>
         <Typography className={classes.title}>
           <strong>{trimstring(selectedNode.name, 30)}</strong>
@@ -63,13 +62,13 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         </ButtonOutlined>
       </div>
 
-      {/*Section */}
+      {/* Section */}
       <div className={classes.section}>
-        {/*Left-Panel Containing details about selected Node. */}
+        {/* Left-Panel Containing details about selected Node. */}
         <div className={classes.leftPanel}>
-          {/*Phase */}
+          {/* Phase */}
           <WorkflowStatus phase={selectedNode.phase} />
-          {/*Start Time */}
+          {/* Start Time */}
           <Typography className={classes.textMargin}>
             <strong>
               {t('workflowDetailsView.workflowNodeInfo.startTime')}:
@@ -81,7 +80,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
                 : '- -'}
             </span>
           </Typography>
-          {/*End Time */}
+          {/* End Time */}
           <Typography className={classes.textMargin}>
             <strong>
               {t('workflowDetailsView.workflowNodeInfo.endTime')}:
@@ -93,7 +92,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
               <span>- -</span>
             )}
           </Typography>
-          {/*Duration */}
+          {/* Duration */}
           <Typography className={classes.textMargin}>
             <strong>
               {t('workflowDetailsView.workflowNodeInfo.duration')}:
@@ -112,7 +111,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
                 ).toFixed(1)}{' '}
             minutes
           </Typography>
-          {/*Button to show Application Details */}
+          {/* Button to show Application Details */}
           {selectedNode.type === 'ChaosEngine' && (
             <>
               <Button
@@ -152,7 +151,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
             </>
           )}
         </div>
-        {/*Right Panel for Node Logs*/}
+        {/* Right Panel for Node Logs */}
         <div className={classes.rightPanel}>
           <LogsSwitcher
             cluster_id={cluster_id}

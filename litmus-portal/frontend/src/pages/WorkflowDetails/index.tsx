@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
 import { AppBar, Typography, useTheme } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs/Tabs';
@@ -14,7 +13,6 @@ import {
   SCHEDULE_DETAILS,
   WORKFLOW_DETAILS,
   WORKFLOW_EVENTS,
-  WORKFLOW_LIST_DETAILS,
 } from '../../graphql';
 import {
   ExecutionData,
@@ -32,10 +30,6 @@ import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
 import {
-  WorkflowList,
-  WorkflowListDataVars,
-} from '../../models/graphql/workflowListData';
-import {
   Schedules,
   ScheduleDataVars,
   ScheduleWorkflow,
@@ -49,7 +43,7 @@ const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
-  const [resilienceScore, setResilienceScore] = useState(0);
+  const [resilienceScore, setResilienceScore] = useState(-1);
   const [
     workflowSchedulesDetails,
     setworkflowSchedulesDetails,
@@ -80,18 +74,6 @@ const WorkflowDetails: React.FC = () => {
   const workflow = data?.getWorkFlowRuns.filter(
     (w) => w.workflow_run_id === workflowRunId
   )[0];
-
-  // Apollo query to get the scheduled workflow data
-  const { data: scheduledWorkflowData } = useQuery<
-    WorkflowList,
-    WorkflowListDataVars
-  >(WORKFLOW_LIST_DETAILS, {
-    variables: {
-      projectID,
-      workflowIDs: [workflow?.workflow_id as string],
-    },
-    pollInterval: 100,
-  });
 
   // Apollo query to get the scheduled data
   const { data: SchedulesData } = useQuery<Schedules, ScheduleDataVars>(
@@ -137,44 +119,6 @@ const WorkflowDetails: React.FC = () => {
     }
   }, [data]);
 
-  // TODO: Will be removed (below useEffect and required queries) once Resilience score calculations shifts to Backend
-  useEffect(() => {
-    if (workflow?.execution_data) {
-      let weightSum = 0;
-      let totalTestResult = 0;
-      const weightsMap = new Map<string, number>();
-      const weightsArray = scheduledWorkflowData?.ListWorkflow[0].weightages;
-      weightsArray?.forEach((weightEntry) => {
-        weightsMap.set(weightEntry.experiment_name, weightEntry.weightage);
-      });
-      const { nodes } = JSON.parse(workflow?.execution_data) as ExecutionData;
-      Object.keys(nodes).forEach((key) => {
-        const node = nodes[key];
-        if (node?.chaosData) {
-          if (
-            node.chaosData.experimentVerdict === 'Pass' ||
-            node.chaosData.experimentVerdict === 'Fail'
-          ) {
-            if (weightsMap.has(node.chaosData.experimentName)) {
-              totalTestResult +=
-                ((weightsMap.get(
-                  node.chaosData.experimentName as string
-                ) as number) *
-                  parseInt(node.chaosData.probeSuccessPercentage, 10)) /
-                100;
-              weightSum += weightsMap.get(
-                node.chaosData.experimentName as string
-              ) as number;
-            }
-          }
-        }
-      });
-      weightSum
-        ? setResilienceScore((totalTestResult / weightSum) * 100)
-        : setResilienceScore(0);
-    }
-  }, [scheduledWorkflowData, data]);
-
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     tabs.changeWorkflowDetailsTabs(newValue);
   };
@@ -207,6 +151,11 @@ const WorkflowDetails: React.FC = () => {
         ...JSON.parse(workflow.execution_data as string).nodes[firstNodeId],
         pod_name: firstNodeId,
       });
+      if (JSON.parse(workflow.execution_data as string).resiliency_score) {
+        setResilienceScore(
+          JSON.parse(workflow.execution_data as string).resiliency_score
+        );
+      }
     }
   }, [data]);
 

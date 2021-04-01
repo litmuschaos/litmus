@@ -1,19 +1,28 @@
-import { Box, createStyles, Tab, withStyles } from '@material-ui/core';
+import { createStyles, Tab, withStyles } from '@material-ui/core';
 import React from 'react';
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  style?: any;
 }
-const TabPanel: React.FC<TabPanelProps> = ({ children, index, value }) => {
+// TabPanel is used to implement the functioning of tabs
+const TabPanel: React.FC<TabPanelProps> = ({
+  children,
+  value,
+  index,
+  style,
+}) => {
   return (
-    <div role="tabpanel" hidden={value !== index}>
-      {value === index && (
-        <Box style={{ marginTop: 30, marginLeft: 10 }}>
-          <>{children}</>
-        </Box>
-      )}
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      style={style}
+    >
+      {value === index && children}
     </div>
   );
 };

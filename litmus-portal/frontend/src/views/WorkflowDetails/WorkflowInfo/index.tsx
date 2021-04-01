@@ -58,7 +58,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           </Typography>
           {/* Static data, will be changed with API response */}
           <Typography className={classes.resilliencyScore}>
-            {`${resiliencyScore}%`}
+            {resiliencyScore === -1 ? 'NA' : `${resiliencyScore}%`}
           </Typography>
         </div>
 
