@@ -2,7 +2,6 @@ package gql
 
 import (
 	"encoding/json"
-
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 
 	"github.com/gorilla/websocket"
@@ -72,7 +71,15 @@ func ClusterConnect(clusterData map[string]string) {
 		if r.Payload.Errors != nil {
 			logrus.Fatal("gql error : ", string(message))
 		}
-
+		if strings.Index("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
+			var KubeObjRequest types.KubeObjRequest
+			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData.(string)), &KubeObjRequest)
+			err = SendKubeObjects(clusterData, KubeObjRequest)
+			if err != nil {
+				logrus.WithError(err).Println("error getting kubernetes object data")
+				continue
+			}
+		}
 		if strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType) == "logs" {
 			podRequest := types.PodLogRequest{
 				RequestID: r.Payload.Data.ClusterConnect.ProjectID,

@@ -2,6 +2,7 @@ package gql
 
 import (
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/objects"
 	"strconv"
 	"strings"
 
@@ -88,5 +89,20 @@ func GenerateLogPayload(cid, accessKey string, podLog types.PodLogRequest) ([]by
 	mutation := `{ cluster_id: ` + clusterID + `, request_id:\"` + podLog.RequestID + `\", workflow_run_id: \"` + podLog.WorkflowRunID + `\", pod_name: \"` + podLog.PodName + `\", pod_type: \"` + podLog.PodType + `\", log:\"` + processed[1:len(processed)-1] + `\"}`
 	var payload = []byte(`{"query":"mutation { podLog(log:` + mutation + ` )}"}`)
 
+	return payload, nil
+}
+
+func GenerateKubeObject(cid string, accessKey string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
+	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
+	kubeObj, err := objects.GetKubernetesObjects(kubeobjectrequest)
+	if err != nil {
+		return nil, err
+	}
+	processed, err := MarshalGQLData(kubeObj)
+	if err != nil {
+		return nil, err
+	}
+	mutation := `{ cluster_id: ` + clusterID + `, kube_obj:\"` + processed[1:len(processed)-1] + `\"}`
+	var payload = []byte(`{"query":"mutation { kubeObj(kubeData:` + mutation + ` )}"}`)
 	return payload, nil
 }

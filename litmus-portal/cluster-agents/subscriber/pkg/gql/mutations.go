@@ -98,3 +98,21 @@ func SendPodLogs(clusterData map[string]string, podLog types.PodLogRequest) {
 	}
 	logrus.Print("RESPONSE ", body)
 }
+
+//SendKubeObjects generates gql mutation to send kubernetes objects data to gql server
+func SendKubeObjects(clusterData map[string]string, kubeobjectrequest types.KubeObjRequest) error {
+	// generate gql payload
+	payload, err := GenerateKubeObject(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], kubeobjectrequest)
+	if err != nil {
+		logrus.WithError(err).Print("Error while getting KubeObject Data")
+		return err
+	}
+	body, err := sendMutation(clusterData["SERVER_ADDR"], payload)
+
+	if err != nil {
+		logrus.Print(err.Error())
+		return err
+	}
+	logrus.Println("Response", body)
+	return nil
+}
