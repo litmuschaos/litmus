@@ -1,22 +1,22 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  // Logs Box
   logs: {
-    width: '100%',
-    padding: theme.spacing(2),
     overflowY: 'scroll',
-    height: '100%',
-    margin: theme.spacing(2, 0, 0, 2),
+    [theme.breakpoints.up('lg')]: {
+      height: '100%',
+    },
+    height: '15rem',
     background: theme.palette.cards.header,
     color: theme.palette.text.primary,
+    textAlign: 'left',
   },
   text: {
     fontSize: '1rem',
     padding: theme.spacing(2.5),
   },
-  crossMark: {
-    color: theme.palette.common.white,
+  tabBar: {
+    borderBottom: `1px solid ${theme.palette.border.main}`,
   },
 }));
 

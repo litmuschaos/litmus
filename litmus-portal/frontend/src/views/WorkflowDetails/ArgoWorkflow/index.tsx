@@ -50,10 +50,15 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({
 
       data.nodes.push({
         id: key,
-        class: `${node.phase} ${node.type}`,
+        class:
+          node.type === 'StepGroup'
+            ? 'StepGroup'
+            : `${node.phase} ${node.type}`,
         label:
           node.type !== 'StepGroup'
             ? createLabel({
+                currentNodeID: key,
+                selectedNodeID,
                 label: node.name,
                 tooltip: node.name,
                 phase: node.phase.toLowerCase(),
@@ -69,7 +74,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({
           data.links.push({
             source: key,
             target: child,
-            class: nodes[child].phase,
+            class: 'link',
             config: {
               arrowhead:
                 nodes[child].type === 'StepGroup' ? 'undirected' : 'vee',

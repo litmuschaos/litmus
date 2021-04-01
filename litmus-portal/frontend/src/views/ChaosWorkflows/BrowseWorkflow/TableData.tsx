@@ -18,6 +18,8 @@ import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
+import useActions from '../../../redux/actions';
+import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 
 interface TableDataProps {
   data: WorkflowRun;
@@ -33,7 +35,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-
+  const nodeSelection = useActions(NodeSelectionActions);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -134,6 +136,9 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() => {
+              nodeSelection.selectNode({
+                pod_name: '',
+              });
               history.push({
                 pathname: `/workflows/${data.workflow_run_id}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,

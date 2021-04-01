@@ -1,115 +1,167 @@
 /* eslint-disable */
-import { Typography } from '@material-ui/core';
-import React from 'react';
+import { Button, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
-import ChaosResult from '../ChaosResult';
-import NodeLogs from '../NodeLogs';
 import useStyles from './styles';
 import trimstring from '../../../utils/trim';
 import WorkflowStatus from '../WorkflowStatus';
+import LogsSwitcher from '../LogsSwitcher';
+import { stepEmbeddedYAMLExtractor } from '../../../utils/yamlUtils';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import YAML from 'yaml';
+import { ButtonOutlined } from 'litmus-ui';
+import { Node } from '../../../models/graphql/workflowData';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/reducers';
 
 interface WorkflowNodeInfoProps {
-  workflow_name: string;
+  setIsInfoToggled: React.Dispatch<React.SetStateAction<boolean>>;
+  manifest: string;
   cluster_id: string;
   workflow_run_id: string;
   pod_namespace: string;
+  selectedNode: Node;
 }
 
 const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
-  workflow_name,
+  manifest,
   cluster_id,
   workflow_run_id,
   pod_namespace,
+  setIsInfoToggled,
+  selectedNode,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const [isAppInfoVisible, setIsAppInfoVisible] = useState(false);
 
-  // Get the nelected node from redux
-  const { phase, pod_name, type, startedAt, finishedAt } = useSelector(
-    (state: RootState) => state.selectedNode
+  const { pod_name } = useSelector((state: RootState) => state.selectedNode);
+
+  const embeddedYAMLString = stepEmbeddedYAMLExtractor(
+    manifest,
+    selectedNode.name
   );
 
   return (
     <div className={classes.root}>
       {/* Node Details */}
-      <div className={classes.leftPanel}>
-        <Typography className={classes.header}>
-          <strong>{t('workflowDetailsView.workflowInfo.header')}:</strong>
+
+      {/* Header*/}
+      <div className={classes.header}>
+        <Typography className={classes.title}>
+          <strong>{trimstring(selectedNode.name, 30)}</strong>
         </Typography>
-        <div className={classes.subSection}>
-          <Typography className={classes.text}>
-            {trimstring(workflow_name, 30)}
-          </Typography>
-          <WorkflowStatus phase={phase} />
-        </div>
-        <hr />
-        <div className={classes.subSection}>
-          <div>
-            <Typography className={classes.text}>
-              <strong>
-                {t('workflowDetailsView.workflowNodeInfo.startTime')}:
-              </strong>
-              &nbsp;&nbsp;&nbsp;
-              <span>{timeDifference(startedAt)}</span>
-            </Typography>
-          </div>
-          <div>
-            <Typography className={classes.text}>
-              <strong>
-                {t('workflowDetailsView.workflowNodeInfo.endTime')}:
-              </strong>
-              &nbsp;&nbsp;&nbsp;
-              {finishedAt !== '' ? (
-                <span>{timeDifference(finishedAt)}</span>
-              ) : (
-                <span className={classes.runningStatusText}>Running</span>
-              )}
-            </Typography>
-          </div>
-        </div>
-        <Typography className={classes.text}>
-          <strong>{t('workflowDetailsView.workflowNodeInfo.duration')}:</strong>
-          &nbsp;&nbsp;&nbsp;
-          {finishedAt !== ''
-            ? (
-                (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
-                60
-              ).toFixed(1)
-            : (
-                (new Date().getTime() / 1000 - parseInt(startedAt, 10)) /
-                60
-              ).toFixed(1)}{' '}
-          minutes
-        </Typography>
-        <div className={classes.topMarginBox}>
-          <img className={classes.icon} src={'/icons/filledDownArrow.svg'} />
-          <Typography className={classes.text}>
-            <strong>
-              {t('workflowDetailsView.workflowNodeInfo.viewPairs')}
-            </strong>
-          </Typography>
-        </div>
-        <div className={classes.topMarginBox}>
-          <img className={classes.icon} src={'/icons/filledDownArrow.svg'} />
-          <Typography className={classes.text}>
-            <strong>
-              {t('workflowDetailsView.workflowNodeInfo.viewApplicationDetails')}
-            </strong>
-          </Typography>
-        </div>
+        <ButtonOutlined
+          className={classes.closeButton}
+          onClick={() => {
+            setIsInfoToggled(false);
+          }}
+        >
+          &#x2715;
+        </ButtonOutlined>
       </div>
-      {/* Node Logs*/}
-      <div className={classes.logsHeight}>
-        <NodeLogs
-          cluster_id={cluster_id}
-          workflow_run_id={workflow_run_id}
-          pod_namespace={pod_namespace}
-          pod_name={pod_name}
-          pod_type={type}
-        />
+
+      {/*Section */}
+      <div className={classes.section}>
+        {/*Left-Panel Containing details about selected Node. */}
+        <div className={classes.leftPanel}>
+          {/*Phase */}
+          <WorkflowStatus phase={selectedNode.phase} />
+          {/*Start Time */}
+          <Typography className={classes.textMargin}>
+            <strong>
+              {t('workflowDetailsView.workflowNodeInfo.startTime')}:
+            </strong>
+            &nbsp;&nbsp;&nbsp;
+            <span>
+              {selectedNode.phase !== 'Pending'
+                ? timeDifference(selectedNode.startedAt)
+                : '- -'}
+            </span>
+          </Typography>
+          {/*End Time */}
+          <Typography className={classes.textMargin}>
+            <strong>
+              {t('workflowDetailsView.workflowNodeInfo.endTime')}:
+            </strong>
+            &nbsp;&nbsp;&nbsp;
+            {selectedNode.finishedAt !== '' ? (
+              <span>{timeDifference(selectedNode.finishedAt)}</span>
+            ) : (
+              <span>- -</span>
+            )}
+          </Typography>
+          {/*Duration */}
+          <Typography className={classes.textMargin}>
+            <strong>
+              {t('workflowDetailsView.workflowNodeInfo.duration')}:
+            </strong>
+            &nbsp;&nbsp;&nbsp;
+            {selectedNode.finishedAt !== ''
+              ? (
+                  (parseInt(selectedNode.finishedAt, 10) -
+                    parseInt(selectedNode.startedAt, 10)) /
+                  60
+                ).toFixed(1)
+              : (
+                  (new Date().getTime() / 1000 -
+                    parseInt(selectedNode.startedAt, 10)) /
+                  60
+                ).toFixed(1)}{' '}
+            minutes
+          </Typography>
+          {/*Button to show Application Details */}
+          {selectedNode.type === 'ChaosEngine' && (
+            <>
+              <Button
+                onClick={() => setIsAppInfoVisible(!isAppInfoVisible)}
+                style={{ textTransform: 'none' }}
+                className={classes.textMargin}
+              >
+                {isAppInfoVisible ? (
+                  <KeyboardArrowDownIcon className={classes.icon} />
+                ) : (
+                  <ChevronRightIcon className={classes.icon} />
+                )}
+                <Typography>
+                  <strong>
+                    {t(
+                      'workflowDetailsView.workflowNodeInfo.viewApplicationDetails'
+                    )}
+                  </strong>
+                </Typography>
+              </Button>
+              {isAppInfoVisible && (
+                <Typography className={classes.textMargin}>
+                  {embeddedYAMLString &&
+                    Object.keys(
+                      YAML.parse(embeddedYAMLString).spec.appinfo
+                    ).map((key) => (
+                      <div>
+                        <strong>{key} :</strong>
+                        <span>
+                          &nbsp;&nbsp;
+                          {YAML.parse(embeddedYAMLString).spec.appinfo[key]}
+                        </span>
+                      </div>
+                    ))}
+                </Typography>
+              )}
+            </>
+          )}
+        </div>
+        {/*Right Panel for Node Logs*/}
+        <div className={classes.rightPanel}>
+          <LogsSwitcher
+            cluster_id={cluster_id}
+            workflow_run_id={workflow_run_id}
+            pod_namespace={pod_namespace}
+            pod_type={selectedNode.type}
+            pod_name={pod_name}
+          />
+        </div>
       </div>
     </div>
   );

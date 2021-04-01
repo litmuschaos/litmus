@@ -562,7 +562,7 @@ workflowDetailsView:
       startTime: Start Time
       applicationDetails: Application Details
     showProperties: Show properties
-    viewLogs: View Logs
+    viewLogs: View Logs & Results
     nodeName: Step Name
     button:
       logs: Logs

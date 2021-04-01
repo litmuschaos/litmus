@@ -18,6 +18,11 @@ const useStyles = makeStyles((theme) => ({
 
   // Header
   header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+
+  title: {
     fontSize: '1.5rem',
     marginBottom: theme.spacing(2),
   },
@@ -53,6 +58,11 @@ const useStyles = makeStyles((theme) => ({
   resilliencyScore: {
     color: theme.palette.highlight,
     fontSize: '1.5rem',
+  },
+
+  closeButton: {
+    borderColor: theme.palette.border.main,
+    float: 'right',
   },
 }));
 

@@ -77,6 +77,19 @@ const useStyles = makeStyles((theme) => ({
   disabledText: {
     color: theme.palette.text.disabled,
   },
+
+  popover: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '5rem',
+    padding: theme.spacing(0, 1, 0, 1),
+  },
+
+  popoverItems: {
+    textAlign: 'left',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+  },
 }));
 
 export default useStyles;
