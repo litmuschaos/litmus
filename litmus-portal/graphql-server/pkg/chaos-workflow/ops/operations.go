@@ -27,6 +27,48 @@ import (
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 )
 
+type WorkflowEvent struct {
+	WorkflowID        string          `json:"-"`
+	EventType         string          `json:"event_type"`
+	UID               string          `json:"-"`
+	Namespace         string          `json:"namespace"`
+	Name              string          `json:"name"`
+	CreationTimestamp string          `json:"creationTimestamp"`
+	Phase             string          `json:"phase"`
+	Message           string          `json:"message"`
+	StartedAt         string          `json:"startedAt"`
+	FinishedAt        string          `json:"finishedAt"`
+	Nodes             map[string]Node `json:"nodes"`
+}
+
+// each node/step data
+type Node struct {
+	Name       string     `json:"name"`
+	Phase      string     `json:"phase"`
+	Message    string     `json:"message"`
+	StartedAt  string     `json:"startedAt"`
+	FinishedAt string     `json:"finishedAt"`
+	Children   []string   `json:"children"`
+	Type       string     `json:"type"`
+	ChaosExp   *ChaosData `json:"chaosData,omitempty"`
+}
+
+// chaos data
+type ChaosData struct {
+	EngineUID              string                  `json:"engineUID"`
+	EngineName             string                  `json:"engineName"`
+	Namespace              string                  `json:"namespace"`
+	ExperimentName         string                  `json:"experimentName"`
+	ExperimentStatus       string                  `json:"experimentStatus"`
+	LastUpdatedAt          string                  `json:"lastUpdatedAt"`
+	ExperimentVerdict      string                  `json:"experimentVerdict"`
+	ExperimentPod          string                  `json:"experimentPod"`
+	RunnerPod              string                  `json:"runnerPod"`
+	ProbeSuccessPercentage string                  `json:"probeSuccessPercentage"`
+	FailStep               string                  `json:"failStep"`
+	ChaosResult            *chaosTypes.ChaosResult `json:"chaosResult"`
+}
+
 // ProcessWorkflow takes the workflow and processes it as required
 func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowInput, error) {
 	// security check for cluster access
@@ -328,4 +370,42 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 		}
 	}
 	r.Mutex.Unlock()
+}
+
+// ResiliencyScoreCalculator calculates the Rscore and returns the execdata string
+func ResiliencyScoreCalculator(execData string, wfid string) string {
+	var resiliency_score, weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0, 0
+	var jsonData WorkflowEvent
+	json.Unmarshal([]byte(execData), &jsonData)
+	for _, value := range jsonData.Nodes {
+		if value.Type == "ChaosEngine" {
+			if value.ChaosExp == nil {
+				continue
+			}
+			chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": []string{wfid}}}})
+			for _, workflow := range chaosWorkflows {
+				var Weightages []*model.Weightages
+				copier.Copy(&Weightages, &workflow.Weightages)
+				totalExperiments = len(Weightages)
+				for _, weightEntry := range Weightages {
+					if weightEntry.ExperimentName == value.ChaosExp.ExperimentName {
+						x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
+						totalTestResult += weightEntry.Weightage * x
+						weightSum += weightEntry.Weightage
+					}
+					if value.ChaosExp.ExperimentVerdict == "Pass" {
+						totalExperimentsPassed += 1
+					}
+				}
+			}
+
+		}
+	}
+	if weightSum == 0 {
+		resiliency_score = 0
+	} else {
+		resiliency_score = (totalTestResult / weightSum)
+	}
+	execData = "{" + `"resiliency_score":` + `"` + strconv.Itoa(resiliency_score) + `",` + `"experiments_passed":` + `"` + strconv.Itoa(totalExperimentsPassed) + `",` + `"total_experiments":` + `"` + strconv.Itoa(totalExperiments) + `",` + execData[1:]
+	return execData
 }
