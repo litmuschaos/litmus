@@ -332,7 +332,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
             </div>
           </div>
           <img
-            src="/icons/calendar.svg"
+            src="/icons/calendarWorkflowIcon.svg"
             alt="calendar"
             className={classes.calIcon}
           />

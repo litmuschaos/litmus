@@ -730,7 +730,8 @@ createWorkflow:
     info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
     error: Invalid Workflow CRD found ! Please correct the errors.
     errYaml: Error in CRD Yaml.
-    codeIsFine: Your code is fine. You can move on !
+    codeIsFine: Your code is fine.
+    youCanMoveOn: You can move on !
     button:
       edit: Edit
       viewYaml: View YAML
