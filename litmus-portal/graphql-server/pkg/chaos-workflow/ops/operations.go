@@ -377,28 +377,26 @@ func ResiliencyScoreCalculator(execData string, wfid string) string {
 	var resiliency_score, weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0, 0
 	var jsonData WorkflowEvent
 	json.Unmarshal([]byte(execData), &jsonData)
+	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": []string{wfid}}}})
+	totalExperiments = len(chaosWorkflows[0].Weightages)
+	weightMap := map[string]int{}
+	for _, weightEnty := range chaosWorkflows[0].Weightages {
+		weightMap[weightEnty.ExperimentName] = weightEnty.Weightage
+	}
 	for _, value := range jsonData.Nodes {
 		if value.Type == "ChaosEngine" {
 			if value.ChaosExp == nil {
 				continue
 			}
-			chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": []string{wfid}}}})
-			for _, workflow := range chaosWorkflows {
-				var Weightages []*model.Weightages
-				copier.Copy(&Weightages, &workflow.Weightages)
-				totalExperiments = len(Weightages)
-				for _, weightEntry := range Weightages {
-					if weightEntry.ExperimentName == value.ChaosExp.ExperimentName {
-						x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
-						totalTestResult += weightEntry.Weightage * x
-						weightSum += weightEntry.Weightage
-					}
-					if value.ChaosExp.ExperimentVerdict == "Pass" {
-						totalExperimentsPassed += 1
-					}
-				}
+			weight, ok := weightMap[value.ChaosExp.ExperimentName]
+			if ok {
+				x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
+				totalTestResult += weight * x
+				weightSum += weight
 			}
-
+			if value.ChaosExp.ExperimentVerdict == "Pass" {
+				totalExperimentsPassed += 1
+			}
 		}
 	}
 	if weightSum == 0 {
