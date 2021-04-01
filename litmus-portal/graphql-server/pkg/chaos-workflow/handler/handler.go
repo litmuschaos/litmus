@@ -272,17 +272,16 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
-	var executionData string = input.ExecutionData
 	// Resiliency Score will be calculated only if workflow execution is completed
 	if input.Completed {
-		executionData = ops.ResiliencyScoreCalculator(input.ExecutionData, input.WorkflowID)
+		input.ExecutionData = ops.ResiliencyScoreCalculator(input.ExecutionData, input.WorkflowID)
 	}
 
 	// err = dbOperationsWorkflow.UpdateWorkflowRun(dbOperationsWorkflow.WorkflowRun(newWorkflowRun))
 	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
-		ExecutionData: executionData,
+		ExecutionData: input.ExecutionData,
 		Completed:     input.Completed,
 	})
 	if err != nil {
@@ -301,7 +300,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
 		WorkflowRunID: input.WorkflowRunID,
 		WorkflowName:  input.WorkflowName,
-		ExecutionData: executionData,
+		ExecutionData: input.ExecutionData,
 		WorkflowID:    input.WorkflowID,
 	}, &r)
 
