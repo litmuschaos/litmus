@@ -51,18 +51,25 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'baseline',
+    margin: theme.spacing(1, 0),
   },
   innerSumDiv: {
     alignContent: 'center',
     display: 'table-cell',
     verticalAlign: 'middle',
     width: '20%',
+    [theme.breakpoints.up('lg')]: {
+      width: '10%',
+    },
   },
   sumText: {
     width: '100%',
     marginTop: theme.spacing(4.5),
     marginBottom: theme.spacing(3),
-    fontSize: '1.5rem',
+    fontSize: '1.2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1.4rem',
+    },
   },
   col1: {
     alignContent: 'center',
@@ -72,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     verticalAlign: 'middle',
   },
   schedule: {
-    fontSize: '1rem',
+    fontSize: '0.85rem',
     paddingLeft: theme.spacing(2),
     paddingTop: theme.spacing(0.75),
   },
@@ -87,7 +94,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
   },
   clusterName: {
-    fontSize: '1rem',
+    fontSize: '0.85rem',
     marginLeft: theme.spacing(7),
     paddingTop: theme.spacing(0.5),
   },
@@ -107,6 +114,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between',
     marginLeft: theme.spacing(2),
     width: '80%',
+    [theme.breakpoints.up('lg')]: {
+      width: '90%',
+    },
   },
   config: {
     height: '3rem',

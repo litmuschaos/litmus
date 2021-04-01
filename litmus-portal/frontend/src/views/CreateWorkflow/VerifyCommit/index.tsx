@@ -272,7 +272,7 @@ const VerifyCommit = forwardRef((_, ref) => {
               </Typography>
             </div>
             <img
-              src="/icons/b-finance.png"
+              src="/icons/b-finance.svg"
               alt="bfinance"
               className={classes.bfinIcon}
             />
@@ -325,6 +325,7 @@ const VerifyCommit = forwardRef((_, ref) => {
                   value={workflow.description}
                   id="desc"
                   fullWidth
+                  multiline
                   onChange={(e) =>
                     handleDescChange({ changedDesc: e.target.value })
                   }
@@ -414,7 +415,10 @@ const VerifyCommit = forwardRef((_, ref) => {
                     {t('createWorkflow.verifyCommit.errYaml')}{' '}
                   </Typography>
                 ) : (
-                  <Typography>{yamlStatus}</Typography>
+                  <Typography>
+                    <b>{yamlStatus}</b>{' '}
+                    {t('createWorkflow.verifyCommit.youCanMoveOn')}
+                  </Typography>
                 )}
                 <br />
                 <ButtonFilled style={{ width: '60%' }} onClick={handleOpen}>
