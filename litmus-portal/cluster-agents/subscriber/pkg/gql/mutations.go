@@ -108,9 +108,9 @@ func SendPodLogs(clusterData map[string]string, podLog types.PodLogRequest) {
 }
 
 //SendKubeObjects generates gql mutation to send kubernetes objects data to gql server
-func SendKubeObjects(clusterData map[string]string, requestType string) error {
+func SendKubeObjects(clusterData map[string]string, kubeobjectrequest types.KubeObjRequest) error {
 	// generate gql payload
-	payload, err := GenerateKubeObject(clusterData["CID"], clusterData["KEY"], requestType)
+	payload, err := GenerateKubeObject(clusterData["CID"], clusterData["KEY"], kubeobjectrequest)
 	if err != nil {
 		logrus.WithError(err).Print("Error while getting KubeObject Data")
 		return err

@@ -249,6 +249,13 @@ input KubeObjectData{
 input KubeObjectRequest{
     cluster_id: ID!
     object_type: String!
+    kube_obj_request: KubeObjRequest!
+}
+
+input KubeObjRequest{
+    group: String!
+    version: String!
+    resource: String!
 }
 
 type Query {

@@ -3695,6 +3695,13 @@ input KubeObjectData{
 input KubeObjectRequest{
     cluster_id: ID!
     object_type: String!
+    kube_obj_request: KubeObjRequest!
+}
+
+input KubeObjRequest{
+    group: String!
+    version: String!
+    resource: String!
 }
 
 type Query {
@@ -18034,6 +18041,36 @@ func (ec *executionContext) unmarshalInputGitConfig(ctx context.Context, obj int
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputKubeObjRequest(ctx context.Context, obj interface{}) (model.KubeObjRequest, error) {
+	var it model.KubeObjRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "group":
+			var err error
+			it.Group, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "version":
+			var err error
+			it.Version, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "resource":
+			var err error
+			it.Resource, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputKubeObjectData(ctx context.Context, obj interface{}) (model.KubeObjectData, error) {
 	var it model.KubeObjectData
 	var asMap = obj.(map[string]interface{})
@@ -18073,6 +18110,12 @@ func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context,
 		case "object_type":
 			var err error
 			it.ObjectType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kube_obj_request":
+			var err error
+			it.KubeObjRequest, err = ec.unmarshalNKubeObjRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjRequest(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21850,6 +21893,18 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNKubeObjRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjRequest(ctx context.Context, v interface{}) (model.KubeObjRequest, error) {
+	return ec.unmarshalInputKubeObjRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNKubeObjRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjRequest(ctx context.Context, v interface{}) (*model.KubeObjRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNKubeObjRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjRequest(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) unmarshalNKubeObjectData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectData(ctx context.Context, v interface{}) (model.KubeObjectData, error) {

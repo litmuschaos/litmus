@@ -91,9 +91,9 @@ func GenerateLogPayload(cid, accessKey string, podLog types.PodLogRequest) ([]by
 
 	return payload, nil
 }
-func GenerateKubeObject(cid, accessKey, requestType string) ([]byte, error) {
+func GenerateKubeObject(cid string, accessKey string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
 	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
-	kubeObj, err := objects.GetKubernetesObjects(requestType)
+	kubeObj, err := objects.GetKubernetesObjects(kubeobjectrequest)
 	if err != nil {
 		return nil, err
 	}

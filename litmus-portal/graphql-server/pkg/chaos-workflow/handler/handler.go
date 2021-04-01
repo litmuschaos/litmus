@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -404,9 +405,16 @@ func KubeObjHandler(kubeData model.KubeObjectData, r store.StateData) (string, e
 
 func GetKubeObjData(kubeObject model.KubeObjectRequest, r store.StateData) {
 	reqType := kubeObject.ObjectType
+	data, err := json.Marshal(kubeObject)
+	if err != nil {
+		log.Print("ERROR WHILE MARSHALLING POD DETAILS")
+	}
+	externalData := string(data)
+	fmt.Println(externalData)
 	payload := model.ClusterAction{
 		Action: &model.ActionPayload{
-			RequestType: reqType,
+			RequestType:  reqType,
+			ExternalData: &externalData,
 		},
 	}
 	if clusterChan, ok := r.ConnectedCluster[kubeObject.ClusterID]; ok {
