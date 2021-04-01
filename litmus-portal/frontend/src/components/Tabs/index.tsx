@@ -2,7 +2,6 @@ import { createStyles, Tab, withStyles } from '@material-ui/core';
 import React from 'react';
 
 interface TabPanelProps {
-  children?: React.ReactNode;
   index: number;
   value: number;
   style?: any;
