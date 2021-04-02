@@ -14,11 +14,7 @@ const client = createApolloClient(
   `${config.grahqlEndpointSubscription}/query`
 );
 
-interface WrapperProps {
-  children?: React.ReactNode;
-}
-
-const Wrapper: React.FC<WrapperProps> = ({ children }) => {
+const Wrapper: React.FC = ({ children }) => {
   return (
     <ApolloProvider client={client}>
       <Provider store={store}>
@@ -28,11 +24,9 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
   );
 };
 
-const customRender = (
+const UIRenderer = (
   ui: ReactElement,
   options?: Omit<RenderOptions, 'queries'>
 ) => render(ui, { wrapper: Wrapper, ...options });
 
-export * from '@testing-library/react';
-
-export { customRender as render };
+export { UIRenderer as render };
