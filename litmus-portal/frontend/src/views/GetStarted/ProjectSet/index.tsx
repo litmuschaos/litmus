@@ -1,20 +1,21 @@
 /* eslint-disable react/no-danger */
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { TextField, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import config from '../../../config';
-import { CREATE_PROJECT, CREATE_USER } from '../../../graphql';
+import { CREATE_PROJECT, CREATE_USER, GET_USER_INFO } from '../../../graphql';
 import {
   CreateUserData,
+  CurrentUserDetails,
   Project,
-  UserRole,
 } from '../../../models/graphql/user';
 import {
   getToken,
   getUserEmail,
+  getUserId,
   getUserName,
   getUsername,
   getUserRole,
@@ -36,14 +37,10 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
   const classes = useStyles();
   const [projectName, setProjectName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const isError = useRef(true);
 
-  if (projectName.length && !validateStartEmptySpacing(projectName)) {
-    isError.current = false;
-  } else {
-    isError.current = true;
-  }
+  const userName = getUsername();
 
+  // Mutation to create project for a user
   const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
     onCompleted: () => {
       setIsLoading(false);
@@ -51,6 +48,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
     },
   });
 
+  // Mutation to create a user
   const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
     onCompleted: () => {
       CreateProject({
@@ -60,6 +58,41 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
       });
     },
   });
+
+  // Query to fetch user details of user from litmusDB
+  const [getUserInfo] = useLazyQuery<CurrentUserDetails>(GET_USER_INFO, {
+    variables: { username: userName },
+    // Adding the user to litmusDB if user does not exists
+    onError: () => {
+      CreateUser({
+        variables: {
+          user: {
+            username: userName,
+            email: getUserEmail(),
+            name: getUserName(),
+            role: getUserRole(),
+            userID: getUserId(),
+          },
+        },
+      });
+    },
+    // Creating project for the user
+    onCompleted: () => {
+      CreateProject({
+        variables: {
+          projectName,
+        },
+      });
+    },
+  });
+
+  const isError = useRef(true);
+
+  if (projectName.length && !validateStartEmptySpacing(projectName)) {
+    isError.current = false;
+  } else {
+    isError.current = true;
+  }
 
   // Submit entered data to /update endpoint
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -82,24 +115,8 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
       .then((data) => {
         if ('error' in data) {
           isError.current = true;
-        } else if (getUserRole() === UserRole.admin) {
-          CreateUser({
-            variables: {
-              user: {
-                username: getUsername(),
-                email: getUserEmail(),
-                name: getUserName(),
-                role: 'admin',
-                userID: data._id,
-              },
-            },
-          });
         } else {
-          CreateProject({
-            variables: {
-              projectName,
-            },
-          });
+          getUserInfo();
         }
       })
       .catch((err) => {
