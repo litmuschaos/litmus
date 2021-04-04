@@ -224,7 +224,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2.5, 2, 0),
   },
 
-  /// /
   panelGroup: {
     display: 'flex',
     alignContent: 'left',
@@ -233,12 +232,6 @@ const useStyles = makeStyles((theme) => ({
 
   panelGroupContainer: {
     width: '100%',
-    background: theme.palette.cards.header,
-    display: 'inline-grid',
-    gridTemplateColumns: '49% 49%',
-    gridGap: theme.spacing(1.75),
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(1.75),
   },
 
   panelGroupTitle: {

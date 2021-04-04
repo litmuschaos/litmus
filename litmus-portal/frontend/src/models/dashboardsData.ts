@@ -94,6 +94,7 @@ export interface ChaosDataUpdates {
   queryIDs: string[];
   chaosData: Array<EventMetric>;
   reGenerate: Boolean;
+  latestEventResult: string[];
 }
 
 export interface EventMetric extends GraphMetric {

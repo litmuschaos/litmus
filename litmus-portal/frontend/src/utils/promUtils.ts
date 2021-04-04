@@ -213,7 +213,8 @@ export const getChaosQueryPromInputAndID = (
   areaGraph: string[],
   timeRangeDiff: number,
   selectedStartTime: number,
-  selectedEndTime: number
+  selectedEndTime: number,
+  existingEvents: ChaosEventDetails[]
 ) => {
   const chaosInformation: ChaosInformation = {
     promQueries: [],
@@ -343,7 +344,17 @@ export const getChaosQueryPromInputAndID = (
   });
 
   chaosResultNamesAndNamespacesMap.forEach((keyValue, index) => {
-    const queryID: string = uuidv4();
+    let queryID: string = uuidv4();
+
+    const matchingEvent: ChaosEventDetails[] = existingEvents.filter(
+      (event: ChaosEventDetails) =>
+        event.workflow === keyValue.workflowName &&
+        event.experiment === keyValue.experimentName
+    );
+
+    if (matchingEvent.length) {
+      queryID = matchingEvent[0].id;
+    }
 
     const chaosEventMetrics: WorkflowAndExperimentMetaDataMap = workflowAndExperimentMetaDataMap.filter(
       (data) =>
@@ -408,6 +419,7 @@ export const chaosEventDataParserForPrometheus = (
     queryIDs: [],
     chaosData: [],
     reGenerate: false,
+    latestEventResult: [],
   };
 
   if (workflowAnalyticsData.ListWorkflow) {
@@ -422,7 +434,7 @@ export const chaosEventDataParserForPrometheus = (
       const chaosEventDetails: ChaosEventDetails = chaosEventList.filter(
         (e) => queryResponse.queryid === e.id
       )[0];
-      let latestRunMetric: RunWiseChaosMetrics;
+      let latestRunMetric: RunWiseChaosMetrics | undefined;
       if (chaosEventDetails) {
         const workflowAndExperiments: WorkflowAndExperimentMetaDataMap =
           chaosEventDetails.chaosMetrics;
@@ -590,6 +602,9 @@ export const chaosEventDataParserForPrometheus = (
             */
         }))
       );
+      chaosDataUpdates.latestEventResult.push(
+        latestRunMetric ? latestRunMetric.experimentVerdict : '--'
+      );
     }
   });
 
@@ -604,6 +619,7 @@ export const chaosEventDataParserForPrometheus = (
       chaosDataUpdates.reGenerate = true;
     }
   }
+
   return chaosDataUpdates;
 };
 

@@ -16,16 +16,11 @@ import TableData from './TableData';
 import TableHeader from './TableHeader';
 
 interface ChaosTableProps {
-  showCheckBoxes: Boolean;
   chaosList: ChaosEventDetails[];
   selectEvents: (selectedEvents: string[]) => void;
 }
 
-const ChaosTable: React.FC<ChaosTableProps> = ({
-  chaosList,
-  selectEvents,
-  showCheckBoxes,
-}) => {
+const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [page, setPage] = React.useState(0);
@@ -89,7 +84,6 @@ const ChaosTable: React.FC<ChaosTableProps> = ({
                     onSelectAllClick={handleSelectAllClick}
                     numSelected={selected.length}
                     rowCount={chaosList.length}
-                    showCheckBox={chaosList.length ? showCheckBoxes : false}
                   />
                   <TableBody>
                     {chaosList.length ? (
@@ -118,7 +112,6 @@ const ChaosTable: React.FC<ChaosTableProps> = ({
                                 data={data}
                                 itemSelectionStatus={isItemSelected}
                                 labelIdentifier={labelId}
-                                showCheckBox={showCheckBoxes}
                               />
                             </TableRow>
                           );
