@@ -7,11 +7,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Header
   header: {
-    display: 'flex',
     alignItems: 'center',
+    borderBottom: `1px solid ${theme.palette.border.main}`,
+    display: 'flex',
     height: '8rem',
     padding: theme.spacing(1, 0, 1, 2),
-    borderBottom: `1px solid ${theme.palette.border.main}`,
   },
 
   // Header title
@@ -28,9 +28,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Left side panel for Nodes data
   nodesData: {
+    height: '100%',
     paddingTop: theme.spacing(13),
     width: '35%',
-    height: '100%',
   },
 
   selectedNode: {
@@ -39,12 +39,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // One Node data
   nodeData: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: theme.spacing(2, 2, 2, 2),
-    height: '4rem',
     alignItems: 'center',
     cursor: 'pointer',
+    display: 'flex',
+    height: '4rem',
+    justifyContent: 'space-between',
+    padding: theme.spacing(2, 2, 2, 2),
   },
 
   // Experiment
@@ -64,15 +64,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   statusWidth: {
-    width: '30%',
     textAlign: 'left',
+    width: '30%',
   },
 
   // Right side panel for Logs
   logsPanel: {
-    width: '100%',
-    textAlign: 'left',
     borderLeft: `1px solid ${theme.palette.border.main}`,
+    textAlign: 'left',
+    width: '100%',
   },
 
   // Close Button
@@ -86,8 +86,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Logs Header
   logsHeader: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     justifyContent: 'space-between',
     padding: theme.spacing(2, 2, 0, 2),
   },

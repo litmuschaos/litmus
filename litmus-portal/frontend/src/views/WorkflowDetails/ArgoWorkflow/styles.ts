@@ -13,9 +13,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(2),
   },
   layoutButton: {
-    minWidth: 0,
     borderColor: theme.palette.text.hint,
     marginRight: theme.spacing(2),
+    minWidth: 0,
     '& svg': {
       fill: theme.palette.text.disabled,
     },
@@ -23,9 +23,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Workflow Graph
   dagreGraph: {
-    width: '100%',
-    height: '90%',
     cursor: 'grab',
+    height: '90%',
+    width: '100%',
 
     // Styles for nodes
     '& g g.nodes': {
@@ -48,8 +48,8 @@ const useStyles = makeStyles((theme: Theme) => ({
           `scale(1.8) translate(-5px, ${props.horizontal ? -5.6 : -2.8}px)`,
       },
       '& path.runningIcon': {
-        transformOrigin: '6.05px 6.55px',
         animation: 'runningNodeSpinAnimation 2s ease-in-out infinite',
+        transformOrigin: '6.05px 6.55px',
       },
       '& path.succeededIcon': {
         transform: (props: StyleProps) =>
@@ -64,9 +64,9 @@ const useStyles = makeStyles((theme: Theme) => ({
           fill: theme.palette.success.main,
         },
         '& circle.selected': {
-          strokeDasharray: '5,2',
-          stroke: theme.palette.success.main,
           fill: 'none',
+          stroke: theme.palette.success.main,
+          strokeDasharray: '5,2',
           strokeWidth: '1.5',
         },
       },
@@ -75,9 +75,9 @@ const useStyles = makeStyles((theme: Theme) => ({
           fill: theme.palette.highlight,
         },
         '& circle.selected': {
-          strokeDasharray: '5,2',
-          stroke: theme.palette.highlight,
           fill: 'none',
+          stroke: theme.palette.highlight,
+          strokeDasharray: '5,2',
           strokeWidth: '1.5',
         },
       },
@@ -86,9 +86,9 @@ const useStyles = makeStyles((theme: Theme) => ({
           fill: theme.palette.horizontalStepper.completed,
         },
         '& circle.selected': {
-          strokeDasharray: '5,2',
-          stroke: theme.palette.horizontalStepper.completed,
           fill: 'none',
+          stroke: theme.palette.horizontalStepper.completed,
+          strokeDasharray: '5,2',
           strokeWidth: '1.5',
         },
       },
@@ -97,22 +97,22 @@ const useStyles = makeStyles((theme: Theme) => ({
           fill: theme.palette.status.failed.text,
         },
         '& circle.selected': {
-          strokeDasharray: '5,2',
-          stroke: theme.palette.status.failed.text,
           fill: 'none',
+          stroke: theme.palette.status.failed.text,
+          strokeDasharray: '5,2',
           strokeWidth: '1.5',
         },
       },
       '& g.StepGroup': {
-        fill: theme.palette.status.completed.text,
         cursor: 'default',
+        fill: theme.palette.status.completed.text,
         '& rect': {
-          x: '-1.5px',
-          y: '-1.5px',
-          width: '0.2rem',
           height: '0.2rem',
           rx: '0.625rem !important',
           ry: '0.625rem !important',
+          width: '0.2rem',
+          x: '-1.5px',
+          y: '-1.5px',
         },
       },
     },

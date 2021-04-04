@@ -10,16 +10,16 @@ const useStyles = makeStyles((theme) => ({
   },
 
   root: {
-    marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(6),
     marginBottom: theme.spacing(8),
+    marginLeft: theme.spacing(6),
+    marginTop: theme.spacing(5),
   },
 
   headerDiv: {
+    backgroundColor: theme.palette.disabledBackground,
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(5),
-    backgroundColor: theme.palette.disabledBackground,
     minHeight: '5rem',
   },
 
@@ -28,20 +28,20 @@ const useStyles = makeStyles((theme) => ({
   },
 
   dashboardType: {
+    fontSize: '1.5rem',
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(3),
-    fontSize: '1.5rem',
   },
 
   loaderText: {
-    textAlign: 'center',
     marginBottom: '3%',
+    textAlign: 'center',
   },
 
   analyticsDiv: {
-    paddingTop: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
     minHeight: '26rem',
+    paddingTop: theme.spacing(2),
   },
 
   button: {
@@ -51,8 +51,8 @@ const useStyles = makeStyles((theme) => ({
 
   iconButton: {
     height: '3rem',
-    width: '3rem',
     marginLeft: theme.spacing(1.5),
+    width: '3rem',
   },
 
   dashboardSwitchIcon: {
@@ -70,8 +70,8 @@ const useStyles = makeStyles((theme) => ({
       background: theme.palette.primary.light,
       color: theme.palette.secondary.contrastText,
     },
-    minWidth: '10rem',
     height: '2.5rem',
+    minWidth: '10rem',
   },
 
   expDiv: {
@@ -84,14 +84,14 @@ const useStyles = makeStyles((theme) => ({
   },
 
   icon: {
-    width: '6rem',
     height: '6rem',
+    width: '6rem',
   },
 
   modalHeading: {
-    marginTop: theme.spacing(3.5),
     fontSize: '2.25rem',
     marginBottom: theme.spacing(4.5),
+    marginTop: theme.spacing(3.5),
   },
 
   modalBody: {

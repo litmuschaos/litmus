@@ -12,9 +12,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // WorkflowName Header
   title: {
-    margin: theme.spacing(2, 0, 0, 0),
     fontSize: '1.5rem',
     fontWeight: 'bold',
+    margin: theme.spacing(2, 0, 0, 0),
   },
 
   // Second Heading
@@ -31,11 +31,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Graphical View
   graphView: {
+    backgroundColor: theme.palette.cards.header,
     display: 'flex',
     flexDirection: 'column',
-    padding: '0.5rem 0.5rem',
     height: '68vh',
-    backgroundColor: theme.palette.cards.header,
+    padding: '0.5rem 0.5rem',
   },
 
   nodesTable: {

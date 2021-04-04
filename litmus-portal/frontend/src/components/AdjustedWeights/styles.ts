@@ -7,8 +7,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   innerDiv: {
     display: 'flex',
     flexDirection: 'row',
-    width: '17rem',
     marginBottom: theme.spacing(2.625),
+    width: '17rem',
   },
   typo: {
     fontSize: '0.875rem',
@@ -20,9 +20,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(0.5),
   },
   typoSpaced: {
-    width: '17rem',
     display: 'flex',
     justifyContent: 'space-between',
+    width: '17rem',
   },
   progressbarDiv: {
     marginRight: theme.spacing(1.25),

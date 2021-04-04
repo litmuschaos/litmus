@@ -6,25 +6,25 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(-23),
   },
   toolbar: {
-    maxWidth: '31.18rem',
     borderBottom: `1px solid ${theme.palette.border.main}`,
     marginBottom: theme.spacing(1.25),
+    maxWidth: '31.18rem',
   },
   InviteBtn: {},
   table: {
-    maxWidth: '31.18rem',
     maxHeight: '20.1875rem',
+    maxWidth: '31.18rem',
   },
   btnFilled: {
-    width: '6.93rem',
     marginRight: theme.spacing(16.75),
+    width: '6.93rem',
   },
   avatarBackground: {
     backgroundColor: theme.palette.secondary.main,
-    width: '2.56rem',
-    height: '2.56rem',
     color: theme.palette.text.primary,
+    height: '2.56rem',
     marginRight: theme.spacing(2.5),
+    width: '2.56rem',
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
     },
@@ -34,8 +34,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   firstCol: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     '& span:first-child': {
       color: theme.palette.common.black,
     },
@@ -60,32 +60,32 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
   },
   body: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
   },
 
   text: {
-    marginTop: theme.spacing(3.75),
     marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(3.75),
   },
   email: {
     color: `${theme.palette.text.hint}99`,
   },
   input: {
     '&:-webkit-autofill': {
-      WebkitTextFillColor: theme.palette.text.secondary,
-      WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
+      webkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
+      webkitTextFillColor: theme.palette.text.secondary,
     },
   },
   typo: {
     fontSize: '2.25rem',
   },
   textSecond: {
-    width: '27.5rem',
     height: '1.6875rem',
     marginBottom: theme.spacing(3.75),
+    width: '27.5rem',
   },
   typoSub: {
     fontSize: '1rem',

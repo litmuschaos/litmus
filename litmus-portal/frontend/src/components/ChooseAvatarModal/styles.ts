@@ -10,34 +10,34 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   selectorbg: {
     backgroundColor: theme.palette.background.paper,
+    marginBottom: theme.spacing(7.5),
     paddingTop: theme.spacing(3.75),
     width: '100%',
-    marginBottom: theme.spacing(7.5),
   },
   // lines of avatars
   avatarline: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
     gap: theme.spacing(3.75),
+    justifyContent: 'center',
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
     },
   },
   avatar: {
-    marginLeft: theme.spacing(3.75),
-    marginBottom: theme.spacing(3.75),
-    width: theme.spacing(6.25),
     height: theme.spacing(6.25),
+    marginBottom: theme.spacing(3.75),
+    marginLeft: theme.spacing(3.75),
+    width: theme.spacing(6.25),
   },
   // selected avatar
   selectedavatar: {
     border: `3px solid ${theme.palette.secondary.dark}`,
-    marginLeft: theme.spacing(3.75),
-    marginBottom: theme.spacing(3.75),
-    width: theme.spacing(6.25),
     height: theme.spacing(6.25),
+    marginBottom: theme.spacing(3.75),
+    marginLeft: theme.spacing(3.75),
+    width: theme.spacing(6.25),
   },
   checkmark: {
     height: theme.spacing(3.75),

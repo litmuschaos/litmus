@@ -6,17 +6,17 @@ const useStyles = makeStyles((theme) => ({
   },
   stepper: {
     background: 'none',
-    padding: theme.spacing(5, 0, 0, 0),
     margin: theme.spacing(0, -3, 0, -5),
+    padding: theme.spacing(5, 0, 0, 0),
     [theme.breakpoints.up('lg')]: {
       margin: theme.spacing(0, -8, 0, -10),
     },
   },
   label: {
-    marginTop: theme.spacing(-9),
+    color: theme.palette.horizontalStepper.pending,
     fontSize: '0.8rem',
     fontWeight: 'bold',
-    color: theme.palette.horizontalStepper.pending,
+    marginTop: theme.spacing(-9),
   },
   activeLabel: {
     color: theme.palette.horizontalStepper.active,
@@ -27,10 +27,10 @@ const useStyles = makeStyles((theme) => ({
 
   // Stepper Content
   stepperContent: {
-    marginTop: theme.spacing(-1.5),
-    paddingTop: theme.spacing(5),
-    paddingBottom: theme.spacing(2),
     boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px',
+    marginTop: theme.spacing(-1.5),
+    paddingBottom: theme.spacing(2),
+    paddingTop: theme.spacing(5),
   },
 
   // Stepper Actions
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   endAction: {
     flexGrow: 1,
     '& button': {
-      float: 'right',
+      cssFloat: 'right',
     },
   },
   nextArrow: {
@@ -51,16 +51,16 @@ const useStyles = makeStyles((theme) => ({
 
 const useStepIconStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
     alignItems: 'center',
+    background: theme.palette.text.hint,
+    borderRadius: '50%',
+    color: theme.palette.text.primary,
+    display: 'flex',
+    fontSize: '1rem',
+    height: '1.5rem',
     justifyContent: 'center',
     width: '1.5rem',
-    height: '1.5rem',
-    borderRadius: '50%',
-    fontSize: '1rem',
     zIndex: 20,
-    color: theme.palette.text.primary,
-    background: theme.palette.text.hint,
   },
   active: {
     backgroundColor: theme.palette.horizontalStepper.active,
@@ -70,10 +70,10 @@ const useStepIconStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   innerCircle: {
-    borderRadius: '50%',
-    width: '0.5rem',
-    height: '0.5rem',
     background: theme.palette.background.paper,
+    borderRadius: '50%',
+    height: '0.5rem',
+    width: '0.5rem',
   },
 }));
 

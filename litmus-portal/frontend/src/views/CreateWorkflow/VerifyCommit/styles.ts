@@ -7,11 +7,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     background: theme.palette.background.paper,
     color: theme.palette.text.primary,
-    padding: theme.spacing(0, 2),
-    margin: '0 auto',
-    width: '98%',
-    height: '100%',
     flexDirection: 'column',
+    height: '100%',
+    margin: '0 auto',
+    padding: theme.spacing(0, 2),
+    width: '98%',
     [theme.breakpoints.up('lg')]: {
       width: '99%',
     },
@@ -34,23 +34,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   description: {
-    marginTop: theme.spacing(3.25),
-    marginBottom: theme.spacing(7.5),
     fontSize: '1rem',
+    marginBottom: theme.spacing(7.5),
+    marginTop: theme.spacing(3.25),
   },
   bfinIcon: {
-    width: '7rem',
     height: '6.31rem',
+    width: '7rem',
   },
   outerSum: {
     display: 'flex',
     flexDirection: 'column',
   },
   summaryDiv: {
+    alignItems: 'baseline',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'baseline',
     margin: theme.spacing(1, 0),
   },
   innerSumDiv: {
@@ -63,10 +63,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   sumText: {
-    width: '100%',
-    marginTop: theme.spacing(4.5),
-    marginBottom: theme.spacing(3),
     fontSize: '1.2rem',
+    marginBottom: theme.spacing(3),
+    marginTop: theme.spacing(4.5),
+    width: '100%',
     [theme.breakpoints.up('lg')]: {
       fontSize: '1.4rem',
     },
@@ -89,9 +89,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '75%',
   },
   schCol2: {
-    marginLeft: theme.spacing(5),
     display: 'flex',
     flexDirection: 'row',
+    marginLeft: theme.spacing(5),
   },
   clusterName: {
     fontSize: '0.85rem',
@@ -105,8 +105,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.secondary,
   },
   link: {
-    fontSize: '0.875rem',
     color: theme.palette.secondary.dark,
+    fontSize: '0.875rem',
   },
   adjWeights: {
     display: 'flex',
@@ -119,12 +119,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   config: {
-    height: '3rem',
-    fontSize: '0.9375rem',
     color: theme.palette.text.disabled,
-    width: '30rem',
-    marginTop: theme.spacing(3.75),
+    fontSize: '0.9375rem',
+    height: '3rem',
     marginLeft: theme.spacing(30),
+    marginTop: theme.spacing(3.75),
+    width: '30rem',
   },
   typoCol2: {
     fontSize: '1rem',
@@ -156,8 +156,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeBtn: {
     color: theme.palette.secondary.contrastText,
-    marginTop: theme.spacing(-6),
     marginRight: theme.spacing(-2.5),
+    marginTop: theme.spacing(-6),
   },
 
   // Modal
@@ -168,21 +168,21 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(3),
   },
   heading: {
-    fontSize: '2rem',
-    textalign: 'center',
-    marginTop: theme.spacing(3),
     color: theme.palette.text.primary,
+    fontSize: '2rem',
+    marginTop: theme.spacing(3),
+    textalign: 'center',
   },
   headWorkflow: {
-    fontsize: '2rem',
-    textalign: 'center',
     color: theme.palette.text.primary,
+    fontsize: '2rem',
     marginTop: theme.spacing(3),
+    textalign: 'center',
   },
   button: {
     color: theme.palette.text.primary,
-    textAlign: 'center',
     marginTop: theme.spacing(5),
+    textAlign: 'center',
   },
   closeButton: {
     borderColor: theme.palette.border.main,

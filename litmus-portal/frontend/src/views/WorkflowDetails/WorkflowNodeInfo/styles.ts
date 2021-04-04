@@ -2,15 +2,15 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    height: '25rem',
-    width: '100%',
     backgroundColor: theme.palette.cards.background,
+    height: '25rem',
     padding: theme.spacing(4, 6, 6, 6),
+    width: '100%',
   },
 
   header: {
-    height: '2rem',
     display: 'flex',
+    height: '2rem',
     justifyContent: 'space-between',
   },
 
@@ -30,8 +30,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   rightPanel: {
-    width: '100%',
     height: '16rem',
+    width: '100%',
   },
 
   subSection: {
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   closeButton: {
     borderColor: theme.palette.border.main,
-    float: 'right',
+    cssFloat: 'right',
   },
 }));
 

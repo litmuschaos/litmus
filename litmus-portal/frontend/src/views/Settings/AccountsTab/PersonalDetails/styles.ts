@@ -3,28 +3,28 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   // Personal details
   headerText: {
-    marginTop: theme.spacing(7.5),
     fontSize: '1.5625rem',
+    marginTop: theme.spacing(7.5),
   },
   input: {
-    display: 'none',
     alignItems: 'center',
+    display: 'none',
   },
   // button styles for saving the changes of personal details
   saveButton: {
-    marginTop: theme.spacing(2),
     marginLeft: theme.spacing(12.4),
+    marginTop: theme.spacing(2),
     width: '7.0625rem',
   },
   // for closing the modal button
   button: {
+    backgroundColor: theme.palette.secondary.dark,
+    borderRadius: 0,
+    color: theme.palette.common.white,
+    height: '2.93rem',
+    marginTop: theme.spacing(1.25),
     textTransform: 'none',
     width: '8.5rem',
-    height: '2.93rem',
-    borderRadius: 0,
-    marginTop: theme.spacing(1.25),
-    backgroundColor: theme.palette.secondary.dark,
-    color: theme.palette.common.white,
     '&:hover': {
       backgroundColor: theme.palette.secondary.dark,
     },
@@ -32,26 +32,26 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // styles for modal and its components
   body: {
+    alignItems: 'center',
+    color: 'none',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
     marginTop: theme.spacing(15),
     paddingBottom: '7rem',
-    color: 'none',
   },
   text: {
-    width: '31rem',
     height: '5.875rem',
-    marginTop: theme.spacing(3.75),
     marginBottom: theme.spacing(3.75),
+    marginTop: theme.spacing(3.75),
+    width: '31rem',
   },
   typo: {
     fontSize: '2.25rem',
   },
   text1: {
-    width: '27.5rem',
     marginBottom: theme.spacing(3.75),
+    width: '27.5rem',
   },
   typo1: {
     fontSize: '1rem',
@@ -61,23 +61,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(3.75),
   },
   textSecondError: {
-    width: '27.5rem',
     height: '1.6875rem',
-    marginTop: theme.spacing(3.75),
     margin: '0 auto',
+    marginTop: theme.spacing(3.75),
+    width: '27.5rem',
   },
   errDiv: {
     color: 'none',
-    width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    textAlign: 'center',
     padding: theme.spacing(7, 0),
+    textAlign: 'center',
+    width: '100%',
   },
   textError: {
-    width: '20.5rem',
-    marginTop: theme.spacing(13.75),
     margin: '0 auto',
+    marginTop: theme.spacing(13.75),
+    width: '20.5rem',
   },
   typoSub: {
     fontSize: '1rem',

@@ -11,9 +11,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   mainPrivateRepo: {
     border: `1px solid ${theme.palette.border.main}`,
-    padding: theme.spacing(2.5),
-    margin: theme.spacing(2.5, 3.75, 2.5, 2),
     borderRadius: 4,
+    margin: theme.spacing(2.5, 3.75, 2.5, 2),
+    padding: theme.spacing(2.5),
     width: 'fit-content',
   },
   privateToggleDiv: {
@@ -21,35 +21,35 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
   },
   mainRadioDiv: {
-    padding: theme.spacing(3.125),
     border: `1px solid ${theme.palette.border.main}`,
     borderRadius: 3,
+    padding: theme.spacing(3.125),
   },
   locallyText: {
     fontSize: '1.25rem',
   },
   disconnectText: {
-    fontSize: '0.875rem',
     color: theme.palette.error.main,
-    marginTop: theme.spacing(0.625),
+    fontSize: '0.875rem',
     marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(0.625),
   },
   enabledText: {
-    padding: theme.spacing(3.125),
     border: `1px solid ${theme.palette.border.main}`,
-    marginTop: theme.spacing(2.5),
-    display: 'flex',
     borderRadius: 3,
+    display: 'flex',
+    marginTop: theme.spacing(2.5),
+    padding: theme.spacing(3.125),
   },
   infoText: {
-    maxWidth: '25rem',
     color: theme.palette.error.main,
     fontSize: '0.75rem',
     marginLeft: theme.spacing(2),
+    maxWidth: '25rem',
   },
   gitInfo: {
-    marginTop: theme.spacing(1.5),
     marginLeft: theme.spacing(2),
+    marginTop: theme.spacing(1.5),
   },
   branchText: {
     fontSize: '1rem',
@@ -94,31 +94,31 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingRight: theme.spacing(0.625),
   },
   alertText: {
-    marginBottom: theme.spacing(2.5),
-    fontSize: '0.75rem',
     color: theme.palette.common.black,
+    fontSize: '0.75rem',
+    marginBottom: theme.spacing(2.5),
     opacity: 0.4,
   },
   modalDiv: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
     height: '25rem',
-    alignItems: 'center',
     justifyContent: 'center',
   },
   modalHeading: {
     fontSize: '2.25rem',
   },
   submitBtnDiv: {
-    marginTop: theme.spacing(1),
     marginBottom: theme.spacing(2.5),
+    marginTop: theme.spacing(1),
   },
   sshDataDiv: {
+    backgroundColor: theme.palette.cards.background,
+    borderRadius: 4,
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: theme.palette.cards.background,
     padding: theme.spacing(2.5),
-    borderRadius: 4,
   },
   sshAlert: {
     color: theme.palette.error.main,
@@ -128,15 +128,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     wordBreak: 'break-all',
   },
   copyBtn: {
+    borderLeft: `1px solid ${theme.palette.secondary.main}`,
     margin: 'auto',
     marginLeft: theme.spacing(2.5),
-    borderLeft: `1px solid ${theme.palette.secondary.main}`,
     paddingLeft: theme.spacing(2.5),
   },
   modalDesc: {
     fontSize: '1rem',
-    width: '21.875',
     marginBottom: theme.spacing(2.5),
+    width: '21.875',
   },
   radio: {
     color: theme.palette.primary.main,
@@ -146,9 +146,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   checked: {},
   createIcon: {
-    width: '0.9375rem',
     height: '0.9375rem',
     marginRight: theme.spacing(1),
+    width: '0.9375rem',
   },
   editBtn: {
     marginTop: theme.spacing(2.5),

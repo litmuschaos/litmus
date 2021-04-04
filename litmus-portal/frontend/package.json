@@ -110,6 +110,8 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.6",
     "prettier": "^2.0.5",
+    "stylelint": "^13.12.0",
+    "stylelint-order": "^4.1.0",
     "typescript": "^3.7.5"
   }
 }

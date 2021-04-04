@@ -4,29 +4,29 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Styles for Header
   appBar: {
     backgroundColor: theme.palette.background.default,
+    boxShadow: `0px 1.8px 0.6px rgba(0, 0, 0, 0.1), 0px 3.2px 7.2px rgba(0, 0, 0, 0.13)`,
     height: '5rem',
     position: 'sticky',
-    boxShadow: `0px 1.8px 0.6px rgba(0, 0, 0, 0.1), 0px 3.2px 7.2px rgba(0, 0, 0, 0.13)`,
   },
   toolBar: {
-    height: '5rem',
     display: 'flex',
+    height: '5rem',
     padding: theme.spacing(0, 7.5),
     '& nav': {
       flexGrow: 1,
     },
   },
   projectDropdown: {
-    display: 'flex',
     alignItems: 'center',
     color: theme.palette.common.black,
+    display: 'flex',
     '& button': {
       marginTop: theme.spacing(0.25),
     },
   },
   projectPopover: {
-    minWidth: '26.3125rem',
     maxHeight: '23.0625rem',
+    minWidth: '26.3125rem',
     overflowY: 'auto',
     '& #hint': {
       color: theme.palette.text.hint,
@@ -35,10 +35,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   projectListItem: {
     '& p': {
       color: theme.palette.text.hint,
-      width: '7.9375rem',
       overflow: 'hidden',
-      whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      width: '7.9375rem',
     },
   },
   active: {
@@ -51,16 +51,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.main,
   },
   profileDropdownPopover: {
-    padding: theme.spacing(3.25, 2.875),
-    minWidth: '21.9375rem',
     minHeight: '11.3125rem',
+    minWidth: '21.9375rem',
+    padding: theme.spacing(3.25, 2.875),
     '& #logoutIcon': {
       marginLeft: theme.spacing(1.875),
     },
   },
   profileSet: {
-    marginTop: theme.spacing(1),
     fontSize: '1rem',
+    marginTop: theme.spacing(1),
   },
   profileDropdownRow: {
     display: 'flex',
@@ -70,13 +70,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   profileUnset: {
     marginTop: theme.spacing(1.25),
     '& a': {
-      textDecoration: 'none',
       color: theme.palette.primary.main,
+      textDecoration: 'none',
     },
     '& #emailUnset': {
       color: theme.palette.text.disabled,
-      fontStyle: 'italic',
       fontSize: '1rem',
+      fontStyle: 'italic',
     },
   },
   profileButtons: {

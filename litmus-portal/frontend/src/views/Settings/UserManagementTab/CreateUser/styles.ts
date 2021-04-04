@@ -2,21 +2,21 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   headDiv: {
-    marginTop: theme.spacing(3.75),
-    marginLeft: theme.spacing(7.5),
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     marginBottom: theme.spacing(3.75),
+    marginLeft: theme.spacing(7.5),
+    marginTop: theme.spacing(3.75),
   },
   createDiv: {
-    display: 'flex',
     alignItems: 'stretch',
+    display: 'flex',
   },
   divHeaderText: {
+    fontSize: '1.5625rem',
     marginLeft: theme.spacing(1),
     marginTop: theme.spacing(0.5),
-    fontSize: '1.5625rem',
   },
   descText: {
     fontSize: '1rem',
@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(-2),
   },
   container: {
-    marginTop: theme.spacing(3.75),
-    border: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.cards.background,
+    border: `1px solid ${theme.palette.border.main}`,
     borderRadius: '0.1875rem',
+    marginTop: theme.spacing(3.75),
     padding: theme.spacing(5),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
@@ -38,21 +38,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   headerText: {
-    marginTop: theme.spacing(7.5),
     fontSize: '1.5625rem',
     marginBottom: theme.spacing(5),
+    marginTop: theme.spacing(7.5),
   },
   // for login details
   details1: {
-    display: 'flex',
     alignContent: 'flex-start',
+    display: 'flex',
+    flexWrap: 'wrap',
     '& div': {
       margin: theme.spacing(0, 1, 1, 0),
       [theme.breakpoints.down('sm')]: {
         width: 'unset',
       },
     },
-    flexWrap: 'wrap',
   },
 
   secondInputField: {
@@ -70,10 +70,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   txt1: {
-    marginTop: theme.spacing(2.5),
-    marginBottom: theme.spacing(3.75),
-    fontSize: '1rem',
     color: theme.palette.text.disabled,
+    fontSize: '1rem',
+    marginBottom: theme.spacing(3.75),
+    marginTop: theme.spacing(2.5),
   },
 
   createRandomButton: {
@@ -87,12 +87,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // for copying the credentials
   copyDiv: {
-    maxWidth: '11rem',
+    alignItems: 'stretch',
+    color: theme.palette.secondary.dark,
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'stretch',
     justifyContent: 'space-between',
-    color: theme.palette.secondary.dark,
+    maxWidth: '11rem',
   },
   copyTypo: {
     marginTop: theme.spacing(1),

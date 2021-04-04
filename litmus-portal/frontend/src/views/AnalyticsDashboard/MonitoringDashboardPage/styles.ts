@@ -3,24 +3,24 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   rootPanel: {
-    display: 'inline-block',
     background: theme.palette.background.paper,
-    padding: theme.spacing(2),
+    display: 'inline-block',
     margin: theme.spacing(3, 1),
+    padding: theme.spacing(2),
   },
 
   rootPanelGroup: {
-    width: '100%',
-    display: 'inline-block',
     background: theme.palette.background.paper,
+    display: 'inline-block',
+    marginBottom: theme.spacing(1),
     padding: theme.spacing(2),
     paddingBottom: 0,
-    marginBottom: theme.spacing(1),
+    width: '100%',
   },
   panelGroup: {
-    display: 'flex',
     alignItems: 'left',
     background: theme.palette.disabledBackground,
+    display: 'flex',
   },
   panelGroupContainer: {
     background: theme.palette.cards.header,
@@ -32,17 +32,17 @@ const useStyles = makeStyles((theme) => ({
   },
 
   panelGroupTitle: {
-    fontWeight: 700,
     fontSize: '1rem',
+    fontWeight: 700,
   },
 
   title: {
-    fontWeight: 700,
-    fontSize: '0.9rem',
-    color: theme.palette.text.primary,
-    textAlign: 'center',
     backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    fontSize: '0.9rem',
+    fontWeight: 700,
     paddingTop: theme.spacing(2.5),
+    textAlign: 'center',
   },
 
   singleGraph: {
@@ -50,8 +50,8 @@ const useStyles = makeStyles((theme) => ({
     '& hr': {
       position: 'relative !important',
     },
-    width: '32.5vw',
     height: '27.5rem',
+    width: '32.5vw',
     [theme.breakpoints.down(1200)]: {
       width: '30vw',
     },

@@ -2,10 +2,10 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   body: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
     marginTop: theme.spacing(7.5),
     padding: theme.spacing(7),
   },
@@ -16,36 +16,36 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
   text1Sucess: {
-    width: '27.5rem',
     height: '1.6875rem',
     marginBottom: theme.spacing(3.75),
+    width: '27.5rem',
   },
   textSucess: {
-    width: '25.06rem',
     height: '5.875rem',
-    marginTop: theme.spacing(3.75),
     marginBottom: theme.spacing(3.75),
+    marginTop: theme.spacing(3.75),
+    width: '25.06rem',
   },
   textSecondError: {
-    width: '27.5rem',
     height: '1.6875rem',
-    marginTop: theme.spacing(3.75),
     margin: '0 auto',
+    marginTop: theme.spacing(3.75),
+    width: '27.5rem',
   },
   errDiv: {
-    width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    textAlign: 'center',
     padding: theme.spacing(7, 0),
+    textAlign: 'center',
+    width: '100%',
   },
   buttonModal: {
     marginTop: theme.spacing(3.75),
   },
   textError: {
-    width: '20.5rem',
-    marginTop: theme.spacing(13.75),
     margin: '0 auto',
+    marginTop: theme.spacing(13.75),
+    width: '20.5rem',
   },
 }));
 export default useStyles;

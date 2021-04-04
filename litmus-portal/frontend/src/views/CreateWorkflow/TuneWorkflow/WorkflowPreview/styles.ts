@@ -40,15 +40,15 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
       },
       '& g.StepGroup': {
-        fill: theme.palette.status.pending.text,
         cursor: 'default',
+        fill: theme.palette.status.pending.text,
         '& rect': {
-          x: -1.5,
-          y: -1.5,
-          width: '0.2rem',
           height: '0.2rem',
           rx: '0.625rem !important',
           ry: '0.625rem !important',
+          width: '0.2rem',
+          x: -1.5,
+          y: -1.5,
         },
       },
       '& g.StepGroup.Succeeded': {
@@ -81,9 +81,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   load: {
-    textAlign: 'center',
-    marginTop: '50%',
     height: '10rem',
+    marginTop: '50%',
+    textAlign: 'center',
   },
 }));
 

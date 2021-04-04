@@ -30,16 +30,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   input: {
-    display: 'none',
     alignItems: 'center',
+    display: 'none',
   },
   dp: {
     marginRight: theme.spacing(2.5),
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
-    width: '4.815rem',
     height: '4.815rem',
+    width: '4.815rem',
   },
 }));
 export default useStyles;

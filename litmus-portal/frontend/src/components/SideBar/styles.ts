@@ -2,14 +2,14 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   drawer: {
-    width: '100%',
     height: '100%',
+    width: '100%',
   },
   drawerPaper: {
-    width: '100%',
     backgroundColor: theme.palette.background.default,
-    position: 'relative',
     color: 'inherit',
+    position: 'relative',
+    width: '100%',
   },
   litmusDiv: {
     display: 'flex',
@@ -22,13 +22,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     left: theme.spacing(4.375),
   },
   litmusHome: {
-    width: '4.0625rem',
-    height: '1.875rem',
-    fontSize: '1.625rem',
-    left: theme.spacing(2.25),
-    top: theme.spacing(3),
-    marginLeft: theme.spacing(1.75),
     color: theme.palette.text.primary,
+    fontSize: '1.625rem',
+    height: '1.875rem',
+    left: theme.spacing(2.25),
+    marginLeft: theme.spacing(1.75),
+    top: theme.spacing(3),
+    width: '4.0625rem',
   },
   drawerListItem: {
     height: '3.1875rem',
@@ -48,26 +48,26 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(2),
   },
   listText: {
-    marginLeft: theme.spacing(0),
     fontSize: '1rem',
+    marginLeft: theme.spacing(0),
   },
   drawerList: {
     marginTop: theme.spacing(8.375),
   },
   versionlogo: {
-    width: '1.25rem',
     height: '2.185rem',
+    width: '1.25rem',
   },
   versionText: {
+    fontSize: '0.75rem',
     margin: 'auto',
     marginLeft: theme.spacing(1.25),
-    fontSize: '0.75rem',
   },
   versionDiv: {
-    marginTop: 'auto',
+    fontSize: '0.75rem',
     marginBottom: theme.spacing(2),
     marginLeft: theme.spacing(4),
-    fontSize: '0.75rem',
+    marginTop: 'auto',
   },
 }));
 

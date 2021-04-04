@@ -2,21 +2,21 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    position: 'fixed',
-    overflow: 'hidden',
-    height: '100vh',
-    width: '100%',
     display: 'grid',
+    gridTemplateAreas: '"sidebar header" "sidebar content"',
     gridTemplateColumns: '20.5em auto',
     gridTemplateRows: '6.5em auto',
-    gridTemplateAreas: '"sidebar header" "sidebar content"',
+    height: '100vh',
+    overflow: 'hidden',
+    position: 'fixed',
+    width: '100%',
 
     '& ::-webkit-scrollbar': {
       width: '0.4rem',
     },
     '& ::-webkit-scrollbar-track': {
-      marginTop: theme.spacing(1),
       webkitBoxShadow: `inset 0 0 8px ${theme.palette.common.black}`,
+      marginTop: theme.spacing(1),
     },
     '& ::-webkit-scrollbar-thumb': {
       backgroundColor: theme.palette.primary.light,
@@ -31,8 +31,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   content: {
     gridArea: 'content',
-    padding: theme.spacing(5, 7.5),
     overflowY: 'scroll',
+    padding: theme.spacing(5, 7.5),
   },
   sidebar: {
     gridArea: 'sidebar',

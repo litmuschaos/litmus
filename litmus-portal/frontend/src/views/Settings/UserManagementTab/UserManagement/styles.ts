@@ -8,23 +8,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1.5625rem',
   },
   members: {
+    color: theme.palette.primary.main,
     display: 'flex',
     justifyContent: 'flex-start',
-    marginTop: theme.spacing(2.625),
     marginBottom: theme.spacing(1.875),
-    color: theme.palette.primary.main,
+    marginTop: theme.spacing(2.625),
   },
   descText: {
-    marginBottom: theme.spacing(3.75),
     fontSize: '1rem',
+    marginBottom: theme.spacing(3.75),
   },
   memTypo: {
     fontSize: '1rem',
   },
   table: {
     backgroundColor: 'inherit',
-    height: '30.25rem',
     border: `1px solid ${theme.palette.border.main}`,
+    height: '30.25rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -37,22 +37,22 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   toolbar: {
-    height: '6.125rem',
-    border: `1px solid ${theme.palette.border.main}`,
-    marginBottom: theme.spacing(1.25),
     backgroundColor: theme.palette.cards.background,
+    border: `1px solid ${theme.palette.border.main}`,
     display: 'flex',
+    height: '6.125rem',
     justifyContent: 'space-between',
+    marginBottom: theme.spacing(1.25),
   },
   toolbarFirstCol: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
   },
   filter: {
-    display: 'flex',
     alignItems: 'center',
-    paddingBottom: theme.spacing(0.5),
+    display: 'flex',
     marginLeft: theme.spacing(5),
+    paddingBottom: theme.spacing(0.5),
   },
   formControl: {
     marginLeft: theme.spacing(2),
@@ -75,10 +75,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '17.56rem',
   },
   firstCol: {
-    display: 'flex',
     alignItems: 'center',
-    maxWidth: '17.56rem',
+    display: 'flex',
     marginLeft: theme.spacing(3),
+    maxWidth: '17.56rem',
   },
   otherTC: {
     maxWidth: '15.375rem',
@@ -94,8 +94,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     background: theme.palette.secondary.contrastText,
   },
   userStat: {
-    fontSize: '0.625rem',
     color: theme.palette.text.disabled,
+    fontSize: '0.625rem',
   },
   optionBtn: {
     marginLeft: 'auto',

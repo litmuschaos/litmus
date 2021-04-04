@@ -4,10 +4,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     background: theme.palette.background.paper,
     color: theme.palette.text.primary,
-    padding: theme.spacing(0, 2),
-    margin: '0 auto',
-    height: '100%',
     flexDirection: 'column',
+    height: '100%',
+    margin: '0 auto',
+    padding: theme.spacing(0, 2),
   },
 
   // Inner Container
@@ -42,17 +42,17 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Agent Div
   agentWrapperDiv: {
-    marginTop: theme.spacing(5),
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
     gridGap: '1.5rem',
+    gridTemplateColumns: '1fr 1fr',
+    marginTop: theme.spacing(5),
   },
   litmusCard: {
     background: theme.palette.cards.background,
   },
   agentRadioButton: {
-    marginTop: theme.spacing(1),
     marginLeft: '5%',
+    marginTop: theme.spacing(1),
   },
 }));
 

@@ -2,14 +2,14 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   table: {
-    maxHeight: '20.1875rem',
     marginBottom: theme.spacing(3),
+    maxHeight: '20.1875rem',
   },
   avatarBackground: {
     backgroundColor: theme.palette.primary.main,
-    width: '2.56rem',
     height: '2.56rem',
     marginRight: theme.spacing(2.5),
+    width: '2.56rem',
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
     },
@@ -41,11 +41,11 @@ const useStyles = makeStyles((theme) => ({
     gap: '1rem',
   },
   root: {
-    marginBottom: theme.spacing(2.5),
     backgroundColor: theme.palette.cards.background,
     display: 'flex',
-    padding: theme.spacing(2.5, 3.75, 2.5, 3.75),
     justifyContent: 'space-between',
+    marginBottom: theme.spacing(2.5),
+    padding: theme.spacing(2.5, 3.75, 2.5, 3.75),
   },
   userDetails: {},
   name: {
@@ -56,8 +56,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.75rem',
   },
   projectDiv: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     justifyContent: 'space-between',
   },
   projectName: {
@@ -66,8 +66,8 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1.5),
   },
   avatarDiv: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     justifyContent: 'space-between',
   },
   butnOutline: {

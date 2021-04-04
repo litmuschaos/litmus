@@ -3,8 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 // CommunityTimeSeriesPlot Component Styling
 const useStyles = makeStyles((theme) => ({
   formControl: {
-    margin: theme.spacing(0.5),
     height: '2.5rem',
+    margin: theme.spacing(0.5),
     width: '19.375rem',
     [theme.breakpoints.down('sm')]: {
       width: '15rem',
@@ -12,8 +12,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   plotCard: {
-    paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
+    paddingTop: theme.spacing(2),
   },
 
   root: {
@@ -23,9 +23,9 @@ const useStyles = makeStyles((theme) => ({
 
   plot: {
     margin: 'auto',
-    width: '150%',
-    paddingLeft: '4.5%',
     marginTop: theme.spacing(2),
+    paddingLeft: '4.5%',
+    width: '150%',
   },
 }));
 

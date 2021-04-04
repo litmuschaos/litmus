@@ -2,14 +2,14 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   table: {
-    maxHeight: '20.1875rem',
     marginBottom: theme.spacing(3),
+    maxHeight: '20.1875rem',
   },
   avatarBackground: {
     backgroundColor: theme.palette.primary.main,
-    width: '2.56rem',
     height: '2.56rem',
     marginRight: theme.spacing(2.5),
+    width: '2.56rem',
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
     },
@@ -46,8 +46,8 @@ const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.cards.background,
     display: 'flex',
-    padding: theme.spacing(2.5, 3.75, 2.5, 3.75),
     justifyContent: 'space-between',
+    padding: theme.spacing(2.5, 3.75, 2.5, 3.75),
   },
   leaveProjectBtn: {
     background: theme.palette.error.main,
@@ -60,31 +60,31 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
   },
   email: {
-    fontSize: '0.75rem',
     color: theme.palette.text.disabled,
+    fontSize: '0.75rem',
   },
   projectDiv: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
   },
   projectName: {
     fontSize: '1.125rem',
     fontWeight: 500,
   },
   projectRole: {
-    display: 'flex',
     alignItems: 'center',
-    fontSize: '0.875rem',
     color: theme.palette.text.hint,
+    display: 'flex',
+    fontSize: '0.875rem',
   },
   avatarDiv: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     justifyContent: 'space-between',
   },
   viewProject: {
-    marginLeft: theme.spacing(1.5),
     color: theme.palette.primary.main,
+    marginLeft: theme.spacing(1.5),
   },
 }));
 export default useStyles;

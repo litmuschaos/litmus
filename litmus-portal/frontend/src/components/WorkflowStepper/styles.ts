@@ -2,11 +2,11 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    width: '97.5%',
     margin: '0 auto',
+    width: '97.5%',
     [theme.breakpoints.up('lg')]: {
-      width: '98%',
       margin: theme.spacing(2, 'auto'),
+      width: '98%',
     },
   },
   // Header
@@ -22,23 +22,23 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   headerButtonWrapper: {
     display: 'flex',
-    width: '15%',
     justifyContent: 'space-between',
+    width: '15%',
     [theme.breakpoints.up('lg')]: {
       width: '11%',
     },
   },
   bottomButtonWrapper: {
     display: 'flex',
-    width: '100%',
     justifyContent: 'space-between',
+    width: '100%',
   },
 
   // Stepper
   stepper: {
     backgroundColor: 'transparent',
-    marginTop: theme.spacing(5),
     marginBottom: theme.spacing(-4),
+    marginTop: theme.spacing(5),
   },
   backButton: {
     marginRight: theme.spacing(1),
@@ -47,17 +47,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     gap: '1rem',
-    marginLeft: '9%',
     marginBottom: theme.spacing(6),
+    marginLeft: '9%',
   },
   yamlError: {
     marginTop: theme.spacing(1.5),
   },
   activeLabel: {
     color: theme.palette.horizontalStepper.active,
-    marginTop: theme.spacing(-9),
-    fontWeight: 'bold',
     fontSize: theme.spacing(1.5),
+    fontWeight: 'bold',
+    marginTop: theme.spacing(-9),
     [theme.breakpoints.down('sm')]: {
       fontSize: theme.spacing(1),
     },
@@ -90,21 +90,21 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(3),
   },
   heading: {
-    fontSize: '2rem',
-    textalign: 'center',
-    marginTop: theme.spacing(3),
     color: theme.palette.text.secondary,
+    fontSize: '2rem',
+    marginTop: theme.spacing(3),
+    textalign: 'center',
   },
   headWorkflow: {
-    fontsize: '2rem',
-    textalign: 'center',
     color: theme.palette.text.secondary,
+    fontsize: '2rem',
     marginTop: theme.spacing(3),
+    textalign: 'center',
   },
   button: {
     color: theme.palette.text.secondary,
-    textAlign: 'center',
     marginTop: theme.spacing(5),
+    textAlign: 'center',
   },
   closeButton: {
     borderColor: theme.palette.border.main,
@@ -116,11 +116,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Bottom
   bottomWrapper: {
-    width: '88%',
     margin: theme.spacing(1, 'auto'),
+    width: '88%',
     [theme.breakpoints.up('lg')]: {
-      width: '87%',
       margin: theme.spacing(2, 'auto'),
+      width: '87%',
     },
   },
 }));

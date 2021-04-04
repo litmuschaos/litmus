@@ -14,19 +14,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1.5625rem',
   },
   myProjectText: {
-    marginBottom: theme.spacing(1.5),
     color: theme.palette.primary.main,
+    marginBottom: theme.spacing(1.5),
   },
   members: {
+    color: theme.palette.secondary.dark,
     display: 'flex',
     justifyContent: 'flex-start',
-    marginTop: theme.spacing(2.625),
     marginBottom: theme.spacing(1.875),
-    color: theme.palette.secondary.dark,
+    marginTop: theme.spacing(2.625),
   },
   descText: {
-    marginBottom: theme.spacing(3.75),
     fontSize: '1rem',
+    marginBottom: theme.spacing(3.75),
   },
   memTypo: {
     fontSize: '1rem',
@@ -50,23 +50,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   tablePagination: {
-    marginTop: theme.spacing(-0.25),
-    height: '3.5rem',
     borderTop: `1px solid ${theme.palette.border.main}`,
+    height: '3.5rem',
+    marginTop: theme.spacing(-0.25),
   },
   toolbar: {
-    height: '6.125rem',
-    border: `1px solid ${theme.palette.cards.background}`,
+    width: '90%',
     backgroundColor: theme.palette.background.paper,
+    border: `1px solid ${theme.palette.cards.background}`,
     display: 'flex',
+    height: '6.125rem',
     justifyContent: 'space-between',
-    Width: '90%',
   },
   filter: {
-    display: 'flex',
     alignItems: 'center',
-    paddingBottom: theme.spacing(0.5),
+    display: 'flex',
     marginLeft: theme.spacing(5),
+    paddingBottom: theme.spacing(0.5),
   },
   formControl: {
     margin: theme.spacing(0, 3, 0, 2),
@@ -81,43 +81,43 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   TR: {
     borderBottom: `1px solid ${theme.palette.border.main}`,
-    paddingLeft: theme.spacing(8),
 
     height: '4.8125rem',
+    paddingLeft: theme.spacing(8),
     '& p': {
-      fontWeight: 'bold',
       fontSize: '0.8125rem',
+      fontWeight: 'bold',
     },
     '& th': {
-      fontWeight: 'bold',
-      fontSize: '0.8125rem',
-      paddingLeft: theme.spacing(5),
       backgroundColor: theme.palette.background.paper,
+      fontSize: '0.8125rem',
+      fontWeight: 'bold',
+      paddingLeft: theme.spacing(5),
     },
   },
   firstTC: {
-    borderRight: `1px solid ${theme.palette.border.main}`,
     borderBottom: `1px solid ${theme.palette.border.main}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
     maxWidth: '17.56rem',
   },
   firstCol: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     maxWidth: '17.56rem',
   },
   otherTC: {
-    maxWidth: '15.375rem',
     borderBottom: `1px solid ${theme.palette.border.main}`,
-    paddingLeft: theme.spacing(5),
     height: '6.625rem',
+    maxWidth: '15.375rem',
+    paddingLeft: theme.spacing(5),
   },
   buttonTC: {
     borderBottom: `1px solid ${theme.palette.border.main}`,
     height: '6.625rem',
   },
   lastCell: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     justifyContent: 'center',
   },
   styledTC: {
@@ -126,31 +126,31 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   styledTCHeading: {
-    borderRight: `1px solid ${theme.palette.border.main}`,
     borderBottom: `1px solid ${theme.palette.border.main}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
     paddingLeft: theme.spacing(5),
   },
   userRole: {
-    fontSize: '0.625rem',
     color: theme.palette.text.disabled,
+    fontSize: '0.625rem',
   },
   toolbarFirstCol: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
   },
   buttonDiv: {
-    marginRight: theme.spacing(1),
     display: 'flex',
+    marginRight: theme.spacing(1),
   },
   optionBtn: {
     marginLeft: 'auto',
   },
   avatarBackground: {
-    backgroundColor: theme.palette.primary.main,
-    width: '2.56rem',
-    height: '2.56rem',
     alignContent: 'right',
+    backgroundColor: theme.palette.primary.main,
+    height: '2.56rem',
     marginRight: theme.spacing(2.5),
+    width: '2.56rem',
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
     },
@@ -177,10 +177,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
   },
   body: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
     padding: theme.spacing(10),
   },
 
@@ -189,18 +189,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '31.93rem',
     [theme.breakpoints.up('lg')]: {
       height: '5.875rem',
-      marginTop: theme.spacing(3.75),
       marginBottom: theme.spacing(3.75),
+      marginTop: theme.spacing(3.75),
     },
   },
   typo: {
     fontSize: '2rem',
   },
   textSecond: {
-    width: '29.06rem',
     height: '1.6875rem',
-    marginTop: theme.spacing(1.875),
     marginBottom: theme.spacing(3.75),
+    marginTop: theme.spacing(1.875),
+    width: '29.06rem',
   },
   typoSub: {
     fontSize: '1rem',
@@ -208,47 +208,47 @@ const useStyles = makeStyles((theme: Theme) => ({
   // for yes or no buttons
   buttonGroup: {
     display: 'flex',
-    width: '12.75rem',
     height: '2.75rem',
-    marginTop: theme.spacing(2.5),
     justifyContent: 'space-between',
+    marginTop: theme.spacing(2.5),
+    width: '12.75rem',
   },
   input: {
     '&:-webkit-autofill': {
-      WebkitTextFillColor: theme.palette.text.secondary,
-      WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
+      webkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
       maxWidth: '15.75rem',
+      webkitTextFillColor: theme.palette.text.secondary,
     },
   },
   myProject: {
+    backgroundColor: theme.palette.cards.header,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: theme.palette.cards.header,
     padding: theme.spacing(0, 5.3, 0, 5.3),
   },
   project: {
-    margin: theme.spacing(3.875, 'auto', 2.5, 'auto'),
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
+    margin: theme.spacing(3.875, 'auto', 2.5, 'auto'),
   },
   projectName: {
+    fontSize: '1rem',
+    fontWeight: 500,
     margin: theme.spacing(0, 0, 0, 1.56),
     textTransform: 'uppercase',
-    fontWeight: 500,
-    fontSize: '1rem',
   },
 
   active: {
-    textTransform: 'capitalize',
     color: theme.palette.primary.main,
-    fontWeight: 500,
     fontSize: '1rem',
+    fontWeight: 500,
+    textTransform: 'capitalize',
   },
   inActive: {
-    textTransform: 'capitalize',
-    fontWeight: 500,
-    fontSize: '1rem',
     color: theme.palette.text.hint,
+    fontSize: '1rem',
+    fontWeight: 500,
+    textTransform: 'capitalize',
   },
   invitationCount: {
     fontSize: '3.75rem',
@@ -264,22 +264,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: '12.8125rem',
   },
   projectInfo: {
-    minWidth: '35%',
-    display: 'flex',
-    justifyContent: 'space-around',
     alignItems: 'center',
     background: theme.palette.cards.header,
+    display: 'flex',
+    justifyContent: 'space-around',
+    minWidth: '35%',
   },
   projectInfoProjectStats: {
     display: 'flex',
     paddingBottom: theme.spacing(1),
     '& p:first-child': {
-      fontSize: '5.625rem',
       color: theme.palette.text.hint,
+      fontSize: '5.625rem',
     },
     '& p:nth-child(2)': {
-      display: 'flex',
       alignItems: 'flex-end',
+      display: 'flex',
       fontSize: '1.875rem',
       padding: theme.spacing(0, 0, 3.5, 2.5),
     },
@@ -287,13 +287,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   displayFlex: {
     display: 'flex',
     '& p': {
-      display: 'flex',
       alignItems: 'center',
+      display: 'flex',
     },
     '& p:nth-child(2)': {
-      padding: theme.spacing(0.5, 0, 0, 1),
-      fontSize: '1rem',
       color: theme.palette.text.hint,
+      fontSize: '1rem',
+      padding: theme.spacing(0.5, 0, 0, 1),
     },
   },
   projectInfoBoldText: {
@@ -301,13 +301,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 700,
   },
   teamInfo: {
-    minWidth: '65%',
     background: theme.palette.cards.background,
+    minWidth: '65%',
     padding: theme.spacing(5),
     '& p': {
-      maxWidth: '24rem',
-      fontSize: '1rem',
       color: theme.palette.text.hint,
+      fontSize: '1rem',
+      maxWidth: '24rem',
     },
   },
   invitationButton: {
@@ -315,14 +315,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'flex-end',
   },
   invitationButtonFlex: {
-    borderRadius: '0.1875rem',
-    border: `1px solid ${theme.palette.warning.main}`,
-    padding: theme.spacing(1),
-    display: 'flex',
     alignItems: 'center',
+    border: `1px solid ${theme.palette.warning.main}`,
+    borderRadius: '0.1875rem',
+    display: 'flex',
+    padding: theme.spacing(1),
     '& p': {
-      fontSize: '1.25rem',
       color: theme.palette.warning.main,
+      fontSize: '1.25rem',
       padding: theme.spacing(0, 0, 0, 1),
     },
   },
@@ -339,22 +339,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: theme.spacing(2.5, 0, 3.375, 0),
   },
   pending: {
-    maxWidth: '2.8rem',
     background: theme.palette.warning.light,
-    marginLeft: theme.spacing(1.0),
     borderRadius: '0.1875rem',
     color: theme.palette.warning.main,
     fontSize: '0.625rem',
+    marginLeft: theme.spacing(1.0),
+    maxWidth: '2.8rem',
     padding: theme.spacing(0.5, 0.5, 0.5, 0.5),
   },
   declined: {
-    maxWidth: '2.8rem',
-    marginLeft: theme.spacing(1.0),
-    borderRadius: '0.1875rem',
-    fontSize: '0.625rem',
-    padding: theme.spacing(0.5, 0.5, 0.5, 0.5),
-    color: theme.palette.error.dark,
     background: theme.palette.error.light,
+    borderRadius: '0.1875rem',
+    color: theme.palette.error.dark,
+    fontSize: '0.625rem',
+    marginLeft: theme.spacing(1.0),
+    maxWidth: '2.8rem',
+    padding: theme.spacing(0.5, 0.5, 0.5, 0.5),
   },
   dropDown: {
     paddingTop: theme.spacing(1.0),
@@ -366,18 +366,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontStyle: 'italic',
   },
   closeModal: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     '& p': {
-      marginRight: theme.spacing(1),
       color: theme.palette.disabledBackground,
+      marginRight: theme.spacing(1),
     },
     '& button': {
-      color: theme.palette.disabledBackground,
       borderColor: theme.palette.disabledBackground,
+      color: theme.palette.disabledBackground,
+      maxHeight: '1.375rem',
       maxWidth: '1.375rem',
       minWidth: '1.375rem',
-      maxHeight: '1.375rem',
     },
   },
 }));

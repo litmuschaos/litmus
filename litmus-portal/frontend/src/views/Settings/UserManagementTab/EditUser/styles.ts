@@ -2,21 +2,21 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   headDiv: {
-    marginTop: theme.spacing(3.75),
-    marginLeft: theme.spacing(7.5),
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     marginBottom: theme.spacing(3.75),
+    marginLeft: theme.spacing(7.5),
+    marginTop: theme.spacing(3.75),
   },
   createDiv: {
-    display: 'flex',
     alignItems: 'stretch',
+    display: 'flex',
   },
   divHeaderText: {
+    fontSize: '1.5625rem',
     marginLeft: theme.spacing(1),
     marginTop: theme.spacing(0.5),
-    fontSize: '1.5625rem',
   },
   descText: {
     fontSize: '1rem',
@@ -26,9 +26,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(-2),
   },
   container: {
-    marginTop: theme.spacing(3.75),
-    border: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.cards.background,
+    border: `1px solid ${theme.palette.border.main}`,
+    marginTop: theme.spacing(3.75),
     padding: theme.spacing(5),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
@@ -36,14 +36,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   headerText: {
-    marginTop: theme.spacing(7.5),
     fontSize: '1.5625rem',
     marginBottom: theme.spacing(5),
+    marginTop: theme.spacing(7.5),
   },
   // for login details
   details1: {
-    display: 'flex',
     alignContent: 'flex-start',
+    display: 'flex',
     flexWrap: 'wrap',
   },
 

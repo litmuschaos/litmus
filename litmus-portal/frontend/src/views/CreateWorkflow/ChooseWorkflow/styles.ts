@@ -4,11 +4,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     background: theme.palette.background.paper,
     color: theme.palette.text.primary,
-    padding: theme.spacing(0, 2),
-    margin: '0 auto',
-    width: '98%',
-    height: '100%',
     flexDirection: 'column',
+    height: '100%',
+    margin: '0 auto',
+    padding: theme.spacing(0, 2),
+    width: '98%',
     [theme.breakpoints.up('lg')]: {
       width: '99%',
     },
@@ -41,8 +41,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Divider
   divider: {
-    border: 'none',
     backgroundColor: theme.palette.disabledBackground,
+    border: 'none',
     height: '0.1rem',
   },
 
@@ -54,15 +54,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     border: 'none',
     boxShadow: 'none',
     '& .MuiAccordionSummary-root': {
-      marginLeft: '-1rem',
       border: 'none',
       height: '0.5rem',
+      marginLeft: '-1rem',
     },
 
     '& .MuiAccordionDetails-root': {
-      position: 'relative',
-      marginLeft: '-1rem',
       border: 'none',
+      marginLeft: '-1rem',
+      position: 'relative',
     },
     '& .MuiAccordion-root:before': {
       backgroundColor: 'transparent',
@@ -82,77 +82,77 @@ const useStyles = makeStyles((theme: Theme) => ({
   predefinedWorkflowCard: {
     backgroundColor: theme.palette.cards.background,
     lineHeight: '5rem', // Making the div content vertically aligned
-    padding: theme.spacing(0, 5),
     margin: theme.spacing(1, 0),
+    padding: theme.spacing(0, 5),
 
     '& #body': {
-      width: '40rem',
       display: 'flex',
       justifyContent: 'space-between',
+      width: '40rem',
     },
 
     '& #left-div': {
-      width: '15rem',
       display: 'flex',
       marginLeft: theme.spacing(2),
+      width: '15rem',
     },
 
     '& #right-div': {
-      width: '20rem',
       display: 'flex',
+      width: '20rem',
     },
   },
   experimentIcon: {
-    width: '3rem',
     height: '3rem',
+    width: '3rem',
   },
   predefinedWorkflowName: {
     marginLeft: theme.spacing(2),
     marginTop: theme.spacing(1.5),
   },
   blur: {
-    height: '4rem',
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
     background: theme.palette.background.paper,
-    opacity: '0.8',
+    bottom: 0,
     filter: 'blur(1rem)',
+    height: '4rem',
+    opacity: '0.8',
+    position: 'absolute',
+    width: '100%',
   },
 
   // Upload button styles
   uploadYAMLDiv: {
-    width: '95%',
-    padding: theme.spacing(3.75),
+    backgroundColor: theme.palette.background.paper,
     border: `1px dashed ${theme.palette.border.main}`,
+    borderRadius: theme.spacing(1.25),
     margin: 'auto',
     marginTop: theme.spacing(1),
-    borderRadius: theme.spacing(1.25),
-    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(3.75),
+    width: '95%',
   },
   uploadYAMLText: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    width: '31.25rem',
     margin: 'auto',
     paddingTop: theme.spacing(1),
+    width: '31.25rem',
   },
   uploadImage: {
     marginBottom: theme.spacing(2.5),
   },
   orText: {
-    marginTop: theme.spacing(1.25),
     marginBottom: theme.spacing(1.25),
+    marginTop: theme.spacing(1.25),
   },
   uploadBtn: {
-    textTransform: 'none',
-    width: 'fit-content',
-    fontSize: '0.7rem',
-    height: '2.8125rem',
     border: `2px solid ${theme.palette.primary.light}`,
     borderRadius: theme.spacing(0.5),
+    fontSize: '0.7rem',
+    height: '2.8125rem',
+    textTransform: 'none',
+    width: 'fit-content',
     '&:hover': {
       backgroundColor: theme.palette.background.paper,
       borderColor: (props) =>
@@ -164,18 +164,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   uploadSuccessDiv: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
-    maxWidth: '31.25rem',
     margin: '0 auto',
+    maxWidth: '31.25rem',
     paddingTop: theme.spacing(1.875),
   },
   uploadSuccessImg: {
-    width: '3.125rem',
     height: '3.125rem',
-    verticalAlign: 'middle',
     paddingBottom: theme.spacing(1),
+    verticalAlign: 'middle',
+    width: '3.125rem',
   },
   uploadSuccessText: {
     display: 'inline-block',
@@ -186,14 +186,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Select MyHub Option Styles
   inputDiv: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
     margin: theme.spacing(2.5),
-    alignItems: 'center',
   },
   formControl: {
-    minWidth: '9rem',
     marginLeft: theme.spacing(1),
+    minWidth: '9rem',
   },
   label: {
     color: theme.palette.common.black,

@@ -2,8 +2,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    borderBottom: `1px solid ${theme.palette.border.main}`,
     backgroundColor: 'inherit',
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     '& button': {
       width: '100%',
     },
