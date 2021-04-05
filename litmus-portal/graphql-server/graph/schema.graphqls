@@ -235,6 +235,23 @@ type GitConfigResponse {
   Password: String
   SSHPrivateKey: String
 }
+
+type ManifestTemplate{
+    template_id: ID!
+    manifest: String!
+    template_name: String!
+    project_id: String!
+    project_name: String!
+    created_at: String!
+    is_removed: Boolean!
+}
+
+input TemplateInput {
+    manifest: String!
+    template_name: String!
+    project_id: String!
+}
+
 type Query {
   # [Deprecated soon]
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -272,6 +289,12 @@ type Query {
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
+
+  # Manifest Template
+  ListManifestTemplate(project_id: String!):[ManifestTemplate]! @authorized
+
+  GetTemplateManifestByID(template_id: String!):ManifestTemplate! @authorized
+
 }
 
 type Mutation {
@@ -359,6 +382,13 @@ type Mutation {
   deleteDashboard(db_id: String): Boolean! @authorized
 
   deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+
+  # Manifest Template
+
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate! @authorized
+
+  deleteManifestTemplate(template_id: String!): Boolean! @authorized
+
 }
 
 type Subscription {
