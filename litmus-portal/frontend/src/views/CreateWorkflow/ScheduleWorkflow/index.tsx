@@ -44,6 +44,10 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
     day_week: '*',
   });
 
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
+
   // Redux States for Schedule
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -367,7 +371,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                     </Typography>
                   }
                 />
-              ) : YAML.parse(workflowData.yaml).spec.suspend === true ? (
+              ) : YAML.parse(manifest).spec.suspend === true ? (
                 <></>
               ) : workflowData.isRecurring ? (
                 <FormControlLabel
