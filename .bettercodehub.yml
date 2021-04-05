@@ -9,5 +9,5 @@ exclude:
 - /litmus-portal/graphql-server/graph/model/.*
 test:
     include:
-      - /litmus-portal/frontend/src/**/__tests__/**/*.{js,jsx,ts,tsx}
-      - /litmus-portal/frontend/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}
+      - /litmus-portal/frontend/src/**/__tests__/**/*\.{js,jsx,ts,tsx}
+      - /litmus-portal/frontend/src/**/?(*\.)(spec|test).{js,jsx,ts,tsx}
