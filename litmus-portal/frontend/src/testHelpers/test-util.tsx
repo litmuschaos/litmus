@@ -1,6 +1,6 @@
 import { render, RenderOptions } from '@testing-library/react';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { ReactElement, FC } from 'react';
+import React, { ReactElement } from 'react';
 import { ApolloProvider } from '@apollo/client';
 import { Provider } from 'react-redux';
 import config from '../config';

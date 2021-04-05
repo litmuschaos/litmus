@@ -5,8 +5,8 @@ import ChooseWorkflow from '../index';
 import '@testing-library/jest-dom';
 
 describe('ChooseWorkflow', () => {
-  it('Renders header, <RadioGroup>, <Accordion', () => {
-    const { getByTestId } = render(<ChooseWorkflow />);
+  it('Renders', () => {
+    render(<ChooseWorkflow />);
 
     // get all radio byRole
     const radios = screen.getAllByRole('radio');
@@ -24,9 +24,5 @@ describe('ChooseWorkflow', () => {
       // check given value
       expect(radio).toHaveProperty('value', 'radio button text');
     });
-
-    expect(getByTestId('chooseworkflow-header')).toBeTruthy();
-    expect(getByTestId('chooseworkflow-radiogroup')).toBeTruthy();
-    expect(getByTestId('chooseworkflow-accordion')).toBeTruthy();
   });
 });

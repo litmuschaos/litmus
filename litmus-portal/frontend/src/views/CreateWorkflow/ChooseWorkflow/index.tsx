@@ -58,11 +58,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
     <div className={classes.root}>
       <div className={classes.innerContainer}>
         {/* Header */}
-        <div
-          aria-label="header"
-          data-testid="chooseworkflow-header"
-          className={classes.header}
-        >
+        <div aria-label="header" className={classes.header}>
           <div aria-label="headerLeft">
             <Typography className={classes.title}>
               <strong> {t('createWorkflow.chooseWorkflow.title')}</strong>
@@ -83,7 +79,6 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           name="gender1"
           value={selected}
           onChange={handleChange}
-          data-testid="chooseworkflow-radiogroup"
         >
           <Accordion expanded={selected === 'A'} className={classes.accordion}>
             <AccordionSummary>
@@ -121,7 +116,6 @@ const ChooseWorkflow = forwardRef((_, ref) => {
               root: classes.MuiAccordionroot,
             }}
             className={classes.accordion}
-            data-testid="chooseworkflow-accordion"
           >
             <AccordionSummary>
               <RadioButton value="D" onChange={(e) => handleChange(e)}>
