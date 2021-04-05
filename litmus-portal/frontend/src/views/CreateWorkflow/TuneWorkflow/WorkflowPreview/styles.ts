@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
       },
       '& g.StepGroup': {
-        fill: theme.palette.status.pending.text,
+        fill: theme.palette.status.completed.text,
         cursor: 'default',
         '& rect': {
           x: -1.5,

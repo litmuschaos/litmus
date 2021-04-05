@@ -7,7 +7,11 @@
     "build": "cross-env NODE_PATH=src react-scripts build",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .js,.tsx,.ts",
-    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts"
+    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts",
+    "test": "react-scripts test --maxWorkers=2",
+    "test:clean": "react-scripts test --clearCache",
+    "test:watch": "npm test --watch",
+    "test:coverage": "npm test --coverage --colors --maxWorkers=2"
   },
   "dependencies": {
     "@apollo/client": "^3.1.2",
@@ -16,6 +20,8 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
+    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/react": "^11.2.6",
     "ace-builds": "^1.4.12",
     "brace": "^0.11.1",
     "clsx": "^1.1.1",
@@ -103,6 +109,7 @@
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^24.3.2",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.1",
@@ -110,6 +117,6 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.6",
     "prettier": "^2.0.5",
-    "typescript": "^3.7.5"
+    "typescript": "^3.9.9"
   }
 }

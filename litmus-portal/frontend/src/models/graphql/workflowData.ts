@@ -29,6 +29,7 @@ export interface Nodes {
 }
 
 export interface ExecutionData {
+  resiliency_score?: number;
   event_type: string;
   uid: string;
   namespace: string;

@@ -1,19 +1,18 @@
-/* eslint-disable */
 import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import YAML from 'yaml';
+import { ButtonOutlined } from 'litmus-ui';
+import { useSelector } from 'react-redux';
 import timeDifference from '../../../utils/datesModifier';
 import useStyles from './styles';
 import trimstring from '../../../utils/trim';
 import WorkflowStatus from '../WorkflowStatus';
 import LogsSwitcher from '../LogsSwitcher';
 import { stepEmbeddedYAMLExtractor } from '../../../utils/yamlUtils';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import YAML from 'yaml';
-import { ButtonOutlined } from 'litmus-ui';
-import { Node } from '../../../models/graphql/workflowData';
-import { useSelector } from 'react-redux';
+import { ExecutionData } from '../../../models/graphql/workflowData';
 import { RootState } from '../../../redux/reducers';
 
 interface WorkflowNodeInfoProps {
@@ -21,17 +20,15 @@ interface WorkflowNodeInfoProps {
   manifest: string;
   cluster_id: string;
   workflow_run_id: string;
-  pod_namespace: string;
-  selectedNode: Node;
+  data: ExecutionData;
 }
 
 const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   manifest,
   cluster_id,
   workflow_run_id,
-  pod_namespace,
+  data,
   setIsInfoToggled,
-  selectedNode,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -41,17 +38,17 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
 
   const embeddedYAMLString = stepEmbeddedYAMLExtractor(
     manifest,
-    selectedNode.name
+    data.nodes[pod_name].name
   );
 
   return (
     <div className={classes.root}>
       {/* Node Details */}
 
-      {/* Header*/}
+      {/* Header */}
       <div className={classes.header}>
         <Typography className={classes.title}>
-          <strong>{trimstring(selectedNode.name, 30)}</strong>
+          <strong>{trimstring(data.nodes[pod_name].name, 30)}</strong>
         </Typography>
         <ButtonOutlined
           className={classes.closeButton}
@@ -63,57 +60,57 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         </ButtonOutlined>
       </div>
 
-      {/*Section */}
+      {/* Section */}
       <div className={classes.section}>
-        {/*Left-Panel Containing details about selected Node. */}
+        {/* Left-Panel Containing details about selected Node. */}
         <div className={classes.leftPanel}>
-          {/*Phase */}
-          <WorkflowStatus phase={selectedNode.phase} />
-          {/*Start Time */}
+          {/* Phase */}
+          <WorkflowStatus phase={data.nodes[pod_name].phase} />
+          {/* Start Time */}
           <Typography className={classes.textMargin}>
             <strong>
               {t('workflowDetailsView.workflowNodeInfo.startTime')}:
             </strong>
             &nbsp;&nbsp;&nbsp;
             <span>
-              {selectedNode.phase !== 'Pending'
-                ? timeDifference(selectedNode.startedAt)
+              {data.nodes[pod_name].phase !== 'Pending'
+                ? timeDifference(data.nodes[pod_name].startedAt)
                 : '- -'}
             </span>
           </Typography>
-          {/*End Time */}
+          {/* End Time */}
           <Typography className={classes.textMargin}>
             <strong>
               {t('workflowDetailsView.workflowNodeInfo.endTime')}:
             </strong>
             &nbsp;&nbsp;&nbsp;
-            {selectedNode.finishedAt !== '' ? (
-              <span>{timeDifference(selectedNode.finishedAt)}</span>
+            {data.nodes[pod_name].finishedAt !== '' ? (
+              <span>{timeDifference(data.nodes[pod_name].finishedAt)}</span>
             ) : (
               <span>- -</span>
             )}
           </Typography>
-          {/*Duration */}
+          {/* Duration */}
           <Typography className={classes.textMargin}>
             <strong>
               {t('workflowDetailsView.workflowNodeInfo.duration')}:
             </strong>
             &nbsp;&nbsp;&nbsp;
-            {selectedNode.finishedAt !== ''
+            {data.nodes[pod_name].finishedAt !== ''
               ? (
-                  (parseInt(selectedNode.finishedAt, 10) -
-                    parseInt(selectedNode.startedAt, 10)) /
+                  (parseInt(data.nodes[pod_name].finishedAt, 10) -
+                    parseInt(data.nodes[pod_name].startedAt, 10)) /
                   60
                 ).toFixed(1)
               : (
                   (new Date().getTime() / 1000 -
-                    parseInt(selectedNode.startedAt, 10)) /
+                    parseInt(data.nodes[pod_name].startedAt, 10)) /
                   60
                 ).toFixed(1)}{' '}
             minutes
           </Typography>
-          {/*Button to show Application Details */}
-          {selectedNode.type === 'ChaosEngine' && (
+          {/* Button to show Application Details */}
+          {data.nodes[pod_name].type === 'ChaosEngine' && (
             <>
               <Button
                 onClick={() => setIsAppInfoVisible(!isAppInfoVisible)}
@@ -138,8 +135,8 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
                   {embeddedYAMLString &&
                     Object.keys(
                       YAML.parse(embeddedYAMLString).spec.appinfo
-                    ).map((key) => (
-                      <div>
+                    ).map((key, index) => (
+                      <div key={index.toString()}>
                         <strong>{key} :</strong>
                         <span>
                           &nbsp;&nbsp;
@@ -152,13 +149,13 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
             </>
           )}
         </div>
-        {/*Right Panel for Node Logs*/}
+        {/* Right Panel for Node Logs */}
         <div className={classes.rightPanel}>
           <LogsSwitcher
             cluster_id={cluster_id}
             workflow_run_id={workflow_run_id}
-            pod_namespace={pod_namespace}
-            pod_type={selectedNode.type}
+            pod_namespace={data.namespace}
+            pod_type={data.nodes[pod_name].type}
             pod_name={pod_name}
           />
         </div>
