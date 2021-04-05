@@ -4,7 +4,7 @@ import React from 'react';
 interface TabPanelProps {
   index: number;
   value: number;
-  style?: any;
+  style?: Object;
 }
 // TabPanel is used to implement the functioning of tabs
 const TabPanel: React.FC<TabPanelProps> = ({
