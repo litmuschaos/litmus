@@ -25,10 +25,13 @@ const TableData: React.FC<TableDataProps> = ({
           inputProps={{ 'aria-labelledby': labelIdentifier }}
         />
       </StyledTableCell>
-      <StyledTableCell className={classes.workflowName}>
-        <Typography>
-          <strong>{data.legend}</strong>
-        </Typography>
+      <StyledTableCell>
+        <div
+          className={classes.colorBar}
+          style={{
+            background: data.legend,
+          }}
+        />
       </StyledTableCell>
       <StyledTableCell>
         <Typography className={classes.tableObjects}>
@@ -36,18 +39,24 @@ const TableData: React.FC<TableDataProps> = ({
         </Typography>
       </StyledTableCell>
       <StyledTableCell>
-        <div className={classes.regularityData}>
-          <Typography className={classes.paddedText}>
-            {data.experiment}
-          </Typography>
-        </div>
+        <Typography className={classes.tableObjects}>
+          {data.experiment}
+        </Typography>
       </StyledTableCell>
       <StyledTableCell>
         <Typography className={classes.tableObjects}>{data.target}</Typography>
       </StyledTableCell>
       <StyledTableCell>
-        <Typography className={classes.tableObjects}>
-          <strong>{data.result}</strong>
+        <Typography
+          className={`${classes.tableObjects} ${
+            data.result === 'Pass'
+              ? classes.passColor
+              : data.result === 'Fail'
+              ? classes.failColor
+              : classes.awaitedColor
+          }`}
+        >
+          {data.result}
         </Typography>
       </StyledTableCell>
     </>

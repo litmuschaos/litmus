@@ -29,36 +29,48 @@ const TableHeader: React.FC<TableHeaderProps> = ({
             inputProps={{ 'aria-label': 'select all desserts' }}
           />
         </StyledTableCell>
-        <StyledTableCell className={classes.workflowName}>
+        <StyledTableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
-            <div className={classes.workflowNameHead}>
-              <b>{t('analytics.tableHead1')} </b>&nbsp;
+            <div className={classes.nameHead}>
+              {t(
+                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead1'
+              )}
             </div>
           </div>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
-            <div className={classes.workflowNameHead}>
-              <b>{t('analytics.tableHead2')}</b>&nbsp;
+            <div className={classes.nameHead}>
+              {t(
+                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead2'
+              )}
             </div>
           </div>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
-            <b>{t('analytics.tableHead3')}</b>&nbsp;
-          </div>
-        </StyledTableCell>
-        <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <div className={classes.workflowNameHead}>
-              <b>{t('analytics.tableHead4')}</b>&nbsp;
+            <div className={classes.nameHead}>
+              {t(
+                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead3'
+              )}
             </div>
           </div>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
-            <div className={classes.workflowNameHead}>
-              <b>{t('analytics.tableHead4')}</b>&nbsp;
+            <div className={classes.nameHead}>
+              {t(
+                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead4'
+              )}
+            </div>
+          </div>
+        </StyledTableCell>
+        <StyledTableCell className={classes.headSpacing}>
+          <div className={classes.nameContent}>
+            <div className={classes.nameHead}>
+              {t(
+                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5'
+              )}
             </div>
           </div>
         </StyledTableCell>

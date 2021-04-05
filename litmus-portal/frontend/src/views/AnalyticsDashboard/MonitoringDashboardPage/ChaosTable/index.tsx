@@ -74,67 +74,77 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
 
   return (
     <div className={classes.root} id="chaos">
-      <div className={classes.tableFix}>
-        <div>
-          <section className="table section">
-            <Paper className={classes.tableBody}>
-              <TableContainer className={classes.tableMain}>
-                <Table aria-label="simple table">
-                  <TableHeader
-                    onSelectAllClick={handleSelectAllClick}
-                    numSelected={selected.length}
-                    rowCount={chaosList.length}
-                  />
-                  <TableBody>
-                    {chaosList.length ? (
-                      chaosList
-                        .slice(0)
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((data: ChaosEventDetails, index: number) => {
-                          const isItemSelected = isSelected(data.id);
-                          const labelId = `enhanced-table-checkbox-${index}`;
-                          return (
-                            <TableRow
-                              hover
-                              onClick={() => {
-                                handleClick(data.id);
-                              }}
-                              role="checkbox"
-                              aria-checked={isItemSelected}
-                              tabIndex={-1}
-                              key={data.id}
-                              selected={isItemSelected}
-                            >
-                              <TableData
-                                data={data}
-                                itemSelectionStatus={isItemSelected}
-                                labelIdentifier={labelId}
-                              />
-                            </TableRow>
-                          );
-                        })
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={6} className={classes.error}>
-                          <Typography align="center">
+      <div>
+        <section className="table section">
+          <Paper className={classes.tableBody}>
+            <TableContainer className={classes.tableMain}>
+              <Table aria-label="simple table">
+                <TableHeader
+                  onSelectAllClick={handleSelectAllClick}
+                  numSelected={selected.length}
+                  rowCount={chaosList.length}
+                />
+                <TableBody>
+                  {chaosList.length ? (
+                    chaosList
+                      .slice(0)
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((data: ChaosEventDetails, index: number) => {
+                        const isItemSelected = isSelected(data.id);
+                        const labelId = `enhanced-table-checkbox-${index}`;
+                        return (
+                          <TableRow
+                            hover
+                            onClick={() => {
+                              handleClick(data.id);
+                            }}
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={data.id}
+                            selected={isItemSelected}
+                          >
+                            <TableData
+                              data={data}
+                              itemSelectionStatus={isItemSelected}
+                              labelIdentifier={labelId}
+                            />
+                          </TableRow>
+                        );
+                      })
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6}>
+                        <div className={classes.noRecords}>
+                          <img
+                            src="/icons/yellowCloudIcon.svg"
+                            className={classes.cloudIcon}
+                            alt="Chaos cloud"
+                          />
+                          <Typography
+                            align="center"
+                            className={classes.noRecordsText}
+                          >
                             {t(
-                              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRecords'
+                              'analyticsDashboard.monitoringDashboardPage.chaosTable.noRecords'
                             )}
                           </Typography>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                    {emptyRows > 0 && (
-                      <TableRow style={{ height: 75 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {chaosList.length > 0 && emptyRows > 0 && (
+                    <TableRow style={{ height: 75 * emptyRows }}>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {chaosList.length ? (
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 component="div"
@@ -143,11 +153,12 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                 page={page}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
-                className={classes.pagination}
               />
-            </Paper>
-          </section>
-        </div>
+            ) : (
+              <div />
+            )}
+          </Paper>
+        </section>
       </div>
     </div>
   );

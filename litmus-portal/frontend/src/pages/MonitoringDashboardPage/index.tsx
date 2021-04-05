@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApolloError, useQuery } from '@apollo/client';
 import {
-  AccordionDetails,
   FormControl,
   IconButton,
   InputLabel,
@@ -13,6 +12,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import AutorenewOutlinedIcon from '@material-ui/icons/AutorenewOutlined';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
@@ -73,6 +73,7 @@ import refreshData from './refreshData';
 import useStyles, {
   Accordion,
   AccordionSummary,
+  StyledAccordionDetails,
   useOutlinedInputStyles,
 } from './styles';
 
@@ -892,18 +893,43 @@ const DashboardPage: React.FC = () => {
                 <AccordionSummary
                   aria-controls="panel1a-content"
                   id="panel1a-header"
-                  className={classes.panelGroup}
+                  className={classes.accordionSummary}
                   key={`chaos-table-${selectedDashboardInformation.dashboardKey}`}
-                  onClick={() => {
-                    setChaosTableOpen(!chaosTableOpen);
-                  }}
                 >
-                  <ArrowDropDownIcon className={classes.tableDropDownIcon} />
-                  <Typography className={classes.panelGroupTitle}>
-                    Show Chaos during this interval
-                  </Typography>
+                  <div
+                    onClick={() => {
+                      setChaosTableOpen(!chaosTableOpen);
+                    }}
+                    className={classes.accordionHeader}
+                    onKeyDown={() => {
+                      setChaosTableOpen(!chaosTableOpen);
+                    }}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    {!chaosTableOpen ? (
+                      <ArrowDropDownIcon className={classes.tableDropIcon} />
+                    ) : (
+                      <ArrowDropUpIcon className={classes.tableDropIcon} />
+                    )}
+                    <Typography className={classes.chaosHelperText}>
+                      {!chaosTableOpen
+                        ? `Show Chaos during this interval`
+                        : `Hide Chaos during this
+                      interval`}
+                    </Typography>
+                  </div>
+                  <IconButton
+                    aria-label="edit chaos query"
+                    aria-haspopup="true"
+                    disabled
+                    data-cy="editChaosQueryButton"
+                    className={classes.editIconButton}
+                  >
+                    <img src="/icons/editIcon.svg" alt="Edit" />
+                  </IconButton>
                 </AccordionSummary>
-                <AccordionDetails className={classes.panelGroupContainer}>
+                <StyledAccordionDetails className={classes.accordionDetails}>
                   <ChaosTable
                     chaosList={prometheusQueryData?.chaosEventsToBeShown}
                     selectEvents={(selectedEvents: string[]) => {
@@ -919,7 +945,7 @@ const DashboardPage: React.FC = () => {
                       }
                     }}
                   />
-                </AccordionDetails>
+                </StyledAccordionDetails>
               </Accordion>
             </div>
             {selectedDashboardInformation.metaData[0] &&
