@@ -1,8 +1,9 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import CheckBox from '../../../../components/CheckBox';
+import { StyledTableCell } from '../../../../components/StyledComponents';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
-import useStyles, { StyledTableCell } from './styles';
+import useStyles from './styles';
 
 interface TableDataProps {
   data: ChaosEventDetails;
@@ -18,7 +19,7 @@ const TableData: React.FC<TableDataProps> = ({
   const classes = useStyles();
 
   return (
-    <>
+    <div>
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
         <CheckBox
           checked={itemSelectionStatus}
@@ -59,7 +60,7 @@ const TableData: React.FC<TableDataProps> = ({
           {data.result}
         </Typography>
       </StyledTableCell>
-    </>
+    </div>
   );
 };
 export default TableData;

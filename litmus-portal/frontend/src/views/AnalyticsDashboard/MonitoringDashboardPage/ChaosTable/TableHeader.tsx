@@ -2,7 +2,8 @@ import { TableHead, TableRow } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CheckBox from '../../../../components/CheckBox';
-import useStyles, { StyledTableCell } from './styles';
+import { StyledTableCell } from '../../../../components/StyledComponents';
+import useStyles from './styles';
 
 interface TableHeaderProps {
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;

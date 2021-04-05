@@ -207,8 +207,9 @@ const useStyles = makeStyles((theme) => ({
 
   headerInfoText: {
     fontWeight: 500,
-    fontSize: '0.95rem',
-    lineHeight: '1rem',
+    fontSize: '1rem',
+    lineHeight: '150%',
+    letterSpacing: '0.02em',
     width: '35%',
     marginLeft: theme.spacing(2.5),
   },
@@ -283,8 +284,6 @@ export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.hint,
     background: theme.palette.background.paper,
   },
-  focused: {},
-  notchedOutline: {},
 }));
 
 export const Accordion = withStyles((theme) => ({
@@ -311,7 +310,6 @@ export const Accordion = withStyles((theme) => ({
       paddingTop: theme.spacing(0.5),
     },
   },
-  expanded: {},
 }))(MuiAccordion);
 
 export const AccordionSummary = withStyles({

@@ -15,6 +15,13 @@ import {
   PrometheusResponse,
   promQueryInput,
 } from '../../../models/graphql/prometheus';
+import {
+  DEFAULT_REFRESH_RATE,
+  DEFAULT_TOLERANCE_LIMIT,
+  MAX_REFRESH_RATE,
+  MINIMUM_TOLERANCE_LIMIT,
+  PROMETHEUS_ERROR_RESOLUTION_LIMIT_REACHED,
+} from '../../../pages/MonitoringDashboardPage/constants';
 import useActions from '../../../redux/actions';
 import * as DashboardActions from '../../../redux/actions/dashboards';
 import { RootState } from '../../../redux/reducers';
@@ -96,13 +103,10 @@ const PanelContent: React.FC<GraphPanelProps> = ({
       }
     },
     onError: (error: ApolloError) => {
-      if (
-        error.message ===
-        `bad_data: exceeded maximum resolution of 11,000 points per timeseries. Try decreasing the query resolution (?step=XX)`
-      ) {
-        if (selectedDashboard.refreshRate !== 2147483647) {
+      if (error.message === PROMETHEUS_ERROR_RESOLUTION_LIMIT_REACHED) {
+        if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
           dashboard.selectDashboard({
-            refreshRate: 2147483647,
+            refreshRate: MAX_REFRESH_RATE,
           });
         }
         setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
@@ -150,7 +154,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
         },
         selectedDashboard.refreshRate !== 0
           ? selectedDashboard.refreshRate
-          : 10000
+          : DEFAULT_REFRESH_RATE
       );
     }
   }, [prometheusQueryData]);
@@ -162,22 +166,23 @@ const PanelContent: React.FC<GraphPanelProps> = ({
     const now: number = Math.round(new Date().getTime() / 1000);
     const diff: number = Math.abs(now - endDate);
     const maxLim: number =
-      (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 4
-        : 14;
+      (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 !== 0
+        ? (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 +
+          MINIMUM_TOLERANCE_LIMIT
+        : DEFAULT_TOLERANCE_LIMIT;
     if (
       !(diff >= 0 && diff <= maxLim) &&
-      selectedDashboard.refreshRate !== 2147483647
+      selectedDashboard.refreshRate !== MAX_REFRESH_RATE
     ) {
       setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
       dashboard.selectDashboard({
-        refreshRate: 2147483647,
+        refreshRate: MAX_REFRESH_RATE,
       });
     }
     if (
       diff >= 0 &&
       diff <= maxLim &&
-      selectedDashboard.refreshRate === 2147483647
+      selectedDashboard.refreshRate === MAX_REFRESH_RATE
     ) {
       setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
     }

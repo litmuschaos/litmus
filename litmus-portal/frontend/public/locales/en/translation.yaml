@@ -197,15 +197,24 @@ analyticsDashboard:
   overview: Overview
   monitoringDashboardPage:
     dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
+    dataSourceIs: Data source is
     reConfigureDashboard: Re-configure dashboard
     updateDataSource: Update data source
+    headerInfoText: "View the chaos events and metrics in a given \n time interval by selecting a time interval."
+    rangeSelector:
+      to: to
+    refresh: 
+      heading: Refresh
+      off: Off
     chaosTable:
       tableHead1: Legend
       tableHead2: Workflow
       tableHead3: Experiment
-      tableHead4: Target ( namespace / pod )
+      tableHead4: "Target \n ( namespace / pod )"
       tableHead5: Result
       noRecords: No chaos happened during the interval
+      showTable: Show Chaos during this interval
+      hideTable: Hide Chaos during this interval
   workflowClusterDashboard:
     title: Dashboard
     tab1: Hourly

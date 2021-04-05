@@ -1,9 +1,4 @@
-import {
-  createStyles,
-  makeStyles,
-  TableCell,
-  withStyles,
-} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -112,13 +107,5 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(0.75),
   },
 }));
-
-export const StyledTableCell = withStyles((theme) =>
-  createStyles({
-    root: {
-      borderBottom: `1px solid ${theme.palette.border.main}`,
-    },
-  })
-)(TableCell);
 
 export default useStyles;

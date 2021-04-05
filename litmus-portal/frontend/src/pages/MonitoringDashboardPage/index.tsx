@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { ApolloError, useQuery } from '@apollo/client';
 import {
   FormControl,
@@ -69,6 +70,14 @@ import {
 } from '../../utils/promUtils';
 import ChaosTable from '../../views/AnalyticsDashboard/MonitoringDashboardPage/ChaosTable';
 import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DashboardPanelGroup';
+import {
+  ACTIVE,
+  DEFAULT_REFRESH_RATE,
+  DEFAULT_TOLERANCE_LIMIT,
+  MAX_REFRESH_RATE,
+  MINIMUM_TOLERANCE_LIMIT,
+  PROMETHEUS_ERROR_RESOLUTION_LIMIT_REACHED,
+} from './constants';
 import refreshData from './refreshData';
 import useStyles, {
   Accordion,
@@ -121,7 +130,6 @@ const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
   const { palette } = useTheme();
   const areaGraph: string[] = palette.graph.area;
-  const ACTIVE: string = 'Active';
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // get ProjectID
@@ -227,19 +235,20 @@ const DashboardPage: React.FC = () => {
     const now: number = Math.round(new Date().getTime() / 1000);
     const diff: number = Math.abs(now - endDate);
     const maxLim: number =
-      (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-        ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 4
-        : 14;
+      (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 !== 0
+        ? (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 +
+          MINIMUM_TOLERANCE_LIMIT
+        : DEFAULT_TOLERANCE_LIMIT;
     if (
       !(diff >= 0 && diff <= maxLim) &&
-      selectedDashboard.refreshRate !== 2147483647
+      selectedDashboard.refreshRate !== MAX_REFRESH_RATE
     ) {
       clearTimeOuts().then(() => {
         setPrometheusQueryData({
           ...prometheusQueryData,
           firstLoad: true,
         });
-        setRefreshRate(2147483647);
+        setRefreshRate(MAX_REFRESH_RATE);
       });
     } else if (!(diff >= 0 && diff <= maxLim)) {
       clearTimeOuts().then(() => {
@@ -251,7 +260,7 @@ const DashboardPage: React.FC = () => {
     } else if (
       diff >= 0 &&
       diff <= maxLim &&
-      selectedDashboard.refreshRate === 2147483647
+      selectedDashboard.refreshRate === MAX_REFRESH_RATE
     ) {
       clearTimeOuts().then(() => {
         setPrometheusQueryData({
@@ -378,13 +387,10 @@ const DashboardPage: React.FC = () => {
       }
     },
     onError: (error: ApolloError) => {
-      if (
-        error.message ===
-        `bad_data: exceeded maximum resolution of 11,000 points per timeseries. Try decreasing the query resolution (?step=XX)`
-      ) {
-        if (selectedDashboard.refreshRate !== 2147483647) {
+      if (error.message === PROMETHEUS_ERROR_RESOLUTION_LIMIT_REACHED) {
+        if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
           dashboard.selectDashboard({
-            refreshRate: 2147483647,
+            refreshRate: MAX_REFRESH_RATE,
           });
         }
         setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
@@ -543,7 +549,7 @@ const DashboardPage: React.FC = () => {
     if (prometheusQueryData.firstLoad) {
       refetch();
       generateChaosQueries();
-      if (selectedDashboard.refreshRate !== 2147483647) {
+      if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
         dashboard.selectDashboard({
           range: {
             startDate: moment
@@ -566,13 +572,14 @@ const DashboardPage: React.FC = () => {
       const now: number = Math.round(new Date().getTime() / 1000);
       const diff: number = Math.abs(now - endDate);
       const maxLim: number =
-        (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-          ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 4
-          : 14;
+        (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 !== 0
+          ? (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 +
+            MINIMUM_TOLERANCE_LIMIT
+          : DEFAULT_TOLERANCE_LIMIT;
       if (
         diff >= 0 &&
         diff <= maxLim &&
-        selectedDashboard.refreshRate !== 2147483647
+        selectedDashboard.refreshRate !== MAX_REFRESH_RATE
       ) {
         const startDate: number =
           new Date(
@@ -597,7 +604,7 @@ const DashboardPage: React.FC = () => {
         },
         selectedDashboard.refreshRate !== 0
           ? selectedDashboard.refreshRate
-          : 10000
+          : DEFAULT_REFRESH_RATE
       );
     }
   }, [prometheusQueryData]);
@@ -664,9 +671,10 @@ const DashboardPage: React.FC = () => {
       const now: number = Math.round(new Date().getTime() / 1000);
       const diff: number = Math.abs(now - endDate);
       const maxLim: number =
-        (selectedDashboard.refreshRate ?? 10000) / 1000 !== 0
-          ? (selectedDashboard.refreshRate ?? 10000) / 1000 + 4
-          : 14;
+        (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 !== 0
+          ? (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 +
+            MINIMUM_TOLERANCE_LIMIT
+          : DEFAULT_TOLERANCE_LIMIT;
       if (!(diff >= 0 && diff <= maxLim)) {
         // A non relative time range has been selected.
         // Refresh rate switch is not acknowledged and it's state is locked (Off).
@@ -755,8 +763,7 @@ const DashboardPage: React.FC = () => {
           </Typography>
           <div className={classes.headerDiv}>
             <Typography className={classes.headerInfoText}>
-              {`View the chaos events and metrics in a given \n time interval by
-              selecting a time interval.`}
+              {t('analyticsDashboard.monitoringDashboardPage.headerInfoText')}
             </Typography>
             <div className={classes.controls}>
               <ButtonOutlined
@@ -784,8 +791,10 @@ const DashboardPage: React.FC = () => {
                     selectedDashboard.range.startDate.lastIndexOf('T') + 1,
                     selectedDashboard.range.startDate.lastIndexOf('+')
                   )} 
-                    
-                  to ${selectedDashboard.range.endDate.split('-')[0]}-${
+                    ${t(
+                      'analyticsDashboard.monitoringDashboardPage.rangeSelector.to'
+                    )}
+                   ${selectedDashboard.range.endDate.split('-')[0]}-${
                         selectedDashboard.range.endDate.split('-')[1]
                       }-${selectedDashboard.range.endDate.substring(
                         selectedDashboard.range.endDate.lastIndexOf('-') + 1,
@@ -811,7 +820,6 @@ const DashboardPage: React.FC = () => {
                 callbackToSetRange={CallbackFromRangeSelector}
                 className={classes.rangeSelectorPopover}
               />
-
               <FormControl className={classes.formControl} variant="outlined">
                 <InputLabel
                   id="refresh-controlled-open-select-label"
@@ -819,7 +827,9 @@ const DashboardPage: React.FC = () => {
                 >
                   <AutorenewOutlinedIcon className={classes.refreshIcon} />
                   <Typography className={classes.refreshText}>
-                    Refresh
+                    {t(
+                      'analyticsDashboard.monitoringDashboardPage.refresh.heading'
+                    )}
                   </Typography>
                 </InputLabel>
                 <Select
@@ -834,7 +844,7 @@ const DashboardPage: React.FC = () => {
                     // When viewing data for non-relative time range, refresh should be Off ideally.
                     // UI can auto detect if it is not Off and switches it to Off.
                     // Now the user can try to view the non-relative time range data again.
-                    if (selectedDashboard.refreshRate !== 2147483647) {
+                    if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
                       dashboard.selectDashboard({
                         refreshRate: event.target.value as number,
                       });
@@ -855,17 +865,30 @@ const DashboardPage: React.FC = () => {
                   }}
                   input={<OutlinedInput classes={outlinedInputClasses} />}
                   IconComponent={KeyboardArrowDownIcon}
+                  MenuProps={{
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                  }}
                 >
                   <MenuItem
                     key="Off-refresh-option"
-                    value={2147483647}
+                    value={MAX_REFRESH_RATE}
                     className={
-                      refreshRate === 2147483647
+                      refreshRate === MAX_REFRESH_RATE
                         ? classes.menuListItemSelected
                         : classes.menuListItem
                     }
                   >
-                    Off
+                    {t(
+                      'analyticsDashboard.monitoringDashboardPage.refresh.off'
+                    )}
                   </MenuItem>
                   {refreshData.map((data: RefreshObjectType) => (
                     <MenuItem
@@ -900,12 +923,10 @@ const DashboardPage: React.FC = () => {
                     onClick={() => {
                       setChaosTableOpen(!chaosTableOpen);
                     }}
-                    className={classes.accordionHeader}
                     onKeyDown={() => {
                       setChaosTableOpen(!chaosTableOpen);
                     }}
-                    role="button"
-                    tabIndex={0}
+                    className={classes.accordionHeader}
                   >
                     {!chaosTableOpen ? (
                       <ArrowDropDownIcon className={classes.tableDropIcon} />
@@ -914,9 +935,12 @@ const DashboardPage: React.FC = () => {
                     )}
                     <Typography className={classes.chaosHelperText}>
                       {!chaosTableOpen
-                        ? `Show Chaos during this interval`
-                        : `Hide Chaos during this
-                      interval`}
+                        ? `${t(
+                            'analyticsDashboard.monitoringDashboardPage.chaosTable.showTable'
+                          )}`
+                        : `${t(
+                            'analyticsDashboard.monitoringDashboardPage.chaosTable.hideTable'
+                          )}`}
                     </Typography>
                   </div>
                   <IconButton
@@ -979,7 +1003,9 @@ const DashboardPage: React.FC = () => {
               align="center"
               variant="h3"
             >
-              Data source is {dataSourceStatus}
+              {`${t(
+                'analyticsDashboard.monitoringDashboardPage.dataSourceIs'
+              )} ${dataSourceStatus}`}
             </Typography>
             <Typography
               align="center"

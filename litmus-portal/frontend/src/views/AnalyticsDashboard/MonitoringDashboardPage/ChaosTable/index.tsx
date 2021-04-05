@@ -120,7 +120,7 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                       <TableCell colSpan={6}>
                         <div className={classes.noRecords}>
                           <img
-                            src="/icons/yellowCloudIcon.svg"
+                            src="/icons/cloudIcon.svg"
                             className={classes.cloudIcon}
                             alt="Chaos cloud"
                           />
