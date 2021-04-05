@@ -12,10 +12,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Check Golang imports order
-        uses: Jerome1337/goimports-action@v1.0.3
-        with:
-          goimports-path: ./litmus-portal
       - shell: bash
         run: |
           cd litmus-portal
