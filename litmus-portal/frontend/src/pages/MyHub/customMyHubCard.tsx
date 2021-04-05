@@ -7,10 +7,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { ButtonFilled } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../components/Button/ButtonFilled';
 import Loader from '../../components/Loader';
 import { HubDetails } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
@@ -180,30 +180,27 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
             <hr className={classes.horizontalLine} />
             {hub.IsAvailable ? (
               <ButtonFilled
-                styles={{
+                style={{
                   width: '100%',
                 }}
-                handleClick={() => {
+                onClick={() => {
                   history.push({
                     pathname: `/myhub/${hub.HubName}`,
                     search: `?projectID=${projectID}&projectRole=${userRole}`,
                   });
                 }}
-                isPrimary
+                fullWidth
               >
                 {t('myhub.view')}
               </ButtonFilled>
             ) : (
               <ButtonFilled
-                styles={{
-                  width: '100%',
-                }}
-                isWarning
-                isPrimary={false}
-                isDisabled={keyValue === hub.id && loader}
-                handleClick={() => {
+                variant="error"
+                disabled={keyValue === hub.id && loader}
+                onClick={() => {
                   handleSync(hub.id);
                 }}
+                fullWidth
               >
                 {keyValue === hub.id && loader
                   ? t('myhub.mainPage.sync')

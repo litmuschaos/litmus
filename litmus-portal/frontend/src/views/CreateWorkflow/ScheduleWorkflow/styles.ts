@@ -2,25 +2,28 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    width: '80%',
+    background: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    padding: theme.spacing(0, 2),
     margin: '0 auto',
-    border: 1,
-    borderColor: theme.palette.text.disabled,
-    borderRadius: '0.1875rem',
+    width: '98%',
+    height: '100%',
+    flexDirection: 'column',
+    [theme.breakpoints.up('lg')]: {
+      width: '99%',
+    },
   },
-  scHeader: {
-    paddingLeft: theme.spacing(3.75),
-    paddingRight: theme.spacing(3.75),
-    paddingTop: theme.spacing(3.75),
-    paddingBottom: theme.spacing(3.75),
+
+  // Inner Container
+  innerContainer: {
+    margin: theme.spacing(4, 'auto'),
+    width: '95%', // Inner width of the container
   },
 
   /* styles for upper and lower segment */
   scSegments: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-even',
+    justifyContent: 'space-between',
   },
 
   headerText: {
@@ -52,8 +55,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   calIcon: {
     width: '7rem',
     height: '6.31rem',
-    marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(25),
   },
 
   scFormControl: {

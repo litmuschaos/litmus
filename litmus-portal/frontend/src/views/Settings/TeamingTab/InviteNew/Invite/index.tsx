@@ -9,8 +9,8 @@ import {
   TableRow,
   Toolbar,
   Typography,
+  useTheme,
 } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -214,7 +214,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     data-cy="inviteNewMemberSuccessModalDoneButton"
                     className={classes.buttonModal}
                   >
-                    <ButtonFilled disabled={false} onClick={handleModal}>
+                    <ButtonFilled onClick={handleModal}>
                       <>
                         {t('settings.teamingTab.inviteNew.invite.button.done')}
                       </>
@@ -270,7 +270,6 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                 className={classes.InviteBtn}
               >
                 <ButtonFilled
-                  className={classes.btnFilled}
                   disabled={!selected.length}
                   onClick={() => {
                     setShowsuccess(true);

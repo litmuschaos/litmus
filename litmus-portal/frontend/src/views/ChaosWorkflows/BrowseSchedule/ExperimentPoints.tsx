@@ -21,7 +21,7 @@ const ExperimentPoints: React.FC<ExperimentPointsProps> = ({
           {weight === 1 || 0 ? `${weight} point` : `${weight} points`}
         </Typography>
       </div>
-      <LinearProgressBar width={1} value={weight} />
+      <LinearProgressBar width={0.2} value={weight} />
     </>
   );
 };

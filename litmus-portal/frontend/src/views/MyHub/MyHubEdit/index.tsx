@@ -7,13 +7,11 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
-import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import BackButton from '../../../components/Button/BackButton';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
@@ -377,9 +375,8 @@ const MyHub: React.FC = () => {
                                         {sshKey.publicKey}
                                       </Typography>
                                       <div className={classes.copyBtn}>
-                                        <ButtonOutline
-                                          isDisabled={false}
-                                          handleClick={() =>
+                                        <ButtonOutlined
+                                          onClick={() =>
                                             copyTextToClipboard(
                                               sshKey.publicKey
                                             )
@@ -404,7 +401,7 @@ const MyHub: React.FC = () => {
                                               </Typography>
                                             </div>
                                           )}
-                                        </ButtonOutline>
+                                        </ButtonOutlined>
                                       </div>
                                     </>
                                   )}
@@ -418,7 +415,7 @@ const MyHub: React.FC = () => {
                   </div>
                 </div>
                 <div className={classes.submitBtnDiv}>
-                  <ButtonFilled isPrimary={false} type="submit">
+                  <ButtonFilled variant="success" type="submit">
                     {t('myhub.editPage.submit')}
                   </ButtonFilled>
                 </div>
@@ -470,8 +467,8 @@ const MyHub: React.FC = () => {
                               {t('myhub.editPage.desc')}
                             </Typography>
                             <ButtonFilled
-                              isPrimary={false}
-                              handleClick={handleClose}
+                              variant="success"
+                              onClick={handleClose}
                             >
                               {t('myhub.connectHubPage.myHub')}
                             </ButtonFilled>

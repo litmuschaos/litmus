@@ -107,7 +107,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
     <div className={classes.rootcontainer}>
       {/* Arrow mark */}
       <div>
-        <img src="icons/check.png" className={classes.check} alt="Check" />
+        <img src="/icons/check.png" className={classes.check} alt="Check" />
       </div>
       <div>
         <Typography className={classes.heading}>

@@ -1,39 +1,38 @@
 import { Typography } from '@material-ui/core';
-import { Modal } from 'litmus-ui';
-import React from 'react';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import localforage from 'localforage';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Center from '../../../containers/layouts/Center';
-import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
-import useActions from '../../../redux/actions';
-import * as WorkflowActions from '../../../redux/actions/workflow';
-import { RootState } from '../../../redux/reducers';
+import { experimentMap } from '../../../models/redux/workflow';
 import WeightSlider from '../WeightSlider';
 import ResultTable from './ResultTable';
 import useStyles from './styles';
-// import InfoTooltip from '../../../components/InfoTooltip';
 
-const ReliablityScore = () => {
+const ReliablityScore = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const workflowData: WorkflowData = useSelector(
-    (state: RootState) => state.workflowData
-  );
-  const workflow = useActions(WorkflowActions);
-
-  const { weights } = workflowData;
+  const [weights, setWeights] = useState<experimentMap[]>([
+    {
+      experimentName: 'pod-delete',
+      weight: 10,
+    },
+    {
+      experimentName: 'pod-cpu-hog',
+      weight: 10,
+    },
+  ]);
 
   const [open, setOpen] = React.useState(false);
 
   const testNames: string[] = [];
   const testWeights: number[] = [];
-  weights.forEach((weight) => {
-    testNames.push(weight.experimentName);
-    testWeights.push(weight.weight);
-  });
 
   function handleChange({
     newValue,
@@ -42,22 +41,37 @@ const ReliablityScore = () => {
     newValue: number;
     index: number;
   }) {
-    (weights as any)[index].weight = newValue;
-    workflow.setWorkflowDetails({
-      weights,
-    });
+    weights[index].weight = newValue;
+    setWeights([...weights]);
   }
+
+  useEffect(() => {
+    localforage
+      .getItem('weights')
+      .then((value) =>
+        value !== null ? setWeights(value as experimentMap[]) : setWeights([])
+      );
+  }, []);
+
+  function onNext() {
+    localforage.setItem('weights', weights);
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <div>
       <form className={classes.root}>
-        <div className={classes.mainDiv}>
+        <div className={classes.innerContainer}>
           <div>
             <Typography className={classes.headerText}>
               <strong>{t('createWorkflow.reliabilityScore.header')}</strong>
             </Typography>
             <Typography className={classes.description}>
-              {t('createWorkflow.reliabilityScore.info')} {weights?.length}{' '}
+              {t('createWorkflow.reliabilityScore.info')} {weights.length}{' '}
               {t('createWorkflow.reliabilityScore.infoNext')}{' '}
               <strong>
                 {t('createWorkflow.reliabilityScore.infoNextStrong')}
@@ -72,26 +86,23 @@ const ReliablityScore = () => {
               </strong>
             </Typography>
           </div>
-          {(weights as any).map((Data: experimentMap, index: number) => (
-            <div>
-              <div>
-                <WeightSlider
-                  index={index}
-                  testName={Data.experimentName}
-                  weight={Data.weight}
-                  handleChange={(newValue, index) =>
-                    handleChange({ newValue, index })
-                  }
-                />
-              </div>
-            </div>
+          {weights.map((Data: experimentMap, index: number) => (
+            <WeightSlider
+              key={Data.experimentName + index.toString()}
+              index={index}
+              testName={Data.experimentName}
+              weight={Data.weight}
+              handleChange={(newValue, index) =>
+                handleChange({ newValue, index })
+              }
+            />
           ))}
           <hr className={classes.horizontalLine} />
           <div className={classes.modalDiv}>
             <div className={classes.divRow}>
-              <ButtonOutline
-                isDisabled
-                handleClick={() => setOpen(true)}
+              <ButtonOutlined
+                disabled
+                onClick={() => setOpen(true)}
                 data-cy="testRunButton"
               >
                 <div className={classes.buttonOutlineDiv}>
@@ -100,7 +111,7 @@ const ReliablityScore = () => {
                     {t('createWorkflow.reliabilityScore.button.demo')}
                   </Typography>
                 </div>
-              </ButtonOutline>
+              </ButtonOutlined>
               {/* <div className={classes.toolTipDiv}>
                 <InfoTooltip value="Text Default" />
                 </div> */}
@@ -110,10 +121,9 @@ const ReliablityScore = () => {
                   <hr className={classes.horizontalLineResult} />
                   <Center>
                     <ButtonFilled
-                      handleClick={() => setOpen(false)}
+                      onClick={() => setOpen(false)}
                       data-cy="gotItButton"
-                      isPrimary
-                      styles={classes.gotItBtn}
+                      className={classes.gotItBtn}
                     >
                       <div>
                         {t('createWorkflow.reliabilityScore.button.gotIt')}
@@ -133,6 +143,6 @@ const ReliablityScore = () => {
       </form>
     </div>
   );
-};
+});
 
 export default ReliablityScore;

@@ -272,6 +272,11 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
+	// Resiliency Score will be calculated only if workflow execution is completed
+	if input.Completed {
+		input.ExecutionData = ops.ResiliencyScoreCalculator(input.ExecutionData, input.WorkflowID)
+	}
+
 	// err = dbOperationsWorkflow.UpdateWorkflowRun(dbOperationsWorkflow.WorkflowRun(newWorkflowRun))
 	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
@@ -381,4 +386,49 @@ func ReRunWorkflow(workflowID string) (string, error) {
 	}, "create", store.Store)
 
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
+}
+
+// KubeObjHandler receives Kubernetes Object data from subscriber
+func KubeObjHandler(kubeData model.KubeObjectData, r store.StateData) (string, error) {
+	_, err := cluster.VerifyCluster(*kubeData.ClusterID)
+	if err != nil {
+		log.Print("Error", err)
+		return "", err
+	}
+	if reqChan, ok := r.KubeObjectData[kubeData.RequestID]; ok {
+		resp := model.KubeObjectResponse{
+			ClusterID: kubeData.ClusterID.ClusterID,
+			KubeObj:   kubeData.KubeObj,
+		}
+		reqChan <- &resp
+		close(reqChan)
+		return "KubeData sent successfully", nil
+	}
+	return "KubeData sent successfully", nil
+}
+
+func GetKubeObjData(reqID string, kubeObject model.KubeObjectRequest, r store.StateData) {
+	reqType := kubeObject.ObjectType
+	data, err := json.Marshal(kubeObject)
+	if err != nil {
+		log.Print("ERROR WHILE MARSHALLING POD DETAILS")
+	}
+	externalData := string(data)
+	payload := model.ClusterAction{
+		ProjectID: reqID,
+		Action: &model.ActionPayload{
+			RequestType:  reqType,
+			ExternalData: &externalData,
+		},
+	}
+	if clusterChan, ok := r.ConnectedCluster[kubeObject.ClusterID]; ok {
+		clusterChan <- &payload
+	} else if reqChan, ok := r.KubeObjectData[reqID]; ok {
+		resp := model.KubeObjectResponse{
+			ClusterID: kubeObject.ClusterID,
+			KubeObj:   "Data not available",
+		}
+		reqChan <- &resp
+		close(reqChan)
+	}
 }

@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
@@ -14,11 +16,20 @@ import (
 	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbSchemaProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
-	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
+	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 )
 
-// CreateProjectWithUser ...
-func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSchemaUserManagement.User) (*model.Project, error) {
+// CreateProjectWithUser :creates a project for the user
+func CreateProjectWithUser(ctx context.Context, projectName string, userID string) (*model.Project, error) {
+
+	var (
+		self_cluster = os.Getenv("SELF_CLUSTER")
+	)
+	user, er := dbOperationsUserManagement.GetUserByUserID(ctx, userID)
+	if er != nil {
+		log.Print("ERROR", er)
+		return nil, er
+	}
 
 	uuid := uuid.New()
 	newProject := &dbSchemaProject.Project{
@@ -52,6 +63,11 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
 	go myhub.AddMyHub(context.Background(), defaultHub, newProject.ID)
+
+	if strings.ToLower(self_cluster) == "true" && strings.ToLower(*user.Role) == "admin" {
+		log.Print("Starting self deployer")
+		go selfDeployer.StartDeployer(newProject.ID)
+	}
 
 	return newProject.GetOutputProject(), nil
 }

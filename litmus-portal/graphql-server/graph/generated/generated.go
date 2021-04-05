@@ -115,7 +115,7 @@ type ComplexityRoot struct {
 	ClusterConfirmResponse struct {
 		ClusterID          func(childComplexity int) int
 		IsClusterConfirmed func(childComplexity int) int
-		NewClusterKey      func(childComplexity int) int
+		NewAccessKey       func(childComplexity int) int
 	}
 
 	ClusterEvent struct {
@@ -162,6 +162,11 @@ type ComplexityRoot struct {
 		UserName      func(childComplexity int) int
 	}
 
+	KubeObjectResponse struct {
+		ClusterID func(childComplexity int) int
+		KubeObj   func(childComplexity int) int
+	}
+
 	Link struct {
 		Name func(childComplexity int) int
 		URL  func(childComplexity int) int
@@ -196,6 +201,7 @@ type ComplexityRoot struct {
 		CreateChaosWorkFlow func(childComplexity int, input model.ChaosWorkFlowInput) int
 		CreateDashBoard     func(childComplexity int, dashboard *model.CreateDBInput) int
 		CreateDataSource    func(childComplexity int, datasource *model.DSInput) int
+		CreateProject       func(childComplexity int, projectName string) int
 		CreateUser          func(childComplexity int, user model.CreateUserInput) int
 		DeclineInvitation   func(childComplexity int, member model.MemberInput) int
 		DeleteChaosWorkflow func(childComplexity int, workflowid string) int
@@ -207,6 +213,7 @@ type ComplexityRoot struct {
 		EnableGitOps        func(childComplexity int, config model.GitConfig) int
 		GeneraterSSHKey     func(childComplexity int) int
 		GitopsNotifer       func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
+		KubeObj             func(childComplexity int, kubeData model.KubeObjectData) int
 		LeaveProject        func(childComplexity int, member model.MemberInput) int
 		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog              func(childComplexity int, log model.PodLog) int
@@ -346,6 +353,7 @@ type ComplexityRoot struct {
 	Subscription struct {
 		ClusterConnect        func(childComplexity int, clusterInfo model.ClusterIdentity) int
 		ClusterEventListener  func(childComplexity int, projectID string) int
+		GetKubeObject         func(childComplexity int, kubeObjectRequest model.KubeObjectRequest) int
 		GetPodLog             func(childComplexity int, podDetails model.PodLogRequest) int
 		WorkflowEventListener func(childComplexity int, projectID string) int
 	}
@@ -480,6 +488,7 @@ type MutationResolver interface {
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error)
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
+	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error)
 	SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error)
@@ -491,6 +500,7 @@ type MutationResolver interface {
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
 	PodLog(ctx context.Context, log model.PodLog) (string, error)
+	KubeObj(ctx context.Context, kubeData model.KubeObjectData) (string, error)
 	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
 	SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
 	SyncHub(ctx context.Context, id string) ([]*model.MyHubStatus, error)
@@ -534,6 +544,7 @@ type SubscriptionResolver interface {
 	WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error)
 	GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error)
 	ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error)
+	GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error)
 }
 
 type executableSchema struct {
@@ -873,12 +884,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClusterConfirmResponse.IsClusterConfirmed(childComplexity), true
 
-	case "ClusterConfirmResponse.newClusterKey":
-		if e.complexity.ClusterConfirmResponse.NewClusterKey == nil {
+	case "ClusterConfirmResponse.newAccessKey":
+		if e.complexity.ClusterConfirmResponse.NewAccessKey == nil {
 			break
 		}
 
-		return e.complexity.ClusterConfirmResponse.NewClusterKey(childComplexity), true
+		return e.complexity.ClusterConfirmResponse.NewAccessKey(childComplexity), true
 
 	case "ClusterEvent.cluster":
 		if e.complexity.ClusterEvent.Cluster == nil {
@@ -1104,6 +1115,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.GitConfigResponse.UserName(childComplexity), true
 
+	case "KubeObjectResponse.cluster_id":
+		if e.complexity.KubeObjectResponse.ClusterID == nil {
+			break
+		}
+
+		return e.complexity.KubeObjectResponse.ClusterID(childComplexity), true
+
+	case "KubeObjectResponse.kube_obj":
+		if e.complexity.KubeObjectResponse.KubeObj == nil {
+			break
+		}
+
+		return e.complexity.KubeObjectResponse.KubeObj(childComplexity), true
+
 	case "Link.Name":
 		if e.complexity.Link.Name == nil {
 			break
@@ -1286,6 +1311,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateDataSource(childComplexity, args["datasource"].(*model.DSInput)), true
 
+	case "Mutation.createProject":
+		if e.complexity.Mutation.CreateProject == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createProject_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateProject(childComplexity, args["projectName"].(string)), true
+
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
 			break
@@ -1412,6 +1449,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.GitopsNotifer(childComplexity, args["clusterInfo"].(model.ClusterIdentity), args["workflow_id"].(string)), true
+
+	case "Mutation.kubeObj":
+		if e.complexity.Mutation.KubeObj == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_kubeObj_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.KubeObj(childComplexity, args["kubeData"].(model.KubeObjectData)), true
 
 	case "Mutation.leaveProject":
 		if e.complexity.Mutation.LeaveProject == nil {
@@ -2315,6 +2364,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.ClusterEventListener(childComplexity, args["project_id"].(string)), true
 
+	case "Subscription.getKubeObject":
+		if e.complexity.Subscription.GetKubeObject == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_getKubeObject_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.GetKubeObject(childComplexity, args["kubeObjectRequest"].(model.KubeObjectRequest)), true
+
 	case "Subscription.getPodLog":
 		if e.complexity.Subscription.GetPodLog == nil {
 			break
@@ -3015,7 +3076,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3191,7 +3252,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3365,7 +3426,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -3397,7 +3458,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -3479,7 +3540,7 @@ input ClusterIdentity {
 
 type ClusterConfirmResponse {
   isClusterConfirmed: Boolean!
-  newClusterKey: String
+  newAccessKey: String
   cluster_id: String
 }
 
@@ -3634,6 +3695,30 @@ type GitConfigResponse {
   Password: String
   SSHPrivateKey: String
 }
+
+type KubeObjectResponse{
+    cluster_id: ID!
+    kube_obj: String!
+}
+
+input KubeObjectData{
+    request_id: ID!
+    cluster_id: ClusterIdentity!
+    kube_obj: String!
+}
+
+input KubeObjectRequest{
+    cluster_id: ID!
+    object_type: String!
+    kube_obj_request: KubeGVRRequest!
+}
+
+input KubeGVRRequest{
+    group: String!
+    version: String!
+    resource: String!
+}
+
 type Query {
   # [Deprecated soon]
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -3684,6 +3769,9 @@ type Mutation {
 
   createUser(user: CreateUserInput!): User! @authorized
 
+  #It is used to create a project
+  createProject(projectName: String!): Project! @authorized
+
   updateUser(user: UpdateUserInput!): String! @authorized
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
@@ -3713,13 +3801,16 @@ type Mutation {
 
   podLog(log: PodLog!): String!
 
+  kubeObj(kubeData: KubeObjectData!): String!
+
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
 
@@ -3766,9 +3857,11 @@ type Subscription {
 
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+
+  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -3788,7 +3881,8 @@ input CreateUserInput {
   email: String
   company_name: String
   name: String
-  project_name: String!
+  userID: String!
+  role: String!
 }
 
 input UpdateUserInput {
@@ -3908,6 +4002,20 @@ func (ec *executionContext) field_Mutation_createDataSource_args(ctx context.Con
 		}
 	}
 	args["datasource"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectName"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectName"] = arg0
 	return args, nil
 }
 
@@ -4056,6 +4164,20 @@ func (ec *executionContext) field_Mutation_gitopsNotifer_args(ctx context.Contex
 		}
 	}
 	args["workflow_id"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_kubeObj_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.KubeObjectData
+	if tmp, ok := rawArgs["kubeData"]; ok {
+		arg0, err = ec.unmarshalNKubeObjectData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectData(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["kubeData"] = arg0
 	return args, nil
 }
 
@@ -4558,6 +4680,20 @@ func (ec *executionContext) field_Subscription_clusterEventListener_args(ctx con
 		}
 	}
 	args["project_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_getKubeObject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.KubeObjectRequest
+	if tmp, ok := rawArgs["kubeObjectRequest"]; ok {
+		arg0, err = ec.unmarshalNKubeObjectRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["kubeObjectRequest"] = arg0
 	return args, nil
 }
 
@@ -6131,7 +6267,7 @@ func (ec *executionContext) _ClusterConfirmResponse_isClusterConfirmed(ctx conte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterConfirmResponse_newClusterKey(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterConfirmResponse_newAccessKey(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6148,7 +6284,7 @@ func (ec *executionContext) _ClusterConfirmResponse_newClusterKey(ctx context.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.NewClusterKey, nil
+		return obj.NewAccessKey, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7221,6 +7357,74 @@ func (ec *executionContext) _GitConfigResponse_SSHPrivateKey(ctx context.Context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _KubeObjectResponse_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.KubeObjectResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubeObjectResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubeObjectResponse_kube_obj(ctx context.Context, field graphql.CollectedField, obj *model.KubeObjectResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubeObjectResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KubeObj, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Link_Name(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7941,6 +8145,67 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createProject_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateProject(rctx, args["projectName"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Project); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Project`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Project)
+	fc.Result = res
+	return ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8513,6 +8778,47 @@ func (ec *executionContext) _Mutation_podLog(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().PodLog(rctx, args["log"].(model.PodLog))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_kubeObj(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_kubeObj_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().KubeObj(rctx, args["kubeData"].(model.KubeObjectData))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13345,6 +13651,77 @@ func (ec *executionContext) _Subscription_clusterConnect(ctx context.Context, fi
 	}
 }
 
+func (ec *executionContext) _Subscription_getKubeObject(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Subscription",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Subscription_getKubeObject_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Subscription().GetKubeObject(rctx, args["kubeObjectRequest"].(model.KubeObjectRequest))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(<-chan *model.KubeObjectResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.KubeObjectResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *model.KubeObjectResponse)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNKubeObjectResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectResponse(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17581,9 +17958,15 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "project_name":
+		case "userID":
 			var err error
-			it.ProjectName, err = ec.unmarshalNString2string(ctx, v)
+			it.UserID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "role":
+			var err error
+			it.Role, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -17770,6 +18153,96 @@ func (ec *executionContext) unmarshalInputGitConfig(ctx context.Context, obj int
 		case "SSHPrivateKey":
 			var err error
 			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKubeGVRRequest(ctx context.Context, obj interface{}) (model.KubeGVRRequest, error) {
+	var it model.KubeGVRRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "group":
+			var err error
+			it.Group, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "version":
+			var err error
+			it.Version, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "resource":
+			var err error
+			it.Resource, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKubeObjectData(ctx context.Context, obj interface{}) (model.KubeObjectData, error) {
+	var it model.KubeObjectData
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "request_id":
+			var err error
+			it.RequestID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cluster_id":
+			var err error
+			it.ClusterID, err = ec.unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kube_obj":
+			var err error
+			it.KubeObj, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context, obj interface{}) (model.KubeObjectRequest, error) {
+	var it model.KubeObjectRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cluster_id":
+			var err error
+			it.ClusterID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "object_type":
+			var err error
+			it.ObjectType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kube_obj_request":
+			var err error
+			it.KubeObjRequest, err = ec.unmarshalNKubeGVRRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -18909,8 +19382,8 @@ func (ec *executionContext) _ClusterConfirmResponse(ctx context.Context, sel ast
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "newClusterKey":
-			out.Values[i] = ec._ClusterConfirmResponse_newClusterKey(ctx, field, obj)
+		case "newAccessKey":
+			out.Values[i] = ec._ClusterConfirmResponse_newAccessKey(ctx, field, obj)
 		case "cluster_id":
 			out.Values[i] = ec._ClusterConfirmResponse_cluster_id(ctx, field, obj)
 		default:
@@ -19101,6 +19574,38 @@ func (ec *executionContext) _GitConfigResponse(ctx context.Context, sel ast.Sele
 			out.Values[i] = ec._GitConfigResponse_Password(ctx, field, obj)
 		case "SSHPrivateKey":
 			out.Values[i] = ec._GitConfigResponse_SSHPrivateKey(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var kubeObjectResponseImplementors = []string{"KubeObjectResponse"}
+
+func (ec *executionContext) _KubeObjectResponse(ctx context.Context, sel ast.SelectionSet, obj *model.KubeObjectResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kubeObjectResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KubeObjectResponse")
+		case "cluster_id":
+			out.Values[i] = ec._KubeObjectResponse_cluster_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "kube_obj":
+			out.Values[i] = ec._KubeObjectResponse_kube_obj(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -19305,6 +19810,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createProject":
+			out.Values[i] = ec._Mutation_createProject(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "updateUser":
 			out.Values[i] = ec._Mutation_updateUser(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -19354,6 +19864,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "podLog":
 			out.Values[i] = ec._Mutation_podLog(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "kubeObj":
+			out.Values[i] = ec._Mutation_kubeObj(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -20257,6 +20772,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_getPodLog(ctx, fields[0])
 	case "clusterConnect":
 		return ec._Subscription_clusterConnect(ctx, fields[0])
+	case "getKubeObject":
+		return ec._Subscription_getKubeObject(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -21508,6 +22025,40 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNKubeGVRRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx context.Context, v interface{}) (model.KubeGVRRequest, error) {
+	return ec.unmarshalInputKubeGVRRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNKubeGVRRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx context.Context, v interface{}) (*model.KubeGVRRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNKubeGVRRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalNKubeObjectData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectData(ctx context.Context, v interface{}) (model.KubeObjectData, error) {
+	return ec.unmarshalInputKubeObjectData(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNKubeObjectRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectRequest(ctx context.Context, v interface{}) (model.KubeObjectRequest, error) {
+	return ec.unmarshalInputKubeObjectRequest(ctx, v)
+}
+
+func (ec *executionContext) marshalNKubeObjectResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectResponse(ctx context.Context, sel ast.SelectionSet, v model.KubeObjectResponse) graphql.Marshaler {
+	return ec._KubeObjectResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNKubeObjectResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectResponse(ctx context.Context, sel ast.SelectionSet, v *model.KubeObjectResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._KubeObjectResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNLink2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLink(ctx context.Context, sel ast.SelectionSet, v model.Link) graphql.Marshaler {

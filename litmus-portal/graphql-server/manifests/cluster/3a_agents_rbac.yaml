@@ -103,10 +103,10 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: subscriber-cluster
+  name: subscriber-cluster-role
   namespace: #{AGENT-NAMESPACE}
   labels:
-    name: subscriber-cluster
+    name: subscriber-cluster-role
 rules:
   - apiGroups:
       - ""
@@ -116,6 +116,7 @@ rules:
       - get
       - create
       - delete
+      - update
   - apiGroups:
       - litmuschaos.io
     resources:
@@ -155,11 +156,18 @@ rules:
       - deployments
     verbs:
       - delete
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: subscriber-cluster-rb
+  name: subscriber-cluster-role-binding
   namespace: #{AGENT-NAMESPACE}
 subjects:
   - kind: ServiceAccount
@@ -167,7 +175,7 @@ subjects:
     namespace: #{AGENT-NAMESPACE}
 roleRef:
   kind: ClusterRole
-  name: subscriber-cluster
+  name: subscriber-cluster-role
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1

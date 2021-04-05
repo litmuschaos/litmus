@@ -19,7 +19,6 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
@@ -27,7 +26,6 @@ import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
-import { getUserRole } from '../../../utils/auth';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
@@ -41,7 +39,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const userRole = getUserRole();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
 
@@ -238,7 +235,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           <div className={classes.weightDiv}>
             {data.weightages.map((expData) => {
               return (
-                <div style={{ marginBottom: 8 }}>
+                <div key={expData.experiment_name} style={{ marginBottom: 8 }}>
                   <ExperimentPoints
                     expName={expData.experiment_name}
                     weight={expData.weightage}
@@ -284,7 +281,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           ) : (
             <></>
           )}
-          {data.cronSyntax === '' ? (
+          {projectRole !== 'Viewer' && data.cronSyntax === '' ? (
             <MenuItem value="Rerun_Schedule" onClick={() => reRunSchedule()}>
               <div className={classes.expDiv}>
                 <ReplayIcon className={classes.rerunBtn} />
@@ -312,7 +309,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               </Typography>
             </div>
           </MenuItem>
-          {userRole !== 'Viewer' ? (
+          {projectRole !== 'Viewer' ? (
             <MenuItem value="Analysis" onClick={() => setIsModalOpen(true)}>
               <div className={classes.expDiv}>
                 <img
@@ -349,12 +346,9 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               {t('createWorkflow.scheduleWorkflow.modalSubheader')}
             </Typography>
             <div className={classes.modalBtns}>
-              <ButtonOutline
-                isDisabled={false}
-                handleClick={() => setIsModalOpen(false)}
-              >
+              <ButtonOutlined onClick={() => setIsModalOpen(false)}>
                 {t('createWorkflow.scheduleWorkflow.cancelBtn')}
-              </ButtonOutline>
+              </ButtonOutlined>
               <ButtonFilled
                 variant="error"
                 className={classes.w7}

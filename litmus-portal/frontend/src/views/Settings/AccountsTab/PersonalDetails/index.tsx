@@ -1,9 +1,8 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import UserDetails from '../../../../components/UserDetails';
 import config from '../../../../config';
@@ -14,7 +13,6 @@ import {
 } from '../../../../models/graphql/user';
 import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
-import { validateEmail } from '../../../../utils/validate';
 import useStyles from './styles';
 
 interface personaData {
@@ -138,13 +136,8 @@ const PersonalDetails: React.FC = () => {
         <div className={classes.saveButton}>
           <div data-cy="save">
             <ButtonFilled
-              isDisabled={
-                personaData.fullName === '' ||
-                validateEmail(personaData.email) ||
-                loading
-              }
-              isPrimary
-              handleClick={handleSubmit}
+              disabled={!(personaData.fullName.length && !loading)}
+              onClick={handleSubmit}
             >
               {loading ? (
                 <div>
@@ -186,11 +179,7 @@ const PersonalDetails: React.FC = () => {
                   </Typography>
                 </div>
                 <div data-cy="done" className={classes.buttonModal}>
-                  <ButtonFilled
-                    isPrimary
-                    isDisabled={false}
-                    handleClick={handleClose}
-                  >
+                  <ButtonFilled onClick={handleClose}>
                     <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>
@@ -214,11 +203,7 @@ const PersonalDetails: React.FC = () => {
                   </Typography>
                 </div>
                 <div data-cy="done">
-                  <ButtonFilled
-                    isPrimary
-                    isDisabled={false}
-                    handleClick={handleClose}
-                  >
+                  <ButtonFilled onClick={handleClose}>
                     <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>
