@@ -430,12 +430,18 @@ export const chaosEventDataParserForPrometheus = (
 
   const workflowCheckList: string[] = [];
   eventData?.GetPromQuery.forEach((queryResponse) => {
-    if (queryResponse.legends && queryResponse.legends[0]) {
+    if (
+      queryResponse.legends &&
+      queryResponse.legends[0] &&
+      parseInt(queryResponse.tsvs[0][0].timestamp ?? '0', 10) >=
+        selectedStartTime &&
+      parseInt(queryResponse.tsvs[0][0].timestamp ?? '0', 10) <= selectedEndTime
+    ) {
       const chaosEventDetails: ChaosEventDetails = chaosEventList.filter(
         (e) => queryResponse.queryid === e.id
       )[0];
       let latestRunMetric: RunWiseChaosMetrics | undefined;
-      if (chaosEventDetails) {
+      if (chaosEventDetails && workflowAnalyticsData.ListWorkflow) {
         const workflowAndExperiments: WorkflowAndExperimentMetaDataMap =
           chaosEventDetails.chaosMetrics;
 
@@ -650,7 +656,7 @@ export const seriesDataParserForPrometheus = (
   lineGraph: string[]
 ) => {
   const seriesData: Array<GraphMetric> = [];
-  prometheusData.GetPromQuery.forEach((queryResponse) => {
+  prometheusData.GetPromQuery.forEach((queryResponse, mainIndex) => {
     if (queryResponse.legends && queryResponse.legends[0]) {
       seriesData.push(
         ...queryResponse.legends.map((elem, index) => ({
@@ -659,7 +665,10 @@ export const seriesDataParserForPrometheus = (
             date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
             value: parseFloat(dataPoint.value ?? '0.0'),
           })),
-          baseColor: lineGraph[index % lineGraph.length],
+          baseColor:
+            lineGraph[
+              (mainIndex + (index % lineGraph.length)) % lineGraph.length
+            ],
         }))
       );
     }

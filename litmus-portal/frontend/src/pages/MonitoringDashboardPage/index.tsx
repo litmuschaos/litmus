@@ -2,7 +2,6 @@
 import { ApolloError, useQuery } from '@apollo/client';
 import {
   AccordionDetails,
-  AccordionSummary,
   FormControl,
   IconButton,
   InputLabel,
@@ -13,8 +12,8 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import AutorenewOutlinedIcon from '@material-ui/icons/AutorenewOutlined';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
 import { ButtonFilled, ButtonOutlined, GraphMetric, Modal } from 'litmus-ui';
@@ -71,7 +70,11 @@ import {
 import ChaosTable from '../../views/AnalyticsDashboard/MonitoringDashboardPage/ChaosTable';
 import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DashboardPanelGroup';
 import refreshData from './refreshData';
-import useStyles, { Accordion, useOutlinedInputStyles } from './styles';
+import useStyles, {
+  Accordion,
+  AccordionSummary,
+  useOutlinedInputStyles,
+} from './styles';
 
 interface SelectedDashboardInformation {
   id: string;
@@ -887,7 +890,6 @@ const DashboardPage: React.FC = () => {
             <div className={classes.chaosTableSection}>
               <Accordion expanded={chaosTableOpen}>
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                   className={classes.panelGroup}
@@ -896,6 +898,7 @@ const DashboardPage: React.FC = () => {
                     setChaosTableOpen(!chaosTableOpen);
                   }}
                 >
+                  <ArrowDropDownIcon className={classes.tableDropDownIcon} />
                   <Typography className={classes.panelGroupTitle}>
                     Show Chaos during this interval
                   </Typography>

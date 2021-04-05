@@ -1,4 +1,5 @@
 import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import { fade, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 
 // Component styles
@@ -226,7 +227,7 @@ const useStyles = makeStyles((theme) => ({
 
   panelGroup: {
     display: 'flex',
-    alignContent: 'left',
+    justifyItems: 'center',
     background: theme.palette.disabledBackground,
   },
 
@@ -235,8 +236,16 @@ const useStyles = makeStyles((theme) => ({
   },
 
   panelGroupTitle: {
-    fontWeight: 700,
+    fontWeight: 500,
     fontSize: '1rem',
+    color: theme.palette.primary.main,
+  },
+
+  tableDropDownIcon: {
+    width: '1.75rem',
+    height: '1.75rem',
+    marginTop: theme.spacing(-0.15),
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -293,5 +302,11 @@ export const Accordion = withStyles({
   },
   expanded: {},
 })(MuiAccordion);
+
+export const AccordionSummary = withStyles({
+  content: {
+    flexGrow: 0,
+  },
+})(MuiAccordionSummary);
 
 export default useStyles;
