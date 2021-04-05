@@ -43,7 +43,6 @@ const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
-  const [resilienceScore, setResilienceScore] = useState(-1);
   const [
     workflowSchedulesDetails,
     setworkflowSchedulesDetails,
@@ -151,11 +150,6 @@ const WorkflowDetails: React.FC = () => {
         ...JSON.parse(workflow.execution_data as string).nodes[firstNodeId],
         pod_name: firstNodeId,
       });
-      if (JSON.parse(workflow.execution_data as string).resiliency_score) {
-        setResilienceScore(
-          JSON.parse(workflow.execution_data as string).resiliency_score
-        );
-      }
     }
   }, [data]);
 
@@ -221,13 +215,8 @@ const WorkflowDetails: React.FC = () => {
                         setIsInfoToggled={setIsInfoToggled}
                         cluster_id={workflow.cluster_id}
                         workflow_run_id={workflow.workflow_run_id}
-                        pod_namespace={
-                          (JSON.parse(workflow.execution_data) as ExecutionData)
-                            .namespace
-                        }
-                        selectedNode={
-                          (JSON.parse(workflow.execution_data) as ExecutionData)
-                            .nodes[pod_name]
+                        data={
+                          JSON.parse(workflow.execution_data) as ExecutionData
                         }
                       />
                     ) : (
@@ -239,7 +228,6 @@ const WorkflowDetails: React.FC = () => {
                         data={
                           JSON.parse(workflow.execution_data) as ExecutionData
                         }
-                        resiliencyScore={resilienceScore}
                       />
                     )}
                   </div>
@@ -253,7 +241,6 @@ const WorkflowDetails: React.FC = () => {
                   tab={2}
                   cluster_name={workflow.cluster_name}
                   data={JSON.parse(workflow.execution_data) as ExecutionData}
-                  resiliencyScore={resilienceScore}
                 />
                 {/* Table for all Node details */}
                 <NodeTable
@@ -270,10 +257,6 @@ const WorkflowDetails: React.FC = () => {
                 handleClose={() => setLogsModalOpen(false)}
                 cluster_id={workflow.cluster_id}
                 workflow_run_id={workflow.workflow_run_id}
-                pod_namespace={
-                  (JSON.parse(workflow.execution_data) as ExecutionData)
-                    .namespace
-                }
                 data={JSON.parse(workflow.execution_data) as ExecutionData}
                 workflow_name={workflow.workflow_name}
               />
