@@ -15,8 +15,8 @@ import {
 import {
   getToken,
   getUserEmail,
+  getUserFullName,
   getUserId,
-  getUserName,
   getUsername,
   getUserRole,
 } from '../../../utils/auth';
@@ -63,18 +63,20 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
   const [getUserInfo] = useLazyQuery<CurrentUserDetails>(GET_USER_INFO, {
     variables: { username: userName },
     // Adding the user to litmusDB if user does not exists
-    onError: () => {
-      CreateUser({
-        variables: {
-          user: {
-            username: userName,
-            email: getUserEmail(),
-            name: getUserName(),
-            role: getUserRole(),
-            userID: getUserId(),
+    onError: (err) => {
+      if (err.message === 'mongo: no documents in result')
+        CreateUser({
+          variables: {
+            user: {
+              username: userName,
+              email: getUserEmail(),
+              name: getUserFullName(),
+              role: getUserRole(),
+              userID: getUserId(),
+            },
           },
-        },
-      });
+        });
+      else console.error(err.message);
     },
     // Creating project for the user
     onCompleted: () => {
@@ -107,7 +109,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
       body: JSON.stringify({
         username: getUsername(),
         email: getUserEmail(),
-        name: getUserName(),
+        name: getUserFullName(),
         password,
       }),
     })
