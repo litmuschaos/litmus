@@ -6,9 +6,10 @@ import (
 	"os/signal"
 	"runtime"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
 	"log"
 	"os"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
