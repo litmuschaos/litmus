@@ -11,7 +11,6 @@ interface WorkflowInfoProps {
   tab: number;
   data: ExecutionData;
   cluster_name: string;
-  resiliencyScore: number;
 }
 
 const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
@@ -19,7 +18,6 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
   tab,
   data,
   cluster_name,
-  resiliencyScore,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -58,7 +56,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           </Typography>
           {/* Static data, will be changed with API response */}
           <Typography className={classes.resilliencyScore}>
-            {`${resiliencyScore}%`}
+            {data.resiliency_score === undefined
+              ? 'NA'
+              : `${data.resiliency_score}%`}
           </Typography>
         </div>
 

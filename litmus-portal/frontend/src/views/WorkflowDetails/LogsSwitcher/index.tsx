@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tab, Tabs, Typography, useTheme } from '@material-ui/core';
+import { Tabs, Typography, useTheme } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useQuery, useSubscription } from '@apollo/client';
@@ -17,13 +17,7 @@ import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
 import { RootState } from '../../../redux/reducers';
-
-interface TabPanelProps {
-  children: React.ReactNode;
-  index: any;
-  value: any;
-  style: any;
-}
+import { TabPanel, StyledTab } from '../../../components/Tabs';
 
 interface ChaosDataVar {
   exp_pod: string;
@@ -32,37 +26,6 @@ interface ChaosDataVar {
 }
 
 interface LogsSwitcherProps extends PodLogRequest {}
-
-// TODO: These below local Tab components will be removed after merge with master
-// TabPanel is used to implement the functioning of tabs
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, style, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      style={style}
-      {...other}
-    >
-      {value === index && (
-        <div style={style} {...other}>
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// tabProps returns 'id' and 'aria-control' props of Tab
-function tabProps(index: any) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
 
 const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   cluster_id,
@@ -215,10 +178,8 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
             },
           }}
         >
-          <Tab label="Logs" {...tabProps(0)} />
-          {type === 'ChaosEngine' && (
-            <Tab label="Chaos Results" {...tabProps(1)} />
-          )}
+          <StyledTab label="Logs" />
+          {type === 'ChaosEngine' && <StyledTab label="Chaos Results" />}
         </Tabs>
       </div>
       <TabPanel value={selectedTab} index={0} style={{ height: '100%' }}>
