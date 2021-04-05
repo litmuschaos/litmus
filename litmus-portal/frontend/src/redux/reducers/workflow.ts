@@ -8,13 +8,7 @@ import {
 import createReducer from './createReducer';
 
 const initialState: WorkflowData = {
-  name: '',
-  link: '',
-  yaml: '',
   id: '',
-  description: '',
-  weights: [],
-  isCustomWorkflow: false,
   isRecurring: false,
   isDisabled: false,
   chaosEngineChanged: false,
@@ -32,20 +26,7 @@ const initialState: WorkflowData = {
     time: new Date(),
     date: new Date(),
   },
-  customWorkflow: {
-    experiment_name: '',
-    hubName: '',
-    repoUrl: '',
-    repoBranch: '',
-    experimentYAML: '',
-    yaml: '',
-    index: -1,
-    description: '',
-  },
-  customWorkflows: [],
-  stepperActiveStep: 1,
   clustername: '',
-  workflowIcon: '',
 };
 
 const init: WorkflowManifest = {
