@@ -234,6 +234,29 @@ type GitConfigResponse struct {
 	SSHPrivateKey *string   `json:"SSHPrivateKey"`
 }
 
+type KubeGVRRequest struct {
+	Group    string `json:"group"`
+	Version  string `json:"version"`
+	Resource string `json:"resource"`
+}
+
+type KubeObjectData struct {
+	RequestID string           `json:"request_id"`
+	ClusterID *ClusterIdentity `json:"cluster_id"`
+	KubeObj   string           `json:"kube_obj"`
+}
+
+type KubeObjectRequest struct {
+	ClusterID      string          `json:"cluster_id"`
+	ObjectType     string          `json:"object_type"`
+	KubeObjRequest *KubeGVRRequest `json:"kube_obj_request"`
+}
+
+type KubeObjectResponse struct {
+	ClusterID string `json:"cluster_id"`
+	KubeObj   string `json:"kube_obj"`
+}
+
 type Link struct {
 	Name string `json:"Name"`
 	URL  string `json:"Url"`

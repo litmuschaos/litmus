@@ -1,7 +1,12 @@
 {
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
-  "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended",
+    "prettier/react"
+  ],
   "env": {
     "browser": true,
     "es6": true

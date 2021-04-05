@@ -1,5 +1,4 @@
 import { Typography } from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
   forwardRef,
@@ -8,10 +7,8 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import Center from '../../../containers/layouts/Center';
 import { experimentMap } from '../../../models/redux/workflow';
 import WeightSlider from '../WeightSlider';
-import ResultTable from './ResultTable';
 import useStyles from './styles';
 
 const ReliablityScore = forwardRef((_, ref) => {
@@ -28,11 +25,6 @@ const ReliablityScore = forwardRef((_, ref) => {
       weight: 10,
     },
   ]);
-
-  const [open, setOpen] = React.useState(false);
-
-  const testNames: string[] = [];
-  const testWeights: number[] = [];
 
   function handleChange({
     newValue,
@@ -97,48 +89,6 @@ const ReliablityScore = forwardRef((_, ref) => {
               }
             />
           ))}
-          <hr className={classes.horizontalLine} />
-          <div className={classes.modalDiv}>
-            <div className={classes.divRow}>
-              <ButtonOutlined
-                disabled
-                onClick={() => setOpen(true)}
-                data-cy="testRunButton"
-              >
-                <div className={classes.buttonOutlineDiv}>
-                  <img src="/icons/video.png" alt="Play icon" />
-                  <Typography className={classes.buttonOutlineText}>
-                    {t('createWorkflow.reliabilityScore.button.demo')}
-                  </Typography>
-                </div>
-              </ButtonOutlined>
-              {/* <div className={classes.toolTipDiv}>
-                <InfoTooltip value="Text Default" />
-                </div> */}
-              <Modal open={open} onClose={() => setOpen(false)}>
-                <div>
-                  <ResultTable testValue={testWeights} testNames={testNames} />
-                  <hr className={classes.horizontalLineResult} />
-                  <Center>
-                    <ButtonFilled
-                      onClick={() => setOpen(false)}
-                      data-cy="gotItButton"
-                      className={classes.gotItBtn}
-                    >
-                      <div>
-                        {t('createWorkflow.reliabilityScore.button.gotIt')}
-                      </div>
-                    </ButtonFilled>
-                  </Center>
-                </div>
-              </Modal>
-            </div>
-            <div>
-              <Typography className={classes.testInfo}>
-                {t('createWorkflow.reliabilityScore.testInfo')}
-              </Typography>
-            </div>
-          </div>
         </div>
       </form>
     </div>

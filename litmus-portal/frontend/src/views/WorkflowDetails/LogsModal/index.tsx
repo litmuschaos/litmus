@@ -20,7 +20,6 @@ interface NodeLogsModalProps {
   handleClose: () => void;
   cluster_id: string;
   workflow_run_id: string;
-  pod_namespace: string;
   data: ExecutionData;
   workflow_name: string;
 }
@@ -34,7 +33,6 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
   handleClose,
   cluster_id,
   workflow_run_id,
-  pod_namespace,
   data,
   workflow_name,
 }) => {
@@ -154,7 +152,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
               <LogsSwitcher
                 cluster_id={cluster_id}
                 workflow_run_id={workflow_run_id}
-                pod_namespace={pod_namespace}
+                pod_namespace={data.namespace}
                 pod_name={pod_name}
                 pod_type={data.nodes[pod_name].type}
               />

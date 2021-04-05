@@ -252,6 +252,29 @@ input TemplateInput {
     project_id: String!
 }
 
+type KubeObjectResponse{
+    cluster_id: ID!
+    kube_obj: String!
+}
+
+input KubeObjectData{
+    request_id: ID!
+    cluster_id: ClusterIdentity!
+    kube_obj: String!
+}
+
+input KubeObjectRequest{
+    cluster_id: ID!
+    object_type: String!
+    kube_obj_request: KubeGVRRequest!
+}
+
+input KubeGVRRequest{
+    group: String!
+    version: String!
+    resource: String!
+}
+
 type Query {
   # [Deprecated soon]
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -340,6 +363,8 @@ type Mutation {
 
   podLog(log: PodLog!): String!
 
+  kubeObj(kubeData: KubeObjectData!): String!
+
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
@@ -401,4 +426,6 @@ type Subscription {
 
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+
+  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
 }
