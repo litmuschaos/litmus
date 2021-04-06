@@ -44,20 +44,17 @@ import useStyles from './styles';
 import { AceValidations, parseYamlValidations } from './Validations';
 
 interface YamlEditorProps {
-  id: string;
+  id?: string;
   content: string;
-  filename: string;
+  filename?: string;
   yamlLink?: string;
-  description: string;
+  description?: string;
   readOnly: boolean;
 }
 
 const YamlEditor: React.FC<YamlEditorProps> = ({
   content,
   filename,
-  yamlLink,
-  id,
-  description,
   readOnly,
 }) => {
   const classes = useStyles();
@@ -127,12 +124,9 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     }
     setModifiedYaml(value);
     setEditorState(stateObject as any);
-    workflow.setWorkflowDetails({
-      name: filename,
-      link: yamlLink,
-      yaml: value,
-      id,
-      description,
+
+    workflow.setWorkflowManifest({
+      manifest: value,
     });
   };
 

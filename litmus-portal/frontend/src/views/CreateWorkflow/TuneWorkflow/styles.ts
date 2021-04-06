@@ -110,6 +110,11 @@ const useStyles = makeStyles((theme) => ({
   label: {
     color: theme.palette.common.black,
   },
+  closeBtn: {
+    color: theme.palette.secondary.contrastText,
+    marginTop: theme.spacing(-6),
+    marginRight: theme.spacing(-2.5),
+  },
 }));
 
 export default useStyles;

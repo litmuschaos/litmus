@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
   forwardRef,
@@ -11,6 +11,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import YamlEditor from '../../../components/YamlEditor/Editor';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
@@ -36,6 +37,7 @@ import WorkflowTable from './WorkflowTable';
 interface WorkflowProps {
   name: string;
   crd: string;
+  description: string;
 }
 
 interface WorkflowExperiment {
@@ -61,30 +63,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
     crd: '',
+    description: '',
   });
-  const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
+  const [customWorkflow, setCustomWorkflow] = useState<boolean>(false);
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
+  const [YAMLModal, setYAMLModal] = useState<boolean>(false);
 
   // Actions
   const workflowAction = useActions(WorkflowActions);
 
   const { t } = useTranslation();
-
-  const fetchYaml = (link: string) => {
-    fetch(link)
-      .then((data) => {
-        data.text().then((yamlText) => {
-          workflowAction.setWorkflowManifest({
-            manifest: yamlText,
-          });
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   // Graphql query to get charts
   const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
@@ -102,39 +92,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
     },
     fetchPolicy: 'cache-and-network',
   });
-
-  // Index DB Fetching for extracting selected Button and Workflow Details
-  const getSelectedWorkflowDetails = () => {
-    localforage.getItem('workflow').then((workflow) =>
-      setWorkflow({
-        name: (workflow as WorkflowDetailsProps).name,
-        crd: (workflow as WorkflowDetailsProps).CRDLink,
-      })
-    );
-    localforage.getItem('selectedScheduleOption').then((value) => {
-      // Setting default data when MyHub is selected
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
-        setCustomWorkflow(false);
-        localforage.getItem('workflow').then((value) => {
-          if (value !== null && (value as WorkflowDetailsProps).CRDLink !== '')
-            fetchYaml((value as WorkflowDetailsProps).CRDLink);
-        });
-      }
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
-        setCustomWorkflow(true);
-        localforage.getItem('selectedHub').then((hub) => {
-          setHubName(hub as string);
-          getCharts({
-            variables: { projectID: selectedProjectID, HubName: hub as string },
-          });
-        });
-      }
-    });
-  };
-
-  useEffect(() => {
-    getSelectedWorkflowDetails();
-  }, []);
 
   // Default CRD
   const yamlTemplate: CustomYAML = {
@@ -175,6 +132,60 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(
     manifest === '' ? yamlTemplate : YAML.parse(manifest)
   );
+
+  // This function fetches the manifest for pre-defined workflows
+  const fetchYaml = (link: string) => {
+    fetch(link)
+      .then((data) => {
+        data.text().then((yamlText) => {
+          setGeneratedYAML(YAML.parse(yamlText));
+          workflowAction.setWorkflowManifest({
+            manifest: yamlText,
+          });
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  // Index DB Fetching for extracting selected Button and Workflow Details
+  const getSelectedWorkflowDetails = () => {
+    localforage.getItem('workflow').then((workflow) =>
+      setWorkflow({
+        name: (workflow as WorkflowDetailsProps).name,
+        crd: (workflow as WorkflowDetailsProps).CRDLink,
+        description: (workflow as WorkflowDetailsProps).description,
+      })
+    );
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      // Setting default data when MyHub is selected
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
+        setCustomWorkflow(false);
+        localforage.getItem('workflow').then((value) => {
+          if (value !== null && (value as WorkflowDetailsProps).CRDLink !== '')
+            fetchYaml((value as WorkflowDetailsProps).CRDLink);
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
+        setCustomWorkflow(true);
+        localforage.getItem('selectedHub').then((hub) => {
+          setHubName(hub as string);
+          getCharts({
+            variables: { projectID: selectedProjectID, HubName: hub as string },
+          });
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'D') {
+        setCustomWorkflow(false);
+      }
+    });
+  };
+
+  useEffect(() => {
+    getSelectedWorkflowDetails();
+  }, []);
+
   // Graphql Query for fetching Engine YAML
   const [
     getEngineYaml,
@@ -224,10 +235,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
   };
 
   useEffect(() => {
-    setGeneratedYAML(updateCRD(generatedYAML, experiment));
-    workflowAction.setWorkflowManifest({
-      manifest: YAML.stringify(generatedYAML),
-    });
+    if (customWorkflow) {
+      setGeneratedYAML(updateCRD(generatedYAML, experiment));
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(generatedYAML),
+      });
+    }
   }, [experiment]);
 
   const onModalClose = () => {
@@ -282,10 +295,43 @@ const TuneWorkflow = forwardRef((_, ref) => {
             {t('createWorkflow.tuneWorkflow.description')}
           </Typography>
           <div className={classes.headerBtn}>
-            <ButtonOutlined className={classes.btn1}>
+            <ButtonOutlined
+              onClick={() => {
+                setYAMLModal(true);
+              }}
+              className={classes.btn1}
+            >
               <img src="./icons/viewYAMLicon.svg" alt="view YAML" />{' '}
               <Width width="0.5rem" /> {t('createWorkflow.tuneWorkflow.view')}
             </ButtonOutlined>
+            <Modal
+              open={YAMLModal}
+              onClose={() => {
+                setYAMLModal(false);
+              }}
+              width="60%"
+              modalActions={
+                <ButtonOutlined
+                  onClick={() => {
+                    setYAMLModal(false);
+                  }}
+                  className={classes.closeBtn}
+                >
+                  &#x2715;
+                </ButtonOutlined>
+              }
+            >
+              <div>
+                <YamlEditor
+                  content={YAML.stringify(generatedYAML)}
+                  filename={workflow.name}
+                  yamlLink={workflow.crd}
+                  id=""
+                  description={workflow.description}
+                  readOnly={false}
+                />
+              </div>
+            </Modal>
             <ButtonOutlined
               onClick={() => {
                 setSelectedExp('');

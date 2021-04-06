@@ -58,12 +58,9 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
   const parsing = (yamlText: string) => {
     const parsedYaml = YAML.parse(yamlText);
     const expData: ChaosCRDTable[] = [];
-    workflow.setWorkflowManifest({
-      manifest: yamlText,
-    });
     addWeights(manifest);
     parsedYaml.spec.templates.forEach((template: any, index: number) => {
-      if (template.inputs !== undefined) {
+      if (template.inputs && template.inputs.artifacts !== undefined) {
         template.inputs.artifacts.forEach((artifact: any) => {
           const chaosEngine = YAML.parse(artifact.raw.data);
           if (chaosEngine.kind === 'ChaosEngine') {
@@ -83,6 +80,9 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
   };
 
   const closeConfigurationStepper = () => {
+    workflow.setWorkflowManifest({
+      engineYAML: '',
+    });
     setDisplayStepper(false);
   };
 
