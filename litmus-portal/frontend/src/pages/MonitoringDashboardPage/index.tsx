@@ -58,7 +58,7 @@ import useActions from '../../redux/actions';
 import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
 import { RootState } from '../../redux/reducers';
-import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
+import { getProjectID } from '../../utils/getSearchParams';
 import {
   chaosEventDataParserForPrometheus,
   getChaosQueryPromInputAndID,
@@ -126,7 +126,6 @@ const DashboardPage: React.FC = () => {
   const dashboard = useActions(DashboardActions);
   // get ProjectID
   const projectID = getProjectID();
-  const projectRole = getProjectRole();
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
