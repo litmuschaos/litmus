@@ -179,6 +179,8 @@ const WorkflowStepper = () => {
         return t(`workflowStepper.step2.errorSnackbar`);
       case 2:
         return t(`workflowStepper.step3.errorSnackbar`);
+      case 3:
+        return t(`workflowStepper.step4.errorSnackbar`);
       default:
         return '';
     }

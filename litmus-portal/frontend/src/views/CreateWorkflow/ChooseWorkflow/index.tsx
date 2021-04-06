@@ -13,9 +13,11 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
+import { RootState } from '../../../redux/reducers';
 import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
 import SelectMyHub from './SelectMyHub';
 import useStyles from './styles';
@@ -25,9 +27,10 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
-
   const [selected, setSelected] = useState<string>('');
-
+  const workflowDetails = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.value);
   };
@@ -35,6 +38,10 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   function onNext() {
     if (selected === '') {
       alert.changeAlertState(true); // No Workflow Type has been selected and user clicked on Next
+      return false;
+    }
+    if (selected === 'D' && workflowDetails === '') {
+      alert.changeAlertState(true);
       return false;
     }
     return true;

@@ -17,7 +17,7 @@ export interface PrometheusQueryInput {
   url: string;
   start: string;
   end: string;
-  queries?: promQueryInput[];
+  queries: promQueryInput[];
 }
 
 export interface timeStampValue {

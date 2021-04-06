@@ -34,23 +34,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         transform: (props: StyleProps) =>
           `scale(1.8) translate(-5px, ${props.horizontal ? -3.6 : -1}px)`,
       },
-      '& g.Succeeded': {
-        '& circle': {
-          fill: theme.palette.status.completed.text,
-        },
-      },
-      '& g.StepGroup': {
-        fill: theme.palette.status.completed.text,
-        cursor: 'default',
-        '& rect': {
-          x: -1.5,
-          y: -1.5,
-          width: '0.2rem',
-          height: '0.2rem',
-          rx: '0.625rem !important',
-          ry: '0.625rem !important',
-        },
-      },
       '& g.StepGroup.Succeeded': {
         fill: theme.palette.status.completed.text,
       },
@@ -61,22 +44,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       '& g.succeeded': {
         fill: theme.palette.status.completed.text,
         stroke: theme.palette.status.completed.text,
-      },
-    },
-  },
-  '@global': {
-    '@keyframes runningNodeSpinAnimation': {
-      from: {
-        transform: (props: StyleProps) =>
-          `scale(1.5) translate(-4px, ${
-            props.horizontal ? -4.3 : -1
-          }px) rotate(0deg)`,
-      },
-      to: {
-        transform: (props: StyleProps) =>
-          `scale(1.5) translate(-4px, ${
-            props.horizontal ? -4.3 : -1
-          }px) rotate(360deg)`,
       },
     },
   },
