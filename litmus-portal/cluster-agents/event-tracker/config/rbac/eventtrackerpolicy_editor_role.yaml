@@ -1,0 +1,24 @@
+# permissions for end users to edit eventtrackerpolicies.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: eventtrackerpolicy-editor-role
+rules:
+- apiGroups:
+  - eventtracker.litmuschaos.io
+  resources:
+  - eventtrackerpolicies
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - eventtracker.litmuschaos.io
+  resources:
+  - eventtrackerpolicies/status
+  verbs:
+  - get
