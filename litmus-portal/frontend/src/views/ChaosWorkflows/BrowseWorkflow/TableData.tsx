@@ -12,6 +12,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { useTranslation } from 'react-i18next';
 import {
   ExecutionData,
   WorkflowRun,
@@ -39,6 +40,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+  const { t } = useTranslation();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -119,9 +121,11 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
       </TableCell>
       <TableCell className={classes.reliabiltyData}>
         <Typography>
-          <span>Overall RR: </span>
-          {exeData.resiliency_score === undefined ? (
-            <span className={classes.less}>NA</span>
+          <span>{t('chaosWorkflows.browseWorkflows.tableData.overallRR')}</span>
+          {!exeData.resiliency_score ? (
+            <span className={classes.less}>
+              {t('chaosWorkflows.browseWorkflows.tableData.na')}
+            </span>
           ) : (
             <span className={getResiliencyScoreColor(exeData.resiliency_score)}>
               <strong>{exeData.resiliency_score}%</strong>
@@ -129,9 +133,13 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           )}
         </Typography>
         <Typography>
-          <span>Experiments Passed: </span>
-          {exeData.resiliency_score === undefined ? (
-            <span className={classes.less}>NA</span>
+          <span>
+            {t('chaosWorkflows.browseWorkflows.tableData.experimentsPassed')}
+          </span>
+          {!exeData.resiliency_score ? (
+            <span className={classes.less}>
+              {t('chaosWorkflows.browseWorkflows.tableData.na')}
+            </span>
           ) : (
             <span className={getResiliencyScoreColor(exeData.resiliency_score)}>
               <strong>
@@ -149,7 +157,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           >
             <Typography>
               <strong>
-                Show Experiments (
+                {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
                 {scheduledWorkflowData?.ListWorkflow[0].weightages.length})
               </strong>
             </Typography>
@@ -173,9 +181,6 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
             transformOrigin={{
               vertical: 'top',
               horizontal: 'center',
-            }}
-            style={{
-              marginTop: 10,
             }}
           >
             <div className={classes.popover}>
@@ -236,7 +241,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
                 className={classes.btnImg}
               />
               <Typography className={classes.btnText}>
-                Show the workflow
+                {t('chaosWorkflows.browseWorkflows.tableData.showTheWorkflow')}
               </Typography>
             </div>
           </MenuItem>
@@ -256,7 +261,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
                 className={classes.btnImg}
               />
               <Typography className={classes.btnText}>
-                Show the analytics
+                {t('chaosWorkflows.browseWorkflows.tableData.showTheAnalytics')}
               </Typography>
             </div>
           </MenuItem>

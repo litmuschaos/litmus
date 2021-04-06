@@ -36,6 +36,7 @@ import {
 } from '../../models/graphql/scheduleData';
 import * as NodeSelectionActions from '../../redux/actions/nodeSelection';
 import useStyles from './styles';
+import { FAILED } from '../../views/WorkflowDetails/workflowConstants';
 
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
@@ -146,9 +147,8 @@ const WorkflowDetails: React.FC = () => {
   useEffect(() => {
     if (workflow && pod_name === '') {
       if (
-        (JSON.parse(
-          workflow.execution_data as string
-        ) as ExecutionData).phase.toLowerCase() !== 'failed'
+        (JSON.parse(workflow.execution_data as string) as ExecutionData)
+          .phase !== FAILED
       ) {
         const firstNodeId = JSON.parse(workflow.execution_data as string).nodes[
           Object.keys(JSON.parse(workflow.execution_data as string).nodes)[0]

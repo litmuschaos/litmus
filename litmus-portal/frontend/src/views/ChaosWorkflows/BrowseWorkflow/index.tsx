@@ -15,6 +15,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../graphql';
 import {
   ExecutionData,
@@ -60,6 +61,7 @@ interface DateData {
 const BrowseWorkflow: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
+  const { t } = useTranslation();
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -303,13 +305,15 @@ const BrowseWorkflow: React.FC = () => {
             <TableHead className={classes.tableHead}>
               <TableRow>
                 {/* Status */}
-                <TableCell className={classes.headerStatus}>Status</TableCell>
+                <TableCell className={classes.headerStatus}>
+                  {t('chaosWorkflows.browseWorkflows.status')}
+                </TableCell>
 
                 {/* Workflow Name */}
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography className={classes.paddedTypography}>
-                      Name
+                      {t('chaosWorkflows.browseWorkflows.name')}
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
@@ -345,21 +349,21 @@ const BrowseWorkflow: React.FC = () => {
                 {/* Target Agent */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
-                    Target Agent
+                    {t('chaosWorkflows.browseWorkflows.targetAgent')}
                   </Typography>
                 </TableCell>
 
                 {/* Reliability Details */}
                 <TableCell>
                   <Typography className={classes.paddedTypography}>
-                    Reliability Details
+                    {t('chaosWorkflows.browseWorkflows.reliabilityDetails')}
                   </Typography>
                 </TableCell>
 
                 {/* Experiments */}
                 <TableCell>
                   <Typography className={classes.paddedTypography}>
-                    Experiments
+                    {t('chaosWorkflows.browseWorkflows.experiments')}
                   </Typography>
                 </TableCell>
 
@@ -367,7 +371,7 @@ const BrowseWorkflow: React.FC = () => {
                 <TableCell>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography className={classes.paddedTypography}>
-                      Last Run
+                      {t('chaosWorkflows.browseWorkflows.lastRun')}
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton

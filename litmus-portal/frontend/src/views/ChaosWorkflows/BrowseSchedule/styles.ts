@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.75),
   },
   workflowName: {
-    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
+    borderRight: `1px solid ${theme.palette.border.main}`,
     color: theme.palette.text.disabled,
   },
   sortDiv: {
@@ -90,12 +90,13 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     paddingLeft: theme.spacing(6.25),
-    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
+    borderRight: `1px solid ${theme.palette.border.main}`,
   },
   regularity: {
     color: theme.palette.text.disabled,
   },
   targetCluster: {
+    paddingLeft: theme.spacing(5),
     color: theme.palette.text.disabled,
   },
   clusterStartDate: {
@@ -125,6 +126,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.disabled,
   },
   clusterData: {
+    paddingLeft: theme.spacing(5),
     paddingTop: theme.spacing(1.25),
   },
   optionBtn: {

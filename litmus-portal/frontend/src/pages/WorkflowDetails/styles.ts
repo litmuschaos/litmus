@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   appBar: {
     background: 'transparent',
     boxShadow: 'none',
-    marginBottom: '1rem',
+    marginBottom: theme.spacing(1),
   },
 
   // Graphical View

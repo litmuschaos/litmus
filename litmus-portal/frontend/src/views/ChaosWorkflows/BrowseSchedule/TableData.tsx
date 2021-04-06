@@ -157,7 +157,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         </Typography>
       </TableCell>
       <TableCell>
-        <Typography>
+        <Typography className={classes.clusterData}>
           <span
             className={
               YAML.parse(data.workflow_manifest).spec.suspend === true
@@ -181,7 +181,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             <div className={classes.expDiv}>
               <Typography className={classes.expInfo}>
                 <strong>
-                  {t('chaosWorkflows.browseSchedule.showExperiment')}
+                  {t('chaosWorkflows.browseSchedules.showExperiments')}
                 </strong>
               </Typography>
               {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
@@ -200,9 +200,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           transformOrigin={{
             vertical: 'top',
             horizontal: 'center',
-          }}
-          style={{
-            marginTop: 10,
           }}
         >
           <div className={classes.weightDiv}>
@@ -233,7 +230,9 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           >
             <div className={classes.expDiv}>
               <Typography className={classes.expInfo}>
-                <strong>Show Schedule</strong>
+                <strong>
+                  {t('chaosWorkflows.browseSchedules.showSchedule')}
+                </strong>
               </Typography>
               {isOpenSchedule ? (
                 <KeyboardArrowDownIcon />
@@ -256,31 +255,30 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             vertical: 'top',
             horizontal: 'center',
           }}
-          style={{
-            marginTop: 10,
-          }}
         >
           <div className={classes.weightDiv}>
             <Typography className={classes.scheduleDetailsFlex}>
-              <strong>Starting Date:</strong>
+              <strong>
+                {t('chaosWorkflows.browseSchedules.startingDate')} :
+              </strong>
               <span className={classes.scheduleDetailsValue}>
                 {formatDate(data.created_at)}
               </span>
             </Typography>
             <Typography className={classes.scheduleDetailsFlex}>
-              <strong>Last Run:</strong>
+              <strong>{t('chaosWorkflows.browseSchedules.lastRun')} :</strong>
               <span className={classes.scheduleDetailsValue}>
                 {timeDifferenceForDate(data.updated_at)}
               </span>
             </Typography>
             <Typography className={classes.scheduleDetailsFlex}>
-              <strong>Regularity:</strong>
+              <strong>
+                {t('chaosWorkflows.browseSchedules.regularity')} :
+              </strong>
               <span className={classes.scheduleDetailsValue}>
-                {data.cronSyntax === '' ? (
-                  <>{t('chaosWorkflows.browseSchedule.regularityOnce')}</>
-                ) : (
-                  cronstrue.toString(data.cronSyntax)
-                )}
+                {data.cronSyntax === ''
+                  ? `${t('chaosWorkflows.browseSchedules.regularityOnce')}`
+                  : cronstrue.toString(data.cronSyntax)}
               </span>
             </Typography>
           </div>
@@ -329,7 +327,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                   className={classes.btnImg}
                 />
                 <Typography data-cy="editSchedule" className={classes.btnText}>
-                  Edit Schedule
+                  {t('chaosWorkflows.browseSchedules.editSchedule')}
                 </Typography>
               </div>
             </MenuItem>
@@ -341,7 +339,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               <div className={classes.expDiv}>
                 <ReplayIcon className={classes.rerunBtn} />
                 <Typography data-cy="reRunSchedule" className={classes.btnText}>
-                  Re-Run Schedule
+                  {t('chaosWorkflows.browseSchedules.reRunSchedule')}
                 </Typography>
               </div>
             </MenuItem>
@@ -360,7 +358,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 data-cy="downloadManifest"
                 className={classes.downloadText}
               >
-                Download Manifest
+                {t('chaosWorkflows.browseSchedules.downloadManifest')}
               </Typography>
             </div>
           </MenuItem>
@@ -376,7 +374,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                   data-cy="deleteSchedule"
                   className={classes.btnText}
                 >
-                  Delete Schedule
+                  {t('chaosWorkflows.browseSchedules.deleteSchedule')}
                 </Typography>
               </div>
             </MenuItem>

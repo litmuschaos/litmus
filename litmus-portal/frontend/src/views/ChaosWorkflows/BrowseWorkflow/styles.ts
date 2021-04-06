@@ -87,11 +87,11 @@ const useStyles = makeStyles((theme) => ({
   },
 
   workflowName: {
-    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
+    borderRight: `1px solid ${theme.palette.border.main}`,
   },
 
   targetCluster: {
-    paddingLeft: theme.spacing(3.75),
+    paddingLeft: theme.spacing(5),
   },
 
   tableDataStatus: {
@@ -105,11 +105,11 @@ const useStyles = makeStyles((theme) => ({
 
   workflowNameData: {
     maxWidth: '15.625rem',
-    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
+    borderRight: `1px solid ${theme.palette.border.main}`,
   },
 
   clusterName: {
-    marginLeft: theme.spacing(4),
+    marginLeft: theme.spacing(5),
   },
   reliabiltyData: {
     width: '12rem',
