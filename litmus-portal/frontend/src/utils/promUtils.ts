@@ -32,11 +32,20 @@ import {
 import {
   ChaosData,
   ExecutionData,
-  WeightageMap,
   Workflow,
   WorkflowList,
   WorkflowRun,
 } from '../models/graphql/workflowListData';
+import {
+  CHAOS_EXPERIMENT_VERDICT_FAIL,
+  CHAOS_EXPERIMENT_VERDICT_PASS,
+  DEFAULT_CHAOS_EVENT_NAME,
+  DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+  DEFAULT_METRIC_SERIES_NAME,
+  INVALID_RESILIENCE_SCORE_STRING,
+  PROMETHEUS_QUERY_RESOLUTION_LIMIT,
+  STATUS_RUNNING,
+} from '../pages/MonitoringDashboardPage/constants';
 import { validateWorkflowParameter } from './validate';
 import { generateChaosQuery, getWorkflowParameter } from './yamlUtils';
 
@@ -74,12 +83,9 @@ export const getWorkflowRunWiseDetails = (schedule: Workflow) => {
           data.workflow_run_id;
         workflowRunWiseDetailsForSchedule.statusOfWorkflowRuns[runIndex] =
           executionData.finishedAt.length === 0
-            ? 'Running'
+            ? STATUS_RUNNING
             : executionData.phase;
         const { nodes } = executionData;
-        const workflowsRunResults: number[] = [];
-        let weightsSum: number = 0;
-        let isValid: boolean = false;
         for (const key of Object.keys(nodes)) {
           const node = nodes[key];
           if (node.chaosData) {
@@ -98,50 +104,15 @@ export const getWorkflowRunWiseDetails = (schedule: Workflow) => {
               experimentName: chaosData.experimentName,
               chaosData,
             });
-            if (
-              executionData.finishedAt.length !== 0 &&
-              executionData.phase !== 'Running'
-            ) {
-              if (
-                chaosData.experimentVerdict === 'Pass' ||
-                chaosData.experimentVerdict === 'Fail'
-              ) {
-                const weightageMap: WeightageMap[] = schedule.weightages;
-                weightageMap.forEach((weightage) => {
-                  if (weightage.experiment_name === chaosData.experimentName) {
-                    if (chaosData.experimentVerdict === 'Pass') {
-                      workflowsRunResults.push(
-                        (weightage.weightage *
-                          parseInt(chaosData.probeSuccessPercentage, 10)) /
-                          100
-                      );
-                    }
-                    if (chaosData.experimentVerdict === 'Fail') {
-                      workflowsRunResults.push(0);
-                    }
-                    if (
-                      chaosData.experimentVerdict === 'Pass' ||
-                      chaosData.experimentVerdict === 'Fail'
-                    ) {
-                      weightsSum += weightage.weightage;
-                      isValid = true;
-                    }
-                  }
-                });
-              }
-            }
           }
         }
-        if (executionData.event_type === 'UPDATE' && isValid) {
+        if (executionData.event_type === 'UPDATE') {
           workflowRunWiseDetailsForSchedule.resilienceScoreForWorkflowRuns[
             runIndex
-          ] = workflowsRunResults.length
-            ? (workflowsRunResults.reduce((a, b) => a + b, 0) / weightsSum) *
-              100
-            : 0;
+          ] = executionData.resiliency_score ?? -1;
         } else if (
           executionData.finishedAt.length === 0 ||
-          executionData.phase === 'Running'
+          executionData.phase === STATUS_RUNNING
         ) {
           workflowRunWiseDetailsForSchedule.resilienceScoreForWorkflowRuns[
             runIndex
@@ -380,12 +351,14 @@ export const getChaosQueryPromInputAndID = (
         keyValue.resultNamespace
       ),
       legend: `${keyValue.workflowName} / \n${keyValue.experimentName}`,
-      resolution: '1/2',
+      resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
-        timeRangeDiff * chaosResultNamesAndNamespacesMap.length < 10999
+        timeRangeDiff * chaosResultNamesAndNamespacesMap.length <
+        PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
           ? 1
           : Math.floor(
-              (timeRangeDiff * chaosResultNamesAndNamespacesMap.length) / 11001
+              (timeRangeDiff * chaosResultNamesAndNamespacesMap.length) /
+                (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)
             ),
     });
     chaosInformation.chaosQueryIDs.push(queryID);
@@ -542,7 +515,7 @@ export const chaosEventDataParserForPrometheus = (
       chaosDataUpdates.queryIDs.push(queryResponse.queryid);
       chaosDataUpdates.chaosData.push(
         ...queryResponse.legends.map((elem, index) => ({
-          metricName: elem[0] ?? 'chaos',
+          metricName: elem[0] ?? DEFAULT_CHAOS_EVENT_NAME,
           data: queryResponse.tsvs[index].map((dataPoint) => ({
             date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
             value: parseInt(dataPoint.value ?? '0', 10),
@@ -553,20 +526,21 @@ export const chaosEventDataParserForPrometheus = (
               subDataName: 'Workflow Status',
               value: latestRunMetric
                 ? latestRunMetric.workflowStatus
-                : 'Running',
+                : STATUS_RUNNING,
             },
             {
               subDataName: 'Experiment Status',
               value: latestRunMetric
                 ? latestRunMetric.experimentStatus
-                : 'Running',
+                : STATUS_RUNNING,
             },
             {
               subDataName: 'Resilience Score',
               value:
                 latestRunMetric &&
-                latestRunMetric.workflowStatus !== 'Running' &&
-                latestRunMetric.resilienceScore !== '-1%'
+                latestRunMetric.workflowStatus !== STATUS_RUNNING &&
+                latestRunMetric.resilienceScore !==
+                  INVALID_RESILIENCE_SCORE_STRING
                   ? latestRunMetric.resilienceScore
                   : '--',
             },
@@ -580,8 +554,10 @@ export const chaosEventDataParserForPrometheus = (
               subDataName: 'Experiment Verdict',
               value: latestRunMetric
                 ? latestRunMetric.experimentVerdict +
-                  (latestRunMetric.experimentVerdict === 'Pass' ||
-                  latestRunMetric.experimentVerdict === 'Fail'
+                  (latestRunMetric.experimentVerdict ===
+                    CHAOS_EXPERIMENT_VERDICT_PASS ||
+                  latestRunMetric.experimentVerdict ===
+                    CHAOS_EXPERIMENT_VERDICT_FAIL
                     ? 'ed'
                     : '')
                 : '--',
@@ -643,9 +619,12 @@ export const getPromQueryInput = (
       minstep:
         Math.floor(timeRangeDiff / parseInt(query.minstep, 10)) *
           prom_queries.length <
-        10999
+        PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
           ? parseInt(query.minstep, 10)
-          : Math.floor((timeRangeDiff * prom_queries.length) / 11001),
+          : Math.floor(
+              (timeRangeDiff * prom_queries.length) /
+                (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)
+            ),
     });
   });
   return promQueries;
@@ -660,7 +639,7 @@ export const seriesDataParserForPrometheus = (
     if (queryResponse.legends && queryResponse.legends[0]) {
       seriesData.push(
         ...queryResponse.legends.map((elem, index) => ({
-          metricName: elem[0] ?? 'metric',
+          metricName: elem[0] ?? DEFAULT_METRIC_SERIES_NAME,
           data: queryResponse.tsvs[index].map((dataPoint) => ({
             date: parseInt(dataPoint.timestamp ?? '0', 10) * 1000,
             value: parseFloat(dataPoint.value ?? '0.0'),

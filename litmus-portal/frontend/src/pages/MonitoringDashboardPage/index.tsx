@@ -73,10 +73,11 @@ import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashbo
 import {
   ACTIVE,
   DEFAULT_REFRESH_RATE,
+  DEFAULT_RELATIVE_TIME_RANGE,
   DEFAULT_TOLERANCE_LIMIT,
   MAX_REFRESH_RATE,
   MINIMUM_TOLERANCE_LIMIT,
-  PROMETHEUS_ERROR_RESOLUTION_LIMIT_REACHED,
+  PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
 } from './constants';
 import refreshData from './refreshData';
 import useStyles, {
@@ -138,11 +139,9 @@ const DashboardPage: React.FC = () => {
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
-
   const selectedDataSource = useSelector(
     (state: RootState) => state.selectDataSource
   );
-
   const [
     selectedDashboardInformation,
     setSelectedDashboardInformation,
@@ -173,6 +172,7 @@ const DashboardPage: React.FC = () => {
     numOfWorkflows: 0,
     firstLoad: true,
   });
+  const [chaosTableOpen, setChaosTableOpen] = React.useState<boolean>(false);
   const [eventsToShow, setEventsToShow] = React.useState<EventsToShowInterface>(
     {
       eventsToShow: [],
@@ -189,7 +189,6 @@ const DashboardPage: React.FC = () => {
     'ACTIVE'
   );
   const open = Boolean(anchorEl);
-
   const [chaosDataSet, setChaosDataSet] = React.useState<ChaosDataSet>({
     queryIDs: [],
     chaosData: [],
@@ -279,7 +278,6 @@ const DashboardPage: React.FC = () => {
   const handleOpenRefresh = () => {
     setOpenRefresh(true);
   };
-  const [chaosTableOpen, setChaosTableOpen] = React.useState<boolean>(true);
 
   // Apollo query to get the dashboards data
   const { data: dashboards } = useQuery<DashboardList, ListDashboardVars>(
@@ -387,7 +385,7 @@ const DashboardPage: React.FC = () => {
       }
     },
     onError: (error: ApolloError) => {
-      if (error.message === PROMETHEUS_ERROR_RESOLUTION_LIMIT_REACHED) {
+      if (error.message === PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED) {
         if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
           dashboard.selectDashboard({
             refreshRate: MAX_REFRESH_RATE,
@@ -504,7 +502,8 @@ const DashboardPage: React.FC = () => {
             ? new Date(
                 moment(selectedDashboard.range.startDate).format()
               ).getTime() / 1000
-            : Math.round(new Date().getTime() / 1000) - 1800
+            : Math.round(new Date().getTime() / 1000) -
+              DEFAULT_RELATIVE_TIME_RANGE
         }`,
         end: `${
           selectedDashboard.range
@@ -553,7 +552,10 @@ const DashboardPage: React.FC = () => {
         dashboard.selectDashboard({
           range: {
             startDate: moment
-              .unix(Math.round(new Date().getTime() / 1000) - 1800)
+              .unix(
+                Math.round(new Date().getTime() / 1000) -
+                  DEFAULT_RELATIVE_TIME_RANGE
+              )
               .format(),
             endDate: moment
               .unix(Math.round(new Date().getTime() / 1000))

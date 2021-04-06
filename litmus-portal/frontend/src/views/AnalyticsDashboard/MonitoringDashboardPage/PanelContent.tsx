@@ -20,7 +20,7 @@ import {
   DEFAULT_TOLERANCE_LIMIT,
   MAX_REFRESH_RATE,
   MINIMUM_TOLERANCE_LIMIT,
-  PROMETHEUS_ERROR_RESOLUTION_LIMIT_REACHED,
+  PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
 } from '../../../pages/MonitoringDashboardPage/constants';
 import useActions from '../../../redux/actions';
 import * as DashboardActions from '../../../redux/actions/dashboards';
@@ -103,7 +103,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
       }
     },
     onError: (error: ApolloError) => {
-      if (error.message === PROMETHEUS_ERROR_RESOLUTION_LIMIT_REACHED) {
+      if (error.message === PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED) {
         if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
           dashboard.selectDashboard({
             refreshRate: MAX_REFRESH_RATE,
@@ -214,12 +214,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
                 title={`${t('analyticsDashboard.toolTip.hideChaosMetric')}`}
               >
                 <IconButton
-                  className={classes.pannelIconButton}
+                  className={classes.panelIconButton}
                   onClick={() => {
                     setViewEventMetric(false);
                   }}
                 >
-                  <DisableViewChaosMetric className={classes.pannelIcon} />
+                  <DisableViewChaosMetric className={classes.panelIcon} />
                 </IconButton>
               </Tooltip>
             ) : (
@@ -227,32 +227,32 @@ const PanelContent: React.FC<GraphPanelProps> = ({
                 title={`${t('analyticsDashboard.toolTip.viewChaosMetric')}`}
               >
                 <IconButton
-                  className={classes.pannelIconButton}
+                  className={classes.panelIconButton}
                   onClick={() => {
                     setViewEventMetric(true);
                   }}
                 >
-                  <ViewChaosMetric className={classes.pannelIcon} />
+                  <ViewChaosMetric className={classes.panelIcon} />
                 </IconButton>
               </Tooltip>
             )}
             <Tooltip title={`${t('analyticsDashboard.toolTip.editPanel')}`}>
               <IconButton
                 disabled
-                className={classes.pannelIconButton}
+                className={classes.panelIconButton}
                 onClick={() => {}}
               >
-                <Edit className={classes.pannelIcon} />
+                <Edit className={classes.panelIcon} />
               </IconButton>
             </Tooltip>
             <Tooltip title={`${t('analyticsDashboard.toolTip.popout')}`}>
               <IconButton
-                className={classes.pannelIconButton}
+                className={classes.panelIconButton}
                 onClick={() => {
                   setPopout(true);
                 }}
               >
-                <Expand className={classes.pannelIcon} />
+                <Expand className={classes.panelIcon} />
               </IconButton>
             </Tooltip>
           </div>
@@ -271,7 +271,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             height="95% !important"
             width="95%"
           >
-            <div className={classes.popoutModal}>
+            <div className={classes.popOutModal}>
               <Typography className={classes.title}>{panel_name}</Typography>
               <LineAreaGraph
                 legendTableHeight={120}

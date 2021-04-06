@@ -31,17 +31,6 @@ const useStyles = makeStyles((theme) => ({
     fontStyle: 'italic',
   },
 
-  dashboardType: {
-    marginLeft: theme.spacing(5),
-    marginTop: theme.spacing(3),
-    fontSize: '1.5rem',
-  },
-
-  loaderText: {
-    textAlign: 'center',
-    marginBottom: '3%',
-  },
-
   analyticsDiv: {
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(2),
@@ -112,10 +101,6 @@ const useStyles = makeStyles((theme) => ({
   flexButtons: {
     display: 'flex',
     justifyContent: 'space-evenly',
-  },
-
-  loader: {
-    padding: '22%',
   },
 
   modal: {

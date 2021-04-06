@@ -17,11 +17,13 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 0,
     marginBottom: theme.spacing(1),
   },
+
   panelGroup: {
     display: 'flex',
     alignContent: 'left',
     background: theme.palette.disabledBackground,
   },
+
   panelGroupContainer: {
     width: '100%',
     background: theme.palette.cards.header,
@@ -56,24 +58,29 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     height: '27.5rem',
   },
-  popoutModal: {
+
+  popOutModal: {
     width: '85%',
     height: '95%',
     padding: '2rem',
     paddingLeft: '10%',
   },
+
   wrapperParentIconsTitle: {
     display: 'flex',
     justifyContent: 'space-between',
   },
+
   wrapperIcons: {
     display: 'flex',
   },
-  pannelIcon: {
+
+  panelIcon: {
     width: '0.9rem',
     height: '0.9rem',
   },
-  pannelIconButton: {
+
+  panelIconButton: {
     backgroundColor: 'transparent !important',
     cursor: 'pointer',
     display: 'flex',
@@ -104,7 +111,6 @@ export const Accordion = withStyles({
       height: '2.5rem',
     },
   },
-  expanded: {},
 })(MuiAccordion);
 
 export default useStyles;

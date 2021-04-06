@@ -3,6 +3,10 @@ import React from 'react';
 import CheckBox from '../../../../components/CheckBox';
 import { StyledTableCell } from '../../../../components/StyledComponents';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
+import {
+  CHAOS_EXPERIMENT_VERDICT_FAIL,
+  CHAOS_EXPERIMENT_VERDICT_PASS,
+} from '../../../../pages/MonitoringDashboardPage/constants';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -19,7 +23,7 @@ const TableData: React.FC<TableDataProps> = ({
   const classes = useStyles();
 
   return (
-    <div>
+    <>
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
         <CheckBox
           checked={itemSelectionStatus}
@@ -50,9 +54,9 @@ const TableData: React.FC<TableDataProps> = ({
       <StyledTableCell>
         <Typography
           className={`${classes.tableObjects} ${
-            data.result === 'Pass'
+            data.result === CHAOS_EXPERIMENT_VERDICT_PASS
               ? classes.passColor
-              : data.result === 'Fail'
+              : data.result === CHAOS_EXPERIMENT_VERDICT_FAIL
               ? classes.failColor
               : classes.awaitedColor
           }`}
@@ -60,7 +64,7 @@ const TableData: React.FC<TableDataProps> = ({
           {data.result}
         </Typography>
       </StyledTableCell>
-    </div>
+    </>
   );
 };
 export default TableData;
