@@ -1,7 +1,6 @@
-/* eslint-disable react/no-danger */
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { TextField, Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { Typography } from '@material-ui/core';
+import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
@@ -134,11 +133,10 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
       <div className={classes.rootLitmusText}>
         <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
         <Typography className={classes.HeaderText}>
-          You’re almost there! Set your project name
+          {t('getStarted.project.info')}
         </Typography>
         <Typography className={classes.litmusText}>
-          The project will be yours with owner access where you can create
-          workflows, view analytics and also invite others to your project.
+          {t('getStarted.project.desc')}
         </Typography>
       </div>
       <form
@@ -146,16 +144,18 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
         onSubmit={handleSubmit}
         className={classes.inputDiv}
       >
-        <TextField
+        <InputField
           className={classes.inputValue}
-          label={t('welcomeModal.case-0.label')}
+          label={t('getStarted.project.label')}
           value={projectName}
+          filled
           helperText={
             validateStartEmptySpacing(projectName)
-              ? 'Should not start with an empty space'
+              ? t(
+                  'settings.userManagementTab.createUser.userDetails.validationEmptySpace'
+                )
               : ''
           }
-          variant="filled"
           required
           onChange={(e) => setProjectName(e.target.value)}
         />
@@ -168,11 +168,12 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
             {isLoading ? (
               <Loader size={loaderSize} />
             ) : (
-              <Typography>Continue to Portal</Typography>
+              <Typography>{t('getStarted.button.letsStart')}</Typography>
             )}
           </ButtonFilled>
-          <Typography>
-            Step {currentStep} of {totalStep}
+          <Typography className={classes.step}>
+            {t('getStarted.button.step')} {currentStep}{' '}
+            {t('getStarted.button.of')} {totalStep}
           </Typography>
         </div>
       </form>
