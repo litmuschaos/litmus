@@ -324,6 +324,16 @@ workflowDetails:
 ######################################
 
 chaosWorkflows:
+  browseAnalytics:
+    workFlowComparisonTable:
+      unableToFetch: Unable to fetch data
+      noRecords: No records available
+      noRuns: No workflow runs available for selected workflows
+      showSelectedWorkflows: Show all selected workflows
+      resilienceScoreComparison: Resilience score comparison
+      comparativeResults: Comparative results of selected workflows which ran successfully
+      once: Once
+      seeAnalytics: See analytics
   browseSchedules:
     name: Name
     cluster: Cluster
