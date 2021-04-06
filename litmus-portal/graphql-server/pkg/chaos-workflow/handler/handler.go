@@ -453,13 +453,14 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 
 	uuid := uuid2.New()
 	template := &dbSchemaWorkflowTemplate.ManifestTemplate{
-		TemplateID:   uuid.String(),
-		TemplateName: templateInput.TemplateName,
-		ProjectID:    templateInput.ProjectID,
-		Manifest:     templateInput.Manifest,
-		ProjectName:  projectData.Name,
-		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
-		IsRemoved:    false,
+		TemplateID:          uuid.String(),
+		TemplateName:        templateInput.TemplateName,
+		TemplateDescription: templateInput.TemplateDescription,
+		ProjectID:           templateInput.ProjectID,
+		Manifest:            templateInput.Manifest,
+		ProjectName:         projectData.Name,
+		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
+		IsRemoved:           false,
 	}
 
 	err = dbOperationsWorkflowTemplate.CreateWorkflowTemplate(ctx, template)

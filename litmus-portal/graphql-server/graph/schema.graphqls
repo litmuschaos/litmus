@@ -240,6 +240,7 @@ type ManifestTemplate{
     template_id: ID!
     manifest: String!
     template_name: String!
+    template_description: String!
     project_id: String!
     project_name: String!
     created_at: String!
@@ -249,6 +250,7 @@ type ManifestTemplate{
 input TemplateInput {
     manifest: String!
     template_name: String!
+    template_description: String!
     project_id: String!
 }
 
