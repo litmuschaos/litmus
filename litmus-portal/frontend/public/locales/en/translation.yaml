@@ -1,24 +1,27 @@
-welcomeModal:
-  title: Welcome to Litmus Portal,
-  info: What do you want to name your project?
+getStarted:
   button:
-    continue: Continue
+    continue: Next
     back: Back
-    letsStart: Let's Start
-  case-0:
+    letsStart: Continue to Portal
+    step: Step
+    of: of
+  project:
     name: projectName
     label: Project Name
-    info: What do you want to name your project?
+    info: You are almost there! Set your project name
+    desc: The project will be yours with owner access where you can create
+      workflows, view analytics and also invite others to your project.
   case-1:
     name: fullName
     label: Full Name
     info: What should I call you?
-  case-2:
+  password:
     name: password
     label: Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
     info: Set your new Password
+    desc: Set a new password which will be used when you login next time
   case-3:
     name: emailAddress
     label: Email Address
@@ -125,10 +128,9 @@ home:
     deploy: Deploy another Agent
 
 login:
-  heading: Welcome to <strong>Litmus!</strong>
-  subHeading1: Your one-stop-shop for Chaos Engineering on
-  subHeading2: . Browse, create, manage, monitor and analyze your chaos workflows.
-  subHeading3: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
+  heading: One-stop-shop for Chaos Engineering on Kubernetes
+  subHeading1: Browse, create, manage, monitor and analyze your chaos workflows.
+  subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
   passwordForgot: Don’t remember your password?
 
 schedule:
@@ -577,9 +579,9 @@ homeView:
     desc: Statistics taken from completed tests
   totalWorkflows:
     header: Number of total Workflows
-    subtitle: AVG amount of workflows
+    subtitle: Average amount of workflows
     perWeek: per week
-    desc: AVG is calculated from the max of workflows
+    desc: Average is calculated from the max of workflows
 
 createWorkflow:
   chooseWorkflow:
@@ -664,7 +666,7 @@ createWorkflow:
   tuneWorkflow:
     header: Tune the selected workflow
     selectedWorkflowInfo: You have selected a pre-defined workflow
-    description: Fine tune the application  names and other variables to suit your needs    
+    description: Fine tune the application  names and other variables to suit your needs
     view: View YAML
     firstExperiment: Add your first experiment
     choose: Choose Experiments
