@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import CheckBox from '../../../../components/CheckBox';
-import { StyledTableCell } from '../../../../components/StyledComponents';
+import { StyledTableCell } from '../../../../components/StyledTableCell';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
 import {
   CHAOS_EXPERIMENT_VERDICT_FAIL,

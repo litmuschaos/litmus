@@ -2,7 +2,7 @@ import { TableHead, TableRow } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CheckBox from '../../../../components/CheckBox';
-import { StyledTableCell } from '../../../../components/StyledComponents';
+import { StyledTableCell } from '../../../../components/StyledTableCell';
 import useStyles from './styles';
 
 interface TableHeaderProps {
