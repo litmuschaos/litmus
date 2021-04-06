@@ -692,6 +692,7 @@ createWorkflow:
     selectedWorkflowInfo: You have selected a pre-defined workflow
     description: Fine tune the application  names and other variables to suit your needs
     view: View YAML
+    edit: Edit YAML
     firstExperiment: Add your first experiment
     choose: Choose Experiments
     selectAvailableExp: Select experiments available in

@@ -67,7 +67,7 @@ const VerifyCommit = forwardRef((_, ref) => {
     (state: RootState) => state.workflowData
   );
 
-  const { id, clusterid, cronSyntax, isDisabled, clustername } = workflowData;
+  const { clusterid, cronSyntax, isDisabled, clustername } = workflowData;
 
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
@@ -440,14 +440,7 @@ const VerifyCommit = forwardRef((_, ref) => {
           </ButtonOutlined>
         }
       >
-        <YamlEditor
-          content={manifest}
-          filename={workflow.name}
-          yamlLink={workflow.crd}
-          id={id}
-          description={workflow.description}
-          readOnly
-        />
+        <YamlEditor content={manifest} filename={workflow.name} readOnly />
       </Modal>
 
       {/* Finish Modal */}

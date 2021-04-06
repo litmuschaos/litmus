@@ -65,20 +65,14 @@ const UploadYAML = () => {
       readFile.text().then((response) => {
         setUploadedYAML(response);
         const parsedYaml = YAML.parse(response);
-        const workflowName = `custom-chaos-workflow-${Math.round(
-          new Date().getTime() / 1000
-        )}`;
-        parsedYaml.metadata.name = workflowName;
-        workflowAction.setWorkflowDetails({
-          ...workflowDetails,
-          name: workflowName,
-          yaml: YAML.stringify(parsedYaml),
+
+        workflowAction.setWorkflowManifest({
+          manifest: YAML.stringify(parsedYaml),
         });
       });
     } else {
-      workflowAction.setWorkflowDetails({
-        ...workflowDetails,
-        yaml: '',
+      workflowAction.setWorkflowManifest({
+        manifest: '',
       });
     }
     saveToLocalForage();
