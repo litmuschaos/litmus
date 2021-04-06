@@ -43,6 +43,8 @@ const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
+  // State for Checking if workflow failed
+  const [isWorkflowFailed, setWorkflowFailed] = useState<boolean>(false);
   const [
     workflowSchedulesDetails,
     setworkflowSchedulesDetails,
@@ -143,13 +145,21 @@ const WorkflowDetails: React.FC = () => {
   // Setting NodeId of first Node in redux for selection of first node in Argo graph by default
   useEffect(() => {
     if (workflow && pod_name === '') {
-      const firstNodeId = JSON.parse(workflow.execution_data as string).nodes[
-        Object.keys(JSON.parse(workflow.execution_data as string).nodes)[0]
-      ].name;
-      nodeSelection.selectNode({
-        ...JSON.parse(workflow.execution_data as string).nodes[firstNodeId],
-        pod_name: firstNodeId,
-      });
+      if (
+        (JSON.parse(
+          workflow.execution_data as string
+        ) as ExecutionData).phase.toLowerCase() !== 'failed'
+      ) {
+        const firstNodeId = JSON.parse(workflow.execution_data as string).nodes[
+          Object.keys(JSON.parse(workflow.execution_data as string).nodes)[0]
+        ].name;
+        nodeSelection.selectNode({
+          ...JSON.parse(workflow.execution_data as string).nodes[firstNodeId],
+          pod_name: firstNodeId,
+        });
+      } else {
+        setWorkflowFailed(true);
+      }
     }
   }, [data]);
 
@@ -258,7 +268,7 @@ const WorkflowDetails: React.FC = () => {
               />
             </TabPanel>
           </div>
-        ) : error ? (
+        ) : error || isWorkflowFailed ? (
           <Typography>{t('workflowDetails.fetchError')}</Typography>
         ) : (
           <Loader />
