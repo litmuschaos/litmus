@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     background: 'transparent',
     boxShadow: 'none',
-    paddingLeft: theme.spacing(1.5),
+    marginBottom: '1rem',
   },
 }));
 

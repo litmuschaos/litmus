@@ -235,22 +235,18 @@ const WorkflowDetails: React.FC = () => {
               </div>
             </TabPanel>
             <TabPanel value={workflowDetailsTabValue} index={1}>
-              <div className={classes.nodesTable}>
-                {/* Workflow Info */}
-                <WorkflowInfo
-                  tab={2}
-                  cluster_name={workflow.cluster_name}
-                  data={JSON.parse(workflow.execution_data) as ExecutionData}
-                />
-                {/* Table for all Node details */}
-                <NodeTable
-                  manifest={
-                    workflowSchedulesDetails?.workflow_manifest as string
-                  }
-                  data={JSON.parse(workflow.execution_data) as ExecutionData}
-                  handleClose={() => setLogsModalOpen(true)}
-                />
-              </div>
+              {/* Workflow Info */}
+              <WorkflowInfo
+                tab={2}
+                cluster_name={workflow.cluster_name}
+                data={JSON.parse(workflow.execution_data) as ExecutionData}
+              />
+              {/* Table for all Node details */}
+              <NodeTable
+                manifest={workflowSchedulesDetails?.workflow_manifest as string}
+                data={JSON.parse(workflow.execution_data) as ExecutionData}
+                handleClose={() => setLogsModalOpen(true)}
+              />
               {/* Modal for viewing logs of a node */}
               <NodeLogsModal
                 logsOpen={logsModalOpen}

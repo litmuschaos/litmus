@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   appBar: {
     background: 'transparent',
     boxShadow: 'none',
+    marginBottom: '1rem',
   },
 
   // Graphical View
@@ -36,10 +37,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: '0.5rem 0.5rem',
     height: '68vh',
     backgroundColor: theme.palette.cards.header,
-  },
-
-  nodesTable: {
-    marginLeft: theme.spacing(-1.5),
   },
 
   infoDashboard: {

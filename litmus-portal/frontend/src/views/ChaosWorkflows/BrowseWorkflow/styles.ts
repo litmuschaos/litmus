@@ -1,6 +1,10 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.background.paper,
+  },
+
   // Header Section Properties
   headerSection: {
     width: '100%',
@@ -51,9 +55,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   // Table and Table Data Properties
-  root: {
-    backgroundColor: theme.palette.background.paper,
-  },
   tableMain: {
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.disabledBackground}`,
@@ -77,51 +78,41 @@ const useStyles = makeStyles((theme) => ({
     '& th': {
       fontWeight: 'bold',
       fontSize: '0.8125rem',
+      color: theme.palette.text.disabled,
       backgroundColor: theme.palette.cards.background,
     },
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
-    color: theme.palette.text.disabled,
   },
+
   workflowName: {
     borderRight: '1px solid rgba(0, 0, 0, 0.1)',
-    color: theme.palette.text.disabled,
+  },
+
+  targetCluster: {
+    paddingLeft: theme.spacing(3.75),
+  },
+
+  tableDataStatus: {
+    paddingLeft: theme.spacing(8.5),
   },
   sortDiv: {
     display: 'flex',
     flexDirection: 'column',
     paddingLeft: theme.spacing(1.25),
   },
-  headData: {
-    color: theme.palette.text.disabled,
-  },
-  tableDataStatus: {
-    paddingLeft: theme.spacing(8.5),
-  },
-  progressBar: {
-    width: '6.5rem',
-    marginTop: theme.spacing(2),
-  },
-  steps: {
-    marginLeft: theme.spacing(5.625),
-  },
+
   workflowNameData: {
     maxWidth: '15.625rem',
     borderRight: '1px solid rgba(0, 0, 0, 0.1)',
   },
-  targetCluster: {
-    paddingLeft: theme.spacing(3.75),
-    color: theme.palette.text.disabled,
-  },
+
   clusterName: {
     marginLeft: theme.spacing(4),
   },
   reliabiltyData: {
-    width: '8.125rem',
-  },
-  stepsData: {
-    paddingLeft: theme.spacing(3.75),
+    width: '12rem',
   },
   optionBtn: {
     marginLeft: 'auto',
@@ -130,15 +121,18 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
   },
-  failed: {
-    color: theme.palette.error.main,
+
+  // Colors for Resilency score and Experiments passed
+  less: {
+    color: theme.palette.status.failed.text,
   },
-  success: {
-    color: theme.palette.success.main,
+  medium: {
+    color: theme.palette.status.pending.text,
   },
-  warning: {
-    color: theme.palette.warning.main,
+  high: {
+    color: theme.palette.status.completed.text,
   },
+
   // Menu option with icon
   expDiv: {
     display: 'flex',
@@ -154,7 +148,19 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.625),
   },
   paddedTypography: {
-    paddingTop: theme.spacing(1.5),
+    display: 'flex',
+    flexDirection: 'row',
+    margin: theme.spacing('auto', 0),
+  },
+  experimentDetails: {
+    display: 'flex',
+  },
+  arrowMargin: {
+    marginLeft: theme.spacing(0.5),
+  },
+  popover: {
+    padding: theme.spacing(3.125, 2.6),
+    width: '15.1875rem',
   },
 }));
 

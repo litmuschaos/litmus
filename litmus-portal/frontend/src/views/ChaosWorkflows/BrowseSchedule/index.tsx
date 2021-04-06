@@ -193,7 +193,7 @@ const BrowseSchedule: React.FC = () => {
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography style={{ paddingLeft: 30, paddingTop: 12 }}>
-                      Schedule Name
+                      Name
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
@@ -226,50 +226,6 @@ const BrowseSchedule: React.FC = () => {
                   </div>
                 </TableCell>
 
-                {/* Starting Date */}
-                <TableCell className={classes.headerStatus}>
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography style={{ paddingTop: 12 }}>
-                      Starting Date
-                    </Typography>
-                    <div className={classes.sortDiv}>
-                      <IconButton
-                        aria-label="sort last run ascending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            ...sortData,
-                            startDate: { sort: true, ascending: true },
-                            name: { sort: false, ascending: true },
-                          })
-                        }
-                      >
-                        <ExpandLessIcon fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="sort last run descending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            ...sortData,
-                            startDate: { sort: true, ascending: false },
-                            name: { sort: false, ascending: true },
-                          })
-                        }
-                      >
-                        <ExpandMoreIcon fontSize="inherit" />
-                      </IconButton>
-                    </div>
-                  </div>
-                </TableCell>
-
-                {/* Regularity */}
-                <TableCell>
-                  <Typography className={classes.regularity}>
-                    Regularity
-                  </Typography>
-                </TableCell>
-
                 {/* Cluster */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
@@ -283,6 +239,19 @@ const BrowseSchedule: React.FC = () => {
                     Show Experiments
                   </Typography>
                 </TableCell>
+
+                {/* Show Schedule Details */}
+                <TableCell>
+                  <Typography className={classes.showExp}>
+                    Show Schedule
+                  </Typography>
+                </TableCell>
+
+                {/* Next Run */}
+                <TableCell>
+                  <Typography className={classes.showExp}>Next Run</Typography>
+                </TableCell>
+
                 <TableCell />
               </TableRow>
             </TableHead>

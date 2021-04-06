@@ -309,7 +309,7 @@ const BrowseWorkflow: React.FC = () => {
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography className={classes.paddedTypography}>
-                      Workflow Name
+                      Name
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
@@ -342,55 +342,29 @@ const BrowseWorkflow: React.FC = () => {
                   </div>
                 </TableCell>
 
-                {/* Target Cluster */}
+                {/* Target Agent */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
-                    Target Cluster
+                    Target Agent
                   </Typography>
                 </TableCell>
 
-                {/* Reliability */}
-                <TableCell className={classes.headData}>
-                  Reliability Details
+                {/* Reliability Details */}
+                <TableCell>
+                  <Typography className={classes.paddedTypography}>
+                    Reliability Details
+                  </Typography>
                 </TableCell>
 
-                {/* No of Experiments */}
-                <TableCell className={classes.headData}>
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography className={classes.paddedTypography}>
-                      # of Steps
-                    </Typography>
-                    <div className={classes.sortDiv}>
-                      <IconButton
-                        aria-label="sort no of steps ascending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            ...sortData,
-                            noOfSteps: { sort: true, ascending: true },
-                          })
-                        }
-                      >
-                        <ExpandLessIcon fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="sort no of steps descending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            ...sortData,
-                            noOfSteps: { sort: true, ascending: false },
-                          })
-                        }
-                      >
-                        <ExpandMoreIcon fontSize="inherit" />
-                      </IconButton>
-                    </div>
-                  </div>
+                {/* Experiments */}
+                <TableCell>
+                  <Typography className={classes.paddedTypography}>
+                    Experiments
+                  </Typography>
                 </TableCell>
 
                 {/* Last Run */}
-                <TableCell className={classes.headData}>
+                <TableCell>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography className={classes.paddedTypography}>
                       Last Run

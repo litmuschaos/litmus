@@ -19,6 +19,7 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
+import parser from 'cron-parser';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
@@ -26,6 +27,7 @@ import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
+import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
@@ -69,6 +71,23 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const handleClose = () => {
     setAnchorEl(null);
     setIsModalOpen(false);
+  };
+
+  // States for PopOver to display schedule details
+  const [
+    popAnchorElSchedule,
+    setPopAnchorElSchedule,
+  ] = React.useState<null | HTMLElement>(null);
+  const isOpenSchedule = Boolean(popAnchorElSchedule);
+  const idSchedule = isOpenSchedule ? 'simple-popover' : undefined;
+  const handlePopOverCloseForSchedule = () => {
+    setPopAnchorElSchedule(null);
+  };
+
+  const handlePopOverClickForSchedule = (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    setPopAnchorElSchedule(event.currentTarget);
   };
 
   // Function to download the manifest
@@ -138,41 +157,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         </Typography>
       </TableCell>
       <TableCell>
-        <Typography className={classes.clusterStartDate}>
-          <span
-            className={
-              YAML.parse(data.workflow_manifest).spec.suspend === true
-                ? classes.dark
-                : ''
-            }
-          >
-            {formatDate(data.created_at)}
-          </span>
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <div className={classes.regularityData}>
-          <div className={classes.expDiv}>
-            <img src="/icons/calender.svg" alt="Calender" />
-            <Typography style={{ paddingLeft: 10 }}>
-              <span
-                className={
-                  YAML.parse(data.workflow_manifest).spec.suspend === true
-                    ? classes.dark
-                    : ''
-                }
-              >
-                {data.cronSyntax === '' ? (
-                  <>{t('chaosWorkflows.browseSchedule.regularityOnce')}</>
-                ) : (
-                  cronstrue.toString(data.cronSyntax)
-                )}
-              </span>
-            </Typography>
-          </div>
-        </div>
-      </TableCell>
-      <TableCell>
         <Typography>
           <span
             className={
@@ -194,25 +178,14 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 : ''
             }
           >
-            {isOpen ? (
-              <div className={classes.expDiv}>
-                <Typography className={classes.expInfoActive}>
-                  <strong>
-                    {t('chaosWorkflows.browseSchedule.showExperiment')}
-                  </strong>
-                </Typography>
-                <KeyboardArrowDownIcon className={classes.expInfoActiveIcon} />
-              </div>
-            ) : (
-              <div className={classes.expDiv}>
-                <Typography className={classes.expInfo}>
-                  <strong>
-                    {t('chaosWorkflows.browseSchedule.showExperiment')}
-                  </strong>
-                </Typography>
-                <ChevronRightIcon />
-              </div>
-            )}
+            <div className={classes.expDiv}>
+              <Typography className={classes.expInfo}>
+                <strong>
+                  {t('chaosWorkflows.browseSchedule.showExperiment')}
+                </strong>
+              </Typography>
+              {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
+            </div>
           </span>
         </Button>
         <Popover
@@ -245,6 +218,88 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             })}
           </div>
         </Popover>
+      </TableCell>
+      <TableCell>
+        <Button
+          onClick={handlePopOverClickForSchedule}
+          style={{ textTransform: 'none' }}
+        >
+          <span
+            className={
+              YAML.parse(data.workflow_manifest).spec.suspend === true
+                ? classes.dark
+                : ''
+            }
+          >
+            <div className={classes.expDiv}>
+              <Typography className={classes.expInfo}>
+                <strong>Show Schedule</strong>
+              </Typography>
+              {isOpenSchedule ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <ChevronRightIcon />
+              )}
+            </div>
+          </span>
+        </Button>
+        <Popover
+          id={idSchedule}
+          open={isOpenSchedule}
+          anchorEl={popAnchorElSchedule}
+          onClose={handlePopOverCloseForSchedule}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          style={{
+            marginTop: 10,
+          }}
+        >
+          <div className={classes.weightDiv}>
+            <Typography className={classes.scheduleDetailsFlex}>
+              <strong>Starting Date:</strong>
+              <span className={classes.scheduleDetailsValue}>
+                {formatDate(data.created_at)}
+              </span>
+            </Typography>
+            <Typography className={classes.scheduleDetailsFlex}>
+              <strong>Last Run:</strong>
+              <span className={classes.scheduleDetailsValue}>
+                {timeDifferenceForDate(data.updated_at)}
+              </span>
+            </Typography>
+            <Typography className={classes.scheduleDetailsFlex}>
+              <strong>Regularity:</strong>
+              <span className={classes.scheduleDetailsValue}>
+                {data.cronSyntax === '' ? (
+                  <>{t('chaosWorkflows.browseSchedule.regularityOnce')}</>
+                ) : (
+                  cronstrue.toString(data.cronSyntax)
+                )}
+              </span>
+            </Typography>
+          </div>
+        </Popover>
+      </TableCell>
+      <TableCell>
+        <span
+          className={
+            YAML.parse(data.workflow_manifest).spec.suspend === true
+              ? classes.dark
+              : ''
+          }
+        >
+          {data.cronSyntax !== '' && (
+            <Typography>
+              {parser.parseExpression(data.cronSyntax).next().toString()}
+            </Typography>
+          )}
+        </span>
       </TableCell>
       <TableCell className={classes.menuCell}>
         <IconButton
