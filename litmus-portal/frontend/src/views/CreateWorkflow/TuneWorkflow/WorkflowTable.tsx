@@ -60,7 +60,7 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
     const expData: ChaosCRDTable[] = [];
     addWeights(manifest);
     parsedYaml.spec.templates.forEach((template: any, index: number) => {
-      if (template.inputs && template.inputs.artifacts !== undefined) {
+      if (template.inputs && template.inputs.artifacts) {
         template.inputs.artifacts.forEach((artifact: any) => {
           const chaosEngine = YAML.parse(artifact.raw.data);
           if (chaosEngine.kind === 'ChaosEngine') {

@@ -44,11 +44,8 @@ import useStyles from './styles';
 import { AceValidations, parseYamlValidations } from './Validations';
 
 interface YamlEditorProps {
-  id?: string;
   content: string;
   filename?: string;
-  yamlLink?: string;
-  description?: string;
   readOnly: boolean;
 }
 

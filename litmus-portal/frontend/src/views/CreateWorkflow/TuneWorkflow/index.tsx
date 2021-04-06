@@ -299,10 +299,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
               onClick={() => {
                 setYAMLModal(true);
               }}
-              className={classes.btn1}
+              className={classes.editBtn}
             >
-              <img src="./icons/viewYAMLicon.svg" alt="view YAML" />{' '}
-              <Width width="0.5rem" /> {t('createWorkflow.tuneWorkflow.view')}
+              <img src="./icons/viewYAMLicon.svg" alt="view YAML" />
+              <Width width="1rem" /> {t('createWorkflow.tuneWorkflow.edit')}
             </ButtonOutlined>
             <Modal
               open={YAMLModal}
@@ -317,7 +317,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
                   }}
                   className={classes.closeBtn}
                 >
-                  &#x2715;
+                  <img src="./icons/cross-disabled.svg" alt="cross" />
                 </ButtonOutlined>
               }
             >
@@ -325,9 +325,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
                 <YamlEditor
                   content={YAML.stringify(generatedYAML)}
                   filename={workflow.name}
-                  yamlLink={workflow.crd}
-                  id=""
-                  description={workflow.description}
                   readOnly={false}
                 />
               </div>
