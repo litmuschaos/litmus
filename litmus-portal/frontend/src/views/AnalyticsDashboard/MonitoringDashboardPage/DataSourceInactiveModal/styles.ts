@@ -7,9 +7,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   modalHeading: {
-    marginTop: theme.spacing(3.5),
+    margin: theme.spacing(3.5, 0, 4.5),
     fontSize: '2.25rem',
-    marginBottom: theme.spacing(4.5),
   },
 
   modalBody: {

@@ -1,8 +1,11 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  DASHBOARD_TYPE_1,
+  DASHBOARD_TYPE_2,
+} from '../../../../pages/MonitoringDashboardPage/constants';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { history } from '../../../../redux/configureStore';
@@ -60,9 +63,9 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
             variant="success"
             onClick={() => {
               let dashboardTemplateID: number = -1;
-              if (dashboardType === 'Kubernetes Platform') {
+              if (dashboardType === DASHBOARD_TYPE_1) {
                 dashboardTemplateID = 0;
-              } else if (dashboardType === 'Sock Shop') {
+              } else if (dashboardType === DASHBOARD_TYPE_2) {
                 dashboardTemplateID = 1;
               }
               dashboard.selectDashboard({

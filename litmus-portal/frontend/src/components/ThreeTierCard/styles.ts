@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   textSection: {
     height: 'fit-content',
     width: '60%',
-    margin: '0 3rem',
+    margin: theme.spacing(0, 6),
     alignSelf: 'center',
     minWidth: '20rem',
   },

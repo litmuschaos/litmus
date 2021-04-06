@@ -1,7 +1,7 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { IconButton, Typography } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
@@ -35,20 +35,19 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
         className={classes.accordionSummary}
         key={`chaos-table-${dashboardKey}`}
       >
-        <div
+        <ButtonFilled
+          className={classes.button}
           onClick={() => {
             setChaosTableOpen(!chaosTableOpen);
           }}
-          onKeyDown={() => {
-            setChaosTableOpen(!chaosTableOpen);
-          }}
-          className={classes.accordionHeader}
+          startIcon={
+            !chaosTableOpen ? (
+              <ArrowDropDownIcon className={classes.tableDropIcon} />
+            ) : (
+              <ArrowDropUpIcon className={classes.tableDropIcon} />
+            )
+          }
         >
-          {!chaosTableOpen ? (
-            <ArrowDropDownIcon className={classes.tableDropIcon} />
-          ) : (
-            <ArrowDropUpIcon className={classes.tableDropIcon} />
-          )}
           <Typography className={classes.chaosHelperText}>
             {!chaosTableOpen
               ? `${t(
@@ -58,7 +57,7 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
                   'analyticsDashboard.monitoringDashboardPage.chaosTable.hideTable'
                 )}`}
           </Typography>
-        </div>
+        </ButtonFilled>
         <IconButton
           aria-label="edit chaos query"
           aria-haspopup="true"

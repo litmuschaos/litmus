@@ -144,7 +144,7 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                 </TableBody>
               </Table>
             </TableContainer>
-            {chaosList.length ? (
+            {chaosList.length > 0 && (
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 component="div"
@@ -154,8 +154,6 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
               />
-            ) : (
-              <div />
             )}
           </Paper>
         </section>

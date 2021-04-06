@@ -1,42 +1,42 @@
 export default [
   {
-    label: 'Every 5 seconds',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every5Seconds',
     value: 5000,
   },
   {
-    label: 'Every 10 seconds',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every10Seconds',
     value: 10000,
   },
   {
-    label: 'Every 30 seconds',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every30Seconds',
     value: 30000,
   },
   {
-    label: 'Every 1 minute',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every1Minute',
     value: 60000,
   },
   {
-    label: 'Every 5 minutes',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every5Minutes',
     value: 300000,
   },
   {
-    label: 'Every 15 minutes',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every15Minutes',
     value: 900000,
   },
   {
-    label: 'Every 30 minutes',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every30Minutes',
     value: 1800000,
   },
   {
-    label: 'Every 1 hour',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every1Hour',
     value: 3600000,
   },
   {
-    label: 'Every 2 hours',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every2Hours',
     value: 7200000,
   },
   {
-    label: 'Every 1 day',
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every1Day',
     value: 86400000,
   },
 ];

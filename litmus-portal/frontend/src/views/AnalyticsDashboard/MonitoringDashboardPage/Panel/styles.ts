@@ -30,8 +30,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-grid',
     gridTemplateColumns: '49% 49%',
     gridGap: theme.spacing(1.75),
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(1.75),
+    padding: theme.spacing(1, 1, 1, 1.75),
   },
 
   expand: {
@@ -62,8 +61,7 @@ const useStyles = makeStyles((theme) => ({
   popOutModal: {
     width: '85%',
     height: '95%',
-    padding: '2rem',
-    paddingLeft: '10%',
+    padding: `${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(4)} 10%`,
   },
 
   wrapperParentIconsTitle: {
@@ -84,8 +82,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'transparent !important',
     cursor: 'pointer',
     display: 'flex',
-    padding: theme.spacing(0.5),
-    paddingBottom: 0,
+    padding: theme.spacing(0.5, 0.5, 0, 0.5),
   },
 }));
 

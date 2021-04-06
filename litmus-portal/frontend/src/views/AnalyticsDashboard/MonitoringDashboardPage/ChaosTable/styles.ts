@@ -66,8 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   checkbox: {
-    paddingLeft: theme.spacing(2.5),
-    paddingTop: theme.spacing(0.5),
+    padding: theme.spacing(0.5, 0, 0, 2.5),
   },
 
   noRecords: {
@@ -103,8 +102,7 @@ const useStyles = makeStyles((theme) => ({
   colorBar: {
     height: '0.45rem',
     width: '2.75rem',
-    marginTop: theme.spacing(0.75),
-    marginLeft: theme.spacing(0.75),
+    margin: theme.spacing(0.75, 0, 0, 0.75),
   },
 }));
 

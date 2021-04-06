@@ -109,14 +109,14 @@ export const getWorkflowRunWiseDetails = (schedule: Workflow) => {
         if (executionData.event_type === 'UPDATE') {
           workflowRunWiseDetailsForSchedule.resilienceScoreForWorkflowRuns[
             runIndex
-          ] = executionData.resiliency_score ?? -1;
+          ] = executionData.resiliency_score ?? NaN;
         } else if (
           executionData.finishedAt.length === 0 ||
           executionData.phase === STATUS_RUNNING
         ) {
           workflowRunWiseDetailsForSchedule.resilienceScoreForWorkflowRuns[
             runIndex
-          ] = -1;
+          ] = NaN;
         }
       } catch (error) {
         console.error(error);

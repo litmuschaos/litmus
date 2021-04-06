@@ -14,6 +14,17 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
 
+  button: {
+    background: 'none',
+    boxShadow: 'none',
+    padding: 0,
+    '&:hover': {
+      background: 'none',
+      boxShadow: 'none',
+      cursor: 'pointer !important',
+    },
+  },
+
   chaosHelperText: {
     fontWeight: 500,
     fontSize: '1rem',
@@ -23,12 +34,7 @@ const useStyles = makeStyles((theme) => ({
   tableDropIcon: {
     width: '1.75rem',
     height: '1.75rem',
-    marginTop: theme.spacing(-0.15),
     color: theme.palette.primary.main,
-  },
-
-  accordionHeader: {
-    display: 'flex',
   },
 
   editIconButton: {
@@ -50,14 +56,19 @@ export const Accordion = withStyles((theme) => ({
       margin: 'auto',
     },
     '& .MuiAccordionSummary-root.Mui-expanded': {
+      cursor: 'default',
       minHeight: '1rem !important',
       height: '2.75rem',
       paddingTop: theme.spacing(0.5),
     },
     '& .MuiAccordionSummary-root': {
+      cursor: 'default',
       minHeight: '1rem !important',
       height: '2.75rem',
       paddingTop: theme.spacing(0.5),
+    },
+    '& .MuiButtonBase-root:hover': {
+      cursor: 'default',
     },
   },
 }))(MuiAccordion);
@@ -68,12 +79,10 @@ export const AccordionSummary = withStyles({
   },
 })(MuiAccordionSummary);
 
-export const StyledAccordionDetails = withStyles({
+export const StyledAccordionDetails = withStyles((theme) => ({
   root: {
-    paddingTop: 0,
-    paddingLeft: 0,
-    paddingRight: 0,
+    padding: theme.spacing(0, 0, 1),
   },
-})(AccordionDetails);
+}))(AccordionDetails);
 
 export default useStyles;

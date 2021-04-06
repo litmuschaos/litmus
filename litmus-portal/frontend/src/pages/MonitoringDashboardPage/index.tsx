@@ -784,7 +784,9 @@ const DashboardPage: React.FC = () => {
                   </IconButton>
                   {!selectedDashboard.range ||
                   selectedDashboard.range.startDate === ' '
-                    ? 'Select Period'
+                    ? `${t(
+                        'analyticsDashboard.monitoringDashboardPage.rangeSelector.selectPeriod'
+                      )}`
                     : `${selectedDashboard.range.startDate.split('-')[0]}-${
                         selectedDashboard.range.startDate.split('-')[1]
                       }-${selectedDashboard.range.startDate.substring(
@@ -905,7 +907,7 @@ const DashboardPage: React.FC = () => {
                           : classes.menuListItem
                       }
                     >
-                      {data.label}
+                      {t(data.label)}
                     </MenuItem>
                   ))}
                 </Select>

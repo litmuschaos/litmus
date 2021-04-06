@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApolloError, useQuery } from '@apollo/client';
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
@@ -41,9 +40,7 @@ interface PrometheusQueryDataInterface {
 }
 
 const PanelContent: React.FC<GraphPanelProps> = ({
-  panel_id,
   panel_name,
-  panel_options,
   prom_queries,
   y_axis_left,
   unit,
@@ -200,113 +197,106 @@ const PanelContent: React.FC<GraphPanelProps> = ({
         viewEventMetric ? classes.expand : ''
       }`}
     >
-      <div>
-        {/* <Typography>panel_id: {panel_id}</Typography>
-          <Typography>
-            panel_options: {JSON.stringify(panel_options)}
-          </Typography>
-          */}
-        <div className={classes.wrapperParentIconsTitle}>
-          <Typography className={classes.title}>{panel_name}</Typography>
-          <div className={classes.wrapperIcons}>
-            {viewEventMetric ? (
-              <Tooltip
-                title={`${t('analyticsDashboard.toolTip.hideChaosMetric')}`}
-              >
-                <IconButton
-                  className={classes.panelIconButton}
-                  onClick={() => {
-                    setViewEventMetric(false);
-                  }}
-                >
-                  <DisableViewChaosMetric className={classes.panelIcon} />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <Tooltip
-                title={`${t('analyticsDashboard.toolTip.viewChaosMetric')}`}
-              >
-                <IconButton
-                  className={classes.panelIconButton}
-                  onClick={() => {
-                    setViewEventMetric(true);
-                  }}
-                >
-                  <ViewChaosMetric className={classes.panelIcon} />
-                </IconButton>
-              </Tooltip>
-            )}
-            <Tooltip title={`${t('analyticsDashboard.toolTip.editPanel')}`}>
-              <IconButton
-                disabled
-                className={classes.panelIconButton}
-                onClick={() => {}}
-              >
-                <Edit className={classes.panelIcon} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={`${t('analyticsDashboard.toolTip.popout')}`}>
+      <div className={classes.wrapperParentIconsTitle}>
+        <Typography className={classes.title}>{panel_name}</Typography>
+        <div className={classes.wrapperIcons}>
+          {viewEventMetric ? (
+            <Tooltip
+              title={`${t('analyticsDashboard.toolTip.hideChaosMetric')}`}
+            >
               <IconButton
                 className={classes.panelIconButton}
                 onClick={() => {
-                  setPopout(true);
+                  setViewEventMetric(false);
                 }}
               >
-                <Expand className={classes.panelIcon} />
+                <DisableViewChaosMetric className={classes.panelIcon} />
               </IconButton>
             </Tooltip>
+          ) : (
+            <Tooltip
+              title={`${t('analyticsDashboard.toolTip.viewChaosMetric')}`}
+            >
+              <IconButton
+                className={classes.panelIconButton}
+                onClick={() => {
+                  setViewEventMetric(true);
+                }}
+              >
+                <ViewChaosMetric className={classes.panelIcon} />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title={`${t('analyticsDashboard.toolTip.editPanel')}`}>
+            <IconButton
+              disabled
+              className={classes.panelIconButton}
+              onClick={() => {}}
+            >
+              <Edit className={classes.panelIcon} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={`${t('analyticsDashboard.toolTip.popout')}`}>
+            <IconButton
+              className={classes.panelIconButton}
+              onClick={() => {
+                setPopout(true);
+              }}
+            >
+              <Expand className={classes.panelIcon} />
+            </IconButton>
+          </Tooltip>
+        </div>
+      </div>
+      <div>
+        <Modal
+          open={popout}
+          onClose={() => setPopout(false)}
+          disableBackdropClick
+          disableEscapeKeyDown
+          modalActions={
+            <ButtonOutlined onClick={() => setPopout(false)}>
+              &#x2715;
+            </ButtonOutlined>
+          }
+          height="95% !important"
+          width="95%"
+        >
+          <div className={classes.popOutModal}>
+            <Typography className={classes.title}>{panel_name}</Typography>
+            <LineAreaGraph
+              legendTableHeight={120}
+              openSeries={graphData}
+              eventSeries={chaos_data}
+              showPoints={false}
+              showLegendTable
+              showEventTable
+              showTips
+              showEventMarkers
+              marginLeftEventTable={10}
+              unit={unit}
+              yLabel={y_axis_left}
+              yLabelOffset={55}
+              margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
+            />
           </div>
-        </div>
-        <div>
-          <Modal
-            open={popout}
-            onClose={() => setPopout(false)}
-            disableBackdropClick
-            disableEscapeKeyDown
-            modalActions={
-              <ButtonOutlined onClick={() => setPopout(false)}>
-                &#x2715;
-              </ButtonOutlined>
-            }
-            height="95% !important"
-            width="95%"
-          >
-            <div className={classes.popOutModal}>
-              <Typography className={classes.title}>{panel_name}</Typography>
-              <LineAreaGraph
-                legendTableHeight={120}
-                openSeries={graphData}
-                eventSeries={chaos_data}
-                showPoints={false}
-                showLegendTable
-                showEventTable
-                showTips
-                showEventMarkers
-                marginLeftEventTable={10}
-                unit={unit}
-                yLabel={y_axis_left}
-                yLabelOffset={55}
-                margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
-              />
-            </div>
-          </Modal>
-        </div>
-        <div className={classes.singleGraph}>
-          <LineAreaGraph
-            legendTableHeight={120}
-            openSeries={graphData}
-            eventSeries={chaos_data}
-            showPoints={false}
-            showEventTable={viewEventMetric}
-            showLegendTable
-            showTips
-            showEventMarkers
-            unit={unit}
-            yLabel={y_axis_left}
-            yLabelOffset={55}
-            margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
-          />
-        </div>
+        </Modal>
+      </div>
+      <div className={classes.singleGraph}>
+        <LineAreaGraph
+          legendTableHeight={120}
+          openSeries={graphData}
+          eventSeries={chaos_data}
+          showPoints={false}
+          showEventTable={viewEventMetric}
+          showLegendTable
+          showTips
+          showEventMarkers
+          unit={unit}
+          yLabel={y_axis_left}
+          yLabelOffset={55}
+          margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
+        />
       </div>
     </div>
   );

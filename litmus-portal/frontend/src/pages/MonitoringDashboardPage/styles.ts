@@ -29,8 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   analyticsDiv: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(2),
+    padding: theme.spacing(1, 0, 2),
     backgroundColor: theme.palette.background.paper,
     minHeight: '26rem',
   },
