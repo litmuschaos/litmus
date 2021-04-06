@@ -1,5 +1,4 @@
-import MuiAccordion from '@material-ui/core/Accordion';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   rootPanel: {
@@ -85,29 +84,5 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.5, 0.5, 0, 0.5),
   },
 }));
-
-export const Accordion = withStyles({
-  root: {
-    border: 0,
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
-    '&:before': {
-      display: 'none',
-    },
-    '&$expanded': {
-      margin: 'auto',
-    },
-    '& .MuiAccordionSummary-root.Mui-expanded': {
-      minHeight: '1rem !important',
-      height: '2.5rem',
-    },
-    '& .MuiAccordionSummary-root': {
-      minHeight: '1rem !important',
-      height: '2.5rem',
-    },
-  },
-})(MuiAccordion);
 
 export default useStyles;

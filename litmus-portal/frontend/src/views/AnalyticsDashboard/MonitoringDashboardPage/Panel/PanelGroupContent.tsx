@@ -1,4 +1,5 @@
-import { Typography } from '@material-ui/core';
+import { Typography, withStyles } from '@material-ui/core';
+import MuiAccordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -6,7 +7,31 @@ import React from 'react';
 import { EventMetric } from '../../../../models/dashboardsData';
 import { PanelResponse } from '../../../../models/graphql/dashboardsDetails';
 import GraphPanel from './GraphPanel';
-import useStyles, { Accordion } from './styles';
+import useStyles from './styles';
+
+const Accordion = withStyles({
+  root: {
+    border: 0,
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+    '& .MuiAccordionSummary-root.Mui-expanded': {
+      minHeight: '1rem !important',
+      height: '2.5rem',
+    },
+    '& .MuiAccordionSummary-root': {
+      minHeight: '1rem !important',
+      height: '2.5rem',
+    },
+  },
+})(MuiAccordion);
 
 interface DashboardPanelGroupContentProps {
   panels: PanelResponse[];

@@ -1,4 +1,7 @@
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography, withStyles } from '@material-ui/core';
+import MuiAccordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { ButtonFilled } from 'litmus-ui';
@@ -6,11 +9,50 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
 import ChaosTable from '../ChaosTable';
-import useStyles, {
-  Accordion,
-  AccordionSummary,
-  StyledAccordionDetails,
-} from './styles';
+import useStyles from './styles';
+
+const Accordion = withStyles((theme) => ({
+  root: {
+    border: 0,
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+    '& .MuiAccordionSummary-root.Mui-expanded': {
+      cursor: 'default',
+      minHeight: '1rem !important',
+      height: '2.75rem',
+      paddingTop: theme.spacing(0.5),
+    },
+    '& .MuiAccordionSummary-root': {
+      cursor: 'default',
+      minHeight: '1rem !important',
+      height: '2.75rem',
+      paddingTop: theme.spacing(0.5),
+    },
+    '& .MuiButtonBase-root:hover': {
+      cursor: 'default',
+    },
+  },
+}))(MuiAccordion);
+
+const AccordionSummary = withStyles({
+  content: {
+    flexGrow: 0,
+  },
+})(MuiAccordionSummary);
+
+const StyledAccordionDetails = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(0, 0, 1),
+  },
+}))(AccordionDetails);
 
 interface ChaosAccordionProps {
   dashboardKey: string;
