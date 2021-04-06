@@ -167,7 +167,10 @@ const getRunWiseChaosMetrics = (
           probeSuccessPercentage: `${selectedChaosData.probeSuccessPercentage}%`,
           experimentStatus: selectedChaosData.experimentStatus,
           experimentVerdict: selectedChaosData.experimentVerdict,
-          resilienceScore: `${resilienceScoreForWorkflowRuns[runIndex]}%`,
+          resilienceScore: `${
+            resilienceScoreForWorkflowRuns[runIndex] +
+            (Number.isNaN(resilienceScoreForWorkflowRuns[runIndex]) ? '' : '%')
+          }`,
           workflowStatus: statusOfWorkflowRuns[runIndex],
         });
       } catch (error) {
