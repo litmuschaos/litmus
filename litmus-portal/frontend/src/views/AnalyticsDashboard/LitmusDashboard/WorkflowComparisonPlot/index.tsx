@@ -11,8 +11,8 @@ import moment from 'moment';
 import Plotly from 'plotly.js';
 import React, { useEffect } from 'react';
 import createPlotlyComponent from 'react-plotly.js/factory';
-import Score from './Score';
 import { selectorOptions } from '../../../../utils/selectorOptions';
+import Score from './Score';
 import useStyles, { useOutlinedInputStyles } from './style';
 
 const Plot = createPlotlyComponent(Plotly);
@@ -257,7 +257,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         color: palette.primary.main,
         width: 3,
       },
-      name: 'AVG Workflows',
+      name: 'Average Workflows',
     };
     data.push(avgResult);
     const normalized = Array(labels?.length).fill(0);
