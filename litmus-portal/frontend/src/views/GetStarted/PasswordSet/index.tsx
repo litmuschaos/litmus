@@ -84,7 +84,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
           value={values.confirmPassword}
           helperText={
             validateConfirmPassword(values.password, values.confirmPassword)
-              ? 'Password is not same'
+              ? t('settings.accountsTab.accountsSettings.passwordNotSame')
               : ''
           }
           filled

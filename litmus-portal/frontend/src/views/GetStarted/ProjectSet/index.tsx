@@ -151,7 +151,9 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
           filled
           helperText={
             validateStartEmptySpacing(projectName)
-              ? 'Should not start with an empty space'
+              ? t(
+                  'settings.userManagementTab.createUser.userDetails.validationEmptySpace'
+                )
               : ''
           }
           required

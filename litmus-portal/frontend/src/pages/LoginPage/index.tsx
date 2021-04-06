@@ -86,7 +86,9 @@ const LoginPage: React.FC = () => {
                 value={authData.username}
                 helperText={
                   validateStartEmptySpacing(authData.username)
-                    ? 'Should not start with an empty space'
+                    ? t(
+                        'settings.userManagementTab.createUser.userDetails.validationEmptySpace'
+                      )
                     : ''
                 }
                 filled
@@ -103,11 +105,7 @@ const LoginPage: React.FC = () => {
                 type="password"
                 required
                 value={authData.password}
-                helperText={
-                  isError
-                    ? 'Wrong Credentials - Try again with correct username or password'
-                    : ''
-                }
+                helperText={isError ? t('login.wrongCredentials') : ''}
                 filled
                 onChange={(e) =>
                   setAuthData({
