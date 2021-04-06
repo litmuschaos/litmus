@@ -13,6 +13,7 @@ import {
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
+import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { isValidWebUrl, validateTimeInSeconds } from '../../utils/validate';
 import ConfigurePrometheus from '../../views/AnalyticsDashboard/DataSource/Forms/prometheus';
 import useStyles from './styles';
@@ -31,9 +32,8 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
   const selectedDataSourceName = useSelector(
     (state: RootState) => state.selectDataSource.selectedDataSourceName
   );
-  const projectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const [open, setOpen] = React.useState(false);
   const [disabled, setDisabled] = React.useState(true);
   const [dataSourceVars, setDataSourceVars] = useState<DataSourceDetails>({
@@ -282,7 +282,12 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
           {success === true ? (
             <ButtonFilled
               variant="success"
-              onClick={() => history.push('/analytics')}
+              onClick={() => {
+                history.push({
+                  pathname: '/analytics',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
+              }}
             >
               <div>Back to Data Source</div>
             </ButtonFilled>
@@ -300,7 +305,12 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
 
               <ButtonFilled
                 variant="error"
-                onClick={() => history.push('/analytics')}
+                onClick={() => {
+                  history.push({
+                    pathname: '/analytics',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
+                }}
               >
                 <div>Back to Data Source</div>
               </ButtonFilled>

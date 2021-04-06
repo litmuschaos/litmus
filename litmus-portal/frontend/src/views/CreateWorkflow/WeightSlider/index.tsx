@@ -1,110 +1,88 @@
 import Slider from '@material-ui/core/Slider';
-import { Theme, withStyles } from '@material-ui/core/styles';
+import { Theme, useTheme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import useStyles from './styles';
 
 const PrettoSlider = withStyles((theme: Theme) => ({
   root: {
-    background: 'transparent',
-    height: '0.5rem',
-  },
-  track: {
-    background:
-      'linear-gradient(90deg, #5B44BA 0%, #858CDD 49.48%, #109B67 100%)',
-    height: '2.374rem',
-    borderRadius: 4,
-    borderTopRightRadius: 13,
-    borderBottomRightRadius: 13,
-    '&[style="left: 0%; width: 100%;"]': {
-      borderTopRightRadius: 4,
-      borderBottomRightRadius: 4,
-    },
+    color: '#52af77',
+    height: 8,
   },
   thumb: {
-    opacity: 0,
-  },
-  mark: {
-    marginLeft: theme.spacing(-0.85),
-    paddingTop: theme.spacing(0.225),
-    backgroundImage: `url(${'./icons/arrow.svg'})`,
-    backgroundColor: 'transparent',
-    '&[data-index="9"]': {
-      background: 'transparent',
+    height: 24,
+    width: 24,
+    backgroundColor: 'currentColor',
+    border: '2px solid currentColor',
+    marginTop: -8,
+    marginLeft: -12,
+    '&:focus, &:hover, &$active': {
+      boxShadow: 'inherit',
     },
-    backgroundSize: 'cover',
-    height: '2.4375rem',
-    width: '0.75rem',
-    marginTop: theme.spacing(-0.25),
   },
-  markActive: {
-    backgroundImage: `url(${'./icons/arrow.svg'})`,
-    background: 'transparent',
-    opacity: 1,
+  active: {},
+  valueLabel: {
+    left: 'calc(-50% + 4px)',
   },
-  rail: {
-    height: '2.375rem',
-    background: '#C9C9CA',
+  track: {
+    height: 8,
     borderRadius: 4,
   },
-  valueLabel: {
-    top: -22,
-    '& *': {
+  rail: {
+    height: 8,
+    borderRadius: 4,
+  },
+  mark: {
+    opacity: 0.2,
+    height: 20,
+    marginTop: -5,
+    backgroundColor: theme.palette.common.black,
+    '&[data-index="0"]': {
       background: 'transparent',
-      color: theme.palette.background.paper,
+    },
+    '&[data-index="10"]': {
+      background: 'transparent',
     },
   },
   markLabel: {
-    fontFamily: 'Ubuntu',
-    fontSize: '0.9375rem',
-    marginTop: theme.spacing(-0.625),
-    marginLeft: '-5%',
-    color: 'black',
-    opacity: 0.4,
-  },
-  markLabelActive: {
-    fontFamily: 'Ubuntu',
-    fontSize: '0.9375rem',
-    color: theme.palette.background.paper,
-    opacity: 1,
+    marginTop: 10,
+    '&[data-index="10"]': {
+      color: 'black',
+    },
   },
 }))(Slider);
+
 const marks = [
   {
+    value: 0,
+    label: '0',
+  },
+  {
     value: 1,
-    label: '1',
   },
   {
     value: 2,
-    label: '2',
   },
   {
     value: 3,
-    label: '3',
   },
   {
     value: 4,
-    label: '4',
   },
   {
     value: 5,
-    label: '5',
   },
   {
     value: 6,
-    label: '6',
   },
   {
     value: 7,
-    label: '7',
   },
   {
     value: 8,
-    label: '8',
   },
   {
     value: 9,
-    label: '9',
   },
   {
     value: 10,
@@ -124,6 +102,7 @@ const WeightSlider: React.FC<CustomSliderProps> = ({
   handleChange,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
   return (
     <div className="App" data-cy="ExperimentWeightSlider">
       <div className={classes.mainDiv}>
@@ -142,6 +121,16 @@ const WeightSlider: React.FC<CustomSliderProps> = ({
           max={10}
           valueLabelDisplay="auto"
           marks={marks}
+          style={{
+            color:
+              weight < 3
+                ? theme.palette.error.main
+                : weight > 3 && weight <= 6
+                ? theme.palette.warning.main
+                : weight > 6
+                ? theme.palette.success.main
+                : theme.palette.error.main,
+          }}
           onChange={(event, value) => {
             handleChange(value as any, index);
           }}

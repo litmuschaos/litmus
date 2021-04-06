@@ -7,7 +7,6 @@ ADD . /subscriber
 WORKDIR /subscriber
 RUN CGO_ENABLED=0 go build -o /output/subscriber -v
 
-
 # DEPLOY STAGE
 FROM alpine:3.12.0
 

@@ -2,11 +2,12 @@ package events
 
 import (
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/logs"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/logs"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"

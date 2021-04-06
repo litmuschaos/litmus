@@ -177,7 +177,7 @@ const useStyles = makeStyles((theme) => ({
   weightInfo: {
     display: 'flex',
     flexDirection: 'row',
-    paddingBottom: theme.spacing(0.625),
+    paddingBottom: theme.spacing(1),
   },
   points: {
     marginLeft: 'auto',

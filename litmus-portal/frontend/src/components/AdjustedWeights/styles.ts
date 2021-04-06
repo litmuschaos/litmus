@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  progressbarDiv: {
+    marginRight: theme.spacing(1.25),
+  },
 }));
 
 export default useStyles;

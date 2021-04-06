@@ -28,10 +28,10 @@ const ErrorPage = () => {
                 {t('error.pageDoesNotExist')}
               </Typography>
               <Button
-                onClick={() => history.push('/')}
+                onClick={() => history.goBack()}
                 className={classes.backBtn}
               >
-                {t('error.backHome')}
+                {t('error.goBack')}
               </Button>
             </div>
             <div className={classes.imgDiv}>

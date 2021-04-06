@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-loop-func */
-/* eslint-disable no-console */
 import { useQuery } from '@apollo/client';
 import {
   IconButton,
@@ -22,7 +21,6 @@ import * as _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
 import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
 import {
@@ -32,7 +30,7 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../../models/graphql/workflowListData';
-import { RootState } from '../../../../redux/reducers';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -129,15 +127,15 @@ const WorkflowComparisonTable = () => {
     totalValidWorkflowRunsCount,
     setTotalValidWorkflowRunsCount,
   ] = React.useState<number>(0);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+
+  const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
   const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID, workflowIDs: [] },
+      variables: { projectID, workflowIDs: [] },
+      fetchPolicy: 'cache-and-network',
     }
   );
 
@@ -356,7 +354,7 @@ const WorkflowComparisonTable = () => {
           timeSeriesArray.push(workflowTimeSeriesData);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     });
 
@@ -542,7 +540,7 @@ const WorkflowComparisonTable = () => {
             showHead: 'firstPage',
           });
         } catch (err) {
-          console.log(err);
+          console.error(err);
         }
         doc.addPage();
         doc.addImage(

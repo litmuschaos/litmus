@@ -1,5 +1,5 @@
 import { IconButton } from '@material-ui/core';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Invite from './Invite';
@@ -22,9 +22,9 @@ const InviteNew: React.FC<InviteNewProps> = ({
   return (
     <div data-cy="inviteNewMemberButton">
       <div className={classes.button}>
-        <ButtonOutlined onClick={handleOpen} disabled={false}>
+        <ButtonFilled onClick={handleOpen}>
           <div>{t('settings.teamingTab.inviteNew.header')}</div>
-        </ButtonOutlined>
+        </ButtonFilled>
       </div>
 
       <Modal

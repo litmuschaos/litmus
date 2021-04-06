@@ -1,513 +1,218 @@
-import { useMutation } from '@apollo/client';
-import Step from '@material-ui/core/Step';
-import { StepIconProps } from '@material-ui/core/StepIcon';
-import StepLabel from '@material-ui/core/StepLabel';
-import Stepper from '@material-ui/core/Stepper';
+import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
-import { Modal, ButtonOutlined, ButtonFilled } from 'litmus-ui';
-import React from 'react';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import localforage from 'localforage';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import YAML from 'yaml';
-import { CREATE_WORKFLOW } from '../../graphql';
-import {
-  CreateWorkFlowInput,
-  CreateWorkflowResponse,
-  WeightMap,
-} from '../../models/graphql/createWorkflowData';
-import { experimentMap, WorkflowData } from '../../models/redux/workflow';
+import Row from '../../containers/layouts/Row';
 import useActions from '../../redux/actions';
-import * as TabActions from '../../redux/actions/tabs';
-import * as TemplateSelectionActions from '../../redux/actions/template';
-import * as WorkflowActions from '../../redux/actions/workflow';
-import { history } from '../../redux/configureStore';
+import * as AlertActions from '../../redux/actions/alert';
 import { RootState } from '../../redux/reducers';
-import { validateWorkflowName } from '../../utils/validate';
-import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
-import parsed from '../../utils/yamlUtils';
+import ChooseAWorkflowAgent from '../../views/CreateWorkflow/ChooseAWorkflowAgent';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
 import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
 import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
 import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
-import ChooseAWorkflowCluster from '../../views/CreateWorkflow/WorkflowCluster';
-
-import ButtonOutline from '../Button/ButtonOutline';
-import Loader from '../Loader';
-import QontoConnector from './quontoConnector';
+import WorkflowSettings from '../../views/CreateWorkflow/WorkflowSettings';
+import { LitmusStepper } from '../LitmusStepper';
 import useStyles from './styles';
-import useQontoStepIconStyles from './useQontoStepIconStyles';
 
-function getSteps(): string[] {
-  return [
-    'Target Cluster',
-    'Choose a workflow',
-    'Tune workflow',
-    'Reliability score',
-    'Schedule',
-    'Verify and Commit',
-  ];
+interface ControlButtonProps {
+  position: string;
 }
 
-function QontoStepIcon(props: StepIconProps) {
-  const classes = useQontoStepIconStyles();
-  const { active, completed } = props;
+interface ChildRef {
+  onNext: () => void;
+}
 
-  if (completed) {
-    return (
-      <div
-        className={`${classes.root} ${
-          active ? classes.active : classes.completed
-        }`}
-      >
-        <img src="./icons/NotPass.png" alt="Not Completed Icon" />
-      </div>
-    );
-  }
-  if (active) {
-    return (
-      <div
-        className={`${classes.root} ${
-          active ? classes.active : classes.completed
-        }`}
-      >
-        <div className={classes.circle} />
-      </div>
-    );
-  }
+interface AlertBoxProps {
+  message: string;
+}
 
-  return (
-    <div
-      className={`${classes.root} ${
-        active ? classes.active : classes.completed
-      }`}
-    >
-      {/* <img src="./icons/workflowNotActive.svg" /> */}
-      <div className={classes.outerCircle}>
-        <div className={classes.innerCircle} />
-      </div>
-    </div>
-  );
+const steps: string[] = [
+  'Choose Agent',
+  'Choose a workflow',
+  'Workflow Settings',
+  'Tune workflow',
+  'Reliability score',
+  'Schedule',
+  'Verify and Commit',
+];
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 function getStepContent(
   stepIndex: number,
-  gotoStep: (page: number) => void
+  childRef: React.MutableRefObject<ChildRef | undefined>
 ): React.ReactNode {
   switch (stepIndex) {
     case 0:
-      return (
-        <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
-      );
+      return <ChooseAWorkflowAgent ref={childRef} />;
     case 1:
-      return <ChooseWorkflow isEditable />;
+      return <ChooseWorkflow ref={childRef} />;
     case 2:
-      return <TuneWorkflow />;
+      return <WorkflowSettings ref={childRef} />;
     case 3:
-      return <ReliablityScore />;
+      return <TuneWorkflow ref={childRef} />;
     case 4:
-      return <ScheduleWorkflow />;
+      return <ReliablityScore ref={childRef} />;
     case 5:
-      return (
-        <VerifyCommit isEditable gotoStep={(page: number) => gotoStep(page)} />
-      );
+      return <ScheduleWorkflow ref={childRef} />;
+    case 6:
+      return <VerifyCommit ref={childRef} />;
     default:
-      return (
-        <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
-      );
+      return <ChooseAWorkflowAgent ref={childRef} />;
   }
 }
 
-const CustomStepper = () => {
+const WorkflowStepper = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const template = useActions(TemplateSelectionActions);
-  const workflowData: WorkflowData = useSelector(
-    (state: RootState) => state.workflowData
+  const childRef = useRef<ChildRef>();
+
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [proceed, shouldProceed] = React.useState<boolean>(false);
+
+  const isAlertOpen = useSelector(
+    (state: RootState) => state.alert.isAlertOpen
   );
-  const {
-    yaml,
-    weights,
-    description,
-    isCustomWorkflow,
-    cronSyntax,
-    name,
-    clusterid,
-    scheduleType,
-  } = workflowData;
+  const alert = useActions(AlertActions);
 
-  const defaultStep = isCustomWorkflow ? 2 : 0;
+  useEffect(() => {
+    localforage
+      .getItem('selectedScheduleOption')
+      .then((value) => (value ? shouldProceed(true) : shouldProceed(false)));
+  }, [proceed]);
 
-  const [activeStep, setActiveStep] = React.useState(defaultStep);
-
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
-  const isDisable = useSelector(
-    (state: RootState) => state.selectTemplate.isDisable
-  );
-  const userRole = useSelector((state: RootState) => state.userData.userRole);
-  const tabs = useActions(TabActions);
-  const workflow = useActions(WorkflowActions);
-  const [invalidYaml, setinValidYaml] = React.useState(false);
-  const steps = getSteps();
-  const scheduleOnce = workflowOnce;
-  const scheduleMore = cronWorkflow;
-
-  function EditYaml() {
-    const oldParsedYaml = YAML.parse(yaml);
-    const NewLink: string = ' ';
-    if (
-      oldParsedYaml.kind === 'Workflow' &&
-      scheduleType.scheduleOnce !== 'now'
-    ) {
-      const oldParsedYaml = YAML.parse(yaml);
-      const newParsedYaml = YAML.parse(scheduleMore);
-      delete newParsedYaml.spec.workflowSpec;
-      newParsedYaml.spec.schedule = cronSyntax;
-      delete newParsedYaml.metadata.generateName;
-      newParsedYaml.metadata.name = workflowData.name;
-      newParsedYaml.metadata.namespace = workflowData.namespace;
-      newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
-      const timeZone = {
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-      };
-      Object.entries(timeZone).forEach(([key, value]) => {
-        newParsedYaml.spec[key] = value;
-      });
-      const NewYaml = YAML.stringify(newParsedYaml);
-      workflow.setWorkflowDetails({
-        link: NewLink,
-        yaml: NewYaml,
-      });
-    }
-    if (
-      oldParsedYaml.kind === 'CronWorkflow' &&
-      scheduleType.scheduleOnce === 'now'
-    ) {
-      const oldParsedYaml = YAML.parse(yaml);
-      const newParsedYaml = YAML.parse(scheduleOnce);
-      delete newParsedYaml.spec;
-      delete newParsedYaml.metadata.generateName;
-      newParsedYaml.metadata.name = workflowData.name;
-      newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
-      newParsedYaml.metadata.namespace = workflowData.namespace;
-      const NewYaml = YAML.stringify(newParsedYaml);
-      workflow.setWorkflowDetails({
-        link: NewLink,
-        yaml: NewYaml,
-      });
-    }
-    if (
-      oldParsedYaml.kind === 'CronWorkflow' &&
-      scheduleType.scheduleOnce !== 'now'
-    ) {
-      const newParsedYaml = YAML.parse(yaml);
-      newParsedYaml.spec.schedule = cronSyntax;
-      delete newParsedYaml.metadata.generateName;
-      newParsedYaml.metadata.name = workflowData.name;
-      newParsedYaml.metadata.namespace = workflowData.namespace;
-      const timeZone = {
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-      };
-      Object.entries(timeZone).forEach(([key, value]) => {
-        newParsedYaml.spec[key] = value;
-      });
-      const NewYaml = YAML.stringify(newParsedYaml);
-      workflow.setWorkflowDetails({
-        link: NewLink,
-        yaml: NewYaml,
-      });
-    }
-  }
+  // } else if (activeStep === 1 && !proceed) {
+  //   // If none of the workflow options (Choose Predefined, Create Custom,  ..)
+  //   // are selected then do not proceed
+  //   setIsAlertOpen(true);
+  // } else {
 
   const handleNext = () => {
-    if (activeStep === 2) {
-      const tests = parsed(yaml);
-      const arr: experimentMap[] = [];
-      const hashMap = new Map();
-      weights.forEach((weight) => {
-        hashMap.set(weight.experimentName, weight.weight);
-      });
-      tests.forEach((test) => {
-        let value = 10;
-        if (hashMap.has(test)) {
-          value = hashMap.get(test);
-        }
-        arr.push({ experimentName: test, weight: value });
-      });
-      if (arr.length === 0) {
-        setinValidYaml(true);
-      } else {
-        const yamlData = YAML.parse(yaml);
-        workflow.setWorkflowDetails({
-          namespace: yamlData.metadata.namespace,
-          weights: arr,
-        });
-        setinValidYaml(false);
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      }
-    } else if (activeStep === 4) {
-      EditYaml();
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    } else {
+    if (childRef.current && childRef.current.onNext()) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
-  const [open, setOpen] = React.useState(false);
-  const [errorModal, setErrorModal] = React.useState(false);
-
   const handleBack = () => {
-    if (activeStep === 2) {
-      setinValidYaml(false);
-    } else if (activeStep === 4 && isDisable === true) {
-      template.selectTemplate({ isDisable: false });
-    }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow, { error: workflowError, loading }] = useMutation<
-    CreateWorkflowResponse,
-    CreateWorkFlowInput
-  >(CREATE_WORKFLOW, {
-    onError: () => {
-      setErrorModal(true);
-    },
-    onCompleted: () => {
-      setOpen(true);
-    },
-  });
+  /** 
+    Control Buttons
+    ------------------------------------------------------------------------------
+    When active step is zero (First Step) there won't be a Back button
+    When active step is the last step in the stepper the button will change to Finish
+    All steps in the middle will have next and back buttons
+  * */
 
-  const handleMutation = () => {
-    if (name.length !== 0 && description.length !== 0 && weights.length !== 0) {
-      const weightData: WeightMap[] = [];
-
-      weights.forEach((data) => {
-        weightData.push({
-          experiment_name: data.experimentName,
-          weightage: data.weight,
-        });
-      });
-
-      /* JSON.stringify takes 3 parameters [object to be converted,
-      a function to alter the conversion, spaces to be shown in final result for indentation ] */
-      const yml = YAML.parse(yaml);
-      const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
-
-      const chaosWorkFlowInputs = {
-        workflow_manifest: yamlJson,
-        cronSyntax,
-        workflow_name: name,
-        workflow_description: description,
-        isCustomWorkflow,
-        weightages: weightData,
-        project_id: selectedProjectID,
-        cluster_id: clusterid,
-      };
-      createChaosWorkFlow({
-        variables: { ChaosWorkFlowInput: chaosWorkFlowInputs },
-      });
-    }
-  };
-
-  const handleOpen = () => {
-    handleMutation();
-  };
-
-  const handleClose = () => {
-    history.push('/workflows');
-    setOpen(false);
-  };
-
-  const handleErrorModalClose = () => {
-    setErrorModal(false);
-  };
-
-  function gotoStep({ page }: { page: number }) {
-    setActiveStep(page);
-  }
-
-  // Check correct permissions for user
-  if (userRole === 'Viewer')
+  const ControlButton: React.FC<ControlButtonProps> = ({ position }) => {
     return (
       <>
-        <Typography
-          variant="h3"
-          align="center"
-          style={{ marginTop: '10rem', marginBottom: '3rem' }}
-        >
-          Missing sufficient permissions :(
-        </Typography>
-        <Typography variant="h6" align="center">
-          Looks like you do not have the required permission to create a new
-          workflow on this project.
-        </Typography>
-        <br />
-        <Typography variant="body1" align="center">
-          Contact portal administrator to upgrade your permission.
-        </Typography>
-
-        {/* Back Button */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '1rem',
-          }}
-        >
-          <ButtonFilled onClick={() => history.goBack()}>Go Back</ButtonFilled>
-        </div>
+        {activeStep === 0 && position === 'top' ? ( // Only show Next button at Top for Step 0
+          <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
+        ) : activeStep === 0 && position !== 'top' ? ( // Don't show Next button at Bottom for Step 0
+          <></>
+        ) : activeStep === 1 &&
+          window.screen.height < 1080 &&
+          position !== 'top' ? (
+          <></>
+        ) : activeStep === steps.length - 1 ? ( // Show Finish button at Bottom for Last Step
+          <ButtonFilled onClick={() => handleNext()}>Finish</ButtonFilled>
+        ) : position === 'top' ? ( // Apply headerButtonWrapper style for top button's div
+          <div className={classes.headerButtonWrapper} aria-label="buttons">
+            <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
+            <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
+          </div>
+        ) : (
+          // Apply bottomButtonWrapper style for top button's div
+          <div className={classes.bottomButtonWrapper} aria-label="buttons">
+            <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
+            <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
+          </div>
+        )}
       </>
     );
+  };
+
+  /** 
+    Alert
+    ------------------------------------------------------------------------------
+    Displays a snackbar with the appropriate message whenever a condition is not satisfied
+  * */
+
+  const AlertBox: React.FC<AlertBoxProps> = ({ message }) => {
+    return (
+      <div>
+        {isAlertOpen ? (
+          <Snackbar
+            open={isAlertOpen}
+            autoHideDuration={6000}
+            onClose={() => alert.changeAlertState(false)}
+          >
+            <Alert
+              onClose={() => alert.changeAlertState(false)}
+              severity="error"
+            >
+              {message}
+            </Alert>
+          </Snackbar>
+        ) : (
+          <></>
+        )}
+      </div>
+    );
+  };
+
+  function getAlertMessage(stepNumber: number) {
+    switch (stepNumber) {
+      case 0:
+        return t(`workflowStepper.step1.errorSnackbar`);
+      case 1:
+        return t(`workflowStepper.step2.errorSnackbar`);
+      case 2:
+        return t(`workflowStepper.step3.errorSnackbar`);
+      case 3:
+        return t(`workflowStepper.step4.errorSnackbar`);
+      default:
+        return '';
+    }
+  }
 
   return (
     <div className={classes.root}>
-      <Stepper
-        activeStep={activeStep}
-        connector={<QontoConnector />}
-        className={classes.stepper}
-        alternativeLabel
-      >
-        {steps.map((label, i) => (
-          <Step key={label}>
-            {activeStep === i ? (
-              <StepLabel StepIconComponent={QontoStepIcon}>
-                <div className={classes.activeLabel} data-cy="labelText">
-                  {label}
-                </div>
-              </StepLabel>
-            ) : (
-              <StepLabel StepIconComponent={QontoStepIcon}>
-                <div className={classes.normalLabel} data-cy="labelText">
-                  {label}
-                </div>
-              </StepLabel>
-            )}
-          </Step>
-        ))}
-      </Stepper>
-      <div>
-        <div>
-          <div>
-            <Modal
-              data-cy="FinishModal"
-              open={open}
-              onClose={handleClose}
-              width="60%"
-              aria-labelledby="simple-modal-title"
-              aria-describedby="simple-modal-description"
-              modalActions={
-                <div data-cy="GoToWorkflowButton">
-                  <ButtonOutlined onClick={handleClose}>
-                    &#x2715;
-                  </ButtonOutlined>
-                </div>
-              }
-            >
-              <div className={classes.modal}>
-                <img src="/icons/finish.svg" alt="mark" />
-                <div className={classes.heading}>
-                  {t('workflowStepper.aNewChaosWorkflow')}
-                  <br />
-                  <span className={classes.successful}>{name}</span>,
-                  <br />
-                  <strong>{t('workflowStepper.successful')}</strong>
-                </div>
-                <div className={classes.headWorkflow}>
-                  {t('workflowStepper.congratulationsSub1')} <br />{' '}
-                  {t('workflowStepper.congratulationsSub2')}
-                </div>
-                <div className={classes.button}>
-                  <ButtonFilled
-                    data-cy="selectFinish"
-                    onClick={() => {
-                      setOpen(false);
-                      tabs.changeWorkflowsTabs(0);
-                      history.push('/workflows');
-                    }}
-                  >
-                    <div>{t('workflowStepper.workflowBtn')}</div>
-                  </ButtonFilled>
-                </div>
-              </div>
-            </Modal>
-            <Modal
-              open={errorModal}
-              onClose={handleErrorModalClose}
-              width="60%"
-              modalActions={
-                <ButtonOutlined onClick={handleErrorModalClose}>
-                  &#x2715;
-                </ButtonOutlined>
-              }
-            >
-              <div className={classes.modal}>
-                <img src="/icons/red-cross.svg" alt="mark" />
-                <div className={classes.heading}>
-                  <strong>{t('workflowStepper.workflowFailed')}</strong>
-                </div>
-                <div className={classes.headWorkflow}>
-                  <Typography className={classes.errorText}>
-                    {t('workflowStepper.error')} : {workflowError?.message}
-                  </Typography>
-                </div>
-                <div className={classes.button}>
-                  <ButtonFilled
-                    data-cy="selectFinish"
-                    onClick={() => {
-                      setErrorModal(false);
-                    }}
-                  >
-                    <div>{t('workflowStepper.backBtn')}</div>
-                  </ButtonFilled>
-                </div>
-              </div>
-            </Modal>
-            {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
-          </div>
-          {/* Control Buttons */}
-          {activeStep !== 0 ? (
-            <div className={classes.buttonGroup} data-cy="StepperButtons">
-              <ButtonOutline isDisabled={false} handleClick={handleBack}>
-                <Typography>Back</Typography>
-              </ButtonOutline>
-              {activeStep === steps.length - 1 ? (
-                <ButtonFilled
-                  disabled={validateWorkflowName(name) || loading}
-                  onClick={() => {
-                    handleOpen();
-                  }}
-                >
-                  {loading ? (
-                    <Loader size={20} />
-                  ) : (
-                    <Typography>{t('workflowStepper.finish')}</Typography>
-                  )}
-                </ButtonFilled>
-              ) : (
-                <ButtonFilled onClick={() => handleNext()} disabled={isDisable}>
-                  <div>
-                    Next
-                    <img
-                      alt="next"
-                      src="icons/nextArrow.svg"
-                      className={classes.nextArrow}
-                    />
-                  </div>
-                </ButtonFilled>
-              )}
-              {invalidYaml ? (
-                <Typography className={classes.yamlError}>
-                  <strong>{t('workflowStepper.continueError')}</strong>
-                </Typography>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
+      {/* Alert */}
+      <AlertBox message={getAlertMessage(activeStep)} />
+
+      {/* Header */}
+      <div className={classes.headWrapper}>
+        <Row justifyContent="space-between">
+          <Typography className={classes.header}>
+            {t(`workflowStepper.scheduleNewChaosWorkflow`)}
+          </Typography>
+          <ControlButton position="top" />
+        </Row>
       </div>
+      <br />
+      {/* Stepper */}
+      <LitmusStepper
+        steps={steps}
+        activeStep={activeStep}
+        handleBack={handleBack}
+        handleNext={() => handleNext()}
+        finishAction={() => {}}
+      >
+        {getStepContent(activeStep, childRef)}
+      </LitmusStepper>
     </div>
   );
 };
 
-export default CustomStepper;
+export default WorkflowStepper;

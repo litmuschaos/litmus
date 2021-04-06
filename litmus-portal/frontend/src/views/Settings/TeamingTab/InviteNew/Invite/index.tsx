@@ -9,12 +9,11 @@ import {
   TableRow,
   Toolbar,
   Typography,
+  useTheme,
 } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import Loader from '../../../../../components/Loader';
 import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../../graphql';
 import {
@@ -25,7 +24,7 @@ import {
   ProjectDetail,
   ProjectDetailVars,
 } from '../../../../../models/graphql/user';
-import { RootState } from '../../../../../redux/reducers';
+import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './styles';
 import TableData from './TableData';
 
@@ -56,7 +55,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // for response data
   const [rows, setRows] = useState<UserInvite[]>([]);
 
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
 
   // for setting the role of the user while sending invitation
   const [roles, setRoles] = useState<Role[]>([]);
@@ -81,7 +80,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const { loading, data: dataB } = useQuery<ProjectDetail, ProjectDetailVars>(
     GET_PROJECT,
     {
-      variables: { projectID: userData.selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -118,7 +117,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     refetchQueries: [
       {
         query: GET_PROJECT,
-        variables: { projectID: userData.selectedProjectID },
+        variables: { projectID },
       },
     ],
   });
@@ -215,7 +214,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     data-cy="inviteNewMemberSuccessModalDoneButton"
                     className={classes.buttonModal}
                   >
-                    <ButtonFilled disabled={false} onClick={handleModal}>
+                    <ButtonFilled onClick={handleModal}>
                       <>
                         {t('settings.teamingTab.inviteNew.invite.button.done')}
                       </>
@@ -271,7 +270,6 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                 className={classes.InviteBtn}
               >
                 <ButtonFilled
-                  className={classes.btnFilled}
                   disabled={!selected.length}
                   onClick={() => {
                     setShowsuccess(true);
@@ -282,7 +280,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                         SendInvite({
                           variables: {
                             member: {
-                              project_id: userData.selectedProjectID,
+                              project_id: projectID,
                               user_id: s.user_id,
                               role: s.role,
                             },

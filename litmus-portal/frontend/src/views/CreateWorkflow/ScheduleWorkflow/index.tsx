@@ -7,7 +7,12 @@ import {
   Select,
   Typography,
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
@@ -29,7 +34,7 @@ interface ScheduleSyntax {
   day_week: string;
 }
 
-const ScheduleWorkflow: React.FC = () => {
+const ScheduleWorkflow = forwardRef((_, ref) => {
   // Initial Cron State
   const [cronValue, setCronValue] = useState<ScheduleSyntax>({
     minute: '*',
@@ -38,6 +43,10 @@ const ScheduleWorkflow: React.FC = () => {
     month: '*',
     day_week: '*',
   });
+
+  const manifest = useSelector(
+    (state: RootState) => state.workflowManifest.manifest
+  );
 
   // Redux States for Schedule
   const workflowData: WorkflowData = useSelector(
@@ -302,9 +311,17 @@ const ScheduleWorkflow: React.FC = () => {
     });
   }, [valueDef, value]);
 
+  function onNext() {
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
+
   return (
     <div className={classes.root}>
-      <div className={classes.scHeader}>
+      <div className={classes.innerContainer}>
         {/* Upper segment */}
         <div className={classes.scSegments}>
           <div>
@@ -319,7 +336,7 @@ const ScheduleWorkflow: React.FC = () => {
             </div>
           </div>
           <img
-            src="/icons/calendar.svg"
+            src="/icons/calendarWorkflowIcon.svg"
             alt="calendar"
             className={classes.calIcon}
           />
@@ -354,7 +371,7 @@ const ScheduleWorkflow: React.FC = () => {
                     </Typography>
                   }
                 />
-              ) : YAML.parse(workflowData.yaml).spec.suspend === true ? (
+              ) : YAML.parse(manifest).spec.suspend === true ? (
                 <></>
               ) : workflowData.isRecurring ? (
                 <FormControlLabel
@@ -686,6 +703,6 @@ const ScheduleWorkflow: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default ScheduleWorkflow;

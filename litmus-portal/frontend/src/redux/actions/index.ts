@@ -7,7 +7,7 @@ const useActions = (actions: any, deps?: any) => {
   return useMemo(
     () => {
       if (Array.isArray(actions)) {
-        return actions.map((a) => bindActionCreators(a, dispatch));
+        return actions.map((action) => bindActionCreators(action, dispatch));
       }
       return bindActionCreators(actions, dispatch);
     },

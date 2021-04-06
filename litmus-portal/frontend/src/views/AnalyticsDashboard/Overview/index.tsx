@@ -6,11 +6,11 @@
 
 import { useQuery } from '@apollo/client';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import {
   LIST_DASHBOARD,
   LIST_DATASOURCE,
-  SCHEDULE_DETAILS,
+  WORKFLOW_LIST_DETAILS,
 } from '../../../graphql/queries';
 import {
   DashboardList,
@@ -23,15 +23,14 @@ import {
   ListDataSourceVars,
 } from '../../../models/graphql/dataSourceDetails';
 import {
-  ScheduleDataVars,
-  Schedules,
-  ScheduleWorkflow,
-} from '../../../models/graphql/scheduleData';
-import { RootState } from '../../../redux/reducers';
+  Workflow,
+  WorkflowList,
+  WorkflowListDataVars,
+} from '../../../models/graphql/workflowListData';
+import { getProjectID } from '../../../utils/getSearchParams';
 import { sortNumAsc } from '../../../utils/sort';
 import { OverviewConfigureBanner } from './OverviewConfigureBanner';
 import { OverviewGlowCard } from './OverviewGlowActionCard';
-import { AnalyticsQuickActionCard } from './OverviewQuickActionCard';
 import { AnalyticsScheduleWorkflowCard } from './OverviewScheduleBanner';
 import useStyles from './styles';
 import { TableDashboardData } from './Tables/dashboardData';
@@ -40,36 +39,35 @@ import { TableScheduleWorkflow } from './Tables/worflowData';
 
 const Overview: React.FC = () => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const projectID = getProjectID();
 
-  // Apollo query to get the scheduled data
-  const { data: schedulesData } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
+  // Apollo query to get the scheduled workflow data
+  const { data: schedulesData } = useQuery<WorkflowList, WorkflowListDataVars>(
+    WORKFLOW_LIST_DETAILS,
     {
       variables: {
-        projectID: selectedProjectID,
+        projectID,
+        workflowIDs: [],
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
     }
   );
 
-  const filteredScheduleData = schedulesData?.getScheduledWorkflows
-    .slice()
-    .sort((a: ScheduleWorkflow, b: ScheduleWorkflow) => {
+  const filteredScheduleData = schedulesData?.ListWorkflow.slice().sort(
+    (a: Workflow, b: Workflow) => {
       const x = parseInt(a.updated_at, 10);
       const y = parseInt(b.updated_at, 10);
       return sortNumAsc(y, x);
-    });
+    }
+  );
 
   // Apollo query to get the dashboard data
   const { data: dashboardsList } = useQuery<DashboardList, ListDashboardVars>(
     LIST_DASHBOARD,
     {
       variables: {
-        projectID: selectedProjectID,
+        projectID,
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
@@ -89,7 +87,7 @@ const Overview: React.FC = () => {
   const { data } = useQuery<DataSourceList, ListDataSourceVars>(
     LIST_DATASOURCE,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
       pollInterval: 10000,
     }
@@ -148,7 +146,7 @@ const Overview: React.FC = () => {
           )}
           <div className={classes.parentWrapper}>
             <div className={classes.analyticsQuickActionCard}>
-              <AnalyticsQuickActionCard />
+              <LocalQuickActionCard variant="analytics" />
             </div>
           </div>
         </div>

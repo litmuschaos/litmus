@@ -72,7 +72,7 @@ export default [
     totalRuns: 4300,
     isCustom: false,
     details:
-      ' This experiment causes Memory resource exhaustion on the Kubernetes node.' +
+      'This experiment causes Memory resource exhaustion on the Kubernetes node.' +
       'The experiment aims to verify resiliency of applications whose replicas may be ' +
       'evicted on account on nodes turning unschedulable (Not Ready) due to lack of Memory resources. ' +
       'The Memory chaos is injected using a job running the linux stress-ng tool (a workload generator). ' +

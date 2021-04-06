@@ -25,13 +25,26 @@ type Data struct {
 
 type ClusterConfirm struct {
 	IsClusterConfirmed bool   `json:isClusterConfirmed`
-	NewClusterKey      string `json:newClusterKey`
+	NewAccessKey       string `json:newAccessKey`
 	ClusterID          string `json:cluster_id`
 }
 
 type ClusterConnect struct {
 	ProjectID string `json:"project_id"`
 	Action    Action `json:"action"`
+}
+
+type KubeObjRequest struct {
+	RequestID      string
+	ClusterID      string         `json:"cluster_id"`
+	ObjectType     string         `json:"object_type"`
+	KubeGVRRequest KubeGVRRequest `json:"kube_obj_request"`
+}
+
+type KubeGVRRequest struct {
+	Group    string `json:"group"`
+	Version  string `json:"version"`
+	Resource string `json:"resource"`
 }
 
 type Action struct {

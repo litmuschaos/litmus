@@ -1,8 +1,8 @@
 import { Typography } from '@material-ui/core';
+import { Done } from '@material-ui/icons';
+import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Done } from '@material-ui/icons';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
 import useStyles from './styles';
 
@@ -35,10 +35,10 @@ const SSHField: React.FC<SSHFieldProps> = ({
         ) : (
           <>
             <Typography className={classes.sshText}>{publicKey}</Typography>
-            <div className={classes.copyBtn} data-cy="sshKeyCopyButton">
-              <ButtonOutline
-                isDisabled={false}
-                handleClick={() => copyPublicKey(publicKey)}
+            <div className={classes.copyBtn}>
+              <ButtonOutlined
+                disabled={false}
+                onClick={() => copyPublicKey(publicKey)}
               >
                 {!copying ? (
                   <div className={classes.rowDiv}>
@@ -55,7 +55,7 @@ const SSHField: React.FC<SSHFieldProps> = ({
                     <Typography>{t('myhub.installChaos.copied')}</Typography>
                   </div>
                 )}
-              </ButtonOutline>
+              </ButtonOutlined>
             </div>
           </>
         )}

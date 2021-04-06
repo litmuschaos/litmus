@@ -7,18 +7,15 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
-import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import BackButton from '../../../components/Button/BackButton';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
-import QuickActionCard from '../../../components/QuickActionCard';
+import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
 import VideoCarousel from '../../../components/VideoCarousel';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { GENERATE_SSH, GET_HUB_STATUS, UPDATE_MY_HUB } from '../../../graphql';
@@ -31,7 +28,7 @@ import {
 } from '../../../models/graphql/user';
 import { HubStatus } from '../../../models/redux/myhub';
 import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
 
@@ -50,15 +47,16 @@ interface MyHubToggleProps {
   isPrivateToggled: boolean;
 }
 
-const MyHub = () => {
+const MyHub: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const userData = useSelector((state: RootState) => state.userData);
+  const projectID = getProjectID();
+  const userRole = getProjectRole();
+  const params: MyHubParams = useParams();
   const { data, loading } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.selectedProjectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
   });
-  const params: MyHubParams = useParams();
   const hubData = data?.getHubStatus.filter(
     (hubs) => hubs.HubName === params.hubname
   )[0];
@@ -184,7 +182,7 @@ const MyHub = () => {
           SSHPrivateKey: sshKey.privateKey,
           SSHPublicKey: sshKey.publicKey,
         },
-        projectID: userData.selectedProjectID,
+        projectID,
       },
     });
     setCloningRepo(true);
@@ -193,7 +191,10 @@ const MyHub = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    history.push({ pathname: '/myhub' });
+    history.push({
+      pathname: '/myhub',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
   };
 
   // Function to copy the SSH key
@@ -374,9 +375,8 @@ const MyHub = () => {
                                         {sshKey.publicKey}
                                       </Typography>
                                       <div className={classes.copyBtn}>
-                                        <ButtonOutline
-                                          isDisabled={false}
-                                          handleClick={() =>
+                                        <ButtonOutlined
+                                          onClick={() =>
                                             copyTextToClipboard(
                                               sshKey.publicKey
                                             )
@@ -401,7 +401,7 @@ const MyHub = () => {
                                               </Typography>
                                             </div>
                                           )}
-                                        </ButtonOutline>
+                                        </ButtonOutlined>
                                       </div>
                                     </>
                                   )}
@@ -415,7 +415,7 @@ const MyHub = () => {
                   </div>
                 </div>
                 <div className={classes.submitBtnDiv}>
-                  <ButtonFilled isPrimary={false} type="submit">
+                  <ButtonFilled variant="success" type="submit">
                     {t('myhub.editPage.submit')}
                   </ButtonFilled>
                 </div>
@@ -467,8 +467,8 @@ const MyHub = () => {
                               {t('myhub.editPage.desc')}
                             </Typography>
                             <ButtonFilled
-                              isPrimary={false}
-                              handleClick={handleClose}
+                              variant="success"
+                              onClick={handleClose}
                             >
                               {t('myhub.connectHubPage.myHub')}
                             </ButtonFilled>
@@ -488,7 +488,7 @@ const MyHub = () => {
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div className={classes.quickActionDiv}>
-            <QuickActionCard analyticsHome={false} nonAdmin />
+            <LocalQuickActionCard variant="homePage" />
           </div>
         </div>
       </div>

@@ -28,31 +28,28 @@ export interface customWorkflow {
 }
 
 export interface WorkflowData {
-  name: string;
-  link: string;
-  yaml: string;
   id: string;
-  description: string;
-  weights: experimentMap[];
-  isCustomWorkflow: boolean;
   isRecurring: boolean;
   isDisabled: boolean;
   chaosEngineChanged: boolean;
   namespace: string;
   workflow_id?: string;
-  clustername: string;
   clusterid: string;
+  clustername: string;
   cronSyntax: string;
   scheduleType: scheduleType;
   scheduleInput: scheduleInput;
-  customWorkflow: customWorkflow;
-  customWorkflows: customWorkflow[];
-  stepperActiveStep: number;
+}
+
+export interface WorkflowManifest {
+  engineYAML: string;
+  manifest: string;
 }
 
 export enum WorkflowActions {
   SET_WORKFLOW_DETAILS = 'SET_WORKFLOW_DETAILS',
   SET_CUSTOM_WORKFLOW = 'SET_CUSTOM_WORKFLOW',
+  SET_WORKFLOW_MANIFEST = 'SET_WORKFLOW_MANIFEST',
 }
 
 interface WorkflowActionType<T, P> {
@@ -65,7 +62,8 @@ export type WorkflowAction =
       typeof WorkflowActions.SET_WORKFLOW_DETAILS,
       WorkflowData
     >
+  | WorkflowActionType<typeof WorkflowActions.SET_CUSTOM_WORKFLOW, WorkflowData>
   | WorkflowActionType<
-      typeof WorkflowActions.SET_CUSTOM_WORKFLOW,
-      WorkflowData
+      typeof WorkflowActions.SET_WORKFLOW_MANIFEST,
+      WorkflowManifest
     >;

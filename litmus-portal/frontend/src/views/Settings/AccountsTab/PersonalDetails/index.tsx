@@ -1,20 +1,18 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
+import UserDetails from '../../../../components/UserDetails';
 import config from '../../../../config';
 import { GET_USER, UPDATE_DETAILS } from '../../../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
-import { UpdateUser } from '../../../../models/redux/user';
+import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
-import { validateEmail } from '../../../../utils/validate';
-import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
 interface personaData {
@@ -36,7 +34,7 @@ const PersonalDetails: React.FC = () => {
     { variables: { username } }
   );
   const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? ''; // Check if can be replaced with JWT based data.
+  const name: string = dataA?.getUser.name ?? ''; // TODO: Check if can be replaced with JWT based data.
   const email: string = dataA?.getUser.email ?? '';
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,
@@ -138,13 +136,8 @@ const PersonalDetails: React.FC = () => {
         <div className={classes.saveButton}>
           <div data-cy="save">
             <ButtonFilled
-              isDisabled={
-                personaData.fullName === '' ||
-                validateEmail(personaData.email) ||
-                loading
-              }
-              isPrimary
-              handleClick={handleSubmit}
+              disabled={!(personaData.fullName.length && !loading)}
+              onClick={handleSubmit}
             >
               {loading ? (
                 <div>
@@ -166,7 +159,6 @@ const PersonalDetails: React.FC = () => {
           >
             {error.length ? (
               <div className={classes.errDiv}>
-                {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
                 <div className={classes.textError}>
                   <Typography className={classes.typo} align="center">
                     <strong>
@@ -187,11 +179,7 @@ const PersonalDetails: React.FC = () => {
                   </Typography>
                 </div>
                 <div data-cy="done" className={classes.buttonModal}>
-                  <ButtonFilled
-                    isPrimary
-                    isDisabled={false}
-                    handleClick={handleClose}
-                  >
+                  <ButtonFilled onClick={handleClose}>
                     <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>
@@ -215,11 +203,7 @@ const PersonalDetails: React.FC = () => {
                   </Typography>
                 </div>
                 <div data-cy="done">
-                  <ButtonFilled
-                    isPrimary
-                    isDisabled={false}
-                    handleClick={handleClose}
-                  >
+                  <ButtonFilled onClick={handleClose}>
                     <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>

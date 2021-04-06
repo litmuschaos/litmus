@@ -2,84 +2,63 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   rootContainer: {
+    position: 'fixed',
+    width: '100%',
     height: '100%',
-    width: '100%',
+    background: theme.palette.primary.main,
+  },
+  rootDiv: {
     display: 'flex',
-    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    padding: theme.spacing(2),
+    maxWidth: '49rem',
   },
-
-  mainDiv: {
-    background: theme.palette.action.hover,
-    width: '100%',
-    height: '100vh',
+  HeaderText: {
+    maxWidth: '23.56rem',
+    fontWeight: 500,
+    fontSize: '2rem',
+    color: theme.palette.text.secondary,
+    margin: theme.spacing(1.5, 0, 2.5, 0),
   },
-
-  box: {
-    maxWidth: '40rem',
-    padding: '12% 5%',
-    paddingLeft: theme.spacing(10),
-    height: '100vh',
-    overflowY: 'hidden',
-    margin: 'auto',
-  },
-
-  heading: {
-    marginTop: theme.spacing(6.2),
-    fontSize: theme.spacing(5),
-  },
-
-  description: {
-    width: '80%',
-    margin: '1.5rem 0',
+  litmusText: {
+    maxWidth: '23.56rem',
     fontSize: '1rem',
+    color: theme.palette.text.secondary,
   },
-
-  loginDiv: {
-    marginTop: theme.spacing(5),
-  },
-
-  imageDiv: {
-    width: '100%',
-    height: '100vh',
-  },
-
-  loginImage: {
-    objectFit: 'cover',
-    width: '100%',
-    height: '100vh',
-  },
-
-  forgotPasssword: {
-    marginTop: theme.spacing(3.125),
-    marginBottom: theme.spacing(3.75),
-  },
-
   inputDiv: {
-    display: 'flex',
-    flexDirection: 'column',
-    maxWidth: '20rem',
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-2.1),
+    maxWidth: '23.75rem',
+    margin: theme.spacing(6, 0, 0, 7.5),
   },
-
   inputValue: {
-    marginLeft: theme.spacing(2),
-    width: '25rem',
+    marginBottom: theme.spacing(1.75),
+    width: '100%',
+    borderRadius: '0.25rem',
+    background: theme.palette.background.paper,
+    '& .MuiInputLabel-filled': {
+      color: theme.palette.text.hint,
+    },
+    '& .MuiFilledInput-input': {
+      background: theme.palette.background.paper,
+    },
+    '& .MuiFormHelperText-root': {
+      background: theme.palette.primary.main,
+      marginTop: 0,
+    },
+    '& .MuiFormHelperText-contained': {
+      margin: 0,
+    },
   },
-
-  linkForgotPass: {
-    color: theme.palette.common.black,
-    opacity: 0.5,
-  },
-
-  descImg: {
-    verticalAlign: 'middle',
-    paddingLeft: theme.spacing(0.625),
-  },
-
-  w20: {
-    width: '20%',
+  loginButton: {
+    marginTop: theme.spacing(1.875),
+    background: theme.palette.primary.light,
+    color: theme.palette.text.secondary,
+    maxWidth: '8rem',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light,
+    },
+    '&:disabled': {
+      backgroundColor: theme.palette.primary.light,
+    },
   },
 }));
-
 export default useStyles;

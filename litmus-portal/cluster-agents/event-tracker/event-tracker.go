@@ -5,6 +5,12 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	sys_runtime "runtime"
+	"time"
+
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/informers"
@@ -12,11 +18,6 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/clientcmd"
-	"log"
-	"net/http"
-	"os"
-	sys_runtime "runtime"
-	"time"
 
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,11 +25,13 @@ import (
 
 var (
 	ClusterID  string
-	ClusterKey string
-	GQL_SERVER = os.Getenv("GQL_SERVER")
+	AccessKey  string
+	ServerAddr = os.Getenv("SERVER_ADDR")
 	Namespace  = os.Getenv("AGENT_NAMESPACE")
 	KubeConfig = os.Getenv("KUBE_CONFIG")
 )
+
+const ExternAgentConfigName = "agent-config"
 
 // Function to get k8s client set
 func getK8sClient() (*kubernetes.Clientset, error) {
@@ -59,8 +62,8 @@ func getK8sClient() (*kubernetes.Clientset, error) {
 
 // Function to send request to litmus graphql server
 func SendRequest(workflowID string) (string, error) {
-	payload := `{"query": "mutation { gitopsNotifer(clusterInfo: { cluster_id: \"` + ClusterID + `\", access_key: \"` + ClusterKey + `\"}, workflow_id: \"` + workflowID + `\")\n}"}`
-	req, err := http.NewRequest("POST", GQL_SERVER, bytes.NewBuffer([]byte(payload)))
+	payload := `{"query": "mutation { gitopsNotifer(clusterInfo: { cluster_id: \"` + ClusterID + `\", access_key: \"` + AccessKey + `\"}, workflow_id: \"` + workflowID + `\")\n}"}`
+	req, err := http.NewRequest("POST", ServerAddr, bytes.NewBuffer([]byte(payload)))
 	if err != nil {
 		return "", err
 	}
@@ -93,16 +96,16 @@ func getConfigmap() (string, string, error) {
 		return "", "", err
 	}
 
-	cm, err := clientset.CoreV1().ConfigMaps(Namespace).Get(context.TODO(), "litmus-portal-config", metav1.GetOptions{})
+	cm, err := clientset.CoreV1().ConfigMaps(Namespace).Get(context.TODO(), ExternAgentConfigName, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
 		return "", "", err
-	} else if cm.Data["is_cluster_confirmed"] == "false" {
+	} else if cm.Data["IS_CLUSTER_CONFIRMED"] == "false" {
 		return "", "", fmt.Errorf("Cluster is not confirmed yet")
 	} else if err != nil {
 		return "", "", err
 	}
 
-	return cm.Data["cluster_id"], cm.Data["cluster_key"], nil
+	return cm.Data["CLUSTER_ID"], cm.Data["ACCESS_KEY"], nil
 }
 
 // K8s informer watching for all the deployment changes
@@ -293,12 +296,12 @@ func runDSInformer(factory informers.SharedInformerFactory) {
 
 // Init function to check the pre-requisite for the gitops agent
 func init() {
-	if GQL_SERVER == "" || Namespace == "" {
+	if ServerAddr == "" || Namespace == "" {
 		log.Fatal("Some environment variables are not set")
 	}
 
 	var err error
-	ClusterID, ClusterKey, err = getConfigmap()
+	ClusterID, AccessKey, err = getConfigmap()
 	if err != nil {
 		log.Fatal(err)
 	}

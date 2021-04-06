@@ -1,14 +1,9 @@
-import { Typography } from '@material-ui/core';
-import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import DagreGraph, { d3Link, d3Node } from '../../../components/DagreGraph';
 import { Nodes } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
-import * as ToggleButtonAction from '../../../redux/actions/button';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
-import * as TabActions from '../../../redux/actions/tabs';
 import { createLabel } from './createLabel';
 import useStyles from './styles';
 
@@ -18,19 +13,21 @@ interface GraphData {
 }
 interface ArgoWorkflowProps {
   nodes: Nodes;
+  setIsInfoToggled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
+const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({
+  nodes,
+  setIsInfoToggled,
+}) => {
   const { t } = useTranslation();
 
   // Graph orientation
-  const [horizontal, setHorizontal] = useState(false);
+  const horizontal = true;
 
   const classes = useStyles({ horizontal });
   // Redux action call for updating selected node
   const nodeSelection = useActions(NodeSelectionActions);
-  const tabs = useActions(TabActions);
-  const toggleButtonAction = useActions(ToggleButtonAction);
 
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
@@ -53,10 +50,15 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
 
       data.nodes.push({
         id: key,
-        class: `${node.phase} ${node.type}`,
+        class:
+          node.type === 'StepGroup'
+            ? 'StepGroup'
+            : `${node.phase} ${node.type}`,
         label:
           node.type !== 'StepGroup'
             ? createLabel({
+                currentNodeID: key,
+                selectedNodeID,
                 label: node.name,
                 tooltip: node.name,
                 phase: node.phase.toLowerCase(),
@@ -72,7 +74,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
           data.links.push({
             source: key,
             target: child,
-            class: nodes[child].phase,
+            class: 'link',
             config: {
               arrowhead:
                 nodes[child].type === 'StepGroup' ? 'undirected' : 'vee',
@@ -97,22 +99,6 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
 
   return graphData.nodes.length ? (
     <>
-      <div className={classes.graphOptions}>
-        <div>
-          <ButtonOutline
-            className={classes.layoutButton}
-            handleClick={() => setHorizontal(!horizontal)}
-          >
-            <AccountTreeRoundedIcon />
-          </ButtonOutline>
-          <Typography component="span">
-            {horizontal
-              ? t('workflowDetailsView.argoWorkflow.controls.horizontal')
-              : t('workflowDetailsView.argoWorkflow.controls.vertical')}
-          </Typography>
-        </div>
-      </div>
-
       <DagreGraph
         className={classes.dagreGraph}
         nodes={graphData.nodes}
@@ -130,16 +116,14 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
           const nodeID = Object.keys(nodes).filter(
             (key) => key === original?.id
           )[0];
+
+          setIsInfoToggled(true);
           setSelectedNodeID(nodeID);
-          tabs.changeWorkflowDetailsTabs(1);
-          toggleButtonAction.toggleInfoButton({
-            isInfoToggled: true,
-          });
         }}
       />
     </>
   ) : (
-    <div>{t('workflowDetailsView.argoWorkflow.loading')}</div>
+    <div>{t('workflowDetailsView.argoWorkFlow.loading')}</div>
   );
 };
 

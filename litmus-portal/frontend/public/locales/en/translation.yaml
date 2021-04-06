@@ -1,28 +1,23 @@
-welcomeModal:
-  title: Welcome to Litmus Portal,
-  info: What do you want to name your project?
+getStarted:
   button:
-    continue: Continue
+    continue: Next
     back: Back
-    letsStart: Let's Start
-  case-0:
+    letsStart: Continue to Portal
+    step: Step
+    of: of
+  project:
     name: projectName
     label: Project Name
-    info: What do you want to name your project?
-  case-1:
-    name: fullName
-    label: Full Name
-    info: What should I call you?
-  case-2:
+    info: You are almost there! Set your project name
+    desc: The project will be yours with owner access where you can create
+      workflows, view analytics and also invite others to your project.
+  password:
     name: password
     label: Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
     info: Set your new Password
-  case-3:
-    name: emailAddress
-    label: Email Address
-    info: You can set your current mail
+    desc: Set a new password which will be used when you login next time
 
 ###########################################
 ############    Components    #############
@@ -30,14 +25,23 @@ welcomeModal:
 
 sidebar:
   title: Litmus
+  version: 'Version: 1.13'
 
 header:
-  notificationDropdown:
-    noNotifications: You don't have any new notification.
+  projectDropdown:
+    myProjects: My Projects
+    noMyProjects: No projects owned by you
+    otherProjects: Other Projects
+    noProjectsOther: You are not part of any projects not owned by you
   profileDropdown:
+    signedIn: 'Signed in as:'
+    emailUnset: Email not set
+    emailSet: Set up your email
+    goToSettingsTitle: Go to settings
+    logOutTitle: Logout from the portal
+    editProfileTitle: Edit your profile
+    logout: Logout
     editProfile: Edit Profile
-    logOut: Log Out
-    noProjects: You haven't created any projects yet.
 
 button:
   backButton: Back
@@ -60,6 +64,7 @@ customWorkflowCard:
 
 workflowStepper:
   continueError: To continue, please check the error in code.
+  scheduleNewChaosWorkflow: Schedule a new chaos workflow
   aNewChaosWorkflow: A new chaos workflow,
   successful: is successfully created!
   congratulationsSub1: Congratulations on creating your workflow! Now information about
@@ -67,9 +72,17 @@ workflowStepper:
   error: Error
   workflowFailed: Failed to create a new workflow.
   workflowBtn: Go to Workflow
+  step1:
+    errorSnackbar: You haven't selected any Target Agent
+  step2:
+    errorSnackbar: Please select a workflow type
+  step3:
+    errorSnackbar: Please provide a valid Workflow Name
+  step4:
+    errorSnackbar: Please select atleast one experiment to proceed
   finish: Finish
   next: Next
-  backBtn: Back
+  back: Back
 
 ######################################
 ############    Pages    #############
@@ -101,16 +114,18 @@ home:
     agentDeployInfo: To configure your workflow you need to deploy an agent. Click on “Deploy your first Agent” to continue.
     chaosAgent: Deploy LitmusChaos agent on your Kubernetes clusters.
     agents: Agents
+    agent: Agent
     chaosAgentInfo: Cloud native chaos engineering can be setup on this cluster using LitmusChaos
     deployFirst: Deploy your first Agent
-    toProjects: To projects
+    toProjects: To Projects
+    toAnalytics: To Analytics
+    deploy: Deploy another Agent
 
 login:
-  heading: Welcome to <strong>Litmus!</strong>
-  subHeading1: Your one-stop-shop for Chaos Engineering on
-  subHeading2: . Browse, create, manage, monitor and analyze your chaos workflows.
-  subHeading3: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
-  passwordForgot: Don’t remember your password?
+  heading: One-stop-shop for Chaos Engineering on Kubernetes
+  subHeading1: Browse, create, manage, monitor and analyze your chaos workflows.
+  subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
+  wrongCredentials: Wrong Credentials - Try again with correct username or password
 
 schedule:
   heading: 'Schedule a workflow'
@@ -178,8 +193,35 @@ analyticsDashboard:
   overview: Overview
   monitoringDashboardPage:
     dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
+    dataSourceIs: Data source is
     reConfigureDashboard: Re-configure dashboard
     updateDataSource: Update data source
+    headerInfoText: "View the chaos events and metrics in a given \n time interval by selecting a time interval."
+    rangeSelector:
+      to: to
+      selectPeriod: Select Period
+    refresh: 
+      heading: Refresh
+      off: Off
+      every5Seconds: Every 5 seconds
+      every10Seconds: Every 10 seconds
+      every30Seconds: Every 30 seconds
+      every1Minute: Every 1 minute
+      every5Minutes: Every 5 minutes
+      every15Minutes: Every 15 minutes
+      every30Minutes: Every 30 minutes
+      every1Hour: Every 1 hour
+      every2Hours: Every 2 hours
+      every1Day: Every 1 day
+    chaosTable:
+      tableHead1: Legend
+      tableHead2: Workflow
+      tableHead3: Experiment
+      tableHead4: "Target \n ( namespace / pod )"
+      tableHead5: Result
+      noRecords: No chaos happened during the interval
+      showTable: Show Chaos during this interval
+      hideTable: Hide Chaos during this interval
   workflowClusterDashboard:
     title: Dashboard
     tab1: Hourly
@@ -260,16 +302,22 @@ analyticsDashboard:
     day: day
     days: days
     few: few
+  toolTip:
+    viewChaosMetric: View Chaos Metric Info
+    hideChaosMetric: Hide Chaos Metric Info
+    editPanel: Edit
+    popout: Popout
 
 error:
   whoops: Whoops!
   pageUnavailable: This page is unavailable
   pageDoesNotExist: The page does not exist, or please try again later.
-  backHome: Go back home
+  goBack: Go back
 
 workflowDetails:
   detailedLog: Click on Info to see details of your workflow
   fetchError: An error has occurred while fetching the data
+  overallRR: 'Overall RR: '
 
 ######################################
 ############    Views    #############
@@ -315,6 +363,8 @@ settings:
         done: Done
     accountsSettings:
       header: Password
+      passwordValidation: Should not start with empty space
+      passwordNotSame: Password is not same
       modal:
         header: Your password
         headerStrong: has been changed!
@@ -335,6 +385,7 @@ settings:
     yourProject: Your Project
     projectInvite: Projects by invite
     invitations: Invitations
+    active: Active
     manageTeam: Manage your team, invite a member to your project or change the role of members in the team
     header: Members
     invitedProject: Projects you were invited to
@@ -407,6 +458,9 @@ settings:
           viewerRole:
             label: Viewer
             body: Can view the project
+      acceptedInvitation:
+        viewProject: View Project
+        role: Role
 
   userManagementTab:
     header: Members
@@ -491,6 +545,8 @@ settings:
     proceed: Yes, proceed
 
 workflowDetailsView:
+  headerDesc: Workflow dashboard of
+  headerMiniDesc: Description of the workflow
   argoWorkflow:
     loading: Loading Graph...
     controls:
@@ -502,19 +558,21 @@ workflowDetailsView:
     couldNot: Could not get logs
     chaosLogs: Chaos logs unavailable
   workflowInfo:
-    header: Workflow name
-    cluster: Cluster
-    param:
-      state: State
-      startTime: Start Time
-      endTime: End Time
-      duration: Duration
-      namespace: Namespace
-      finished: To be finished
-    nodeDetails:
-      curr: Currently Running Nodes
-      exec: Executed Nodes
-      noExec: No executed nodes
+    header: Overall Workflow Description
+    resilienceScore: Resilience Score
+    runTime:
+      runTimeHeader: Run Time
+      startTime: 'Start Time :'
+      endTime: 'End Time :'
+    hostedOn:
+      hostedOnHeader: Hosted On
+      cluster: 'Cluster :'
+      namespace: 'Namespace :'
+    targets:
+      targetsHeader: Targets
+      cluster: 'Cluster :'
+      namespace: 'Namespace :'
+    application: 'Application :'
   workflowNodeInfo:
     name: Name
     type: Type
@@ -522,6 +580,17 @@ workflowDetailsView:
     startTime: Start Time
     endTime: End Time
     duration: Duration
+    viewPairs: View the key value pairs
+    viewApplicationDetails: View the application details
+  tableView:
+    tableHeader:
+      stepName: Step Name
+      status: Status
+      duration: Duration
+      startTime: Start Time
+      applicationDetails: Application Details
+    showProperties: Show properties
+    viewLogs: View Logs & Results
     nodeName: Step Name
     button:
       logs: Logs
@@ -536,19 +605,35 @@ homeView:
     desc: Statistics taken from completed tests
   totalWorkflows:
     header: Number of total Workflows
-    subtitle: AVG amount of workflows
+    subtitle: Average amount of workflows
     perWeek: per week
-    desc: AVG is calculated from the max of workflows
+    desc: Average is calculated from the max of workflows
 
 createWorkflow:
   chooseWorkflow:
+    title: Start creating your chaos workflow
+    subtitle: Simulate the workflow run and see the suggested reliability score
     header: Select or design workflow
     info: Select one of the pre-defined chaos workflows or design your own workflow.
     preDefined: pre-defined workflows
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
+    settings: Workflow Settings
+    descriptionA: You have selected a pre-defined workflow
+    descriptionB: You have selected an existing workflow
+    descriptionC: You have selected a MyHub workflow
+    descriptionD: You have imported a workflow YAML
+    description2: Provide a name and description to the new workflow.
+    edit: Edit Photo
+    changeImage: Change workflow logo
+    changeImgDescription: You can choose a logo from given below
+    saveChanges: Save Changes
+    imageNotChanged: You have not changed the image.
+    continue: Do you want to continue?
+    continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
+    selectMyHub: Select MyHub
     label:
       workflowName: Workflow name
       desc: Description
@@ -606,14 +691,76 @@ createWorkflow:
     fail: Fail
   tuneWorkflow:
     header: Tune the selected workflow
-    info: The following tests are run in sequence. The sequence of tests cannot be changed.
-    infoExtended: Select the tests you want to keep in the workflow and adjust the variables in the selected test.
+    selectedWorkflowInfo: You have selected a pre-defined workflow
+    description: Fine tune the application  names and other variables to suit your needs
+    view: View YAML
+    edit: Edit YAML
+    firstExperiment: Add your first experiment
+    choose: Choose Experiments
+    selectAvailableExp: Select experiments available in
+    afterSelect: After selecting you can fine tune them.
+    selectExp: Select An Experiment
+    done: Done
+    editSequence: Edit Sequence
+    addANewExperiment: Add a new experiment
+    addProbe:
+      heading: Add
+      headingStrong: Probe
+      labels:
+        probeName: Probe Name
+        probeType: Probe Type
+        probeMode: Probe Mode
+        probeDetails: Probe Details
+        probeProp: Probe Properties
+        timeout: Timeout
+        retry: Retry
+        interval: Interval
+        polling: Polling interval
+        initialDelay: Initial Delay Seconds
+        url: URL
+      button:
+        cancel: Cancel
+        addProbe: Add Probe
+      inputLabels:
+        url: URL
+        insecure: Insecure Skip Verify
+        method: Method
+        body: Body
+        request: Request
+        contentType: Content Type
+        criteria: Criteria
+        responseCode: Response Code
+        command: Command
+        source: Source
+        comparator: Comparator
+        type: Type
+        value: Value
+        operation: Operation
+        group: Group
+        version: Version
+        resource: Resource
+        namespace: Namespace
+        fieldSel: FieldSelector
+        labelSel: LabelSelector
+        endpoint: Endpoint
+        query: Query
+      select:
+        http: http
+        cmd: cmd
+        k8s: k8s
+        prom: prom
+        sot: SOT
+        eot: EOT
+        edge: Edge
+        onchaos: OnChaos
+        continuous: Continuous
   verifyCommit:
     header: Confirmation of Results
     info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
     error: Invalid Workflow CRD found ! Please correct the errors.
     errYaml: Error in CRD Yaml.
-    codeIsFine: Your code is fine. You can move on !
+    codeIsFine: Your code is fine.
+    youCanMoveOn: You can move on !
     button:
       edit: Edit
       viewYaml: View YAML
@@ -698,6 +845,13 @@ workflowCluster:
       clusterInfo: Cluster information
       about: About Litmus Cluster
       back: Back
+workflowAgent:
+  header:
+    chooseAgent: Choose Agent to send the chaos workflow to
+    creatingNew: You are creating a new chaos workflow
+    selectAgent: Select a target Kubernetes cluster to run this workflow
+  search:
+    placeholder: Search
 
 workflows:
   browseWorkflows: Browse workflows
@@ -720,7 +874,7 @@ internetIssues:
 myhub:
   title: MyHubs
   connectTarget: Connect the target
-  viewMyHub: View MyHub
+  viewMyHub: View My Hub
   error: '[Error: could not connect]'
   view: View
   validationEmptySpace: Should not start with an empty space
@@ -812,9 +966,9 @@ customWorkflow:
     construct: Using experiments from MyHubs
     upload: Upload your
     yaml: YAML
-    uploadFile: Upload File
+    uploadFile: Select YAML file from your device
     uploadSuccess: Successfully uploaded
-    drag: Drag & Drop here
+    drag: Drag & Drop YAML file to upload
     chooseExp: Choose the experiment
     loadingExp: Loading Experiments, please wait...
     selectExp: Select the experiment
