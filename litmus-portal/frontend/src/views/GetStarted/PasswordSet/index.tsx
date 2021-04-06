@@ -1,6 +1,6 @@
 /* eslint-disable react/no-danger */
-import { TextField, Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { Typography } from '@material-ui/core';
+import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { validateConfirmPassword } from '../../../utils/validate';
@@ -54,18 +54,18 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
         <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
         {/* TODO: Add translations */}
         <Typography className={classes.HeaderText}>
-          Set your new password
+          {t('getStarted.password.info')}
         </Typography>
         <Typography className={classes.litmusText}>
-          Set a new password which will be used when you login next time
+          {t('getStarted.password.desc')}
         </Typography>
       </div>
       <form id="login-form" className={classes.inputDiv}>
-        <TextField
+        <InputField
           className={classes.inputValue}
-          label={t('welcomeModal.case-2.label')}
+          label={t('getStarted.password.label')}
           type="password"
-          variant="filled"
+          filled
           required
           value={values.password}
           onChange={(event) => {
@@ -76,18 +76,18 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
             setPassword(event);
           }}
         />
-        <TextField
+        <InputField
           className={classes.inputValue}
-          label={t('welcomeModal.case-2.cnfLabel')}
+          label={t('getStarted.password.cnfLabel')}
           type="password"
           required
           value={values.confirmPassword}
           helperText={
             validateConfirmPassword(values.password, values.confirmPassword)
-              ? 'Password is not same'
+              ? t('settings.accountsTab.accountsSettings.passwordNotSame')
               : ''
           }
-          variant="filled"
+          filled
           onChange={(event) =>
             setValues({
               password: values.password,
@@ -102,10 +102,11 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
             disabled={isError.current}
             onClick={handleSubmit}
           >
-            Next
+            {t('getStarted.button.continue')}
           </ButtonFilled>
-          <Typography>
-            Step {currentStep} of {totalStep}
+          <Typography className={classes.step}>
+            {t('getStarted.button.step')} {currentStep}{' '}
+            {t('getStarted.button.of')} {totalStep}
           </Typography>
         </div>
       </form>

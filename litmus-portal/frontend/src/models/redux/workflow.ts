@@ -28,27 +28,17 @@ export interface customWorkflow {
 }
 
 export interface WorkflowData {
-  name: string;
-  link: string;
-  yaml: string;
   id: string;
-  description: string;
-  weights: experimentMap[];
-  isCustomWorkflow: boolean;
   isRecurring: boolean;
   isDisabled: boolean;
   chaosEngineChanged: boolean;
   namespace: string;
   workflow_id?: string;
-  clustername: string;
   clusterid: string;
+  clustername: string;
   cronSyntax: string;
   scheduleType: scheduleType;
   scheduleInput: scheduleInput;
-  customWorkflow: customWorkflow;
-  customWorkflows: customWorkflow[];
-  stepperActiveStep: number;
-  workflowIcon: string;
 }
 
 export interface WorkflowManifest {

@@ -26,7 +26,6 @@ const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
 const Targets = lazy(() => import('../../pages/Targets'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
-const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
 const AnalyticsDashboard = lazy(
   () => import('../../pages/AnalyticsDashboards')
@@ -49,9 +48,6 @@ const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));
-const CreateCustomWorkflow = lazy(
-  () => import('../../pages/CreateCustomWorkflow')
-);
 
 const Routes: React.FC = () => {
   const baseRoute = window.location.pathname.split('/')[1];
@@ -198,11 +194,11 @@ const Routes: React.FC = () => {
             path="/workflows/:workflowRunId"
             component={WorkflowDetails}
           />
-          <Route
+          {/* <Route
             exact
             path="/workflows/schedule/:scheduleProjectID/:workflowName" // Check
             component={SchedulePage}
-          />
+          /> */}
           <Route
             exact
             path="/workflows/template/:templateName"
@@ -224,11 +220,6 @@ const Routes: React.FC = () => {
             exact
             path="/myhub/:hubname/:chart/:experiment"
             component={MyHubExperiment}
-          />
-          <Route
-            exact
-            path="/create-workflow/custom"
-            component={CreateCustomWorkflow}
           />
           {projectRole === 'Owner' ? (
             <Route path="/settings" component={Settings} />

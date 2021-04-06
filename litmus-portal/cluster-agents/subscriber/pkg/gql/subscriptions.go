@@ -2,6 +2,7 @@ package gql
 
 import (
 	"encoding/json"
+
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 
 	"github.com/gorilla/websocket"
