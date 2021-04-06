@@ -27,6 +27,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
+	"sync"
 )
 
 // EventTrackerPolicyReconciler reconciles a EventTrackerPolicy object
@@ -48,6 +49,9 @@ type Response struct {
 func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	_ = context.Background()
 	_ = r.Log.WithValues("eventtrackerpolicy", req.NamespacedName)
+
+	var mutex = &sync.Mutex{}
+	mutex.Lock()
 
 	var etp eventtrackerv1.EventTrackerPolicy
 	err := r.Client.Get(context.Background(), req.NamespacedName, &etp)
@@ -75,10 +79,12 @@ func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 		}
 	}
 
-	err = r.Client.Get(context.Background(), req.NamespacedName, &etp)
+	err = r.Client.Update(context.Background(), &etp)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
+
+	defer mutex.Unlock()
 
 	return ctrl.Result{}, nil
 }

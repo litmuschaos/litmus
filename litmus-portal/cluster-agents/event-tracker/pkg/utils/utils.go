@@ -49,7 +49,6 @@ func cases(key string, value string, operator string) bool {
 }
 
 func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, data interface{}) bool {
-
 	final_result := false
 	if etp.Spec.ConditionType == "and" {
 		for _, condition := range etp.Spec.Conditions {
@@ -76,7 +75,6 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, data interface{}) bo
 
 			str := fmt.Sprintf("%v", result)
 			if val := cases(str, condition.Value, condition.Operator); val {
-				log.Print(val)
 				final_result = val
 			}
 		}
@@ -88,36 +86,36 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, data interface{}) bo
 func PolicyAuditor(resourceType string, obj interface{}, workflowid string) error {
 	restConfig, err := k8s.GetKubeConfig()
 	if err != nil {
-		log.Print(err)
+		return err
 	}
 
 	clientSet, err := dynamic.NewForConfig(restConfig)
 	if err != nil {
-		log.Print(err)
+		return err
 	}
 
 	deploymentRes := schema.GroupVersionResource{Group: "eventtracker.litmuschaos.io", Version: "v1", Resource: "eventtrackerpolicies"}
 	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace(AgentNamespace).List(metav1.ListOptions{})
 	if err != nil {
-		log.Print(err)
+		return err
 	}
 
 	for _, ep := range deploymentConfigList.Items {
 
 		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace(AgentNamespace).Get(ep.GetName(), metav1.GetOptions{})
 		if err != nil {
-			log.Print(err)
+			return err
 		}
 
 		var etp litmuschaosv1.EventTrackerPolicy
 		data, err := json.Marshal(eventTrackerPolicy.Object)
 		if err != nil {
-			log.Print(err)
+			return err
 		}
 
 		err = json.Unmarshal(data, &etp)
 		if err != nil {
-			log.Print(err)
+			return err
 		}
 
 		var dataInterface interface{}
@@ -127,7 +125,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 			resourceName = deps.GetName()
 			mar, err := json.Marshal(deps)
 			if err != nil {
-				log.Print(err)
+				return err
 			}
 
 			err = json.Unmarshal(mar, &dataInterface)
@@ -136,7 +134,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 			resourceName = sts.GetName()
 			mar, err := json.Marshal(sts)
 			if err != nil {
-				log.Print(err)
+				return err
 			}
 
 			err = json.Unmarshal(mar, &dataInterface)
@@ -145,7 +143,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 			resourceName = sts.GetName()
 			mar, err := json.Marshal(sts)
 			if err != nil {
-				log.Print(err)
+				return err
 			}
 
 			err = json.Unmarshal(mar, &dataInterface)
@@ -160,8 +158,6 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 		} else if check == false {
 			result = "ConditionFailed"
 		}
-
-		log.Print("$v for resourceName %v and resourceType %v",result,resourceName,resourceType)
 
 		etp.Statuses = append(etp.Statuses, litmuschaosv1.EventTrackerPolicyStatus{
 			TimeStamp:    time.Now().Format(time.RFC850),
