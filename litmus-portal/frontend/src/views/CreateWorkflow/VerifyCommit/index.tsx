@@ -517,7 +517,7 @@ const VerifyCommit = forwardRef((_, ref) => {
                   setErrorModal(false);
                 }}
               >
-                <div>{t('workflowStepper.backBtn')}</div>
+                <div>{t('workflowStepper.back')}</div>
               </ButtonFilled>
             </div>
           </div>

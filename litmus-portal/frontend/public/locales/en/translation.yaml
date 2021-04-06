@@ -78,9 +78,11 @@ workflowStepper:
     errorSnackbar: Please select a workflow type
   step3:
     errorSnackbar: Please provide a valid Workflow Name
+  step4:
+    errorSnackbar: Please select atleast one experiment to proceed
   finish: Finish
   next: Next
-  backBtn: Back
+  back: Back
 
 ######################################
 ############    Pages    #############
