@@ -87,7 +87,7 @@ workflowStepper:
     errorSnackbar: Please select atleast one experiment to proceed
   finish: Finish
   next: Next
-  backBtn: Back
+  back: Back
 
 ######################################
 ############    Pages    #############

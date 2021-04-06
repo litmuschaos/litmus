@@ -2,6 +2,7 @@ import { Paper, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { LitmusStepConnector } from './LitmusStepConnector';
 import { LitmusStepIcon } from './LitmusStepIcon';
 import { useStyles } from './styles';
@@ -28,6 +29,7 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
   children,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   return (
     <div className={classes.root}>
       <Stepper
@@ -72,7 +74,7 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
       <div className={classes.stepperActions}>
         {activeStep >= 0 && (
           <ButtonOutlined onClick={handleBack}>
-            <Typography>Back</Typography>
+            <Typography>{t('workflowStepper.back')}</Typography>
           </ButtonOutlined>
         )}
         {moreStepperActions}
@@ -80,12 +82,12 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
           {activeStep !== steps.length - 1 ? (
             !hideNext && (
               <ButtonFilled onClick={handleNext} disabled={disableNext}>
-                <Typography>Next</Typography>
+                <Typography>{t('workflowStepper.next')}</Typography>
               </ButtonFilled>
             )
           ) : (
             <ButtonFilled onClick={handleNext} disabled={disableNext}>
-              <Typography>Finish</Typography>
+              <Typography>{t('workflowStepper.finish')}</Typography>
             </ButtonFilled>
           )}
         </div>
