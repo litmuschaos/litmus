@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraphPanelProps } from '../../../models/dashboardsData';
+import { GraphPanelProps } from '../../../../models/dashboardsData';
 import PanelContent from './PanelContent';
 
 const GraphPanel: React.FC<GraphPanelProps> = ({ ...props }) => {

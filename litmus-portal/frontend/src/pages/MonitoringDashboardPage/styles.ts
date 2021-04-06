@@ -1,7 +1,4 @@
-import MuiAccordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import { fade, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { fade, makeStyles, Theme } from '@material-ui/core/styles';
 
 // Component styles
 const useStyles = makeStyles((theme) => ({
@@ -81,30 +78,6 @@ const useStyles = makeStyles((theme) => ({
 
   btnText: {
     fontWeight: 500,
-  },
-
-  icon: {
-    width: '6rem',
-    height: '6rem',
-  },
-
-  modalHeading: {
-    marginTop: theme.spacing(3.5),
-    fontSize: '2.25rem',
-    marginBottom: theme.spacing(4.5),
-  },
-
-  modalBody: {
-    marginBottom: theme.spacing(4.5),
-  },
-
-  flexButtons: {
-    display: 'flex',
-    justifyContent: 'space-evenly',
-  },
-
-  modal: {
-    padding: theme.spacing(15, 0),
   },
 
   selectDate: {
@@ -211,37 +184,6 @@ const useStyles = makeStyles((theme) => ({
   chaosTableSection: {
     padding: theme.spacing(2.5, 2, 0),
   },
-
-  accordionSummary: {
-    display: 'flex',
-    justifyItems: 'center',
-    background: theme.palette.disabledBackground,
-  },
-
-  accordionDetails: {
-    width: '100%',
-  },
-
-  chaosHelperText: {
-    fontWeight: 500,
-    fontSize: '1rem',
-    color: theme.palette.primary.main,
-  },
-
-  tableDropIcon: {
-    width: '1.75rem',
-    height: '1.75rem',
-    marginTop: theme.spacing(-0.15),
-    color: theme.palette.primary.main,
-  },
-
-  accordionHeader: {
-    display: 'flex',
-  },
-
-  editIconButton: {
-    marginTop: theme.spacing(-0.75),
-  },
 }));
 
 export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
@@ -270,45 +212,5 @@ export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
     background: theme.palette.background.paper,
   },
 }));
-
-export const Accordion = withStyles((theme) => ({
-  root: {
-    border: 0,
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
-    '&:before': {
-      display: 'none',
-    },
-    '&$expanded': {
-      margin: 'auto',
-    },
-    '& .MuiAccordionSummary-root.Mui-expanded': {
-      minHeight: '1rem !important',
-      height: '2.75rem',
-      paddingTop: theme.spacing(0.5),
-    },
-    '& .MuiAccordionSummary-root': {
-      minHeight: '1rem !important',
-      height: '2.75rem',
-      paddingTop: theme.spacing(0.5),
-    },
-  },
-}))(MuiAccordion);
-
-export const AccordionSummary = withStyles({
-  content: {
-    flexGrow: 0,
-  },
-})(MuiAccordionSummary);
-
-export const StyledAccordionDetails = withStyles({
-  root: {
-    paddingTop: 0,
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-})(AccordionDetails);
 
 export default useStyles;

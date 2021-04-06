@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { ApolloError, useQuery } from '@apollo/client';
 import {
   FormControl,
@@ -12,12 +11,10 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import AutorenewOutlinedIcon from '@material-ui/icons/AutorenewOutlined';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
-import { ButtonFilled, ButtonOutlined, GraphMetric, Modal } from 'litmus-ui';
+import { ButtonOutlined, GraphMetric } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -60,16 +57,15 @@ import {
 import useActions from '../../redux/actions';
 import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
-import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import {
   chaosEventDataParserForPrometheus,
   getChaosQueryPromInputAndID,
 } from '../../utils/promUtils';
-import ChaosTable from '../../views/AnalyticsDashboard/MonitoringDashboardPage/ChaosTable';
-import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DashboardPanelGroup';
+import ChaosAccordion from '../../views/AnalyticsDashboard/MonitoringDashboardPage/ChaosAccordion';
+import DataSourceInactiveModal from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DataSourceInactiveModal';
+import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/Panel/DashboardPanelGroup';
 import {
   ACTIVE,
   DEFAULT_REFRESH_RATE,
@@ -80,12 +76,7 @@ import {
   PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
 } from './constants';
 import refreshData from './refreshData';
-import useStyles, {
-  Accordion,
-  AccordionSummary,
-  StyledAccordionDetails,
-  useOutlinedInputStyles,
-} from './styles';
+import useStyles, { useOutlinedInputStyles } from './styles';
 
 interface SelectedDashboardInformation {
   id: string;
@@ -172,7 +163,6 @@ const DashboardPage: React.FC = () => {
     numOfWorkflows: 0,
     firstLoad: true,
   });
-  const [chaosTableOpen, setChaosTableOpen] = React.useState<boolean>(false);
   const [eventsToShow, setEventsToShow] = React.useState<EventsToShowInterface>(
     {
       eventsToShow: [],
@@ -542,6 +532,19 @@ const DashboardPage: React.FC = () => {
       chaosEventList: [],
       numberOfWorkflowsUnderConsideration: 0,
     };
+  };
+
+  const postEventSelectionRoutine = (selectedEvents: string[]) => {
+    setEventsToShow({
+      selectEvents: true,
+      eventsToShow: selectedEvents,
+    });
+    if (!selectedDashboardInformation.selectionOverride) {
+      setSelectedDashboardInformation({
+        ...selectedDashboardInformation,
+        selectionOverride: true,
+      });
+    }
   };
 
   useEffect(() => {
@@ -914,65 +917,11 @@ const DashboardPage: React.FC = () => {
             key={selectedDashboardInformation.dashboardKey}
           >
             <div className={classes.chaosTableSection}>
-              <Accordion expanded={chaosTableOpen}>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                  className={classes.accordionSummary}
-                  key={`chaos-table-${selectedDashboardInformation.dashboardKey}`}
-                >
-                  <div
-                    onClick={() => {
-                      setChaosTableOpen(!chaosTableOpen);
-                    }}
-                    onKeyDown={() => {
-                      setChaosTableOpen(!chaosTableOpen);
-                    }}
-                    className={classes.accordionHeader}
-                  >
-                    {!chaosTableOpen ? (
-                      <ArrowDropDownIcon className={classes.tableDropIcon} />
-                    ) : (
-                      <ArrowDropUpIcon className={classes.tableDropIcon} />
-                    )}
-                    <Typography className={classes.chaosHelperText}>
-                      {!chaosTableOpen
-                        ? `${t(
-                            'analyticsDashboard.monitoringDashboardPage.chaosTable.showTable'
-                          )}`
-                        : `${t(
-                            'analyticsDashboard.monitoringDashboardPage.chaosTable.hideTable'
-                          )}`}
-                    </Typography>
-                  </div>
-                  <IconButton
-                    aria-label="edit chaos query"
-                    aria-haspopup="true"
-                    disabled
-                    data-cy="editChaosQueryButton"
-                    className={classes.editIconButton}
-                  >
-                    <img src="/icons/editIcon.svg" alt="Edit" />
-                  </IconButton>
-                </AccordionSummary>
-                <StyledAccordionDetails className={classes.accordionDetails}>
-                  <ChaosTable
-                    chaosList={prometheusQueryData?.chaosEventsToBeShown}
-                    selectEvents={(selectedEvents: string[]) => {
-                      setEventsToShow({
-                        selectEvents: true,
-                        eventsToShow: selectedEvents,
-                      });
-                      if (!selectedDashboardInformation.selectionOverride) {
-                        setSelectedDashboardInformation({
-                          ...selectedDashboardInformation,
-                          selectionOverride: true,
-                        });
-                      }
-                    }}
-                  />
-                </StyledAccordionDetails>
-              </Accordion>
+              <ChaosAccordion
+                dashboardKey={selectedDashboardInformation.dashboardKey}
+                chaosEventsToBeShown={prometheusQueryData?.chaosEventsToBeShown}
+                postEventSelectionRoutine={postEventSelectionRoutine}
+              />
             </div>
             {selectedDashboardInformation.metaData[0] &&
               selectedDashboardInformation.metaData[0].panel_groups.map(
@@ -995,72 +944,12 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
       {dataSourceStatus !== 'ACTIVE' ? (
-        <Modal open onClose={() => {}} width="60%">
-          <div className={classes.modal}>
-            <Typography align="center">
-              <CrossMarkIcon className={classes.icon} />
-            </Typography>
-            <Typography
-              className={classes.modalHeading}
-              align="center"
-              variant="h3"
-            >
-              {`${t(
-                'analyticsDashboard.monitoringDashboardPage.dataSourceIs'
-              )} ${dataSourceStatus}`}
-            </Typography>
-            <Typography
-              align="center"
-              variant="body1"
-              className={classes.modalBody}
-            >
-              {t('analyticsDashboard.monitoringDashboardPage.dataSourceError')}
-            </Typography>
-            <div className={classes.flexButtons}>
-              <ButtonFilled
-                variant="success"
-                onClick={() => {
-                  let dashboardTemplateID: number = -1;
-                  if (
-                    selectedDashboardInformation.type === 'Kubernetes Platform'
-                  ) {
-                    dashboardTemplateID = 0;
-                  } else if (
-                    selectedDashboardInformation.type === 'Sock Shop'
-                  ) {
-                    dashboardTemplateID = 1;
-                  }
-                  dashboard.selectDashboard({
-                    selectedDashboardID: selectedDashboardInformation.id,
-                    selectedDashboardName: selectedDashboardInformation.name,
-                    selectedDashboardTemplateID: dashboardTemplateID,
-                  });
-                  history.push({
-                    pathname: '/analytics/dashboard/configure',
-                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                  });
-                }}
-              >
-                {t(
-                  'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
-                )}
-              </ButtonFilled>
-              <ButtonFilled
-                variant="success"
-                onClick={() => {
-                  history.push({
-                    pathname: '/analytics/datasource/configure',
-                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                  });
-                }}
-              >
-                {t(
-                  'analyticsDashboard.monitoringDashboardPage.updateDataSource'
-                )}
-              </ButtonFilled>
-            </div>
-          </div>
-        </Modal>
+        <DataSourceInactiveModal
+          dataSourceStatus={dataSourceStatus}
+          dashboardType={selectedDashboardInformation.type}
+          dashboardID={selectedDashboardInformation.id}
+          dashboardName={selectedDashboardInformation.name}
+        />
       ) : (
         <div />
       )}

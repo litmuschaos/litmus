@@ -7,32 +7,32 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { PROM_QUERY } from '../../../graphql';
-import { GraphPanelProps } from '../../../models/dashboardsData';
+import { PROM_QUERY } from '../../../../graphql';
+import { GraphPanelProps } from '../../../../models/dashboardsData';
 import {
   PrometheusQueryInput,
   PrometheusQueryVars,
   PrometheusResponse,
   promQueryInput,
-} from '../../../models/graphql/prometheus';
+} from '../../../../models/graphql/prometheus';
 import {
   DEFAULT_REFRESH_RATE,
   DEFAULT_TOLERANCE_LIMIT,
   MAX_REFRESH_RATE,
   MINIMUM_TOLERANCE_LIMIT,
   PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
-} from '../../../pages/MonitoringDashboardPage/constants';
-import useActions from '../../../redux/actions';
-import * as DashboardActions from '../../../redux/actions/dashboards';
-import { RootState } from '../../../redux/reducers';
-import { ReactComponent as ViewChaosMetric } from '../../../svg/aligment.svg';
-import { ReactComponent as DisableViewChaosMetric } from '../../../svg/alignmentStriked.svg';
-import { ReactComponent as Expand } from '../../../svg/arrowsOut.svg';
-import { ReactComponent as Edit } from '../../../svg/edit.svg';
+} from '../../../../pages/MonitoringDashboardPage/constants';
+import useActions from '../../../../redux/actions';
+import * as DashboardActions from '../../../../redux/actions/dashboards';
+import { RootState } from '../../../../redux/reducers';
+import { ReactComponent as ViewChaosMetric } from '../../../../svg/aligment.svg';
+import { ReactComponent as DisableViewChaosMetric } from '../../../../svg/alignmentStriked.svg';
+import { ReactComponent as Expand } from '../../../../svg/arrowsOut.svg';
+import { ReactComponent as Edit } from '../../../../svg/edit.svg';
 import {
   getPromQueryInput,
   seriesDataParserForPrometheus,
-} from '../../../utils/promUtils';
+} from '../../../../utils/promUtils';
 import useStyles from './styles';
 
 interface PrometheusQueryDataInterface {

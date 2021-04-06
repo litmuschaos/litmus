@@ -3,8 +3,8 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import React from 'react';
-import { EventMetric } from '../../../models/dashboardsData';
-import { PanelResponse } from '../../../models/graphql/dashboardsDetails';
+import { EventMetric } from '../../../../models/dashboardsData';
+import { PanelResponse } from '../../../../models/graphql/dashboardsDetails';
 import GraphPanel from './GraphPanel';
 import useStyles, { Accordion } from './styles';
 
