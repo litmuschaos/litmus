@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     paddingTop: theme.spacing(2),
     margin: '0 auto',
+    marginBottom: theme.spacing(-2), // Overriding because LitmusStepper has default padding bottom
     height: '100%',
   },
 
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     width: '40%',
     [theme.breakpoints.up('lg')]: {
-      width: '20%',
+      width: '25%',
     },
   },
 

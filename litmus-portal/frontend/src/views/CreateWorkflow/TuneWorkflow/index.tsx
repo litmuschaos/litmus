@@ -23,6 +23,7 @@ import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
 import { Charts } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
+import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
@@ -69,6 +70,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   // Actions
   const workflowAction = useActions(WorkflowActions);
+  const alert = useActions(AlertActions);
 
   const { t } = useTranslation();
 
@@ -254,8 +256,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
     }
   }, [engineDataLoading, experimentDataLoading]);
 
-  // console.log(generatedYAML);
   function onNext() {
+    if (customWorkflow && experiment.length === 0) {
+      alert.changeAlertState(true); // Custom Workflow has no experiments
+      return false;
+    }
     return true;
   }
 

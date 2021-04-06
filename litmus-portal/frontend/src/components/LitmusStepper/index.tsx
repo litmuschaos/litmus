@@ -22,7 +22,6 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
   activeStep,
   handleBack,
   handleNext,
-  finishAction,
   hideNext,
   disableNext,
   moreStepperActions,
@@ -78,13 +77,17 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
         )}
         {moreStepperActions}
         <div className={classes.endAction}>
-          {activeStep !== steps.length - 1
-            ? !hideNext && (
-                <ButtonFilled onClick={handleNext} disabled={disableNext}>
-                  <Typography>Next</Typography>
-                </ButtonFilled>
-              )
-            : finishAction}
+          {activeStep !== steps.length - 1 ? (
+            !hideNext && (
+              <ButtonFilled onClick={handleNext} disabled={disableNext}>
+                <Typography>Next</Typography>
+              </ButtonFilled>
+            )
+          ) : (
+            <ButtonFilled onClick={handleNext} disabled={disableNext}>
+              <Typography>Finish</Typography>
+            </ButtonFilled>
+          )}
         </div>
       </div>
     </div>

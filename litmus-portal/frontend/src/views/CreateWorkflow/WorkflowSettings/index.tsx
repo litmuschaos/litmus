@@ -146,7 +146,11 @@ const WorkflowSettings = forwardRef((_, ref) => {
       CRDLink,
     };
     localforage.setItem('workflow', workflowDetails);
-    if (validateWorkflowName(name)) {
+    if (name.length === 0) {
+      alert.changeAlertState(true); // Workflow Name is empty and user clicked on Next
+      return false;
+    }
+    if (name.length > 0 && validateWorkflowName(name)) {
       alert.changeAlertState(true); // Workflow Name is not valid and user clicked on Next
       return false;
     }
