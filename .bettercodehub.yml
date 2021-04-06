@@ -7,8 +7,7 @@ exclude:
 - /build/utils/.*
 - /litmus-portal/graphql-server/graph/generated/.*
 - /litmus-portal/graphql-server/graph/model/.*
-- /litmus-portal/frontend/src/**/.*/styles\.ts
+- /litmus-portal/frontend/src/.*/.*/styles\.ts
 test:
     include:
-      - /litmus-portal/frontend/src/**/__tests__/**/.*\.tsx
-      - /litmus-portal/frontend/src/**/?(.*\.)(spec|test).tsx
+      - /litmus-portal/frontend/src/.*/__tests__.*\.tsx
