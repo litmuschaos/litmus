@@ -18,14 +18,15 @@ package controllers
 
 import (
 	"context"
-	"log"
-
+	"encoding/json"
 	"github.com/go-logr/logr"
+	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
 	"k8s.io/apimachinery/pkg/runtime"
+	"log"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
-	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
+	"strings"
 )
 
 // EventTrackerPolicyReconciler reconciles a EventTrackerPolicy object
@@ -35,6 +36,12 @@ type EventTrackerPolicyReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+type Response struct {
+	Data struct {
+		GitopsNotifer string `json:"gitopsNotifer"`
+	} `json:"data"`
+}
+
 // +kubebuilder:rbac:groups=eventtracker.litmuschaos.io,resources=eventtrackerpolicies,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=eventtracker.litmuschaos.io,resources=eventtrackerpolicies/status,verbs=get;update;patch
 
@@ -42,17 +49,36 @@ func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	_ = context.Background()
 	_ = r.Log.WithValues("eventtrackerpolicy", req.NamespacedName)
 
-	// your logic here
-
-	log.Print(req.Name)
 	var etp eventtrackerv1.EventTrackerPolicy
-
-	err := r.Client.Get(context.Background(), req.NamespacedName , &etp)
-	if err != nil{
+	err := r.Client.Get(context.Background(), req.NamespacedName, &etp)
+	if err != nil {
 		return ctrl.Result{}, err
 	}
 
-	log.Print(etp.Statuses)
+	for index, status := range etp.Statuses {
+		if strings.ToLower(status.Result) == "conditionpassed" && strings.ToLower(status.IsTriggered) == "false" {
+			log.Print("ResourceName: %v, WorkflowID %v", status.ResourceName, status.WorkflowID)
+			response, err := utils.SendRequest(status.WorkflowID)
+			if err != nil {
+				return ctrl.Result{}, err
+			}
+			log.Print(response)
+
+			var res Response
+			json.Unmarshal([]byte(response), &res)
+
+			if res.Data.GitopsNotifer == "Gitops Disabled" {
+				etp.Statuses[index].IsTriggered = "false"
+			} else {
+				etp.Statuses[index].IsTriggered = "true"
+			}
+		}
+	}
+
+	err = r.Client.Get(context.Background(), req.NamespacedName, &etp)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 
 	return ctrl.Result{}, nil
 }

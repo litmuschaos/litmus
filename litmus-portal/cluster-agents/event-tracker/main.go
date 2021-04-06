@@ -18,10 +18,12 @@ package main
 
 import (
 	"flag"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
 	"k8s.io/client-go/informers"
 	"log"
 	"os"
+	"time"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -31,8 +33,6 @@ import (
 
 	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/controllers"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
-
 	// +kubebuilder:scaffold:imports
 )
 
@@ -46,19 +46,20 @@ func init() {
 
 	_ = eventtrackerv1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
-}
 
-func main() {
 	clientset, err := k8s.K8sClient()
 	if err != nil {
 		log.Print(err)
 	}
 
-	factory := informers.NewSharedInformerFactory(clientset, 0)
+	factory := informers.NewSharedInformerFactory(clientset, 30*time.Second)
 
 	go utils.RunDeploymentInformer(factory)
 	go utils.RunDSInformer(factory)
 	go utils.RunStsInformer(factory)
+}
+
+func main() {
 
 	var metricsAddr string
 	var enableLeaderElection bool

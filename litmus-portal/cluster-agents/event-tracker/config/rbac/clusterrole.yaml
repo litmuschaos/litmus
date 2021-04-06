@@ -4,7 +4,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: manager-role
+  name: event-tracker-cluster-role
 rules:
 - apiGroups:
   - eventtracker.litmuschaos.io
@@ -26,3 +26,17 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+    - ""
+    - extensions
+    - apps
+  resources:
+    - deployments
+    - daemonsets
+    - statefulsets
+    - pods
+    - configmaps
+  verbs:
+    - get
+    - list
+    - watch

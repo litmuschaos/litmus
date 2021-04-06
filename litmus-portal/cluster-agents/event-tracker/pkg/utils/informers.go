@@ -9,7 +9,6 @@ import (
 	"log"
 )
 
-
 // K8s informer watching for all the deployment changes
 func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 	deploymentInformer := factory.Apps().V1().Deployments().Informer()
@@ -24,10 +23,10 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
 			depNewObj := newObj.(*v1.Deployment)
 			depOldObj := oldObj.(*v1.Deployment)
-			if depNewObj.GetResourceVersion() != depOldObj.GetResourceVersion(){
+			if depNewObj.GetResourceVersion() != depOldObj.GetResourceVersion() {
 				var worflowid = depNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 				if depNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-					log.Print("EventType: Add")
+					log.Print("EventType: Update")
 					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depNewObj.Name, depNewObj.Namespace)
 					err := PolicyAuditor("Deployment", depNewObj, worflowid)
 					if err != nil {
@@ -61,7 +60,7 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 			stsNewObj := newObj.(*v1.StatefulSet)
 			stsOldObj := oldObj.(*v1.StatefulSet)
 
-			if stsNewObj.GetResourceVersion() != stsOldObj.GetResourceVersion(){
+			if stsNewObj.GetResourceVersion() != stsOldObj.GetResourceVersion() {
 				var worflowid = stsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 				if stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 					log.Print("EventType: Update")
@@ -95,7 +94,7 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 			dsNewObj := newObj.(*v1.DaemonSet)
 			dsOldObj := newObj.(*v1.DaemonSet)
 
-			if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion(){
+			if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion() {
 				var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 				if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 					log.Print("EventType: Update")
@@ -112,4 +111,3 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 		return
 	}
 }
-
