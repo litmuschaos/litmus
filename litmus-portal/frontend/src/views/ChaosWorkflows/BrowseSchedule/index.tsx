@@ -173,7 +173,7 @@ const BrowseSchedule: React.FC = () => {
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
-              {(data ? getClusters(data?.getScheduledWorkflows) : []).map(
+              {(data ? getClusters(data.getScheduledWorkflows) : []).map(
                 (cluster: any) => (
                   <MenuItem value={cluster}>{cluster}</MenuItem>
                 )
