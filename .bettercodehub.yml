@@ -9,4 +9,4 @@ exclude:
 - /litmus-portal/graphql-server/graph/model/.*
 test:
     include:
-      - /litmus-portal/frontend/src/.*/__tests__.*\.tsx
+      - /litmus-portal/frontend/src/.*
