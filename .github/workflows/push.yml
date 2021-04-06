@@ -7,15 +7,6 @@ on:
     tags:
       - '*'
 jobs:
-  frontend-checks:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - shell: bash
-        run: |
-          cd litmus-portal
-          make frontend-services-checks
 
   get-envs:
     runs-on: ubuntu-latest
