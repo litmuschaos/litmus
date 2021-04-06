@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/jmespath/go-jmespath"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
@@ -36,6 +37,7 @@ func cases(key string, value string, operator string) bool {
 func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, data interface{}) bool {
 
 	final_result := false
+	log.Print(etp.Spec.ConditionType)
 	if etp.Spec.ConditionType == "and" {
 		for _, condition := range etp.Spec.Conditions{
 			result, err := jmespath.Search(condition.Key, data)
@@ -43,7 +45,11 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, data interface{}) bo
 				log.Print(err)
 				return false
 			}
+
 			str := fmt.Sprintf("%v", result)
+			log.Print("key", str)
+			log.Print("val", condition.Value)
+
 			if val := cases(str, condition.Value, condition.Operator); !val {
 				final_result = val
 				break;
@@ -52,8 +58,10 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, data interface{}) bo
 			}
 		}
 	} else if etp.Spec.ConditionType == "or" {
+		log.Print(etp.Spec.Conditions)
 		for _, condition := range etp.Spec.Conditions{
 
+			log.Print(condition)
 			result, err := jmespath.Search(condition.Key, data)
 			if err != nil {
 				log.Print(err)
@@ -74,7 +82,7 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, data interface{}) bo
 	return final_result
 }
 
-func PolicyAuditor(resourceType string, obj interface{}, workflowid string) {
+func PolicyAuditor(resourceType string, obj interface{}, workflowid string) error {
 	restConfig, err := k8s.GetKubeConfig()
 	if err != nil{
 		log.Print(err)
@@ -85,8 +93,8 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) {
 		log.Print(err)
 	}
 
-	deploymentRes := schema.GroupVersionResource{Group: "eventtracker.litmuschaos.io", Version: "v1alpha1", Resource: "eventtrackerpolicies"}
-	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace("litmus").List(metav1.ListOptions{})
+	deploymentRes := schema.GroupVersionResource{Group: "eventtracker.litmuschaos.io", Version: "v1", Resource: "eventtrackerpolicies"}
+	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace("default").List(metav1.ListOptions{})
 	if err != nil {
 		log.Print(err)
 	}
@@ -94,7 +102,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) {
 
 	for _, ep := range deploymentConfigList.Items {
 
-		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace("litmus").Get(ep.GetName(),metav1.GetOptions{})
+		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace("default").Get(ep.GetName(),metav1.GetOptions{})
 		if err != nil {
 			log.Print(err)
 		}
@@ -139,10 +147,13 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) {
 			}
 
 			err = json.Unmarshal(mar, &dataInterface)
+		} else {
+			return errors.New("Resource not supported")
 		}
 
 
 		result := conditionChecker(etp, dataInterface)
+		log.Print(result)
 		if result == true {
 			etp.Statuses = append(etp.Statuses, litmuschaosv1.EventTrackerPolicyStatus{
 				TimeStamp: time.Now().Format(time.RFC850),
@@ -166,22 +177,23 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) {
 		var unstruc unstructured.Unstructured
 		data, err = json.Marshal(etp)
 		if err != nil {
-			log.Print(err)
-		}
-		//
-		err = json.Unmarshal(data, &unstruc)
-		if err != nil {
-			log.Print(err)
+			return err
 		}
 
-		_, err = clientSet.Resource(deploymentRes).Namespace("litmus").Update(&unstruc ,metav1.UpdateOptions{})
+		err = json.Unmarshal(data, &unstruc)
 		if err != nil {
-			log.Print(err)
+			return err
+		}
+
+		_, err = clientSet.Resource(deploymentRes).Namespace("default").Update(&unstruc ,metav1.UpdateOptions{})
+		if err != nil {
+			return err
 		}
 
 		//log.Print(eventTrackerPolicyUpdate)
 		log.Print("EventTrackerPolicy CR updated")
 	}
 
+	return nil
 
 }

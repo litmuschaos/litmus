@@ -30,7 +30,7 @@ type EventTrackerPolicySpec struct {
 
 	// Foo is an example field of EventTrackerPolicy. Edit EventTrackerPolicy_types.go to remove/update
 	ConditionType string      `json:"condition_type,omitempty"`
-	Conditions    []Condition `json:"condition,omitempty"`
+	Conditions    []Condition `json:"conditions,omitempty"`
 }
 
 type Condition struct {

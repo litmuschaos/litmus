@@ -34,7 +34,11 @@ spec:
         spec:
           description: EventTrackerPolicySpec defines the desired state of EventTrackerPolicy
           properties:
-            condition:
+            condition_type:
+              description: Foo is an example field of EventTrackerPolicy. Edit EventTrackerPolicy_types.go
+                to remove/update
+              type: string
+            conditions:
               items:
                 properties:
                   key:
@@ -45,10 +49,6 @@ spec:
                     type: string
                 type: object
               type: array
-            condition_type:
-              description: Foo is an example field of EventTrackerPolicy. Edit EventTrackerPolicy_types.go
-                to remove/update
-              type: string
           type: object
         statuses:
           items:

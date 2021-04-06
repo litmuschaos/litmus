@@ -45,6 +45,14 @@ func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	// your logic here
 
 	log.Print(req.Name)
+	var etp eventtrackerv1.EventTrackerPolicy
+
+	err := r.Client.Get(context.Background(), req.NamespacedName , &etp)
+	if err != nil{
+		return ctrl.Result{}, err
+	}
+
+	log.Print(etp.Statuses)
 
 	return ctrl.Result{}, nil
 }

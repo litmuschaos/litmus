@@ -20,27 +20,21 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 	defer runtime.HandleCrash()
 
 	deploymentInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		// When a new resource gets created
-		AddFunc: func(obj interface{}) {
-			depObj := obj.(*v1.Deployment)
-
-			var worflowid = depObj.GetAnnotations()["litmuschaos.io/workflow"]
-			if depObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-				log.Print("EventType: Add")
-				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depObj.Name, depObj.Namespace)
-				PolicyAuditor("Deployment", depObj, worflowid)
-			}
-		},
-
 		// When a resource gets updated
-		UpdateFunc: func(_ interface{}, newObj interface{}) {
-			depObj := newObj.(*v1.Deployment)
-
-			var worflowid = depObj.GetAnnotations()["litmuschaos.io/workflow"]
-			if depObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
+		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
+			depNewObj := newObj.(*v1.Deployment)
+			depOldObj := oldObj.(*v1.Deployment)
+			if depNewObj.GetResourceVersion() != depOldObj.GetResourceVersion(){
+				var worflowid = depNewObj.GetAnnotations()["litmuschaos.io/workflow"]
+				if depNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 					log.Print("EventType: Add")
-					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depObj.Name, depObj.Namespace)
-					PolicyAuditor("Deployment", depObj, worflowid)
+					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depNewObj.Name, depNewObj.Namespace)
+					err := PolicyAuditor("Deployment", depNewObj, worflowid)
+					if err != nil {
+						log.Print(err)
+						return
+					}
+				}
 			}
 		},
 	})
@@ -62,27 +56,19 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 	defer runtime.HandleCrash()
 
 	stsInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		// When a new resource gets created
-		AddFunc: func(obj interface{}) {
-			stsObj := obj.(*v1.StatefulSet)
-
-			var worflowid = stsObj.GetAnnotations()["litmuschaos.io/workflow"]
-			if stsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-				log.Print("EventType: Add")
-				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsObj.Name, stsObj.Namespace)
-				PolicyAuditor("StateFulSet", stsObj, worflowid)
-			}
-		},
-
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
-			stsObj := newObj.(*v1.StatefulSet)
+			stsNewObj := newObj.(*v1.StatefulSet)
+			stsOldObj := oldObj.(*v1.StatefulSet)
 
-			var worflowid = stsObj.GetAnnotations()["litmuschaos.io/workflow"]
-			if stsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-				log.Print("EventType: Update")
-				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsObj.Name, stsObj.Namespace)
-				PolicyAuditor("StateFulSet", stsObj, worflowid)
+			if stsNewObj.GetResourceVersion() != stsOldObj.GetResourceVersion(){
+				var worflowid = stsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
+				if stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
+					log.Print("EventType: Update")
+					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsNewObj.Name, stsNewObj.Namespace)
+					PolicyAuditor("StateFulSet", stsNewObj, worflowid)
+				}
+
 			}
 		},
 	})
@@ -104,27 +90,18 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 	defer runtime.HandleCrash()
 
 	dsInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		// When a new resource gets created
-		AddFunc: func(obj interface{}) {
-			dsObj := obj.(*v1.DaemonSet)
-
-			var worflowid = dsObj.GetAnnotations()["litmuschaos.io/workflow"]
-			if dsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-				log.Print("EventType: Add")
-				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsObj.Name, dsObj.Namespace)
-				PolicyAuditor("DaemonSet", dsObj, worflowid)
-			}
-		},
-
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
-			dsObj := newObj.(*v1.DaemonSet)
+			dsNewObj := newObj.(*v1.DaemonSet)
+			dsOldObj := newObj.(*v1.DaemonSet)
 
-			var worflowid = dsObj.GetAnnotations()["litmuschaos.io/workflow"]
-			if dsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-				log.Print("EventType: Update")
-				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsObj.Name, dsObj.Namespace)
-				PolicyAuditor("DaemonSet", dsObj, worflowid)
+			if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion(){
+				var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
+				if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
+					log.Print("EventType: Update")
+					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
+					PolicyAuditor("DaemonSet", dsNewObj, worflowid)
+				}
 			}
 		},
 	})
