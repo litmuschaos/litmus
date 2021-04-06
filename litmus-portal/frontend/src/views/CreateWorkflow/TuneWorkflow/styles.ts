@@ -45,8 +45,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
-  // Header Buttons [View YAML, Add Exp]
-  btn1: {
+  // Header Buttons [Edit YAML, Add Exp]
+  editBtn: {
     border: 'none !important',
     color: theme.palette.highlight,
   },
@@ -109,6 +109,9 @@ const useStyles = makeStyles((theme) => ({
   },
   label: {
     color: theme.palette.common.black,
+  },
+  closeBtn: {
+    color: theme.palette.secondary.contrastText,
   },
 }));
 
