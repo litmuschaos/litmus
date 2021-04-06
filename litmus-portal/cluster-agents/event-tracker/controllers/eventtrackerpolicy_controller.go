@@ -61,7 +61,7 @@ func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 
 	for index, status := range etp.Statuses {
 		if strings.ToLower(status.Result) == "conditionpassed" && strings.ToLower(status.IsTriggered) == "false" {
-			log.Print("ResourceName: %v, WorkflowID %v", status.ResourceName, status.WorkflowID)
+			log.Print("ResourceName: " + status.ResourceName + "WorkflowID: " + status.WorkflowID)
 			response, err := utils.SendRequest(status.WorkflowID)
 			if err != nil {
 				return ctrl.Result{}, err

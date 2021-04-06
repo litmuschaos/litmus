@@ -58,7 +58,7 @@ type EventTrackerPolicy struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   EventTrackerPolicySpec   `json:"spec,omitempty"`
+	Spec     EventTrackerPolicySpec     `json:"spec,omitempty"`
 	Statuses []EventTrackerPolicyStatus `json:"statuses,omitempty"`
 }
 

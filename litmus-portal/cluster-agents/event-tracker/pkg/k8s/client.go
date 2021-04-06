@@ -3,11 +3,11 @@ package k8s
 import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"os"
 	"k8s.io/client-go/tools/clientcmd"
+	"os"
 )
 
-var KubeConfig  = os.Getenv("KUBE_CONFIG")
+var KubeConfig = os.Getenv("KUBE_CONFIG")
 
 func GetKubeConfig() (*rest.Config, error) {
 	// Use in-cluster config if kubeconfig path is not specified
