@@ -3,10 +3,11 @@ package workflowtemplate
 import (
 	"context"
 	"errors"
+	"log"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
 )
 
 var workflowtemplateCollection *mongo.Collection
