@@ -223,9 +223,15 @@ const BrowseSchedule: React.FC = () => {
               label="Name"
               className={classes.selectText}
             >
-              <MenuItem value="All">Show All Workflows</MenuItem>
-              <MenuItem value="false">Show Enabled Workflows Only</MenuItem>
-              <MenuItem value="true">Show Disabled Workflows Only</MenuItem>
+              <MenuItem value="All">
+                {t('chaosWorkflows.browseSchedules.options.all')}
+              </MenuItem>
+              <MenuItem value="false">
+                {t('chaosWorkflows.browseSchedules.options.enabledOnly')}
+              </MenuItem>
+              <MenuItem value="true">
+                {t('chaosWorkflows.browseSchedules.options.disabledOnly')}
+              </MenuItem>
             </Select>
           </FormControl>
 

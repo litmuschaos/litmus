@@ -352,6 +352,10 @@ chaosWorkflows:
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
+    options:
+      all: Show All Workflows
+      enabledOnly: Show Enabled Workflows Only
+      disabledOnly: Show Disabled Workflows Only
   browseWorkflows:
     status: Status
     name: Name
