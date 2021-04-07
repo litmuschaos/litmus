@@ -417,6 +417,8 @@ export const chaosEventDataParserForPrometheus = (
         (e) => queryResponse.queryid === e.id
       )[0];
       let latestRunMetric: RunWiseChaosMetrics | undefined;
+      let allRunMetric: RunWiseChaosMetrics[];
+
       if (chaosEventDetails && workflowAnalyticsData.ListWorkflow) {
         const workflowAndExperiments: WorkflowAndExperimentMetaDataMap =
           chaosEventDetails.chaosMetrics;
@@ -513,9 +515,12 @@ export const chaosEventDataParserForPrometheus = (
             eventMetric.lastUpdatedTimeStamp >= selectedStartTime &&
             eventMetric.lastUpdatedTimeStamp <= selectedEndTime
         );
+        allRunMetric = availableRunMetrics;
         latestRunMetric = availableRunMetrics[availableRunMetrics.length - 1];
       }
+
       chaosDataUpdates.queryIDs.push(queryResponse.queryid);
+
       chaosDataUpdates.chaosData.push(
         ...queryResponse.legends.map((elem, index) => ({
           metricName: elem[0] ?? DEFAULT_CHAOS_EVENT_NAME,
@@ -524,48 +529,44 @@ export const chaosEventDataParserForPrometheus = (
             value: parseInt(dataPoint.value ?? '0', 10),
           })),
           baseColor: chaosEventDetails ? chaosEventDetails.legend : '',
-          subData: [
-            {
-              subDataName: 'Workflow Status',
-              value: latestRunMetric
-                ? latestRunMetric.workflowStatus
-                : STATUS_RUNNING,
-            },
-            {
-              subDataName: 'Experiment Status',
-              value: latestRunMetric
-                ? latestRunMetric.experimentStatus
-                : STATUS_RUNNING,
-            },
-            {
-              subDataName: 'Resilience Score',
-              value:
-                latestRunMetric &&
-                latestRunMetric.workflowStatus !== STATUS_RUNNING &&
-                latestRunMetric.resilienceScore !==
-                  INVALID_RESILIENCE_SCORE_STRING
-                  ? latestRunMetric.resilienceScore
-                  : '--',
-            },
-            {
-              subDataName: 'Probe Success Percentage',
-              value: latestRunMetric
-                ? latestRunMetric.probeSuccessPercentage
-                : '--',
-            },
-            {
-              subDataName: 'Experiment Verdict',
-              value: latestRunMetric
-                ? latestRunMetric.experimentVerdict +
-                  (latestRunMetric.experimentVerdict ===
-                    CHAOS_EXPERIMENT_VERDICT_PASS ||
-                  latestRunMetric.experimentVerdict ===
-                    CHAOS_EXPERIMENT_VERDICT_FAIL
-                    ? 'ed'
-                    : '')
-                : '--',
-            },
-          ],
+          subData: allRunMetric
+            .map((elem: RunWiseChaosMetrics) => {
+              return [
+                {
+                  subDataName: 'Workflow Status',
+                  value: elem ? elem.workflowStatus : STATUS_RUNNING,
+                },
+                {
+                  subDataName: 'Experiment Status',
+                  value: elem ? elem.experimentStatus : STATUS_RUNNING,
+                },
+                {
+                  subDataName: 'Resilience Score',
+                  value:
+                    elem &&
+                    elem.workflowStatus !== STATUS_RUNNING &&
+                    elem.resilienceScore !== INVALID_RESILIENCE_SCORE_STRING
+                      ? elem.resilienceScore
+                      : '--',
+                },
+                {
+                  subDataName: 'Probe Success Percentage',
+                  value: elem ? elem.probeSuccessPercentage : '--',
+                },
+                {
+                  subDataName: 'Experiment Verdict',
+                  value: elem
+                    ? elem.experimentVerdict +
+                      (elem.experimentVerdict ===
+                        CHAOS_EXPERIMENT_VERDICT_PASS ||
+                      elem.experimentVerdict === CHAOS_EXPERIMENT_VERDICT_FAIL
+                        ? 'ed'
+                        : '')
+                    : '--',
+                },
+              ];
+            })
+            .flat(),
           // Filter subData within the start and end time of interleaving on experiment's lastUpdatedTimeStamp.
           // Add one extra subData field - lastUpdatedTimeStamp to filter subData in graph.
           // This method sends the latest run details within selected dashboard time range as the subData.
