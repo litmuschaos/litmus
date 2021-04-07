@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { SUCCEEDED } from '../../WorkflowDetails/workflowConstants';
 import useStyles from './styles';
 
 interface StatusProps {
@@ -22,7 +23,9 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
   return (
     <>
       <div className={label}>
-        <Typography className={classes.statusFont}>{status}</Typography>
+        <Typography className={classes.statusFont}>
+          {status === SUCCEEDED ? 'Completed' : status}
+        </Typography>
       </div>
     </>
   );

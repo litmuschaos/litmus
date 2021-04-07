@@ -315,9 +315,8 @@ error:
   goBack: Go back
 
 workflowDetails:
-  detailedLog: Click on Info to see details of your workflow
+  workflowNotStarted: Please check the configuration, the workflow was not able to start
   fetchError: An error has occurred while fetching the data
-  overallRR: 'Overall RR: '
 
 ######################################
 ############    Views    #############

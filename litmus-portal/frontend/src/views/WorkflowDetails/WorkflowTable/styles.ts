@@ -79,16 +79,16 @@ const useStyles = makeStyles((theme) => ({
   },
 
   popover: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '5rem',
-    padding: theme.spacing(0, 1, 0, 1),
+    padding: theme.spacing(2),
   },
 
   popoverItems: {
     textAlign: 'left',
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    margin: theme.spacing(1, 'auto'),
+  },
+
+  boldText: {
+    fontWeight: 'bold',
   },
 }));
 

@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
+import { RUNNING, SUCCEEDED, PENDING, FAILED } from '../workflowConstants';
 import useStyles from './styles';
 
 interface WorkflowStatusProps {
@@ -11,13 +12,13 @@ const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
 
   function getStatus(phase: string) {
     switch (phase) {
-      case 'Succeeded':
+      case SUCCEEDED:
         return classes.succeeded;
-      case 'Running':
+      case RUNNING:
         return classes.running;
-      case 'Failed':
+      case FAILED:
         return classes.failed;
-      case 'Pending':
+      case PENDING:
         return classes.pending;
       default:
         return classes.pending;
@@ -28,16 +29,14 @@ const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
     <div className={classes.status}>
       <span className={classes.icon}>
         <img
-          className={
-            phase.toLowerCase() === 'running' ? classes.runningSmallIcon : ''
-          }
+          className={phase === RUNNING ? classes.runningSmallIcon : ''}
           src={`/icons/${phase.toLowerCase()}.svg`}
           alt="status"
         />
       </span>
       <Typography>
         <span className={getStatus(phase)}>
-          <strong>{phase}</strong>
+          <strong>{phase === SUCCEEDED ? 'Completed' : phase}</strong>
         </span>
       </Typography>
     </div>
