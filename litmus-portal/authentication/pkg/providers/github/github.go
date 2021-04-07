@@ -16,7 +16,7 @@ var (
 		RedirectURL:  "http://localhost:3000/oauth/github",
 		Endpoint:     githubAuth.Endpoint,
 	}
-	globalToken *oauth2.Token // Non-concurrent security
+	globalToken *oauth2.Token // nolint
 )
 
 //Middleware redirects to a github endpoint to get the temp code for oauth
@@ -27,7 +27,7 @@ func Middleware(w http.ResponseWriter, r *http.Request) {
 
 //GitHub gets the temp code for oauth and exchanges this code with github in order to get auth token
 func GitHub(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	_ = r.ParseForm()
 	state := r.Form.Get("state")
 	if state != "xyz" {
 		http.Error(w, "State invalid", http.StatusBadRequest)

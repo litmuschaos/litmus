@@ -76,6 +76,7 @@ func (us *UserStore) Close() {
 	us.session.Close()
 }
 
+//nolint
 func (us *UserStore) c(name string) *mgo.Collection {
 	return us.session.DB(us.dbName).C(name)
 }
@@ -84,7 +85,7 @@ func (us *UserStore) cHandler(name string, handler func(c *mgo.Collection)) {
 	session := us.session.Clone()
 	defer session.Close()
 	handler(session.DB(us.dbName).C(name))
-	return
+	return //nolint
 }
 
 // Set set user information
@@ -95,11 +96,11 @@ func (us *UserStore) Set(user *models.UserCredentials) (err error) {
 		user.CreatedAt = &currentTime
 		if cerr := c.Insert(user); cerr != nil {
 			err = cerr
-			return
+			return //nolint
 		}
 	})
 
-	return
+	return //nolint
 }
 
 // GetByUserName according to the ID for the user information
@@ -108,11 +109,11 @@ func (us *UserStore) GetByUserName(username string) (user *models.UserCredential
 		user = new(models.UserCredentials)
 		if cerr := c.Find(bson.M{"username": username}).One(user); cerr != nil {
 			err = cerr
-			return
+			return //nolint
 		}
 	})
 
-	return
+	return //nolint
 }
 
 // GetAllUsers according to the ID for the user information
@@ -120,11 +121,11 @@ func (us *UserStore) GetAllUsers() (users []*models.UserCredentials, err error) 
 	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {
 		if cerr := c.Find(bson.M{}).All(&users); cerr != nil {
 			err = cerr
-			return
+			return //nolint
 		}
 	})
 
-	return
+	return //nolint
 }
 
 // GetByEmail according to the ID for the user information
@@ -133,11 +134,11 @@ func (us *UserStore) GetByEmail(email string) (user *models.UserCredentials, err
 		user = new(models.UserCredentials)
 		if cerr := c.Find(bson.M{"email": email}).One(user); cerr != nil {
 			err = cerr
-			return
+			return //nolint
 		}
 	})
 
-	return
+	return //nolint
 }
 
 //UpdateUser updates the user
@@ -147,10 +148,10 @@ func (us *UserStore) UpdateUser(user *models.UserCredentials) (err error) {
 		user.UpdatedAt = &currentTime
 		if cerr := c.UpdateId(user.GetID(), user); cerr != nil {
 			err = cerr
-			return
+			return //nolint
 		}
 	})
-	return
+	return //nolint
 }
 
 // RemoveByUserName use the user id to delete the user information
@@ -158,9 +159,9 @@ func (us *UserStore) RemoveByUserName(username string) (err error) {
 	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {
 		if cerr := c.Remove(bson.M{"username": username}); cerr != nil {
 			err = cerr
-			return
+			return //nolint
 		}
 	})
 
-	return
+	return //nolint
 }

@@ -31,13 +31,13 @@ func (user *User) Login(c *gin.Context) {
 
 	userModel := models.UserCredentials(*user)
 	controller.Server.HandleAuthenticateRequest(c, &userModel)
-	return
+
 }
 
 // Logout lets a user login into the litmus-portal
 func (user *User) Logout(c *gin.Context) {
 	controller.Server.LogoutRequest(c)
-	return
+
 }
 
 // UpdateUserDetails updates a user details
@@ -53,7 +53,7 @@ func (user *User) UpdateUserDetails(c *gin.Context) {
 
 	userModel := models.UserCredentials(*user)
 	controller.Server.UpdateUserDetailsRequest(c, &userModel)
-	return
+
 }
 
 //Create ...
@@ -69,11 +69,11 @@ func (user *User) Create(c *gin.Context) {
 
 	userModel := models.UserCredentials(*user)
 	controller.Server.CreateRequest(c, &userModel)
-	return
+
 }
 
 //GetAllUsers ...
 func (user *User) GetAllUsers(c *gin.Context) {
 	controller.Server.GetUsersRequest(c)
-	return
+
 }

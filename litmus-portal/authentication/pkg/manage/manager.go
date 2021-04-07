@@ -201,7 +201,7 @@ func (m *Manager) UpdatePassword(reset bool, oldPassword, newPassword, userName 
 		return nil, errors.ErrInvalidUser
 	}
 
-	if reset == false {
+	if !reset {
 		err = bcrypt.CompareHashAndPassword([]byte(storedUser.GetPassword()), []byte(oldPassword))
 		if err != nil {
 			return storedUser.GetPublicInfo(), errors.ErrInvalidPassword

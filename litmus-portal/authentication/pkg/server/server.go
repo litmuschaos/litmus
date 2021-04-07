@@ -99,7 +99,7 @@ func (s *Server) HandleAuthenticateRequest(c *gin.Context, user *models.UserCred
 	}
 
 	s.redirect(c, s.getTokenData(ti))
-	return
+
 }
 
 // LogoutRequest the authorization request handling
@@ -120,7 +120,7 @@ func (s *Server) LogoutRequest(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "LoggedOut successfully",
 	})
-	return
+
 }
 
 // GetTokenData token data
@@ -186,6 +186,7 @@ func (s *Server) getErrorData(err error) (map[string]interface{}, int, http.Head
 func (s *Server) internalErrorHandler(err error) (re *errors.Response) {
 	log.Infoln("Internal Error:", err.Error())
 	return
+
 }
 
 func (s *Server) responseErrorHandler(re *errors.Response) {
@@ -238,7 +239,7 @@ func (s *Server) UpdatePasswordRequest(c *gin.Context, oldPassword, newPassword 
 		return
 	}
 	s.redirect(c, updatedUserInfo)
-	return
+
 }
 
 // ResetPasswordRequest validates the request
@@ -265,7 +266,7 @@ func (s *Server) ResetPasswordRequest(c *gin.Context, newPassword, userName stri
 		}
 	}
 	s.redirect(c, updatedUserInfo)
-	return
+
 }
 
 // UpdateUserDetailsRequest validates the request
@@ -284,7 +285,7 @@ func (s *Server) UpdateUserDetailsRequest(c *gin.Context, user *models.UserCrede
 		return
 	}
 	s.redirect(c, updatedUserInfo)
-	return
+
 }
 
 // CreateRequest validates the request
@@ -312,7 +313,7 @@ func (s *Server) CreateRequest(c *gin.Context, user *models.UserCredentials) {
 		s.redirectError(c, errors.ErrInvalidUser)
 	}
 	s.redirect(c, createdUserInfo)
-	return
+
 }
 
 // GetUsersRequest validates the request
@@ -333,5 +334,5 @@ func (s *Server) GetUsersRequest(c *gin.Context) {
 		}
 	}
 	s.redirect(c, users)
-	return
+
 }

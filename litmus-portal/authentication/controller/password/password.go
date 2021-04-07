@@ -32,7 +32,7 @@ func (password *Password) Update(c *gin.Context) {
 	}
 
 	controller.Server.UpdatePasswordRequest(c, password.OldPassword, password.NewPassword)
-	return
+
 }
 
 //Reset ...
@@ -47,5 +47,5 @@ func (password *Password) Reset(c *gin.Context) {
 	}
 
 	controller.Server.ResetPasswordRequest(c, password.NewPassword, password.Username)
-	return
+
 }
