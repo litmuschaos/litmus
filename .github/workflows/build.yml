@@ -44,11 +44,6 @@ jobs:
         uses: Jerome1337/goimports-action@v1.0.3
         with:
           goimports-path: ./litmus-portal
-      - name: golangci-lint graphql-server
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.29      
-          working-directory: ./litmus-portal/graphql-server
       - name: golangci-lint event-tracker
         uses: golangci/golangci-lint-action@v2
         with:
@@ -59,6 +54,12 @@ jobs:
         with:
           version: v1.29      
           working-directory: ./litmus-portal/cluster-agents/subscriber
+      - name: golangci-lint graphql-server
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.29      
+          working-directory: ./litmus-portal/graphql-server
+          args: --timeout=0
       - name: golangci-lint authentication server
         uses: golangci/golangci-lint-action@v2
         with:
