@@ -78,8 +78,8 @@ func NewRandom() (UUID, error) {
 // UUID will be the lower 4 bits of version.
 func NewHash(h hash.Hash, space UUID, data []byte, version int) UUID {
 	h.Reset()
-	h.Write(space[:])
-	h.Write(data)
+	_, _ = h.Write(space[:])
+	_, _ = h.Write(data)
 	s := h.Sum(nil)
 	var uuid UUID
 	copy(uuid[:], s)
