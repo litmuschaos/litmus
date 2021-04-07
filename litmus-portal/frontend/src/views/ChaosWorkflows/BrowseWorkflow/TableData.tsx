@@ -110,8 +110,8 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           });
         }}
       >
-        <Typography data-cy="workflowName">
-          <strong>{data.workflow_name}</strong>
+        <Typography className={classes.boldText} data-cy="workflowName">
+          {data.workflow_name}
         </Typography>
       </TableCell>
       <TableCell>
@@ -127,8 +127,12 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>
           ) : (
-            <span className={getResiliencyScoreColor(exeData.resiliency_score)}>
-              <strong>{exeData.resiliency_score}%</strong>
+            <span
+              className={`${classes.boldText} ${getResiliencyScoreColor(
+                exeData.resiliency_score
+              )}`}
+            >
+              {exeData.resiliency_score}%
             </span>
           )}
         </Typography>
@@ -141,10 +145,12 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>
           ) : (
-            <span className={getResiliencyScoreColor(exeData.resiliency_score)}>
-              <strong>
-                {exeData.experiments_passed}/{exeData.total_experiments}
-              </strong>
+            <span
+              className={`${classes.boldText} ${getResiliencyScoreColor(
+                exeData.resiliency_score
+              )}`}
+            >
+              {exeData.experiments_passed}/{exeData.total_experiments}
             </span>
           )}
         </Typography>
@@ -153,13 +159,11 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         <div>
           <Button
             onClick={handlePopOverClick}
-            style={{ textTransform: 'none' }}
+            className={classes.buttonTransform}
           >
-            <Typography>
-              <strong>
-                {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
-                {scheduledWorkflowData?.ListWorkflow[0].weightages.length})
-              </strong>
+            <Typography className={classes.boldText}>
+              {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
+              {scheduledWorkflowData?.ListWorkflow[0].weightages.length})
             </Typography>
             <div className={classes.experimentDetails}>
               {isOpen ? (

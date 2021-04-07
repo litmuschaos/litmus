@@ -146,13 +146,13 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       <TableCell className={classes.workflowNameData}>
         <Typography>
           <span
-            className={
+            className={`${classes.boldText} ${
               YAML.parse(data.workflow_manifest).spec.suspend === true
                 ? classes.dark
                 : ''
-            }
+            }`}
           >
-            <strong>{data.workflow_name}</strong>
+            {data.workflow_name}
           </span>
         </Typography>
       </TableCell>
@@ -170,7 +170,10 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         </Typography>
       </TableCell>
       <TableCell>
-        <Button onClick={handlePopOverClick} style={{ textTransform: 'none' }}>
+        <Button
+          onClick={handlePopOverClick}
+          className={classes.buttonTransform}
+        >
           <span
             className={
               YAML.parse(data.workflow_manifest).spec.suspend === true
@@ -179,10 +182,8 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             }
           >
             <div className={classes.expDiv}>
-              <Typography className={classes.expInfo}>
-                <strong>
-                  {t('chaosWorkflows.browseSchedules.showExperiments')}
-                </strong>
+              <Typography className={`${classes.boldText} ${classes.expInfo}`}>
+                {t('chaosWorkflows.browseSchedules.showExperiments')}
               </Typography>
               {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
             </div>
@@ -219,7 +220,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       <TableCell>
         <Button
           onClick={handlePopOverClickForSchedule}
-          style={{ textTransform: 'none' }}
+          className={classes.buttonTransform}
         >
           <span
             className={
@@ -229,10 +230,8 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             }
           >
             <div className={classes.expDiv}>
-              <Typography className={classes.expInfo}>
-                <strong>
-                  {t('chaosWorkflows.browseSchedules.showSchedule')}
-                </strong>
+              <Typography className={`${classes.boldText} ${classes.expInfo}`}>
+                {t('chaosWorkflows.browseSchedules.showSchedule')}
               </Typography>
               {isOpenSchedule ? (
                 <KeyboardArrowDownIcon />
@@ -258,23 +257,25 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         >
           <div className={classes.weightDiv}>
             <Typography className={classes.scheduleDetailsFlex}>
-              <strong>
+              <span className={classes.boldText}>
                 {t('chaosWorkflows.browseSchedules.startingDate')} :
-              </strong>
+              </span>
               <span className={classes.scheduleDetailsValue}>
                 {formatDate(data.created_at)}
               </span>
             </Typography>
             <Typography className={classes.scheduleDetailsFlex}>
-              <strong>{t('chaosWorkflows.browseSchedules.lastRun')} :</strong>
+              <span className={classes.boldText}>
+                {t('chaosWorkflows.browseSchedules.lastRun')} :
+              </span>
               <span className={classes.scheduleDetailsValue}>
                 {timeDifferenceForDate(data.updated_at)}
               </span>
             </Typography>
             <Typography className={classes.scheduleDetailsFlex}>
-              <strong>
+              <span className={classes.boldText}>
                 {t('chaosWorkflows.browseSchedules.regularity')} :
-              </strong>
+              </span>
               <span className={classes.scheduleDetailsValue}>
                 {data.cronSyntax === ''
                   ? `${t('chaosWorkflows.browseSchedules.regularityOnce')}`

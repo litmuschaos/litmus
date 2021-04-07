@@ -127,7 +127,6 @@ const useStyles = makeStyles((theme) => ({
   },
   clusterData: {
     paddingLeft: theme.spacing(5),
-    paddingTop: theme.spacing(1.25),
   },
   optionBtn: {
     marginLeft: theme.spacing(-6.25),
@@ -230,6 +229,14 @@ const useStyles = makeStyles((theme) => ({
   scheduleDetailsValue: {
     width: '50%',
     textAlign: 'left',
+  },
+
+  boldText: {
+    fontWeight: 'bold',
+  },
+
+  buttonTransform: {
+    textTransform: 'none',
   },
 }));
 

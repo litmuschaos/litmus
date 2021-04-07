@@ -162,6 +162,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3.125, 2.6),
     width: '15.1875rem',
   },
+
+  boldText: {
+    fontWeight: 'bold',
+  },
+
+  buttonTransform: {
+    textTransform: 'none',
+  },
 }));
 
 export default useStyles;
