@@ -11,12 +11,12 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
   const [label, setLabel] = React.useState(' ');
   useEffect(() => {
     if (status === 'Succeeded') {
-      return setLabel(classes.completed);
+      return setLabel(`${classes.status} ${classes.completed}`);
     }
     if (status === 'Running' || status === 'Pending') {
-      return setLabel(classes.running);
+      return setLabel(`${classes.status} ${classes.running}`);
     }
-    return setLabel(classes.failed);
+    return setLabel(`${classes.status} ${classes.failed}`);
   }, [status]);
 
   return (

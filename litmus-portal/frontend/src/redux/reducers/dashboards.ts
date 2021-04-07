@@ -9,6 +9,11 @@ import createReducer from './createReducer';
 const initialState: DashboardData = {
   selectedDashboardID: '',
   refreshRate: 0,
+  range: {
+    startDate: '',
+    endDate: '',
+  },
+  forceUpdate: false,
 };
 
 export const selectDashboard = createReducer<DashboardData>(initialState, {

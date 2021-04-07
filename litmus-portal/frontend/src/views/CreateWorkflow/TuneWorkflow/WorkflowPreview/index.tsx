@@ -115,7 +115,8 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
     let nodeID = 0; // temporary variable to keep track of the node id
     for (let i = 0; i < updatedSteps.length - 1; i++) {
       /**
-       * If the node at position i has a length equal to 1 and i+1 has more children -> for cases where
+       * If the node at position i has a length equal to 1 and i+1 has
+       * more children -> for cases where
        * the parent is a single node and the has two or more children
        *
        *      []  <- i (source)

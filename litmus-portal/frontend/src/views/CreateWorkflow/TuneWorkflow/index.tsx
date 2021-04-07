@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
   forwardRef,
@@ -11,6 +11,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import YamlEditor from '../../../components/YamlEditor/Editor';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
@@ -20,22 +21,23 @@ import {
 } from '../../../graphql/queries';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
-import { CustomYAML } from '../../../models/redux/customyaml';
+import { CustomYAML, Steps } from '../../../models/redux/customyaml';
 import { Charts } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
+import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
-import { updateCRD } from './UpdateCRD';
 import WorkflowPreview from './WorkflowPreview';
 import WorkflowTable from './WorkflowTable';
 
 interface WorkflowProps {
   name: string;
   crd: string;
+  description: string;
 }
 
 interface WorkflowExperiment {
@@ -46,6 +48,11 @@ interface WorkflowExperiment {
 interface ChartName {
   ChaosName: string;
   ExperimentName: string;
+}
+
+interface WorkflowExperiment {
+  ChaosEngine: string;
+  Experiment: string;
 }
 
 const TuneWorkflow = forwardRef((_, ref) => {
@@ -61,30 +68,19 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
     crd: '',
+    description: '',
   });
-  const [customWorkflow, setCustomWorkflow] = useState<boolean>(false); // eslint-disable-line
-  const manifest = useSelector(
-    (state: RootState) => state.workflowManifest.manifest
+  const { manifest, isCustomWorkflow } = useSelector(
+    (state: RootState) => state.workflowManifest
   );
+
+  const [YAMLModal, setYAMLModal] = useState<boolean>(false);
 
   // Actions
   const workflowAction = useActions(WorkflowActions);
+  const alert = useActions(AlertActions);
 
   const { t } = useTranslation();
-
-  const fetchYaml = (link: string) => {
-    fetch(link)
-      .then((data) => {
-        data.text().then((yamlText) => {
-          workflowAction.setWorkflowManifest({
-            manifest: yamlText,
-          });
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   // Graphql query to get charts
   const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
@@ -102,39 +98,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
     },
     fetchPolicy: 'cache-and-network',
   });
-
-  // Index DB Fetching for extracting selected Button and Workflow Details
-  const getSelectedWorkflowDetails = () => {
-    localforage.getItem('workflow').then((workflow) =>
-      setWorkflow({
-        name: (workflow as WorkflowDetailsProps).name,
-        crd: (workflow as WorkflowDetailsProps).CRDLink,
-      })
-    );
-    localforage.getItem('selectedScheduleOption').then((value) => {
-      // Setting default data when MyHub is selected
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
-        setCustomWorkflow(false);
-        localforage.getItem('workflow').then((value) => {
-          if (value !== null && (value as WorkflowDetailsProps).CRDLink !== '')
-            fetchYaml((value as WorkflowDetailsProps).CRDLink);
-        });
-      }
-      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
-        setCustomWorkflow(true);
-        localforage.getItem('selectedHub').then((hub) => {
-          setHubName(hub as string);
-          getCharts({
-            variables: { projectID: selectedProjectID, HubName: hub as string },
-          });
-        });
-      }
-    });
-  };
-
-  useEffect(() => {
-    getSelectedWorkflowDetails();
-  }, []);
 
   // Default CRD
   const yamlTemplate: CustomYAML = {
@@ -172,9 +135,61 @@ const TuneWorkflow = forwardRef((_, ref) => {
       ],
     },
   };
-  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(
-    manifest === '' ? yamlTemplate : YAML.parse(manifest)
-  );
+
+  // Generated YAML for custom workflows
+  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(yamlTemplate);
+
+  // This function fetches the manifest for pre-defined workflows
+  const fetchYaml = (link: string) => {
+    fetch(link)
+      .then((data) => {
+        data.text().then((yamlText) => {
+          workflowAction.setWorkflowManifest({
+            manifest: yamlText,
+          });
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  // Index DB Fetching for extracting selected Button and Workflow Details
+  const getSelectedWorkflowDetails = () => {
+    localforage.getItem('workflow').then((workflow) =>
+      setWorkflow({
+        name: (workflow as WorkflowDetailsProps).name,
+        crd: (workflow as WorkflowDetailsProps).CRDLink,
+        description: (workflow as WorkflowDetailsProps).description,
+      })
+    );
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      // Setting default data when MyHub is selected
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
+        localforage.getItem('workflow').then((value) => {
+          if (
+            value !== null &&
+            (value as WorkflowDetailsProps).CRDLink !== '' &&
+            manifest === ''
+          )
+            fetchYaml((value as WorkflowDetailsProps).CRDLink);
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
+        localforage.getItem('selectedHub').then((hub) => {
+          setHubName(hub as string);
+          getCharts({
+            variables: { projectID: selectedProjectID, HubName: hub as string },
+          });
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    getSelectedWorkflowDetails();
+  }, []);
+
   // Graphql Query for fetching Engine YAML
   const [
     getEngineYaml,
@@ -222,12 +237,117 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
     setAddExpModal(false);
   };
+  // Initial step in experiment
+  const customSteps: Steps[][] = [
+    [
+      {
+        name: 'install-chaos-experiments',
+        template: 'install-chaos-experiments',
+      },
+    ],
+  ];
+  let installAllExp = '';
 
-  useEffect(() => {
-    setGeneratedYAML(updateCRD(generatedYAML, experiment));
-    workflowAction.setWorkflowManifest({
-      manifest: YAML.stringify(generatedYAML),
+  // UpdateCRD is used to updated the manifest while adding experiments from MyHub
+  const updateCRD = (crd: CustomYAML, experiment: WorkflowExperiment[]) => {
+    const generatedYAML: CustomYAML = crd;
+
+    const modifyYAML = (link: string) => {
+      customSteps.push([
+        {
+          name: YAML.parse(link as string).metadata.name,
+          template: YAML.parse(link as string).metadata.name,
+        },
+      ]);
+      installAllExp = `${installAllExp}kubectl apply -f /tmp/${
+        YAML.parse(link as string).metadata.name
+      }.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
+    };
+
+    experiment.forEach((exp) => {
+      modifyYAML(Object.values(exp.Experiment)[0]);
     });
+
+    // Step 1 in template (creating array of chaos-steps)
+    generatedYAML.spec.templates[0] = {
+      name: 'custom-chaos',
+      steps: customSteps,
+    };
+
+    if (experiment.length === 0) {
+      // Step 2 in template (experiment YAMLs of all experiments)
+      generatedYAML.spec.templates[1] = {
+        name: 'install-chaos-experiments',
+        inputs: {
+          artifacts: [],
+        },
+        container: {
+          args: [`${installAllExp}sleep 30`],
+          command: ['sh', '-c'],
+          image: 'alpine/k8s:1.18.2',
+        },
+      };
+    }
+
+    // Step 3 in template (engine YAMLs of all experiments)
+    experiment.forEach((data) => {
+      const ExperimentYAML = YAML.parse(Object.values(data.Experiment)[0]);
+      ExperimentYAML.metadata.name = YAML.parse(
+        Object.values(data.Experiment)[0]
+      ).metadata.name;
+      ExperimentYAML.metadata.namespace =
+        '{{workflow.parameters.adminModeNamespace}}';
+      const artifacts = generatedYAML.spec.templates[1].inputs?.artifacts;
+      if (artifacts !== undefined) {
+        artifacts.push({
+          name: ExperimentYAML.metadata.name,
+          path: `/tmp/${ExperimentYAML.metadata.name}.yaml`,
+          raw: {
+            data: YAML.stringify(ExperimentYAML),
+          },
+        });
+      }
+      const ChaosEngine = YAML.parse(Object.values(data.ChaosEngine)[0]);
+      ChaosEngine.metadata.name = YAML.parse(
+        Object.values(data.Experiment)[0]
+      ).metadata.name;
+      ChaosEngine.metadata.namespace =
+        '{{workflow.parameters.adminModeNamespace}}';
+
+      generatedYAML.spec.templates.push({
+        name: ChaosEngine.metadata.name,
+        inputs: {
+          artifacts: [
+            {
+              name: ChaosEngine.metadata.name,
+              path: `/tmp/chaosengine-${ChaosEngine.metadata.name}.yaml`,
+              raw: {
+                data: YAML.stringify(ChaosEngine),
+              },
+            },
+          ],
+        },
+        container: {
+          args: [
+            `-file=/tmp/chaosengine-${ChaosEngine.metadata.name}.yaml`,
+            `-saveName=/tmp/engine-name`,
+          ],
+          image: 'litmuschaos/litmus-checker:latest',
+        },
+      });
+    });
+    return generatedYAML;
+  };
+
+  // UseEffect to make changes in the generated YAML
+  // when a new experiment is added from MyHub
+  useEffect(() => {
+    if (isCustomWorkflow) {
+      setGeneratedYAML(updateCRD(generatedYAML, experiment));
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(generatedYAML),
+      });
+    }
   }, [experiment]);
 
   const onModalClose = () => {
@@ -254,8 +374,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
     }
   }, [engineDataLoading, experimentDataLoading]);
 
-  // console.log(generatedYAML);
   function onNext() {
+    if (isCustomWorkflow && experiment.length === 0) {
+      alert.changeAlertState(true); // Custom Workflow has no experiments
+      return false;
+    }
     return true;
   }
 
@@ -282,10 +405,42 @@ const TuneWorkflow = forwardRef((_, ref) => {
             {t('createWorkflow.tuneWorkflow.description')}
           </Typography>
           <div className={classes.headerBtn}>
-            <ButtonOutlined className={classes.btn1}>
-              <img src="./icons/viewYAMLicon.svg" alt="view YAML" />{' '}
-              <Width width="0.5rem" /> {t('createWorkflow.tuneWorkflow.view')}
+            <ButtonOutlined
+              onClick={() => {
+                setYAMLModal(true);
+              }}
+              className={classes.editBtn}
+            >
+              <img src="./icons/viewYAMLicon.svg" alt="view YAML" />
+              <Width width="1rem" /> {t('createWorkflow.tuneWorkflow.edit')}
             </ButtonOutlined>
+            <Modal
+              open={YAMLModal}
+              onClose={() => {
+                setYAMLModal(false);
+              }}
+              width="60%"
+              modalActions={
+                <ButtonOutlined
+                  onClick={() => {
+                    setYAMLModal(false);
+                  }}
+                  className={classes.closeBtn}
+                >
+                  <img src="./icons/cross-disabled.svg" alt="cross" />
+                </ButtonOutlined>
+              }
+            >
+              <div>
+                <YamlEditor
+                  content={
+                    isCustomWorkflow ? YAML.stringify(generatedYAML) : manifest
+                  }
+                  filename={workflow.name}
+                  readOnly={false}
+                />
+              </div>
+            </Modal>
             <ButtonOutlined
               onClick={() => {
                 setSelectedExp('');
@@ -319,11 +474,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
         <Row>
           {/* Argo Workflow Graph */}
           <Width width="30%">
-            <WorkflowPreview isCustomWorkflow={customWorkflow} />
+            <WorkflowPreview isCustomWorkflow={isCustomWorkflow} />
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            <WorkflowTable isCustom={customWorkflow} />
+            <WorkflowTable isCustom={isCustomWorkflow} />
           </Width>
         </Row>
       </div>

@@ -77,21 +77,27 @@ const WorkflowSettings = forwardRef((_, ref) => {
 
   const initializeWithDefault = () => {
     localforage.getItem('selectedScheduleOption').then((value) => {
-      // Map over the list of predefined workflows and extract the name and detail
-      data.map((w) => {
-        if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
-          setName(w.title);
-          setDescription(w.details);
-          setIcon(w.urlToIcon);
-          setCRDLink(w.chaosWkfCRDLink);
-        }
-        return null;
-      });
-
-      if ((value as ChooseWorkflowRadio).selected !== 'A') {
+      if ((value as ChooseWorkflowRadio).selected === 'A') {
+        // Map over the list of predefined workflows and extract the name and detail
+        data.map((w) => {
+          if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
+            setName(w.title);
+            setDescription(w.details);
+            setIcon(w.urlToIcon);
+            setCRDLink(w.chaosWkfCRDLink);
+          }
+          return null;
+        });
+      }
+      if ((value as ChooseWorkflowRadio).selected === 'C') {
         setName('custom-chaos-workflow');
         workflowAction.setWorkflowManifest({ manifest: '' });
         setDescription('Custom Chaos Workflow');
+        setIcon('./avatars/litmus.svg');
+      }
+      if ((value as ChooseWorkflowRadio).selected === 'D') {
+        setName('chaos-workflow');
+        setDescription('Chaos Workflow');
         setIcon('./avatars/litmus.svg');
       }
 
@@ -146,7 +152,11 @@ const WorkflowSettings = forwardRef((_, ref) => {
       CRDLink,
     };
     localforage.setItem('workflow', workflowDetails);
-    if (validateWorkflowName(name)) {
+    if (!name.length) {
+      alert.changeAlertState(true); // Workflow Name is empty and user clicked on Next
+      return false;
+    }
+    if (name.length > 0 && validateWorkflowName(name)) {
       alert.changeAlertState(true); // Workflow Name is not valid and user clicked on Next
       return false;
     }

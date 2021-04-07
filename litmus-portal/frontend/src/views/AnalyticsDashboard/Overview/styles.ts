@@ -56,7 +56,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     background: 'transparent',
   },
   banner: {
-    height: '18rem',
+    height: 'fit-content',
+    minHeight: '18rem',
     width: '100%',
     overflow: 'hidden',
   },

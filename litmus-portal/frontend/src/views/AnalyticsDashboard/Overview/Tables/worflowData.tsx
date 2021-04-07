@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScheduleWorkflow } from '../../../../models/graphql/scheduleData';
+import { Workflow } from '../../../../models/graphql/workflowListData';
 import useActions from '../../../../redux/actions';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
@@ -21,7 +21,7 @@ import { GetTimeDiff } from '../../../../utils/timeDifferenceString';
 import useStyles from '../styles';
 
 interface TableScheduleWorkflow {
-  scheduleWorkflowList: ScheduleWorkflow[] | undefined;
+  scheduleWorkflowList: Workflow[] | undefined;
 }
 
 const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({

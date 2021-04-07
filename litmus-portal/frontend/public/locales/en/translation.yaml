@@ -78,9 +78,11 @@ workflowStepper:
     errorSnackbar: Please select a workflow type
   step3:
     errorSnackbar: Please provide a valid Workflow Name
+  step4:
+    errorSnackbar: Please select atleast one experiment to proceed
   finish: Finish
   next: Next
-  backBtn: Back
+  back: Back
 
 ######################################
 ############    Pages    #############
@@ -191,8 +193,35 @@ analyticsDashboard:
   overview: Overview
   monitoringDashboardPage:
     dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
+    dataSourceIs: Data source is
     reConfigureDashboard: Re-configure dashboard
     updateDataSource: Update data source
+    headerInfoText: "View the chaos events and metrics in a given \n time interval by selecting a time interval."
+    rangeSelector:
+      to: to
+      selectPeriod: Select Period
+    refresh: 
+      heading: Refresh
+      off: Off
+      every5Seconds: Every 5 seconds
+      every10Seconds: Every 10 seconds
+      every30Seconds: Every 30 seconds
+      every1Minute: Every 1 minute
+      every5Minutes: Every 5 minutes
+      every15Minutes: Every 15 minutes
+      every30Minutes: Every 30 minutes
+      every1Hour: Every 1 hour
+      every2Hours: Every 2 hours
+      every1Day: Every 1 day
+    chaosTable:
+      tableHead1: Legend
+      tableHead2: Workflow
+      tableHead3: Experiment
+      tableHead4: "Target \n ( namespace / pod )"
+      tableHead5: Result
+      noRecords: No chaos happened during the interval
+      showTable: Show Chaos during this interval
+      hideTable: Hide Chaos during this interval
   workflowClusterDashboard:
     title: Dashboard
     tab1: Hourly
@@ -273,6 +302,11 @@ analyticsDashboard:
     day: day
     days: days
     few: few
+  toolTip:
+    viewChaosMetric: View Chaos Metric Info
+    hideChaosMetric: Hide Chaos Metric Info
+    editPanel: Edit
+    popout: Popout
 
 error:
   whoops: Whoops!
@@ -300,9 +334,37 @@ chaosWorkflows:
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
       seeAnalytics: See analytics
-  browseSchedule:
+  browseSchedules:
+    name: Name
+    cluster: Cluster
+    experiments: Experiments
+    schedule: Schedule
+    nextRun: Next Run
+    regularity: Regularity
+    startingDate: Starting Date
+    lastRun: Last Run
     regularityOnce: Once
-    showExperiment: Show Experiment
+    showExperiments: Show Experiments
+    showSchedule: Show Schedule
+    reRunSchedule: Rerun Schedule
+    downloadManifest: Download Manifest
+    deleteSchedule: Delete Schedule
+    editSchedule: Edit Schedule
+  browseWorkflows:
+    status: Status
+    name: Name
+    targetAgent: Target Agent
+    reliabilityDetails: Reliability Details
+    experiments: Experiments
+    lastRun: Last Run
+    tableData:
+      overallRR: "Overall RR : "
+      experimentsPassed: "Experiments Passed : "
+      showExperiments: Show Experiments
+      showTheWorkflow: Show the workflow
+      showTheAnalytics: show the analytics
+      na: NA
+
 
 analyticsDashboardViews:
   kubernetesDashboard:
@@ -660,6 +722,7 @@ createWorkflow:
     selectedWorkflowInfo: You have selected a pre-defined workflow
     description: Fine tune the application  names and other variables to suit your needs
     view: View YAML
+    edit: Edit YAML
     firstExperiment: Add your first experiment
     choose: Choose Experiments
     selectAvailableExp: Select experiments available in
