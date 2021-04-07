@@ -15,6 +15,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../graphql';
 import {
   ExecutionData,
@@ -60,6 +61,7 @@ interface DateData {
 const BrowseWorkflow: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
+  const { t } = useTranslation();
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -303,13 +305,15 @@ const BrowseWorkflow: React.FC = () => {
             <TableHead className={classes.tableHead}>
               <TableRow>
                 {/* Status */}
-                <TableCell className={classes.headerStatus}>Status</TableCell>
+                <TableCell className={classes.headerStatus}>
+                  {t('chaosWorkflows.browseWorkflows.status')}
+                </TableCell>
 
                 {/* Workflow Name */}
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography className={classes.paddedTypography}>
-                      Workflow Name
+                      {t('chaosWorkflows.browseWorkflows.name')}
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
@@ -342,58 +346,32 @@ const BrowseWorkflow: React.FC = () => {
                   </div>
                 </TableCell>
 
-                {/* Target Cluster */}
+                {/* Target Agent */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
-                    Target Cluster
+                    {t('chaosWorkflows.browseWorkflows.targetAgent')}
                   </Typography>
                 </TableCell>
 
-                {/* Reliability */}
-                <TableCell className={classes.headData}>
-                  Reliability Details
+                {/* Reliability Details */}
+                <TableCell>
+                  <Typography className={classes.paddedTypography}>
+                    {t('chaosWorkflows.browseWorkflows.reliabilityDetails')}
+                  </Typography>
                 </TableCell>
 
-                {/* No of Experiments */}
-                <TableCell className={classes.headData}>
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography className={classes.paddedTypography}>
-                      # of Steps
-                    </Typography>
-                    <div className={classes.sortDiv}>
-                      <IconButton
-                        aria-label="sort no of steps ascending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            ...sortData,
-                            noOfSteps: { sort: true, ascending: true },
-                          })
-                        }
-                      >
-                        <ExpandLessIcon fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="sort no of steps descending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            ...sortData,
-                            noOfSteps: { sort: true, ascending: false },
-                          })
-                        }
-                      >
-                        <ExpandMoreIcon fontSize="inherit" />
-                      </IconButton>
-                    </div>
-                  </div>
+                {/* Experiments */}
+                <TableCell>
+                  <Typography className={classes.paddedTypography}>
+                    {t('chaosWorkflows.browseWorkflows.experiments')}
+                  </Typography>
                 </TableCell>
 
                 {/* Last Run */}
-                <TableCell className={classes.headData}>
+                <TableCell>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography className={classes.paddedTypography}>
-                      Last Run
+                      {t('chaosWorkflows.browseWorkflows.lastRun')}
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton

@@ -81,7 +81,7 @@ const ScheduleWorkflow = () => {
 
   function EditYaml() {
     const oldParsedYaml = YAML.parse(manifest);
-    let NewYaml: string = ' ';
+    let NewYaml: string;
     if (
       oldParsedYaml.kind === 'Workflow' &&
       scheduleType.scheduleOnce !== 'now'

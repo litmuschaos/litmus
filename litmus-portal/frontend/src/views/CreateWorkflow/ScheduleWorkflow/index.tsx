@@ -167,7 +167,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
 
   function EditYaml() {
     const oldParsedYaml = YAML.parse(manifest);
-    let NewYaml: string = ' ';
+    let NewYaml: string;
     if (
       oldParsedYaml.kind === 'Workflow' &&
       workflowData.scheduleType.scheduleOnce !== 'now'

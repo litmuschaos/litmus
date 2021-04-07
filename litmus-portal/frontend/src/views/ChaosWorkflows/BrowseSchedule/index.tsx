@@ -21,6 +21,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import { DELETE_SCHEDULE, SCHEDULE_DETAILS } from '../../../graphql';
 import {
@@ -55,6 +56,7 @@ interface SortData {
 const BrowseSchedule: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
+  const { t } = useTranslation();
 
   // Apollo query to get the scheduled data
   const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
@@ -171,7 +173,7 @@ const BrowseSchedule: React.FC = () => {
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
-              {(data ? getClusters(data?.getScheduledWorkflows) : []).map(
+              {(data ? getClusters(data.getScheduledWorkflows) : []).map(
                 (cluster: any) => (
                   <MenuItem value={cluster}>{cluster}</MenuItem>
                 )
@@ -193,7 +195,7 @@ const BrowseSchedule: React.FC = () => {
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography style={{ paddingLeft: 30, paddingTop: 12 }}>
-                      Schedule Name
+                      {t('chaosWorkflows.browseSchedules.name')}
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
@@ -226,63 +228,34 @@ const BrowseSchedule: React.FC = () => {
                   </div>
                 </TableCell>
 
-                {/* Starting Date */}
-                <TableCell className={classes.headerStatus}>
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography style={{ paddingTop: 12 }}>
-                      Starting Date
-                    </Typography>
-                    <div className={classes.sortDiv}>
-                      <IconButton
-                        aria-label="sort last run ascending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            ...sortData,
-                            startDate: { sort: true, ascending: true },
-                            name: { sort: false, ascending: true },
-                          })
-                        }
-                      >
-                        <ExpandLessIcon fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="sort last run descending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            ...sortData,
-                            startDate: { sort: true, ascending: false },
-                            name: { sort: false, ascending: true },
-                          })
-                        }
-                      >
-                        <ExpandMoreIcon fontSize="inherit" />
-                      </IconButton>
-                    </div>
-                  </div>
-                </TableCell>
-
-                {/* Regularity */}
-                <TableCell>
-                  <Typography className={classes.regularity}>
-                    Regularity
-                  </Typography>
-                </TableCell>
-
                 {/* Cluster */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
-                    Cluster
+                    {t('chaosWorkflows.browseSchedules.cluster')}
                   </Typography>
                 </TableCell>
 
                 {/* Show Experiments */}
                 <TableCell>
                   <Typography className={classes.showExp}>
-                    Show Experiments
+                    {t('chaosWorkflows.browseSchedules.experiments')}
                   </Typography>
                 </TableCell>
+
+                {/* Show Schedule Details */}
+                <TableCell>
+                  <Typography className={classes.showExp}>
+                    {t('chaosWorkflows.browseSchedules.schedule')}
+                  </Typography>
+                </TableCell>
+
+                {/* Next Run */}
+                <TableCell>
+                  <Typography className={classes.showExp}>
+                    {t('chaosWorkflows.browseSchedules.nextRun')}
+                  </Typography>
+                </TableCell>
+
                 <TableCell />
               </TableRow>
             </TableHead>

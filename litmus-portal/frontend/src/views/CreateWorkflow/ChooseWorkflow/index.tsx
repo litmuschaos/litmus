@@ -22,6 +22,7 @@ import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
 import SelectMyHub from './SelectMyHub';
 import useStyles from './styles';
 import UploadYAML from './uploadYAML';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 
 const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
@@ -31,8 +32,18 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const workflowDetails = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
+  const workflowAction = useActions(WorkflowActions);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.value);
+    if (event.target.value === 'C') {
+      workflowAction.setWorkflowManifest({
+        isCustomWorkflow: true,
+      });
+    } else {
+      workflowAction.setWorkflowManifest({
+        isCustomWorkflow: false,
+      });
+    }
   };
 
   function onNext() {
@@ -55,6 +66,9 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           ? setSelected((value as ChooseWorkflowRadio).selected)
           : setSelected('')
       );
+    workflowAction.setWorkflowManifest({
+      manifest: '',
+    });
   }, []);
 
   useImperativeHandle(ref, () => ({

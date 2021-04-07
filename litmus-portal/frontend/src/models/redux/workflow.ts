@@ -41,6 +41,7 @@ export interface WorkflowData {
 export interface WorkflowManifest {
   engineYAML: string;
   manifest: string;
+  isCustomWorkflow: boolean;
 }
 
 export enum WorkflowActions {
