@@ -44,6 +44,11 @@ jobs:
         uses: Jerome1337/goimports-action@v1.0.3
         with:
           goimports-path: ./litmus-portal
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.29      
+          working-directory: ./litmus-portal
       - shell: bash
         run: |
           cd litmus-portal
