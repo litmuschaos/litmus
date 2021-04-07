@@ -131,7 +131,10 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 
 	e, _ := json.Marshal(AllChartsDetails)
 	var data1 []*model.Chart
-	json.Unmarshal([]byte(e), &data1)
+	err = json.Unmarshal([]byte(e), &data1)
+	if err != nil {
+		return nil, err
+	}
 	return data1, nil
 }
 
@@ -140,7 +143,10 @@ func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
 	data, _ := ReadExperimentFile(experimentFilePath)
 	e, _ := json.Marshal(data)
 	var data1 *model.Chart
-	json.Unmarshal([]byte(e), &data1)
+	err := json.Unmarshal([]byte(e), &data1)
+	if err != nil {
+		return nil, err
+	}
 	return data1, nil
 }
 

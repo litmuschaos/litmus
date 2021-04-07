@@ -46,7 +46,10 @@ func RestMiddleware(handler http.Handler) http.Handler {
 		if err != nil {
 			fmt.Println("Error in Cookie: ", err)
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Error verifying JWT token: " + err.Error()))
+			_, err = w.Write([]byte("Error verifying JWT token: " + err.Error()))
+			if err != nil {
+				fmt.Println("Error: ", err)
+			}
 			return
 		}
 

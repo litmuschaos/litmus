@@ -66,7 +66,7 @@ func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 
 	data, ok := value.(md.Matrix)
 	if !ok {
-		log.Print("Unsupported result format: %s", value.Type().String())
+		log.Printf("Unsupported result format: %s", value.Type().String())
 	}
 
 	var (
@@ -121,7 +121,10 @@ func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 	newResponse.Legends = newLegends
 
 	var resp model.PromResponse
-	copier.Copy(&resp, &newResponse)
+	err = copier.Copy(&resp, &newResponse)
+	if err != nil {
+		return model.PromResponse{}, err
+	}
 
 	return resp, nil
 }

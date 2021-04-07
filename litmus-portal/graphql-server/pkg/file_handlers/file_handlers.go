@@ -41,7 +41,10 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteHeaders(&w, statusCode)
-	w.Write(response)
+	_, err = w.Write(response)
+	if err != nil {
+		log.Print("error", err)
+	}
 }
 
 func GetManifest(token string) ([]byte, int, error) {

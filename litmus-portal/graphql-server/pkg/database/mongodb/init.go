@@ -16,7 +16,6 @@ var (
 	dbName   = "litmus"
 
 	backgroundContext = context.Background()
-	err               error
 )
 
 // init initializes database connection
@@ -43,8 +42,8 @@ func init() {
 		log.Fatal(err)
 	}
 
-	ctx, _ := context.WithTimeout(backgroundContext, 20*time.Second)
-
+	ctx, cancel := context.WithTimeout(backgroundContext, 20*time.Second)
+	defer cancel()
 	// Check the connection
 	err = client.Ping(ctx, nil)
 	if err != nil {

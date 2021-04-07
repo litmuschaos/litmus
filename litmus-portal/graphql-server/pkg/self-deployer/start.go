@@ -55,7 +55,7 @@ func StartDeployer(projectID string) {
 		}
 	}
 
-	if isAllManifestInstall == true {
+	if isAllManifestInstall {
 		log.Print("ALL MANIFESTS HAS BEEN INSTALLED:")
 	} else {
 		log.Print("SOME MANIFESTS HAS NOT BEEN INSTALLED:", failedManifest)

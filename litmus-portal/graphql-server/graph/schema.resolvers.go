@@ -321,15 +321,15 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		verifiedCluster.IsActive = false
 
 		newVerifiedCluster := model.Cluster{}
-		copier.Copy(&newVerifiedCluster, &verifiedCluster)
+		_ = copier.Copy(&newVerifiedCluster, &verifiedCluster)
 
 		clusterHandler.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", newVerifiedCluster, *data_store.Store)
 
 		data_store.Store.Mutex.Lock()
 		delete(data_store.Store.ConnectedCluster, clusterInfo.ClusterID)
 		data_store.Store.Mutex.Unlock()
-		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
-		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+		query := bson.D{{Key: "cluster_id", Value: clusterInfo.ClusterID}}
+		update := bson.D{{Key: "$set", Value: bson.D{{Key: "is_active", Value: false}, {Key: "updated_at", Value: strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
 		err = dbOperationsCluster.UpdateCluster(query, update)
 		if err != nil {
@@ -337,8 +337,8 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		}
 	}()
 
-	query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
-	update := bson.D{{"$set", bson.D{{"is_active", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+	query := bson.D{{Key: "cluster_id", Value: clusterInfo.ClusterID}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "is_active", Value: true}, {Key: "updated_at", Value: strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
 	err = dbOperationsCluster.UpdateCluster(query, update)
 	if err != nil {
@@ -346,7 +346,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	}
 
 	newVerifiedCluster := model.Cluster{}
-	copier.Copy(&newVerifiedCluster, &verifiedCluster)
+	_ = copier.Copy(&newVerifiedCluster, &verifiedCluster)
 
 	verifiedCluster.IsActive = true
 	clusterHandler.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *data_store.Store)

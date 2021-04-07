@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -64,12 +63,12 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n"
 	)
 
-	if *cluster.AgentNsExists == false {
-		generatedYAML = append(generatedYAML, fmt.Sprintf(namspaceStr))
+	if !*cluster.AgentNsExists {
+		generatedYAML = append(generatedYAML, namspaceStr)
 	}
 
-	if *cluster.AgentSaExists == false {
-		generatedYAML = append(generatedYAML, fmt.Sprintf(serviceAccountStr))
+	if !*cluster.AgentSaExists {
+		generatedYAML = append(generatedYAML, serviceAccountStr)
 	}
 
 	// File operations

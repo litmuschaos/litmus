@@ -2,7 +2,6 @@ package handler
 
 import (
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -16,7 +15,6 @@ import (
 	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
@@ -30,7 +28,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		return &model.ClusterRegResponse{}, err
 	}
 
-	newCluster := dbSchemaCluster.Cluster{
+	newCluster := dbOperationsCluster.Cluster{
 		ClusterID:      clusterID,
 		ClusterName:    input.ClusterName,
 		Description:    input.Description,
@@ -73,8 +71,8 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 	if cluster.AccessKey == identity.AccessKey {
 		newKey := utils.RandomString(32)
 		time := strconv.FormatInt(time.Now().Unix(), 10)
-		query := bson.D{{"cluster_id", identity.ClusterID}}
-		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"is_cluster_confirmed", true}, {"updated_at", time}}}}
+		query := bson.D{{Key: "cluster_id", Value: identity.ClusterID}}
+		update := bson.D{{Key: "$unset", Value: bson.D{{Key: "token", Value: ""}}}, {Key: "$set", Value: bson.D{{Key: "access_key", Value: newKey}, {Key: "is_registered", Value: true}, {Key: "is_cluster_confirmed", Value: true}, {Key: "updated_at", Value: time}}}}
 
 		err = dbOperationsCluster.UpdateCluster(query, update)
 		if err != nil {
@@ -85,8 +83,10 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 		cluster.AccessKey = ""
 
 		newCluster := model.Cluster{}
-		copier.Copy(&newCluster, &cluster)
-
+		err = copier.Copy(&newCluster, &cluster)
+		if err != nil {
+			return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
+		}
 		log.Print("Cluster Confirmed having ID: ", cluster.ClusterID, ", PID: ", cluster.ProjectID)
 		SendClusterEvent("cluster-registration", "New Cluster", "New Cluster registration", newCluster, r)
 
@@ -106,8 +106,10 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 		log.Print("CLUSTER EVENT : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
 
 		newCluster := model.Cluster{}
-		copier.Copy(&newCluster, &cluster)
-
+		err = copier.Copy(&newCluster, &cluster)
+		if err != nil {
+			return "", err
+		}
 		SendClusterEvent("cluster-event", clusterEvent.EventName, clusterEvent.Description, newCluster, r)
 		return "Event Published", nil
 	}
@@ -119,8 +121,8 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
-	query := bson.D{{"cluster_id", clusterID}}
-	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
+	query := bson.D{{Key: "cluster_id", Value: clusterID}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "is_removed", Value: true}, {Key: "updated_at", Value: time}}}}
 
 	err := dbOperationsCluster.UpdateCluster(query, update)
 	if err != nil {
@@ -179,10 +181,13 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 			return nil, err
 		}
 		newCluster := model.Cluster{}
-		copier.Copy(&newCluster, &cluster)
+		err = copier.Copy(&newCluster, &cluster)
+		if err != nil {
+			return nil, err
+		}
 		newCluster.NoOfWorkflows = func(i int) *int { return &i }(len(workflows))
 		for _, workflow := range workflows {
-			if workflow.IsRemoved == false {
+			if !workflow.IsRemoved {
 				totalNoOfSchedules = totalNoOfSchedules + len(workflow.WorkflowRuns)
 			}
 			if strings.Compare(workflow.UpdatedAt, lastWorkflowTimestamp) == 1 {
@@ -218,13 +223,13 @@ func SendClusterEvent(eventType, eventName, description string, cluster model.Cl
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
 func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r store.StateData) {
-	if os.Getenv("AGENT_SCOPE") == "cluster" {
-		/*
-			namespace = Obtain from WorkflowManifest or
-			from frontend as a separate workflowNamespace field under ChaosWorkFlowInput model
-			for CreateChaosWorkflow mutation to be passed to this function.
-		*/
-	}
+	// if os.Getenv("AGENT_SCOPE") == "cluster" {
+	/*
+		namespace = Obtain from WorkflowManifest or
+		from frontend as a separate workflowNamespace field under ChaosWorkFlowInput model
+		for CreateChaosWorkflow mutation to be passed to this function.
+	*/
+	// }
 	newAction := &model.ClusterAction{
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{

@@ -41,8 +41,8 @@ func init() {
 
 // UpdateWorkflowRun takes workflowID and wfRun parameters to update the workflow run details in the database
 func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
 	count, err := workflowCollection.CountDocuments(ctx, bson.M{"workflow_id": workflowID, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID})
 	if err != nil {
 		return 0, err
@@ -74,8 +74,8 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 
 // GetWorkflows takes a query parameter to retrieve the workflow details from the database
 func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
 	cursor, err := workflowCollection.Find(ctx, query)
 	if err != nil {
 		return nil, err
@@ -92,9 +92,9 @@ func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
 
 // GetWorkflowsByClusterID takes a clusterID parameter to retrieve the workflow details from the database
 func GetWorkflowsByClusterID(clusterID string) ([]ChaosWorkFlowInput, error) {
-	query := bson.D{{"cluster_id", clusterID}}
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-
+	query := bson.D{{Key: "cluster_id", Value: clusterID}}
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
 	cursor, err := workflowCollection.Find(ctx, query)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,8 @@ func GetWorkflowsByClusterID(clusterID string) ([]ChaosWorkFlowInput, error) {
 
 // InsertChaosWorkflow takes details of a workflow and inserts into the database collection
 func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
 	_, err := workflowCollection.InsertOne(ctx, chaosWorkflow)
 	if err != nil {
 		return err
@@ -121,8 +122,8 @@ func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 
 // UpdateChaosWorkflow takes query and update parameters to update the workflow details in the database
 func UpdateChaosWorkflow(query bson.D, update bson.D) error {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
 	_, err := workflowCollection.UpdateOne(ctx, query, update)
 	if err != nil {
 		return err

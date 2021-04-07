@@ -18,7 +18,6 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperationsMyHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/myhub"
-	dbSchemaMyHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/myhub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 )
@@ -34,7 +33,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 	if err != nil {
 		return nil, err
 	}
-	if IsExist == true {
+	if IsExist {
 		return nil, errors.New("HubName Already exists")
 	}
 
@@ -59,7 +58,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
-	newHub := &dbSchemaMyHub.MyHub{
+	newHub := &dbOperationsMyHub.MyHub{
 		ID:            uuid.String(),
 		ProjectID:     projectID,
 		RepoURL:       myhub.RepoURL,
@@ -95,13 +94,13 @@ func SaveMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (
 	if err != nil {
 		return nil, err
 	}
-	if IsExist == true {
+	if IsExist {
 		return nil, errors.New("HubName Already exists")
 	}
 
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
-	newHub := &dbSchemaMyHub.MyHub{
+	newHub := &dbOperationsMyHub.MyHub{
 		ID:            uuid.String(),
 		ProjectID:     projectID,
 		RepoURL:       myhub.RepoURL,
@@ -202,6 +201,9 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 
 	chartsInput := model.CloningInput{}
 	myhubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
 	for _, n := range myhubs {
 		if n.HubName == hubName {
 			chartsInput = model.CloningInput{
@@ -262,8 +264,8 @@ func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
 	}
 
 	time := strconv.FormatInt(time.Now().Unix(), 10)
-	query := bson.D{{"myhub_id", hubID}, {"IsRemoved", false}}
-	update := bson.D{{"$set", bson.D{{"last_synced_at", time}}}}
+	query := bson.D{{Key: "myhub_id", Value: hubID}, {Key: "IsRemoved", Value: false}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "last_synced_at", Value: time}}}}
 
 	err = myHubOps.GitSyncHandlerForProjects(syncHubInput)
 	if err != nil {
@@ -328,7 +330,7 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 		if err != nil {
 			return nil, err
 		}
-		if IsExist == true {
+		if IsExist {
 			return nil, errors.New("HubName Already exists")
 		}
 	}
@@ -348,11 +350,11 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
-	query := bson.D{{"myhub_id", myhub.ID}, {"IsRemoved", false}}
-	update := bson.D{{"$set", bson.D{{"repo_url", myhub.RepoURL}, {"repo_branch", myhub.RepoBranch},
-		{"hub_name", myhub.HubName}, {"IsPrivate", myhub.IsPrivate}, {"AuthType", myhub.AuthType},
-		{"Token", myhub.Token}, {"UserName", myhub.UserName}, {"Password", myhub.Password},
-		{"SSHPrivateKey", myhub.SSHPrivateKey}, {"SSHPublicKey", myhub.SSHPublicKey}, {"updated_at", time}}}}
+	query := bson.D{{Key: "myhub_id", Value: myhub.ID}, {Key: "IsRemoved", Value: false}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "repo_url", Value: myhub.RepoURL}, {Key: "repo_branch", Value: myhub.RepoBranch},
+		{Key: "hub_name", Value: myhub.HubName}, {Key: "IsPrivate", Value: myhub.IsPrivate}, {Key: "AuthType", Value: myhub.AuthType},
+		{Key: "Token", Value: myhub.Token}, {Key: "UserName", Value: myhub.UserName}, {Key: "Password", Value: myhub.Password},
+		{Key: "SSHPrivateKey", Value: myhub.SSHPrivateKey}, {Key: "SSHPublicKey", Value: myhub.SSHPublicKey}, {Key: "updated_at", Value: time}}}}
 
 	// Updating the new hub into database with the given username.
 	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
@@ -362,7 +364,10 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 	}
 
 	var newMyhub model.MyHub
-	copier.Copy(&newMyhub, &myhub)
+	err = copier.Copy(&newMyhub, &myhub)
+	if err != nil {
+		return nil, err
+	}
 
 	newMyhub.UpdatedAt = time
 
@@ -370,8 +375,8 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 }
 
 func DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
-	query := bson.D{{"myhub_id", hubID}}
-	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+	query := bson.D{{Key: "myhub_id", Value: hubID}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "IsRemoved", Value: true}, {Key: "updated_at", Value: strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
 	err := dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
@@ -387,21 +392,24 @@ var GetIconHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reques
 	img, err := os.Open("/tmp/version/" + vars["ProjectID"] + "/" + vars["HubName"] + "/charts/" + vars["ChartName"] + "/icons/" + vars["IconName"])
 	responseStatusCode := 200
 	if err != nil {
-		responseStatusCode = 500
+		responseStatusCode = 500 //nolint
 		fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
 	}
 	defer img.Close()
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(responseStatusCode)
 	w.Header().Set("Content-Type", "image/png") // <-- set the content-type header
-	io.Copy(w, img)
+	_, err = io.Copy(w, img)
+	if err != nil {
+		fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
+	}
 })
 
 // RecurringHubSync is used for syncing
 func RecurringHubSync() {
 	for {
 		// Started Syncing of hubs
-		myhubs, _ := GetAllHubs(nil)
+		myhubs, _ := GetAllHubs(context.TODO())
 
 		for _, myhub := range myhubs {
 
@@ -418,7 +426,10 @@ func RecurringHubSync() {
 				SSHPrivateKey: myhub.SSHPrivateKey,
 			}
 
-			myHubOps.GitSyncHandlerForProjects(chartsInput)
+			err := myHubOps.GitSyncHandlerForProjects(chartsInput)
+			if err != nil {
+				log.Print("ERROR", err)
+			}
 		}
 
 		// Syncing Completed

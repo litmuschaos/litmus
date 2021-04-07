@@ -22,14 +22,14 @@ func TSDBHealthCheck(url, datasourceType string) string {
 		dbHealth = "Active"
 	}
 
-	log.Printf(dbServerMsg)
+	log.Printf("%s", dbServerMsg)
 
 	if datasourceType == "Prometheus" {
 		prometheusHealth, prometheusHealthMsg := prometheusHealthCheck(url)
 		prometheusReadiness, prometheusReadinessMsg := prometheusReadinessCheck(url)
 
-		log.Printf(prometheusHealthMsg)
-		log.Printf(prometheusReadinessMsg)
+		log.Printf("%s", prometheusHealthMsg)
+		log.Printf("%s", prometheusReadinessMsg)
 
 		if dbHealth == "Active" && (prometheusHealth != "ACTIVE" || prometheusReadiness != "ACTIVE") {
 			dbHealth = "Not Ready"

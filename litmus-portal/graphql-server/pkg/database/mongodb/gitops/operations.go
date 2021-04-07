@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,8 +16,6 @@ var (
 	gitOpsCollection  *mongo.Collection
 	backgroundContext = context.Background()
 )
-
-const timeout = 15 * time.Second
 
 func init() {
 	gitOpsCollection = mongodb.Database.Collection("gitops-collection")

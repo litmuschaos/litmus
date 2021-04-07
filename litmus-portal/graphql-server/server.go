@@ -25,8 +25,6 @@ import (
 
 const defaultPort = "8080"
 
-var err error
-
 func init() {
 	log.Printf("Go Version: %s", runtime.Version())
 	log.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)

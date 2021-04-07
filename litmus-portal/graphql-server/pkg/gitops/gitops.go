@@ -31,7 +31,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
-	dbSchemaGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 )
 
@@ -84,8 +83,8 @@ func GitUserFromContext(ctx context.Context) GitUser {
 	}
 }
 
-// GetGitOpsConfig is used for constructing the GitConfig from dbSchemaGitOps.GitConfigDB
-func GetGitOpsConfig(repoData dbSchemaGitOps.GitConfigDB) GitConfig {
+// GetGitOpsConfig is used for constructing the GitConfig from dbOperationsGitOps.GitConfigDB
+func GetGitOpsConfig(repoData dbOperationsGitOps.GitConfigDB) GitConfig {
 	gitConfig := GitConfig{
 		ProjectID:     repoData.ProjectID,
 		RepositoryURL: repoData.RepositoryURL,
@@ -208,7 +207,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 		return nil, nil
 
 	default:
-		return nil, errors.New("No Mathcing Auth Type Found")
+		return nil, errors.New("no Mathcing Auth Type Found")
 	}
 }
 
@@ -474,10 +473,13 @@ func SetupGitOps(user GitUser, gitConfig GitConfig) (string, error) {
 func SyncDBToGit(ctx context.Context, config GitConfig) error {
 	repositoryExists, err := PathExists(config.LocalPath)
 	if err != nil {
-		return fmt.Errorf("Error while checking repo exists, err: %s", err)
+		return fmt.Errorf("error while checking repo exists, err: %s", err)
 	}
 	if !repositoryExists {
 		err = config.setupGitRepo(GitUserFromContext(ctx))
+		if err != nil {
+			return errors.New("Error syncing DB : " + err.Error())
+		}
 	} else {
 		err = config.GitPull()
 		if err != nil {
@@ -559,8 +561,8 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 		}
 	}
 
-	query := bson.D{{"project_id", config.ProjectID}}
-	update := bson.D{{"$set", bson.D{{"latest_commit", latestCommit}}}}
+	query := bson.D{{Key: "project_id", Value: config.ProjectID}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "latest_commit", Value: latestCommit}}}}
 
 	if ctx == nil {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
@@ -640,7 +642,10 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 		return errors.New("file name doesn't match workflow name")
 	}
 
-	workflow, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}, {"project_id", config.ProjectID}, {"isRemoved", false}})
+	workflow, err := dbOperationsWorkflow.GetWorkflows(bson.D{{Key: "workflow_id", Value: wfID}, {Key: "project_id", Value: config.ProjectID}, {Key: "isRemoved", Value: false}})
+	if err != nil {
+		return err
+	}
 	if len(workflow) == 0 {
 		return errors.New("No such workflow found : " + wfID)
 	}
@@ -675,5 +680,5 @@ func deleteWorkflow(file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 
-	return ops.ProcessWorkflowDelete(bson.D{{"workflow_name", fileName}, {"project_id", config.ProjectID}}, store.Store)
+	return ops.ProcessWorkflowDelete(bson.D{{Key: "workflow_name", Value: fileName}, {Key: "project_id", Value: config.ProjectID}}, store.Store)
 }

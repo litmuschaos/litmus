@@ -3,6 +3,7 @@ package ops
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -24,7 +25,6 @@ import (
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
-	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 )
 
 type WorkflowEvent struct {
@@ -265,12 +265,15 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 
 // ProcessWorkflowCreation creates new workflow entry and sends the workflow to the specific agent for execution
 func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData) error {
-	var Weightages []*dbSchemaWorkflow.WeightagesInput
+	var Weightages []*dbOperationsWorkflow.WeightagesInput
 	if input.Weightages != nil {
-		copier.Copy(&Weightages, &input.Weightages)
+		err := copier.Copy(&Weightages, &input.Weightages)
+		if err != nil {
+			return nil
+		}
 	}
 
-	newChaosWorkflow := dbSchemaWorkflow.ChaosWorkFlowInput{
+	newChaosWorkflow := dbOperationsWorkflow.ChaosWorkFlowInput{
 		WorkflowID:          *input.WorkflowID,
 		WorkflowManifest:    input.WorkflowManifest,
 		CronSyntax:          input.CronSyntax,
@@ -282,7 +285,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 		Weightages:          Weightages,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
-		WorkflowRuns:        []*dbSchemaWorkflow.ChaosWorkflowRun{},
+		WorkflowRuns:        []*dbOperationsWorkflow.ChaosWorkflowRun{},
 		IsRemoved:           false,
 	}
 
@@ -300,13 +303,16 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 
 // ProcessWorkflowUpdate updates the workflow entry and sends update resource request to required agent
 func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, r *store.StateData) error {
-	var Weightages []*dbSchemaWorkflow.WeightagesInput
+	var Weightages []*dbOperationsWorkflow.WeightagesInput
 	if workflow.Weightages != nil {
-		copier.Copy(&Weightages, &workflow.Weightages)
+		err := copier.Copy(&Weightages, &workflow.Weightages)
+		if err != nil {
+			return err
+		}
 	}
 
-	query := bson.D{{"workflow_id", workflow.WorkflowID}, {"project_id", workflow.ProjectID}}
-	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+	query := bson.D{{Key: "workflow_id", Value: workflow.WorkflowID}, {Key: "project_id", Value: workflow.ProjectID}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "workflow_manifest", Value: workflow.WorkflowManifest}, {Key: "cronSyntax", Value: workflow.CronSyntax}, {Key: "workflow_name", Value: workflow.WorkflowName}, {Key: "workflow_description", Value: workflow.WorkflowDescription}, {Key: "isCustomWorkflow", Value: workflow.IsCustomWorkflow}, {Key: "weightages", Value: Weightages}, {Key: "updated_at", Value: strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
 	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 	if err != nil {
@@ -326,7 +332,7 @@ func ProcessWorkflowDelete(query bson.D, r *store.StateData) error {
 		return err
 	}
 
-	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "isRemoved", Value: true}}}}
 
 	err = dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 
@@ -374,10 +380,13 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 
 // ResiliencyScoreCalculator calculates the Rscore and returns the execdata string
 func ResiliencyScoreCalculator(execData string, wfid string) string {
-	var resiliency_score, weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0, 0
+	var resiliency_score, weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int
 	var jsonData WorkflowEvent
-	json.Unmarshal([]byte(execData), &jsonData)
-	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": []string{wfid}}}})
+	err := json.Unmarshal([]byte(execData), &jsonData)
+	if err != nil {
+		fmt.Printf("%v", err)
+	}
+	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{Key: "workflow_id", Value: bson.M{"$in": []string{wfid}}}})
 	totalExperiments = len(chaosWorkflows[0].Weightages)
 	weightMap := map[string]int{}
 	for _, weightEnty := range chaosWorkflows[0].Weightages {
