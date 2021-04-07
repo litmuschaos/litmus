@@ -44,27 +44,26 @@ jobs:
         uses: Jerome1337/goimports-action@v1.0.3
         with:
           goimports-path: ./litmus-portal
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.29      
-          working-directory: ./litmus-portal/authentication
-      - name: golangci-lint
+      - name: golangci-lint graphql-server
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.29      
           working-directory: ./litmus-portal/graphql-server
-      - name: golangci-lint
+      - name: golangci-lint event-tracker
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.29      
           working-directory: ./litmus-portal/cluster-agents/event-tracker
-      - name: golangci-lint
+      - name: golangci-lint subscriber
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.29      
           working-directory: ./litmus-portal/cluster-agents/subscriber
-
+      - name: golangci-lint authentication server
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.29      
+          working-directory: ./litmus-portal/authentication
       - shell: bash
         run: |
           cd litmus-portal
