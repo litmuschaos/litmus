@@ -100,7 +100,7 @@ func getConfigmap() (string, string, error) {
 	if errors.IsNotFound(err) {
 		return "", "", err
 	} else if cm.Data["IS_CLUSTER_CONFIRMED"] == "false" {
-		return "", "", fmt.Errorf("Cluster is not confirmed yet")
+		return "", "", fmt.Errorf("cluster is not confirmed yet")
 	} else if err != nil {
 		return "", "", err
 	}
@@ -150,7 +150,7 @@ func runDeploymentInformer(factory informers.SharedInformerFactory) {
 					}
 				}
 
-				if trigger_flag == true {
+				if trigger_flag {
 					log.Print("EventType: Update")
 					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", newDepObj.Name, newDepObj.Namespace)
 					response, err := SendRequest(worflowid)
@@ -165,7 +165,7 @@ func runDeploymentInformer(factory informers.SharedInformerFactory) {
 
 	deploymentInformer.Run(stopper)
 	if !cache.WaitForCacheSync(stopper, deploymentInformer.HasSynced) {
-		runtime.HandleError(fmt.Errorf("Timed out waiting for caches to sync"))
+		runtime.HandleError(fmt.Errorf("timed out waiting for caches to sync"))
 		return
 	}
 }
@@ -212,7 +212,7 @@ func runStsInformer(factory informers.SharedInformerFactory) {
 					}
 				}
 
-				if trigger_flag == true {
+				if trigger_flag {
 					log.Print("EventType: Update")
 					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", newStsObj.Name, newStsObj.Namespace)
 					response, err := SendRequest(worflowid)
@@ -227,7 +227,7 @@ func runStsInformer(factory informers.SharedInformerFactory) {
 
 	stsInformer.Run(stopper)
 	if !cache.WaitForCacheSync(stopper, stsInformer.HasSynced) {
-		runtime.HandleError(fmt.Errorf("Timed out waiting for caches to sync"))
+		runtime.HandleError(fmt.Errorf("timed out waiting for caches to sync"))
 		return
 	}
 }
@@ -274,7 +274,7 @@ func runDSInformer(factory informers.SharedInformerFactory) {
 					}
 				}
 
-				if trigger_flag == true {
+				if trigger_flag {
 					log.Print("EventType: Update")
 					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", newDsObj.Name, newDsObj.Namespace)
 					response, err := SendRequest(worflowid)
@@ -289,7 +289,7 @@ func runDSInformer(factory informers.SharedInformerFactory) {
 
 	dsInformer.Run(stopper)
 	if !cache.WaitForCacheSync(stopper, dsInformer.HasSynced) {
-		runtime.HandleError(fmt.Errorf("Timed out waiting for caches to sync"))
+		runtime.HandleError(fmt.Errorf("timed out waiting for caches to sync"))
 		return
 	}
 }
