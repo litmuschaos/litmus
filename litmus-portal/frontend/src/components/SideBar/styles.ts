@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     backgroundColor: theme.palette.sidebarMenu,
     position: 'relative',
-    color: theme.palette.text.secondary,
   },
   litmusDiv: {
     display: 'flex',
