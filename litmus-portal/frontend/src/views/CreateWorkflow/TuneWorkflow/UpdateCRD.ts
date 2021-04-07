@@ -46,6 +46,10 @@ export const updateCRD = (
   };
 
   if (experiment.length === 0) {
+    generatedYAML.spec.templates[0] = {
+      name: 'custom-chaos',
+      steps: [],
+    };
     // Step 2 in template (experiment YAMLs of all experiments)
     generatedYAML.spec.templates[1] = {
       name: 'install-chaos-experiments',

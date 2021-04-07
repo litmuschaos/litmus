@@ -31,6 +31,7 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
+import { fetchWorkflowNameFromManifest } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface WorkflowProps {
@@ -67,7 +68,7 @@ const VerifyCommit = forwardRef((_, ref) => {
     (state: RootState) => state.workflowData
   );
 
-  const { clusterid, cronSyntax, isDisabled, clustername } = workflowData;
+  const { clusterid, cronSyntax, clustername } = workflowData;
 
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
@@ -84,9 +85,6 @@ const VerifyCommit = forwardRef((_, ref) => {
         manifest: YAML.stringify(parsedManifest),
       });
     }
-  };
-  const fetchWorkflowNameFromManifest = (manifest: string) => {
-    return YAML.parse(manifest).metadata.name;
   };
 
   useEffect(() => {
@@ -245,6 +243,7 @@ const VerifyCommit = forwardRef((_, ref) => {
     localforage.removeItem('hasSetWorkflowData');
     localforage.removeItem('weights');
     localforage.removeItem('selectedHub');
+    localforage.removeItem('editSchedule');
     setFinishModalOpen(false);
   };
 
@@ -298,7 +297,6 @@ const VerifyCommit = forwardRef((_, ref) => {
                   onChange={(e) =>
                     handleNameChange({ changedName: e.target.value })
                   }
-                  disabled={workflowData.isRecurring}
                 />
               </div>
             </div>
@@ -339,18 +337,7 @@ const VerifyCommit = forwardRef((_, ref) => {
                 </Typography>
               </div>
               <div className={classes.schCol2}>
-                {/* <CustomDate disabled={edit} />
-              <CustomTime
-                handleDateChange={handleDateChange}
-                value={selectedDate}
-                ampm
-                disabled={edit}
-              /> */}
-                {isDisabled ? (
-                  <Typography className={classes.schedule}>
-                    {t('createWorkflow.verifyCommit.summary.disabled')}
-                  </Typography>
-                ) : cronSyntax === '' ? (
+                {cronSyntax === '' ? (
                   <Typography className={classes.schedule}>
                     {t('createWorkflow.verifyCommit.summary.schedulingNow')}
                   </Typography>
@@ -360,9 +347,9 @@ const VerifyCommit = forwardRef((_, ref) => {
                   </Typography>
                 )}
 
-                <div className={classes.editButton1}>
+                <div className={classes.editButton}>
                   <IconButton>
-                    <EditIcon className={classes.editbtn} data-cy="edit" />
+                    <EditIcon className={classes.editIcon} data-cy="edit" />
                   </IconButton>
                 </div>
               </div>
@@ -395,10 +382,7 @@ const VerifyCommit = forwardRef((_, ref) => {
                       />
                     ))}
                   </div>
-                  <ButtonOutlined
-                    disabled={workflowData.isRecurring}
-                    data-cy="testRunButton"
-                  >
+                  <ButtonOutlined data-cy="testRunButton">
                     {t('createWorkflow.verifyCommit.button.edit')}
                   </ButtonOutlined>
                 </div>

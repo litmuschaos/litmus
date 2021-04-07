@@ -4,17 +4,20 @@ const useStyles = makeStyles((theme: Theme) => ({
   horizontalLine: {
     background: theme.palette.border.main,
   },
+  title: {
+    padding: theme.spacing(0, 2),
+    fontSize: '2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '2.3rem',
+    },
+  },
   root: {
     background: theme.palette.background.paper,
     color: theme.palette.text.primary,
-    padding: theme.spacing(0, 2),
-    margin: '0 auto',
-    width: '98%',
-    height: '100%',
+    padding: theme.spacing(1, 2),
+    margin: '1rem auto',
+    width: '100%',
     flexDirection: 'column',
-    [theme.breakpoints.up('lg')]: {
-      width: '99%',
-    },
   },
 
   // Inner Container
@@ -42,6 +45,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '7rem',
     height: '6.31rem',
   },
+
+  // Body
   outerSum: {
     display: 'flex',
     flexDirection: 'column',
@@ -64,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   sumText: {
     width: '100%',
-    marginTop: theme.spacing(4.5),
+    marginTop: theme.spacing(2),
     marginBottom: theme.spacing(3),
     fontSize: '1.2rem',
     [theme.breakpoints.up('lg')]: {
@@ -84,14 +89,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: theme.spacing(0.75),
   },
   col2: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     marginLeft: theme.spacing(5),
     width: '75%',
   },
   schCol2: {
+    width: '75%',
     marginLeft: theme.spacing(5),
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   clusterName: {
     fontSize: '0.85rem',
@@ -113,7 +120,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginLeft: theme.spacing(2),
+
     width: '80%',
     [theme.breakpoints.up('lg')]: {
       width: '90%',
@@ -144,7 +151,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   yamlFlex: {
     display: 'flex',
     flexDirection: 'column',
-    marginLeft: theme.spacing(7),
+    width: '75%',
+    marginLeft: theme.spacing(5),
   },
   progress: {
     display: 'flex',
@@ -159,6 +167,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.secondary.contrastText,
     marginTop: theme.spacing(-6),
     marginRight: theme.spacing(-2.5),
+  },
+  buttonDiv: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
   },
 
   // Modal

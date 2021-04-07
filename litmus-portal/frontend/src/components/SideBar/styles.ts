@@ -7,9 +7,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: '100%',
-    backgroundColor: theme.palette.background.default,
+    // backgroundColor: theme.palette.sidebarMenu,
+    backgroundColor: '#5B44BA', // Has to be updated in Litmus UI
     position: 'relative',
-    color: 'inherit',
+    color: theme.palette.text.secondary,
   },
   litmusDiv: {
     display: 'flex',
@@ -28,13 +29,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     left: theme.spacing(2.25),
     top: theme.spacing(3),
     marginLeft: theme.spacing(1.75),
-    color: theme.palette.text.primary,
+    color: theme.palette.text.secondary,
   },
   drawerListItem: {
     height: '3.1875rem',
     transition: '0.8s',
+    '& path': {
+      fill: theme.palette.text.secondary,
+    },
     '&:hover': {
-      backgroundColor: theme.palette.disabledBackground,
+      backgroundColor: theme.palette.primary.dark,
     },
   },
   active: {

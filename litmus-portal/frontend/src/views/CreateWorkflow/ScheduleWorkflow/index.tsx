@@ -23,6 +23,8 @@ import useActions from '../../../redux/actions';
 import * as TemplateSelectionActions from '../../../redux/actions/template';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import { cronWorkflow, workflowOnce } from '../../../utils/workflowTemplate';
+import { fetchWorkflowNameFromManifest } from '../../../utils/yamlUtils';
 import SetTime from './SetTime/index';
 import useStyles from './styles';
 
@@ -54,6 +56,10 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
   );
   const workflow = useActions(WorkflowActions);
   const template = useActions(TemplateSelectionActions);
+
+  const scheduleOnce = workflowOnce;
+  const scheduleMore = cronWorkflow;
+
   // Controls Radio Buttons
   const [value, setValue] = React.useState(
     workflowData.scheduleType.scheduleOnce
@@ -80,10 +86,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
     else
       workflow.setWorkflowDetails({
         cronSyntax,
-      });
-    if (value === 'disable')
-      workflow.setWorkflowDetails({
-        isDisabled: true,
       });
   }, [cronValue]);
 
@@ -163,6 +165,76 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
     validateTime(selectedTime, date);
   };
 
+  function EditYaml() {
+    const oldParsedYaml = YAML.parse(manifest);
+    let NewYaml: string = ' ';
+    if (
+      oldParsedYaml.kind === 'Workflow' &&
+      workflowData.scheduleType.scheduleOnce !== 'now'
+    ) {
+      const oldParsedYaml = YAML.parse(manifest);
+      const newParsedYaml = YAML.parse(scheduleMore);
+      delete newParsedYaml.spec.workflowSpec;
+      newParsedYaml.spec.schedule = workflowData.cronSyntax;
+      delete newParsedYaml.metadata.generateName;
+      newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
+      newParsedYaml.metadata.labels = {
+        workflow_id: workflowData.workflow_id,
+      };
+      newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
+      const tz = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      };
+      Object.entries(tz).forEach(([key, value]) => {
+        newParsedYaml.spec[key] = value;
+      });
+      NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowManifest({
+        manifest: NewYaml,
+      });
+    }
+    if (
+      oldParsedYaml.kind === 'CronWorkflow' &&
+      workflowData.scheduleType.scheduleOnce === 'now'
+    ) {
+      const oldParsedYaml = YAML.parse(manifest);
+      const newParsedYaml = YAML.parse(scheduleOnce);
+      delete newParsedYaml.spec;
+      delete newParsedYaml.metadata.generateName;
+      newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
+      newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
+      newParsedYaml.metadata.labels = {
+        workflow_id: workflowData.workflow_id,
+      };
+      NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowManifest({
+        manifest: NewYaml,
+      });
+    }
+    if (
+      oldParsedYaml.kind === 'CronWorkflow' &&
+      workflowData.scheduleType.scheduleOnce !== 'now'
+      //   && !isDisabled
+    ) {
+      const newParsedYaml = YAML.parse(manifest);
+      newParsedYaml.spec.schedule = workflowData.cronSyntax;
+      //   newParsedYaml.spec.suspend = false;
+      delete newParsedYaml.metadata.generateName;
+      newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
+      newParsedYaml.metadata.labels = { workflow_id: workflowData.workflow_id };
+      const tz = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      };
+      Object.entries(tz).forEach(([key, value]) => {
+        newParsedYaml.spec[key] = value;
+      });
+      NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowManifest({
+        manifest: NewYaml,
+      });
+    }
+  }
+
   // Function for recurring date change
   const reccuringDateChange = (date: Date | null) => {
     setSelectedTime(date);
@@ -202,9 +274,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
   // UseEffect to update the values of CronSyntax on radio button change
   useEffect(() => {
     if (value === 'now') {
-      workflow.setWorkflowDetails({
-        isDisabled: false,
-      });
       setValueDef('');
       setCronValue({
         minute: '',
@@ -212,11 +281,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
         day_month: '',
         month: '',
         day_week: '',
-      });
-    }
-    if (value === 'disable') {
-      workflow.setWorkflowDetails({
-        isDisabled: true,
       });
     }
     if (value === 'specificTime') {
@@ -248,9 +312,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
       }
     }
     if (valueDef === 'everyHr') {
-      workflow.setWorkflowDetails({
-        isDisabled: false,
-      });
       setCronValue({
         minute: minute.toString(),
         hour: '0-23',
@@ -260,9 +321,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
       });
     }
     if (valueDef === 'everyDay') {
-      workflow.setWorkflowDetails({
-        isDisabled: false,
-      });
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -272,9 +330,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
       });
     }
     if (valueDef === 'everyWeek') {
-      workflow.setWorkflowDetails({
-        isDisabled: false,
-      });
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -284,9 +339,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
       });
     }
     if (valueDef === 'everyMonth') {
-      workflow.setWorkflowDetails({
-        isDisabled: false,
-      });
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -296,9 +348,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
       });
     }
     if (value === 'recurringSchedule' && valueDef === '') {
-      workflow.setWorkflowDetails({
-        isDisabled: false,
-      });
       template.selectTemplate({ isDisable: true });
     } else {
       template.selectTemplate({ isDisable: false });
@@ -312,6 +361,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
   }, [valueDef, value]);
 
   function onNext() {
+    EditYaml();
     return true;
   }
 
@@ -354,55 +404,22 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
               onChange={handleChange}
             >
               {/* options to choose schedule */}
-              {!workflowData.isRecurring ? (
-                <FormControlLabel
-                  value="now"
-                  control={
-                    <Radio
-                      classes={{
-                        root: classes.radio,
-                        checked: classes.checked,
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography className={classes.radioText}>
-                      {t('createWorkflow.scheduleWorkflow.radio.now')}
-                    </Typography>
-                  }
-                />
-              ) : YAML.parse(manifest).spec.suspend === true ? (
-                <></>
-              ) : workflowData.isRecurring ? (
-                <FormControlLabel
-                  value="disable"
-                  control={
-                    <Radio
-                      classes={{
-                        root: classes.radio,
-                        checked: classes.checked,
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography className={classes.radioText}>
-                      Disable Schedule
-                    </Typography>
-                  }
-                />
-              ) : (
-                <></>
-              )}
-              {/* <FormControlLabel
-                value="specificTime"
-                disabled
-                control={<Radio classes={{ root: classes.radio, checked: classes.checked }}/>}
+              <FormControlLabel
+                value="now"
+                control={
+                  <Radio
+                    classes={{
+                      root: classes.radio,
+                      checked: classes.checked,
+                    }}
+                  />
+                }
                 label={
                   <Typography className={classes.radioText}>
-                    {t('createWorkflow.scheduleWorkflow.radio.specific')}
+                    {t('createWorkflow.scheduleWorkflow.radio.now')}
                   </Typography>
                 }
-              /> */}
+              />
               {value === 'specificTime' ? (
                 <div className={classes.schLater}>
                   <Typography className={classes.captionText}>

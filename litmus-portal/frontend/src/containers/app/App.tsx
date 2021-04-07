@@ -25,6 +25,8 @@ const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
 const Targets = lazy(() => import('../../pages/Targets'));
+const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
+const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
 const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
 const AnalyticsDashboard = lazy(
@@ -194,11 +196,16 @@ const Routes: React.FC = () => {
             path="/workflows/:workflowRunId"
             component={WorkflowDetails}
           />
-          {/* <Route
+          <Route
             exact
-            path="/workflows/schedule/:scheduleProjectID/:workflowName" // Check
-            component={SchedulePage}
-          /> */}
+            path="/workflows/schedule/:scheduleProjectID/:workflowName"
+            component={EditSchedule}
+          />
+          <Route
+            exact
+            path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
+            component={SetNewSchedule}
+          />
           <Route
             exact
             path="/workflows/template/:templateName"

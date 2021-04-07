@@ -237,12 +237,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
   };
 
   useEffect(() => {
-    if (customWorkflow) {
-      setGeneratedYAML(updateCRD(generatedYAML, experiment));
-      workflowAction.setWorkflowManifest({
-        manifest: YAML.stringify(generatedYAML),
-      });
-    }
+    setGeneratedYAML(updateCRD(generatedYAML, experiment));
+    workflowAction.setWorkflowManifest({
+      manifest: YAML.stringify(generatedYAML),
+    });
   }, [experiment]);
 
   const onModalClose = () => {

@@ -97,7 +97,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: '/icons/survey.svg',
           alt: 'survey',
-          onClick: () => window.open('https://forms.gle/qMuVphRyEWCFqjD56'),
+          onClick: () => window.open('https://forms.gle/KQp5qj8MUneMSxLp9'),
           text: t('quickActionCard.quickSurvey'),
         }
       : emptyData,
