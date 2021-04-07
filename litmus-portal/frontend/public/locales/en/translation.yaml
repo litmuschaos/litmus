@@ -334,9 +334,37 @@ chaosWorkflows:
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
       seeAnalytics: See analytics
-  browseSchedule:
+  browseSchedules:
+    name: Name
+    cluster: Cluster
+    experiments: Experiments
+    schedule: Schedule
+    nextRun: Next Run
+    regularity: Regularity
+    startingDate: Starting Date
+    lastRun: Last Run
     regularityOnce: Once
-    showExperiment: Show Experiment
+    showExperiments: Show Experiments
+    showSchedule: Show Schedule
+    reRunSchedule: Rerun Schedule
+    downloadManifest: Download Manifest
+    deleteSchedule: Delete Schedule
+    editSchedule: Edit Schedule
+  browseWorkflows:
+    status: Status
+    name: Name
+    targetAgent: Target Agent
+    reliabilityDetails: Reliability Details
+    experiments: Experiments
+    lastRun: Last Run
+    tableData:
+      overallRR: "Overall RR : "
+      experimentsPassed: "Experiments Passed : "
+      showExperiments: Show Experiments
+      showTheWorkflow: Show the workflow
+      showTheAnalytics: show the analytics
+      na: NA
+
 
 analyticsDashboardViews:
   kubernetesDashboard:
