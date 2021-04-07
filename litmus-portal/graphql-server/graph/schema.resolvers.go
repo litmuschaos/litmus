@@ -66,7 +66,7 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid s
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
-	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[2:3])
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[2:3], []string{"Accepted"})
 
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, member model.Memb
 }
 
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2])
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2], []string{"Pending"})
 
 	if err != nil {
 		return "Unsuccessful", err
@@ -86,7 +86,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.Me
 }
 
 func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2])
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2], []string{"Pending"})
 
 	if err != nil {
 		return "Unsuccessful", err
@@ -96,7 +96,7 @@ func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.M
 }
 
 func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[2:3])
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[2:3], []string{"Accepted", "Pending"})
 
 	if err != nil {
 		return "Unsuccessful", err
@@ -106,7 +106,7 @@ func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.Me
 }
 
 func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
-	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2])
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2], []string{"Accepted"})
 
 	if err != nil {
 		return "Unsuccessful", err
