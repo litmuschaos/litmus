@@ -22,8 +22,13 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import YAML from 'yaml';
 import Loader from '../../../components/Loader';
-import { DELETE_SCHEDULE, SCHEDULE_DETAILS } from '../../../graphql';
+import {
+  DELETE_SCHEDULE,
+  SCHEDULE_DETAILS,
+  UPDATE_SCHEDULE,
+} from '../../../graphql';
 import {
   DeleteSchedule,
   ScheduleDataVars,
@@ -39,10 +44,12 @@ import {
 } from '../../../utils/sort';
 import useStyles from './styles';
 import TableData from './TableData';
+import { WeightMap } from '../../../models/graphql/createWorkflowData';
 
 interface FilterOption {
   search: string;
   cluster: string;
+  suspended: string;
 }
 interface PaginationData {
   pageNo: number;
@@ -76,7 +83,42 @@ const BrowseSchedule: React.FC = () => {
   const [filter, setFilter] = React.useState<FilterOption>({
     search: '',
     cluster: 'All',
+    suspended: 'All',
   });
+
+  const [disableSchedule] = useMutation(UPDATE_SCHEDULE, {
+    refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
+  });
+
+  const handleDisableSchedule = (schedule: ScheduleWorkflow) => {
+    const yaml = YAML.parse(schedule.workflow_manifest);
+    yaml.spec.suspend = true;
+
+    const weightData: WeightMap[] = [];
+
+    schedule.weightages.forEach((weightEntry) => {
+      weightData.push({
+        experiment_name: weightEntry.experiment_name,
+        weightage: weightEntry.weightage,
+      });
+    });
+
+    disableSchedule({
+      variables: {
+        ChaosWorkFlowInput: {
+          workflow_id: schedule.workflow_id,
+          workflow_name: schedule.workflow_name,
+          workflow_description: schedule.workflow_description,
+          isCustomWorkflow: schedule.isCustomWorkflow,
+          cronSyntax: schedule.cronSyntax,
+          workflow_manifest: JSON.stringify(yaml, null, 2),
+          project_id: schedule.project_id,
+          cluster_id: schedule.cluster_id,
+          weightages: weightData,
+        },
+      },
+    });
+  };
 
   // State for pagination
   const [paginationData, setPaginationData] = useState<PaginationData>({
@@ -110,6 +152,15 @@ const BrowseSchedule: React.FC = () => {
         : dataRow.cluster_name
             .toLowerCase()
             .includes(filter.cluster.toLowerCase())
+    )
+    .filter((dataRow) =>
+      filter.suspended === 'All'
+        ? true
+        : filter.suspended === 'true'
+        ? YAML.parse(dataRow.workflow_manifest).spec.suspend === true
+        : filter.suspended === 'false'
+        ? YAML.parse(dataRow.workflow_manifest).spec.suspend === undefined
+        : false
     )
     .sort((a: ScheduleWorkflow, b: ScheduleWorkflow) => {
       // Sorting based on unique fields
@@ -154,6 +205,30 @@ const BrowseSchedule: React.FC = () => {
               </InputAdornment>
             }
           />
+
+          <FormControl
+            variant="outlined"
+            className={classes.formControl}
+            focused
+          >
+            <InputLabel className={classes.selectText}>Name</InputLabel>
+            <Select
+              value={filter.suspended}
+              onChange={(event) =>
+                setFilter({
+                  ...filter,
+                  suspended: event.target.value as string,
+                })
+              }
+              label="Name"
+              className={classes.selectText}
+            >
+              <MenuItem value="All">Show All Workflows</MenuItem>
+              <MenuItem value="false">Show Enabled Workflows Only</MenuItem>
+              <MenuItem value="true">Show Disabled Workflows Only</MenuItem>
+            </Select>
+          </FormControl>
+
           {/* Select Cluster */}
           <FormControl
             variant="outlined"
@@ -284,7 +359,11 @@ const BrowseSchedule: React.FC = () => {
                       data-cy="workflowSchedulesTableRow"
                       key={data.workflow_id}
                     >
-                      <TableData data={data} deleteRow={deleteRow} />
+                      <TableData
+                        data={data}
+                        deleteRow={deleteRow}
+                        handleDisableSchedule={handleDisableSchedule}
+                      />
                     </TableRow>
                   ))
               ) : (

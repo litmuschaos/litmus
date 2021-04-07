@@ -200,7 +200,7 @@ analyticsDashboard:
     rangeSelector:
       to: to
       selectPeriod: Select Period
-    refresh: 
+    refresh:
       heading: Refresh
       off: Off
       every5Seconds: Every 5 seconds
@@ -350,6 +350,8 @@ chaosWorkflows:
     downloadManifest: Download Manifest
     deleteSchedule: Delete Schedule
     editSchedule: Edit Schedule
+    scheduleIsDisabled: This Schedule is disabled now
+    disableSchedule: Disable Schedule
   browseWorkflows:
     status: Status
     name: Name
@@ -358,13 +360,12 @@ chaosWorkflows:
     experiments: Experiments
     lastRun: Last Run
     tableData:
-      overallRR: "Overall RR : "
-      experimentsPassed: "Experiments Passed : "
+      overallRR: 'Overall RR : '
+      experimentsPassed: 'Experiments Passed : '
       showExperiments: Show Experiments
       showTheWorkflow: Show the workflow
       showTheAnalytics: show the analytics
       na: NA
-
 
 analyticsDashboardViews:
   kubernetesDashboard:
