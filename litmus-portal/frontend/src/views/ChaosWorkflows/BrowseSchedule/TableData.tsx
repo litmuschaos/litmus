@@ -35,9 +35,14 @@ import useStyles from './styles';
 interface TableDataProps {
   data: ScheduleWorkflow;
   deleteRow: (wfid: string) => void;
+  handleDisableSchedule: (schedule: ScheduleWorkflow) => void;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
+const TableData: React.FC<TableDataProps> = ({
+  data,
+  deleteRow,
+  handleDisableSchedule,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -293,10 +298,16 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               : ''
           }
         >
-          {data.cronSyntax !== '' && (
+          {YAML.parse(data.workflow_manifest).spec.suspend === true ? (
             <Typography>
-              {parser.parseExpression(data.cronSyntax).next().toString()}
+              {t('chaosWorkflows.browseSchedules.scheduleIsDisabled')}
             </Typography>
+          ) : (
+            data.cronSyntax !== '' && (
+              <Typography>
+                {parser.parseExpression(data.cronSyntax).next().toString()}
+              </Typography>
+            )
           )}
         </span>
       </TableCell>
@@ -347,6 +358,29 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           ) : (
             <></>
           )}
+          {projectRole !== 'Viewer' &&
+            YAML.parse(data.workflow_manifest).spec.suspend !== true && (
+              <MenuItem
+                value="Disable"
+                onClick={() => {
+                  handleDisableSchedule(data);
+                }}
+              >
+                <div className={classes.expDiv}>
+                  <img
+                    src="/icons/disableSchedule.svg"
+                    alt="Delete Schedule"
+                    className={classes.btnImg}
+                  />
+                  <Typography
+                    data-cy="disableSchedule"
+                    className={classes.downloadText}
+                  >
+                    {t('chaosWorkflows.browseSchedules.disableSchedule')}
+                  </Typography>
+                </div>
+              </MenuItem>
+            )}
           <MenuItem
             value="Download"
             onClick={() =>
