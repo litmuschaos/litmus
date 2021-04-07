@@ -12,6 +12,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 )
 
+// ValidateRole :Validates the role of a user in a given project
 func ValidateRole(ctx context.Context, projectID string, requiredRoles []model.MemberRole) error {
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	uid := claims["uid"].(string)
