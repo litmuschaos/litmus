@@ -26,9 +26,12 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
+	validate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rbac"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+var requiredRoles = []model.MemberRole{"Viewer", "Editor", "Owner"}
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
 	return clusterHandler.ClusterRegister(clusterInput)
@@ -63,22 +66,52 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid s
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[2:3])
+
+	if err != nil {
+		return nil, err
+	}
+
 	return project.SendInvitation(ctx, member)
 }
 
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2])
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.AcceptInvitation(ctx, member)
 }
 
 func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2])
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.DeclineInvitation(ctx, member)
 }
 
 func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[2:3])
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.RemoveInvitation(ctx, member)
 }
 
 func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, requiredRoles[:2])
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.LeaveProject(ctx, member)
 }
 
