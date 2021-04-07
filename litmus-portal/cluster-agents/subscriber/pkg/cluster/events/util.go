@@ -54,7 +54,7 @@ func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.Litmuschao
 // util function, checks if event is a chaos-exp event, if so -  extract the chaos data
 func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
-	var cd *types.ChaosData = nil
+	var cd *types.ChaosData
 	// considering chaos workflow has only 1 artifact with manifest as raw data
 	data := nodeStatus.Inputs.Artifacts[0].Raw.Data
 	obj := &unstructured.Unstructured{}

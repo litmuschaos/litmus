@@ -5,6 +5,7 @@ import (
 	"flag"
 	"os/signal"
 	"runtime"
+	"syscall"
 
 	"log"
 	"os"
@@ -25,8 +26,6 @@ var (
 		"IS_CLUSTER_CONFIRMED": os.Getenv("IS_CLUSTER_CONFIRMED"),
 		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
 	}
-
-	err error
 )
 
 func init() {
@@ -41,9 +40,9 @@ func init() {
 		log.Fatal(err)
 	}
 
-	if isConfirmed == true {
+	if isConfirmed {
 		clusterData["ACCESS_KEY"] = newKey
-	} else if isConfirmed == false {
+	} else if !isConfirmed {
 		clusterConfirmByte, err := gql.ClusterConfirm(clusterData)
 		if err != nil {
 			log.Fatal(err)
@@ -55,7 +54,7 @@ func init() {
 			log.Fatal(err)
 		}
 
-		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
+		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed {
 			clusterData["ACCESS_KEY"] = clusterConfirmInterface.Data.ClusterConfirm.NewAccessKey
 			clusterData["IS_CLUSTER_CONFIRMED"] = "true"
 			_, err = k8s.ClusterRegister(clusterData)
@@ -72,7 +71,7 @@ func init() {
 
 func main() {
 	stopCh := make(chan struct{})
-	sigCh := make(chan os.Signal)
+	sigCh := make(chan os.Signal, 10)
 	stream := make(chan types.WorkflowEvent, 10)
 
 	//start workflow event watcher
@@ -84,7 +83,7 @@ func main() {
 	// listen for cluster actions
 	go gql.ClusterConnect(clusterData)
 
-	signal.Notify(sigCh, os.Kill, os.Interrupt)
+	signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
 	<-sigCh
 	close(stopCh)
 	close(stream)

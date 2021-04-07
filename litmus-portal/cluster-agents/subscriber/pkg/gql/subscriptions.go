@@ -17,7 +17,7 @@ import (
 
 func ClusterConnect(clusterData map[string]string) {
 	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     namespace\n     }\n  }\n}\n"}`
-	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
+	serverURL, _ := url.Parse(clusterData["SERVER_ADDR"])
 	scheme := "ws"
 	if serverURL.Scheme == "https" {
 		scheme = "wss"
@@ -36,7 +36,7 @@ func ClusterConnect(clusterData map[string]string) {
 		payload := types.OperationMessage{
 			Type: "connection_init",
 		}
-		data, err := json.Marshal(payload)
+		data, _ := json.Marshal(payload)
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
 			log.Println("write:", err)
@@ -46,7 +46,7 @@ func ClusterConnect(clusterData map[string]string) {
 			Payload: []byte(query),
 			Type:    "start",
 		}
-		data, err = json.Marshal(payload)
+		data, _ = json.Marshal(payload)
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
 			log.Println("write:", err)
@@ -72,11 +72,11 @@ func ClusterConnect(clusterData map[string]string) {
 		if r.Payload.Errors != nil {
 			logrus.Fatal("gql error : ", string(message))
 		}
-		if strings.Index("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
+		if strings.Contains("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) {
 			KubeObjRequest := types.KubeObjRequest{
 				RequestID: r.Payload.Data.ClusterConnect.ProjectID,
 			}
-			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData.(string)), &KubeObjRequest)
+			_ = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData.(string)), &KubeObjRequest)
 			err = SendKubeObjects(clusterData, KubeObjRequest)
 			if err != nil {
 				logrus.WithError(err).Println("error getting kubernetes object data")
@@ -95,7 +95,7 @@ func ClusterConnect(clusterData map[string]string) {
 			// send pod logs
 			logrus.Print("LOG REQUEST ", podRequest)
 			SendPodLogs(clusterData, podRequest)
-		} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
+		} else if strings.Contains("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) {
 			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
 			_, err = k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.Namespace)
 			if err != nil {
