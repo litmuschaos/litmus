@@ -3,12 +3,13 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"reflect"
+
 	v1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/tools/cache"
-	"log"
-	"reflect"
 )
 
 // K8s informer watching for all the deployment changes

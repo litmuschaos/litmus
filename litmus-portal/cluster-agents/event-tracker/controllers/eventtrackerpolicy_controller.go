@@ -19,15 +19,16 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"log"
+	"strings"
+	"sync"
+
 	"github.com/go-logr/logr"
 	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
 	"k8s.io/apimachinery/pkg/runtime"
-	"log"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strings"
-	"sync"
 )
 
 // EventTrackerPolicyReconciler reconciles a EventTrackerPolicy object

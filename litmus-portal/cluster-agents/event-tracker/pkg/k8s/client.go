@@ -1,10 +1,11 @@
 package k8s
 
 import (
+	"os"
+
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"os"
 )
 
 var KubeConfig = os.Getenv("KUBE_CONFIG")
