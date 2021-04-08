@@ -15,7 +15,7 @@ import (
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
 
-	uuid2 "github.com/google/uuid"
+	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -451,7 +451,7 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 		return nil, err
 	}
 
-	uuid := uuid2.New()
+	uuid := uuid.New()
 	template := &dbSchemaWorkflowTemplate.ManifestTemplate{
 		TemplateID:          uuid.String(),
 		TemplateName:        templateInput.TemplateName,
