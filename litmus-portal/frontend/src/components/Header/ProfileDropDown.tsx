@@ -11,7 +11,7 @@ import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { getUserEmail, getUsername, logout } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import { userInitials } from '../../utils/user';
+import { userInitials } from '../../utils/userInitials';
 import useStyles from './styles';
 
 const ProfileDropdown: React.FC = () => {

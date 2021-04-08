@@ -31,7 +31,7 @@ import {
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
 import { getProjectID } from '../../../../utils/getSearchParams';
-import { userInitials } from '../../../../utils/user';
+import { userInitials } from '../../../../utils/userInitials';
 import useStyles from './styles';
 
 interface TableDataProps {

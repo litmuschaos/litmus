@@ -6,7 +6,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { history } from '../../redux/configureStore';
 import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
@@ -49,7 +48,6 @@ const SideBar: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
-  const { t } = useTranslation();
   const pathName = useLocation().pathname.split('/')[1];
   const version = process.env.REACT_APP_KB_CHAOS_VERSION;
   const buildTime = moment
@@ -66,19 +64,6 @@ const SideBar: React.FC = () => {
       }}
       anchor="left"
     >
-      {/* <Link to="/" className={classes.homeLink}>
-        <div className={classes.litmusDiv}>
-          <img
-            src="/icons/litmusPurple.svg"
-            alt="litmus logo"
-            className={classes.logo}
-          />
-          <Typography className={classes.litmusHome} variant="body1">
-            {t('sidebar.title')}
-          </Typography>
-        </div>
-      </Link> */}
-
       <List className={classes.drawerList}>
         <CustomisedListItem
           key="home"

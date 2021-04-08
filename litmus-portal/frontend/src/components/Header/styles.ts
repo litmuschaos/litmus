@@ -16,7 +16,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     '& nav': {
       flexGrow: 1,
+      marginLeft: theme.spacing(15),
     },
+  },
+  // Logo
+  litmusDiv: {
+    display: 'flex',
+  },
+  homeLink: {
+    textDecoration: 'none',
+  },
+  logo: {
+    left: theme.spacing(4.375),
+  },
+  litmusHome: {
+    fontSize: '1.625rem',
+    marginLeft: theme.spacing(1.75),
   },
   projectDropdown: {
     display: 'flex',

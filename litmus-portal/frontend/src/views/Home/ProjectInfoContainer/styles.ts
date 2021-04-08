@@ -1,55 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  firstAgentContainer: {
-    padding: theme.spacing(6.5, 11.875),
-    display: 'flex',
-
-    '& img': {
-      padding: theme.spacing(2),
-      marginTop: theme.spacing(2),
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(2),
-    },
-  },
-  agentDeployDesc: {
-    marginLeft: theme.spacing(12.5),
-
-    '& p:first-child': {
-      marginBottom: theme.spacing(3.5),
-      fontSize: '1.5rem',
-      fontWeight: 500,
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(3),
-    },
-  },
-  buttonGroup: {
-    marginTop: theme.spacing(5.25),
-    display: 'flex',
-
-    '& button': {
-      marginRight: theme.spacing(5),
-    },
-
-    '& svg': {
-      marginRight: theme.spacing(1.5),
-    },
-
-    '& button:nth-child(2)': {
-      '& span': {
-        color: theme.palette.highlight,
-      },
-
-      '& p': {
-        fontWeight: 500,
-        fontSize: '0.875rem',
-      },
-    },
-  },
   projectInfoContainer: {
     marginTop: theme.spacing(3.25),
     padding: theme.spacing(3.125, 6.5),
@@ -88,6 +39,11 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: 500,
         marginLeft: theme.spacing(1),
       },
+    },
+  },
+  viewProjectButton: {
+    '& img': {
+      margin: theme.spacing(0, 1, -0.25, 0),
     },
   },
 }));
