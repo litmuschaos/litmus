@@ -17,12 +17,13 @@ import { useSelector } from 'react-redux';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
+import ChooseWorkflowFromExisting from './ChooseWorkflowFromExisting';
 import SelectMyHub from './SelectMyHub';
 import useStyles from './styles';
 import UploadYAML from './uploadYAML';
-import * as WorkflowActions from '../../../redux/actions/workflow';
 
 const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
@@ -111,9 +112,14 @@ const ChooseWorkflow = forwardRef((_, ref) => {
             <ChoosePreDefinedExperiments />
           </Accordion>
 
-          <RadioButton value="B" onChange={(e) => handleChange(e)}>
-            Create a new workflow by cloning an existing workflow
-          </RadioButton>
+          <Accordion expanded={selected === 'B'} className={classes.accordion}>
+            <AccordionSummary>
+              <RadioButton value="B" onChange={(e) => handleChange(e)}>
+                Create a new workflow by cloning an existing workflow
+              </RadioButton>
+            </AccordionSummary>
+            <ChooseWorkflowFromExisting />
+          </Accordion>
 
           <Accordion
             expanded={selected === 'C'}

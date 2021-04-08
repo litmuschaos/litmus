@@ -102,6 +102,47 @@ const useStyles = makeStyles((theme: Theme) => ({
       display: 'flex',
     },
   },
+  existingWorkflowCard: {
+    alignItems: 'center',
+    backgroundColor: theme.palette.cards.background,
+    lineHeight: '5rem', // Making the div content vertically aligned
+    padding: theme.spacing(0, 5),
+    margin: theme.spacing(1, 0),
+
+    '& #body': {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+
+    '& #left-div': {
+      width: '10rem',
+      margin: theme.spacing(2),
+    },
+
+    '& #right-div': {
+      width: '30rem',
+      margin: theme.spacing(0, 4, 0, 4),
+    },
+    '& #last-div': {
+      width: '15rem',
+      margin: theme.spacing(0, 4, 0, 4),
+      position: 'relative',
+    },
+  },
+  lastDivChildren: {
+    width: '60%',
+    position: 'absolute',
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    top: 14,
+  },
+  templateIconBg: {
+    height: 70,
+    marginLeft: theme.spacing(15),
+  },
   experimentIcon: {
     width: '3rem',
     height: '3rem',

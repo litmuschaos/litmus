@@ -237,6 +237,58 @@ const useStyles = makeStyles((theme) => ({
   buttonTransform: {
     textTransform: 'none',
   },
+
+  // Save Template
+  saveTemplateRoot: {
+    margin: theme.spacing(8, 5, 5, 5),
+
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  SaveTemplateTxt: {
+    fontWeight: 500,
+    fontSize: '1.5rem',
+  },
+  NoteTxt: {
+    fontSize: '0.875rem',
+    fontWeight: 400,
+    margin: theme.spacing(2, 0, 2.75, 0),
+    color: theme.palette.warning.main,
+  },
+  InputFieldTemplate: {
+    width: '98%',
+  },
+  footerTemplateDiv: {
+    width: '98%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: theme.spacing(6.75),
+  },
+  errorTemplateDiv: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  errorYamlText: {
+    fontSize: '1rem',
+    color: theme.palette.border.error,
+    marginLeft: theme.spacing(1.375),
+  },
+  templateButtonsDiv: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  saveButtonTemplate: {
+    marginLeft: theme.spacing(1),
+  },
+  cancelIcon: {
+    fontSize: '1rem',
+    marginRight: theme.spacing(1),
+  },
 }));
 
 export default useStyles;

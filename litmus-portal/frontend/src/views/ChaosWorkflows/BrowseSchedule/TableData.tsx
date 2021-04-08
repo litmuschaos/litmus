@@ -8,18 +8,19 @@ import {
   TableCell,
   Typography,
 } from '@material-ui/core';
+import { InsertDriveFileOutlined } from '@material-ui/icons';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplayIcon from '@material-ui/icons/Replay';
+import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
-import parser from 'cron-parser';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
@@ -29,6 +30,7 @@ import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
+import SaveTemplateModal from './SaveTemplateModal';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -54,6 +56,10 @@ const TableData: React.FC<TableDataProps> = ({
     null
   );
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState<boolean>(
+    false
+  );
+
   const tabs = useActions(TabActions);
   const open = Boolean(anchorEl);
   const isOpen = Boolean(popAnchorEl);
@@ -138,6 +144,19 @@ const TableData: React.FC<TableDataProps> = ({
 
   return (
     <>
+      <Modal
+        width="48.62%"
+        height="70.5%"
+        open={isTemplateModalOpen}
+        onClose={() => setIsTemplateModalOpen(false)}
+        modalActions={
+          <ButtonOutlined onClick={() => setIsTemplateModalOpen(false)}>
+            &#x2715;
+          </ButtonOutlined>
+        }
+      >
+        <SaveTemplateModal />
+      </Modal>
       <TableCell className={classes.workflowNameData}>
         <Typography>
           <span
@@ -384,6 +403,20 @@ const TableData: React.FC<TableDataProps> = ({
                 className={classes.downloadText}
               >
                 {t('chaosWorkflows.browseSchedules.downloadManifest')}
+              </Typography>
+            </div>
+          </MenuItem>
+          <MenuItem
+            value="Download"
+            onClick={() => setIsTemplateModalOpen(true)}
+          >
+            <div className={classes.expDiv}>
+              <InsertDriveFileOutlined className={classes.downloadBtn} />
+              <Typography
+                data-cy="downloadManifest"
+                className={classes.downloadText}
+              >
+                Save Template
               </Typography>
             </div>
           </MenuItem>
