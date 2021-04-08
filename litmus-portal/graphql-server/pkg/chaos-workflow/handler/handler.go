@@ -446,7 +446,7 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 	if IsExist == true {
 		return nil, errors.New("Template already exists")
 	}
-	projectData, err := dbOperationsProject.GetProject(ctx, templateInput.ProjectID)
+	projectData, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", templateInput.ProjectID}})
 	if err != nil {
 		return nil, err
 	}
