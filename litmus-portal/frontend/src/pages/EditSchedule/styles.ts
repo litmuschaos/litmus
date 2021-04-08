@@ -4,17 +4,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   horizontalLine: {
     background: theme.palette.border.main,
   },
+  title: {
+    padding: theme.spacing(0, 2),
+    fontWeight: 700,
+    fontSize: '2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '2.3rem',
+    },
+  },
   root: {
     background: theme.palette.background.paper,
     color: theme.palette.text.primary,
-    padding: theme.spacing(0, 2),
-    margin: '0 auto',
-    width: '98%',
-    height: '100%',
+    padding: theme.spacing(1, 2),
+    margin: theme.spacing(2, 'auto'),
+    width: '100%',
     flexDirection: 'column',
-    [theme.breakpoints.up('lg')]: {
-      width: '99%',
-    },
   },
 
   // Inner Container
@@ -28,21 +32,21 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between',
   },
   headerText: {
-    fontWeight: 700,
     fontSize: '1.2rem',
     [theme.breakpoints.up('lg')]: {
       fontSize: '1.4rem',
     },
   },
   description: {
-    marginTop: theme.spacing(3.25),
-    marginBottom: theme.spacing(7.5),
+    margin: theme.spacing(3, 0),
     fontSize: '1rem',
   },
   bfinIcon: {
     width: '7rem',
     height: '6.31rem',
   },
+
+  // Body
   outerSum: {
     display: 'flex',
     flexDirection: 'column',
@@ -81,18 +85,20 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   schedule: {
     fontSize: '0.85rem',
-    paddingLeft: theme.spacing(2),
-    paddingTop: theme.spacing(0.75),
+    padding: theme.spacing(0.75, 0, 2, 0),
   },
   col2: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     marginLeft: theme.spacing(5),
+    fontWeight: 700,
     width: '75%',
   },
   schCol2: {
+    width: '75%',
     marginLeft: theme.spacing(5),
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   clusterName: {
     fontSize: '0.85rem',
@@ -114,7 +120,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginLeft: theme.spacing(2),
+
     width: '80%',
     [theme.breakpoints.up('lg')]: {
       width: '90%',
@@ -125,8 +131,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '0.9375rem',
     color: theme.palette.text.disabled,
     width: '30rem',
-    marginTop: theme.spacing(3.75),
-    marginLeft: theme.spacing(30),
+    margin: theme.spacing(3.75, 0, 30, 0),
   },
   typoCol2: {
     fontSize: '1rem',
@@ -137,19 +142,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonOutlineText: {
     padding: theme.spacing(1.5),
   },
-  spacingHorizontal: {
-    margin: theme.spacing(0, 1),
-  },
   errorText: {
     color: theme.palette.error.main,
-    fontWeight: 700,
     fontSize: '1rem',
     marginLeft: theme.spacing(5),
   },
   yamlFlex: {
     display: 'flex',
     flexDirection: 'column',
-    marginLeft: theme.spacing(7),
+    width: '75%',
+    marginLeft: theme.spacing(5),
   },
   progress: {
     display: 'flex',
@@ -158,16 +160,25 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     marginLeft: theme.spacing(5),
   },
+  spacingHorizontal: {
+    margin: theme.spacing(0, 1),
+  },
   buttomPad: {
     paddingBottom: theme.spacing(3.75),
   },
   closeBtn: {
     color: theme.palette.secondary.contrastText,
-    marginTop: theme.spacing(-6),
-    marginRight: theme.spacing(-2.5),
+  },
+  buttonDiv: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   verifyYAMLButton: {
-    width: '60%',
+    width: '20%',
+  },
+  bold: {
+    fontWeight: 700,
   },
 
   // Modal
@@ -201,9 +212,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '2.2rem',
     fontWeight: 'bold',
     margin: theme.spacing(2, 0),
-  },
-  bold: {
-    fontWeight: 700,
   },
 }));
 export default useStyles;

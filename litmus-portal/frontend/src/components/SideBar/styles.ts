@@ -7,9 +7,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: '100%',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.sidebarMenu,
     position: 'relative',
-    color: 'inherit',
   },
   litmusDiv: {
     display: 'flex',

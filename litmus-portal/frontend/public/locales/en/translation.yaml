@@ -132,7 +132,7 @@ schedule:
   headingDesc: 'Click on test to see detailed log of your workflow'
   headingText: 'Schedule details:'
   description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  save: 'Save Changes'  
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
   scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
@@ -153,6 +153,15 @@ schedule:
   congratulationsSub2: it will be displayed on the workflow schedules.
   workflowBtn: Go to Workflow
   backBtn: Go Back
+
+editSchedule:
+  title: Edit Schedule
+  verify: Verify
+  cancel: Cancel
+  save: Save Changes
+  edit: Edit
+  theSchedule: The Schedule
+  successfullyCreated: is successfully created
 
 community:
   title: 'Community'
@@ -200,7 +209,7 @@ analyticsDashboard:
     rangeSelector:
       to: to
       selectPeriod: Select Period
-    refresh: 
+    refresh:
       heading: Refresh
       off: Off
       every5Seconds: Every 5 seconds
@@ -350,6 +359,12 @@ chaosWorkflows:
     downloadManifest: Download Manifest
     deleteSchedule: Delete Schedule
     editSchedule: Edit Schedule
+    scheduleIsDisabled: This Schedule is disabled now
+    disableSchedule: Disable Schedule
+    options:
+      all: Show All Workflows
+      enabledOnly: Show Enabled Workflows Only
+      disabledOnly: Show Disabled Workflows Only
   browseWorkflows:
     status: Status
     name: Name
@@ -358,13 +373,12 @@ chaosWorkflows:
     experiments: Experiments
     lastRun: Last Run
     tableData:
-      overallRR: "Overall RR : "
-      experimentsPassed: "Experiments Passed : "
+      overallRR: 'Overall RR : '
+      experimentsPassed: 'Experiments Passed : '
       showExperiments: Show Experiments
       showTheWorkflow: Show the workflow
       showTheAnalytics: show the analytics
       na: NA
-
 
 analyticsDashboardViews:
   kubernetesDashboard:
@@ -789,6 +803,8 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
+    test: test
+    YAML: YAML
     button:
       edit: Edit
       viewYaml: View YAML
