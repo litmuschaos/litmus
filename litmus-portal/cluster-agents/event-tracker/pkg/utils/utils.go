@@ -40,10 +40,10 @@ func cases(key string, value string, operator string) bool {
 		return key < value
 	} else if operator == "GreaterThan" {
 		return key > value
-	} else if operator == "LessThanEqualTo" {
-		return key <= value
 	} else if operator == "GreaterThanEqualTo" {
 		return key >= value
+	} else if operator == "LessThanEqualTo" {
+		return key <= value
 	}
 	return false
 }

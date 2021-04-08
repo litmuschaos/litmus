@@ -1,12 +1,14 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	v1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/tools/cache"
 	"log"
+	"reflect"
 )
 
 // K8s informer watching for all the deployment changes
@@ -18,12 +20,31 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 
 	defer runtime.HandleCrash()
 
+	// label change -->ver (2) --> policy-replicas=1
 	deploymentInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
 			depNewObj := newObj.(*v1.Deployment)
 			depOldObj := oldObj.(*v1.Deployment)
-			if depNewObj.GetResourceVersion() != depOldObj.GetResourceVersion() {
+
+			oldManifest := depOldObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+			newManifest := depNewObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+
+			var oldDep v1.Deployment
+			err := json.Unmarshal([]byte(oldManifest), &oldDep)
+			if err != nil {
+				log.Print(err)
+				return
+			}
+
+			var newDep v1.Deployment
+			err = json.Unmarshal([]byte(newManifest), &newDep)
+			if err != nil {
+				log.Print(err)
+				return
+			}
+
+			if depNewObj.GetResourceVersion() != depOldObj.GetResourceVersion() && !reflect.DeepEqual(newDep, oldDep) {
 				var worflowid = depNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 				if depNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 					log.Print("EventType: Update")
@@ -60,7 +81,24 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 			stsNewObj := newObj.(*v1.StatefulSet)
 			stsOldObj := oldObj.(*v1.StatefulSet)
 
-			if stsNewObj.GetResourceVersion() != stsOldObj.GetResourceVersion() {
+			oldManifest := stsOldObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+			newManifest := stsNewObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+
+			var oldSts v1.StatefulSet
+			err := json.Unmarshal([]byte(oldManifest), &oldSts)
+			if err != nil {
+				log.Print(err)
+				return
+			}
+
+			var newSts v1.StatefulSet
+			err = json.Unmarshal([]byte(newManifest), &newSts)
+			if err != nil {
+				log.Print(err)
+				return
+			}
+
+			if stsNewObj.GetResourceVersion() != stsOldObj.GetResourceVersion() && !reflect.DeepEqual(newSts, oldSts) {
 				var worflowid = stsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 				if stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 					log.Print("EventType: Update")
@@ -94,7 +132,24 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 			dsNewObj := newObj.(*v1.DaemonSet)
 			dsOldObj := newObj.(*v1.DaemonSet)
 
-			if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion() {
+			oldManifest := dsOldObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+			newManifest := dsNewObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+
+			var oldDm v1.StatefulSet
+			err := json.Unmarshal([]byte(oldManifest), &oldDm)
+			if err != nil {
+				log.Print(err)
+				return
+			}
+
+			var newDm v1.StatefulSet
+			err = json.Unmarshal([]byte(newManifest), &newDm)
+			if err != nil {
+				log.Print(err)
+				return
+			}
+
+			if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion() && !reflect.DeepEqual(newDm, oldDm) {
 				var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 				if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 					log.Print("EventType: Update")
