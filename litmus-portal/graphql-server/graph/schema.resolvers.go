@@ -221,6 +221,14 @@ func (r *mutationResolver) DeleteDataSource(ctx context.Context, input model.Del
 	return analyticsHandler.DeleteDataSource(input)
 }
 
+func (r *mutationResolver) CreateManifestTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error) {
+	return wfHandler.SaveWorkflowTemplate(ctx, templateInput)
+}
+
+func (r *mutationResolver) DeleteManifestTemplate(ctx context.Context, templateID string) (bool, error) {
+	return wfHandler.DeleteWorkflowTemplate(ctx, templateID)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return wfHandler.QueryWorkflowRuns(projectID)
 }
@@ -289,6 +297,14 @@ func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]
 
 func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
 	return gitOpsHandler.GetGitOpsDetailsHandler(ctx, projectID)
+}
+
+func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error) {
+	return wfHandler.ListWorkflowTemplate(ctx, projectID)
+}
+
+func (r *queryResolver) GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error) {
+	return wfHandler.QueryTemplateWorkflowByID(ctx, templateID)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

@@ -15,13 +15,17 @@ import (
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
 
+	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
+	dbSchemaWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 )
 
@@ -431,4 +435,86 @@ func GetKubeObjData(reqID string, kubeObject model.KubeObjectRequest, r store.St
 		reqChan <- &resp
 		close(reqChan)
 	}
+}
+
+// SaveWorkflowTemplate is used to save the workflow manifest as a template
+func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error) {
+	IsExist, err := IsTemplateAvailable(ctx, templateInput.TemplateName, templateInput.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+	if IsExist == true {
+		return nil, errors.New("Template already exists")
+	}
+	projectData, err := dbOperationsProject.GetProject(ctx, templateInput.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+
+	uuid := uuid.New()
+	template := &dbSchemaWorkflowTemplate.ManifestTemplate{
+		TemplateID:          uuid.String(),
+		TemplateName:        templateInput.TemplateName,
+		TemplateDescription: templateInput.TemplateDescription,
+		ProjectID:           templateInput.ProjectID,
+		Manifest:            templateInput.Manifest,
+		ProjectName:         projectData.Name,
+		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
+		IsRemoved:           false,
+	}
+
+	err = dbOperationsWorkflowTemplate.CreateWorkflowTemplate(ctx, template)
+	if err != nil {
+		log.Print("Error", err)
+	}
+	return template.GetManifestTemplateOutput(), nil
+}
+
+// ListWorkflowTemplate is used to list all the workflow templates available in the project
+func ListWorkflowTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error) {
+	templates, err := dbSchemaWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+	var templateList []*model.ManifestTemplate
+
+	for _, template := range templates {
+		templateList = append(templateList, template.GetManifestTemplateOutput())
+	}
+	return templateList, err
+}
+
+// QueryTemplateWorkflowID is used to fetch the workflow template with template id
+func QueryTemplateWorkflowByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error) {
+	template, err := dbSchemaWorkflowTemplate.GetTemplateByTemplateID(ctx, templateID)
+	if err != nil {
+		return nil, err
+	}
+	return template.GetManifestTemplateOutput(), err
+}
+
+// DeleteWorkflowTemplate is used to delete the workflow template (update the is_removed field as true)
+func DeleteWorkflowTemplate(ctx context.Context, templateID string) (bool, error) {
+	query := bson.D{{"template_id", templateID}}
+	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
+	err := dbOperationsWorkflowTemplate.UpdateTemplateManifest(ctx, query, update)
+	if err != nil {
+		log.Print("Err", err)
+		return false, err
+	}
+	return true, err
+}
+
+// IsTemplateAvailable is used to check if a template name already exists in the database
+func IsTemplateAvailable(ctx context.Context, templateName string, projectID string) (bool, error) {
+	templates, err := dbOperationsWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
+	if err != nil {
+		return true, err
+	}
+	for _, n := range templates {
+		if n.TemplateName == templateName {
+			return true, nil
+		}
+	}
+	return false, nil
 }
