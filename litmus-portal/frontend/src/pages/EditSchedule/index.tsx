@@ -243,7 +243,9 @@ const EditSchedule: React.FC = () => {
       ) : (
         <>
           <BackButton />
-          <Typography className={classes.title}>Edit Schedule</Typography>
+          <Typography className={classes.title}>
+            {t('editSchedule.title')}
+          </Typography>
           <div className={classes.root}>
             <div className={classes.innerContainer}>
               <Typography className={classes.sumText}>
