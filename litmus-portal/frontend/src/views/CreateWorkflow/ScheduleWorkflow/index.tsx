@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import CustomDate from '../../../components/DateTime/CustomDate/index';
 import CustomTime from '../../../components/DateTime/CustomTime/index';
+import { constants } from '../../../constants';
 import { WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as TemplateSelectionActions from '../../../redux/actions/template';
@@ -311,7 +312,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
         });
       }
     }
-    if (valueDef === 'everyHr') {
+    if (valueDef === constants.recurringEveryHour) {
       setCronValue({
         minute: minute.toString(),
         hour: '0-23',
@@ -320,7 +321,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
         day_week: '*',
       });
     }
-    if (valueDef === 'everyDay') {
+    if (valueDef === constants.recurringEveryDay) {
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -329,7 +330,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
         day_week: '0-6',
       });
     }
-    if (valueDef === 'everyWeek') {
+    if (valueDef === constants.recurringEveryWeek) {
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -338,7 +339,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
         day_week: days.slice(0, 3),
       });
     }
-    if (valueDef === 'everyMonth') {
+    if (valueDef === constants.recurringEveryMonth) {
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -420,7 +421,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                   </Typography>
                 }
               />
-              {value === 'specificTime' ? (
+              {value === 'specificTime' && (
                 <div className={classes.schLater}>
                   <Typography className={classes.captionText}>
                     {t('createWorkflow.scheduleWorkflow.radio.future')}
@@ -443,8 +444,6 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                     />
                   </div>
                 </div>
-              ) : (
-                <></>
               )}
               <FormControlLabel
                 value="recurringSchedule"
@@ -459,7 +458,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                   </Typography>
                 }
               />
-              {value === 'recurringSchedule' ? (
+              {value === 'recurringSchedule' && (
                 <div className={classes.schLater}>
                   <Typography className={classes.captionText}>
                     {t('createWorkflow.scheduleWorkflow.radio.rightRecurr')}
@@ -477,7 +476,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                         }}
                       >
                         <FormControlLabel
-                          value="everyHr"
+                          value={constants.recurringEveryHour}
                           control={
                             <Radio
                               classes={{
@@ -488,7 +487,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                           }
                           label={t('createWorkflow.scheduleWorkflow.every.hr')}
                         />
-                        {valueDef === 'everyHr' ? (
+                        {valueDef === constants.recurringEveryHour && (
                           <div>
                             <div className={classes.scRandom}>
                               <Typography className={classes.scRandsub1}>
@@ -525,11 +524,9 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                               )}
                             </div>
                           </div>
-                        ) : (
-                          <></>
                         )}
                         <FormControlLabel
-                          value="everyDay"
+                          value={constants.recurringEveryDay}
                           control={
                             <Radio
                               classes={{
@@ -540,7 +537,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                           }
                           label={t('createWorkflow.scheduleWorkflow.every.day')}
                         />
-                        {valueDef === 'everyDay' ? (
+                        {valueDef === constants.recurringEveryDay && (
                           <div>
                             <div className={classes.scRandom}>
                               <Typography className={classes.scRandsub1}>
@@ -568,11 +565,9 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                               />
                             </div>
                           </div>
-                        ) : (
-                          <></>
                         )}
                         <FormControlLabel
-                          value="everyWeek"
+                          value={constants.recurringEveryWeek}
                           control={
                             <Radio
                               classes={{
@@ -585,7 +580,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                             'createWorkflow.scheduleWorkflow.every.week'
                           )}
                         />
-                        {valueDef === 'everyWeek' ? (
+                        {valueDef === constants.recurringEveryWeek && (
                           <div>
                             <div className={classes.scRandom}>
                               <Typography className={classes.scRandsub1}>
@@ -650,11 +645,9 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                               />
                             </div>
                           </div>
-                        ) : (
-                          <></>
                         )}
                         <FormControlLabel
-                          value="everyMonth"
+                          value={constants.recurringEveryMonth}
                           control={
                             <Radio
                               classes={{
@@ -667,7 +660,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                             'createWorkflow.scheduleWorkflow.every.month'
                           )}
                         />
-                        {valueDef === 'everyMonth' ? (
+                        {valueDef === constants.recurringEveryMonth && (
                           <div>
                             <div className={classes.scRandom}>
                               <Typography className={classes.scRandsub1}>
@@ -704,15 +697,11 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                               />
                             </div>
                           </div>
-                        ) : (
-                          <></>
                         )}
                       </RadioGroup>
                     </FormControl>
                   </div>
                 </div>
-              ) : (
-                <></>
               )}
             </RadioGroup>
           </FormControl>

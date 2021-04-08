@@ -2,6 +2,7 @@
 import { QuickActionCard } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { constants } from '../../constants';
 import { Role } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -97,7 +98,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: '/icons/survey.svg',
           alt: 'survey',
-          onClick: () => window.open('https://forms.gle/KQp5qj8MUneMSxLp9'),
+          onClick: () => window.open(constants.FeedbackForm),
           text: t('quickActionCard.quickSurvey'),
         }
       : emptyData,

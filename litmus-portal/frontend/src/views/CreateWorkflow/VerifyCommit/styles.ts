@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between',
   },
   headerText: {
+    fontWeight: 700,
     fontSize: '1.2rem',
     [theme.breakpoints.up('lg')]: {
       fontSize: '1.4rem',
@@ -64,8 +65,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   sumText: {
     width: '100%',
-    marginTop: theme.spacing(4.5),
-    marginBottom: theme.spacing(3),
+    margin: theme.spacing(2, 0),
+    fontWeight: 700,
     fontSize: '1.2rem',
     [theme.breakpoints.up('lg')]: {
       fontSize: '1.4rem',
@@ -136,8 +137,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonOutlineText: {
     padding: theme.spacing(1.5),
   },
+  spacingHorizontal: {
+    margin: theme.spacing(0, 1),
+  },
   errorText: {
     color: theme.palette.error.main,
+    fontWeight: 700,
     fontSize: '1rem',
     marginLeft: theme.spacing(5),
   },
@@ -149,6 +154,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   progress: {
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     flexGrow: 1,
     marginLeft: theme.spacing(5),
   },
@@ -159,6 +165,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.secondary.contrastText,
     marginTop: theme.spacing(-6),
     marginRight: theme.spacing(-2.5),
+  },
+  verifyYAMLButton: {
+    width: '60%',
   },
 
   // Modal
@@ -191,6 +200,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   successful: {
     fontSize: '2.2rem',
     fontWeight: 'bold',
+    margin: theme.spacing(2, 0),
+  },
+  bold: {
+    fontWeight: 700,
   },
 }));
 export default useStyles;

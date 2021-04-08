@@ -132,7 +132,7 @@ schedule:
   headingDesc: 'Click on test to see detailed log of your workflow'
   headingText: 'Schedule details:'
   description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  save: 'Save Changes'  
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
   scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
@@ -153,6 +153,15 @@ schedule:
   congratulationsSub2: it will be displayed on the workflow schedules.
   workflowBtn: Go to Workflow
   backBtn: Go Back
+
+editSchedule:
+  title: Edit Schedule
+  verify: Verify
+  cancel: Cancel
+  save: Save Changes
+  edit: Edit
+  theSchedule: The Schedule
+  successfullyCreated: is successfully created
 
 community:
   title: 'Community'
@@ -789,6 +798,8 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
+    test: test
+    YAML: YAML
     button:
       edit: Edit
       viewYaml: View YAML

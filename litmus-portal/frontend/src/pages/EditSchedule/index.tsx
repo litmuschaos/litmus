@@ -193,7 +193,7 @@ const EditSchedule: React.FC = () => {
   const tabs = useActions(TabActions);
 
   const [yamlStatus, setYamlStatus] = React.useState(
-    'Your code is fine. You can move on!'
+    `${t('createWorkflow.verifyCommit.codeIsFine')}`
   );
   const [modified, setModified] = React.useState(false);
 
@@ -243,15 +243,11 @@ const EditSchedule: React.FC = () => {
       ) : (
         <>
           <BackButton />
-          <Typography className={classes.title}>
-            <strong> Edit Schedule</strong>
-          </Typography>
+          <Typography className={classes.title}>Edit Schedule</Typography>
           <div className={classes.root}>
             <div className={classes.innerContainer}>
               <Typography className={classes.sumText}>
-                <strong>
-                  {t('createWorkflow.verifyCommit.summary.header')}
-                </strong>
+                {t('createWorkflow.verifyCommit.summary.header')}
               </Typography>
 
               <div className={classes.outerSum}>
@@ -274,7 +270,7 @@ const EditSchedule: React.FC = () => {
                       {t('createWorkflow.verifyCommit.summary.clustername')}:
                     </Typography>
                   </div>
-                  <Typography className={classes.col2}>
+                  <Typography className={classes.schCol2}>
                     {clustername}
                   </Typography>
                 </div>
@@ -316,7 +312,7 @@ const EditSchedule: React.FC = () => {
                       }
                     >
                       <EditIcon className={classes.editIcon} data-cy="edit" />
-                      Edit
+                      {t('editSchedule.edit')}
                     </ButtonOutlined>
                   </div>
                 </div>
@@ -330,21 +326,18 @@ const EditSchedule: React.FC = () => {
                   {weights.length === 0 ? (
                     <div>
                       <Typography className={classes.col2}>
-                        <strong>
-                          {t('createWorkflow.verifyCommit.error')}
-                        </strong>
+                        {t('createWorkflow.verifyCommit.error')}
                       </Typography>
                     </div>
                   ) : (
                     <div className={classes.adjWeights}>
-                      <div
-                        className={classes.progress}
-                        style={{ flexWrap: 'wrap' }}
-                      >
+                      <div className={classes.progress}>
                         {weights.map((Test) => (
                           <AdjustedWeights
                             key={Test.weight}
-                            testName={`${Test.experimentName} test`}
+                            testName={`${Test.experimentName} ${t(
+                              'createWorkflow.verifyCommit.test'
+                            )}`}
                             testValue={Test.weight}
                             spacing={false}
                             icon={false}
@@ -356,23 +349,26 @@ const EditSchedule: React.FC = () => {
                 </div>
                 <div className={classes.summaryDiv}>
                   <div className={classes.innerSumDiv}>
-                    <Typography className={classes.col1}>YAML:</Typography>
+                    <Typography className={classes.col1}>
+                      {t('createWorkflow.verifyCommit.YAML')}
+                    </Typography>
                   </div>
                   <div className={classes.yamlFlex}>
                     {weights.length === 0 ? (
-                      <Typography>
-                        {' '}
-                        {t('createWorkflow.verifyCommit.errYaml')}{' '}
+                      <Typography className={classes.spacingHorizontal}>
+                        {t('createWorkflow.verifyCommit.errYaml')}
                       </Typography>
                     ) : (
                       <Typography>
-                        <b>{yamlStatus}</b>{' '}
-                        {t('createWorkflow.verifyCommit.youCanMoveOn')}
+                        <b>{yamlStatus}</b>
+                        <span className={classes.spacingHorizontal}>
+                          {t('createWorkflow.verifyCommit.youCanMoveOn')}
+                        </span>
                       </Typography>
                     )}
                     <br />
                     <ButtonFilled
-                      style={{ width: '20%' }}
+                      className={classes.verifyYAMLButton}
                       onClick={handleEditOpen}
                     >
                       {t('createWorkflow.verifyCommit.button.viewYaml')}
@@ -392,10 +388,10 @@ const EditSchedule: React.FC = () => {
                 });
               }}
             >
-              Cancel
+              {t('editSchedule.cancel')}
             </ButtonOutlined>
             <ButtonFilled onClick={() => handleNext()}>
-              Save Changes
+              {t('editSchedule.save')}
             </ButtonFilled>
           </div>
 
@@ -435,11 +431,13 @@ const EditSchedule: React.FC = () => {
               <div className={classes.modal}>
                 <img src="/icons/finish.svg" alt="mark" />
                 <div className={classes.heading}>
-                  The Schedule
+                  {t('editSchedule.theSchedule')}
                   <br />
                   <span className={classes.successful}>{workflow.name}</span>,
                   <br />
-                  <strong>is successfully updated</strong>
+                  <span className={classes.bold}>
+                    {t('editSchedule.successfullyCreated')}
+                  </span>
                 </div>
                 <div className={classes.headWorkflow}>
                   {t('workflowStepper.congratulationsSub1')} <br />{' '}

@@ -109,7 +109,7 @@ const VerifyCommit = forwardRef((_, ref) => {
   }, []);
 
   const [yamlStatus, setYamlStatus] = React.useState(
-    'Your code is fine. You can move on!'
+    `${t('createWorkflow.verifyCommit.codeIsFine')}`
   );
 
   const [modified, setModified] = React.useState(false);
@@ -264,7 +264,7 @@ const VerifyCommit = forwardRef((_, ref) => {
           <div className={classes.suHeader}>
             <div>
               <Typography className={classes.headerText}>
-                <strong> {t('createWorkflow.verifyCommit.header')}</strong>
+                {t('createWorkflow.verifyCommit.header')}
               </Typography>
               <Typography className={classes.description}>
                 {t('createWorkflow.verifyCommit.info')}
@@ -279,7 +279,7 @@ const VerifyCommit = forwardRef((_, ref) => {
           <Divider />
 
           <Typography className={classes.sumText}>
-            <strong>{t('createWorkflow.verifyCommit.summary.header')}</strong>
+            {t('createWorkflow.verifyCommit.summary.header')}
           </Typography>
 
           <div className={classes.outerSum}>
@@ -363,19 +363,18 @@ const VerifyCommit = forwardRef((_, ref) => {
               {weights.length === 0 ? (
                 <div>
                   <Typography className={classes.errorText}>
-                    <strong>{t('createWorkflow.verifyCommit.error')}</strong>
+                    {t('createWorkflow.verifyCommit.error')}
                   </Typography>
                 </div>
               ) : (
                 <div className={classes.adjWeights}>
-                  <div
-                    className={classes.progress}
-                    style={{ flexWrap: 'wrap' }}
-                  >
+                  <div className={classes.progress}>
                     {WorkflowTestData.map((Test) => (
                       <AdjustedWeights
                         key={Test.weight}
-                        testName={`${Test.experimentName} test`}
+                        testName={`${Test.experimentName} ${t(
+                          'createWorkflow.verifyCommit.test'
+                        )}`}
                         testValue={Test.weight}
                         spacing={false}
                         icon={false}
@@ -390,22 +389,28 @@ const VerifyCommit = forwardRef((_, ref) => {
             </div>
             <div className={classes.summaryDiv}>
               <div className={classes.innerSumDiv}>
-                <Typography className={classes.col1}>YAML:</Typography>
+                <Typography className={classes.col1}>
+                  {t('createWorkflow.verifyCommit.YAML')}
+                </Typography>
               </div>
               <div className={classes.yamlFlex}>
                 {weights.length === 0 ? (
-                  <Typography>
-                    {' '}
-                    {t('createWorkflow.verifyCommit.errYaml')}{' '}
+                  <Typography className={classes.spacingHorizontal}>
+                    {t('createWorkflow.verifyCommit.errYaml')}
                   </Typography>
                 ) : (
                   <Typography>
-                    <b>{yamlStatus}</b>{' '}
-                    {t('createWorkflow.verifyCommit.youCanMoveOn')}
+                    <b>{yamlStatus}</b>
+                    <span className={classes.spacingHorizontal}>
+                      {t('createWorkflow.verifyCommit.youCanMoveOn')}
+                    </span>
                   </Typography>
                 )}
                 <br />
-                <ButtonFilled style={{ width: '60%' }} onClick={handleOpen}>
+                <ButtonFilled
+                  className={classes.verifyYAMLButton}
+                  onClick={handleOpen}
+                >
                   {t('createWorkflow.verifyCommit.button.viewYaml')}
                 </ButtonFilled>
               </div>
@@ -451,7 +456,9 @@ const VerifyCommit = forwardRef((_, ref) => {
               <br />
               <span className={classes.successful}>{workflow.name}</span>,
               <br />
-              <strong>{t('workflowStepper.successful')}</strong>
+              <span className={classes.bold}>
+                {t('workflowStepper.successful')}
+              </span>
             </div>
             <div className={classes.headWorkflow}>
               {t('workflowStepper.congratulationsSub1')} <br />{' '}

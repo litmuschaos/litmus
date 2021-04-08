@@ -16,6 +16,7 @@ import YAML from 'yaml';
 import BackButton from '../../components/Button/BackButton';
 import CustomDate from '../../components/DateTime/CustomDate/index';
 import CustomTime from '../../components/DateTime/CustomTime/index';
+import { constants } from '../../constants';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
@@ -330,7 +331,7 @@ const ScheduleWorkflow = () => {
         });
       }
     }
-    if (valueDef === 'everyHr') {
+    if (valueDef === constants.recurringEveryHour) {
       setCronValue({
         minute: minute.toString(),
         hour: '0-23',
@@ -339,7 +340,7 @@ const ScheduleWorkflow = () => {
         day_week: '*',
       });
     }
-    if (valueDef === 'everyDay') {
+    if (valueDef === constants.recurringEveryDay) {
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -348,7 +349,7 @@ const ScheduleWorkflow = () => {
         day_week: '0-6',
       });
     }
-    if (valueDef === 'everyWeek') {
+    if (valueDef === constants.recurringEveryWeek) {
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -357,7 +358,7 @@ const ScheduleWorkflow = () => {
         day_week: days.slice(0, 3),
       });
     }
-    if (valueDef === 'everyMonth') {
+    if (valueDef === constants.recurringEveryMonth) {
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
@@ -387,7 +388,7 @@ const ScheduleWorkflow = () => {
     <Scaffold>
       <BackButton />
       <Typography className={classes.title}>
-        <strong> Edit Schedule</strong>
+        {t('editSchedule.title')}
       </Typography>
       <div className={classes.root}>
         <div className={classes.innerContainer}>
@@ -440,7 +441,7 @@ const ScheduleWorkflow = () => {
                     </Typography>
                   }
                 />
-                {value === 'specificTime' ? (
+                {value === 'specificTime' && (
                   <div className={classes.schLater}>
                     <Typography className={classes.captionText}>
                       {t('createWorkflow.scheduleWorkflow.radio.future')}
@@ -463,8 +464,6 @@ const ScheduleWorkflow = () => {
                       />
                     </div>
                   </div>
-                ) : (
-                  <></>
                 )}
                 <FormControlLabel
                   value="recurringSchedule"
@@ -482,7 +481,7 @@ const ScheduleWorkflow = () => {
                     </Typography>
                   }
                 />
-                {value === 'recurringSchedule' ? (
+                {value === 'recurringSchedule' && (
                   <div className={classes.schLater}>
                     <Typography className={classes.captionText}>
                       {t('createWorkflow.scheduleWorkflow.radio.rightRecurr')}
@@ -500,7 +499,7 @@ const ScheduleWorkflow = () => {
                           }}
                         >
                           <FormControlLabel
-                            value="everyHr"
+                            value={constants.recurringEveryHour}
                             control={
                               <Radio
                                 classes={{
@@ -513,7 +512,7 @@ const ScheduleWorkflow = () => {
                               'createWorkflow.scheduleWorkflow.every.hr'
                             )}
                           />
-                          {valueDef === 'everyHr' ? (
+                          {valueDef === constants.recurringEveryHour && (
                             <div>
                               <div className={classes.scRandom}>
                                 <Typography className={classes.scRandsub1}>
@@ -550,11 +549,9 @@ const ScheduleWorkflow = () => {
                                 )}
                               </div>
                             </div>
-                          ) : (
-                            <></>
                           )}
                           <FormControlLabel
-                            value="everyDay"
+                            value={constants.recurringEveryDay}
                             control={
                               <Radio
                                 classes={{
@@ -567,7 +564,7 @@ const ScheduleWorkflow = () => {
                               'createWorkflow.scheduleWorkflow.every.day'
                             )}
                           />
-                          {valueDef === 'everyDay' ? (
+                          {valueDef === constants.recurringEveryDay && (
                             <div>
                               <div className={classes.scRandom}>
                                 <Typography className={classes.scRandsub1}>
@@ -595,11 +592,9 @@ const ScheduleWorkflow = () => {
                                 />
                               </div>
                             </div>
-                          ) : (
-                            <></>
                           )}
                           <FormControlLabel
-                            value="everyWeek"
+                            value={constants.recurringEveryWeek}
                             control={
                               <Radio
                                 classes={{
@@ -612,7 +607,7 @@ const ScheduleWorkflow = () => {
                               'createWorkflow.scheduleWorkflow.every.week'
                             )}
                           />
-                          {valueDef === 'everyWeek' ? (
+                          {valueDef === constants.recurringEveryWeek && (
                             <div>
                               <div className={classes.scRandom}>
                                 <Typography className={classes.scRandsub1}>
@@ -649,7 +644,7 @@ const ScheduleWorkflow = () => {
                                       name: 'days',
                                       style: {
                                         fontSize: '0.75rem',
-                                        height: 7,
+                                        height: '0.43rem',
                                       },
                                     }}
                                   >
@@ -677,11 +672,9 @@ const ScheduleWorkflow = () => {
                                 />
                               </div>
                             </div>
-                          ) : (
-                            <></>
                           )}
                           <FormControlLabel
-                            value="everyMonth"
+                            value={constants.recurringEveryMonth}
                             control={
                               <Radio
                                 classes={{
@@ -694,7 +687,7 @@ const ScheduleWorkflow = () => {
                               'createWorkflow.scheduleWorkflow.every.month'
                             )}
                           />
-                          {valueDef === 'everyMonth' ? (
+                          {valueDef === constants.recurringEveryMonth && (
                             <div>
                               <div className={classes.scRandom}>
                                 <Typography className={classes.scRandsub1}>
@@ -731,15 +724,11 @@ const ScheduleWorkflow = () => {
                                 />
                               </div>
                             </div>
-                          ) : (
-                            <></>
                           )}
                         </RadioGroup>
                       </FormControl>
                     </div>
                   </div>
-                ) : (
-                  <></>
                 )}
               </RadioGroup>
             </FormControl>
@@ -768,7 +757,7 @@ const ScheduleWorkflow = () => {
             })
           }
         >
-          Verify
+          {t('editSchedule.verify')}
         </ButtonFilled>
       </div>
     </Scaffold>

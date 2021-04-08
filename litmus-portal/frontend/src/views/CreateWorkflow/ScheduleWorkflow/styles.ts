@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   title: {
     padding: theme.spacing(0, 2),
+    fontWeight: 700,
     fontSize: '2rem',
     [theme.breakpoints.up('lg')]: {
       fontSize: '2.3rem',
