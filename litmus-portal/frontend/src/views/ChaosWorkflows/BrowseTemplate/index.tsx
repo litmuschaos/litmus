@@ -1,7 +1,10 @@
 import { Divider, Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import localforage from 'localforage';
 import React from 'react';
+import data from '../../../components/PredifinedWorkflows/data';
 import Scaffold from '../../../containers/layouts/Scaffold';
+import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { preDefinedWorkflowData } from '../../../models/predefinedWorkflow';
 import { LocationState } from '../../../models/routerModel';
 import useActions from '../../../redux/actions';
@@ -29,6 +32,26 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
   const userRole = getProjectRole();
   const workflowAction = useActions(WorkflowActions);
   const { workflowData, testNames, testWeights } = location.state;
+
+  const preSelectWorkflow = () => {
+    data.map((w) => {
+      if (w.title === workflowData.title) {
+        const selection: ChooseWorkflowRadio = {
+          selected: 'A',
+          id: w.workflowID.toString(),
+        };
+        localforage.setItem('selectedScheduleOption', selection);
+      }
+      return null;
+    });
+    workflowAction.setWorkflowDetails({
+      isCustomWorkflow: false,
+    });
+    history.push({
+      pathname: '/create-workflow',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
+  };
 
   return (
     <Scaffold>
@@ -65,20 +88,7 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
             <ButtonOutlined onClick={() => history.push('/workflows')}>
               <>Back</>
             </ButtonOutlined>
-            <ButtonFilled
-              variant="success"
-              onClick={() => {
-                workflowAction.setWorkflowDetails({
-                  description: '',
-                  isCustomWorkflow: false,
-                  customWorkflows: [],
-                });
-                history.push({
-                  pathname: '/create-workflow',
-                  search: `?projectID=${projectID}&projectRole=${userRole}`,
-                });
-              }}
-            >
+            <ButtonFilled variant="success" onClick={() => preSelectWorkflow()}>
               <>Schedule this template</>
             </ButtonFilled>
           </div>
