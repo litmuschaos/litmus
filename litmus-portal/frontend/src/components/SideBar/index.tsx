@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { history } from '../../redux/configureStore';
 import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
@@ -66,7 +66,7 @@ const SideBar: React.FC = () => {
       }}
       anchor="left"
     >
-      <Link to="/" className={classes.homeLink}>
+      {/* <Link to="/" className={classes.homeLink}>
         <div className={classes.litmusDiv}>
           <img
             src="/icons/litmusPurple.svg"
@@ -77,7 +77,7 @@ const SideBar: React.FC = () => {
             {t('sidebar.title')}
           </Typography>
         </div>
-      </Link>
+      </Link> */}
 
       <List className={classes.drawerList}>
         <CustomisedListItem
