@@ -29,6 +29,7 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
+import { updateEngineName } from '../../../utils/yamlUtils';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
@@ -137,15 +138,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
   };
 
   // Generated YAML for custom workflows
-  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(yamlTemplate);
+  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(
+    manifest === '' ? yamlTemplate : YAML.parse(manifest)
+  );
 
   // This function fetches the manifest for pre-defined workflows
   const fetchYaml = (link: string) => {
     fetch(link)
       .then((data) => {
         data.text().then((yamlText) => {
+          const wfmanifest = updateEngineName(YAML.parse(yamlText));
           workflowAction.setWorkflowManifest({
-            manifest: yamlText,
+            manifest: wfmanifest,
           });
         });
       })

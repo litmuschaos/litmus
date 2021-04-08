@@ -19,6 +19,65 @@ const nameextractor = (val: any) => {
   return experimentNames;
 };
 
+export const updateEngineName = (parsedYaml: any) => {
+  let engineName = '';
+  try {
+    if (parsedYaml.spec !== undefined) {
+      const yamlData = parsedYaml.spec;
+      yamlData.templates.forEach((template: any) => {
+        if (template.inputs && template.inputs.artifacts) {
+          template.inputs.artifacts.forEach((artifact: any) => {
+            const chaosEngine = YAML.parse(artifact.raw.data);
+            // Condition to check for the kind as ChaosEngine
+            if (chaosEngine.kind === 'ChaosEngine') {
+              const updatedEngineName = `${
+                chaosEngine.metadata.name
+              }-${Math.round(new Date().getTime() / 1000)}`;
+              chaosEngine.metadata.name = updatedEngineName;
+
+              // Condition to check the namespace
+              if (typeof chaosEngine.metadata.namespace === 'object') {
+                // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
+                const namespace = Object.keys(
+                  chaosEngine.metadata.namespace
+                )[0].replace(/\s/g, '');
+                chaosEngine.metadata.namespace = `{${namespace}}`;
+              }
+
+              // Edge Case: Condition to check the appns
+              // Required because while parsing the chaos engine
+              // '{{workflow.parameters.adminModeNamespace}}' changes to a JSON object
+              if (typeof chaosEngine.spec.appinfo.appns === 'object') {
+                // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
+                const appns = Object.keys(
+                  chaosEngine.spec.appinfo.appns
+                )[0].replace(/\s/g, '');
+                chaosEngine.spec.appinfo.appns = `{${appns}}`;
+              }
+              engineName += `${updatedEngineName} `;
+            }
+            // Update the artifact in template
+            const artifactData = artifact;
+            artifactData.raw.data = YAML.stringify(chaosEngine);
+          });
+        }
+        if (
+          template.name === 'revert-chaos' ||
+          template.name === 'revert-kube-proxy-chaos'
+        ) {
+          // Update the args in revert chaos template
+          const revertTemplate = template;
+          revertTemplate.container.args[0] = `kubectl delete chaosengine ${engineName} -n {{workflow.parameters.adminModeNamespace}}`;
+        }
+      });
+    }
+    return YAML.stringify(parsedYaml);
+  } catch (err) {
+    console.error(err);
+    return YAML.stringify(parsedYaml);
+  }
+};
+
 const parsed = (yaml: string) => {
   const file = yaml;
   if (file === 'error') {
