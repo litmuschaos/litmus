@@ -592,6 +592,7 @@ workflowDetailsView:
   workflowInfo:
     header: Overall Workflow Description
     resilienceScore: Resilience Score
+    Completed: Completed
     runTime:
       runTimeHeader: Run Time
       startTime: 'Start Time :'

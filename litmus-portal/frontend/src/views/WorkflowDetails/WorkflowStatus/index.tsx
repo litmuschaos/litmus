@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { RUNNING, SUCCEEDED, PENDING, FAILED } from '../workflowConstants';
 import useStyles from './styles';
 
@@ -10,18 +11,19 @@ interface WorkflowStatusProps {
 const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
   const classes = useStyles();
 
+  const { t } = useTranslation();
   function getStatus(phase: string) {
     switch (phase) {
       case SUCCEEDED:
-        return classes.succeeded;
+        return `${classes.textBold} ${classes.succeeded}`;
       case RUNNING:
-        return classes.running;
+        return `${classes.textBold} ${classes.running}`;
       case FAILED:
-        return classes.failed;
+        return `${classes.textBold} ${classes.failed}`;
       case PENDING:
-        return classes.pending;
+        return `${classes.textBold} ${classes.pending}`;
       default:
-        return classes.pending;
+        return `${classes.textBold} ${classes.pending}`;
     }
   }
 
@@ -36,7 +38,9 @@ const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
       </span>
       <Typography>
         <span className={getStatus(phase)}>
-          <strong>{phase === SUCCEEDED ? 'Completed' : phase}</strong>
+          {phase === SUCCEEDED
+            ? `${t('workflowDetailsView.workflowInfo.Completed')}`
+            : phase}
         </span>
       </Typography>
     </div>
