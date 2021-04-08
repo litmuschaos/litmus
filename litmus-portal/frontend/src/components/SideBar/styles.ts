@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: '100%',
-    backgroundColor: theme.palette.background.default,
+    background: theme.palette.sidebarMenu,
     position: 'relative',
     color: 'inherit',
   },
