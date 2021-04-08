@@ -26,5 +26,6 @@ func NewConfig() generated.Config {
 		newCtx := context.WithValue(ctx, authorization.UserClaim, user)
 		return next(newCtx)
 	}
+
 	return config
 }

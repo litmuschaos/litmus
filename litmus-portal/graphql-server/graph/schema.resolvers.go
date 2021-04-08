@@ -26,8 +26,14 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
+	validate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rbac"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
+)
+
+const (
+	AcceptedInvitation = "Accepted"
+	PendingInvitation  = "Pending"
 )
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
@@ -63,22 +69,51 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid s
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleOwner}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+
 	return project.SendInvitation(ctx, member)
 }
 
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, PendingInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.AcceptInvitation(ctx, member)
 }
 
 func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, PendingInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.DeclineInvitation(ctx, member)
 }
 
 func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleOwner}, AcceptedInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.RemoveInvitation(ctx, member)
 }
 
 func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, AcceptedInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.LeaveProject(ctx, member)
 }
 
