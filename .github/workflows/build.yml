@@ -44,6 +44,10 @@ jobs:
         uses: Jerome1337/goimports-action@v1.0.3
         with:
           goimports-path: ./litmus-portal
+      - uses: Jerome1337/gofmt-action@v1.0.4
+        with:
+          gofmt-path: './litmus-portal'
+          gofmt-flags: '-l -d'
       - shell: bash
         run: |
           cd litmus-portal
