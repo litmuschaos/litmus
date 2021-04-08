@@ -24,7 +24,6 @@ import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
-import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import timeDifferenceForDate from '../../../utils/datesModifier';
@@ -62,8 +61,6 @@ const TableData: React.FC<TableDataProps> = ({
   const handlePopOverClose = () => {
     setPopAnchorEl(null);
   };
-
-  const workflow = useActions(WorkflowActions);
 
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
@@ -124,13 +121,6 @@ const TableData: React.FC<TableDataProps> = ({
       search: `?projectID=${projectID}&projectRole=${projectRole}`,
     });
   };
-
-  // If regularity is not Once then set recurring schedule state to true
-  if (data.cronSyntax !== '') {
-    workflow.setWorkflowDetails({
-      isRecurring: true,
-    });
-  }
 
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {

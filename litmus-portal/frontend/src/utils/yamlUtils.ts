@@ -70,6 +70,10 @@ const parsed = (yaml: string) => {
   }
 };
 
+export const fetchWorkflowNameFromManifest = (manifest: string) => {
+  return YAML.parse(manifest).metadata.name;
+};
+
 export const getWorkflowParameter = (parameterString: string) => {
   return parameterString
     .substring(1, parameterString.length - 1)
