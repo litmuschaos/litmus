@@ -53,7 +53,7 @@ metadata:
   name: litmusportal-frontend-service
   namespace: litmus
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - name: http
       port: 9091
@@ -115,7 +115,8 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+#          image: litmuschaos/litmusportal-server:ci
+          image: imrajdas/gql-server:ci
           env:
             - name: DB_SERVER
               valueFrom:
@@ -171,6 +172,19 @@ spec:
               value: "litmuschaos/chaos-runner:1.13.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:1.13.0"
+            - name: SERVER_SERVICE_NAME
+              value: "litmusportal-server-service"
+            - name: SERVER_LABELS
+              value: "component=litmusportal-server"
+            - name: "INGRESS"
+              value: "true"
+            - name: "INGRESS_NAME"
+              value: "litmus-ingress"
+#            ServerServiceName = os.Getenv("SERVER_SERVICE_NAME")
+#            ServerLabel       = os.Getenv("SERVER_LABELS") //
+#            Ingress           = os.Getenv("INGRESS")
+#            IngressName       = os.Getenv("INGRESS_NAME")
+
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
@@ -212,7 +226,7 @@ metadata:
   name: litmusportal-server-service
   namespace: litmus
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - name: graphql-server
       port: 9002
