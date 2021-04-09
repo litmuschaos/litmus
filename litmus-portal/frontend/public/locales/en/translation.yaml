@@ -747,6 +747,20 @@ createWorkflow:
     done: Done
     editSequence: Edit Sequence
     addANewExperiment: Add a new experiment
+    verticalStepper:
+      annotationInfo: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      annotation: Annotation Check
+      true: 'True'
+      false: 'False'
+      annotationDesc: The target application does not have an annotation “Chaos=true”. Ideally, you cannot run this experiment unless the annotation is patched to the application. However, this service account has the privileges to disable the enforcement of annotation checks. Mark the annotation as false to proceed.
+      appkind: appKind
+      deployment: Deployment
+      statefulset: Statefulset
+      daemonset: Daemonset
+      deploymentconfig: Deploymentconfig
+      rollout: Rollout
+      nodeselector: NodeSelector
+      selector: 'kubernetes.io/hostname :'
     addProbe:
       heading: Add
       headingStrong: Probe
