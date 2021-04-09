@@ -14,6 +14,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import Row from '../../../containers/layouts/Row';
@@ -40,6 +41,7 @@ interface ChaosCRDTable {
 
 const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const theme = useTheme();
   const workflow = useActions(WorkflowActions);
@@ -161,11 +163,21 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Sequence</TableCell>
-                  <TableCell align="left">Name</TableCell>
-                  <TableCell align="left">Namespace</TableCell>
-                  <TableCell align="left">Application</TableCell>
-                  <TableCell align="left">Probes</TableCell>
+                  <TableCell>
+                    {t('createWorkflow.chooseWorkflow.table.head1')}
+                  </TableCell>
+                  <TableCell align="left">
+                    {t('createWorkflow.chooseWorkflow.table.head2')}
+                  </TableCell>
+                  <TableCell align="left">
+                    {t('createWorkflow.chooseWorkflow.table.head3')}
+                  </TableCell>
+                  <TableCell align="left">
+                    {t('createWorkflow.chooseWorkflow.table.head4')}
+                  </TableCell>
+                  <TableCell align="left">
+                    {t('createWorkflow.chooseWorkflow.table.head5')}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -199,7 +211,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
                   <TableRow>
                     <TableCell colSpan={5}>
                       <Typography align="center">
-                        Please add experiments to see the data
+                        {t('createWorkflow.chooseWorkflow.pleaseAddExp')}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -211,7 +223,9 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
             <TableContainer className={classes.revertChaos} component={Paper}>
               <Row className={classes.wrapper}>
                 <div className={classes.key}>
-                  <Typography>Revert Schedule</Typography>
+                  <Typography>
+                    {t('createWorkflow.chooseWorkflow.revertSchedule')}
+                  </Typography>
                 </div>
                 <div>
                   <ToggleButtonGroup
@@ -232,7 +246,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
                       }}
                       aria-label="centered"
                     >
-                      True
+                      {t('createWorkflow.chooseWorkflow.true')}
                     </ToggleButton>
                     <ToggleButton
                       value={false}
@@ -246,7 +260,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
                       }}
                       aria-label="centered"
                     >
-                      False
+                      {t('createWorkflow.chooseWorkflow.false')}
                     </ToggleButton>
                   </ToggleButtonGroup>
                 </div>

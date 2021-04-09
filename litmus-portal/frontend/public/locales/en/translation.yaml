@@ -677,6 +677,16 @@ createWorkflow:
     continue: Do you want to continue?
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
+    pleaseAddExp: Please add experiments to see the data
+    revertSchedule: Revert Schedule
+    trueValue: True
+    falseValue: False
+    table:
+      head1: Sequence
+      head2: Name
+      head3: Namespace
+      head4: Application
+      head5: Probes
     selectMyHub: Select MyHub
     label:
       workflowName: Workflow name
