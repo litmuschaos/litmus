@@ -67,9 +67,9 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
             expData.push({
               StepIndex: index,
               Name: chaosEngine.metadata.name,
-              Namespace: chaosEngine.spec.appinfo?.appns || '',
-              Application: chaosEngine.spec.appinfo?.applabel || '',
-              Probes: chaosEngine.spec.experiments[0].spec.probe?.length || 0,
+              Namespace: chaosEngine.spec.appinfo?.appns ?? '',
+              Application: chaosEngine.spec.appinfo?.applabel ?? '',
+              Probes: chaosEngine.spec.experiments[0].spec.probe?.length ?? 0,
               ChaosEngine: artifact.raw.data,
             });
           }

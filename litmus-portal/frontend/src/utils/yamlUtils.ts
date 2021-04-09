@@ -61,10 +61,7 @@ export const updateEngineName = (parsedYaml: any) => {
             artifactData.raw.data = YAML.stringify(chaosEngine);
           });
         }
-        if (
-          template.name === 'revert-chaos' ||
-          template.name === 'revert-kube-proxy-chaos'
-        ) {
+        if (template.name.includes('revert-')) {
           // Update the args in revert chaos template
           const revertTemplate = template;
           revertTemplate.container.args[0] = `kubectl delete chaosengine ${engineName} -n {{workflow.parameters.adminModeNamespace}}`;

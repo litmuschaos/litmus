@@ -21,7 +21,7 @@ import {
 } from '../../../graphql/queries';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
-import { CustomYAML, Steps } from '../../../models/redux/customyaml';
+import { CustomYAML } from '../../../models/redux/customyaml';
 import { Charts } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
@@ -56,113 +56,12 @@ interface WorkflowExperiment {
   Experiment: string;
 }
 
-let installAllExp = '';
-// Initial step in experiment
-const customSteps: Steps[][] = [
-  [
-    {
-      name: 'install-chaos-experiments',
-      template: 'install-chaos-experiments',
-    },
-  ],
-];
-
-// UpdateCRD is used to updated the manifest while adding experiments from MyHub
-const updateCRD = (crd: CustomYAML, experiment: WorkflowExperiment[]) => {
-  const generatedYAML: CustomYAML = crd;
-
-  const modifyYAML = (link: string) => {
-    customSteps.push([
-      {
-        name: YAML.parse(link as string).metadata.name,
-        template: YAML.parse(link as string).metadata.name,
-      },
-    ]);
-    installAllExp = `${installAllExp}kubectl apply -f /tmp/${
-      YAML.parse(link as string).metadata.name
-    }.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
-  };
-
-  experiment.forEach((exp) => {
-    modifyYAML(Object.values(exp.Experiment)[0]);
-  });
-
-  // Step 1 in template (creating array of chaos-steps)
-  generatedYAML.spec.templates[0] = {
-    name: 'custom-chaos',
-    steps: customSteps,
-  };
-
-  if (experiment.length) {
-    // Step 2 in template (experiment YAMLs of all experiments)
-    generatedYAML.spec.templates[1] = {
-      name: 'install-chaos-experiments',
-      inputs: {
-        artifacts: [],
-      },
-      container: {
-        args: [`${installAllExp}sleep 30`],
-        command: ['sh', '-c'],
-        image: 'alpine/k8s:1.18.2',
-      },
-    };
-  }
-
-  // Step 3 in template (engine YAMLs of all experiments)
-  experiment.forEach((data) => {
-    const ExperimentYAML = YAML.parse(Object.values(data.Experiment)[0]);
-    ExperimentYAML.metadata.name = YAML.parse(
-      Object.values(data.Experiment)[0]
-    ).metadata.name;
-    ExperimentYAML.metadata.namespace =
-      '{{workflow.parameters.adminModeNamespace}}';
-    const artifacts = generatedYAML.spec.templates[1].inputs?.artifacts;
-    if (artifacts !== undefined) {
-      artifacts.push({
-        name: ExperimentYAML.metadata.name,
-        path: `/tmp/${ExperimentYAML.metadata.name}.yaml`,
-        raw: {
-          data: YAML.stringify(ExperimentYAML),
-        },
-      });
-    }
-    const ChaosEngine = YAML.parse(Object.values(data.ChaosEngine)[0]);
-    ChaosEngine.metadata.name = YAML.parse(
-      Object.values(data.Experiment)[0]
-    ).metadata.name;
-    ChaosEngine.metadata.namespace =
-      '{{workflow.parameters.adminModeNamespace}}';
-
-    generatedYAML.spec.templates.push({
-      name: ChaosEngine.metadata.name,
-      inputs: {
-        artifacts: [
-          {
-            name: ChaosEngine.metadata.name,
-            path: `/tmp/chaosengine-${ChaosEngine.metadata.name}.yaml`,
-            raw: {
-              data: YAML.stringify(ChaosEngine),
-            },
-          },
-        ],
-      },
-      container: {
-        args: [
-          `-file=/tmp/chaosengine-${ChaosEngine.metadata.name}.yaml`,
-          `-saveName=/tmp/engine-name`,
-        ],
-        image: 'litmuschaos/litmus-checker:latest',
-      },
-    });
-  });
-
-  return generatedYAML;
-};
-
 const TuneWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
 
-  // State Variables for Tune Workflow
+  /**
+   * State Variables for Tune Workflow
+   */
   const [hubName, setHubName] = useState<string>('');
   const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]);
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
@@ -180,13 +79,17 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   const [YAMLModal, setYAMLModal] = useState<boolean>(false);
 
-  // Actions
+  /**
+   * Actions
+   */
   const workflowAction = useActions(WorkflowActions);
   const alert = useActions(AlertActions);
 
   const { t } = useTranslation();
 
-  // Graphql query to get charts
+  /**
+   * Graphql query to get charts
+   */
   const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
     onCompleted: (data) => {
       const allExp: ChartName[] = [];
@@ -203,7 +106,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
     fetchPolicy: 'cache-and-network',
   });
 
-  // Default CRD
+  const [installAllExp, setInstallAllExp] = useState<string>('');
+
+  /**
+   * Default Manifest Template
+   */
   const yamlTemplate: CustomYAML = {
     apiVersion: 'argoproj.io/v1alpha1',
     kind: 'Workflow',
@@ -228,24 +135,41 @@ const TuneWorkflow = forwardRef((_, ref) => {
       serviceAccountName: 'argo-chaos',
       templates: [
         {
-          name: '',
-          steps: [[]],
+          name: 'custom-chaos',
+          steps: [
+            [
+              {
+                name: 'install-chaos-experiments',
+                template: 'install-chaos-experiments',
+              },
+            ],
+          ],
+        },
+        {
+          name: 'install-chaos-experiments',
+          inputs: {
+            artifacts: [],
+          },
           container: {
-            image: '',
-            command: [],
-            args: [],
+            args: [`${installAllExp}`],
+            command: ['sh', '-c'],
+            image: 'litmuschaos/k8s:latest',
           },
         },
       ],
     },
   };
 
-  // Generated YAML for custom workflows
+  /**
+   * Generated YAML for custom workflows
+   */
   const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(
     manifest === '' ? yamlTemplate : YAML.parse(manifest)
   );
 
-  // This function fetches the manifest for pre-defined workflows
+  /**
+   * This function fetches the manifest for pre-defined workflows
+   */
   const fetchYaml = (link: string) => {
     fetch(link)
       .then((data) => {
@@ -261,7 +185,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
       });
   };
 
-  // Index DB Fetching for extracting selected Button and Workflow Details
+  /**
+   * Index DB Fetching for extracting selected Button and Workflow Details
+   */
   const getSelectedWorkflowDetails = () => {
     localforage.getItem('workflow').then((workflow) =>
       setWorkflow({
@@ -271,7 +197,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
       })
     );
     localforage.getItem('selectedScheduleOption').then((value) => {
-      // Setting default data when MyHub is selected
+      /**
+       * Setting default data when MyHub is selected
+       */
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'A') {
         localforage.getItem('workflow').then((value) => {
           if (
@@ -297,7 +225,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
     getSelectedWorkflowDetails();
   }, []);
 
-  // Graphql Query for fetching Engine YAML
+  /**
+   * Graphql Query for fetching Engine YAML
+   */
   const [
     getEngineYaml,
     { data: engineData, loading: engineDataLoading },
@@ -305,7 +235,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
     fetchPolicy: 'network-only',
   });
 
-  // Graphql Query for fetching Experiment YAML
+  /**
+   * Graphql Query for fetching Experiment YAML
+   */
   const [
     getExperimentYaml,
     { data: experimentData, loading: experimentDataLoading },
@@ -345,8 +277,93 @@ const TuneWorkflow = forwardRef((_, ref) => {
     setAddExpModal(false);
   };
 
-  // UseEffect to make changes in the generated YAML
-  // when a new experiment is added from MyHub
+  /**
+   * UpdateCRD is used to updated the manifest while adding experiments from MyHub
+   */
+  const updateCRD = (crd: CustomYAML, experiment: WorkflowExperiment[]) => {
+    const generatedYAML: CustomYAML = crd;
+    let installAll = '';
+    const modifyYAML = (link: string) => {
+      const steps = generatedYAML.spec.templates[0]?.steps;
+      if (steps !== undefined)
+        steps.push([
+          {
+            name: YAML.parse(link as string).metadata.name,
+            template: YAML.parse(link as string).metadata.name,
+          },
+        ]);
+      installAll = `${installAllExp}kubectl apply -f /tmp/${
+        YAML.parse(link as string).metadata.name
+      }.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
+      const arg = generatedYAML.spec.templates[1]?.container;
+      if (arg !== undefined) arg.args = [`${installAll} sleep 30`];
+      setInstallAllExp(installAll);
+    };
+
+    experiment.forEach((exp) => {
+      modifyYAML(Object.values(exp.Experiment)[0]);
+    });
+
+    /**
+     * Step to add experiment and engine YAMLs of all experiments
+     */
+    experiment.forEach((data) => {
+      /**
+       * Adding experiment YAML
+       */
+      const ExperimentYAML = YAML.parse(Object.values(data.Experiment)[0]);
+      const artifacts = generatedYAML.spec.templates[1].inputs?.artifacts;
+      if (artifacts !== undefined) {
+        artifacts.push({
+          name: ExperimentYAML.metadata.name,
+          path: `/tmp/${ExperimentYAML.metadata.name}.yaml`,
+          raw: {
+            data: YAML.stringify(ExperimentYAML),
+          },
+        });
+      }
+
+      /**
+       * Adding engine YAML
+       */
+      const ChaosEngine = YAML.parse(Object.values(data.ChaosEngine)[0]);
+      const ExpName = YAML.parse(Object.values(data.Experiment)[0]).metadata
+        .name;
+      ChaosEngine.metadata.name = `${
+        YAML.parse(Object.values(data.Experiment)[0]).metadata.name
+      }-${Math.round(new Date().getTime() / 1000)}`;
+      ChaosEngine.metadata.namespace =
+        '{{workflow.parameters.adminModeNamespace}}';
+      ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
+      generatedYAML.spec.templates.push({
+        name: ExpName,
+        inputs: {
+          artifacts: [
+            {
+              name: ExpName,
+              path: `/tmp/chaosengine-${ExpName}.yaml`,
+              raw: {
+                data: YAML.stringify(ChaosEngine),
+              },
+            },
+          ],
+        },
+        container: {
+          args: [
+            `-file=/tmp/chaosengine-${ExpName}.yaml`,
+            `-saveName=/tmp/engine-name`,
+          ],
+          image: 'litmuschaos/litmus-checker:latest',
+        },
+      });
+    });
+    return generatedYAML;
+  };
+
+  /**
+   * UseEffect to make changes in the generated YAML
+   * when a new experiment is added from MyHub
+   */
   useEffect(() => {
     if (isCustomWorkflow) {
       setGeneratedYAML(updateCRD(generatedYAML, experiment));

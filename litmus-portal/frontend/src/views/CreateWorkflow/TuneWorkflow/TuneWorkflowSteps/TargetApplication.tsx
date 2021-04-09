@@ -34,6 +34,7 @@ import {
   KubeObjResponse,
 } from '../../../../models/graphql/createWorkflowData';
 import { KUBE_OBJ } from '../../../../graphql';
+import { constants } from '../../../../constants';
 
 interface AppInfoData {
   namespace: string;
@@ -105,6 +106,17 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
   const [appLabel, setAppLabel] = useState<string[]>([]);
 
   /**
+   *
+   * Variable required for Menu List
+   */
+  const applicationKind: string[] = [
+    constants.deployment,
+    constants.statefulset,
+    constants.daemonset,
+    constants.deploymentconfig,
+    constants.rollout,
+  ];
+  /**
    * Function to filter the lables according to the namespace provided
    */
   const handleLabelChange = () => {
@@ -116,7 +128,9 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
         }
       });
     }
-    return applabel.length > 0 ? setAppLabel(applabel) : setAppLabel(['']);
+    return applabel.length > 0
+      ? setAppLabel(applabel)
+      : setAppLabel(['No resource available']);
   };
 
   /**
@@ -232,35 +246,35 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
    * kubeObj data and populate it in the AutoComplete textfields
    */
   useEffect(() => {
-    if (targetApp.appkind === 'deployment') {
+    if (targetApp.appkind === constants.deployment) {
       setGVRObj({
-        group: 'apps',
-        version: 'v1',
-        resource: 'deployments',
+        group: constants.apps,
+        version: constants.v1,
+        resource: constants.deployments,
       });
-    } else if (targetApp.appkind === 'statefulset') {
+    } else if (targetApp.appkind === constants.statefulset) {
       setGVRObj({
-        group: 'apps',
-        version: 'v1',
-        resource: 'statefulsets',
+        group: constants.apps,
+        version: constants.v1,
+        resource: constants.statefulsets,
       });
-    } else if (targetApp.appkind === 'daemonset') {
+    } else if (targetApp.appkind === constants.daemonset) {
       setGVRObj({
-        group: 'apps',
-        version: 'v1',
-        resource: 'daemonsets',
+        group: constants.apps,
+        version: constants.v1,
+        resource: constants.daemonsets,
       });
-    } else if (targetApp.appkind === 'deploymentconfig') {
+    } else if (targetApp.appkind === constants.deploymentconfig) {
       setGVRObj({
-        group: 'apps.openshift.io',
-        version: 'v1',
-        resource: 'deploymentconfigs',
+        group: constants.openshift,
+        version: constants.v1,
+        resource: constants.deploymentconfigs,
       });
-    } else if (targetApp.appkind === 'rollout') {
+    } else if (targetApp.appkind === constants.rollout) {
       setGVRObj({
-        group: 'argoproj.io',
-        version: 'v1alpha1',
-        resource: 'rollouts',
+        group: constants.argoproj,
+        version: constants.v1alpha1,
+        resource: constants.rollouts,
       });
     } else {
       setGVRObj({
@@ -279,7 +293,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
       <br />
       <div className={classes.inputDiv}>
         {/* Annotation Check  */}
-        <div style={{ display: 'flex' }}>
+        <div className={classes.flexDisplay}>
           <Typography className={classes.annotation}>
             {t('createWorkflow.tuneWorkflow.verticalStepper.annotation')}
           </Typography>
@@ -348,7 +362,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
               freeSolo
               value={targetApp.appns}
               defaultValue={targetApp.appns}
-              style={{ width: '100%' }}
+              className={classes.autoCompleteText}
               onChange={(_, v: any) => {
                 setTargetApp({
                   ...targetApp,
@@ -365,7 +379,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
                     });
                   }}
                   {...params}
-                  label="appns"
+                  label={constants.appns}
                 />
               )}
             />
@@ -375,7 +389,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
           {/* AppKind MenuList */}
           {engineManifest.spec.appinfo?.appkind && (
             <FormControl variant="outlined">
-              <InputLabel id="appKind" style={{ color: '#00000099' }}>
+              <InputLabel id="appKind" className={classes.appKind}>
                 {t('createWorkflow.tuneWorkflow.verticalStepper.appkind')}
               </InputLabel>
               <Select
@@ -387,35 +401,37 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
                     appkind: event.target.value as string,
                   });
                   handleLabelChange();
-                  if (event.target.value === 'deployment') {
+                  if (event.target.value === constants.deployment) {
                     setGVRObj({
-                      group: 'apps',
-                      version: 'v1',
-                      resource: 'deployments',
+                      group: constants.apps,
+                      version: constants.v1,
+                      resource: constants.deployments,
                     });
-                  } else if (event.target.value === 'statefulset') {
+                  } else if (event.target.value === constants.statefulset) {
                     setGVRObj({
-                      group: 'apps',
-                      version: 'v1',
-                      resource: 'statefulsets',
+                      group: constants.apps,
+                      version: constants.v1,
+                      resource: constants.statefulsets,
                     });
-                  } else if (event.target.value === 'daemonset') {
+                  } else if (event.target.value === constants.daemonset) {
                     setGVRObj({
-                      group: 'apps',
-                      version: 'v1',
-                      resource: 'daemonsets',
+                      group: constants.apps,
+                      version: constants.v1,
+                      resource: constants.daemonsets,
                     });
-                  } else if (event.target.value === 'deploymentconfig') {
+                  } else if (
+                    event.target.value === constants.deploymentconfig
+                  ) {
                     setGVRObj({
-                      group: 'apps.openshift.io',
-                      version: 'v1',
-                      resource: 'deploymentconfigs',
+                      group: constants.openshift,
+                      version: constants.v1,
+                      resource: constants.deploymentconfigs,
                     });
-                  } else if (event.target.value === 'rollout') {
+                  } else if (event.target.value === constants.rollout) {
                     setGVRObj({
-                      group: 'argoproj.io',
-                      version: 'v1alpha1',
-                      resource: 'rollouts',
+                      group: constants.argoproj,
+                      version: constants.v1alpha1,
+                      resource: constants.rollouts,
                     });
                   } else {
                     setGVRObj({
@@ -425,26 +441,16 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
                     });
                   }
                 }}
-                label="appKind"
+                label={constants.appKind}
               >
                 <MenuItem aria-label="None" value="" />
-                <MenuItem value="deployment">
-                  {t('createWorkflow.tuneWorkflow.verticalStepper.deployment')}
-                </MenuItem>
-                <MenuItem value="statefulset">
-                  {t('createWorkflow.tuneWorkflow.verticalStepper.statefulset')}
-                </MenuItem>
-                <MenuItem value="daemonset">
-                  {t('createWorkflow.tuneWorkflow.verticalStepper.daemonset')}
-                </MenuItem>
-                <MenuItem value="deploymentconfig">
-                  {t(
-                    'createWorkflow.tuneWorkflow.verticalStepper.deploymentconfig'
-                  )}
-                </MenuItem>
-                <MenuItem value="rollout">
-                  {t('createWorkflow.tuneWorkflow.verticalStepper.rollout')}
-                </MenuItem>
+                {applicationKind.map((kind) => {
+                  return (
+                    <MenuItem key={kind} value={kind}>
+                      {kind}
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
           )}
@@ -458,7 +464,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
               freeSolo
               value={targetApp.applabel}
               defaultValue={targetApp.applabel}
-              style={{ width: '100%' }}
+              className={classes.autoCompleteText}
               onChange={(_, v: any) => {
                 setTargetApp({
                   ...targetApp,
@@ -474,7 +480,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
                     });
                   }}
                   {...params}
-                  label="applabel"
+                  label={constants.appLabel}
                 />
               )}
             />
@@ -483,7 +489,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
 
           {/* JobCleanUpPolicy textfield */}
           <InputField
-            label="jobCleanUpPolicy"
+            label={constants.jobCleanUp}
             width="auto"
             value={targetApp.jobCleanUpPolicy}
             onChange={(event) => {
@@ -515,12 +521,12 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
             }
           />
           {addNodeSelector && (
-            <div style={{ display: 'flex' }}>
-              <Typography style={{ marginTop: 15, marginRight: 5 }}>
+            <div className={classes.flexDisplay}>
+              <Typography className={classes.nodeSelectorText}>
                 {t('createWorkflow.tuneWorkflow.verticalStepper.selector')}
               </Typography>
               <InputField
-                label="nodeselector"
+                label={constants.nodeselector}
                 width="50%"
                 value={nodeSelector}
                 onChange={(event) => {

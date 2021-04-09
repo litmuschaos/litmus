@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   inputDiv: {
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: '400px',
+    maxWidth: '25rem',
   },
   annotation: {
     fontSize: '0.875rem',
@@ -84,6 +84,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   checkBoxDefault: {
     color: theme.palette.primary.main,
+  },
+  autoCompleteText: {
+    width: '100%',
+  },
+  nodeSelectorText: {
+    margin: theme.spacing(1.875, 0.625, 0, 0),
+  },
+  flexDisplay: {
+    display: 'flex',
+  },
+  appKind: {
+    color: theme.palette.text.hint,
   },
 }));
 export default useStyles;
