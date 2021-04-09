@@ -93,7 +93,8 @@ export const generateChaosQuery = (
   return queryStringWithEngineName.replaceAll('*{}', namespace);
 };
 
-// This is a utility function for extracting embedded yaml as a string for chaosengine with provided name
+// This is a utility function for extracting embedded
+// yaml as a string for chaosengine with provided name
 export const stepEmbeddedYAMLExtractor = (
   manifest: string,
   stepName: string

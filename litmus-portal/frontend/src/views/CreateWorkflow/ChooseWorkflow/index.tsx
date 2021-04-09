@@ -10,6 +10,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,17 +18,22 @@ import { useSelector } from 'react-redux';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
 import SelectMyHub from './SelectMyHub';
 import useStyles from './styles';
 import UploadYAML from './uploadYAML';
-import * as WorkflowActions from '../../../redux/actions/workflow';
+
+interface ChildRef {
+  onNext: () => void;
+}
 
 const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
+  const childRef = useRef<ChildRef>();
   const [selected, setSelected] = useState<string>('');
   const workflowDetails = useSelector(
     (state: RootState) => state.workflowManifest.manifest
@@ -55,6 +61,11 @@ const ChooseWorkflow = forwardRef((_, ref) => {
       alert.changeAlertState(true);
       return false;
     }
+    if (childRef.current) {
+      alert.changeAlertState(true);
+      return childRef.current.onNext();
+    }
+    alert.changeAlertState(false);
     return true;
   }
 
@@ -108,7 +119,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
                 templates
               </RadioButton>
             </AccordionSummary>
-            <ChoosePreDefinedExperiments />
+            <ChoosePreDefinedExperiments ref={childRef} />
           </Accordion>
 
           <RadioButton value="B" onChange={(e) => handleChange(e)}>
@@ -128,7 +139,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
                 <strong> My Hubs</strong>
               </RadioButton>
             </AccordionSummary>
-            <SelectMyHub />
+            <SelectMyHub ref={childRef} />
           </Accordion>
 
           <Accordion
