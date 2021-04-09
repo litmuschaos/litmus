@@ -196,12 +196,6 @@ const WorkflowSettings = forwardRef((_, ref) => {
               alt="User"
               src={icon}
             />
-            <Typography
-              className={classes.editText}
-              onClick={() => setAvatarModal(true)}
-            >
-              {t('createWorkflow.chooseWorkflow.edit')}
-            </Typography>
           </div>
           <div className={classes.inputDiv}>
             <div aria-details="spacer" style={{ width: '60%' }}>
