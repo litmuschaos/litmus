@@ -655,9 +655,11 @@ createWorkflow:
   chooseWorkflow:
     title: Start creating your chaos workflow
     subtitle: Simulate the workflow run and see the suggested reliability score
-    header: Select or design workflow
-    info: Select one of the pre-defined chaos workflows or design your own workflow.
-    preDefined: pre-defined workflows
+    optionA: Create a new workflow from one of the pre-defined chaos workflow templates
+    optionB: Create a new workflow by cloning an existing workflow
+    optionC: Create a new workflow using the experiments from
+    optionD: Import a workflow using YAML
+    myHubs: My Hubs
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name

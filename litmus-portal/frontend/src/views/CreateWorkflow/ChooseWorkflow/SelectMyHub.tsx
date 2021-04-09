@@ -1,7 +1,12 @@
 import { useQuery } from '@apollo/client';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
 import { MyHubDetail } from '../../../models/graphql/user';
@@ -10,7 +15,7 @@ import { HubStatus } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles, { MenuProps } from './styles';
 
-const SelectMyHub = () => {
+const SelectMyHub = forwardRef((_, ref) => {
   const { t } = useTranslation();
   const selectedProjectID = getProjectID();
   const [selectedHub, setSelectedHub] = useState('');
@@ -42,6 +47,17 @@ const SelectMyHub = () => {
     }
   }, [loading]);
 
+  function onNext() {
+    if (selectedHub === '') {
+      return false;
+    }
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
+
   const classes = useStyles();
   return (
     <div>
@@ -68,6 +84,6 @@ const SelectMyHub = () => {
       </div>
     </div>
   );
-};
+});
 
 export default SelectMyHub;
