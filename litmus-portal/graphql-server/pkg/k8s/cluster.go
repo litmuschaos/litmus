@@ -80,7 +80,7 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
  */
 func GetServerEndpoint() (string, error) {
 	var (
-		NodePort                int32
+		NodePort           int32
 		Port int32
 		ExternalIP         string
 		InternalIP         string
@@ -89,7 +89,7 @@ func GetServerEndpoint() (string, error) {
 		Scheme              string
 		FinalUrl           string
 		ServerServiceName = os.Getenv("SERVER_SERVICE_NAME")
-		ServerLabel       = os.Getenv("SERVER_LABEL") // component=litmusportal-server
+		ServerLabels       = os.Getenv("SERVER_LABELS") // component=litmusportal-server
 		LitmusPortalNS    = os.Getenv("LITMUS_PORTAL_NAMESPACE")
 		Ingress           = os.Getenv("INGRESS")
 		IngressName       = os.Getenv("INGRESS_NAME")
@@ -147,7 +147,7 @@ func GetServerEndpoint() (string, error) {
 
 	} else if Ingress == "false" || Ingress == "" {
 		podList, err := clientset.CoreV1().Pods(LitmusPortalNS).List(metaV1.ListOptions{
-			LabelSelector: ServerLabel,
+			LabelSelector: ServerLabels,
 		})
 		if err != nil {
 			return "", err
