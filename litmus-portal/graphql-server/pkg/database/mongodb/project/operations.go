@@ -32,13 +32,12 @@ func CreateProject(ctx context.Context, project *Project) error {
 }
 
 // GetProject ...
-func GetProject(ctx context.Context, projectID string) (*Project, error) {
+func GetProject(ctx context.Context, query bson.D) (*Project, error) {
 	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	var project = new(Project)
-	query := bson.M{"_id": projectID}
 	err := projectCollection.FindOne(ctx, query).Decode(project)
 	if err != nil {
-		log.Print("Error getting project with id: ", projectID, " error: ", err)
+		log.Print("Error getting project with query :", query)
 		return nil, err
 	}
 

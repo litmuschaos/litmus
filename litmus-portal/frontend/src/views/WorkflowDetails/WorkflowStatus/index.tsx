@@ -1,5 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { RUNNING, SUCCEEDED, PENDING, FAILED } from '../workflowConstants';
 import useStyles from './styles';
 
 interface WorkflowStatusProps {
@@ -9,18 +11,19 @@ interface WorkflowStatusProps {
 const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
   const classes = useStyles();
 
+  const { t } = useTranslation();
   function getStatus(phase: string) {
     switch (phase) {
-      case 'Succeeded':
-        return classes.succeeded;
-      case 'Running':
-        return classes.running;
-      case 'Failed':
-        return classes.failed;
-      case 'Pending':
-        return classes.pending;
+      case SUCCEEDED:
+        return `${classes.textBold} ${classes.succeeded}`;
+      case RUNNING:
+        return `${classes.textBold} ${classes.running}`;
+      case FAILED:
+        return `${classes.textBold} ${classes.failed}`;
+      case PENDING:
+        return `${classes.textBold} ${classes.pending}`;
       default:
-        return classes.pending;
+        return `${classes.textBold} ${classes.pending}`;
     }
   }
 
@@ -28,16 +31,16 @@ const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
     <div className={classes.status}>
       <span className={classes.icon}>
         <img
-          className={
-            phase.toLowerCase() === 'running' ? classes.runningSmallIcon : ''
-          }
+          className={phase === RUNNING ? classes.runningSmallIcon : ''}
           src={`/icons/${phase.toLowerCase()}.svg`}
           alt="status"
         />
       </span>
       <Typography>
         <span className={getStatus(phase)}>
-          <strong>{phase}</strong>
+          {phase === SUCCEEDED
+            ? `${t('workflowDetailsView.workflowInfo.Completed')}`
+            : phase}
         </span>
       </Typography>
     </div>
