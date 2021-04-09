@@ -93,6 +93,7 @@ export const generateChaosQuery = (
   return queryStringWithEngineName.replaceAll('*{}', namespace);
 };
 
+// This is a utility function for extracting embedded yaml as a string for chaosengine with provided name
 export const stepEmbeddedYAMLExtractor = (
   manifest: string,
   stepName: string
@@ -105,10 +106,7 @@ export const stepEmbeddedYAMLExtractor = (
       if (parsedYaml.kind === 'CronWorkflow') {
         const totalSteps = parsedYaml.spec.workflowSpec.templates.length - 1; // Total Steps in CronWorkflow
         for (let i = 0; i < totalSteps; i++) {
-          if (
-            parsedYaml.spec.workflowSpec.templates[1 + i].inputs.artifacts[0]
-              .name === stepName
-          ) {
+          if (parsedYaml.spec.workflowSpec.templates[1 + i].name === stepName) {
             embeddedYaml =
               parsedYaml.spec.workflowSpec.templates[1 + i].inputs.artifacts[0]
                 .raw.data;
@@ -118,10 +116,7 @@ export const stepEmbeddedYAMLExtractor = (
       } else {
         const totalSteps = parsedYaml.spec.templates.length - 1; // Total Steps in Workflow
         for (let i = 0; i < totalSteps; i++) {
-          if (
-            parsedYaml.spec.templates[1 + i].inputs.artifacts[0].name ===
-            stepName
-          ) {
+          if (parsedYaml.spec.templates[1 + i].name === stepName) {
             embeddedYaml =
               parsedYaml.spec.templates[1 + i].inputs.artifacts[0].raw.data;
             break;
