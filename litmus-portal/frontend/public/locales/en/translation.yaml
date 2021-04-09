@@ -132,7 +132,7 @@ schedule:
   headingDesc: 'Click on test to see detailed log of your workflow'
   headingText: 'Schedule details:'
   description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'  
+  save: 'Save Changes'
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
   scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
@@ -606,15 +606,10 @@ workflowDetailsView:
       runTimeHeader: Run Time
       startTime: 'Start Time :'
       endTime: 'End Time :'
-    hostedOn:
-      hostedOnHeader: Hosted On
-      cluster: 'Cluster :'
-      namespace: 'Namespace :'
     targets:
-      targetsHeader: Targets
+      targetsHeader: Target
       cluster: 'Cluster :'
       namespace: 'Namespace :'
-    application: 'Application :'
   workflowNodeInfo:
     name: Name
     type: Type

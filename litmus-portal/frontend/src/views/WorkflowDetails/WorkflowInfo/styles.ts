@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
   // Division in 4 parts
   subSection: {
-    width: '25%',
+    width: '33.3%',
   },
 
   // Sub section division in 2 parts
