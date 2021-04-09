@@ -51,21 +51,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2.5),
     width: '10rem',
   },
-  modalDiv: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '25rem',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalHeading: {
-    fontSize: '2.25rem',
-  },
-  modalDesc: {
-    fontSize: '1rem',
-    width: '21.875',
-    marginBottom: theme.spacing(2.5),
-  },
   videoDescription: {
     marginTop: theme.spacing(-6.25),
     marginLeft: theme.spacing(5.625),
@@ -196,6 +181,21 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   checked: {},
+  modalDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '25rem',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalHeading: {
+    fontSize: '2.25rem',
+  },
+  modalDesc: {
+    fontSize: '1rem',
+    width: '21.875',
+    marginBottom: theme.spacing(2.5),
+  },
 }));
 
 export default useStyles;

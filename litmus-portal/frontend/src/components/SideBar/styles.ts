@@ -7,9 +7,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: '100%',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.sidebarMenu,
     position: 'relative',
-    color: 'inherit',
   },
   litmusDiv: {
     display: 'flex',
@@ -52,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
   drawerList: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(8.375),
   },
   versionlogo: {
     width: '1.25rem',

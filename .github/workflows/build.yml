@@ -1,0 +1,138 @@
+name: build-pipeline
+on:
+  pull_request:
+    branches:
+      - master
+      - v*
+      - litmus-v2
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    # Set job outputs to values from filter step
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      graphql-server: ${{ steps.filter.outputs.graphql-server }}
+      authentication: ${{ steps.filter.outputs.authentication }}
+      event-tracker: ${{ steps.filter.outputs.event-tracker }}
+      subscriber: ${{ steps.filter.outputs.subscriber }}
+    steps:
+    # For pull requests it's not necessary to checkout the code
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          frontend:
+            - 'litmus-portal/frontend/**'
+          graphql-server:
+            - 'litmus-portal/graphql-server/**'
+          authentication:
+            - 'litmus-portal/authentication/**'
+          event-tracker:
+            - 'litmus-portal/cluster-agents/event-tracker/**'
+          subscriber:
+            - 'litmus-portal/cluster-agents/subscriber/**'
+
+  backend-checks:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.graphql-server == 'true'  || needs.changes.outputs.authentication == 'true' || needs.changes.outputs.event-tracker == 'true' || needs.changes.outputs.subscriber == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Check Golang imports order
+        uses: Jerome1337/goimports-action@v1.0.3
+        with:
+          goimports-path: ./litmus-portal
+      - shell: bash
+        run: |
+          cd litmus-portal
+          make backend-services-checks
+
+  frontend-checks:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Frontend checks
+        shell: bash
+        run: |
+          cd litmus-portal
+          make frontend-services-checks
+
+  docker-build-graphql-server:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+    if: ${{ needs.changes.outputs.graphql-server == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build graphql server docker image
+        shell: bash
+        run: |
+          cd litmus-portal/graphql-server
+          docker build . -f build/Dockerfile
+
+  docker-build-authentication-server:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+    if: ${{ needs.changes.outputs.authentication == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build auth server docker image
+        shell: bash
+        run: |
+          cd litmus-portal/authentication
+          docker images && docker build . -f Dockerfile
+
+  docker-build-subscriber:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+    if: ${{ needs.changes.outputs.subscriber == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build subscriber docker image
+        shell: bash
+        run: |
+          cd litmus-portal/cluster-agents/subscriber
+          docker build . -f build/Dockerfile
+
+  docker-build-event-tracker:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+    if: ${{ needs.changes.outputs.event-tracker == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build event tracker docker image
+        shell: bash
+        run: |
+          cd litmus-portal/cluster-agents/event-tracker
+          docker build . -f build/Dockerfile
+
+  docker-build-frontend:
+    runs-on: ubuntu-latest
+    needs:
+      - frontend-checks
+      - changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build frontend docker image
+        shell: bash
+        run: |
+          cd litmus-portal/frontend
+          docker build . -f Dockerfile

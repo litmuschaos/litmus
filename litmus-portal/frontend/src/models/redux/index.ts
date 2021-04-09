@@ -1,3 +1,4 @@
+import { AlertAction } from './alert';
 import { AnalyticsAction } from './analytics';
 import { DashboardSelectionAction } from './dashboards';
 import { DataSourceSelectionAction } from './dataSource';
@@ -12,6 +13,7 @@ export type Action =
   | WorkflowAction
   | NodeSelectionAction
   | TabAction
+  | AlertAction
   | TemplateSelectionAction
   | MyHubAction
   | DataSourceSelectionAction

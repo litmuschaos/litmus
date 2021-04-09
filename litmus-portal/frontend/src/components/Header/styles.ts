@@ -47,6 +47,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   profileDropdown: {
     margin: theme.spacing(0.25, 0, 0, 2.75),
   },
+  avatarBackground: {
+    backgroundColor: theme.palette.primary.main,
+  },
   profileDropdownPopover: {
     padding: theme.spacing(3.25, 2.875),
     minWidth: '21.9375rem',

@@ -22,21 +22,21 @@
 ## Überblick
 
 Litmus ist ein Werkzeug für cloud-natives Chaos Engineering. Die Anwendung stellt
-verschiedene Hilfmittel bereit Chaos auf Kubernetes zu inszenieren und hilft
-somit SREs Schwachstellen in ihren Entwicklungen zu finden.
-Mit Litmus können Chaos-Experimente in der Staging-Umgebung und gegebenenfalls
-auch in der Produktion durchgeführt werden um Schwachstellen und Bugs zu
+verschiedene Hilfsmittel bereit, um Chaos auf Kubernetes zu inszenieren und hilft
+somit SREs dabei, Schwachstellen in ihren Systemen zu finden.
+Mit Litmus können Chaos-Experimente in der Staging- und gegebenenfalls
+auch in der Produktionsumgebung durchgeführt werden, um Schwachstellen und Bugs zu
 finden.
 
-Litmus nutzt einen cloud-nativen Ansatz um Chaos zu erzeugen, verwalten und zu
-beobachten. Um Chaos zu initialisieren und manipulieren werden die folgenden
+Litmus nutzt einen cloud-nativen Ansatz um Chaos zu erzeugen, zu verwalten und zu
+beobachten. Um Chaos zu initialisieren und zu manipulieren werden die folgenden
 Kubernetes Custom Resource Definitions (kurz CRDs) benötigt:
-- **ChaosEngine**: Mittel, um eine Kubernetes-Anwendung der eine
-  Kubernetes-Node mit dem Chaos-Experiment zu verbinden. Die Chaos-Engine wird
+- **ChaosEngine**: Mittel, um eine Kubernetes-Anwendung oder einen
+  Kubernetes-Node mit einem Chaos-Experiment zu verbinden. Die Chaos-Engine wird
   vom Chaos-Operator beobachtet, welcher die Chaos-Experimente ausführt.
 - **ChaosExperiment**: Mittel, um die Konfigurationsparameter eines
   Chaos-Experiments zu gruppieren. Chaos-Experiment CRs werden vom Operator
-  kreiert, wenn Experimente vom Chaos-Engine ausgeführt werden.
+  kreiert, wenn Experimente von der Chaos-Engine ausgeführt werden.
 - **ChaosResult**: Mittel, um die Ergebnisse des Chaos-Experiments zu
   speichern. Der Chaos-Exporter liest die Ergebnisse aus und exportiert die
   Messwerte auf einen konfigurierten Prometheus-Server.
@@ -50,12 +50,12 @@ Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_b
 - **Für Entwickler**: Mit Litmus können Chaos-Experimente in der
   Entwicklungsphase einer Anwendung als Erweiterung zu Modultests
   oder auch Integrationstests durchgeführt werden.
-- **Für CI-Pipelines**: In der Continuous Integration können
+- **Für CI-Pipelines**: Im Continuous Integration Prozess können
   Chaos-Experimente als Schritt in der Pipeline genutzt werden, um Bugs zu
   finden.
-- **Für SREs**: Mit Litmus können Chaos-Experimente geplant durchgeführt
+- **Für SREs**: Mit Litmus können Chaos-Experimente geplant und durchgeführt
   werden, um möglichst früh Schwächen in Anwendungen zu finden und die
-  Stabilität des Endproduktes zu steigern.
+  Stabilität des Systems zu steigern.
 
 ## Mit Litmus loslegen
 
@@ -71,9 +71,8 @@ Erste Informationen findet man in den <a href="https://github.com/litmuschaos/co
 
 Informationen befinden sich hier: <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Anwender von LitmusChaos</a>
 
-(_Senden Sie bitte eine PR an die Seite, wenn Sie in Ihren Anwendungen oder
-während der Entwicklung Litmus zum Chaos
-Engineering nutzen_)
+(_Sende bitte einen PR an die Seite, wenn Du in deiner Anwendungen oder
+während der Entwicklung Litmus zum Chaos Engineering nutzen_)
 
 ## Anmerkungen
 
@@ -82,28 +81,17 @@ aufgelistet. Die meisten offenen Punkte sind bereits Teil der [Roadmap](./ROADMA
 Einschränkungen bestimmter Experimente empfiehlt sich ein Blick in die
 jeweilige [Dokumentation](https://docs.litmuschaos.io/docs/pod-delete/).
 
-- Der Chaos-Operator sowie die Chaos-Experimente laufen als
-  Kubernetes-Resourcen auf einem Cluster. Im Falle von air-gapped Umgebungen
-  oder Netzwerken müssen die Chaos-Ressourcen unter dieser Prämisse gehostet
-  werden.
-- Wenn plattform-spezifische Chaos-Experimente (vgl. die der AWS, GCP Cloud) durchgeführt
-  werden sollen, werden die nötigen Informationen über Kubernetes Secrets
-  bereitgestellt. Andere Optionen, Informationen und Daten sicher
-  weiterzugeben,
-  sind aktuell noch nicht getestet oder implementiert.
-- Wenn Chaos-Experimente die Docker-API von innerhalb aufrufen, dann muss das
-    Docker-Socket installiert werden. Sinnvolles Management ist empfohlen, wenn Entwickler und Administratoren Zugang zu den
-    Experimenten haben.
-- In (seltenen) Fällen, bei denen die Chaos-Experimente Privileged-Container
-  benutzen, werden die empfohlenen Sicherheitsrichtlinien dokumentiert.
+- Der Chaos-Operator sowie die Chaos-Experimente laufen als Kubernetes-Ressourcen auf einem Cluster. Im Falle von air-gapped Umgebungen oder Netzwerken müssen die Chaos-Ressourcen unter dieser Prämisse gehostet werden.
+- Wenn plattform-spezifische Chaos-Experimente (vgl. die von AWS und der GCP Cloud) durchgeführt werden sollen, werden die nötigen Informationen über Kubernetes Secrets bereitgestellt. Andere Möglichkeiten diese Informationen und Daten sicher weiterzugeben sind aktuell noch nicht getestet oder implementiert.
+- Einige Chaos-Experimente nutzen möglicherweise die Docker-API innerhalb der Experiment-Pods. In diesen Fällen muss der Docker-Socket in die entsprechenden Pods gemountet werden. Es ist ratsam, diese Experimente nur von vertrauenswürdigen Admins, SREs, Entwicklern oder DevOps ausführen zu lassen.
+- In (seltenen) Fällen, bei denen die Chaos-Experimente Privileged-Container benutzen, werden die empfohlenen Sicherheitsrichtlinien dokumentiert.
 
 ## Lizenz
 
 Litmus ist unter der Apache License, Version 2.0 zugelassen. Die komplette Lizenz
 ist auf folgender Seite zu finden: [Lizenz](./LICENSE). Einige Projekte, die
-von Litmus genutzt werden, laufen eventuell unter anderen Lizenzen, bitte
-schauen Sie
-bei dem jeweiligen Projekt nach.
+von Litmus genutzt werden, sind eventuell anders Lizensiert.
+Bitte schaue bei den jeweiligen Projekt nach.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
@@ -117,7 +105,7 @@ Litmus Chaos ist Teil der CNCF Projekte.
 Die Litmus Community trifft sich immer am dritten Mittwoch jeden Monats um
 10:00PM IST oder 9:30 AM PST.
 
-Kommunikationsmedien zum Austausch und weitere Informationen:
+Kommunikationskanäle zum Austausch und für weitere Informationen:
 
 - [Community Slack](https://slack.litmuschaos.io)
 - [Sync Up Meeting Link](https://zoom.us/j/91358162694)

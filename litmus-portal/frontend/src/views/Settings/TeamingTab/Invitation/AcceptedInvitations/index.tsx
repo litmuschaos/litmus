@@ -11,7 +11,7 @@ import {
 import { MemberInvitation } from '../../../../../models/graphql/invite';
 import { Member, Project, Projects } from '../../../../../models/graphql/user';
 import { history } from '../../../../../redux/configureStore';
-import { getUserId, getUserRole } from '../../../../../utils/auth';
+import { getUserId } from '../../../../../utils/auth';
 import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -85,7 +85,6 @@ const AcceptedInvitations: React.FC = () => {
           >
             <Paper className={classes.root}>
               <div className={classes.projectDiv}>
-                <img src="./icons/litmus-icon.svg" alt="chaos" />
                 <Typography className={classes.projectName}>
                   {project.projectDetails.name}
                 </Typography>
@@ -99,11 +98,16 @@ const AcceptedInvitations: React.FC = () => {
                   }}
                 >
                   <Typography>
-                    {/* TODO: Add translation */}
-                    View Project
+                    {t(
+                      'settings.teamingTab.invitation.acceptedInvitation.viewProject'
+                    )}
                   </Typography>
                 </IconButton>
               </div>
+              <Typography className={classes.projectRole}>
+                {t('settings.teamingTab.invitation.acceptedInvitation.role')}:{' '}
+                {project.currentUserProjectRole}
+              </Typography>
               <div className={classes.buttonDiv}>
                 <div data-cy="LeaveProject">
                   <ButtonFilled
@@ -115,7 +119,7 @@ const AcceptedInvitations: React.FC = () => {
                           data: {
                             project_id: project.projectDetails.id,
                             user_id: getUserId(),
-                            role: getUserRole(),
+                            role: project.currentUserProjectRole,
                           },
                         },
                       });

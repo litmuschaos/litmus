@@ -2,10 +2,10 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: subscriber-namespace
+  name: subscriber-role
   namespace: #{AGENT-NAMESPACE}
   labels:
-    name: subscriber-namespace
+    name: subscriber-role
 rules:
   - apiGroups:
       - ""
@@ -15,6 +15,7 @@ rules:
       - get
       - create
       - delete
+      - update
   - apiGroups:
       - litmuschaos.io
     resources:
@@ -56,7 +57,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: subscriber-namespace-rb
+  name: subscriber-role-binding
   namespace: #{AGENT-NAMESPACE}
 subjects:
   - kind: ServiceAccount
@@ -64,69 +65,61 @@ subjects:
     namespace: #{AGENT-NAMESPACE}
 roleRef:
   kind: Role
-  name: subscriber-namespace
+  name: subscriber-role
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: litmus-namespace-admin
+  name: litmus-admin
   namespace: #{AGENT-NAMESPACE}
   labels:
-    name: litmus-namespace-admin
+    name: litmus-admin
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: litmus-namespace-admin
+  name: litmus-admin
   namespace: #{AGENT-NAMESPACE}
   labels:
-    name: litmus-namespace-admin
+    name: litmus-admin
 rules:
-  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io"]
-    resources:
-      [
-          "pods",
-          "pods/exec",
-          "pods/log",
-          "pods/eviction",
-          "jobs",
-          "deployments",
-          "daemonsets",
-          "statefulsets",
-          "events",
-          "configmaps",
-          "services",
-          "chaosengines",
-          "chaosexperiments",
-          "chaosresults",
-      ]
-    verbs:
-      [
-          "get",
-          "create",
-          "update",
-          "patch",
-          "delete",
-          "list",
-          "watch",
-          "deletecollection",
-      ]
+- apiGroups: [""]
+  resources: ["replicationcontrollers","secrets"]
+  verbs: ["get","list"]
+- apiGroups: ["apps.openshift.io"]
+  resources: ["deploymentconfigs"]
+  verbs: ["get","list"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+  verbs: ["get","list","update"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get","list","create","deletecollection"]
+- apiGroups: ["argoproj.io"]
+  resources: ["rollouts"]
+  verbs: ["get","list"]
+- apiGroups: [""]
+  resources: ["pods","pods/exec","configmaps","events","services"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+- apiGroups: ["litmuschaos.io"]
+  resources: ["chaosengines","chaosexperiments","chaosresults"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: litmus-namespace-admin
+  name: litmus-admin
   namespace: #{AGENT-NAMESPACE}
   labels:
-    name: litmus-namespace-admin
+    name: litmus-admin
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: litmus-namespace-admin
+  name: litmus-admin
 subjects:
   - kind: ServiceAccount
-    name: litmus-namespace-admin
+    name: litmus-admin
     namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: v1
@@ -169,7 +162,7 @@ metadata:
   namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   name: litmus-event-tracker-cluster-role
 rules:
@@ -189,12 +182,12 @@ rules:
       - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: litmus-event-tracker-clusterole-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: litmus-event-tracker-cluster-role
 subjects:
   - kind: ServiceAccount

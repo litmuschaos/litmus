@@ -44,6 +44,7 @@ export const WORKFLOW_LIST_DETAILS = gql`
   query workflowListDetails($projectID: String!, $workflowIDs: [ID]) {
     ListWorkflow(project_id: $projectID, workflow_ids: $workflowIDs) {
       workflow_id
+      workflow_manifest
       cronSyntax
       cluster_name
       workflow_name
@@ -58,6 +59,7 @@ export const WORKFLOW_LIST_DETAILS = gql`
       project_id
       cluster_id
       cluster_type
+      isRemoved
       workflow_runs {
         execution_data
         workflow_run_id
@@ -140,100 +142,67 @@ export const ALL_USERS = gql`
   }
 `;
 
-export const GET_CHARTS_DATA = gql`
-  query getCharts($HubName: String!, $projectID: String!) {
-    getCharts(HubName: $HubName, projectID: $projectID) {
-      ApiVersion
-      Kind
-      Metadata {
+export const CORE_CHART_FIELDS = gql`
+  fragment CoreChartFields on Chart {
+    ApiVersion
+    Kind
+    Metadata {
+      Name
+      Version
+      Annotations {
+        Categories
+        Vendor
+        CreatedAt
+        Repository
+        Support
+        ChartDescription
+      }
+    }
+    Spec {
+      DisplayName
+      CategoryDescription
+      Keywords
+      Maturity
+      Experiments
+      Maintainers {
         Name
-        Version
-        Annotations {
-          Categories
-          Vendor
-          CreatedAt
-          Repository
-          Support
-          ChartDescription
-        }
+        Email
       }
-      Spec {
-        DisplayName
-        CategoryDescription
-        Keywords
-        Maturity
-        Experiments
-        Maintainers {
-          Name
-          Email
-        }
-        MinKubeVersion
-        Provider
-        Links {
-          Name
-          Url
-        }
-        ChaosExpCRDLink
-        Platforms
-        ChaosType
+      MinKubeVersion
+      Provider
+      Links {
+        Name
+        Url
       }
-      PackageInfo {
-        PackageName
-        Experiments {
-          Name
-          CSV
-          Desc
-        }
+      ChaosExpCRDLink
+      Platforms
+      ChaosType
+    }
+    PackageInfo {
+      PackageName
+      Experiments {
+        Name
+        CSV
+        Desc
       }
     }
   }
 `;
 
+export const GET_CHARTS_DATA = gql`
+  ${CORE_CHART_FIELDS}
+  query getCharts($HubName: String!, $projectID: String!) {
+    getCharts(HubName: $HubName, projectID: $projectID) {
+      ...CoreChartFields
+    }
+  }
+`;
+
 export const GET_EXPERIMENT_DATA = gql`
+  ${CORE_CHART_FIELDS}
   query getExperiment($data: ExperimentInput!) {
     getHubExperiment(experimentInput: $data) {
-      ApiVersion
-      Kind
-      Metadata {
-        Name
-        Version
-        Annotations {
-          Categories
-          Vendor
-          CreatedAt
-          Repository
-          Support
-          ChartDescription
-        }
-      }
-      Spec {
-        DisplayName
-        CategoryDescription
-        Keywords
-        Maturity
-        Experiments
-        Maintainers {
-          Name
-          Email
-        }
-        MinKubeVersion
-        Provider
-        Links {
-          Name
-          Url
-        }
-        ChaosExpCRDLink
-        Platforms
-        ChaosType
-      }
-      PackageInfo {
-        PackageName
-        Experiments {
-          Name
-          CSV
-          Desc
-        }
-      }
+      ...CoreChartFields
     }
   }
 `;

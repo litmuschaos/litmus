@@ -1,8 +1,11 @@
 import { Divider, Typography } from '@material-ui/core';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import localforage from 'localforage';
 import React from 'react';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutlined from '../../../components/Button/ButtonOutline';
+import { useTranslation } from 'react-i18next';
+import data from '../../../components/PredifinedWorkflows/data';
 import Scaffold from '../../../containers/layouts/Scaffold';
+import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { preDefinedWorkflowData } from '../../../models/predefinedWorkflow';
 import { LocationState } from '../../../models/routerModel';
 import useActions from '../../../redux/actions';
@@ -25,20 +28,41 @@ interface BrowseTemplateProps {
 }
 
 const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const projectID = getProjectID();
   const userRole = getProjectRole();
   const workflowAction = useActions(WorkflowActions);
   const { workflowData, testNames, testWeights } = location.state;
 
+  const preSelectWorkflow = () => {
+    data.map((w) => {
+      if (w.title === workflowData.title) {
+        const selection: ChooseWorkflowRadio = {
+          selected: 'A',
+          id: w.workflowID.toString(),
+        };
+        localforage.setItem('selectedScheduleOption', selection);
+      }
+      return null;
+    });
+    workflowAction.setWorkflowDetails({
+      isCustomWorkflow: false,
+    });
+    history.push({
+      pathname: '/create-workflow',
+      search: `?projectID=${projectID}&projectRole=${userRole}`,
+    });
+  };
+
   return (
     <Scaffold>
       <div className={classes.root}>
         <Typography className={classes.headerTitle}>
-          Browse a workflow template
+          {t('browseTemplate.browseAWorkflow')}
         </Typography>
         <Typography variant="subtitle1" className={classes.bodytext}>
-          See details of your workflow template
+          {t('browseTemplate.seeDetails')}
         </Typography>
         <section className={classes.contentWrapper}>
           {/* Header */}
@@ -63,32 +87,11 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
 
           {/* Buttons */}
           <div className={classes.spaceBetween}>
-            <ButtonOutlined
-              isDisabled={false}
-              handleClick={() => {
-                history.push({
-                  pathname: '/workflows',
-                  search: `?projectID=${projectID}&projectRole=${userRole}`,
-                });
-              }}
-            >
-              <>Back</>
+            <ButtonOutlined onClick={() => history.push('/workflows')}>
+              {t('browseTemplate.back')}
             </ButtonOutlined>
-            <ButtonFilled
-              isPrimary={false}
-              handleClick={() => {
-                workflowAction.setWorkflowDetails({
-                  description: '',
-                  isCustomWorkflow: false,
-                  customWorkflows: [],
-                });
-                history.push({
-                  pathname: '/create-workflow',
-                  search: `?projectID=${projectID}&projectRole=${userRole}`,
-                });
-              }}
-            >
-              <>Schedule this template</>
+            <ButtonFilled variant="success" onClick={() => preSelectWorkflow()}>
+              {t('browseTemplate.scheduleThisTemplate')}
             </ButtonFilled>
           </div>
         </section>

@@ -109,11 +109,11 @@ func GetServerEndpoint() (string, error) {
 		if getIng.Status.LoadBalancer.Ingress[0].Hostname == "" {
 			IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
 		} else {
-			IPAddress = getIng.Status.LoadBalancer.Ingress[0].Hostname
+			IPAddress=  getIng.Spec.Rules[0].Host
 		}
 
-		if ExternalIP == "" {
-			return "", errors.New("IP Address or Hostname is not available in the Ingress of " + IngressName)
+		if IPAddress == "" {
+			return "", errors.New("IP Address or Hostname is not available in the ingress of " + IngressName)
 		}
 
 		for _, rule := range getIng.Spec.Rules {
@@ -143,7 +143,7 @@ func GetServerEndpoint() (string, error) {
 			Scheme = "http"
 		}
 
-		FinalUrl = Scheme + "://" + IPAddress + "/" + IngressPath
+		FinalUrl = Scheme + "://" + IPAddress + IngressPath
 
 	} else if Ingress == "false" || Ingress == "" {
 		podList, err := clientset.CoreV1().Pods(LitmusPortalNS).List(metaV1.ListOptions{

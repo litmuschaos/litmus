@@ -22,3 +22,12 @@ export const WORKFLOW_LOGS = gql`
     }
   }
 `;
+
+export const KUBE_OBJ = gql`
+  subscription getKubeObject($data: KubeObjectRequest!) {
+    getKubeObject(kubeObjectRequest: $data) {
+      cluster_id
+      kube_obj
+    }
+  }
+`;

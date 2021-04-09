@@ -2,6 +2,8 @@
 import { QuickActionCard } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { constants } from '../../constants';
+import { Role } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
@@ -11,6 +13,7 @@ type Variant = 'homePage' | 'returningHome' | 'analytics' | 'community';
 
 interface LocalQuickActionCardProps {
   variant?: Variant;
+  className?: string;
 }
 
 interface QuickActionCardProps {
@@ -22,6 +25,7 @@ interface QuickActionCardProps {
 
 const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
   variant,
+  className,
 }) => {
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
@@ -75,7 +79,8 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       : emptyData,
 
     // TODO: settings only accessible by Owner
-    homePage || returningHome || community || analytics
+    (homePage || returningHome || community || analytics) &&
+    getProjectRole() === Role.owner
       ? {
           src: '/icons/teamMember.svg',
           alt: 'team',
@@ -93,7 +98,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: '/icons/survey.svg',
           alt: 'survey',
-          onClick: () => window.open('https://forms.gle/qMuVphRyEWCFqjD56'),
+          onClick: () => window.open(constants.FeedbackForm),
           text: t('quickActionCard.quickSurvey'),
         }
       : emptyData,
@@ -123,6 +128,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
 
   return (
     <QuickActionCard
+      className={className}
       quickActions={quickActionData}
       title={t('quickActionCard.quickActions')}
     />

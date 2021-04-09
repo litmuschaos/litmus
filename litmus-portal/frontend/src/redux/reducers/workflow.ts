@@ -3,19 +3,11 @@ import {
   WorkflowAction,
   WorkflowActions,
   WorkflowData,
+  WorkflowManifest,
 } from '../../models/redux/workflow';
 import createReducer from './createReducer';
 
 const initialState: WorkflowData = {
-  name: '',
-  link: '',
-  yaml: '',
-  id: '',
-  description: '',
-  weights: [],
-  isCustomWorkflow: false,
-  isRecurring: false,
-  isDisabled: false,
   chaosEngineChanged: false,
   namespace: 'litmus',
   clusterid: '',
@@ -31,19 +23,13 @@ const initialState: WorkflowData = {
     time: new Date(),
     date: new Date(),
   },
-  customWorkflow: {
-    experiment_name: '',
-    hubName: '',
-    repoUrl: '',
-    repoBranch: '',
-    experimentYAML: '',
-    yaml: '',
-    index: -1,
-    description: '',
-  },
-  customWorkflows: [],
-  stepperActiveStep: 1,
   clustername: '',
+};
+
+const init: WorkflowManifest = {
+  manifest: '',
+  engineYAML: '',
+  isCustomWorkflow: false,
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {
@@ -58,4 +44,14 @@ export const workflowData = createReducer<WorkflowData>(initialState, {
   },
 });
 
-export default workflowData;
+export const workflowManifest = createReducer<WorkflowManifest>(init, {
+  [WorkflowActions.SET_WORKFLOW_MANIFEST](
+    state: WorkflowManifest,
+    action: WorkflowAction
+  ) {
+    return {
+      ...state,
+      ...action.payload,
+    };
+  },
+});

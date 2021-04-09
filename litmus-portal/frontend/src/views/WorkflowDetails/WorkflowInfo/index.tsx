@@ -1,177 +1,140 @@
 import { Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ButtonOutlined } from 'litmus-ui';
 import { ExecutionData } from '../../../models/graphql/workflowData';
 import timeDifference from '../../../utils/datesModifier';
 import useStyles from './styles';
 
 interface WorkflowInfoProps {
-  workflow_name: string;
-  execution_data: ExecutionData;
+  setIsInfoToggled?: React.Dispatch<React.SetStateAction<boolean>>;
+  tab: number;
+  data: ExecutionData;
   cluster_name: string;
 }
 
-interface SidebarState {
-  currentRunningNodes: string[];
-  executedNodes: string[];
-}
-
 const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
-  workflow_name,
-  execution_data,
+  setIsInfoToggled,
+  tab,
+  data,
   cluster_name,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  // Get selected node data from redux
-
-  const [duration, setDuration] = useState<number>(0);
-  const [data, setData] = useState<SidebarState>({
-    currentRunningNodes: [],
-    executedNodes: [],
-  });
-
-  useEffect(() => {
-    setDuration(
-      (parseInt(execution_data.finishedAt, 10) -
-        parseInt(execution_data.startedAt, 10)) /
-        60
-    );
-
-    // If the Workflow is Running [Data is being received through Subscription]
-    // Set the currently executed node in a local state
-    const executedNodes: string[] = [];
-    const currentRunningNodes: string[] = [];
-
-    for (const val of Object.values(execution_data.nodes))
-      if (val.type !== 'StepGroup' && val.phase === 'Running')
-        currentRunningNodes.push(val.name);
-      else if (val.type !== 'StepGroup' && val.phase === 'Succeeded')
-        executedNodes.push(val.name);
-
-    setData({
-      ...data,
-      currentRunningNodes,
-      executedNodes,
-    });
-  }, [execution_data.nodes, execution_data.phase]);
 
   return (
-    <div className={classes.root}>
+    <div
+      className={`${classes.root} ${
+        tab === 1 ? classes.rootBottom : classes.rootHeader
+      }`}
+    >
       {/* Workflow Information */}
-      <div className={classes.heightMaintainer}>
-        <Typography className={classes.workflowSpacing}>
-          <span className={classes.bold}>
-            {t('workflowDetailsView.workflowInfo.header')}:
-          </span>
-          <br />
-          {workflow_name}
+
+      {/* Header Section */}
+      <div className={classes.header}>
+        <Typography className={classes.title}>
+          <strong>{t('workflowDetailsView.workflowInfo.header')}</strong>
         </Typography>
+        {tab === 1 && setIsInfoToggled && (
+          <ButtonOutlined
+            className={classes.closeButton}
+            onClick={() => {
+              setIsInfoToggled(false);
+            }}
+          >
+            &#x2715;
+          </ButtonOutlined>
+        )}
       </div>
-      <hr />
 
-      {/* Workflow Details
-      @param State
-      @param Start Time
-      @param End Time
-      @param Duration
-      @param Namespace */}
-
-      <div className={classes.workflowSpacing}>
-        <div className={classes.heightMaintainer}>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowInfo.param.state')}:
-            </span>{' '}
-            {execution_data.phase}
+      {/* Body Section divided in 4 parts */}
+      <div className={classes.section}>
+        {/* 1. Resiliency Score Sub Section */}
+        <div className={classes.subSection}>
+          <Typography className={classes.subSectionTitle}>
+            {t('workflowDetailsView.workflowInfo.resilienceScore')}
           </Typography>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowInfo.param.startTime')}:
-            </span>{' '}
-            {timeDifference(execution_data.startedAt)}
-          </Typography>
-          {execution_data.phase !== 'Running' ? (
-            <>
-              <Typography>
-                <span className={classes.bold}>
-                  {t('workflowDetailsView.workflowInfo.param.endTime')}:
-                </span>{' '}
-                {execution_data.finishedAt === ''
-                  ? t('workflowDetailsView.workflowInfo.param.finished')
-                  : timeDifference(execution_data.finishedAt)}
-              </Typography>
-              <Typography>
-                <span className={classes.bold}>
-                  {t('workflowDetailsView.workflowInfo.param.duration')}:
-                </span>{' '}
-                {`${duration.toFixed(1)} minutes`}
-              </Typography>
-            </>
-          ) : (
-            <></>
-          )}
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowInfo.param.namespace')}:
-            </span>{' '}
-            {execution_data.namespace}
+          {/* Static data, will be changed with API response */}
+          <Typography className={classes.resilliencyScore}>
+            {data.resiliency_score === undefined
+              ? 'NA'
+              : `${data.resiliency_score}%`}
           </Typography>
         </div>
-      </div>
-      <hr />
 
-      {/* Workflow Node Details
-      @param Currently Running Node
-      @param Executed Nodes */}
-
-      <div className={classes.workflowSpacing}>
-        <div className={classes.heightMaintainer}>
-          {execution_data.phase === 'Running' ? (
-            <Typography>
-              <span className={classes.bold}>
-                {t('workflowDetailsView.workflowInfo.nodeDetails.curr')}:
-              </span>{' '}
-              <ul>
-                {data.currentRunningNodes.map((node) => (
-                  <li key={node}>{node}</li>
-                ))}
-              </ul>
-            </Typography>
-          ) : (
-            <></>
-          )}
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowInfo.nodeDetails.exec')}:
-            </span>{' '}
-            {data.executedNodes.length ? (
-              <ul>
-                {data.executedNodes.map((node) => (
-                  <li key={node}>{node}</li>
-                ))}
-              </ul>
-            ) : (
-              <Typography>
-                {t('workflowDetailsView.workflowInfo.nodeDetails.noExec')}
+        {/* 2. Run Time Sub Section */}
+        <div className={classes.subSection}>
+          <Typography className={classes.subSectionTitle}>
+            {t('workflowDetailsView.workflowInfo.runTime.runTimeHeader')}
+          </Typography>
+          <div className={classes.section}>
+            <div className={classes.subCategorySection}>
+              <Typography className={classes.subCategorySectionTitle}>
+                {t('workflowDetailsView.workflowInfo.runTime.startTime')}
               </Typography>
-            )}
-          </Typography>
+              <Typography>{timeDifference(data.startedAt)}</Typography>
+            </div>
+            <div className={classes.subCategorySection}>
+              <Typography className={classes.subCategorySectionTitle}>
+                {t('workflowDetailsView.workflowInfo.runTime.endTime')}
+              </Typography>
+              <Typography>
+                {data.finishedAt !== ''
+                  ? timeDifference(data.finishedAt)
+                  : 'Not yet finished'}
+              </Typography>
+            </div>
+          </div>
         </div>
-      </div>
-      <hr />
 
-      {/* Cluster Details
-      @param Cluster Name */}
-
-      <div className={classes.workflowSpacing}>
-        <div className={classes.heightMaintainer}>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowInfo.cluster')}:
-            </span>{' '}
-            {cluster_name}
+        {/* 3. HostedOn Sub Section */}
+        <div className={classes.subSection}>
+          <Typography className={classes.subSectionTitle}>
+            {t('workflowDetailsView.workflowInfo.hostedOn.hostedOnHeader')}
           </Typography>
+          <div className={classes.section}>
+            <div className={classes.subCategorySection}>
+              <Typography className={classes.subCategorySectionTitle}>
+                {t('workflowDetailsView.workflowInfo.hostedOn.cluster')}
+              </Typography>
+              <Typography>{cluster_name}</Typography>
+            </div>
+            <div className={classes.subCategorySection}>
+              <Typography className={classes.subCategorySectionTitle}>
+                {t('workflowDetailsView.workflowInfo.hostedOn.namespace')}
+              </Typography>
+              <Typography>{data.namespace}</Typography>
+            </div>
+          </div>
+        </div>
+
+        {/* Target Sub Section */}
+        <div className={classes.subSection}>
+          <Typography className={classes.subSectionTitle}>
+            {t('workflowDetailsView.workflowInfo.targets.targetsHeader')}
+          </Typography>
+          <div className={classes.section}>
+            <div className={classes.subCategorySection}>
+              <Typography className={classes.subCategorySectionTitle}>
+                {t('workflowDetailsView.workflowInfo.targets.cluster')}
+              </Typography>
+              <div>{cluster_name}</div>
+            </div>
+            <div className={classes.subCategorySection}>
+              <Typography className={classes.subCategorySectionTitle}>
+                {t('workflowDetailsView.workflowInfo.targets.namespace')}
+              </Typography>
+              <Typography>{data.namespace}</Typography>
+            </div>
+            <div className={classes.subCategorySection}>
+              <Typography className={classes.subCategorySectionTitle}>
+                {t('workflowDetailsView.workflowInfo.application')}
+              </Typography>
+
+              {/* Static data, will be changed with API response */}
+              <Typography>Application name</Typography>
+            </div>
+          </div>
         </div>
       </div>
     </div>

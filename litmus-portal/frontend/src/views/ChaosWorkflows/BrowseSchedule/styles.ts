@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.disabledBackground}`,
     backgroundColor: theme.palette.cards.background,
     height: '29.220rem',
     '&::-webkit-scrollbar': {
@@ -79,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.75),
   },
   workflowName: {
-    border: '1px solid rgba(0, 0, 0, 0.1)',
+    borderRight: `1px solid ${theme.palette.border.main}`,
     color: theme.palette.text.disabled,
   },
   sortDiv: {
@@ -90,12 +89,13 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     paddingLeft: theme.spacing(6.25),
-    border: '1px solid rgba(0, 0, 0, 0.1)',
+    borderRight: `1px solid ${theme.palette.border.main}`,
   },
   regularity: {
     color: theme.palette.text.disabled,
   },
   targetCluster: {
+    paddingLeft: theme.spacing(5),
     color: theme.palette.text.disabled,
   },
   clusterStartDate: {
@@ -125,7 +125,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.disabled,
   },
   clusterData: {
-    paddingTop: theme.spacing(1.25),
+    paddingLeft: theme.spacing(5),
   },
   optionBtn: {
     marginLeft: theme.spacing(-6.25),
@@ -168,7 +168,7 @@ const useStyles = makeStyles((theme) => ({
   },
   // Experiment Weights PopOver Property
   weightDiv: {
-    width: '15.1875rem',
+    width: '18.1875rem',
     padding: theme.spacing(3.125, 2.6),
   },
   dark: {
@@ -177,7 +177,7 @@ const useStyles = makeStyles((theme) => ({
   weightInfo: {
     display: 'flex',
     flexDirection: 'row',
-    paddingBottom: theme.spacing(0.625),
+    paddingBottom: theme.spacing(1),
   },
   points: {
     marginLeft: 'auto',
@@ -219,6 +219,24 @@ const useStyles = makeStyles((theme) => ({
     width: '16rem',
   },
   w7: { width: '7rem' },
+
+  scheduleDetailsFlex: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    margin: theme.spacing(2),
+  },
+  scheduleDetailsValue: {
+    width: '50%',
+    textAlign: 'left',
+  },
+
+  boldText: {
+    fontWeight: 'bold',
+  },
+
+  buttonTransform: {
+    textTransform: 'none',
+  },
 }));
 
 export default useStyles;

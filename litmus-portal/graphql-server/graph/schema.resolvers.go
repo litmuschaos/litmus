@@ -26,8 +26,14 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
+	validate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rbac"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
+)
+
+const (
+	AcceptedInvitation = "Accepted"
+	PendingInvitation  = "Pending"
 )
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
@@ -35,6 +41,10 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 }
 
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	err := validate.ValidateRole(ctx, input.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return wfHandler.CreateChaosWorkflow(ctx, &input, data_store.Store)
 }
 
@@ -43,11 +53,15 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID st
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
+	return usermanagement.CreateUser(ctx, user)
+}
+
+func (r *mutationResolver) CreateProject(ctx context.Context, projectName string) (*model.Project, error) {
+	//fetching all the user's details from jwt token
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	userUID := claims["uid"].(string)
-	role := claims["role"].(string)
 
-	return usermanagement.CreateUser(ctx, user, userUID, role)
+	return project.CreateProjectWithUser(ctx, projectName, userUID)
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
@@ -59,22 +73,51 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid s
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleOwner}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+
 	return project.SendInvitation(ctx, member)
 }
 
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, PendingInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.AcceptInvitation(ctx, member)
 }
 
 func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, PendingInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.DeclineInvitation(ctx, member)
 }
 
 func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleOwner}, AcceptedInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.RemoveInvitation(ctx, member)
 }
 
 func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, AcceptedInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
 	return project.LeaveProject(ctx, member)
 }
 
@@ -94,11 +137,25 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 	return wfHandler.LogsHandler(log, *data_store.Store)
 }
 
+func (r *mutationResolver) KubeObj(ctx context.Context, kubeData model.KubeObjectData) (string, error) {
+	return wfHandler.KubeObjHandler(kubeData, *data_store.Store)
+}
+
 func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+
 	return myhub.AddMyHub(ctx, myhubInput, projectID)
 }
 
 func (r *mutationResolver) SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+
 	return myhub.SaveMyHub(ctx, myhubInput, projectID)
 }
 
@@ -107,6 +164,10 @@ func (r *mutationResolver) SyncHub(ctx context.Context, id string) ([]*model.MyH
 }
 
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	err := validate.ValidateRole(ctx, input.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return wfHandler.UpdateWorkflow(ctx, input, data_store.Store)
 }
 
@@ -127,6 +188,10 @@ func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, 
 }
 
 func (r *mutationResolver) UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return myhub.UpdateMyHub(ctx, myhubInput, projectID)
 }
 
@@ -178,11 +243,27 @@ func (r *mutationResolver) DeleteDataSource(ctx context.Context, input model.Del
 	return analyticsHandler.DeleteDataSource(input)
 }
 
+func (r *mutationResolver) CreateManifestTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error) {
+	return wfHandler.SaveWorkflowTemplate(ctx, templateInput)
+}
+
+func (r *mutationResolver) DeleteManifestTemplate(ctx context.Context, templateID string) (bool, error) {
+	return wfHandler.DeleteWorkflowTemplate(ctx, templateID)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return wfHandler.QueryWorkflowRuns(projectID)
 }
 
 func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return clusterHandler.QueryGetClusters(projectID, clusterType)
 }
 
@@ -191,6 +272,10 @@ func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.Us
 }
 
 func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*model.Project, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return project.GetProject(ctx, projectID)
 }
 
@@ -205,10 +290,18 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 }
 
 func (r *queryResolver) GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return wfHandler.QueryWorkflows(projectID)
 }
 
 func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	if len(workflowIds) == 0 {
 		return wfHandler.QueryListWorkflow(projectID)
 	} else {
@@ -217,14 +310,26 @@ func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, work
 }
 
 func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return myhub.GetCharts(ctx, hubName, projectID)
 }
 
 func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
+	err := validate.ValidateRole(ctx, experimentInput.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return myhub.GetExperiment(ctx, experimentInput)
 }
 
 func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return myhub.HubStatus(ctx, projectID)
 }
 
@@ -248,6 +353,14 @@ func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) 
 	return gitOpsHandler.GetGitOpsDetailsHandler(ctx, projectID)
 }
 
+func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error) {
+	return wfHandler.ListWorkflowTemplate(ctx, projectID)
+}
+
+func (r *queryResolver) GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error) {
+	return wfHandler.QueryTemplateWorkflowByID(ctx, templateID)
+}
+
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)
@@ -264,20 +377,20 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 }
 
 func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
-	log.Print("NEW WORKFLOW EVENT LISTENER", projectID)
+	log.Print("NEW WORKFLOW EVENT LISTENER: ", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
 	data_store.Store.Mutex.Lock()
 	data_store.Store.WorkflowEventPublish[projectID] = append(data_store.Store.WorkflowEventPublish[projectID], workflowEvent)
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		log.Print("CLOSED WORKFLOW LISTENER", projectID)
+		log.Print("CLOSED WORKFLOW LISTENER: ", projectID)
 	}()
 	return workflowEvent, nil
 }
 
 func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
-	log.Print("NEW LOG REQUEST", podDetails.ClusterID, podDetails.PodName)
+	log.Print("NEW LOG REQUEST: ", podDetails.ClusterID, podDetails.PodName)
 	workflowLog := make(chan *model.PodLogResponse, 1)
 	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
@@ -285,7 +398,7 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.P
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		log.Print("CLOSED LOG LISTENER", podDetails.ClusterID, podDetails.PodName)
+		log.Print("CLOSED LOG LISTENER: ", podDetails.ClusterID, podDetails.PodName)
 		delete(data_store.Store.WorkflowLog, reqID.String())
 	}()
 	go wfHandler.GetLogs(reqID.String(), podDetails, *data_store.Store)
@@ -293,11 +406,11 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.P
 }
 
 func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error) {
-	log.Print("NEW CLUSTER CONNECT ", clusterInfo.ClusterID)
+	log.Print("NEW CLUSTER CONNECT: ", clusterInfo.ClusterID)
 	clusterAction := make(chan *model.ClusterAction, 1)
 	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
 	if err != nil {
-		log.Print("VALIDATION FAILED : ", clusterInfo.ClusterID)
+		log.Print("VALIDATION FAILED: ", clusterInfo.ClusterID)
 		return clusterAction, err
 	}
 
@@ -343,6 +456,22 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	verifiedCluster.IsActive = true
 	clusterHandler.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *data_store.Store)
 	return clusterAction, nil
+}
+
+func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
+	log.Print("NEW KUBEOBJECT REQUEST", kubeObjectRequest.ClusterID)
+	kubeObjData := make(chan *model.KubeObjectResponse)
+	reqID := uuid.New()
+	data_store.Store.Mutex.Lock()
+	data_store.Store.KubeObjectData[reqID.String()] = kubeObjData
+	data_store.Store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		log.Println("Closed KubeObj Listener")
+		delete(data_store.Store.KubeObjectData, reqID.String())
+	}()
+	go wfHandler.GetKubeObjData(reqID.String(), kubeObjectRequest, *data_store.Store)
+	return kubeObjData, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

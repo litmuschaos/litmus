@@ -4,9 +4,12 @@ import (
 	"context"
 	"errors"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/google/uuid"
 
@@ -14,11 +17,20 @@ import (
 	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbSchemaProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
-	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
+	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 )
 
-// CreateProjectWithUser ...
-func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSchemaUserManagement.User) (*model.Project, error) {
+// CreateProjectWithUser :creates a project for the user
+func CreateProjectWithUser(ctx context.Context, projectName string, userID string) (*model.Project, error) {
+
+	var (
+		self_cluster = os.Getenv("SELF_CLUSTER")
+	)
+	user, er := dbOperationsUserManagement.GetUserByUserID(ctx, userID)
+	if er != nil {
+		log.Print("ERROR", er)
+		return nil, er
+	}
 
 	uuid := uuid.New()
 	newProject := &dbSchemaProject.Project{
@@ -53,12 +65,18 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
 	go myhub.AddMyHub(context.Background(), defaultHub, newProject.ID)
 
+	if strings.ToLower(self_cluster) == "true" && strings.ToLower(*user.Role) == "admin" {
+		log.Print("Starting self deployer")
+		go selfDeployer.StartDeployer(newProject.ID)
+	}
+
 	return newProject.GetOutputProject(), nil
 }
 
 // GetProject ...
 func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
-	project, err := dbOperationsProject.GetProject(ctx, projectID)
+
+	project, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", projectID}})
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +85,7 @@ func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 
 // GetProjectsByUserID ...
 func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, error) {
+
 	projects, err := dbOperationsProject.GetProjectsByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -81,6 +100,7 @@ func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, 
 
 // SendInvitation :Send an invitation
 func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+
 	invitation, err := getInvitation(ctx, member)
 	if err != nil {
 		return nil, err
@@ -165,6 +185,7 @@ func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, e
 
 //LeaveProject :Leave a Project
 func LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
+
 	invitation, err := getInvitation(ctx, member)
 	if err != nil {
 		return "Unsuccessful", err
@@ -186,7 +207,7 @@ func LeaveProject(ctx context.Context, member model.MemberInput) (string, error)
 // getInvitation :Returns the Invitation Status
 func getInvitation(ctx context.Context, member model.MemberInput) (dbSchemaProject.Invitation, error) {
 
-	project, err := dbOperationsProject.GetProject(ctx, member.ProjectID)
+	project, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", member.ProjectID}})
 	if err != nil {
 		return "", err
 	}

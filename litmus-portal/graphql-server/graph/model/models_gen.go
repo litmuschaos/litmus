@@ -105,7 +105,7 @@ type ClusterActionInput struct {
 
 type ClusterConfirmResponse struct {
 	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
-	NewClusterKey      *string `json:"newClusterKey"`
+	NewAccessKey       *string `json:"newAccessKey"`
 	ClusterID          *string `json:"cluster_id"`
 }
 
@@ -160,7 +160,8 @@ type CreateUserInput struct {
 	Email       *string `json:"email"`
 	CompanyName *string `json:"company_name"`
 	Name        *string `json:"name"`
-	ProjectName string  `json:"project_name"`
+	UserID      string  `json:"userID"`
+	Role        string  `json:"role"`
 }
 
 type DSInput struct {
@@ -233,6 +234,29 @@ type GitConfigResponse struct {
 	SSHPrivateKey *string   `json:"SSHPrivateKey"`
 }
 
+type KubeGVRRequest struct {
+	Group    string `json:"group"`
+	Version  string `json:"version"`
+	Resource string `json:"resource"`
+}
+
+type KubeObjectData struct {
+	RequestID string           `json:"request_id"`
+	ClusterID *ClusterIdentity `json:"cluster_id"`
+	KubeObj   string           `json:"kube_obj"`
+}
+
+type KubeObjectRequest struct {
+	ClusterID      string          `json:"cluster_id"`
+	ObjectType     string          `json:"object_type"`
+	KubeObjRequest *KubeGVRRequest `json:"kube_obj_request"`
+}
+
+type KubeObjectResponse struct {
+	ClusterID string `json:"cluster_id"`
+	KubeObj   string `json:"kube_obj"`
+}
+
 type Link struct {
 	Name string `json:"Name"`
 	URL  string `json:"Url"`
@@ -241,6 +265,17 @@ type Link struct {
 type Maintainer struct {
 	Name  string `json:"Name"`
 	Email string `json:"Email"`
+}
+
+type ManifestTemplate struct {
+	TemplateID          string `json:"template_id"`
+	Manifest            string `json:"manifest"`
+	TemplateName        string `json:"template_name"`
+	TemplateDescription string `json:"template_description"`
+	ProjectID           string `json:"project_id"`
+	ProjectName         string `json:"project_name"`
+	CreatedAt           string `json:"created_at"`
+	IsRemoved           bool   `json:"is_removed"`
 }
 
 type Member struct {
@@ -382,6 +417,13 @@ type Spec struct {
 	ChaosExpCRDLink     string        `json:"ChaosExpCRDLink"`
 	Platforms           []string      `json:"Platforms"`
 	ChaosType           *string       `json:"ChaosType"`
+}
+
+type TemplateInput struct {
+	Manifest            string `json:"manifest"`
+	TemplateName        string `json:"template_name"`
+	TemplateDescription string `json:"template_description"`
+	ProjectID           string `json:"project_id"`
 }
 
 type UpdateMyHub struct {

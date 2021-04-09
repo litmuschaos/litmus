@@ -19,15 +19,14 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
+import parser from 'cron-parser';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
-import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
-import { getUserRole } from '../../../utils/auth';
+import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
@@ -35,13 +34,17 @@ import useStyles from './styles';
 interface TableDataProps {
   data: ScheduleWorkflow;
   deleteRow: (wfid: string) => void;
+  handleDisableSchedule: (schedule: ScheduleWorkflow) => void;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
+const TableData: React.FC<TableDataProps> = ({
+  data,
+  deleteRow,
+  handleDisableSchedule,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const userRole = getUserRole();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
 
@@ -59,8 +62,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     setPopAnchorEl(null);
   };
 
-  const workflow = useActions(WorkflowActions);
-
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
   };
@@ -72,6 +73,23 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const handleClose = () => {
     setAnchorEl(null);
     setIsModalOpen(false);
+  };
+
+  // States for PopOver to display schedule details
+  const [
+    popAnchorElSchedule,
+    setPopAnchorElSchedule,
+  ] = React.useState<null | HTMLElement>(null);
+  const isOpenSchedule = Boolean(popAnchorElSchedule);
+  const idSchedule = isOpenSchedule ? 'simple-popover' : undefined;
+  const handlePopOverCloseForSchedule = () => {
+    setPopAnchorElSchedule(null);
+  };
+
+  const handlePopOverClickForSchedule = (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    setPopAnchorElSchedule(event.currentTarget);
   };
 
   // Function to download the manifest
@@ -104,13 +122,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     });
   };
 
-  // If regularity is not Once then set recurring schedule state to true
-  if (data.cronSyntax !== '') {
-    workflow.setWorkflowDetails({
-      isRecurring: true,
-    });
-  }
-
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {
       tabs.changeWorkflowsTabs(0);
@@ -130,53 +141,18 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       <TableCell className={classes.workflowNameData}>
         <Typography>
           <span
-            className={
+            className={`${classes.boldText} ${
               YAML.parse(data.workflow_manifest).spec.suspend === true
                 ? classes.dark
                 : ''
-            }
+            }`}
           >
-            <strong>{data.workflow_name}</strong>
+            {data.workflow_name}
           </span>
         </Typography>
       </TableCell>
       <TableCell>
-        <Typography className={classes.clusterStartDate}>
-          <span
-            className={
-              YAML.parse(data.workflow_manifest).spec.suspend === true
-                ? classes.dark
-                : ''
-            }
-          >
-            {formatDate(data.created_at)}
-          </span>
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <div className={classes.regularityData}>
-          <div className={classes.expDiv}>
-            <img src="/icons/calender.svg" alt="Calender" />
-            <Typography style={{ paddingLeft: 10 }}>
-              <span
-                className={
-                  YAML.parse(data.workflow_manifest).spec.suspend === true
-                    ? classes.dark
-                    : ''
-                }
-              >
-                {data.cronSyntax === '' ? (
-                  <>{t('chaosWorkflows.browseSchedule.regularityOnce')}</>
-                ) : (
-                  cronstrue.toString(data.cronSyntax)
-                )}
-              </span>
-            </Typography>
-          </div>
-        </div>
-      </TableCell>
-      <TableCell>
-        <Typography>
+        <Typography className={classes.clusterData}>
           <span
             className={
               YAML.parse(data.workflow_manifest).spec.suspend === true
@@ -189,7 +165,10 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         </Typography>
       </TableCell>
       <TableCell>
-        <Button onClick={handlePopOverClick} style={{ textTransform: 'none' }}>
+        <Button
+          onClick={handlePopOverClick}
+          className={classes.buttonTransform}
+        >
           <span
             className={
               YAML.parse(data.workflow_manifest).spec.suspend === true
@@ -197,25 +176,12 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 : ''
             }
           >
-            {isOpen ? (
-              <div className={classes.expDiv}>
-                <Typography className={classes.expInfoActive}>
-                  <strong>
-                    {t('chaosWorkflows.browseSchedule.showExperiment')}
-                  </strong>
-                </Typography>
-                <KeyboardArrowDownIcon className={classes.expInfoActiveIcon} />
-              </div>
-            ) : (
-              <div className={classes.expDiv}>
-                <Typography className={classes.expInfo}>
-                  <strong>
-                    {t('chaosWorkflows.browseSchedule.showExperiment')}
-                  </strong>
-                </Typography>
-                <ChevronRightIcon />
-              </div>
-            )}
+            <div className={classes.expDiv}>
+              <Typography className={`${classes.boldText} ${classes.expInfo}`}>
+                {t('chaosWorkflows.browseSchedules.showExperiments')}
+              </Typography>
+              {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
+            </div>
           </span>
         </Button>
         <Popover
@@ -231,14 +197,11 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             vertical: 'top',
             horizontal: 'center',
           }}
-          style={{
-            marginTop: 10,
-          }}
         >
           <div className={classes.weightDiv}>
             {data.weightages.map((expData) => {
               return (
-                <div style={{ marginBottom: 8 }}>
+                <div key={expData.experiment_name} style={{ marginBottom: 8 }}>
                   <ExperimentPoints
                     expName={expData.experiment_name}
                     weight={expData.weightage}
@@ -248,6 +211,95 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             })}
           </div>
         </Popover>
+      </TableCell>
+      <TableCell>
+        <Button
+          onClick={handlePopOverClickForSchedule}
+          className={classes.buttonTransform}
+        >
+          <span
+            className={
+              YAML.parse(data.workflow_manifest).spec.suspend === true
+                ? classes.dark
+                : ''
+            }
+          >
+            <div className={classes.expDiv}>
+              <Typography className={`${classes.boldText} ${classes.expInfo}`}>
+                {t('chaosWorkflows.browseSchedules.showSchedule')}
+              </Typography>
+              {isOpenSchedule ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <ChevronRightIcon />
+              )}
+            </div>
+          </span>
+        </Button>
+        <Popover
+          id={idSchedule}
+          open={isOpenSchedule}
+          anchorEl={popAnchorElSchedule}
+          onClose={handlePopOverCloseForSchedule}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+        >
+          <div className={classes.weightDiv}>
+            <Typography className={classes.scheduleDetailsFlex}>
+              <span className={classes.boldText}>
+                {t('chaosWorkflows.browseSchedules.startingDate')} :
+              </span>
+              <span className={classes.scheduleDetailsValue}>
+                {formatDate(data.created_at)}
+              </span>
+            </Typography>
+            <Typography className={classes.scheduleDetailsFlex}>
+              <span className={classes.boldText}>
+                {t('chaosWorkflows.browseSchedules.lastRun')} :
+              </span>
+              <span className={classes.scheduleDetailsValue}>
+                {timeDifferenceForDate(data.updated_at)}
+              </span>
+            </Typography>
+            <Typography className={classes.scheduleDetailsFlex}>
+              <span className={classes.boldText}>
+                {t('chaosWorkflows.browseSchedules.regularity')} :
+              </span>
+              <span className={classes.scheduleDetailsValue}>
+                {data.cronSyntax === ''
+                  ? `${t('chaosWorkflows.browseSchedules.regularityOnce')}`
+                  : cronstrue.toString(data.cronSyntax)}
+              </span>
+            </Typography>
+          </div>
+        </Popover>
+      </TableCell>
+      <TableCell>
+        <span
+          className={
+            YAML.parse(data.workflow_manifest).spec.suspend === true
+              ? classes.dark
+              : ''
+          }
+        >
+          {YAML.parse(data.workflow_manifest).spec.suspend === true ? (
+            <Typography>
+              {t('chaosWorkflows.browseSchedules.scheduleIsDisabled')}
+            </Typography>
+          ) : (
+            data.cronSyntax !== '' && (
+              <Typography>
+                {parser.parseExpression(data.cronSyntax).next().toString()}
+              </Typography>
+            )
+          )}
+        </span>
       </TableCell>
       <TableCell className={classes.menuCell}>
         <IconButton
@@ -277,25 +329,48 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                   className={classes.btnImg}
                 />
                 <Typography data-cy="editSchedule" className={classes.btnText}>
-                  Edit Schedule
+                  {t('chaosWorkflows.browseSchedules.editSchedule')}
                 </Typography>
               </div>
             </MenuItem>
           ) : (
             <></>
           )}
-          {data.cronSyntax === '' ? (
+          {projectRole !== 'Viewer' && data.cronSyntax === '' ? (
             <MenuItem value="Rerun_Schedule" onClick={() => reRunSchedule()}>
               <div className={classes.expDiv}>
                 <ReplayIcon className={classes.rerunBtn} />
                 <Typography data-cy="reRunSchedule" className={classes.btnText}>
-                  Re-Run Schedule
+                  {t('chaosWorkflows.browseSchedules.reRunSchedule')}
                 </Typography>
               </div>
             </MenuItem>
           ) : (
             <></>
           )}
+          {projectRole !== 'Viewer' &&
+            YAML.parse(data.workflow_manifest).spec.suspend !== true && (
+              <MenuItem
+                value="Disable"
+                onClick={() => {
+                  handleDisableSchedule(data);
+                }}
+              >
+                <div className={classes.expDiv}>
+                  <img
+                    src="/icons/disableSchedule.svg"
+                    alt="Delete Schedule"
+                    className={classes.btnImg}
+                  />
+                  <Typography
+                    data-cy="disableSchedule"
+                    className={classes.downloadText}
+                  >
+                    {t('chaosWorkflows.browseSchedules.disableSchedule')}
+                  </Typography>
+                </div>
+              </MenuItem>
+            )}
           <MenuItem
             value="Download"
             onClick={() =>
@@ -308,11 +383,11 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 data-cy="downloadManifest"
                 className={classes.downloadText}
               >
-                Download Manifest
+                {t('chaosWorkflows.browseSchedules.downloadManifest')}
               </Typography>
             </div>
           </MenuItem>
-          {userRole !== 'Viewer' ? (
+          {projectRole !== 'Viewer' ? (
             <MenuItem value="Analysis" onClick={() => setIsModalOpen(true)}>
               <div className={classes.expDiv}>
                 <img
@@ -324,7 +399,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                   data-cy="deleteSchedule"
                   className={classes.btnText}
                 >
-                  Delete Schedule
+                  {t('chaosWorkflows.browseSchedules.deleteSchedule')}
                 </Typography>
               </div>
             </MenuItem>
@@ -349,12 +424,9 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               {t('createWorkflow.scheduleWorkflow.modalSubheader')}
             </Typography>
             <div className={classes.modalBtns}>
-              <ButtonOutline
-                isDisabled={false}
-                handleClick={() => setIsModalOpen(false)}
-              >
+              <ButtonOutlined onClick={() => setIsModalOpen(false)}>
                 {t('createWorkflow.scheduleWorkflow.cancelBtn')}
-              </ButtonOutline>
+              </ButtonOutlined>
               <ButtonFilled
                 variant="error"
                 className={classes.w7}
