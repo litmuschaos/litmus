@@ -535,10 +535,12 @@ export const chaosEventDataParserForPrometheus = (
                 {
                   subDataName: 'Workflow Status',
                   value: elem ? elem.workflowStatus : STATUS_RUNNING,
+                  date: elem ? elem.lastUpdatedTimeStamp : 0,
                 },
                 {
                   subDataName: 'Experiment Status',
                   value: elem ? elem.experimentStatus : STATUS_RUNNING,
+                  date: elem ? elem.lastUpdatedTimeStamp : 0,
                 },
                 {
                   subDataName: 'Resilience Score',
@@ -548,10 +550,12 @@ export const chaosEventDataParserForPrometheus = (
                     elem.resilienceScore !== INVALID_RESILIENCE_SCORE_STRING
                       ? elem.resilienceScore
                       : '--',
+                  date: elem ? elem.lastUpdatedTimeStamp : 0,
                 },
                 {
                   subDataName: 'Probe Success Percentage',
                   value: elem ? elem.probeSuccessPercentage : '--',
+                  date: elem ? elem.lastUpdatedTimeStamp : 0,
                 },
                 {
                   subDataName: 'Experiment Verdict',
@@ -563,29 +567,11 @@ export const chaosEventDataParserForPrometheus = (
                         ? 'ed'
                         : '')
                     : '--',
+                  date: elem ? elem.lastUpdatedTimeStamp : 0,
                 },
               ];
             })
             .flat(),
-          // Filter subData within the start and end time of interleaving on experiment's lastUpdatedTimeStamp.
-          // Add one extra subData field - lastUpdatedTimeStamp to filter subData in graph.
-          // This method sends the latest run details within selected dashboard time range as the subData.
-          // Needs to be updated to send every run detail with lastUpdatedTimeStamp in the ${NEW_SUBDATA_FIELD}.
-          /* 
-            Schema: 
-            (to be updated as)
-            - subData: [
-                { subDataName: "subData-1-1", value: "1-1", lastUpdatedTimeStamp: 1616832979 },
-                { subDataName: "subData-1-2", value: "1-2", lastUpdatedTimeStamp: 1616833006 },
-              ],
-            subData: 
-            (to be filtered by lastUpdatedTimeStamp in litmus-ui graph on hovering over chaos events)
-            - Workflow Status 
-            - Experiment Status
-            - Resilience Score
-            - Probe Success Percentage
-            - Experiment Verdict
-            */
         }))
       );
       chaosDataUpdates.latestEventResult.push(

@@ -267,7 +267,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             <LineAreaGraph
               legendTableHeight={120}
               openSeries={graphData}
-              eventSeries={chaos_data}
+              eventSeries={chaos_data ?? []}
               showPoints={false}
               showLegendTable
               showEventTable
@@ -286,7 +286,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
         <LineAreaGraph
           legendTableHeight={120}
           openSeries={graphData}
-          eventSeries={chaos_data}
+          eventSeries={chaos_data ?? []}
           showPoints={false}
           showEventTable={viewEventMetric}
           showLegendTable

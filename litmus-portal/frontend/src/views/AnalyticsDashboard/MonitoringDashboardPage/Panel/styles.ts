@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   panelGroupContainer: {
+    position: 'relative',
     width: '100%',
     background: theme.palette.cards.header,
     display: 'inline-grid',
@@ -54,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
   singleGraph: {
     backgroundColor: theme.palette.background.paper,
     position: 'relative',
+    width: 'inherit',
     height: '27.5rem',
   },
 

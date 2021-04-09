@@ -101,6 +101,7 @@ export interface EventMetric extends GraphMetric {
   subData?: Array<{
     subDataName: string;
     value: string;
+    date: number;
   }>;
 }
 

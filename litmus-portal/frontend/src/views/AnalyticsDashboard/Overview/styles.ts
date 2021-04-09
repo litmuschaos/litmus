@@ -19,7 +19,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '25rem',
     marginBottom: '2rem',
   },
-
+  workTableIconText: {
+    display: 'flex',
+  },
   workflowScheduleButton: {
     marginLeft: theme.spacing(2.5),
     marginTop: theme.spacing(5),
@@ -115,8 +117,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     '& p': {
       paddingRight: theme.spacing(2),
     },
-    marginRight: theme.spacing(5),
-    paddingRight: theme.spacing(5),
+    padding: 0,
+    marginRight: theme.spacing(5.75),
+    paddingRight: theme.spacing(5.75),
   },
   seeAllBtn: {
     backgroundColor: 'transparent !important',
@@ -137,15 +140,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   tableRow: {
     display: 'flex',
-    marginTop: theme.spacing(1),
+    height: '4rem',
     justifyContent: 'space-between',
-    padding: theme.spacing(1, 0),
     borderBottom: `1rem solid ${theme.palette.cards.header}`,
     background: theme.palette.cards.background,
     '& td': {
       padding: theme.spacing(0, 1.5),
       borderBottom: `none`,
-      alignSelf: 'baseline',
+      alignSelf: 'center',
+      '& img': {
+        height: '1.875rem',
+        width: '1.875rem',
+      },
+    },
+    '& td:first-child': {
+      paddingLeft: theme.spacing(3.75),
     },
   },
   tableRowHeader: {
@@ -155,6 +164,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   dataRowName: {
     fontSize: '0.85rem',
     fontWeight: 500,
+    margin: 'auto 0',
     marginLeft: theme.spacing(1),
   },
   btnFilled: {
