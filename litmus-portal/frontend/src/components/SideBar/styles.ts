@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     background: theme.palette.sidebarMenu,
     position: 'relative',
-    color: 'inherit',
   },
 
   drawerListItem: {

@@ -24,7 +24,6 @@ import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
-import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import timeDifferenceForDate from '../../../utils/datesModifier';
@@ -35,9 +34,14 @@ import useStyles from './styles';
 interface TableDataProps {
   data: ScheduleWorkflow;
   deleteRow: (wfid: string) => void;
+  handleDisableSchedule: (schedule: ScheduleWorkflow) => void;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
+const TableData: React.FC<TableDataProps> = ({
+  data,
+  deleteRow,
+  handleDisableSchedule,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -57,8 +61,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const handlePopOverClose = () => {
     setPopAnchorEl(null);
   };
-
-  const workflow = useActions(WorkflowActions);
 
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
@@ -119,13 +121,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       search: `?projectID=${projectID}&projectRole=${projectRole}`,
     });
   };
-
-  // If regularity is not Once then set recurring schedule state to true
-  if (data.cronSyntax !== '') {
-    workflow.setWorkflowDetails({
-      isRecurring: true,
-    });
-  }
 
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {
@@ -293,10 +288,16 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               : ''
           }
         >
-          {data.cronSyntax !== '' && (
+          {YAML.parse(data.workflow_manifest).spec.suspend === true ? (
             <Typography>
-              {parser.parseExpression(data.cronSyntax).next().toString()}
+              {t('chaosWorkflows.browseSchedules.scheduleIsDisabled')}
             </Typography>
+          ) : (
+            data.cronSyntax !== '' && (
+              <Typography>
+                {parser.parseExpression(data.cronSyntax).next().toString()}
+              </Typography>
+            )
           )}
         </span>
       </TableCell>
@@ -347,6 +348,29 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           ) : (
             <></>
           )}
+          {projectRole !== 'Viewer' &&
+            YAML.parse(data.workflow_manifest).spec.suspend !== true && (
+              <MenuItem
+                value="Disable"
+                onClick={() => {
+                  handleDisableSchedule(data);
+                }}
+              >
+                <div className={classes.expDiv}>
+                  <img
+                    src="/icons/disableSchedule.svg"
+                    alt="Delete Schedule"
+                    className={classes.btnImg}
+                  />
+                  <Typography
+                    data-cy="disableSchedule"
+                    className={classes.downloadText}
+                  >
+                    {t('chaosWorkflows.browseSchedules.disableSchedule')}
+                  </Typography>
+                </div>
+              </MenuItem>
+            )}
           <MenuItem
             value="Download"
             onClick={() =>

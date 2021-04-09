@@ -18,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
   },
 
+  textBold: {
+    fontWeight: 'bold',
+  },
+
   status: {
     display: 'flex',
     flexDirection: 'row',

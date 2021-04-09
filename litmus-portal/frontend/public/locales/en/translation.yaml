@@ -102,7 +102,7 @@ schedule:
   headingDesc: 'Click on test to see detailed log of your workflow'
   headingText: 'Schedule details:'
   description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  save: 'Save Changes'  
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
   scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
@@ -123,6 +123,15 @@ schedule:
   congratulationsSub2: it will be displayed on the workflow schedules.
   workflowBtn: Go to Workflow
   backBtn: Go Back
+
+editSchedule:
+  title: Edit Schedule
+  verify: Verify
+  cancel: Cancel
+  save: Save Changes
+  edit: Edit
+  theSchedule: The Schedule
+  successfullyCreated: is successfully created
 
 community:
   title: 'Community'
@@ -285,9 +294,8 @@ error:
   goBack: Go back
 
 workflowDetails:
-  detailedLog: Click on Info to see details of your workflow
+  workflowNotStarted: Please check the configuration, the workflow was not able to start
   fetchError: An error has occurred while fetching the data
-  overallRR: 'Overall RR: '
 
 ######################################
 ############    Views    #############
@@ -320,6 +328,12 @@ chaosWorkflows:
     downloadManifest: Download Manifest
     deleteSchedule: Delete Schedule
     editSchedule: Edit Schedule
+    scheduleIsDisabled: This Schedule is disabled now
+    disableSchedule: Disable Schedule
+    options:
+      all: Show All Workflows
+      enabledOnly: Show Enabled Workflows Only
+      disabledOnly: Show Disabled Workflows Only
   browseWorkflows:
     status: Status
     name: Name
@@ -557,6 +571,7 @@ workflowDetailsView:
   workflowInfo:
     header: Overall Workflow Description
     resilienceScore: Resilience Score
+    Completed: Completed
     runTime:
       runTimeHeader: Run Time
       startTime: 'Start Time :'
@@ -745,6 +760,8 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
+    test: test
+    YAML: YAML
     button:
       edit: Edit
       viewYaml: View YAML
@@ -843,6 +860,12 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+browseTemplate:
+  browseAWorkflow: Browse a workflow template
+  seeDetails: See details of your workflow template
+  back: Back
+  scheduleThisTemplate: Schedule this template
 
 #########################################
 ############    dataErrors    ###########
