@@ -632,6 +632,7 @@ workflowDetailsView:
     button:
       logs: Logs
       result: Chaos Result
+    minutes: minutes
 
 homeView:
   averageResilienceScore:

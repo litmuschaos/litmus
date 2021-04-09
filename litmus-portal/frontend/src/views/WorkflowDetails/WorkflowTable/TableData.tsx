@@ -54,8 +54,9 @@ const TableData: React.FC<TableDataProps> = ({
             : (
                 (new Date().getTime() / 1000 - parseInt(data.startedAt, 10)) /
                 60
-              ).toFixed(1)}{' '}
-          minutes
+              ).toFixed(1)}
+          &nbsp;
+          {t('workflowDetailsView.tableView.minutes')}
         </Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
