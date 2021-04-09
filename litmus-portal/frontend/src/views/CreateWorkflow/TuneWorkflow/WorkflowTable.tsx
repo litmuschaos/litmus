@@ -7,7 +7,12 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import { experimentMap } from '../../../models/redux/workflow';
@@ -19,7 +24,7 @@ import ConfigurationStepper from './ConfigurationStepper/ConfigurationStepper';
 import useStyles from './styles';
 
 interface WorkflowTableProps {
-  isCustom?: boolean;
+  isCustom: boolean | undefined;
 }
 
 interface ChaosCRDTable {
@@ -31,7 +36,7 @@ interface ChaosCRDTable {
   ChaosEngine: string;
 }
 
-const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
+const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   const classes = useStyles();
   const workflow = useActions(WorkflowActions);
   const [experiments, setExperiments] = useState<ChaosCRDTable[]>([]);
@@ -91,6 +96,17 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
       parsing(manifest);
     }
   }, [manifest]);
+
+  function onNext() {
+    if (experiments.length === 0) {
+      return false; // Should show alert
+    }
+    return true; // Should not show any alert
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <div>
@@ -152,6 +168,6 @@ const WorkflowTable: React.FC<WorkflowTableProps> = ({ isCustom }) => {
       )}
     </div>
   );
-};
+});
 
 export default WorkflowTable;

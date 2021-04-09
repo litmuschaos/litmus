@@ -6,6 +6,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,6 +54,10 @@ interface ChartName {
 interface WorkflowExperiment {
   ChaosEngine: string;
   Experiment: string;
+}
+
+interface ChildRef {
+  onNext: () => void;
 }
 
 let installAllExp = '';
@@ -160,6 +165,8 @@ const updateCRD = (crd: CustomYAML, experiment: WorkflowExperiment[]) => {
 
 const TuneWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
+
+  const childRef = useRef<ChildRef>();
 
   // State Variables for Tune Workflow
   const [hubName, setHubName] = useState<string>('');
@@ -379,9 +386,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
   }, [engineDataLoading, experimentDataLoading]);
 
   function onNext() {
-    if (isCustomWorkflow && experiment.length === 0) {
-      alert.changeAlertState(true); // Custom Workflow has no experiments
-      return false;
+    if (isCustomWorkflow && childRef.current) {
+      if ((childRef.current.onNext() as unknown) === false) {
+        alert.changeAlertState(true); // Custom Workflow has no experiments
+        return false;
+      }
     }
     return true;
   }
@@ -482,7 +491,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            <WorkflowTable isCustom={isCustomWorkflow} />
+            <WorkflowTable ref={childRef} isCustom={isCustomWorkflow} />
           </Width>
         </Row>
       </div>
