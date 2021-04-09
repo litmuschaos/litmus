@@ -246,7 +246,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
                       }}
                       aria-label="centered"
                     >
-                      {t('createWorkflow.chooseWorkflow.true')}
+                      {t('createWorkflow.chooseWorkflow.trueValue')}
                     </ToggleButton>
                     <ToggleButton
                       value={false}
@@ -260,7 +260,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
                       }}
                       aria-label="centered"
                     >
-                      {t('createWorkflow.chooseWorkflow.false')}
+                      {t('createWorkflow.chooseWorkflow.falseValue')}
                     </ToggleButton>
                   </ToggleButtonGroup>
                 </div>
