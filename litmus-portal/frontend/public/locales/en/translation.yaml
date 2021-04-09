@@ -904,6 +904,12 @@ workflows:
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
 
+browseTemplate:
+  browseAWorkflow: Browse a workflow template
+  seeDetails: See details of your workflow template
+  back: Back
+  scheduleThisTemplate: Schedule this template
+
 #########################################
 ############    dataErrors    ###########
 #########################################

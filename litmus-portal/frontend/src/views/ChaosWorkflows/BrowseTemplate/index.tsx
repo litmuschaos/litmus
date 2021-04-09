@@ -2,6 +2,7 @@ import { Divider, Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import localforage from 'localforage';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import data from '../../../components/PredifinedWorkflows/data';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
@@ -27,6 +28,7 @@ interface BrowseTemplateProps {
 }
 
 const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const projectID = getProjectID();
   const userRole = getProjectRole();
@@ -57,10 +59,10 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
     <Scaffold>
       <div className={classes.root}>
         <Typography className={classes.headerTitle}>
-          Browse a workflow template
+          {t('browseTemplate.browseAWorkflow')}
         </Typography>
         <Typography variant="subtitle1" className={classes.bodytext}>
-          See details of your workflow template
+          {t('browseTemplate.seeDetails')}
         </Typography>
         <section className={classes.contentWrapper}>
           {/* Header */}
@@ -86,10 +88,10 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
           {/* Buttons */}
           <div className={classes.spaceBetween}>
             <ButtonOutlined onClick={() => history.push('/workflows')}>
-              <>Back</>
+              {t('browseTemplate.back')}
             </ButtonOutlined>
             <ButtonFilled variant="success" onClick={() => preSelectWorkflow()}>
-              <>Schedule this template</>
+              {t('browseTemplate.scheduleThisTemplate')}
             </ButtonFilled>
           </div>
         </section>
