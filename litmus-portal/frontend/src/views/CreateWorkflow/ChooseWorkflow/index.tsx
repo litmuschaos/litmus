@@ -93,7 +93,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
         <div aria-label="header" className={classes.header}>
           <div aria-label="headerLeft">
             <Typography className={classes.title}>
-              <strong> {t('createWorkflow.chooseWorkflow.title')}</strong>
+              {t('createWorkflow.chooseWorkflow.title')}
             </Typography>
             <Typography className={classes.subtitle}>
               {t('createWorkflow.chooseWorkflow.subtitle')}
@@ -115,15 +115,14 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           <Accordion expanded={selected === 'A'} className={classes.accordion}>
             <AccordionSummary>
               <RadioButton value="A" onChange={(e) => handleChange(e)}>
-                Create a new workflow from one of the pre-defined chaos workflow
-                templates
+                {t('createWorkflow.chooseWorkflow.optionA')}
               </RadioButton>
             </AccordionSummary>
             <ChoosePreDefinedExperiments ref={childRef} />
           </Accordion>
 
           <RadioButton value="B" onChange={(e) => handleChange(e)}>
-            Create a new workflow by cloning an existing workflow
+            {t('createWorkflow.chooseWorkflow.optionB')}
           </RadioButton>
 
           <Accordion
@@ -135,8 +134,10 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="C" onChange={(e) => handleChange(e)}>
-                Create a new workflow using the experiments from
-                <strong> My Hubs</strong>
+                {t('createWorkflow.chooseWorkflow.optionC')}
+                <span className={classes.bold}>
+                  {t('createWorkflow.chooseWorkflow.myHubs')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <SelectMyHub ref={childRef} />
@@ -151,7 +152,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="D" onChange={(e) => handleChange(e)}>
-                Import a workflow using YAML
+                {t('createWorkflow.chooseWorkflow.optionD')}
               </RadioButton>
             </AccordionSummary>
             <UploadYAML />
