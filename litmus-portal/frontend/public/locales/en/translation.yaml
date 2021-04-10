@@ -655,9 +655,11 @@ createWorkflow:
   chooseWorkflow:
     title: Start creating your chaos workflow
     subtitle: Simulate the workflow run and see the suggested reliability score
-    header: Select or design workflow
-    info: Select one of the pre-defined chaos workflows or design your own workflow.
-    preDefined: pre-defined workflows
+    optionA: Create a new workflow from one of the pre-defined chaos workflow templates
+    optionB: Create a new workflow by cloning an existing workflow
+    optionC: Create a new workflow using the experiments from
+    optionD: Import a workflow using YAML
+    myHubs: My Hubs
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
@@ -675,6 +677,16 @@ createWorkflow:
     continue: Do you want to continue?
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
+    pleaseAddExp: Please add experiments to see the data
+    revertSchedule: Revert Schedule
+    trueValue: True
+    falseValue: False
+    table:
+      head1: Sequence
+      head2: Name
+      head3: Namespace
+      head4: Application
+      head5: Probes
     selectMyHub: Select MyHub
     label:
       workflowName: Workflow name
@@ -745,6 +757,20 @@ createWorkflow:
     done: Done
     editSequence: Edit Sequence
     addANewExperiment: Add a new experiment
+    verticalStepper:
+      annotationInfo: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      annotation: Annotation Check
+      true: 'True'
+      false: 'False'
+      annotationDesc: The target application does not have an annotation “Chaos=true”. Ideally, you cannot run this experiment unless the annotation is patched to the application. However, this service account has the privileges to disable the enforcement of annotation checks. Mark the annotation as false to proceed.
+      appkind: appKind
+      deployment: Deployment
+      statefulset: Statefulset
+      daemonset: Daemonset
+      deploymentconfig: Deploymentconfig
+      rollout: Rollout
+      nodeselector: NodeSelector
+      selector: 'kubernetes.io/hostname :'
     addProbe:
       heading: Add
       headingStrong: Probe
@@ -903,6 +929,12 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+browseTemplate:
+  browseAWorkflow: Browse a workflow template
+  seeDetails: See details of your workflow template
+  back: Back
+  scheduleThisTemplate: Schedule this template
 
 #########################################
 ############    dataErrors    ###########

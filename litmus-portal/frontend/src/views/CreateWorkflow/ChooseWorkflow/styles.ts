@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between',
   },
   title: {
+    fontWeight: 700,
     fontSize: '1.2rem',
     [theme.breakpoints.up('lg')]: {
       fontSize: '1.4rem',
@@ -238,6 +239,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   label: {
     color: theme.palette.common.black,
+  },
+  bold: {
+    fontWeight: 700,
   },
 }));
 
