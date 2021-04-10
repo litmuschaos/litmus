@@ -31,11 +31,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const (
-	AcceptedInvitation = "Accepted"
-	PendingInvitation  = "Pending"
-)
-
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
 	return clusterHandler.ClusterRegister(clusterInput)
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"errors"
+
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -72,24 +73,24 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 
 	return response, nil
 }
+
 /*
 	This function returns the endpoint of the server by which external agents can communicate.
 	The order of generating the endpoint is based on different network type:
 	- Ingress
 	- LoadBalancer > NodePort > ClusterIP
- */
+*/
 func GetServerEndpoint() (string, error) {
 	var (
-		NodePort           int32
-		Port int32
-		ExternalIP         string
-		InternalIP         string
-		IngressPath        string
-		IPAddress          string
-		Scheme              string
-		FinalUrl           string
+		NodePort          int32
+		Port              int32
+		InternalIP        string
+		IngressPath       string
+		IPAddress         string
+		Scheme            string
+		FinalUrl          string
 		ServerServiceName = os.Getenv("SERVER_SERVICE_NAME")
-		ServerLabels       = os.Getenv("SERVER_LABELS") // component=litmusportal-server
+		NodeName          = os.Getenv("NODE_NAME")
 		LitmusPortalNS    = os.Getenv("LITMUS_PORTAL_NAMESPACE")
 		Ingress           = os.Getenv("INGRESS")
 		IngressName       = os.Getenv("INGRESS_NAME")
@@ -106,10 +107,24 @@ func GetServerEndpoint() (string, error) {
 			return "", err
 		}
 
-		if getIng.Status.LoadBalancer.Ingress[0].Hostname == "" {
-			IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
+		/*
+			Priorities of retrieving Ingress endpoint
+			1. hostname
+			2. IPAddress
+		*/
+
+		if len(getIng.Status.LoadBalancer.Ingress) > 0 {
+			if len(getIng.Spec.Rules) > 0 {
+				if getIng.Spec.Rules[0].Host != "" {
+					IPAddress = getIng.Spec.Rules[0].Host
+				} else if getIng.Status.LoadBalancer.Ingress[0].IP != "" {
+					IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
+				}
+			} else {
+				return "", errors.New("Ingress rules are not present")
+			}
 		} else {
-			IPAddress=  getIng.Spec.Rules[0].Host
+			return "", errors.New("IP Address or HostName not generated")
 		}
 
 		if IPAddress == "" {
@@ -119,6 +134,7 @@ func GetServerEndpoint() (string, error) {
 		for _, rule := range getIng.Spec.Rules {
 			for _, path := range rule.HTTP.Paths {
 				if path.Backend.ServiceName == ServerServiceName {
+					log.Print(path.Path)
 					path_arr := strings.Split(path.Path, "/")
 					if path_arr[len(path_arr)-1] == "(.*)" {
 						path_arr[len(path_arr)-1] = "query"
@@ -126,11 +142,14 @@ func GetServerEndpoint() (string, error) {
 						path_arr = append(path_arr, "query")
 					}
 
+					log.Print(path_arr)
 					for el, p := range path_arr {
-						if el == len(path_arr) {
-							IngressPath += p
-						} else {
-							IngressPath += p + "/"
+						if p != "" {
+							if el == len(path_arr)-1 {
+								IngressPath += p
+							} else {
+								IngressPath += p + "/"
+							}
 						}
 					}
 				}
@@ -143,15 +162,9 @@ func GetServerEndpoint() (string, error) {
 			Scheme = "http"
 		}
 
-		FinalUrl = Scheme + "://" + IPAddress + IngressPath
+		FinalUrl = Scheme + "://" + IPAddress + "/" + IngressPath
 
 	} else if Ingress == "false" || Ingress == "" {
-		podList, err := clientset.CoreV1().Pods(LitmusPortalNS).List(metaV1.ListOptions{
-			LabelSelector: ServerLabels,
-		})
-		if err != nil {
-			return "", err
-		}
 
 		svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ServerServiceName, metaV1.GetOptions{})
 		if err != nil {
@@ -164,33 +177,33 @@ func GetServerEndpoint() (string, error) {
 				Port = port.Port
 			}
 		}
-		
+
 		if strings.ToLower(string(svc.Spec.Type)) == "loadbalancer" {
-			log.Print("loadbalance")
+			log.Print("loadbalancer")
 			IPAddress = svc.Spec.LoadBalancerIP
 			if IPAddress == "" {
 				return "", errors.New("ExternalIP is not present for loadbalancer service type")
 			}
-			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort))
+			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port))
 		} else if strings.ToLower(string(svc.Spec.Type)) == "nodeport" {
-			nodeIP, err := clientset.CoreV1().Nodes().Get(podList.Items[0].Spec.NodeName, metaV1.GetOptions{})
+			nodeIP, err := clientset.CoreV1().Nodes().Get(NodeName, metaV1.GetOptions{})
 			if err != nil {
 				return "", err
 			}
 
 			for _, addr := range nodeIP.Status.Addresses {
 				if strings.ToLower(string(addr.Type)) == "externalip" && addr.Address != "" {
-					ExternalIP = addr.Address
+					IPAddress = addr.Address
 				} else if strings.ToLower(string(addr.Type)) == "internalip" && addr.Address != "" {
 					InternalIP = addr.Address
 				}
 			}
 
-			if ExternalIP == "" {
+			if IPAddress == "" {
 				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort))
-			} else if InternalIP == ""{
-				FinalUrl = "http://" + ExternalIP + ":" + strconv.Itoa(int(NodePort))
-			} else{
+			} else if InternalIP == "" {
+				FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort))
+			} else {
 				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
 		} else if strings.ToLower(string(svc.Spec.Type)) == "clusterip" {
@@ -204,7 +217,7 @@ func GetServerEndpoint() (string, error) {
 		}
 	}
 
-	log.Print(FinalUrl)
+	log.Print("Server endpoint: ", FinalUrl)
 
 	return FinalUrl, nil
 }
