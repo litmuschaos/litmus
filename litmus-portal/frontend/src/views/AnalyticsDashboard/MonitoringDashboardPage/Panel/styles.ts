@@ -63,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
     width: '85%',
     height: '95%',
     padding: theme.spacing(4),
-    paddingLeft: theme.spacing(2),
   },
 
   wrapperParentIconsTitle: {
