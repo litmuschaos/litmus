@@ -1,37 +1,14 @@
-import { Typography, withStyles } from '@material-ui/core';
-import MuiAccordion from '@material-ui/core/Accordion';
+import { Typography } from '@material-ui/core';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { EventMetric } from 'litmus-ui';
 import React from 'react';
-import { EventMetric } from '../../../../models/dashboardsData';
+import { Accordion } from '../../../../components/Accordion';
 import { PanelResponse } from '../../../../models/graphql/dashboardsDetails';
+import { ReactComponent as ExpandAccordion } from '../../../../svg/expandAccordion.svg';
+import { ReactComponent as ShrinkAccordion } from '../../../../svg/shrinkAccordion.svg';
 import GraphPanel from './GraphPanel';
 import useStyles from './styles';
-
-const Accordion = withStyles({
-  root: {
-    border: 0,
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
-    '&:before': {
-      display: 'none',
-    },
-    '&$expanded': {
-      margin: 'auto',
-    },
-    '& .MuiAccordionSummary-root.Mui-expanded': {
-      minHeight: '1rem !important',
-      height: '2.5rem',
-    },
-    '& .MuiAccordionSummary-root': {
-      minHeight: '1rem !important',
-      height: '2.5rem',
-    },
-  },
-})(MuiAccordion);
 
 interface DashboardPanelGroupContentProps {
   panels: PanelResponse[];
@@ -53,7 +30,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
     <div className={classes.rootPanelGroup}>
       <Accordion expanded={open}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={open ? <ShrinkAccordion /> : <ExpandAccordion />}
           aria-controls="panel1a-content"
           id="panel1a-header"
           className={classes.panelGroup}

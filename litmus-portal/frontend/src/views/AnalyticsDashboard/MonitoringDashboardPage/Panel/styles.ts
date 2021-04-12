@@ -24,10 +24,11 @@ const useStyles = makeStyles((theme) => ({
   },
 
   panelGroupContainer: {
+    position: 'relative',
     width: '100%',
     background: theme.palette.cards.header,
-    display: 'inline-grid',
-    gridTemplateColumns: '49% 49%',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
     gridGap: theme.spacing(1.75),
     padding: theme.spacing(1, 1, 1, 1.75),
   },
@@ -54,13 +55,14 @@ const useStyles = makeStyles((theme) => ({
   singleGraph: {
     backgroundColor: theme.palette.background.paper,
     position: 'relative',
+    width: 'inherit',
     height: '27.5rem',
   },
 
   popOutModal: {
     width: '85%',
     height: '95%',
-    padding: `${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(4)} 10%`,
+    padding: theme.spacing(4),
   },
 
   wrapperParentIconsTitle: {

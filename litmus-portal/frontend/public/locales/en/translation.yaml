@@ -173,6 +173,7 @@ community:
   follow: Follow
 
 analytics:
+  workflowAnalytics: Workflow Analytics
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon !
@@ -196,6 +197,12 @@ analytics:
     tableHead4: Resulting Points
     tableHead5: Last run
     close: Close
+  subData:
+    workflowStatus: Workflow Status
+    experimentStatus: Experiment Status
+    resilienceScore: Resilience Score
+    probeSuccessPercentage: Probe Success Percentage
+    experimentVerdict: Experiment Verdict
 
 analyticsDashboard:
   heading: Analytics
