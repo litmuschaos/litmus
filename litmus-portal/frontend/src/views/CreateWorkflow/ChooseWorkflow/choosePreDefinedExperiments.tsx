@@ -6,7 +6,12 @@ import {
 } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import data from '../../../components/PredifinedWorkflows/data';
 import { preDefinedWorkflowData } from '../../../models/predefinedWorkflow';
 import useStyles from './styles';
@@ -16,7 +21,7 @@ interface ChooseWorkflowRadio {
   id: string;
 }
 
-const ChoosePreDefinedExperiments = () => {
+const ChoosePreDefinedExperiments = forwardRef((_, ref) => {
   const classes = useStyles();
   const { palette } = useTheme();
 
@@ -53,6 +58,17 @@ const ChoosePreDefinedExperiments = () => {
           : setSelected('')
       );
   }, []);
+
+  function onNext() {
+    if (selected === '' || selected === undefined) {
+      return false;
+    }
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <AccordionDetails>
@@ -110,5 +126,5 @@ const ChoosePreDefinedExperiments = () => {
       </div>
     </AccordionDetails>
   );
-};
+});
 export default ChoosePreDefinedExperiments;

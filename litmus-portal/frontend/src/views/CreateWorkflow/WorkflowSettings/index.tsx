@@ -119,6 +119,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
     localforage.getItem('hasSetWorkflowData').then((isDataPresent) => {
       return isDataPresent ? checkForStoredData() : initializeWithDefault();
     });
+    alert.changeAlertState(false);
     detectHeader();
   }, []);
 
@@ -160,6 +161,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
       alert.changeAlertState(true); // Workflow Name is not valid and user clicked on Next
       return false;
     }
+
     return true;
   }
 
@@ -194,12 +196,6 @@ const WorkflowSettings = forwardRef((_, ref) => {
               alt="User"
               src={icon}
             />
-            <Typography
-              className={classes.editText}
-              onClick={() => setAvatarModal(true)}
-            >
-              {t('createWorkflow.chooseWorkflow.edit')}
-            </Typography>
           </div>
           <div className={classes.inputDiv}>
             <div aria-details="spacer" style={{ width: '60%' }}>

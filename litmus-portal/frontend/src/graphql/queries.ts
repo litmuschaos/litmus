@@ -256,6 +256,18 @@ export const GET_GITOPS_DATA = gql`
   }
 `;
 
+export const LIST_MANIFEST_TEMPLATE = gql`
+  query ListManifestTemplate($data: String!) {
+    ListManifestTemplate(project_id: $data) {
+      template_id
+      manifest
+      project_name
+      template_description
+      template_name
+    }
+  }
+`;
+
 export const LIST_PROJECTS = gql`
   query listProjects {
     listProjects {

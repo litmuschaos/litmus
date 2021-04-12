@@ -18,7 +18,7 @@ spec:
         - args:
             - --storage.tsdb.retention.time=360h
             - --config.file=/etc/prometheus/prometheus.yml
-          image: prom/prometheus:v2.25.0
+          image: prom/prometheus:v2.25.2
           imagePullPolicy: IfNotPresent
           name: prometheus
           ports:

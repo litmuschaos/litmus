@@ -36,7 +36,6 @@ import {
 } from '../../models/graphql/scheduleData';
 import * as NodeSelectionActions from '../../redux/actions/nodeSelection';
 import useStyles from './styles';
-import { FAILED } from '../../views/WorkflowDetails/workflowConstants';
 
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
@@ -78,13 +77,13 @@ const WorkflowDetails: React.FC = () => {
   )[0];
 
   // Apollo query to get the scheduled data
-  const { data: SchedulesData } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
-    {
-      variables: { projectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const { data: SchedulesData, loading } = useQuery<
+    Schedules,
+    ScheduleDataVars
+  >(SCHEDULE_DETAILS, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   // Using subscription to get realtime data
   useEffect(() => {
@@ -147,8 +146,7 @@ const WorkflowDetails: React.FC = () => {
   useEffect(() => {
     if (workflow && pod_name === '') {
       if (
-        (JSON.parse(workflow.execution_data as string) as ExecutionData)
-          .phase !== FAILED
+        Object.keys(JSON.parse(workflow.execution_data as string).nodes).length
       ) {
         const firstNodeId = JSON.parse(workflow.execution_data as string).nodes[
           Object.keys(JSON.parse(workflow.execution_data as string).nodes)[0]
@@ -170,7 +168,7 @@ const WorkflowDetails: React.FC = () => {
           <BackButton />
         </div>
         {/* If workflow data is present then display the workflow details */}
-        {workflow && pod_name !== '' ? (
+        {workflow && pod_name !== '' && !loading ? (
           <div>
             <Typography data-cy="wfName" className={classes.title}>
               {t('workflowDetailsView.headerDesc')} {workflow.workflow_name}
@@ -268,8 +266,10 @@ const WorkflowDetails: React.FC = () => {
               />
             </TabPanel>
           </div>
-        ) : error || isWorkflowFailed ? (
+        ) : error ? (
           <Typography>{t('workflowDetails.fetchError')}</Typography>
+        ) : isWorkflowFailed ? (
+          <Typography>{t('workflowDetails.workflowNotStarted')}</Typography>
         ) : (
           <Loader />
         )}

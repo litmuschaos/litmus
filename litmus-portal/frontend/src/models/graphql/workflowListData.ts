@@ -77,3 +77,15 @@ export interface WorkflowListDataVars {
   projectID: string;
   workflowIDs: string[];
 }
+
+export interface ListManifestTemplateArray {
+  template_id: string;
+  manifest: string;
+  project_name: string;
+  template_description: string;
+  template_name: string;
+}
+
+export interface ListManifestTemplate {
+  ListManifestTemplate: ListManifestTemplateArray[];
+}

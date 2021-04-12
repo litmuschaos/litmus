@@ -80,6 +80,16 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '40rem',
     minHeight: '20rem',
   },
+  revertChaos: {
+    margin: theme.spacing(3, 0),
+    minWidth: '40rem',
+  },
+  wrapper: {
+    padding: theme.spacing(1, 0),
+  },
+  key: {
+    margin: theme.spacing(1, 2),
+  },
 
   // Styles for Add Experiment Modal
   addExpModal: {
