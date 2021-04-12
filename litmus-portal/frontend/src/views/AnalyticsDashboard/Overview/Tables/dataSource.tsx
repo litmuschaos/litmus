@@ -2,6 +2,7 @@ import {
   IconButton,
   Paper,
   Table,
+  TableBody,
   TableCell,
   TableRow,
   Typography,
@@ -67,68 +68,70 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
           </div>
 
           <Table className={classes.tableStyling}>
-            {dataSourceList.slice(0, 3).map((singleDataSource) => (
-              <TableRow
-                key={singleDataSource.ds_id}
-                className={classes.tableRow}
-              >
-                <TableCell scope="row" className={classes.tableRowHeader}>
-                  <div className={classes.dataSourceTableHeader}>
-                    {singleDataSource.health_status === 'Active' ? (
-                      <LightPills
-                        variant="success"
-                        label={singleDataSource.health_status}
-                      />
-                    ) : singleDataSource.health_status === 'Not Ready' ? (
-                      <LightPills
-                        variant="warning"
-                        label={singleDataSource.health_status}
-                      />
-                    ) : (
-                      <LightPills
-                        variant="danger"
-                        label={singleDataSource.health_status}
-                      />
-                    )}
-                    <Typography className={classes.dataRowName}>
-                      {singleDataSource.ds_name}
+            <TableBody>
+              {dataSourceList.slice(0, 3).map((singleDataSource) => (
+                <TableRow
+                  key={singleDataSource.ds_id}
+                  className={classes.tableRow}
+                >
+                  <TableCell scope="row" className={classes.tableRowHeader}>
+                    <div className={classes.dataSourceTableHeader}>
+                      {singleDataSource.health_status === 'Active' ? (
+                        <LightPills
+                          variant="success"
+                          label={singleDataSource.health_status}
+                        />
+                      ) : singleDataSource.health_status === 'Not Ready' ? (
+                        <LightPills
+                          variant="warning"
+                          label={singleDataSource.health_status}
+                        />
+                      ) : (
+                        <LightPills
+                          variant="danger"
+                          label={singleDataSource.health_status}
+                        />
+                      )}
+                      <Typography className={classes.dataRowName}>
+                        {singleDataSource.ds_name}
+                      </Typography>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Typography className={classes.dateText}>
+                      {t('analyticsDashboard.timeText.lastConfigured')}:{' '}
+                      {GetTimeDiff(
+                        currentTime / 1000,
+                        parseInt(singleDataSource.updated_at, 10),
+                        t
+                      )}{' '}
+                      {t('analyticsDashboard.timeText.ago')}
                     </Typography>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Typography className={classes.dateText}>
-                    {t('analyticsDashboard.timeText.lastConfigured')}:{' '}
-                    {GetTimeDiff(
-                      currentTime / 1000,
-                      parseInt(singleDataSource.updated_at, 10),
-                      t
-                    )}{' '}
-                    {t('analyticsDashboard.timeText.ago')}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    className={classes.seeAllBtn}
-                    disableRipple
-                    disableFocusRipple
-                    onClick={() => {
-                      dataSource.selectDataSource({
-                        selectedDataSourceID: singleDataSource.ds_id,
-                        selectedDataSourceName: singleDataSource.ds_name,
-                      });
-                      history.push({
-                        pathname: '/analytics/datasource/configure',
-                        search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                      });
-                    }}
-                  >
-                    <Typography className={classes.seeAllText}>
-                      {t('analyticsDashboard.seeDetails')}
-                    </Typography>
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      className={classes.seeAllBtn}
+                      disableRipple
+                      disableFocusRipple
+                      onClick={() => {
+                        dataSource.selectDataSource({
+                          selectedDataSourceID: singleDataSource.ds_id,
+                          selectedDataSourceName: singleDataSource.ds_name,
+                        });
+                        history.push({
+                          pathname: '/analytics/datasource/configure',
+                          search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                        });
+                      }}
+                    >
+                      <Typography className={classes.seeAllText}>
+                        {t('analyticsDashboard.seeDetails')}
+                      </Typography>
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
           </Table>
         </Paper>
       ) : (

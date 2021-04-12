@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     width: '100%',
     background: theme.palette.cards.header,
-    display: 'inline-grid',
-    gridTemplateColumns: '49% 49%',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
     gridGap: theme.spacing(1.75),
     padding: theme.spacing(1, 1, 1, 1.75),
   },
@@ -62,7 +62,8 @@ const useStyles = makeStyles((theme) => ({
   popOutModal: {
     width: '85%',
     height: '95%',
-    padding: `${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(4)} 10%`,
+    padding: theme.spacing(4),
+    paddingLeft: theme.spacing(2),
   },
 
   wrapperParentIconsTitle: {

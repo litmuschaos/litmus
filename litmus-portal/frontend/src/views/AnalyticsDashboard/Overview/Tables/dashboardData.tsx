@@ -2,6 +2,7 @@ import {
   IconButton,
   Paper,
   Table,
+  TableBody,
   TableCell,
   TableRow,
   Typography,
@@ -84,59 +85,61 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
             )}
           </div>
           <Table className={classes.tableStyling}>
-            {dashboardDataList.slice(0, 3).map((dashboard) => (
-              <TableRow key={dashboard.db_id} className={classes.tableRow}>
-                <TableCell scope="row" className={classes.tableRowHeader}>
-                  <div className={classes.workTableIconText}>
-                    <img
-                      src={
-                        PreconfiguredDashboardsArray.map((elem) => {
-                          if (elem.name === dashboard.db_type) {
-                            return elem.urlToIcon;
-                          }
-                          return undefined;
-                        }).filter((item) => item)[0]
-                      }
-                      alt="icon"
-                    />
+            <TableBody>
+              {dashboardDataList.slice(0, 3).map((dashboard) => (
+                <TableRow key={dashboard.db_id} className={classes.tableRow}>
+                  <TableCell scope="row" className={classes.tableRowHeader}>
+                    <div className={classes.workTableIconText}>
+                      <img
+                        src={
+                          PreconfiguredDashboardsArray.map((elem) => {
+                            if (elem.name === dashboard.db_type) {
+                              return elem.urlToIcon;
+                            }
+                            return undefined;
+                          }).filter((item) => item)[0]
+                        }
+                        alt="icon"
+                      />
 
-                    <Typography className={classes.dataRowName}>
-                      {dashboard.db_name}
+                      <Typography className={classes.dataRowName}>
+                        {dashboard.db_name}
+                      </Typography>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Typography className={classes.dateText}>
+                      {t('analyticsDashboard.timeText.lastOpened')}:{' '}
+                      {GetTimeDiff(
+                        currentTime / 1000,
+                        parseInt(dashboard.updated_at, 10),
+                        t
+                      )}{' '}
+                      {t('analyticsDashboard.timeText.ago')}
                     </Typography>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Typography className={classes.dateText}>
-                    {t('analyticsDashboard.timeText.lastOpened')}:{' '}
-                    {GetTimeDiff(
-                      currentTime / 1000,
-                      parseInt(dashboard.updated_at, 10),
-                      t
-                    )}{' '}
-                    {t('analyticsDashboard.timeText.ago')}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    className={classes.seeAllBtn}
-                    disableRipple
-                    disableFocusRipple
-                    onClick={() => {
-                      onDashboardLoadRoutine(dashboard).then(() => {
-                        history.push({
-                          pathname: '/analytics/dashboard',
-                          search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      className={classes.seeAllBtn}
+                      disableRipple
+                      disableFocusRipple
+                      onClick={() => {
+                        onDashboardLoadRoutine(dashboard).then(() => {
+                          history.push({
+                            pathname: '/analytics/dashboard',
+                            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                          });
                         });
-                      });
-                    }}
-                  >
-                    <Typography className={classes.seeAllText}>
-                      {t('analyticsDashboard.seeAnalytics')}
-                    </Typography>
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+                      }}
+                    >
+                      <Typography className={classes.seeAllText}>
+                        {t('analyticsDashboard.seeAnalytics')}
+                      </Typography>
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
           </Table>
         </Paper>
       ) : (
