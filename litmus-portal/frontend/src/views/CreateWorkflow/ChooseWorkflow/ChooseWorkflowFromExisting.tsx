@@ -8,7 +8,12 @@ import {
 } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DELETE_WORKFLOW_TEMPLATE,
@@ -26,7 +31,7 @@ interface ChooseWorkflowRadio {
   id: string;
 }
 
-const ChooseWorkflowFromExisting = () => {
+const ChooseWorkflowFromExisting = forwardRef((_, ref) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { palette } = useTheme();
@@ -95,6 +100,17 @@ const ChooseWorkflowFromExisting = () => {
           : setSelected('')
       );
   }, []);
+
+  function onNext() {
+    if (selected === '' || selected === undefined) {
+      return false;
+    }
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <AccordionDetails>
@@ -171,11 +187,11 @@ const ChooseWorkflowFromExisting = () => {
               <div className={classes.noTemplatesDiv}>
                 <Typography className={classes.noTemplatesText}>
                   <strong>
-                    {t('createWorkflow.createWorkflow.noTemplates')}
+                    {t('createWorkflow.chooseWorkflow.noTemplates')}
                   </strong>
                 </Typography>
                 <Typography className={classes.noTemplatesDesc}>
-                  {t('createWorkflow.createWorkflow.addTemplate')}
+                  {t('createWorkflow.chooseWorkflow.addTemplate')}
                 </Typography>
               </div>
             )}
@@ -186,5 +202,5 @@ const ChooseWorkflowFromExisting = () => {
       </div>
     </AccordionDetails>
   );
-};
+});
 export default ChooseWorkflowFromExisting;

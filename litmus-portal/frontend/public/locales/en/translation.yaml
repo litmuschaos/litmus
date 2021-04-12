@@ -655,7 +655,7 @@ homeView:
     desc: Average is calculated from the max of workflows
 
 createWorkflow:
-  createWorkflow:
+  chooseWorkflow:
     title: Start creating your chaos workflow
     subtitle: Simulate the workflow run and see the suggested reliability score
     optionA: Create a new workflow from one of the pre-defined chaos workflow templates
