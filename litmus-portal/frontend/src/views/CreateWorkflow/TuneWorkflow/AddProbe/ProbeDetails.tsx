@@ -9,13 +9,20 @@ interface ProbeDetailsProps {
   probeData: any;
 }
 
+interface HTTPDataType {
+  criteria: string;
+  responseCode: string;
+  body: string;
+  contentType: string;
+}
+
 const ProbeDetails: React.FC<ProbeDetailsProps> = ({
   setProbeData,
   probeData,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [httpData, setHttpData] = useState<any>({
+  const [httpData, setHttpData] = useState<HTTPDataType>({
     criteria: '',
     responseCode: '',
     body: '',
