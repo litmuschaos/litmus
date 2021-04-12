@@ -105,13 +105,15 @@ const ProfileDropdown: React.FC = () => {
           <div
             className={`${classes.profileDropdownRow} ${classes.profileButtons}`}
           >
-            <ButtonFilled
-              title="Logout from the portal"
-              onClick={() => logout()}
-            >
-              {t('header.profileDropdown.logout')}
-              <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
-            </ButtonFilled>
+            <div data-cy="logoutButton">
+              <ButtonFilled
+                title="Logout from the portal"
+                onClick={() => logout()}
+              >
+                {t('header.profileDropdown.logout')}
+                <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
+              </ButtonFilled>
+            </div>
             <ButtonOutlined
               title="Edit your profile"
               onClick={() => {

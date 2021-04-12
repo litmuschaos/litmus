@@ -81,6 +81,7 @@ const LoginPage: React.FC = () => {
           >
             <div>
               <InputField
+                data-cy="inputName"
                 className={classes.inputValue}
                 label="Username"
                 value={authData.username}
@@ -100,6 +101,7 @@ const LoginPage: React.FC = () => {
                 }
               />
               <InputField
+                data-cy="inputPassword"
                 className={classes.inputValue}
                 label="Password"
                 type="password"
