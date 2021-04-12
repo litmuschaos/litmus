@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Right side panel for Logs
   logsPanel: {
-    width: '100%',
+    width: '65%',
     textAlign: 'left',
     borderLeft: `1px solid ${theme.palette.border.main}`,
   },

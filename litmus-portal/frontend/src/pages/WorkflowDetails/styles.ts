@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: '0.5rem 0.5rem',
-    height: '68vh',
+    height: '100%',
     backgroundColor: theme.palette.cards.header,
   },
 
