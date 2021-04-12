@@ -215,6 +215,8 @@ func GetServerEndpoint() (string, error) {
 		default:
 			return "", errors.New("No service type found")
 		}
+	} else {
+		return "", errors.New("Ingress value is not correct")
 	}
 
 	log.Print("Server endpoint: ", FinalUrl)

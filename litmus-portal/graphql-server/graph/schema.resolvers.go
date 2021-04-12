@@ -77,7 +77,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, member model.Memb
 }
 
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, PendingInvitation)
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.PendingInvitation)
 
 	if err != nil {
 		return "Unsuccessful", err
@@ -87,7 +87,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.Me
 }
 
 func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, PendingInvitation)
+	err := validate.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.PendingInvitation)
 
 	if err != nil {
 		return "Unsuccessful", err
