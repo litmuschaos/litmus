@@ -14,12 +14,12 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
-import { RootState } from '../../../redux/reducers';
+// import { RootState } from '../../../redux/reducers';
 import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
 import ChooseWorkflowFromExisting from './ChooseWorkflowFromExisting';
 import SelectMyHub from './SelectMyHub';
@@ -36,9 +36,9 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const alert = useActions(AlertActions);
   const childRef = useRef<ChildRef>();
   const [selected, setSelected] = useState<string>('');
-  const workflowDetails = useSelector(
-    (state: RootState) => state.workflowManifest.manifest
-  );
+  // const workflowDetails = useSelector(
+  //   (state: RootState) => state.workflowManifest.manifest
+  // );
   const workflowAction = useActions(WorkflowActions);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.value);
@@ -54,18 +54,18 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   };
 
   function onNext() {
-    if (selected === '') {
-      alert.changeAlertState(true); // No Workflow Type has been selected and user clicked on Next
-      return false;
-    }
-    if (selected === 'D' && workflowDetails === '') {
-      alert.changeAlertState(true);
-      return false;
-    }
-    if (childRef.current) {
-      alert.changeAlertState(true);
-      return childRef.current.onNext();
-    }
+    // if (selected === '') {
+    //   alert.changeAlertState(true); // No Workflow Type has been selected and user clicked on Next
+    //   return false;
+    // }
+    // if (selected === 'D' && workflowDetails === '') {
+    //   alert.changeAlertState(true);
+    //   return false;
+    // }
+    // if (childRef.current) {
+    //   alert.changeAlertState(true);
+    //   return childRef.current.onNext();
+    // }
     alert.changeAlertState(false);
     return true;
   }
@@ -122,7 +122,13 @@ const ChooseWorkflow = forwardRef((_, ref) => {
             <ChoosePreDefinedExperiments ref={childRef} />
           </Accordion>
 
-          <Accordion expanded={selected === 'B'} className={classes.accordion}>
+          <Accordion
+            expanded={selected === 'B'}
+            classes={{
+              root: classes.MuiAccordionroot,
+            }}
+            className={classes.accordion}
+          >
             <AccordionSummary>
               <RadioButton value="B" onChange={(e) => handleChange(e)}>
                 Create a new workflow by cloning an existing workflow

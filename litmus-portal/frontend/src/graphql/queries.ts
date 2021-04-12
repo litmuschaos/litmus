@@ -397,3 +397,12 @@ export const PROM_QUERY = gql`
     }
   }
 `;
+
+export const GET_TEMPLATE_BY_ID = gql`
+  query GetManifestTemplate($data: String!) {
+    GetTemplateManifestByID(template_id: $data) {
+      template_id
+      manifest
+    }
+  }
+`;

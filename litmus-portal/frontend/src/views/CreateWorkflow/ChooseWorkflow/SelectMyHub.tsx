@@ -39,6 +39,7 @@ const SelectMyHub = forwardRef((_, ref) => {
     };
     localforage.setItem('selectedScheduleOption', selection);
     localforage.setItem('selectedHub', event.target.value as string);
+    localforage.setItem('hasSetWorkflowData', false);
   };
 
   useEffect(() => {

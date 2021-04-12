@@ -132,7 +132,7 @@ schedule:
   headingDesc: 'Click on test to see detailed log of your workflow'
   headingText: 'Schedule details:'
   description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'  
+  save: 'Save Changes'
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
   scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
@@ -360,6 +360,9 @@ chaosWorkflows:
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
+    saveTemplate: Save Template
+    updateEngine: 'Note: Make sure to update the chaos engine names'
+    saveChanges: Save Changes
     options:
       all: Show All Workflows
       enabledOnly: Show Enabled Workflows Only
@@ -652,7 +655,7 @@ homeView:
     desc: Average is calculated from the max of workflows
 
 createWorkflow:
-  chooseWorkflow:
+  createWorkflow:
     title: Start creating your chaos workflow
     subtitle: Simulate the workflow run and see the suggested reliability score
     optionA: Create a new workflow from one of the pre-defined chaos workflow templates
@@ -681,6 +684,8 @@ createWorkflow:
     revertSchedule: Revert Schedule
     trueValue: True
     falseValue: False
+    noTemplates: No template available.
+    addTemplate: You can add a template from the scheduled workflows table.
     table:
       head1: Sequence
       head2: Name
