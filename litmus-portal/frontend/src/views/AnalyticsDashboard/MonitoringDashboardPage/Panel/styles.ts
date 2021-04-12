@@ -12,8 +12,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     display: 'inline-block',
     background: theme.palette.background.paper,
-    padding: theme.spacing(2),
-    paddingBottom: 0,
+    padding: theme.spacing(2, 2, 0, 2),
     marginBottom: theme.spacing(1),
   },
 

@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   Head: {
-    marginBottom: theme.spacing(2.5),
+    margin: theme.spacing(1, 0, 2.5),
   },
 }));
 export default useStyles;

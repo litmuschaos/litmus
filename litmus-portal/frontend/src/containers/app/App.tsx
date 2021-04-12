@@ -184,7 +184,7 @@ const Routes: React.FC = () => {
           />
           <Route
             exact
-            path="/analytics/dashboard"
+            path="/analytics/application-dashboard"
             component={() => <DashboardPage />}
           />
           <Route exact path="/create-workflow" component={CreateWorkflow} />

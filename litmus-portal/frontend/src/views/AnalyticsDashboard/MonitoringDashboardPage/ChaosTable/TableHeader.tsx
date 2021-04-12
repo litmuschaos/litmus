@@ -2,6 +2,7 @@ import { TableHead, TableRow } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CheckBox from '../../../../components/CheckBox';
+import InfoTooltip from '../../../../components/InfoTooltip';
 import { StyledTableCell } from '../../../../components/StyledTableCell';
 import useStyles from './styles';
 
@@ -70,9 +71,15 @@ const TableHeader: React.FC<TableHeaderProps> = ({
           <div className={classes.nameContent}>
             <div className={classes.nameHead}>
               {t(
-                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5'
+                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5.title'
               )}
             </div>
+            <InfoTooltip
+              value={t(
+                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5.infoText'
+              )}
+              className={classes.infoIcon}
+            />
           </div>
         </StyledTableCell>
       </TableRow>

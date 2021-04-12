@@ -38,6 +38,7 @@ interface DashboardPanelGroupContentProps {
   panel_group_name: string;
   panel_group_id: string;
   chaos_data?: Array<EventMetric>;
+  selectedPanels?: string[];
 }
 
 const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
@@ -45,6 +46,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
   panel_group_id,
   panel_group_name,
   chaos_data,
+  selectedPanels,
 }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState<boolean>(true);
@@ -54,8 +56,8 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
       <Accordion expanded={open}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
+          aria-controls={`panel-group-${panel_group_id}-content`}
+          id={`panel-group-${panel_group_id}-header`}
           className={classes.panelGroup}
           key={`${panel_group_id}`}
           onClick={() => {
@@ -68,21 +70,26 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
         </AccordionSummary>
         <AccordionDetails className={classes.panelGroupContainer}>
           {panels &&
-            panels.map((panel: PanelResponse) => (
-              <GraphPanel
-                key={panel.panel_id}
-                data-cy="dashboardPanel"
-                panel_id={panel.panel_id}
-                panel_name={panel.panel_name}
-                panel_options={panel.panel_options}
-                prom_queries={panel.prom_queries}
-                y_axis_left={panel.y_axis_left}
-                y_axis_right={panel.y_axis_right}
-                x_axis_down={panel.x_axis_down}
-                unit={panel.unit}
-                chaos_data={chaos_data}
-              />
-            ))}
+            panels
+              .filter(
+                (panel) =>
+                  selectedPanels && selectedPanels.includes(panel.panel_id)
+              )
+              .map((panel: PanelResponse) => (
+                <GraphPanel
+                  key={panel.panel_id}
+                  data-cy="dashboardPanel"
+                  panel_id={panel.panel_id}
+                  panel_name={panel.panel_name}
+                  panel_options={panel.panel_options}
+                  prom_queries={panel.prom_queries}
+                  y_axis_left={panel.y_axis_left}
+                  y_axis_right={panel.y_axis_right}
+                  x_axis_down={panel.x_axis_down}
+                  unit={panel.unit}
+                  chaos_data={chaos_data}
+                />
+              ))}
         </AccordionDetails>
       </Accordion>
     </div>
