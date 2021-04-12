@@ -171,6 +171,16 @@ spec:
               value: "litmuschaos/chaos-runner:1.13.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:1.13.0"
+            - name: SERVER_SERVICE_NAME
+              value: "litmusportal-server-service"
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: INGRESS
+              value: "false"
+            - name: INGRESS_NAME
+              value: "litmus-ingress"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

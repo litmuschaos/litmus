@@ -14,6 +14,11 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 )
 
+const (
+	AcceptedInvitation = "Accepted"
+	PendingInvitation  = "Pending"
+)
+
 // CreateUser :creates a user
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
