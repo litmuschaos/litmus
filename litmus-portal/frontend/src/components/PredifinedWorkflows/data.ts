@@ -1,7 +1,7 @@
 export default [
   {
     workflowID: 0,
-    title: 'sock-shop-resiliency-check',
+    title: 'sock-shop-chaos',
     chaosinfra: false,
     urlToIcon: '/icons/sock-shop.png',
     chaosWkfCRDLink:
