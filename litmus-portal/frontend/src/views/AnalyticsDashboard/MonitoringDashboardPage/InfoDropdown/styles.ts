@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   headerText: {
     fontWeight: 'bold',
     fontSize: '1rem',
-    fontHeight: '140%',
+    lineHeight: '140%',
     padding: theme.spacing(1.5, 0, 0, 3),
   },
   button: {

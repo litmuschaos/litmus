@@ -4,6 +4,7 @@ import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CheckBox from '../../../../components/CheckBox';
+import DashboardList from '../../../../components/PreconfiguredDashboards/data';
 import {
   DashboardConfigurationDetails,
   PanelNameAndID,
@@ -90,8 +91,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               )}
             </Typography>
             <Typography className={classes.infoValue}>
-              {' '}
-              {dashboardConfigurationDetails.name}{' '}
+              {dashboardConfigurationDetails.name}
             </Typography>
           </div>
           <div className={classes.dashboardMetaDataItem}>
@@ -104,14 +104,14 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               <Typography className={classes.infoValue}>
                 <img
                   src={`/icons/${
-                    dashboardConfigurationDetails.type === 'Kubernetes Platform'
+                    dashboardConfigurationDetails.type === DashboardList[0].name
                       ? 'kubernetes-platform'
                       : 'sock-shop'
                   }.svg`}
                   alt="dashboard Icon"
                   className={classes.dashboardIcon}
-                />{' '}
-                {dashboardConfigurationDetails.type}{' '}
+                />
+                {dashboardConfigurationDetails.type}
               </Typography>
             </div>
           </div>
@@ -122,8 +122,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               )}
             </Typography>
             <Typography className={classes.infoValue}>
-              {' '}
-              {dashboardConfigurationDetails.dataSourceName}{' '}
+              {dashboardConfigurationDetails.dataSourceName}
               <Icon
                 onClick={() => {
                   window.open(dashboardConfigurationDetails.dataSourceURL);
@@ -144,8 +143,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               )}
             </Typography>
             <Typography className={classes.infoValue}>
-              {' '}
-              {dashboardConfigurationDetails.agent}{' '}
+              {dashboardConfigurationDetails.agent}
             </Typography>
           </div>
         </div>
