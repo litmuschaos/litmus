@@ -321,7 +321,7 @@ chaosWorkflows:
       seeAnalytics: See analytics
   browseSchedules:
     name: Name
-    cluster: Cluster
+    agent: Agent
     experiments: Experiments
     schedule: Schedule
     nextRun: Next Run
@@ -591,7 +591,7 @@ workflowDetailsView:
     targets:
       targetsHeader: Target
       cluster: 'Cluster :'
-      namespace: 'Namespace :'
+      namespace: 'Workflow Namespace :'
   workflowNodeInfo:
     name: Name
     type: Type

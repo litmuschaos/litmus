@@ -391,6 +391,7 @@ const TableData: React.FC<TableDataProps> = ({
             <></>
           )}
           {projectRole !== 'Viewer' &&
+            data.cronSyntax !== '' &&
             YAML.parse(data.workflow_manifest).spec.suspend !== true && (
               <MenuItem
                 value="Disable"
