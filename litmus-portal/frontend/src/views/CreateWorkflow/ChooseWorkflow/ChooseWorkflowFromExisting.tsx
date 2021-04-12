@@ -8,12 +8,7 @@ import {
 } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
 import localforage from 'localforage';
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DELETE_WORKFLOW_TEMPLATE,
@@ -31,7 +26,7 @@ interface ChooseWorkflowRadio {
   id: string;
 }
 
-const ChooseWorkflowFromExisting = forwardRef((_, ref) => {
+const ChooseWorkflowFromExisting = () => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { palette } = useTheme();
@@ -100,17 +95,6 @@ const ChooseWorkflowFromExisting = forwardRef((_, ref) => {
           : setSelected('')
       );
   }, []);
-
-  function onNext() {
-    if (selected === '' || selected === undefined) {
-      return false;
-    }
-    return true;
-  }
-
-  useImperativeHandle(ref, () => ({
-    onNext,
-  }));
 
   return (
     <AccordionDetails>
@@ -202,5 +186,5 @@ const ChooseWorkflowFromExisting = forwardRef((_, ref) => {
       </div>
     </AccordionDetails>
   );
-});
+};
 export default ChooseWorkflowFromExisting;

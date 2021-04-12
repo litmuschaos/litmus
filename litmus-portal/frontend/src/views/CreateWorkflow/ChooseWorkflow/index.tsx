@@ -10,7 +10,6 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
-  useRef,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,8 +33,8 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
-  const childRef = useRef<ChildRef>();
   const [selected, setSelected] = useState<string>('');
+  const [subSelection, setSubSelection] = useState<string | undefined>('');
   const workflowDetails = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
@@ -62,22 +61,25 @@ const ChooseWorkflow = forwardRef((_, ref) => {
       alert.changeAlertState(true);
       return false;
     }
-    if (childRef.current) {
+    if (selected === 'A' && subSelection === '') {
       alert.changeAlertState(true);
-      return childRef.current.onNext();
+      return false;
+    }
+    if (selected === 'B' && subSelection === '') {
+      alert.changeAlertState(true);
+      return false;
     }
     alert.changeAlertState(false);
     return true;
   }
 
   useEffect(() => {
-    localforage
-      .getItem('selectedScheduleOption')
-      .then((value) =>
-        value
-          ? setSelected((value as ChooseWorkflowRadio).selected)
-          : setSelected('')
-      );
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      if (value) {
+        setSelected((value as ChooseWorkflowRadio).selected);
+        setSubSelection((value as ChooseWorkflowRadio).id);
+      } else setSelected('');
+    });
     workflowAction.setWorkflowManifest({
       manifest: '',
     });
@@ -119,7 +121,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
                 {t('createWorkflow.chooseWorkflow.optionA')}
               </RadioButton>
             </AccordionSummary>
-            <ChoosePreDefinedExperiments ref={childRef} />
+            <ChoosePreDefinedExperiments />
           </Accordion>
 
           <Accordion
@@ -134,7 +136,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
                 {t('createWorkflow.chooseWorkflow.optionB')}
               </RadioButton>
             </AccordionSummary>
-            <ChooseWorkflowFromExisting ref={childRef} />
+            <ChooseWorkflowFromExisting />
           </Accordion>
 
           <Accordion
@@ -152,7 +154,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
                 </span>
               </RadioButton>
             </AccordionSummary>
-            <SelectMyHub ref={childRef} />
+            <SelectMyHub />
           </Accordion>
 
           <Accordion
