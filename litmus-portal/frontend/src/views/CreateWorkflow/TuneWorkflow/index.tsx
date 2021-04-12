@@ -19,6 +19,7 @@ import {
   GET_CHARTS_DATA,
   GET_ENGINE_YAML,
   GET_EXPERIMENT_YAML,
+  GET_TEMPLATE_BY_ID,
 } from '../../../graphql/queries';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
@@ -109,6 +110,19 @@ const TuneWorkflow = forwardRef((_, ref) => {
       setAllExperiments([...allExp]);
     },
     fetchPolicy: 'cache-and-network',
+  });
+
+  /**
+   * Graphql query to get the templates list
+   */
+  const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
+    onCompleted: (data) => {
+      const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
+      const wfmanifest = updateEngineName(YAML.parse(parsedYAML));
+      workflowAction.setWorkflowManifest({
+        manifest: wfmanifest,
+      });
+    },
   });
 
   const [installAllExp, setInstallAllExp] = useState<string>('');
@@ -213,6 +227,21 @@ const TuneWorkflow = forwardRef((_, ref) => {
             manifest === ''
           )
             fetchYaml((value as WorkflowDetailsProps).CRDLink);
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'B') {
+        localforage.getItem('selectedScheduleOption').then((value) => {
+          if (
+            value !== null &&
+            (value as ChooseWorkflowRadio).id !== '' &&
+            manifest === ''
+          ) {
+            getTemplate({
+              variables: {
+                data: (value as ChooseWorkflowRadio).id,
+              },
+            });
+          }
         });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {

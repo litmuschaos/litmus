@@ -220,23 +220,31 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
   useEffect(() => {
     if (data !== undefined) {
       const appinfo: AppInfoData[] = [];
-      const kubeData: KubeObjData[] = JSON.parse(data.getKubeObject.kube_obj);
-      kubeData.forEach((obj: KubeObjData) => {
-        const applabel: string[] = [];
-        if (obj.data != null) {
-          obj.data.forEach((objData: KubeObjResource) => {
-            if (objData.labels != null) {
-              Object.entries(objData.labels).map(([key, value]) =>
-                applabel.push(`${key}=${value}`)
-              );
-            }
+      try {
+        const kubeData: KubeObjData[] = JSON.parse(data.getKubeObject.kube_obj);
+        kubeData.forEach((obj: KubeObjData) => {
+          const applabel: string[] = [];
+          if (obj.data != null) {
+            obj.data.forEach((objData: KubeObjResource) => {
+              if (objData.labels != null) {
+                Object.entries(objData.labels).map(([key, value]) =>
+                  applabel.push(`${key}=${value}`)
+                );
+              }
+            });
+          }
+          appinfo.push({
+            namespace: obj.namespace,
+            appLabel: applabel,
           });
-        }
-        appinfo.push({
-          namespace: obj.namespace,
-          appLabel: applabel,
         });
-      });
+      } catch (err) {
+        console.error(err);
+        appinfo.push({
+          namespace: '',
+          appLabel: [''],
+        });
+      }
       setAppInfoData(appinfo);
     }
   }, [data]);

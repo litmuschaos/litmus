@@ -89,6 +89,9 @@ const WorkflowSettings = forwardRef((_, ref) => {
           return null;
         });
       }
+      if ((value as ChooseWorkflowRadio).selected === 'B') {
+        workflowAction.setWorkflowManifest({ manifest: '' });
+      }
       if ((value as ChooseWorkflowRadio).selected === 'C') {
         setName('custom-chaos-workflow');
         workflowAction.setWorkflowManifest({ manifest: '' });
