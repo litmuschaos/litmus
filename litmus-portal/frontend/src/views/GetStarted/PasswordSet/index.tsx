@@ -62,6 +62,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
       </div>
       <form id="login-form" className={classes.inputDiv}>
         <InputField
+          data-cy="inputPassword"
           className={classes.inputValue}
           label={t('getStarted.password.label')}
           type="password"
@@ -77,6 +78,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
           }}
         />
         <InputField
+          data-cy="confirmInputPassword"
           className={classes.inputValue}
           label={t('getStarted.password.cnfLabel')}
           type="password"
@@ -96,14 +98,16 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
           }
         />
         <div className={classes.buttonGroup}>
-          <ButtonFilled
-            className={classes.submitButton}
-            type="submit"
-            disabled={isError.current}
-            onClick={handleSubmit}
-          >
-            {t('getStarted.button.continue')}
-          </ButtonFilled>
+          <div data-cy="nextButton">
+            <ButtonFilled
+              className={classes.submitButton}
+              type="submit"
+              disabled={isError.current}
+              onClick={handleSubmit}
+            >
+              {t('getStarted.button.continue')}
+            </ButtonFilled>
+          </div>
           <Typography className={classes.step}>
             {t('getStarted.button.step')} {currentStep}{' '}
             {t('getStarted.button.of')} {totalStep}

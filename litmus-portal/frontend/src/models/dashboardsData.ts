@@ -1,4 +1,4 @@
-import { GraphMetric } from 'litmus-ui';
+import { EventMetric } from 'litmus-ui';
 import { PanelGroupResponse, PanelResponse } from './graphql/dashboardsDetails';
 import { promQueryInput } from './graphql/prometheus';
 import { ChaosData } from './graphql/workflowListData';
@@ -108,13 +108,6 @@ export interface ChaosDataUpdates {
   chaosData: Array<EventMetric>;
   reGenerate: Boolean;
   latestEventResult: string[];
-}
-
-export interface EventMetric extends GraphMetric {
-  subData?: Array<{
-    subDataName: string;
-    value: string;
-  }>;
 }
 
 export interface GraphPanelProps extends PanelResponse {

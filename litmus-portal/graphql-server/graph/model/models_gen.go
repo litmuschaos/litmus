@@ -267,6 +267,17 @@ type Maintainer struct {
 	Email string `json:"Email"`
 }
 
+type ManifestTemplate struct {
+	TemplateID          string `json:"template_id"`
+	Manifest            string `json:"manifest"`
+	TemplateName        string `json:"template_name"`
+	TemplateDescription string `json:"template_description"`
+	ProjectID           string `json:"project_id"`
+	ProjectName         string `json:"project_name"`
+	CreatedAt           string `json:"created_at"`
+	IsRemoved           bool   `json:"is_removed"`
+}
+
 type Member struct {
 	UserID     string     `json:"user_id"`
 	UserName   string     `json:"user_name"`
@@ -406,6 +417,13 @@ type Spec struct {
 	ChaosExpCRDLink     string        `json:"ChaosExpCRDLink"`
 	Platforms           []string      `json:"Platforms"`
 	ChaosType           *string       `json:"ChaosType"`
+}
+
+type TemplateInput struct {
+	Manifest            string `json:"manifest"`
+	TemplateName        string `json:"template_name"`
+	TemplateDescription string `json:"template_description"`
+	ProjectID           string `json:"project_id"`
 }
 
 type UpdateMyHub struct {

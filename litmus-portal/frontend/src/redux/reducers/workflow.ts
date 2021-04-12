@@ -8,9 +8,6 @@ import {
 import createReducer from './createReducer';
 
 const initialState: WorkflowData = {
-  id: '',
-  isRecurring: false,
-  isDisabled: false,
   chaosEngineChanged: false,
   namespace: 'litmus',
   clusterid: '',
@@ -32,6 +29,7 @@ const initialState: WorkflowData = {
 const init: WorkflowManifest = {
   manifest: '',
   engineYAML: '',
+  isCustomWorkflow: false,
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {

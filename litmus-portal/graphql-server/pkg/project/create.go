@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/google/uuid"
 
@@ -74,7 +75,8 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 
 // GetProject ...
 func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
-	project, err := dbOperationsProject.GetProject(ctx, projectID)
+
+	project, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", projectID}})
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +85,7 @@ func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 
 // GetProjectsByUserID ...
 func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, error) {
+
 	projects, err := dbOperationsProject.GetProjectsByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -97,6 +100,7 @@ func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, 
 
 // SendInvitation :Send an invitation
 func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+
 	invitation, err := getInvitation(ctx, member)
 	if err != nil {
 		return nil, err
@@ -181,6 +185,7 @@ func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, e
 
 //LeaveProject :Leave a Project
 func LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
+
 	invitation, err := getInvitation(ctx, member)
 	if err != nil {
 		return "Unsuccessful", err
@@ -202,7 +207,7 @@ func LeaveProject(ctx context.Context, member model.MemberInput) (string, error)
 // getInvitation :Returns the Invitation Status
 func getInvitation(ctx context.Context, member model.MemberInput) (dbSchemaProject.Invitation, error) {
 
-	project, err := dbOperationsProject.GetProject(ctx, member.ProjectID)
+	project, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", member.ProjectID}})
 	if err != nil {
 		return "", err
 	}

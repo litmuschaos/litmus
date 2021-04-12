@@ -1,11 +1,12 @@
 import { ApolloError, useQuery } from '@apollo/client';
-import { IconButton, Tooltip, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { ButtonOutlined, GraphMetric, LineAreaGraph, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { ToolTip } from '../../../../components/ToolTip';
 import { PROM_QUERY } from '../../../../graphql';
 import { GraphPanelProps } from '../../../../models/dashboardsData';
 import {
@@ -201,7 +202,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
         <Typography className={classes.title}>{panel_name}</Typography>
         <div className={classes.wrapperIcons}>
           {viewEventMetric ? (
-            <Tooltip
+            <ToolTip
               title={`${t('analyticsDashboard.toolTip.hideChaosMetric')}`}
             >
               <IconButton
@@ -212,9 +213,9 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               >
                 <DisableViewChaosMetric className={classes.panelIcon} />
               </IconButton>
-            </Tooltip>
+            </ToolTip>
           ) : (
-            <Tooltip
+            <ToolTip
               title={`${t('analyticsDashboard.toolTip.viewChaosMetric')}`}
             >
               <IconButton
@@ -225,18 +226,16 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               >
                 <ViewChaosMetric className={classes.panelIcon} />
               </IconButton>
-            </Tooltip>
+            </ToolTip>
           )}
-          <Tooltip title={`${t('analyticsDashboard.toolTip.editPanel')}`}>
-            <IconButton
-              disabled
-              className={classes.panelIconButton}
-              onClick={() => {}}
-            >
-              <Edit className={classes.panelIcon} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={`${t('analyticsDashboard.toolTip.popout')}`}>
+          <IconButton
+            disabled
+            className={classes.panelIconButton}
+            onClick={() => {}}
+          >
+            <Edit className={classes.panelIcon} />
+          </IconButton>
+          <ToolTip title={`${t('analyticsDashboard.toolTip.popout')}`}>
             <IconButton
               className={classes.panelIconButton}
               onClick={() => {
@@ -245,7 +244,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             >
               <Expand className={classes.panelIcon} />
             </IconButton>
-          </Tooltip>
+          </ToolTip>
         </div>
       </div>
       <div>
@@ -267,7 +266,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             <LineAreaGraph
               legendTableHeight={120}
               openSeries={graphData}
-              eventSeries={chaos_data}
+              eventSeries={chaos_data ?? []}
               showPoints={false}
               showLegendTable
               showEventTable
@@ -286,7 +285,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
         <LineAreaGraph
           legendTableHeight={120}
           openSeries={graphData}
-          eventSeries={chaos_data}
+          eventSeries={chaos_data ?? []}
           showPoints={false}
           showEventTable={viewEventMetric}
           showLegendTable

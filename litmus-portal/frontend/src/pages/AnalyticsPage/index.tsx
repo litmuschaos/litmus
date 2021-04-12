@@ -312,7 +312,7 @@ const AnalyticsPage: React.FC = () => {
                   <BackButton />
                 </div>
                 <Typography variant="h4">
-                  <strong>Workflow Analytics</strong>
+                  <strong> {t('analytics.workflowAnalytics')}</strong>
                 </Typography>
                 <div className={classes.headerDiv}>
                   <Typography variant="body1">

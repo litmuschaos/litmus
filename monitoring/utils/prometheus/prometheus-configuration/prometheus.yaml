@@ -12,7 +12,7 @@ spec:
         port: web
   externalLabels:
     cluster: docker-desktop
-  image: quay.io/prometheus/prometheus:v2.25.0
+  image: quay.io/prometheus/prometheus:v2.25.2
   nodeSelector:
     kubernetes.io/os: linux
   podMonitorNamespaceSelector: {}

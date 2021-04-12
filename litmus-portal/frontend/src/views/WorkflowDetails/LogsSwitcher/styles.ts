@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.up('lg')]: {
       height: '100%',
     },
-    height: '15rem',
+    height: '100%',
     background: theme.palette.cards.header,
     color: theme.palette.text.primary,
     textAlign: 'left',

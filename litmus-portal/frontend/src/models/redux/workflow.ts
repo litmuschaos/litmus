@@ -28,9 +28,6 @@ export interface customWorkflow {
 }
 
 export interface WorkflowData {
-  id: string;
-  isRecurring: boolean;
-  isDisabled: boolean;
   chaosEngineChanged: boolean;
   namespace: string;
   workflow_id?: string;
@@ -44,6 +41,7 @@ export interface WorkflowData {
 export interface WorkflowManifest {
   engineYAML: string;
   manifest: string;
+  isCustomWorkflow: boolean;
 }
 
 export enum WorkflowActions {

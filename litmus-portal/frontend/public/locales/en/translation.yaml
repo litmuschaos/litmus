@@ -154,6 +154,15 @@ schedule:
   workflowBtn: Go to Workflow
   backBtn: Go Back
 
+editSchedule:
+  title: Edit Schedule
+  verify: Verify
+  cancel: Cancel
+  save: Save Changes
+  edit: Edit
+  theSchedule: The Schedule
+  successfullyCreated: is successfully created
+
 community:
   title: 'Community'
   heading: 'Litmus Insights'
@@ -164,6 +173,7 @@ community:
   follow: Follow
 
 analytics:
+  workflowAnalytics: Workflow Analytics
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon !
@@ -187,6 +197,12 @@ analytics:
     tableHead4: Resulting Points
     tableHead5: Last run
     close: Close
+  subData:
+    workflowStatus: Workflow Status
+    experimentStatus: Experiment Status
+    resilienceScore: Resilience Score
+    probeSuccessPercentage: Probe Success Percentage
+    experimentVerdict: Experiment Verdict
 
 analyticsDashboard:
   heading: Analytics
@@ -212,7 +228,7 @@ analyticsDashboard:
     rangeSelector:
       to: to
       selectPeriod: Select Period
-    refresh: 
+    refresh:
       heading: Refresh
       off: Off
       every5Seconds: Every 5 seconds
@@ -329,9 +345,8 @@ error:
   goBack: Go back
 
 workflowDetails:
-  detailedLog: Click on Info to see details of your workflow
+  workflowNotStarted: Please check the configuration, the workflow was not able to start
   fetchError: An error has occurred while fetching the data
-  overallRR: 'Overall RR: '
 
 ######################################
 ############    Views    #############
@@ -348,9 +363,47 @@ chaosWorkflows:
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
       seeAnalytics: See analytics
-  browseSchedule:
+  browseSchedules:
+    name: Name
+    agent: Agent
+    experiments: Experiments
+    schedule: Schedule
+    nextRun: Next Run
+    regularity: Regularity
+    startingDate: Starting Date
+    lastRun: Last Run
     regularityOnce: Once
-    showExperiment: Show Experiment
+    showExperiments: Show Experiments
+    showSchedule: Show Schedule
+    reRunSchedule: Rerun Schedule
+    downloadManifest: Download Manifest
+    deleteSchedule: Delete Schedule
+    editSchedule: Edit Schedule
+    scheduleIsDisabled: This Schedule is disabled now
+    disableSchedule: Disable Schedule
+    saveTemplate: Save Template
+    updateEngine: 'Note: Make sure to update the chaos engine names'
+    saveChanges: Save Changes
+    savedSuccessfully: Successfully saved template.
+    cancel: Cancel
+    options:
+      all: Show All Workflows
+      enabledOnly: Show Enabled Workflows Only
+      disabledOnly: Show Disabled Workflows Only
+  browseWorkflows:
+    status: Status
+    name: Name
+    targetAgent: Target Agent
+    reliabilityDetails: Reliability Details
+    experiments: Experiments
+    lastRun: Last Run
+    tableData:
+      overallRR: 'Overall RR : '
+      experimentsPassed: 'Experiments Passed : '
+      showExperiments: Show Experiments
+      showTheWorkflow: Show the workflow
+      showTheAnalytics: show the analytics
+      na: NA
 
 analyticsDashboardViews:
   kubernetesDashboard:
@@ -574,19 +627,15 @@ workflowDetailsView:
   workflowInfo:
     header: Overall Workflow Description
     resilienceScore: Resilience Score
+    Completed: Completed
     runTime:
       runTimeHeader: Run Time
       startTime: 'Start Time :'
       endTime: 'End Time :'
-    hostedOn:
-      hostedOnHeader: Hosted On
-      cluster: 'Cluster :'
-      namespace: 'Namespace :'
     targets:
-      targetsHeader: Targets
+      targetsHeader: Target
       cluster: 'Cluster :'
-      namespace: 'Namespace :'
-    application: 'Application :'
+      namespace: 'Workflow Namespace :'
   workflowNodeInfo:
     name: Name
     type: Type
@@ -609,6 +658,7 @@ workflowDetailsView:
     button:
       logs: Logs
       result: Chaos Result
+    minutes: minutes
 
 homeView:
   averageResilienceScore:
@@ -627,9 +677,11 @@ createWorkflow:
   chooseWorkflow:
     title: Start creating your chaos workflow
     subtitle: Simulate the workflow run and see the suggested reliability score
-    header: Select or design workflow
-    info: Select one of the pre-defined chaos workflows or design your own workflow.
-    preDefined: pre-defined workflows
+    optionA: Create a new workflow from one of the pre-defined chaos workflow templates
+    optionB: Create a new workflow by cloning an existing workflow
+    optionC: Create a new workflow using the experiments from
+    optionD: Import a workflow using YAML
+    myHubs: My Hubs
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
@@ -647,6 +699,18 @@ createWorkflow:
     continue: Do you want to continue?
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
+    pleaseAddExp: Please add experiments to see the data
+    revertSchedule: Revert Schedule    
+    noTemplates: No template available.
+    addTemplate: You can add a template from the scheduled workflows table.
+    trueValue: 'True'
+    falseValue: 'False'
+    table:
+      head1: Sequence
+      head2: Name
+      head3: Namespace
+      head4: Application
+      head5: Probes
     selectMyHub: Select MyHub
     label:
       workflowName: Workflow name
@@ -717,6 +781,20 @@ createWorkflow:
     done: Done
     editSequence: Edit Sequence
     addANewExperiment: Add a new experiment
+    verticalStepper:
+      annotationInfo: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      annotation: Annotation Check
+      true: 'True'
+      false: 'False'
+      annotationDesc: The target application does not have an annotation “Chaos=true”. Ideally, you cannot run this experiment unless the annotation is patched to the application. However, this service account has the privileges to disable the enforcement of annotation checks. Mark the annotation as false to proceed.
+      appkind: appKind
+      deployment: Deployment
+      statefulset: Statefulset
+      daemonset: Daemonset
+      deploymentconfig: Deploymentconfig
+      rollout: Rollout
+      nodeselector: NodeSelector
+      selector: 'kubernetes.io/hostname :'
     addProbe:
       heading: Add
       headingStrong: Probe
@@ -775,6 +853,8 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
+    test: test
+    YAML: YAML
     button:
       edit: Edit
       viewYaml: View YAML
@@ -873,6 +953,12 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+browseTemplate:
+  browseAWorkflow: Browse a workflow template
+  seeDetails: See details of your workflow template
+  back: Back
+  scheduleThisTemplate: Schedule this template
 
 #########################################
 ############    dataErrors    ###########
