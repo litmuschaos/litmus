@@ -363,6 +363,7 @@ chaosWorkflows:
     saveTemplate: Save Template
     updateEngine: 'Note: Make sure to update the chaos engine names'
     saveChanges: Save Changes
+    savedSuccessfully: Successfully saved template.
     options:
       all: Show All Workflows
       enabledOnly: Show Enabled Workflows Only

@@ -13,6 +13,7 @@ import { RootState } from '../../../redux/reducers';
 import useStyles from './styles';
 import { getProjectID } from '../../../utils/getSearchParams';
 import Loader from '../../../components/Loader';
+import { constants } from '../../../constants';
 
 interface SaveTemplateModalProps {
   closeTemplate: () => void;
@@ -52,15 +53,15 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       onError: (data) => {
         setDisplayResult(true);
         setCloneResult({
-          type: 'error',
+          type: constants.error,
           message: data.message,
         });
       },
       onCompleted: () => {
         setDisplayResult(true);
         setCloneResult({
-          type: 'success',
-          message: 'Successully saved template.',
+          type: constants.success,
+          message: `${t('chaosWorkflows.browseSchedules.savedSuccessfully')}`,
         });
       },
     }
@@ -68,7 +69,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 
   const handleAlertOnClose = () => {
     setDisplayResult(false);
-    if (cloneResult.type === 'success') closeTemplate();
+    if (cloneResult.type === constants.success) closeTemplate();
   };
 
   return (
@@ -111,7 +112,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
             onClick={() => {
               addWorkflowTemplate();
             }}
-            disabled={loading || cloneResult.type === 'success'}
+            disabled={loading || cloneResult.type === constants.success}
           >
             {loading ? (
               <Loader size={20} />
@@ -133,7 +134,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       >
         <Alert
           onClose={handleAlertOnClose}
-          severity={cloneResult.type === 'error' ? 'error' : 'success'}
+          severity={cloneResult.type === constants.error ? 'error' : 'success'}
         >
           {cloneResult.message}
         </Alert>
