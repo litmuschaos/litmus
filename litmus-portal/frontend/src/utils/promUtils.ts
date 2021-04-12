@@ -37,8 +37,6 @@ import {
   WorkflowRun,
 } from '../models/graphql/workflowListData';
 import {
-  CHAOS_EXPERIMENT_VERDICT_FAIL,
-  CHAOS_EXPERIMENT_VERDICT_PASS,
   DEFAULT_CHAOS_EVENT_NAME,
   DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
   DEFAULT_METRIC_SERIES_NAME,
@@ -417,6 +415,8 @@ export const chaosEventDataParserForPrometheus = (
         (e) => queryResponse.queryid === e.id
       )[0];
       let latestRunMetric: RunWiseChaosMetrics | undefined;
+      let allRunMetric: RunWiseChaosMetrics[];
+
       if (chaosEventDetails && workflowAnalyticsData.ListWorkflow) {
         const workflowAndExperiments: WorkflowAndExperimentMetaDataMap =
           chaosEventDetails.chaosMetrics;
@@ -513,9 +513,12 @@ export const chaosEventDataParserForPrometheus = (
             eventMetric.lastUpdatedTimeStamp >= selectedStartTime &&
             eventMetric.lastUpdatedTimeStamp <= selectedEndTime
         );
+        allRunMetric = availableRunMetrics;
         latestRunMetric = availableRunMetrics[availableRunMetrics.length - 1];
       }
+
       chaosDataUpdates.queryIDs.push(queryResponse.queryid);
+
       chaosDataUpdates.chaosData.push(
         ...queryResponse.legends.map((elem, index) => ({
           metricName: elem[0] ?? DEFAULT_CHAOS_EVENT_NAME,
@@ -524,67 +527,42 @@ export const chaosEventDataParserForPrometheus = (
             value: parseInt(dataPoint.value ?? '0', 10),
           })),
           baseColor: chaosEventDetails ? chaosEventDetails.legend : '',
-          subData: [
-            {
-              subDataName: 'Workflow Status',
-              value: latestRunMetric
-                ? latestRunMetric.workflowStatus
-                : STATUS_RUNNING,
-            },
-            {
-              subDataName: 'Experiment Status',
-              value: latestRunMetric
-                ? latestRunMetric.experimentStatus
-                : STATUS_RUNNING,
-            },
-            {
-              subDataName: 'Resilience Score',
-              value:
-                latestRunMetric &&
-                latestRunMetric.workflowStatus !== STATUS_RUNNING &&
-                latestRunMetric.resilienceScore !==
-                  INVALID_RESILIENCE_SCORE_STRING
-                  ? latestRunMetric.resilienceScore
-                  : '--',
-            },
-            {
-              subDataName: 'Probe Success Percentage',
-              value: latestRunMetric
-                ? latestRunMetric.probeSuccessPercentage
-                : '--',
-            },
-            {
-              subDataName: 'Experiment Verdict',
-              value: latestRunMetric
-                ? latestRunMetric.experimentVerdict +
-                  (latestRunMetric.experimentVerdict ===
-                    CHAOS_EXPERIMENT_VERDICT_PASS ||
-                  latestRunMetric.experimentVerdict ===
-                    CHAOS_EXPERIMENT_VERDICT_FAIL
-                    ? 'ed'
-                    : '')
-                : '--',
-            },
-          ],
-          // Filter subData within the start and end time of interleaving on experiment's lastUpdatedTimeStamp.
-          // Add one extra subData field - lastUpdatedTimeStamp to filter subData in graph.
-          // This method sends the latest run details within selected dashboard time range as the subData.
-          // Needs to be updated to send every run detail with lastUpdatedTimeStamp in the ${NEW_SUBDATA_FIELD}.
-          /* 
-            Schema: 
-            (to be updated as)
-            - subData: [
-                { subDataName: "subData-1-1", value: "1-1", lastUpdatedTimeStamp: 1616832979 },
-                { subDataName: "subData-1-2", value: "1-2", lastUpdatedTimeStamp: 1616833006 },
-              ],
-            subData: 
-            (to be filtered by lastUpdatedTimeStamp in litmus-ui graph on hovering over chaos events)
-            - Workflow Status 
-            - Experiment Status
-            - Resilience Score
-            - Probe Success Percentage
-            - Experiment Verdict
-            */
+          subData: allRunMetric
+            .map((elem: RunWiseChaosMetrics) => {
+              return [
+                {
+                  subDataName: 'analytics.subData.workflowStatus',
+                  value: elem ? elem.workflowStatus : STATUS_RUNNING,
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 : 0,
+                },
+                {
+                  subDataName: 'analytics.subData.experimentStatus',
+                  value: elem ? elem.experimentStatus : STATUS_RUNNING,
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 : 0,
+                },
+                {
+                  subDataName: 'analytics.subData.resilienceScore',
+                  value:
+                    elem &&
+                    elem.workflowStatus !== STATUS_RUNNING &&
+                    elem.resilienceScore !== INVALID_RESILIENCE_SCORE_STRING
+                      ? elem.resilienceScore
+                      : '--',
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 : 0,
+                },
+                {
+                  subDataName: 'analytics.subData.probeSuccessPercentage',
+                  value: elem ? elem.probeSuccessPercentage : '--',
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 : 0,
+                },
+                {
+                  subDataName: 'analytics.subData.experimentVerdict',
+                  value: elem ? elem.experimentVerdict : '--',
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 : 0,
+                },
+              ];
+            })
+            .flat(),
         }))
       );
       chaosDataUpdates.latestEventResult.push(

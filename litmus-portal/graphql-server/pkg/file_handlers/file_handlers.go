@@ -36,7 +36,7 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	response, statusCode, err := GetManifest(token)
 	if err != nil {
-		log.Print("error", err)
+		log.Print("error: ", err)
 		utils.WriteHeaders(&w, statusCode)
 	}
 
@@ -45,9 +45,6 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetManifest(token string) ([]byte, int, error) {
-	var (
-		portalEndpoint string
-	)
 
 	id, err := cluster.ClusterValidateJWT(token)
 	if err != nil {
@@ -60,15 +57,14 @@ func GetManifest(token string) ([]byte, int, error) {
 	}
 
 	if os.Getenv("PORTAL_SCOPE") == "cluster" {
-		portalEndpoint, err = k8s.GetPortalEndpoint()
+		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
 		if err != nil {
 			return nil, 500, err
 		}
 	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
-		portalEndpoint = os.Getenv("PORTAL_ENDPOINT")
+		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT")
 	}
 
-	subscriberConfiguration.GQLServerURI = portalEndpoint + "/query"
 	if !reqCluster.IsRegistered {
 		var respData []byte
 

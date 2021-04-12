@@ -1,4 +1,4 @@
-import { GraphMetric } from 'litmus-ui';
+import { EventMetric } from 'litmus-ui';
 import { PanelGroupResponse, PanelResponse } from './graphql/dashboardsDetails';
 import { promQueryInput } from './graphql/prometheus';
 import { ChaosData } from './graphql/workflowListData';
@@ -30,6 +30,19 @@ export interface DashboardDetails {
   information: string;
   panelGroupMap: PanelGroupMap[];
   panelGroups?: PanelGroupResponse[];
+}
+
+export interface DashboardConfigurationDetails {
+  name: string;
+  type: string;
+  dataSourceName: string;
+  dataSourceURL: string;
+  agent: string;
+}
+
+export interface PanelNameAndID {
+  name: string;
+  id: string;
 }
 
 export interface ChaosResultNamesAndNamespacesMap {
@@ -97,13 +110,6 @@ export interface ChaosDataUpdates {
   latestEventResult: string[];
 }
 
-export interface EventMetric extends GraphMetric {
-  subData?: Array<{
-    subDataName: string;
-    value: string;
-  }>;
-}
-
 export interface GraphPanelProps extends PanelResponse {
   className?: string;
   chaos_data?: Array<EventMetric>;
@@ -111,4 +117,5 @@ export interface GraphPanelProps extends PanelResponse {
 
 export interface GraphPanelGroupProps extends PanelGroupResponse {
   chaos_data?: Array<EventMetric>;
+  selectedPanels?: string[];
 }

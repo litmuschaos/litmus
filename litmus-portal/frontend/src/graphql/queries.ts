@@ -69,6 +69,16 @@ export const WORKFLOW_LIST_DETAILS = gql`
   }
 `;
 
+export const WORKFLOW_LIST_DETAILS_FOR_MANIFEST = gql`
+  query workflowListDetails($projectID: String!, $workflowIDs: [ID]) {
+    ListWorkflow(project_id: $projectID, workflow_ids: $workflowIDs) {
+      workflow_id
+      workflow_manifest
+      workflow_name
+    }
+  }
+`;
+
 export const GET_USER = gql`
   query getUser($username: String!) {
     getUser(username: $username) {
@@ -127,6 +137,14 @@ export const GET_CLUSTER = gql`
       no_of_workflows
       token
       last_workflow_timestamp
+    }
+  }
+`;
+
+export const GET_CLUSTER_LENGTH = gql`
+  query getClusters($project_id: String!) {
+    getCluster(project_id: $project_id) {
+      cluster_id
     }
   }
 `;
@@ -252,6 +270,18 @@ export const GET_GITOPS_DATA = gql`
       UserName
       Password
       SSHPrivateKey
+    }
+  }
+`;
+
+export const LIST_MANIFEST_TEMPLATE = gql`
+  query ListManifestTemplate($data: String!) {
+    ListManifestTemplate(project_id: $data) {
+      template_id
+      manifest
+      project_name
+      template_description
+      template_name
     }
   }
 `;
@@ -382,6 +412,15 @@ export const PROM_QUERY = gql`
         timestamp
         value
       }
+    }
+  }
+`;
+
+export const GET_TEMPLATE_BY_ID = gql`
+  query GetManifestTemplate($data: String!) {
+    GetTemplateManifestByID(template_id: $data) {
+      template_id
+      manifest
     }
   }
 `;

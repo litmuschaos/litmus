@@ -242,9 +242,7 @@ const BrowseSchedule: React.FC = () => {
             color="primary"
             focused
           >
-            <InputLabel className={classes.selectText}>
-              Target Cluster
-            </InputLabel>
+            <InputLabel className={classes.selectText}>Target Agent</InputLabel>
             <Select
               value={filter.cluster}
               onChange={(event) =>
@@ -312,7 +310,7 @@ const BrowseSchedule: React.FC = () => {
                 {/* Cluster */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
-                    {t('chaosWorkflows.browseSchedules.cluster')}
+                    {t('chaosWorkflows.browseSchedules.agent')}
                   </Typography>
                 </TableCell>
 

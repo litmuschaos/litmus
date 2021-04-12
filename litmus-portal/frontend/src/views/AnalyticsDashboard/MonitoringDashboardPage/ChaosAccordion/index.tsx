@@ -72,8 +72,8 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
   return (
     <Accordion expanded={chaosTableOpen}>
       <AccordionSummary
-        aria-controls="panel1a-content"
-        id="panel1a-header"
+        aria-controls="chaos-table-content"
+        id="chaos-table-header"
         className={classes.accordionSummary}
         key={`chaos-table-${dashboardKey}`}
       >

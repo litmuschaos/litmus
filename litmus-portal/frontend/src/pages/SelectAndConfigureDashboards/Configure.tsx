@@ -20,6 +20,10 @@ import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import ConfigureDashboard from '../../views/AnalyticsDashboard/KubernetesDashboards/Form';
+import {
+  DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+  DEFAULT_RELATIVE_TIME_RANGE,
+} from '../MonitoringDashboardPage/constants';
 import useStyles from './styles';
 
 interface DashboardConfigurePageProps {
@@ -124,10 +128,12 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
       db_type: dashboardVars.dashboardType,
       panel_groups: getPanelGroups(),
       end_time: `${Math.round(new Date().getTime() / 1000)}`,
-      start_time: `${Math.round(new Date().getTime() / 1000) - 1800}`,
+      start_time: `${
+        Math.round(new Date().getTime() / 1000) - DEFAULT_RELATIVE_TIME_RANGE
+      }`,
       project_id: projectID,
       cluster_id: dashboardVars.agentID,
-      refresh_rate: '5',
+      refresh_rate: DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
     };
     createDashboard({
       variables: { createDBInput: dashboardInput },
@@ -142,8 +148,10 @@ const DashboardConfigurePage: React.FC<DashboardConfigurePageProps> = ({
       db_type: dashboardVars.dashboardType,
       panel_groups: getPanelGroups(),
       end_time: `${Math.round(new Date().getTime() / 1000)}`,
-      start_time: `${Math.round(new Date().getTime() / 1000) - 1800}`,
-      refresh_rate: '5',
+      start_time: `${
+        Math.round(new Date().getTime() / 1000) - DEFAULT_RELATIVE_TIME_RANGE
+      }`,
+      refresh_rate: DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
     };
     updateDashboard({
       variables: { updataDBInput: dashboardInput },

@@ -30,9 +30,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   createCard: {
-    [theme.breakpoints.down('md')]: {
-      marginRight: theme.spacing(3.75),
-    },
     marginLeft: theme.spacing(5),
     pointerEvents: (props: StyleProps) => (props.isDisabled ? 'none' : 'all'),
     boxShadow: (props: StyleProps) =>

@@ -10,4 +10,34 @@ export const constants = {
   recurringEveryDay: 'everyDay',
   recurringEveryWeek: 'everyWeek',
   recurringEveryMonth: 'everyMonth',
+
+  /**
+   * GVR and AppKind Constants [Component Used in -> TuneWorkflow/TargetApplication]
+   */
+  deployment: 'deployment',
+  statefulset: 'statefulset',
+  daemonset: 'daemonset',
+  deploymentconfig: 'deploymentconfig',
+  rollout: 'rollout',
+  deployments: 'deployments',
+  statefulsets: 'statefulsets',
+  daemonsets: 'daemonsets',
+  deploymentconfigs: 'deploymentconfigs',
+  rollouts: 'rollout',
+  apps: 'apps',
+  v1: 'v1',
+  openshift: 'apps.openshift.io',
+  argoproj: 'argoproj.io',
+  v1alpha1: 'v1alpha1',
+  appns: 'appns',
+  appKind: 'appkind',
+  appLabel: 'applabel',
+  jobCleanUp: 'jobCleanUpPolicy',
+  nodeselector: 'nodeselector',
+
+  /**
+   * Template Saved Constants [Component Used in -> Save Template Modal]
+   */
+  error: 'error',
+  success: 'success',
 };

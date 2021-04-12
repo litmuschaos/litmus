@@ -11,7 +11,7 @@ import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { getUserEmail, getUsername, logout } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import { userInitials } from '../../utils/user';
+import { userInitials } from '../../utils/userInitials';
 import useStyles from './styles';
 
 const ProfileDropdown: React.FC = () => {
@@ -105,13 +105,15 @@ const ProfileDropdown: React.FC = () => {
           <div
             className={`${classes.profileDropdownRow} ${classes.profileButtons}`}
           >
-            <ButtonFilled
-              title="Logout from the portal"
-              onClick={() => logout()}
-            >
-              {t('header.profileDropdown.logout')}
-              <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
-            </ButtonFilled>
+            <div data-cy="logoutButton">
+              <ButtonFilled
+                title="Logout from the portal"
+                onClick={() => logout()}
+              >
+                {t('header.profileDropdown.logout')}
+                <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
+              </ButtonFilled>
+            </div>
             <ButtonOutlined
               title="Edit your profile"
               onClick={() => {

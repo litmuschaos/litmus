@@ -1,7 +1,7 @@
 export interface DataSourceData {
   selectedDataSourceID: string;
   selectedDataSourceURL: string;
-  selectedDataSourceName?: string;
+  selectedDataSourceName: string;
   selectedDataSourceTemplateID?: number;
 }
 

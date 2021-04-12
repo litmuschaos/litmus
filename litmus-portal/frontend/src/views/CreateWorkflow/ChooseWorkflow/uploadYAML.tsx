@@ -2,11 +2,10 @@ import { AccordionDetails, Button, Paper, Typography } from '@material-ui/core';
 import localforage from 'localforage';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
-import { RootState } from '../../../redux/reducers';
+import { updateEngineName } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
@@ -19,13 +18,13 @@ const UploadYAML = () => {
   const [uploadedYAML, setUploadedYAML] = useState('');
   const [fileName, setFileName] = useState<string | null>('');
   const workflowAction = useActions(WorkflowActions);
-  const workflowDetails = useSelector((state: RootState) => state.workflowData);
 
   const saveToLocalForage = () => {
     const selection: ChooseWorkflowRadio = {
       selected: 'D',
     };
     localforage.setItem('selectedScheduleOption', selection);
+    localforage.setItem('hasSetWorkflowData', false);
   };
 
   // Function to handle when a File is dragged on the upload field
@@ -40,15 +39,9 @@ const UploadYAML = () => {
         const readFile = await file.text();
         setUploadedYAML(readFile);
         setFileName(file.name);
-        const workflowName = `custom-chaos-workflow-${Math.round(
-          new Date().getTime() / 1000
-        )}`;
-        const parsedYaml = YAML.parse(readFile);
-        parsedYaml.metadata.name = workflowName;
-        workflowAction.setWorkflowDetails({
-          ...workflowDetails,
-          name: workflowName,
-          yaml: YAML.stringify(parsedYaml),
+        const wfmanifest = updateEngineName(YAML.parse(readFile));
+        workflowAction.setWorkflowManifest({
+          manifest: wfmanifest,
         });
       });
     saveToLocalForage();
@@ -64,10 +57,9 @@ const UploadYAML = () => {
     if ((extension === 'yaml' || extension === 'yml') && readFile) {
       readFile.text().then((response) => {
         setUploadedYAML(response);
-        const parsedYaml = YAML.parse(response);
-
+        const wfmanifest = updateEngineName(YAML.parse(response));
         workflowAction.setWorkflowManifest({
-          manifest: YAML.stringify(parsedYaml),
+          manifest: wfmanifest,
         });
       });
     } else {

@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
   header: {
     width: '100%',
     display: 'flex',
-    margin: theme.spacing(5, 0, 2.5, 0),
+    margin: theme.spacing(1, 0, 2.5, 0),
   },
   scheduleBtn: {
     marginLeft: 'auto',

@@ -39,26 +39,37 @@ const TableData: React.FC<TableDataProps> = ({
         />
       </StyledTableCell>
       <StyledTableCell>
-        <Typography className={classes.tableObjects}>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '25rem' }}
+        >
           {data.workflow}
         </Typography>
       </StyledTableCell>
       <StyledTableCell>
-        <Typography className={classes.tableObjects}>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '10rem' }}
+        >
           {data.experiment}
         </Typography>
       </StyledTableCell>
       <StyledTableCell>
-        <Typography className={classes.tableObjects}>{data.target}</Typography>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '15rem' }}
+        >
+          {data.target}
+        </Typography>
       </StyledTableCell>
       <StyledTableCell>
         <Typography
           className={`${classes.tableObjects} ${
             data.result === CHAOS_EXPERIMENT_VERDICT_PASS
-              ? classes.passColor
+              ? classes.pass
               : data.result === CHAOS_EXPERIMENT_VERDICT_FAIL
-              ? classes.failColor
-              : classes.awaitedColor
+              ? classes.fail
+              : classes.awaited
           }`}
         >
           {data.result}
