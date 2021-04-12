@@ -134,24 +134,22 @@ func GetServerEndpoint() (string, error) {
 		for _, rule := range getIng.Spec.Rules {
 			for _, path := range rule.HTTP.Paths {
 				if path.Backend.ServiceName == ServerServiceName {
-					log.Print(path.Path)
-					path_arr := strings.Split(path.Path, "/")
-					if path_arr[len(path_arr)-1] == "(.*)" {
-						path_arr[len(path_arr)-1] = "query"
+					f := func(c rune) bool {
+						return c == '/'
+					}
+
+					path_arr := strings.FieldsFunc(path.Path, f)
+					if len(path_arr) > 0 {
+						if path_arr[len(path_arr)-1] == "(.*)" {
+							path_arr[len(path_arr)-1] = "query"
+						} else {
+							path_arr = append(path_arr, "query")
+						}
 					} else {
 						path_arr = append(path_arr, "query")
 					}
 
-					log.Print(path_arr)
-					for el, p := range path_arr {
-						if p != "" {
-							if el == len(path_arr)-1 {
-								IngressPath += p
-							} else {
-								IngressPath += p + "/"
-							}
-						}
-					}
+					IngressPath = strings.Join(path_arr[:], "/")
 				}
 			}
 		}
