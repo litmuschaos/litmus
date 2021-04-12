@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
   // Table and Table Data Properties
   tableMain: {
     backgroundColor: theme.palette.cards.background,
-    border: `1px solid ${theme.palette.cards.background}`,
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -39,13 +38,12 @@ const useStyles = makeStyles((theme) => ({
     },
     '& th': {
       backgroundColor: theme.palette.cards.background,
-      color: theme.palette.text.secondary,
+      color: theme.palette.text.hint,
     },
   },
 
   tableRows: {
     padding: theme.spacing(4),
-    color: theme.palette.text.hint,
     height: '4.6875rem',
   },
 
@@ -74,8 +72,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
 
-  disabledText: {
-    color: theme.palette.text.disabled,
+  primaryText: {
+    color: theme.palette.text.primary,
   },
 
   popover: {

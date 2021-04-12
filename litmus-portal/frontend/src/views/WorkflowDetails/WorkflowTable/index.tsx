@@ -78,48 +78,46 @@ const NodeTable: React.FC<NodeTableProps> = ({
         >
           <Table stickyHeader aria-label="simple table">
             <TableHead className={classes.tableHead}>
-              <TableRow className={classes.tableRows}>
-                {/* Step Name */}
-                <StyledTableCell className={classes.tableCellWidth}>
-                  <Typography>
-                    {t('workflowDetailsView.tableView.tableHeader.stepName')}
-                  </Typography>
-                </StyledTableCell>
+              {/* Step Name */}
+              <StyledTableCell className={classes.tableCellWidth}>
+                <Typography>
+                  {t('workflowDetailsView.tableView.tableHeader.stepName')}
+                </Typography>
+              </StyledTableCell>
 
-                {/* Status */}
-                <StyledTableCell className={classes.tableCellWidth}>
-                  <Typography>
-                    {t('workflowDetailsView.tableView.tableHeader.status')}
-                  </Typography>
-                </StyledTableCell>
+              {/* Status */}
+              <StyledTableCell className={classes.tableCellWidth}>
+                <Typography>
+                  {t('workflowDetailsView.tableView.tableHeader.status')}
+                </Typography>
+              </StyledTableCell>
 
-                {/* Duration of Node execution */}
-                <StyledTableCell className={classes.tableCellWidth}>
-                  <Typography>
-                    {t('workflowDetailsView.tableView.tableHeader.duration')}
-                  </Typography>
-                </StyledTableCell>
+              {/* Duration of Node execution */}
+              <StyledTableCell className={classes.tableCellWidth}>
+                <Typography>
+                  {t('workflowDetailsView.tableView.tableHeader.duration')}
+                </Typography>
+              </StyledTableCell>
 
-                {/* Start Time */}
-                <StyledTableCell className={classes.tableCellWidth}>
-                  <Typography>
-                    {t('workflowDetailsView.tableView.tableHeader.startTime')}
-                  </Typography>
-                </StyledTableCell>
+              {/* Start Time */}
+              <StyledTableCell className={classes.tableCellWidth}>
+                <Typography>
+                  {t('workflowDetailsView.tableView.tableHeader.startTime')}
+                </Typography>
+              </StyledTableCell>
 
-                {/* Application Details */}
-                <StyledTableCell className={classes.tableCellWidth}>
-                  <Typography>
-                    {t(
-                      'workflowDetailsView.tableView.tableHeader.applicationDetails'
-                    )}
-                  </Typography>
-                </StyledTableCell>
+              {/* Application Details */}
+              <StyledTableCell className={classes.tableCellWidth}>
+                <Typography>
+                  {t(
+                    'workflowDetailsView.tableView.tableHeader.applicationDetails'
+                  )}
+                </Typography>
+              </StyledTableCell>
 
-                <StyledTableCell className={classes.tableCellWidth}>
-                  <Typography />
-                </StyledTableCell>
-              </TableRow>
+              <StyledTableCell className={classes.tableCellWidth}>
+                <Typography />
+              </StyledTableCell>
             </TableHead>
 
             {/* Table Body Section */}
@@ -136,7 +134,7 @@ const NodeTable: React.FC<NodeTableProps> = ({
                     node.name
                   );
                   return (
-                    <TableRow key={node.id}>
+                    <TableRow key={node.id} className={classes.tableRows}>
                       <TableData
                         onViewLogsClick={() => changeNodeLogs(node.id)}
                         embeddedYAML={stepYAML}

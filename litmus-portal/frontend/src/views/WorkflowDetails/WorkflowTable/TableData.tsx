@@ -39,47 +39,37 @@ const TableData: React.FC<TableDataProps> = ({
   return (
     <>
       <StyledTableCell className={classes.tableCellWidth}>
-        <Typography>
-          <span className={classes.disabledText}>
-            <strong>{data.name}</strong>
-          </span>
-        </Typography>
+        <Typography className={classes.primaryText}>{data.name}</Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
         <WorkflowStatus phase={data.phase} />
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
-        <Typography>
-          <span className={classes.disabledText}>
-            <strong>
-              {data.finishedAt !== ''
-                ? (
-                    (parseInt(data.finishedAt, 10) -
-                      parseInt(data.startedAt, 10)) /
-                    60
-                  ).toFixed(1)
-                : (
-                    (new Date().getTime() / 1000 -
-                      parseInt(data.startedAt, 10)) /
-                    60
-                  ).toFixed(1)}{' '}
-              minutes
-            </strong>
-          </span>
+        <Typography className={classes.primaryText}>
+          {data.finishedAt !== ''
+            ? (
+                (parseInt(data.finishedAt, 10) - parseInt(data.startedAt, 10)) /
+                60
+              ).toFixed(1)
+            : (
+                (new Date().getTime() / 1000 - parseInt(data.startedAt, 10)) /
+                60
+              ).toFixed(1)}
+          &nbsp;
+          {t('workflowDetailsView.tableView.minutes')}
         </Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
-        <Typography>
-          <span className={classes.disabledText}>
-            <strong>{timeDifference(data.startedAt)}</strong>
-          </span>
+        <Typography className={classes.primaryText}>
+          {timeDifference(data.startedAt)}
         </Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
-        {data.type === 'ChaosEngine' ? (
+        {data.type === 'ChaosEngine' && embeddedYAML ? (
           <div>
             <Button
-              onClick={handlePopOverClick}
+              disabled={!YAML.parse(embeddedYAML).spec.appinfo}
+              onClick={(event) => handlePopOverClick(event)}
               style={{ textTransform: 'none' }}
             >
               <div className={classes.applicationDetails}>
@@ -89,11 +79,7 @@ const TableData: React.FC<TableDataProps> = ({
                   <ChevronRightIcon className={classes.arrowMargin} />
                 )}
                 <Typography>
-                  <span className={classes.disabledText}>
-                    <strong>
-                      {t('workflowDetailsView.tableView.showProperties')}
-                    </strong>
-                  </span>
+                  {t('workflowDetailsView.tableView.showProperties')}
                 </Typography>
               </div>
             </Button>
@@ -112,7 +98,7 @@ const TableData: React.FC<TableDataProps> = ({
               }}
             >
               <div className={classes.popover}>
-                {embeddedYAML &&
+                {YAML.parse(embeddedYAML).spec.appinfo &&
                   Object.keys(YAML.parse(embeddedYAML).spec.appinfo).map(
                     (key, index) => {
                       return (

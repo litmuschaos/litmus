@@ -47,7 +47,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
         )}
       </div>
 
-      {/* Body Section divided in 4 parts */}
+      {/* Body Section divided in 3 parts */}
       <div className={classes.section}>
         {/* 1. Resiliency Score Sub Section */}
         <div className={classes.subSection}>
@@ -87,28 +87,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           </div>
         </div>
 
-        {/* 3. HostedOn Sub Section */}
-        <div className={classes.subSection}>
-          <Typography className={classes.subSectionTitle}>
-            {t('workflowDetailsView.workflowInfo.hostedOn.hostedOnHeader')}
-          </Typography>
-          <div className={classes.section}>
-            <div className={classes.subCategorySection}>
-              <Typography className={classes.subCategorySectionTitle}>
-                {t('workflowDetailsView.workflowInfo.hostedOn.cluster')}
-              </Typography>
-              <Typography>{cluster_name}</Typography>
-            </div>
-            <div className={classes.subCategorySection}>
-              <Typography className={classes.subCategorySectionTitle}>
-                {t('workflowDetailsView.workflowInfo.hostedOn.namespace')}
-              </Typography>
-              <Typography>{data.namespace}</Typography>
-            </div>
-          </div>
-        </div>
-
-        {/* Target Sub Section */}
+        {/* 3. Target Sub Section */}
         <div className={classes.subSection}>
           <Typography className={classes.subSectionTitle}>
             {t('workflowDetailsView.workflowInfo.targets.targetsHeader')}
@@ -125,14 +104,6 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
                 {t('workflowDetailsView.workflowInfo.targets.namespace')}
               </Typography>
               <Typography>{data.namespace}</Typography>
-            </div>
-            <div className={classes.subCategorySection}>
-              <Typography className={classes.subCategorySectionTitle}>
-                {t('workflowDetailsView.workflowInfo.application')}
-              </Typography>
-
-              {/* Static data, will be changed with API response */}
-              <Typography>Application name</Typography>
             </div>
           </div>
         </div>
