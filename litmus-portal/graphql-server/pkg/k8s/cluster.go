@@ -184,7 +184,7 @@ func GetServerEndpoint() (string, error) {
 			if IPAddress == "" {
 				return "", errors.New("ExternalIP is not present for loadbalancer service type")
 			}
-			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port))
+			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port)) + "/query"
 		case "nodeport":
 			nodeIP, err := clientset.CoreV1().Nodes().Get(NodeName, metaV1.GetOptions{})
 			if err != nil {
@@ -200,9 +200,9 @@ func GetServerEndpoint() (string, error) {
 			}
 
 			if IPAddress == "" {
-				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort))
+				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort)) + "/query"
 			} else if InternalIP == "" {
-				FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort))
+				FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort)) + "/query"
 			} else {
 				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
@@ -211,7 +211,7 @@ func GetServerEndpoint() (string, error) {
 			if svc.Spec.ClusterIP == "" {
 				return "", errors.New("ClusterIP is not present")
 			}
-			FinalUrl = "http://" + svc.Spec.ClusterIP + ":" + strconv.Itoa(int(Port))
+			FinalUrl = "http://" + svc.Spec.ClusterIP + ":" + strconv.Itoa(int(Port)) + "/query"
 		default:
 			return "", errors.New("No service type found")
 		}
