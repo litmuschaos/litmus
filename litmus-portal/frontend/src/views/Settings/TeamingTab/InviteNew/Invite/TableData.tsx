@@ -10,7 +10,7 @@ import {
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserInvite } from '../../../../../models/graphql/invite';
-import { userInitials } from '../../../../../utils/user';
+import { userInitials } from '../../../../../utils/userInitials';
 import useStyles from './styles';
 
 interface TableDataProps {

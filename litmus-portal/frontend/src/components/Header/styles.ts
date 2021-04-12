@@ -3,23 +3,39 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   // Styles for Header
   appBar: {
-    backgroundColor: theme.palette.background.default,
-    height: '5rem',
     position: 'sticky',
-    boxShadow: `0px 1.8px 0.6px rgba(0, 0, 0, 0.1), 0px 3.2px 7.2px rgba(0, 0, 0, 0.13)`,
+    boxShadow: `0px 0.6px 1.8px rgba(0, 0, 0, 0.1), 0px 3.2px 7.2px rgba(0, 0, 0, 0.13)`,
   },
   toolBar: {
-    height: '5rem',
+    height: '4.9rem',
     display: 'flex',
+    background: `linear-gradient(269.82deg, #5B44BA 0.52%, #493795 99.07%)`,
     padding: theme.spacing(0, 7.5),
+    '& *': {
+      color: theme.palette.text.secondary,
+    },
     '& nav': {
       flexGrow: 1,
+      marginLeft: theme.spacing(15),
     },
+  },
+  // Logo
+  litmusDiv: {
+    display: 'flex',
+  },
+  homeLink: {
+    textDecoration: 'none',
+  },
+  logo: {
+    left: theme.spacing(4.375),
+  },
+  litmusHome: {
+    fontSize: '1.625rem',
+    marginLeft: theme.spacing(1.75),
   },
   projectDropdown: {
     display: 'flex',
     alignItems: 'center',
-    color: theme.palette.common.black,
     '& button': {
       marginTop: theme.spacing(0.25),
     },
@@ -42,13 +58,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   active: {
-    background: theme.palette.cards.highlight,
+    '& .MuiListItem-root.Mui-selected, .MuiListItem-root.Mui-selected:hover': {
+      background: theme.palette.common.black,
+    },
   },
   profileDropdown: {
     margin: theme.spacing(0.25, 0, 0, 2.75),
   },
   avatarBackground: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.light,
   },
   profileDropdownPopover: {
     padding: theme.spacing(3.25, 2.875),
