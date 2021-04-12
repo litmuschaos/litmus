@@ -7,7 +7,7 @@ const ToolTip = withStyles((theme: Theme) => ({
     color: theme.palette.text.primary,
     boxShadow:
       '0rem 0.128rem 0.384rem rgba(0,0,0,0.1), 0rem 0.682rem 1.54rem rgba(0,0,0,0.13)',
-    fontSize: 10,
+    fontSize: '0.625rem',
     fontWeight: 400,
   },
 }))(Tooltip);

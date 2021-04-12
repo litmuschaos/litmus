@@ -117,9 +117,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     '& p': {
       paddingRight: theme.spacing(2),
     },
-    padding: 0,
+    padding: `0 0 0 ${theme.spacing(5.75)}`,
     marginRight: theme.spacing(5.75),
-    paddingRight: theme.spacing(5.75),
   },
   seeAllBtn: {
     backgroundColor: 'transparent !important',
