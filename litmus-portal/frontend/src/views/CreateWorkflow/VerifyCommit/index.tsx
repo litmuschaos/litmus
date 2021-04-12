@@ -245,6 +245,12 @@ const VerifyCommit = forwardRef((_, ref) => {
     localforage.removeItem('selectedHub');
     localforage.removeItem('editSchedule');
     setFinishModalOpen(false);
+
+    tabs.changeWorkflowsTabs(0);
+    history.push({
+      pathname: '/workflows',
+      search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
+    });
   };
 
   function onNext() {
@@ -469,11 +475,6 @@ const VerifyCommit = forwardRef((_, ref) => {
                 data-cy="selectFinish"
                 onClick={() => {
                   handleFinishModal();
-                  tabs.changeWorkflowsTabs(0);
-                  history.push({
-                    pathname: '/workflows',
-                    search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
-                  });
                 }}
               >
                 <div>{t('workflowStepper.workflowBtn')}</div>

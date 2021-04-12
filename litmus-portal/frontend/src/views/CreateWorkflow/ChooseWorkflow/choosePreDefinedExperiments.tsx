@@ -111,4 +111,5 @@ const ChoosePreDefinedExperiments = () => {
     </AccordionDetails>
   );
 };
+
 export default ChoosePreDefinedExperiments;
