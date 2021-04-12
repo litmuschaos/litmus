@@ -609,15 +609,10 @@ workflowDetailsView:
       runTimeHeader: Run Time
       startTime: 'Start Time :'
       endTime: 'End Time :'
-    hostedOn:
-      hostedOnHeader: Hosted On
-      cluster: 'Cluster :'
-      namespace: 'Namespace :'
     targets:
-      targetsHeader: Targets
+      targetsHeader: Target
       cluster: 'Cluster :'
       namespace: 'Namespace :'
-    application: 'Application :'
   workflowNodeInfo:
     name: Name
     type: Type
@@ -640,6 +635,7 @@ workflowDetailsView:
     button:
       logs: Logs
       result: Chaos Result
+    minutes: minutes
 
 homeView:
   averageResilienceScore:
