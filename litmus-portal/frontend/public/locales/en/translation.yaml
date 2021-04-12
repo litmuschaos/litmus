@@ -89,37 +89,7 @@ workflowStepper:
 ######################################
 
 home:
-  workflow:
-    heading: Let's Start
-    info: Schedule your first workflow
   heading: Welcome,
-  subHeading1: Congratulations!
-  subHeading2: You have established your first project on the Litmus portal.
-  subHeading3: Now it is successfully running on your Kubernetes cluster. Once you have scheduled your chaos workflows, reliability analytics will be displayed here.
-  button1: See pre-defined workflows
-  analytics:
-    heading: How busy is the Litmus Project?
-    moreInfo: See more
-  comingSoon: Coming soon !
-  resilienceScore: Resilience score
-  recentActivity: Recent activity
-  resilienceScoreComparisonOptions:
-    option1: Hourly
-    option2: Daily
-    option3: Monthly
-    granularity: Granularity
-  recentActivityEmpty: No recent activity.
-  NonAdmin:
-    noAgent: No LitmusChaos Agent has been discovered on any cluster.
-    agentDeployInfo: To configure your workflow you need to deploy an agent. Click on “Deploy your first Agent” to continue.
-    chaosAgent: Deploy LitmusChaos agent on your Kubernetes clusters.
-    agents: Agents
-    agent: Agent
-    chaosAgentInfo: Cloud native chaos engineering can be setup on this cluster using LitmusChaos
-    deployFirst: Deploy your first Agent
-    toProjects: To Projects
-    toAnalytics: To Analytics
-    deploy: Deploy another Agent
 
 login:
   heading: One-stop-shop for Chaos Engineering on Kubernetes
@@ -645,19 +615,6 @@ workflowDetailsView:
       logs: Logs
       result: Chaos Result
     minutes: minutes
-
-homeView:
-  averageResilienceScore:
-    header: Average Resilience Score
-    desc: Based on results of completed tests
-  passedVsFailed:
-    header: Passed Vs Failed
-    desc: Statistics taken from completed tests
-  totalWorkflows:
-    header: Number of total Workflows
-    subtitle: Average amount of workflows
-    perWeek: per week
-    desc: Average is calculated from the max of workflows
 
 createWorkflow:
   chooseWorkflow:
