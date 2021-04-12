@@ -48,8 +48,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep }) => {
   return (
     <div>
       <Typography>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
+        {t('createWorkflow.tuneWorkflow.verticalStepper.myHubInfo')}
       </Typography>
       <br />
       <div className={classes.generalContainer}>

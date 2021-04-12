@@ -686,7 +686,7 @@ createWorkflow:
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
     pleaseAddExp: Please add experiments to see the data
-    revertSchedule: Revert Schedule    
+    revertSchedule: Revert Schedule
     noTemplates: No template available.
     addTemplate: You can add a template from the scheduled workflows table.
     trueValue: 'True'
@@ -768,7 +768,8 @@ createWorkflow:
     editSequence: Edit Sequence
     addANewExperiment: Add a new experiment
     verticalStepper:
-      annotationInfo: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      myHubInfo: MyHub and Experiment details
+      annotationInfo: Provide target application details where you want to induce the chaos.
       annotation: Annotation Check
       true: 'True'
       false: 'False'
