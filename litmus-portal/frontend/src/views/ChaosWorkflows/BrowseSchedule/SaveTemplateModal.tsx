@@ -106,7 +106,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       <div className={classes.footerTemplateDiv}>
         <div className={classes.templateButtonsDiv}>
           <IconButton onClick={closeTemplate} className={classes.cancelIcon}>
-            Cancel
+            {t('chaosWorkflows.browseSchedules.cancel')}
           </IconButton>
           <ButtonFilled
             onClick={() => {
