@@ -3,8 +3,7 @@ export default [
     workflowID: 0,
     title: 'sock-shop-resiliency-check',
     chaosinfra: false,
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
+    urlToIcon: '/icons/sock-shop.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/sock-shop-demo/usingCmdProbe/workflow.yaml',
     chaosWkfCRDLink_Recur:
@@ -56,14 +55,13 @@ export default [
     workflowID: 2,
     title: 'podtato-head-chaos',
     chaosinfra: false,
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
+    urlToIcon: '/icons/podtato_head.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/podtato-head/workflow.yaml',
     chaosWkfCRDLink_Recur:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/podtato-head/workflow_cron.yaml',
     gitLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/podtato-head',
+      'https://github.com/litmuschaos/chaos-charts/tree/master/workflows/podtato-head',
     provider: 'ChaosNative',
     description: 'Induces chaos on podtato-head application',
     totalRuns: 10,
