@@ -32,6 +32,19 @@ export interface DashboardDetails {
   panelGroups?: PanelGroupResponse[];
 }
 
+export interface DashboardConfigurationDetails {
+  name: string;
+  type: string;
+  dataSourceName: string;
+  dataSourceURL: string;
+  agent: string;
+}
+
+export interface PanelNameAndID {
+  name: string;
+  id: string;
+}
+
 export interface ChaosResultNamesAndNamespacesMap {
   resultName: string;
   resultNamespace: string;
@@ -104,4 +117,5 @@ export interface GraphPanelProps extends PanelResponse {
 
 export interface GraphPanelGroupProps extends PanelGroupResponse {
   chaos_data?: Array<EventMetric>;
+  selectedPanels?: string[];
 }

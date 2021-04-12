@@ -126,7 +126,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                       onClick={() => {
                         onDashboardLoadRoutine(dashboard).then(() => {
                           history.push({
-                            pathname: '/analytics/dashboard',
+                            pathname: '/analytics/application-dashboard',
                             search: `?projectID=${projectID}&projectRole=${projectRole}`,
                           });
                         });

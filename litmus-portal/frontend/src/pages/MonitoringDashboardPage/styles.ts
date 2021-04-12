@@ -14,13 +14,23 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2.5),
   },
 
+  infoDiv: {
+    marginTop: theme.spacing(3.5),
+  },
+
   headerDiv: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(3.5),
     paddingTop: theme.spacing(2.15),
     backgroundColor: theme.palette.disabledBackground,
     minHeight: '5rem',
+  },
+
+  controlsDiv: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(4.5),
   },
 
   italic: {
@@ -34,7 +44,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   button: {
-    marginBottom: theme.spacing(3),
     marginLeft: theme.spacing(-2),
   },
 

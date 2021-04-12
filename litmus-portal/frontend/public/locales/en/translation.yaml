@@ -182,7 +182,19 @@ analyticsDashboard:
     dataSourceIs: Data source is
     reConfigureDashboard: Re-configure dashboard
     updateDataSource: Update data source
+    or: or
     headerInfoText: "View the chaos events and metrics in a given \n time interval by selecting a time interval."
+    infoButtonText: Info
+    infoDropdown:
+      header: Application Dashboard Information
+      close: Close Info
+      subHeading1: Dashboard Configuration Details
+      subHeading2: Selected Applications
+      subHeading3: Selected Metrics
+      metaData1: Name
+      metaData2: Type
+      metaData3: DataSource
+      metaData4: Agent
     rangeSelector:
       to: to
       selectPeriod: Select Period
@@ -204,7 +216,9 @@ analyticsDashboard:
       tableHead2: Workflow
       tableHead3: Experiment
       tableHead4: "Target \n ( namespace / pod )"
-      tableHead5: Result
+      tableHead5:
+        title: Result
+        infoText: Latest Chaos experiment verdict
       noRecords: No chaos happened during the interval
       showTable: Show Chaos during this interval
       hideTable: Hide Chaos during this interval

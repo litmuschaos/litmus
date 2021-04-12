@@ -32,12 +32,14 @@ import {
   ChaosDataUpdates,
   ChaosEventDetails,
   ChaosInformation,
+  PanelNameAndID,
 } from '../../models/dashboardsData';
 import {
   DashboardList,
   ListDashboardResponse,
   ListDashboardVars,
   PanelGroupResponse,
+  PanelResponse,
 } from '../../models/graphql/dashboardsDetails';
 import {
   DataSourceList,
@@ -64,7 +66,9 @@ import {
 } from '../../utils/promUtils';
 import ChaosAccordion from '../../views/AnalyticsDashboard/MonitoringDashboardPage/ChaosAccordion';
 import DataSourceInactiveModal from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DataSourceInactiveModal';
+import InfoDropdown from '../../views/AnalyticsDashboard/MonitoringDashboardPage/InfoDropdown';
 import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/Panel/DashboardPanelGroup';
+import TopNavButtons from '../../views/AnalyticsDashboard/MonitoringDashboardPage/TopNavButtons';
 import {
   ACTIVE,
   DEFAULT_REFRESH_RATE,
@@ -87,6 +91,7 @@ interface SelectedDashboardInformation {
   metaData: ListDashboardResponse[];
   dashboardKey: string;
   selectionOverride: Boolean;
+  panelNameAndIDList: PanelNameAndID[];
 }
 
 interface PrometheusQueryDataInterface {
@@ -144,6 +149,7 @@ const DashboardPage: React.FC = () => {
     metaData: [],
     dashboardKey: 'Default',
     selectionOverride: false,
+    panelNameAndIDList: [],
   });
   const [
     prometheusQueryData,
@@ -194,6 +200,8 @@ const DashboardPage: React.FC = () => {
     isDateRangeSelectorPopoverOpen,
     setDateRangeSelectorPopoverOpen,
   ] = React.useState(false);
+  const [isInfoOpen, setIsInfoOpen] = React.useState<Boolean>(false);
+  const [selectedPanels, setSelectedPanels] = React.useState<string[]>([]);
 
   const clearTimeOuts = async () => {
     let id = window.setTimeout(() => {}, 0);
@@ -400,6 +408,17 @@ const DashboardPage: React.FC = () => {
             return data.db_id === selectedDashboardInformation.id;
           }
         )[0];
+        const selectedPanelNameAndIDList: PanelNameAndID[] = [];
+        selectedDashboard.panel_groups.forEach(
+          (panelGroup: PanelGroupResponse) => {
+            panelGroup.panels.forEach((panel: PanelResponse) => {
+              selectedPanelNameAndIDList.push({
+                name: panel.panel_name,
+                id: panel.panel_id,
+              });
+            });
+          }
+        );
         dashboard.selectDashboard({
           selectedDashboardID: selectedDashboardInformation.id,
           selectedDashboardName: selectedDashboard.db_name,
@@ -411,7 +430,11 @@ const DashboardPage: React.FC = () => {
           dashboardListForAgent: availableDashboards,
           metaData: [selectedDashboard],
           dashboardKey: selectedDashboardInformation.id,
+          panelNameAndIDList: selectedPanelNameAndIDList,
         });
+        setSelectedPanels(
+          selectedPanelNameAndIDList.map((panel: PanelNameAndID) => panel.id)
+        );
       }
     }
   }, [dashboards, selectedDashboardInformation.id]);
@@ -696,74 +719,112 @@ const DashboardPage: React.FC = () => {
           <div className={classes.button}>
             <BackButton />
           </div>
-          <Typography variant="h4" className={classes.weightedFont}>
-            {selectedDashboardInformation.agentName} /{' '}
-            <Typography
-              variant="h4"
-              display="inline"
-              className={classes.italic}
-            >
-              {selectedDashboardInformation.name}
+
+          <div className={classes.controlsDiv}>
+            <Typography variant="h4" className={classes.weightedFont}>
+              {selectedDashboardInformation.agentName} /{' '}
+              <Typography
+                variant="h4"
+                display="inline"
+                className={classes.italic}
+              >
+                {selectedDashboardInformation.name}
+              </Typography>
+              <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+                data-cy="browseDashboardListOptions"
+                className={classes.iconButton}
+              >
+                <KeyboardArrowDownIcon
+                  className={classes.dashboardSwitchIcon}
+                />
+              </IconButton>
+              <Menu
+                id="long-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={open}
+                onClose={handleClose}
+              >
+                {selectedDashboardInformation.dashboardListForAgent.map(
+                  (data: ListDashboardResponse) => {
+                    return (
+                      <MenuItem
+                        key={`${data.db_id}-monitoringDashboard`}
+                        value={data.db_id}
+                        onClick={() => {
+                          setSelectedDashboardInformation({
+                            ...selectedDashboardInformation,
+                            id: data.db_id,
+                            name: data.db_name,
+                            type: data.db_type,
+                          });
+                          dataSource.selectDataSource({
+                            selectedDataSourceURL: '',
+                            selectedDataSourceID: '',
+                            selectedDataSourceName: '',
+                          });
+                          setRefreshRate(0);
+                          setAnchorEl(null);
+                        }}
+                        className={
+                          data.db_id === selectedDashboardInformation.id
+                            ? classes.menuItemSelected
+                            : classes.menuItem
+                        }
+                      >
+                        <div className={classes.expDiv}>
+                          <Typography
+                            data-cy="switchDashboard"
+                            className={`${classes.btnText} ${classes.italic}`}
+                            variant="h5"
+                          >
+                            {data.db_name}
+                          </Typography>
+                        </div>
+                      </MenuItem>
+                    );
+                  }
+                )}
+              </Menu>
             </Typography>
-            <IconButton
-              aria-label="more"
-              aria-controls="long-menu"
-              aria-haspopup="true"
-              onClick={handleClick}
-              data-cy="browseDashboardListOptions"
-              className={classes.iconButton}
-            >
-              <KeyboardArrowDownIcon className={classes.dashboardSwitchIcon} />
-            </IconButton>
-            <Menu
-              id="long-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={open}
-              onClose={handleClose}
-            >
-              {selectedDashboardInformation.dashboardListForAgent.map(
-                (data: ListDashboardResponse) => {
-                  return (
-                    <MenuItem
-                      key={`${data.db_id}-monitoringDashboard`}
-                      value={data.db_id}
-                      onClick={() => {
-                        setSelectedDashboardInformation({
-                          ...selectedDashboardInformation,
-                          id: data.db_id,
-                          name: data.db_name,
-                          type: data.db_type,
-                        });
-                        dataSource.selectDataSource({
-                          selectedDataSourceURL: '',
-                          selectedDataSourceID: '',
-                          selectedDataSourceName: '',
-                        });
-                        setRefreshRate(0);
-                        setAnchorEl(null);
-                      }}
-                      className={
-                        data.db_id === selectedDashboardInformation.id
-                          ? classes.menuItemSelected
-                          : classes.menuItem
-                      }
-                    >
-                      <div className={classes.expDiv}>
-                        <Typography
-                          data-cy="switchDashboard"
-                          className={`${classes.btnText} ${classes.italic}`}
-                          variant="h5"
-                        >
-                          {data.db_name}
-                        </Typography>
-                      </div>
-                    </MenuItem>
-                  );
+
+            <TopNavButtons
+              isInfoToggledState={isInfoOpen}
+              switchIsInfoToggled={(toggleState: Boolean) => {
+                setIsInfoOpen(toggleState);
+              }}
+            />
+          </div>
+          {isInfoOpen && (
+            <div className={classes.infoDiv}>
+              <InfoDropdown
+                dashboardConfigurationDetails={{
+                  name: selectedDashboardInformation.name,
+                  type: selectedDashboardInformation.type,
+                  dataSourceName: selectedDataSource.selectedDataSourceName,
+                  dataSourceURL: selectedDataSource.selectedDataSourceURL,
+                  agent: selectedDashboardInformation.agentName,
+                }}
+                metricsToBeShown={
+                  selectedDashboardInformation.panelNameAndIDList
                 }
-              )}
-            </Menu>
-          </Typography>
+                applicationsToBeShown={[]}
+                postPanelSelectionRoutine={(selectedPanelList: string[]) => {
+                  setSelectedPanels(selectedPanelList);
+                }}
+                postApplicationSelectionRoutine={(
+                  selectedApplicationList: string[]
+                ) => {}}
+                closeInfo={() => {
+                  setIsInfoOpen(false);
+                }}
+              />
+            </div>
+          )}
           <div className={classes.headerDiv}>
             <Typography className={classes.headerInfoText}>
               {t('analyticsDashboard.monitoringDashboardPage.headerInfoText')}
@@ -936,6 +997,7 @@ const DashboardPage: React.FC = () => {
                       panel_group_name={panelGroup.panel_group_name}
                       panels={panelGroup.panels}
                       chaos_data={chaosDataSet.visibleChaos}
+                      selectedPanels={selectedPanels}
                     />
                   </div>
                 )

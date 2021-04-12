@@ -4,6 +4,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
     height: '100%',
+    marginTop: theme.spacing(2),
   },
   leftBannerTable: {
     flexGrow: 1,
