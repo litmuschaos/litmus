@@ -34,4 +34,10 @@ export const constants = {
   appLabel: 'applabel',
   jobCleanUp: 'jobCleanUpPolicy',
   nodeselector: 'nodeselector',
+
+  /**
+   * Template Saved Constants [Component Used in -> Save Template Modal]
+   */
+  error: 'error',
+  success: 'success',
 };

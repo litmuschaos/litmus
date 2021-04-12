@@ -367,6 +367,11 @@ chaosWorkflows:
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
+    saveTemplate: Save Template
+    updateEngine: 'Note: Make sure to update the chaos engine names'
+    saveChanges: Save Changes
+    savedSuccessfully: Successfully saved template.
+    cancel: Cancel
     options:
       all: Show All Workflows
       enabledOnly: Show Enabled Workflows Only
@@ -681,9 +686,11 @@ createWorkflow:
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
     pleaseAddExp: Please add experiments to see the data
-    revertSchedule: Revert Schedule
-    trueValue: True
-    falseValue: False
+    revertSchedule: Revert Schedule    
+    noTemplates: No template available.
+    addTemplate: You can add a template from the scheduled workflows table.
+    trueValue: 'True'
+    falseValue: 'False'
     table:
       head1: Sequence
       head2: Name

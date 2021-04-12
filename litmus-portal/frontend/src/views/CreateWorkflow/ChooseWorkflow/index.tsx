@@ -122,13 +122,19 @@ const ChooseWorkflow = forwardRef((_, ref) => {
             <ChoosePreDefinedExperiments ref={childRef} />
           </Accordion>
 
-          <Accordion expanded={selected === 'B'} className={classes.accordion}>
+          <Accordion
+            expanded={selected === 'B'}
+            classes={{
+              root: classes.MuiAccordionroot,
+            }}
+            className={classes.accordion}
+          >
             <AccordionSummary>
               <RadioButton value="B" onChange={(e) => handleChange(e)}>
-                Create a new workflow by cloning an existing workflow
+                {t('createWorkflow.chooseWorkflow.optionB')}
               </RadioButton>
             </AccordionSummary>
-            <ChooseWorkflowFromExisting />
+            <ChooseWorkflowFromExisting ref={childRef} />
           </Accordion>
 
           <Accordion

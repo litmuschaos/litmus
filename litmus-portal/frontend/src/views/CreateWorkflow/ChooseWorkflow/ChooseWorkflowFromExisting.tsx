@@ -1,14 +1,24 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import {
   AccordionDetails,
+  IconButton,
   RadioGroup,
   Typography,
   useTheme,
 } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
-import { LIST_MANIFEST_TEMPLATE } from '../../../graphql';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  DELETE_WORKFLOW_TEMPLATE,
+  LIST_MANIFEST_TEMPLATE,
+} from '../../../graphql';
 import {
   ListManifestTemplate,
   ListManifestTemplateArray,
@@ -21,23 +31,13 @@ interface ChooseWorkflowRadio {
   id: string;
 }
 
-const ChooseWorkflowFromExisting = () => {
+const ChooseWorkflowFromExisting = forwardRef((_, ref) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const { palette } = useTheme();
   // Local States
   const [search, setSearch] = useState<string | null>(null);
   const [selected, setSelected] = useState<string>('');
-
-  // Methods
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelected(event.target.value);
-    const selection: ChooseWorkflowRadio = {
-      selected: 'A',
-      id: event.target.value,
-    };
-    localforage.setItem('selectedScheduleOption', selection);
-    localforage.setItem('hasSetWorkflowData', false);
-  };
 
   const { data: templateData } = useQuery<ListManifestTemplate>(
     LIST_MANIFEST_TEMPLATE,
@@ -45,8 +45,18 @@ const ChooseWorkflowFromExisting = () => {
       variables: {
         data: getProjectID(),
       },
+      fetchPolicy: 'network-only',
     }
   );
+
+  const [deleteTemplate] = useMutation(DELETE_WORKFLOW_TEMPLATE, {
+    refetchQueries: [
+      {
+        query: LIST_MANIFEST_TEMPLATE,
+        variables: { data: getProjectID() },
+      },
+    ],
+  });
 
   const filteredExistingWorkflows: ListManifestTemplateArray[] = templateData
     ? templateData.ListManifestTemplate.filter(
@@ -59,6 +69,27 @@ const ChooseWorkflowFromExisting = () => {
       )
     : [];
 
+  // Methods
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelected(event.target.value);
+    const selection: ChooseWorkflowRadio = {
+      selected: 'B',
+      id: event.target.value,
+    };
+    const templateData = filteredExistingWorkflows.filter((workflow) => {
+      return workflow.template_id === event.target.value;
+    })[0];
+
+    localforage.setItem('selectedScheduleOption', selection);
+    localforage.setItem('workflow', {
+      name: templateData.template_name.toLowerCase(),
+      description: templateData.template_description,
+      icon: './avatars/litmus.svg',
+      CRDLink: templateData.template_id,
+    });
+    localforage.setItem('hasSetWorkflowData', true);
+  };
+
   // Selects Option B -> Sub Experiment Options which was already selected by the user
   useEffect(() => {
     localforage
@@ -69,6 +100,17 @@ const ChooseWorkflowFromExisting = () => {
           : setSelected('')
       );
   }, []);
+
+  function onNext() {
+    if (selected === '' || selected === undefined) {
+      return false;
+    }
+    return true;
+  }
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <AccordionDetails>
@@ -88,7 +130,7 @@ const ChooseWorkflowFromExisting = () => {
 
         <div className={classes.predefinedWorkflowDiv}>
           <RadioGroup value={selected} onChange={handleChange}>
-            {filteredExistingWorkflows &&
+            {filteredExistingWorkflows && filteredExistingWorkflows.length ? (
               filteredExistingWorkflows.map(
                 (templateData: ListManifestTemplateArray) => (
                   <LitmusCard
@@ -123,11 +165,36 @@ const ChooseWorkflowFromExisting = () => {
                             className={classes.templateIconBg}
                           />
                         </div>
+                        <IconButton
+                          onClick={() => {
+                            deleteTemplate({
+                              variables: { data: templateData.template_id },
+                            });
+                          }}
+                        >
+                          <img
+                            alt="delete"
+                            src="./icons/deleteBox.svg"
+                            height="30"
+                          />
+                        </IconButton>
                       </div>
                     </RadioButton>
                   </LitmusCard>
                 )
-              )}
+              )
+            ) : (
+              <div className={classes.noTemplatesDiv}>
+                <Typography className={classes.noTemplatesText}>
+                  <strong>
+                    {t('createWorkflow.chooseWorkflow.noTemplates')}
+                  </strong>
+                </Typography>
+                <Typography className={classes.noTemplatesDesc}>
+                  {t('createWorkflow.chooseWorkflow.addTemplate')}
+                </Typography>
+              </div>
+            )}
           </RadioGroup>
         </div>
         {/* Bottom Blur */}
@@ -135,5 +202,5 @@ const ChooseWorkflowFromExisting = () => {
       </div>
     </AccordionDetails>
   );
-};
+});
 export default ChooseWorkflowFromExisting;

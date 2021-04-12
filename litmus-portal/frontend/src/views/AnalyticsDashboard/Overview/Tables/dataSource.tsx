@@ -37,6 +37,8 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
   const tabs = useActions(TabActions);
   const currentTime = new Date().valueOf();
   const dataSource = useActions(DataSourceActions);
+  const dataSourceActive = 'Active';
+  const dataSourceNotReady = 'Not Ready';
 
   return (
     <div>
@@ -76,12 +78,13 @@ const TableDataSource: React.FC<TableDataSourceProps> = ({
                 >
                   <TableCell scope="row" className={classes.tableRowHeader}>
                     <div className={classes.dataSourceTableHeader}>
-                      {singleDataSource.health_status === 'Active' ? (
+                      {singleDataSource.health_status === dataSourceActive ? (
                         <LightPills
                           variant="success"
                           label={singleDataSource.health_status}
                         />
-                      ) : singleDataSource.health_status === 'Not Ready' ? (
+                      ) : singleDataSource.health_status ===
+                        dataSourceNotReady ? (
                         <LightPills
                           variant="warning"
                           label={singleDataSource.health_status}
