@@ -2,6 +2,8 @@ import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import Loader from '../../components/Loader';
+import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { GET_CLUSTER_LENGTH } from '../../graphql';
 import { Clusters, ClusterVars } from '../../models/graphql/clusterData';
@@ -15,7 +17,7 @@ const HomePage: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const { data: agentList } = useQuery<Clusters, ClusterVars>(
+  const { data: agentList, loading } = useQuery<Clusters, ClusterVars>(
     GET_CLUSTER_LENGTH,
     {
       variables: { project_id: getProjectID() },
@@ -34,7 +36,11 @@ const HomePage: React.FC = () => {
       <Typography variant="h3" className={classes.userName}>
         {t('home.heading')} {getUsername()}
       </Typography>
-      {!(agentList && agentCount > 0) ? (
+      {loading ? (
+        <Center>
+          <Loader />
+        </Center>
+      ) : agentList && agentCount > 0 ? (
         <AgentConfiguredHome agentCount={agentCount} />
       ) : (
         <LandingHome />

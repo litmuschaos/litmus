@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { history } from '../../redux/configureStore';
 import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
+import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
@@ -149,6 +150,17 @@ const SideBar: React.FC = () => {
             <SettingsIcon />
           </CustomisedListItem>
         )}
+        <hr id="quickActions" />
+        <CustomisedListItem
+          key="litmusDocs"
+          handleClick={() => {
+            window.open('https://docs.litmuschaos.io/docs/getstarted');
+          }}
+          label="Litmus Docs"
+          selected={pathName === 'docs'}
+        >
+          <DocsIcon />
+        </CustomisedListItem>
         <CustomisedListItem
           key="community"
           handleClick={() => {

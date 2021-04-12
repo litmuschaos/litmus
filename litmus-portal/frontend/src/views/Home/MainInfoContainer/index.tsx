@@ -27,7 +27,6 @@ const MainInfoContainer: React.FC<MainInfoContainerProps> = ({
         <img src={src} alt={alt} />
         <div className={classes.containerDesc}>
           <Typography id="Heading">{heading}</Typography>
-          {/* TODO: Rewrite */}
           <Typography id="desc">{description}</Typography>
           <div className={classes.buttonGroup}>
             {button}

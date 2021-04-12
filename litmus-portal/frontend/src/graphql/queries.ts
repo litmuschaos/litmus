@@ -69,6 +69,16 @@ export const WORKFLOW_LIST_DETAILS = gql`
   }
 `;
 
+export const WORKFLOW_LIST_DETAILS_FOR_MANIFEST = gql`
+  query workflowListDetails($projectID: String!, $workflowIDs: [ID]) {
+    ListWorkflow(project_id: $projectID, workflow_ids: $workflowIDs) {
+      workflow_id
+      workflow_manifest
+      workflow_name
+    }
+  }
+`;
+
 export const GET_USER = gql`
   query getUser($username: String!) {
     getUser(username: $username) {

@@ -44,6 +44,10 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: theme.spacing(1.875),
       display: 'flex',
       alignItems: 'center',
+      '& p': {
+        fontWeight: 500,
+        fontSize: '1rem',
+      },
     },
   },
 }));
