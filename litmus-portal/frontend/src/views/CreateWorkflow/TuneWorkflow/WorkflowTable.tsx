@@ -103,8 +103,13 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
       },
     ]);
 
-    parsed(manifest).forEach((engine) => {
-      deleteEngines = `${deleteEngines + engine} `;
+    parsed(manifest).forEach((_, i) => {
+      deleteEngines = `${
+        deleteEngines +
+        YAML.parse(
+          parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
+        ).metadata.name
+      } `;
     });
 
     deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';

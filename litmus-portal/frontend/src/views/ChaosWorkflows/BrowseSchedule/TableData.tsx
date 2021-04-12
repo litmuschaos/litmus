@@ -32,6 +32,7 @@ import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
 import SaveTemplateModal from './SaveTemplateModal';
 import useStyles from './styles';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 
 interface TableDataProps {
   data: ScheduleWorkflow;
@@ -49,6 +50,8 @@ const TableData: React.FC<TableDataProps> = ({
 
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+
+  const workflow = useActions(WorkflowActions);
 
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -142,20 +145,40 @@ const TableData: React.FC<TableDataProps> = ({
     });
   };
 
+  const handleSaveWorkflowTemplate = (manifest: string) => {
+    const parsedYAML = YAML.parse(manifest);
+    if (parsedYAML.metadata.labels !== undefined) {
+      const labelData = parsedYAML.metadata.labels;
+      if (labelData.cluster_id !== undefined) {
+        delete labelData.cluster_id;
+      }
+      if (labelData.workflow_id !== undefined) {
+        delete labelData.workflow_id;
+      }
+    }
+    workflow.setWorkflowManifest({
+      manifest: YAML.stringify(parsedYAML),
+    });
+    setIsTemplateModalOpen(true);
+  };
+
+  const handleCloseTemplate = () => {
+    setIsTemplateModalOpen(false);
+  };
+
   return (
     <>
       <Modal
-        width="48.62%"
-        height="70.5%"
+        width="60%"
         open={isTemplateModalOpen}
-        onClose={() => setIsTemplateModalOpen(false)}
+        onClose={handleCloseTemplate}
         modalActions={
-          <ButtonOutlined onClick={() => setIsTemplateModalOpen(false)}>
+          <ButtonOutlined onClick={handleCloseTemplate}>
             &#x2715;
           </ButtonOutlined>
         }
       >
-        <SaveTemplateModal />
+        <SaveTemplateModal closeTemplate={handleCloseTemplate} />
       </Modal>
       <TableCell className={classes.workflowNameData}>
         <Typography>
@@ -409,7 +432,7 @@ const TableData: React.FC<TableDataProps> = ({
           </MenuItem>
           <MenuItem
             value="Download"
-            onClick={() => setIsTemplateModalOpen(true)}
+            onClick={() => handleSaveWorkflowTemplate(data.workflow_manifest)}
           >
             <div className={classes.expDiv}>
               <InsertDriveFileOutlined className={classes.downloadBtn} />
@@ -417,7 +440,7 @@ const TableData: React.FC<TableDataProps> = ({
                 data-cy="downloadManifest"
                 className={classes.downloadText}
               >
-                Save Template
+                {t('chaosWorkflows.browseSchedules.saveTemplate')}
               </Typography>
             </div>
           </MenuItem>

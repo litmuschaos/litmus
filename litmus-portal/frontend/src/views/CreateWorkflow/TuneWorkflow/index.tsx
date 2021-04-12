@@ -6,6 +6,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -19,6 +20,7 @@ import {
   GET_CHARTS_DATA,
   GET_ENGINE_YAML,
   GET_EXPERIMENT_YAML,
+  GET_TEMPLATE_BY_ID,
 } from '../../../graphql/queries';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
@@ -70,6 +72,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [hubName, setHubName] = useState<string>('');
   const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]);
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
+  const [selectedRadio, setSelectedRadio] = useState<string>('');
   const [selectedExp, setSelectedExp] = useState('');
   const selectedProjectID = getProjectID();
   const [addExpModal, setAddExpModal] = useState(false);
@@ -111,7 +114,31 @@ const TuneWorkflow = forwardRef((_, ref) => {
     fetchPolicy: 'cache-and-network',
   });
 
+  /**
+   * Graphql query to get the templates list
+   */
+  const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
+    onCompleted: (data) => {
+      const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
+      const wfmanifest = updateEngineName(YAML.parse(parsedYAML));
+      workflowAction.setWorkflowManifest({
+        manifest: wfmanifest,
+      });
+    },
+  });
+
   const [installAllExp, setInstallAllExp] = useState<string>('');
+
+  useLayoutEffect(() => {
+    localforage
+      .getItem('selectedScheduleOption')
+      .then(
+        (value) =>
+          value !== null &&
+          (value as ChooseWorkflowRadio).selected === 'C' &&
+          setSelectedRadio('C')
+      );
+  }, []);
 
   /**
    * Default Manifest Template
@@ -213,6 +240,21 @@ const TuneWorkflow = forwardRef((_, ref) => {
             manifest === ''
           )
             fetchYaml((value as WorkflowDetailsProps).CRDLink);
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'B') {
+        localforage.getItem('selectedScheduleOption').then((value) => {
+          if (
+            value !== null &&
+            (value as ChooseWorkflowRadio).id !== '' &&
+            manifest === ''
+          ) {
+            getTemplate({
+              variables: {
+                data: (value as ChooseWorkflowRadio).id,
+              },
+            });
+          }
         });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
@@ -416,6 +458,47 @@ const TuneWorkflow = forwardRef((_, ref) => {
     onNext,
   }));
 
+  const LeftButtonWrapper = () => (
+    <>
+      <ButtonOutlined
+        onClick={() => {
+          setYAMLModal(true);
+        }}
+        className={classes.editBtn}
+      >
+        <img src="./icons/viewYAMLicon.svg" alt="view YAML" />
+        <Width width="1rem" /> {t('createWorkflow.tuneWorkflow.edit')}
+      </ButtonOutlined>
+      <Modal
+        open={YAMLModal}
+        onClose={() => {
+          setYAMLModal(false);
+        }}
+        width="60%"
+        modalActions={
+          <ButtonOutlined
+            onClick={() => {
+              setYAMLModal(false);
+            }}
+            className={classes.closeBtn}
+          >
+            <img src="./icons/cross-disabled.svg" alt="cross" />
+          </ButtonOutlined>
+        }
+      >
+        <div>
+          <YamlEditor
+            content={
+              isCustomWorkflow ? YAML.stringify(generatedYAML) : manifest
+            }
+            filename={workflow.name}
+            readOnly={false}
+          />
+        </div>
+      </Modal>
+    </>
+  );
+
   return (
     <div className={classes.root}>
       {/* Header */}
@@ -434,54 +517,24 @@ const TuneWorkflow = forwardRef((_, ref) => {
             <br />
             {t('createWorkflow.tuneWorkflow.description')}
           </Typography>
-          <div className={classes.headerBtn}>
-            <ButtonOutlined
-              onClick={() => {
-                setYAMLModal(true);
-              }}
-              className={classes.editBtn}
-            >
-              <img src="./icons/viewYAMLicon.svg" alt="view YAML" />
-              <Width width="1rem" /> {t('createWorkflow.tuneWorkflow.edit')}
-            </ButtonOutlined>
-            <Modal
-              open={YAMLModal}
-              onClose={() => {
-                setYAMLModal(false);
-              }}
-              width="60%"
-              modalActions={
-                <ButtonOutlined
-                  onClick={() => {
-                    setYAMLModal(false);
-                  }}
-                  className={classes.closeBtn}
-                >
-                  <img src="./icons/cross-disabled.svg" alt="cross" />
-                </ButtonOutlined>
-              }
-            >
-              <div>
-                <YamlEditor
-                  content={
-                    isCustomWorkflow ? YAML.stringify(generatedYAML) : manifest
-                  }
-                  filename={workflow.name}
-                  readOnly={false}
-                />
-              </div>
-            </Modal>
-            <ButtonOutlined
-              onClick={() => {
-                setSelectedExp('');
-                setAddExpModal(true);
-              }}
-            >
-              {t('createWorkflow.tuneWorkflow.addANewExperiment')}
-            </ButtonOutlined>
-          </div>
+          {selectedRadio === 'C' ? (
+            <div className={classes.headerBtn}>
+              {LeftButtonWrapper()}
+              <ButtonOutlined
+                onClick={() => {
+                  setSelectedExp('');
+                  setAddExpModal(true);
+                }}
+              >
+                {t('createWorkflow.tuneWorkflow.addANewExperiment')}
+              </ButtonOutlined>
+            </div>
+          ) : (
+            <>{LeftButtonWrapper()}</>
+          )}
         </Row>
       </div>
+
       {/* Add Experiment Modal */}
       <AddExperimentModal
         addExpModal={addExpModal}
@@ -492,6 +545,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
         allExperiments={allExperiments}
         handleDone={handleDone}
       />
+
       {/* Experiment Details */}
       <div className={classes.experimentWrapper}>
         {/* Edit Button */}

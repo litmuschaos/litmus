@@ -1,12 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import localforage from 'localforage';
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
 import { MyHubDetail } from '../../../models/graphql/user';
@@ -15,7 +10,7 @@ import { HubStatus } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles, { MenuProps } from './styles';
 
-const SelectMyHub = forwardRef((_, ref) => {
+const SelectMyHub = () => {
   const { t } = useTranslation();
   const selectedProjectID = getProjectID();
   const [selectedHub, setSelectedHub] = useState('');
@@ -39,6 +34,7 @@ const SelectMyHub = forwardRef((_, ref) => {
     };
     localforage.setItem('selectedScheduleOption', selection);
     localforage.setItem('selectedHub', event.target.value as string);
+    localforage.setItem('hasSetWorkflowData', false);
   };
 
   useEffect(() => {
@@ -46,17 +42,6 @@ const SelectMyHub = forwardRef((_, ref) => {
       setAvailableHubs([...data.getHubStatus]);
     }
   }, [loading]);
-
-  function onNext() {
-    if (selectedHub === '') {
-      return false;
-    }
-    return true;
-  }
-
-  useImperativeHandle(ref, () => ({
-    onNext,
-  }));
 
   const classes = useStyles();
   return (
@@ -84,6 +69,6 @@ const SelectMyHub = forwardRef((_, ref) => {
       </div>
     </div>
   );
-});
+};
 
 export default SelectMyHub;

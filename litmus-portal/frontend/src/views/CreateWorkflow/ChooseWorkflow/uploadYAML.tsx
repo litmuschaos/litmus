@@ -24,6 +24,7 @@ const UploadYAML = () => {
       selected: 'D',
     };
     localforage.setItem('selectedScheduleOption', selection);
+    localforage.setItem('hasSetWorkflowData', false);
   };
 
   // Function to handle when a File is dragged on the upload field

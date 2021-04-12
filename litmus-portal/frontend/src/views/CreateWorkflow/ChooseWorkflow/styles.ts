@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Accordion Expanded Body [Content]
   predefinedWorkflowDiv: {
-    height: window.screen.height < 1080 ? '15rem' : '20rem',
+    height: '15rem',
     overflowY: 'scroll',
   },
   MuiAccordionroot: {
@@ -118,7 +118,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 
     '& #left-div': {
-      width: '10rem',
+      width: '15rem',
       margin: theme.spacing(2),
     },
 
@@ -242,6 +242,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   bold: {
     fontWeight: 700,
+  },
+  noTemplatesDiv: {
+    margin: 'auto',
+    textAlign: 'center',
+  },
+  noTemplatesText: {
+    fontSize: '1.25rem',
+  },
+  noTemplatesDesc: {
+    fontSize: '1rem',
   },
 }));
 

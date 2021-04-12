@@ -15,10 +15,15 @@ export const CREATE_WORKFLOW = gql`
 export const ADD_WORKFLOW_TEMPLATE = gql`
   mutation addWorkflowTemplate($data: TemplateInput!) {
     createManifestTemplate(templateInput: $data) {
-      manifest
-      project_name
       template_name
+      template_id
     }
+  }
+`;
+
+export const DELETE_WORKFLOW_TEMPLATE = gql`
+  mutation deleteManifestTemplate($data: String!) {
+    deleteManifestTemplate(template_id: $data)
   }
 `;
 
