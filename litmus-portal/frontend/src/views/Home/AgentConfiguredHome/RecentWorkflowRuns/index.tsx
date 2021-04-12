@@ -53,7 +53,7 @@ const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
       {/* WorkflowRuns Data */}
 
       {filteredData.map((workflow) => {
-        return <WorkflowRunCard data={workflow} />;
+        return <WorkflowRunCard key={workflow.workflow_id} data={workflow} />;
       })}
     </Paper>
   );
