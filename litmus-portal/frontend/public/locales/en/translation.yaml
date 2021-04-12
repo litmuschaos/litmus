@@ -679,11 +679,11 @@ createWorkflow:
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
     pleaseAddExp: Please add experiments to see the data
-    revertSchedule: Revert Schedule
-    trueValue: True
-    falseValue: False
+    revertSchedule: Revert Schedule    
     noTemplates: No template available.
     addTemplate: You can add a template from the scheduled workflows table.
+    trueValue: 'True'
+    falseValue: 'False'
     table:
       head1: Sequence
       head2: Name
