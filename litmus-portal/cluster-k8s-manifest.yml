@@ -178,7 +178,7 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
             - name: INGRESS
-              value: "true"
+              value: "false"
             - name: INGRESS_NAME
               value: "litmus-ingress"
           ports:

@@ -176,14 +176,16 @@ func GetServerEndpoint() (string, error) {
 			}
 		}
 
-		if strings.ToLower(string(svc.Spec.Type)) == "loadbalancer" {
+		exp := strings.ToLower(string(svc.Spec.Type))
+		switch exp {
+		case "loadbalancer":
 			log.Print("loadbalancer")
 			IPAddress = svc.Spec.LoadBalancerIP
 			if IPAddress == "" {
 				return "", errors.New("ExternalIP is not present for loadbalancer service type")
 			}
 			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port))
-		} else if strings.ToLower(string(svc.Spec.Type)) == "nodeport" {
+		case "nodeport":
 			nodeIP, err := clientset.CoreV1().Nodes().Get(NodeName, metaV1.GetOptions{})
 			if err != nil {
 				return "", err
@@ -204,13 +206,13 @@ func GetServerEndpoint() (string, error) {
 			} else {
 				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
-		} else if strings.ToLower(string(svc.Spec.Type)) == "clusterip" {
+		case "clusterip":
 			log.Print("External agents can't be connected to the server if the service type is set to ClusterIP\n")
 			if svc.Spec.ClusterIP == "" {
 				return "", errors.New("ClusterIP is not present")
 			}
 			FinalUrl = "http://" + svc.Spec.ClusterIP + ":" + strconv.Itoa(int(Port))
-		} else {
+		default:
 			return "", errors.New("No service type found")
 		}
 	}

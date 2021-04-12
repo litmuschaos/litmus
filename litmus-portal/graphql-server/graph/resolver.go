@@ -15,11 +15,6 @@ import (
 
 type Resolver struct{}
 
-const (
-	AcceptedInvitation = "Accepted"
-	PendingInvitation  = "Pending"
-)
-
 func NewConfig() generated.Config {
 	config := generated.Config{Resolvers: &Resolver{}}
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
