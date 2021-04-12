@@ -72,7 +72,7 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
 
       {/* Stepper Actions */}
       <div className={classes.stepperActions}>
-        {activeStep >= 0 && (
+        {activeStep > 0 && (
           <ButtonOutlined onClick={handleBack}>
             <Typography>{t('workflowStepper.back')}</Typography>
           </ButtonOutlined>
