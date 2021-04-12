@@ -37,8 +37,6 @@ import {
   WorkflowRun,
 } from '../models/graphql/workflowListData';
 import {
-  CHAOS_EXPERIMENT_VERDICT_FAIL,
-  CHAOS_EXPERIMENT_VERDICT_PASS,
   DEFAULT_CHAOS_EVENT_NAME,
   DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
   DEFAULT_METRIC_SERIES_NAME,
@@ -391,6 +389,7 @@ export const chaosEventDataParserForPrometheus = (
   selectedStartTime: number,
   selectedEndTime: number
 ) => {
+  const delayTime = 10000;
   const chaosDataUpdates: ChaosDataUpdates = {
     queryIDs: [],
     chaosData: [],
@@ -533,41 +532,34 @@ export const chaosEventDataParserForPrometheus = (
             .map((elem: RunWiseChaosMetrics) => {
               return [
                 {
-                  subDataName: 'Workflow Status',
+                  subDataName: 'analytics.subData.workflowStatus',
                   value: elem ? elem.workflowStatus : STATUS_RUNNING,
-                  date: elem ? elem.lastUpdatedTimeStamp : 0,
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 + delayTime : 0,
                 },
                 {
-                  subDataName: 'Experiment Status',
+                  subDataName: 'analytics.subData.experimentStatus',
                   value: elem ? elem.experimentStatus : STATUS_RUNNING,
-                  date: elem ? elem.lastUpdatedTimeStamp : 0,
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 + delayTime : 0,
                 },
                 {
-                  subDataName: 'Resilience Score',
+                  subDataName: 'analytics.subData.resilienceScore',
                   value:
                     elem &&
                     elem.workflowStatus !== STATUS_RUNNING &&
                     elem.resilienceScore !== INVALID_RESILIENCE_SCORE_STRING
                       ? elem.resilienceScore
                       : '--',
-                  date: elem ? elem.lastUpdatedTimeStamp : 0,
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 + delayTime : 0,
                 },
                 {
-                  subDataName: 'Probe Success Percentage',
+                  subDataName: 'analytics.subData.probeSuccessPercentage',
                   value: elem ? elem.probeSuccessPercentage : '--',
-                  date: elem ? elem.lastUpdatedTimeStamp : 0,
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 + delayTime : 0,
                 },
                 {
-                  subDataName: 'Experiment Verdict',
-                  value: elem
-                    ? elem.experimentVerdict +
-                      (elem.experimentVerdict ===
-                        CHAOS_EXPERIMENT_VERDICT_PASS ||
-                      elem.experimentVerdict === CHAOS_EXPERIMENT_VERDICT_FAIL
-                        ? 'ed'
-                        : '')
-                    : '--',
-                  date: elem ? elem.lastUpdatedTimeStamp : 0,
+                  subDataName: 'analytics.subData.experimentVerdict',
+                  value: elem ? elem.experimentVerdict : '--',
+                  date: elem ? elem.lastUpdatedTimeStamp * 1000 + delayTime : 0,
                 },
               ];
             })

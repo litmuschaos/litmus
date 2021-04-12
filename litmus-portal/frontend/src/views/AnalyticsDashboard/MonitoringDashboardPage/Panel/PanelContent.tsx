@@ -228,15 +228,13 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               </IconButton>
             </ToolTip>
           )}
-          <ToolTip title={`${t('analyticsDashboard.toolTip.editPanel')}`}>
-            <IconButton
-              disabled
-              className={classes.panelIconButton}
-              onClick={() => {}}
-            >
-              <Edit className={classes.panelIcon} />
-            </IconButton>
-          </ToolTip>
+          <IconButton
+            disabled
+            className={classes.panelIconButton}
+            onClick={() => {}}
+          >
+            <Edit className={classes.panelIcon} />
+          </IconButton>
           <ToolTip title={`${t('analyticsDashboard.toolTip.popout')}`}>
             <IconButton
               className={classes.panelIconButton}
