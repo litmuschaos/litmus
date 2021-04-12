@@ -1,28 +1,23 @@
-welcomeModal:
-  title: Welcome to Litmus Portal,
-  info: What do you want to name your project?
+getStarted:
   button:
-    continue: Continue
+    continue: Next
     back: Back
-    letsStart: Let's Start
-  case-0:
+    letsStart: Continue to Portal
+    step: Step
+    of: of
+  project:
     name: projectName
     label: Project Name
-    info: What do you want to name your project?
-  case-1:
-    name: fullName
-    label: Full Name
-    info: What should I call you?
-  case-2:
+    info: You are almost there! Set your project name
+    desc: The project will be yours with owner access where you can create
+      workflows, view analytics and also invite others to your project.
+  password:
     name: password
     label: Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
     info: Set your new Password
-  case-3:
-    name: emailAddress
-    label: Email Address
-    info: You can set your current mail
+    desc: Set a new password which will be used when you login next time
 
 ###########################################
 ############    Components    #############
@@ -83,9 +78,11 @@ workflowStepper:
     errorSnackbar: Please select a workflow type
   step3:
     errorSnackbar: Please provide a valid Workflow Name
+  step4:
+    errorSnackbar: Please select atleast one experiment to proceed
   finish: Finish
   next: Next
-  backBtn: Back
+  back: Back
 
 ######################################
 ############    Pages    #############
@@ -125,18 +122,17 @@ home:
     deploy: Deploy another Agent
 
 login:
-  heading: Welcome to <strong>Litmus!</strong>
-  subHeading1: Your one-stop-shop for Chaos Engineering on
-  subHeading2: . Browse, create, manage, monitor and analyze your chaos workflows.
-  subHeading3: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
-  passwordForgot: Don’t remember your password?
+  heading: One-stop-shop for Chaos Engineering on Kubernetes
+  subHeading1: Browse, create, manage, monitor and analyze your chaos workflows.
+  subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
+  wrongCredentials: Wrong Credentials - Try again with correct username or password
 
 schedule:
   heading: 'Schedule a workflow'
   headingDesc: 'Click on test to see detailed log of your workflow'
   headingText: 'Schedule details:'
   description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  save: 'Save Changes'  
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
   scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
@@ -157,6 +153,15 @@ schedule:
   congratulationsSub2: it will be displayed on the workflow schedules.
   workflowBtn: Go to Workflow
   backBtn: Go Back
+
+editSchedule:
+  title: Edit Schedule
+  verify: Verify
+  cancel: Cancel
+  save: Save Changes
+  edit: Edit
+  theSchedule: The Schedule
+  successfullyCreated: is successfully created
 
 community:
   title: 'Community'
@@ -197,8 +202,35 @@ analyticsDashboard:
   overview: Overview
   monitoringDashboardPage:
     dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
+    dataSourceIs: Data source is
     reConfigureDashboard: Re-configure dashboard
     updateDataSource: Update data source
+    headerInfoText: "View the chaos events and metrics in a given \n time interval by selecting a time interval."
+    rangeSelector:
+      to: to
+      selectPeriod: Select Period
+    refresh:
+      heading: Refresh
+      off: Off
+      every5Seconds: Every 5 seconds
+      every10Seconds: Every 10 seconds
+      every30Seconds: Every 30 seconds
+      every1Minute: Every 1 minute
+      every5Minutes: Every 5 minutes
+      every15Minutes: Every 15 minutes
+      every30Minutes: Every 30 minutes
+      every1Hour: Every 1 hour
+      every2Hours: Every 2 hours
+      every1Day: Every 1 day
+    chaosTable:
+      tableHead1: Legend
+      tableHead2: Workflow
+      tableHead3: Experiment
+      tableHead4: "Target \n ( namespace / pod )"
+      tableHead5: Result
+      noRecords: No chaos happened during the interval
+      showTable: Show Chaos during this interval
+      hideTable: Hide Chaos during this interval
   workflowClusterDashboard:
     title: Dashboard
     tab1: Hourly
@@ -279,6 +311,11 @@ analyticsDashboard:
     day: day
     days: days
     few: few
+  toolTip:
+    viewChaosMetric: View Chaos Metric Info
+    hideChaosMetric: Hide Chaos Metric Info
+    editPanel: Edit
+    popout: Popout
 
 error:
   whoops: Whoops!
@@ -287,9 +324,8 @@ error:
   goBack: Go back
 
 workflowDetails:
-  detailedLog: Click on Info to see details of your workflow
+  workflowNotStarted: Please check the configuration, the workflow was not able to start
   fetchError: An error has occurred while fetching the data
-  overallRR: 'Overall RR: '
 
 ######################################
 ############    Views    #############
@@ -306,9 +342,42 @@ chaosWorkflows:
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
       seeAnalytics: See analytics
-  browseSchedule:
+  browseSchedules:
+    name: Name
+    cluster: Cluster
+    experiments: Experiments
+    schedule: Schedule
+    nextRun: Next Run
+    regularity: Regularity
+    startingDate: Starting Date
+    lastRun: Last Run
     regularityOnce: Once
-    showExperiment: Show Experiment
+    showExperiments: Show Experiments
+    showSchedule: Show Schedule
+    reRunSchedule: Rerun Schedule
+    downloadManifest: Download Manifest
+    deleteSchedule: Delete Schedule
+    editSchedule: Edit Schedule
+    scheduleIsDisabled: This Schedule is disabled now
+    disableSchedule: Disable Schedule
+    options:
+      all: Show All Workflows
+      enabledOnly: Show Enabled Workflows Only
+      disabledOnly: Show Disabled Workflows Only
+  browseWorkflows:
+    status: Status
+    name: Name
+    targetAgent: Target Agent
+    reliabilityDetails: Reliability Details
+    experiments: Experiments
+    lastRun: Last Run
+    tableData:
+      overallRR: 'Overall RR : '
+      experimentsPassed: 'Experiments Passed : '
+      showExperiments: Show Experiments
+      showTheWorkflow: Show the workflow
+      showTheAnalytics: show the analytics
+      na: NA
 
 analyticsDashboardViews:
   kubernetesDashboard:
@@ -532,6 +601,7 @@ workflowDetailsView:
   workflowInfo:
     header: Overall Workflow Description
     resilienceScore: Resilience Score
+    Completed: Completed
     runTime:
       runTimeHeader: Run Time
       startTime: 'Start Time :'
@@ -577,9 +647,9 @@ homeView:
     desc: Statistics taken from completed tests
   totalWorkflows:
     header: Number of total Workflows
-    subtitle: AVG amount of workflows
+    subtitle: Average amount of workflows
     perWeek: per week
-    desc: AVG is calculated from the max of workflows
+    desc: Average is calculated from the max of workflows
 
 createWorkflow:
   chooseWorkflow:
@@ -664,8 +734,9 @@ createWorkflow:
   tuneWorkflow:
     header: Tune the selected workflow
     selectedWorkflowInfo: You have selected a pre-defined workflow
-    description: Fine tune the application  names and other variables to suit your needs    
+    description: Fine tune the application  names and other variables to suit your needs
     view: View YAML
+    edit: Edit YAML
     firstExperiment: Add your first experiment
     choose: Choose Experiments
     selectAvailableExp: Select experiments available in
@@ -732,6 +803,8 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
+    test: test
+    YAML: YAML
     button:
       edit: Edit
       viewYaml: View YAML
@@ -830,6 +903,12 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+browseTemplate:
+  browseAWorkflow: Browse a workflow template
+  seeDetails: See details of your workflow template
+  back: Back
+  scheduleThisTemplate: Schedule this template
 
 #########################################
 ############    dataErrors    ###########

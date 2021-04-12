@@ -31,6 +31,7 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
+import { fetchWorkflowNameFromManifest } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface WorkflowProps {
@@ -67,7 +68,7 @@ const VerifyCommit = forwardRef((_, ref) => {
     (state: RootState) => state.workflowData
   );
 
-  const { id, clusterid, cronSyntax, isDisabled, clustername } = workflowData;
+  const { clusterid, cronSyntax, clustername } = workflowData;
 
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
@@ -84,9 +85,6 @@ const VerifyCommit = forwardRef((_, ref) => {
         manifest: YAML.stringify(parsedManifest),
       });
     }
-  };
-  const fetchWorkflowNameFromManifest = (manifest: string) => {
-    return YAML.parse(manifest).metadata.name;
   };
 
   useEffect(() => {
@@ -111,7 +109,7 @@ const VerifyCommit = forwardRef((_, ref) => {
   }, []);
 
   const [yamlStatus, setYamlStatus] = React.useState(
-    'Your code is fine. You can move on!'
+    `${t('createWorkflow.verifyCommit.codeIsFine')}`
   );
 
   const [modified, setModified] = React.useState(false);
@@ -245,6 +243,7 @@ const VerifyCommit = forwardRef((_, ref) => {
     localforage.removeItem('hasSetWorkflowData');
     localforage.removeItem('weights');
     localforage.removeItem('selectedHub');
+    localforage.removeItem('editSchedule');
     setFinishModalOpen(false);
   };
 
@@ -265,7 +264,7 @@ const VerifyCommit = forwardRef((_, ref) => {
           <div className={classes.suHeader}>
             <div>
               <Typography className={classes.headerText}>
-                <strong> {t('createWorkflow.verifyCommit.header')}</strong>
+                {t('createWorkflow.verifyCommit.header')}
               </Typography>
               <Typography className={classes.description}>
                 {t('createWorkflow.verifyCommit.info')}
@@ -280,7 +279,7 @@ const VerifyCommit = forwardRef((_, ref) => {
           <Divider />
 
           <Typography className={classes.sumText}>
-            <strong>{t('createWorkflow.verifyCommit.summary.header')}</strong>
+            {t('createWorkflow.verifyCommit.summary.header')}
           </Typography>
 
           <div className={classes.outerSum}>
@@ -298,7 +297,6 @@ const VerifyCommit = forwardRef((_, ref) => {
                   onChange={(e) =>
                     handleNameChange({ changedName: e.target.value })
                   }
-                  disabled={workflowData.isRecurring}
                 />
               </div>
             </div>
@@ -339,18 +337,7 @@ const VerifyCommit = forwardRef((_, ref) => {
                 </Typography>
               </div>
               <div className={classes.schCol2}>
-                {/* <CustomDate disabled={edit} />
-              <CustomTime
-                handleDateChange={handleDateChange}
-                value={selectedDate}
-                ampm
-                disabled={edit}
-              /> */}
-                {isDisabled ? (
-                  <Typography className={classes.schedule}>
-                    {t('createWorkflow.verifyCommit.summary.disabled')}
-                  </Typography>
-                ) : cronSyntax === '' ? (
+                {cronSyntax === '' ? (
                   <Typography className={classes.schedule}>
                     {t('createWorkflow.verifyCommit.summary.schedulingNow')}
                   </Typography>
@@ -360,9 +347,9 @@ const VerifyCommit = forwardRef((_, ref) => {
                   </Typography>
                 )}
 
-                <div className={classes.editButton1}>
+                <div className={classes.editButton}>
                   <IconButton>
-                    <EditIcon className={classes.editbtn} data-cy="edit" />
+                    <EditIcon className={classes.editIcon} data-cy="edit" />
                   </IconButton>
                 </div>
               </div>
@@ -376,29 +363,25 @@ const VerifyCommit = forwardRef((_, ref) => {
               {weights.length === 0 ? (
                 <div>
                   <Typography className={classes.errorText}>
-                    <strong>{t('createWorkflow.verifyCommit.error')}</strong>
+                    {t('createWorkflow.verifyCommit.error')}
                   </Typography>
                 </div>
               ) : (
                 <div className={classes.adjWeights}>
-                  <div
-                    className={classes.progress}
-                    style={{ flexWrap: 'wrap' }}
-                  >
+                  <div className={classes.progress}>
                     {WorkflowTestData.map((Test) => (
                       <AdjustedWeights
                         key={Test.weight}
-                        testName={`${Test.experimentName} test`}
+                        testName={`${Test.experimentName} ${t(
+                          'createWorkflow.verifyCommit.test'
+                        )}`}
                         testValue={Test.weight}
                         spacing={false}
                         icon={false}
                       />
                     ))}
                   </div>
-                  <ButtonOutlined
-                    disabled={workflowData.isRecurring}
-                    data-cy="testRunButton"
-                  >
+                  <ButtonOutlined data-cy="testRunButton">
                     {t('createWorkflow.verifyCommit.button.edit')}
                   </ButtonOutlined>
                 </div>
@@ -406,22 +389,28 @@ const VerifyCommit = forwardRef((_, ref) => {
             </div>
             <div className={classes.summaryDiv}>
               <div className={classes.innerSumDiv}>
-                <Typography className={classes.col1}>YAML:</Typography>
+                <Typography className={classes.col1}>
+                  {t('createWorkflow.verifyCommit.YAML')}
+                </Typography>
               </div>
               <div className={classes.yamlFlex}>
                 {weights.length === 0 ? (
-                  <Typography>
-                    {' '}
-                    {t('createWorkflow.verifyCommit.errYaml')}{' '}
+                  <Typography className={classes.spacingHorizontal}>
+                    {t('createWorkflow.verifyCommit.errYaml')}
                   </Typography>
                 ) : (
                   <Typography>
-                    <b>{yamlStatus}</b>{' '}
-                    {t('createWorkflow.verifyCommit.youCanMoveOn')}
+                    <b>{yamlStatus}</b>
+                    <span className={classes.spacingHorizontal}>
+                      {t('createWorkflow.verifyCommit.youCanMoveOn')}
+                    </span>
                   </Typography>
                 )}
                 <br />
-                <ButtonFilled style={{ width: '60%' }} onClick={handleOpen}>
+                <ButtonFilled
+                  className={classes.verifyYAMLButton}
+                  onClick={handleOpen}
+                >
                   {t('createWorkflow.verifyCommit.button.viewYaml')}
                 </ButtonFilled>
               </div>
@@ -440,14 +429,7 @@ const VerifyCommit = forwardRef((_, ref) => {
           </ButtonOutlined>
         }
       >
-        <YamlEditor
-          content={manifest}
-          filename={workflow.name}
-          yamlLink={workflow.crd}
-          id={id}
-          description={workflow.description}
-          readOnly
-        />
+        <YamlEditor content={manifest} filename={workflow.name} readOnly />
       </Modal>
 
       {/* Finish Modal */}
@@ -474,7 +456,9 @@ const VerifyCommit = forwardRef((_, ref) => {
               <br />
               <span className={classes.successful}>{workflow.name}</span>,
               <br />
-              <strong>{t('workflowStepper.successful')}</strong>
+              <span className={classes.bold}>
+                {t('workflowStepper.successful')}
+              </span>
             </div>
             <div className={classes.headWorkflow}>
               {t('workflowStepper.congratulationsSub1')} <br />{' '}
@@ -524,7 +508,7 @@ const VerifyCommit = forwardRef((_, ref) => {
                   setErrorModal(false);
                 }}
               >
-                <div>{t('workflowStepper.backBtn')}</div>
+                <div>{t('workflowStepper.back')}</div>
               </ButtonFilled>
             </div>
           </div>

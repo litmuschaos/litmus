@@ -112,7 +112,7 @@ const TableData: React.FC<TableDataProps> = ({
               }}
             >
               <div className={classes.popover}>
-                {YAML.parse(embeddedYAML) &&
+                {embeddedYAML &&
                   Object.keys(YAML.parse(embeddedYAML).spec.appinfo).map(
                     (key, index) => {
                       return (
@@ -120,7 +120,9 @@ const TableData: React.FC<TableDataProps> = ({
                           key={index.toString()}
                           className={classes.popoverItems}
                         >
-                          {key} : {YAML.parse(embeddedYAML).spec.appinfo[key]}
+                          <span className={classes.boldText}>{key} :</span>
+                          &nbsp;
+                          {YAML.parse(embeddedYAML).spec.appinfo[key]}
                         </Typography>
                       );
                     }

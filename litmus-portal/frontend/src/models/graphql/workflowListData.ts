@@ -33,6 +33,7 @@ export interface Nodes {
 }
 
 export interface ExecutionData {
+  resiliency_score?: number;
   event_type: string;
   uid: string;
   namespace: string;
@@ -52,6 +53,7 @@ export interface WorkflowRun {
 
 export interface Workflow {
   workflow_id: string;
+  workflow_manifest: string;
   cronSyntax: string;
   cluster_name: string;
   workflow_name: string;
@@ -63,6 +65,7 @@ export interface Workflow {
   project_id: string;
   cluster_id: string;
   cluster_type: string;
+  isRemoved: Boolean;
   workflow_runs: WorkflowRun[];
 }
 

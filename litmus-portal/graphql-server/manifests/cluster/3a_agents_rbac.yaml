@@ -135,6 +135,7 @@ rules:
       - cronworkflows/finalizers
       - clusterworkflowtemplates
       - clusterworkflowtemplates/finalizers
+      - rollouts
     verbs:
       - create
       - get
@@ -151,15 +152,27 @@ rules:
       - list
       - watch
   - apiGroups:
-      - "apps"
+      - apps
     resources:
       - deployments
+      - statefulsets
+      - daemonsets
     verbs:
+      - get
+      - list
       - delete
   - apiGroups:
       - ""
     resources:
+      - pods
       - namespaces
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps.openshift.io
+    resources:
+      - deploymentconfigs
     verbs:
       - get
       - list

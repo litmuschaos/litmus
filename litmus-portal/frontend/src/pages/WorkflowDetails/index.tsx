@@ -43,6 +43,8 @@ const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
+  // State for Checking if workflow failed
+  const [isWorkflowFailed, setWorkflowFailed] = useState<boolean>(false);
   const [
     workflowSchedulesDetails,
     setworkflowSchedulesDetails,
@@ -75,13 +77,13 @@ const WorkflowDetails: React.FC = () => {
   )[0];
 
   // Apollo query to get the scheduled data
-  const { data: SchedulesData } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
-    {
-      variables: { projectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const { data: SchedulesData, loading } = useQuery<
+    Schedules,
+    ScheduleDataVars
+  >(SCHEDULE_DETAILS, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   // Using subscription to get realtime data
   useEffect(() => {
@@ -143,13 +145,19 @@ const WorkflowDetails: React.FC = () => {
   // Setting NodeId of first Node in redux for selection of first node in Argo graph by default
   useEffect(() => {
     if (workflow && pod_name === '') {
-      const firstNodeId = JSON.parse(workflow.execution_data as string).nodes[
-        Object.keys(JSON.parse(workflow.execution_data as string).nodes)[0]
-      ].name;
-      nodeSelection.selectNode({
-        ...JSON.parse(workflow.execution_data as string).nodes[firstNodeId],
-        pod_name: firstNodeId,
-      });
+      if (
+        Object.keys(JSON.parse(workflow.execution_data as string).nodes).length
+      ) {
+        const firstNodeId = JSON.parse(workflow.execution_data as string).nodes[
+          Object.keys(JSON.parse(workflow.execution_data as string).nodes)[0]
+        ].name;
+        nodeSelection.selectNode({
+          ...JSON.parse(workflow.execution_data as string).nodes[firstNodeId],
+          pod_name: firstNodeId,
+        });
+      } else {
+        setWorkflowFailed(true);
+      }
     }
   }, [data]);
 
@@ -160,7 +168,7 @@ const WorkflowDetails: React.FC = () => {
           <BackButton />
         </div>
         {/* If workflow data is present then display the workflow details */}
-        {workflow && pod_name !== '' ? (
+        {workflow && pod_name !== '' && !loading ? (
           <div>
             <Typography data-cy="wfName" className={classes.title}>
               {t('workflowDetailsView.headerDesc')} {workflow.workflow_name}
@@ -235,22 +243,18 @@ const WorkflowDetails: React.FC = () => {
               </div>
             </TabPanel>
             <TabPanel value={workflowDetailsTabValue} index={1}>
-              <div className={classes.nodesTable}>
-                {/* Workflow Info */}
-                <WorkflowInfo
-                  tab={2}
-                  cluster_name={workflow.cluster_name}
-                  data={JSON.parse(workflow.execution_data) as ExecutionData}
-                />
-                {/* Table for all Node details */}
-                <NodeTable
-                  manifest={
-                    workflowSchedulesDetails?.workflow_manifest as string
-                  }
-                  data={JSON.parse(workflow.execution_data) as ExecutionData}
-                  handleClose={() => setLogsModalOpen(true)}
-                />
-              </div>
+              {/* Workflow Info */}
+              <WorkflowInfo
+                tab={2}
+                cluster_name={workflow.cluster_name}
+                data={JSON.parse(workflow.execution_data) as ExecutionData}
+              />
+              {/* Table for all Node details */}
+              <NodeTable
+                manifest={workflowSchedulesDetails?.workflow_manifest as string}
+                data={JSON.parse(workflow.execution_data) as ExecutionData}
+                handleClose={() => setLogsModalOpen(true)}
+              />
               {/* Modal for viewing logs of a node */}
               <NodeLogsModal
                 logsOpen={logsModalOpen}
@@ -264,6 +268,8 @@ const WorkflowDetails: React.FC = () => {
           </div>
         ) : error ? (
           <Typography>{t('workflowDetails.fetchError')}</Typography>
+        ) : isWorkflowFailed ? (
+          <Typography>{t('workflowDetails.workflowNotStarted')}</Typography>
         ) : (
           <Loader />
         )}
