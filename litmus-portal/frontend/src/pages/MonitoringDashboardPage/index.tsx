@@ -14,7 +14,7 @@ import {
 import AutorenewOutlinedIcon from '@material-ui/icons/AutorenewOutlined';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
-import { ButtonOutlined, GraphMetric } from 'litmus-ui';
+import { ButtonOutlined, EventMetric, GraphMetric } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +32,6 @@ import {
   ChaosDataUpdates,
   ChaosEventDetails,
   ChaosInformation,
-  EventMetric,
 } from '../../models/dashboardsData';
 import {
   DashboardList,

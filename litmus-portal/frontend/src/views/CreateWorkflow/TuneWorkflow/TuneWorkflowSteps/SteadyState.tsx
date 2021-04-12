@@ -43,7 +43,10 @@ const SteadyState: React.FC<SteadyStateProps> = ({
   );
   const chaosEngine = YAML.parse(manifest.engineYAML);
   const [probesData, setProbesData] = useState(
-    chaosEngine.spec.experiments[0].spec.probe
+    chaosEngine.spec.experiments[0].spec.probe &&
+      chaosEngine.spec.experiments[0].spec.probe.length
+      ? chaosEngine.spec.experiments[0].spec.probe
+      : []
   );
 
   // State varible to handle the Probe Modal
@@ -97,11 +100,10 @@ const SteadyState: React.FC<SteadyStateProps> = ({
     setProbesData(probesData);
     handleMainYAMLChange();
   };
-
   // Function to handle add probes operation
   const handleAddProbe = () => {
-    chaosEngine.spec.experiments[0].spec.probe = probesData;
     setProbesData(probesData);
+    chaosEngine.spec.experiments[0].spec.probe = probesData;
     handleMainYAMLChange();
     setAddProbe(false);
   };
@@ -236,8 +238,8 @@ const SteadyState: React.FC<SteadyStateProps> = ({
         <Typography> + Add a new Probe </Typography>
       </ButtonOutlined>
       <AddProbe
-        probesData={probesData}
-        setProbesData={setProbesData}
+        probesValue={probesData}
+        setProbesValue={setProbesData}
         addProbe={handleAddProbe}
         handleClose={handleClose}
         open={addProbe}

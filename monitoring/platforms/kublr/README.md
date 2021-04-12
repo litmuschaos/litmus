@@ -9,9 +9,7 @@ need to set up prometheus and grafana to enable monitoring, it is possible to ju
 
 - [Grafana Dashboards](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/grafana-dashboards)
 
-  > Contains chaos interleaved grafana dashboards for various native k8s and application metrics. These dashboards are
-  > modified slightly relative to the dashboards in the generic getting started guide to accomodate for additional labels
-  > Kublr introduces in its centralized monitoring.
+  > Contains chaos interleaved grafana dashboards for various native k8s and application metrics. These dashboards are modified slightly relative to the dashboards in the generic getting started guide to accomodate for additional labels which Kublr introduces in its centralized monitoring.
 
 # Demonstration
 
@@ -34,7 +32,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 - Install the litmus chaos operator and CRDs
 
   ```
-  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.9.0.yaml
+  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.13.0.yaml
   ```
 
 - Install the litmus-admin serviceaccount for centralized/admin-mode of chaos execution
@@ -46,7 +44,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 - Install the chaos experiments in admin(litmus) namespace
 
   ```
-  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.9.0?file=charts/generic/experiments.yaml -n litmus
+  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.13.0?file=charts/generic/experiments.yaml -n litmus
   ```
 
 ### Step-3: Configure Sock-shop application and Litmus for the Kublr centralized monitoring Infrastructure
@@ -55,7 +53,6 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 
   ```
   kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/chaos-exporter/
-  kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/litmus-event-router/
   ```
 
 - Enable Litmus metrics collection on the Litmus monitoring components
@@ -63,7 +60,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
   ```
 
   kubectl annotate svc -n litmus --overwrite \
-    chaos-exporter chaos-operator-metrics litmus-eventrouter \
+    chaos-exporter chaos-operator-metrics \
     'prometheus.io/scrape=true'
 
   ```
@@ -80,7 +77,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 
   ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
 
-- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/kubernetes/Sock-Shop-Performance-Under-Chaos.json)
+- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/sock-shop/Sock-Shop-Performance-Under-Chaos.json)
 
 - Import the grafana dashboard "Node and Pod Chaos Demo" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/kubernetes/Node-and-pod-metrics-dashboard-kublr.json)
 
@@ -125,9 +122,15 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 - Observe the impact of chaos injection through increased Latency & reduced QPS (queries per second) on the microservices
   under test.
 
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Sock-Shop-Dashboard.png?raw=true)
+  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/screenshots/Sock-Shop-Dashboard-1.png?raw=true)
 
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Node-and-Pod-metrics-Dashboard.png?raw=true)
+  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/screenshots/Sock-Shop-Dashboard-2.png?raw=true)
+
+  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/screenshots/Sock-Shop-Dashboard-3.png?raw=true)
+
+  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/screenshots/Node-and-Pod-metrics-Dashboard-1.png?raw=true)
+
+  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/screenshots/Node-and-Pod-metrics-Dashboard-2.png?raw=true)
 
 ### Step-6 (optional): Inject continous chaos using Argo CD.
 

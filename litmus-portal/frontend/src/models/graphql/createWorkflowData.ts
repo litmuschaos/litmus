@@ -28,3 +28,41 @@ export interface CreateWorkflowResponse {
   cluster_id: string;
   is_active: boolean;
 }
+
+export interface GVRRequest {
+  group: string;
+  version: string;
+  resource: string;
+}
+
+export interface KubeObjRequest {
+  data: {
+    cluster_id: string;
+    object_type: string;
+    kube_obj_request: GVRRequest;
+  };
+}
+
+export interface KubeObjResponse {
+  getKubeObject: {
+    cluster_id: string;
+    kube_obj: string;
+  };
+}
+
+export interface KubeObjResource {
+  api_version: string;
+  containers: object;
+  creation_timestamp: string;
+  labels: string;
+  name: string;
+  namespace: string;
+  termination_grace_periods: string;
+  uid: string;
+  volumes: object;
+}
+
+export interface KubeObjData {
+  namespace: string;
+  data: KubeObjResource[];
+}

@@ -110,9 +110,10 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
             minutes
           </Typography>
           {/* Button to show Application Details */}
-          {data.nodes[pod_name].type === 'ChaosEngine' && (
+          {data.nodes[pod_name].type === 'ChaosEngine' && embeddedYAMLString && (
             <>
               <Button
+                disabled={!YAML.parse(embeddedYAMLString).spec.appinfo}
                 onClick={() => setIsAppInfoVisible(!isAppInfoVisible)}
                 style={{ textTransform: 'none' }}
                 className={classes.textMargin}
@@ -132,10 +133,8 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
               </Button>
               {isAppInfoVisible && (
                 <Typography className={classes.textMargin}>
-                  {embeddedYAMLString &&
-                    Object.keys(
-                      YAML.parse(embeddedYAMLString).spec.appinfo
-                    ).map((key, index) => (
+                  {Object.keys(YAML.parse(embeddedYAMLString).spec.appinfo).map(
+                    (key, index) => (
                       <div key={index.toString()}>
                         <strong>{key} :</strong>
                         <span>
@@ -143,7 +142,8 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
                           {YAML.parse(embeddedYAMLString).spec.appinfo[key]}
                         </span>
                       </div>
-                    ))}
+                    )
+                  )}
                 </Typography>
               )}
             </>

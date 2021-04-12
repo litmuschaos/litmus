@@ -1,5 +1,5 @@
 /* eslint-disable no-return-assign */
-import { QuickActionCard } from 'litmus-ui';
+import { QuickActionCard, QuickActionCardProps } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { constants } from '../../constants';
@@ -14,13 +14,6 @@ type Variant = 'homePage' | 'returningHome' | 'analytics' | 'community';
 interface LocalQuickActionCardProps {
   variant?: Variant;
   className?: string;
-}
-
-interface QuickActionCardProps {
-  onClick?: () => void;
-  src: string;
-  alt: string;
-  text: string;
 }
 
 const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({

@@ -1,21 +1,21 @@
 import { Modal, ButtonOutlined, ButtonFilled, InputField } from 'litmus-ui';
 import { MenuItem, Select, InputLabel } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useEffect } from 'react';
 import useStyles from './styles';
 import ProbeDetails from './ProbeDetails';
 
 interface AddProbeProps {
-  probesData: any;
-  setProbesData: React.Dispatch<any>;
+  probesValue: any;
+  setProbesValue: React.Dispatch<any>;
   addProbe: () => void;
   handleClose: () => void;
   open: boolean;
 }
 
 const AddProbe: React.FC<AddProbeProps> = ({
-  probesData,
-  setProbesData,
+  probesValue,
+  setProbesValue,
   addProbe,
   handleClose,
   open,
@@ -23,7 +23,9 @@ const AddProbe: React.FC<AddProbeProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const allProbes = probesData;
+  const [allProbes, setAllProbes] = React.useState(
+    probesValue && probesValue.length ? probesValue : []
+  );
   const [probeType, setProbeType] = React.useState('httpProbe/inputs');
   const [probeData, setProbeData] = React.useState({
     name: '',
@@ -75,9 +77,14 @@ const AddProbe: React.FC<AddProbeProps> = ({
 
   const handleAddProbe = () => {
     allProbes.push(probeData);
-    setProbesData(allProbes);
+    setAllProbes(allProbes);
     addProbe();
   };
+
+  useEffect(() => {
+    setProbesValue(allProbes);
+  }, [allProbes]);
+
   return (
     <Modal
       open={open}
