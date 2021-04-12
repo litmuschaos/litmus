@@ -89,7 +89,7 @@ const ChooseWorkflowFromExisting = () => {
         <div className={classes.predefinedWorkflowDiv}>
           <RadioGroup value={selected} onChange={handleChange}>
             {filteredExistingWorkflows &&
-              filteredExistingWorkflows?.map(
+              filteredExistingWorkflows.map(
                 (templateData: ListManifestTemplateArray) => (
                   <LitmusCard
                     width="100%"
