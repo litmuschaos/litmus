@@ -34,19 +34,21 @@ const (
 )
 
 func cases(key string, value string, operator string) bool {
-	if operator == "EqualTo" {
+	switch operator {
+	case "EqualTo":
 		return key == value
-	} else if operator == "NotEqualTo" {
+	case "NotEqualTo":
 		return key != value
-	} else if operator == "LessThan" {
+	case "LessThan":
 		return key < value
-	} else if operator == "GreaterThan" {
+	case "GreaterThan":
 		return key > value
-	} else if operator == "GreaterThanEqualTo" {
+	case "GreaterThanEqualTo":
 		return key >= value
-	} else if operator == "LessThanEqualTo" {
+	case "LessThanEqualTo":
 		return key <= value
 	}
+
 	return false
 }
 
@@ -122,7 +124,9 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 
 		var dataInterface interface{}
 		var resourceName string
-		if strings.ToLower(resourceType) == "deployment" {
+		expr := strings.ToLower(resourceType)
+		switch expr {
+		case "deployment":
 			deps := obj.(*v1.Deployment)
 			resourceName = deps.GetName()
 			mar, err := json.Marshal(deps)
@@ -131,7 +135,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 			}
 
 			err = json.Unmarshal(mar, &dataInterface)
-		} else if strings.ToLower(resourceType) == "statefulset" {
+		case "statefulset":
 			sts := obj.(*v1.StatefulSet)
 			resourceName = sts.GetName()
 			mar, err := json.Marshal(sts)
@@ -140,7 +144,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 			}
 
 			err = json.Unmarshal(mar, &dataInterface)
-		} else if strings.ToLower(resourceType) == "daemonset" {
+		case "daemonset":
 			sts := obj.(*v1.DaemonSet)
 			resourceName = sts.GetName()
 			mar, err := json.Marshal(sts)
@@ -149,7 +153,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 			}
 
 			err = json.Unmarshal(mar, &dataInterface)
-		} else {
+		default:
 			return errors.New("Resource not supported")
 		}
 
