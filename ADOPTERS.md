@@ -17,7 +17,7 @@ Please send PRs to add or remove organizations/users.
 |[Kublr](https://kublr.com/)|Identify the weak spots and components prone to failures under stress|[Our Story](adopters/organizations/kublr.md)|
 |[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
 |[RedHat](https://www.redhat.com/en)|[RedHat Openshift Virtualization Maturity](https://www.youtube.com/watch?v=VITGHJ47gx8&list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&index=7)|[Our Story](adopters/organizations/redhat.md)|
-|[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|To Be Added|
+|[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
