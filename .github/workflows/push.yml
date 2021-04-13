@@ -178,7 +178,7 @@ jobs:
         run: |
           source env-vars
           cd litmus-portal/cluster-agents/event-tracker
-          docker build . -f build/Dockerfile -t ${{ secrets.REPONAME }}/${EVENT_TRACKER}:${IMG_TAG}
+          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${EVENT_TRACKER}:${IMG_TAG}
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:

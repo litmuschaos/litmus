@@ -120,7 +120,7 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/cluster-agents/event-tracker
-          docker build . -f build/Dockerfile
+          docker build . -f Dockerfile
 
   docker-build-frontend:
     runs-on: ubuntu-latest
