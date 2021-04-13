@@ -1,6 +1,7 @@
 import { Paper, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Workflow } from '../../../../models/graphql/workflowData';
 import { history } from '../../../../redux/configureStore';
@@ -16,6 +17,7 @@ interface RecentWorkflowRunsProps {
 }
 
 const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   const projectID = getProjectID();
@@ -27,7 +29,9 @@ const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
     <Paper className={classes.workflowRunContainer}>
       {/* Heading section of the container */}
       <div className={classes.containerHeading}>
-        <Typography id="heading">Recent Workflow runs</Typography>
+        <Typography id="heading">
+          {t('homeViews.agentConfiguredHome.recentWorkflowRuns.heading')}
+        </Typography>
         <Link
           to={{
             pathname: '/workflows',
@@ -35,7 +39,7 @@ const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
           }}
         >
           <Typography>
-            View all {data.getWorkFlowRuns.length} workflows
+            {t('homeViews.agentConfiguredHome.recentWorkflowRuns.viewAll')}
           </Typography>
         </Link>
         <ButtonFilled
@@ -46,7 +50,10 @@ const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
             });
           }}
         >
-          <Typography>Schedule workflow</Typography>
+          <Typography>
+            <img src="./icons/calendarBlank.svg" alt="calendar" />
+            {t('homeViews.agentConfiguredHome.recentWorkflowRuns.schedule')}
+          </Typography>
         </ButtonFilled>
       </div>
 

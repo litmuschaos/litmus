@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   toolBar: {
     height: '4.9rem',
     display: 'flex',
-    background: `linear-gradient(269.82deg, #5B44BA 0.52%, #493795 99.07%)`,
+    background: theme.palette.header,
     padding: theme.spacing(0, 7.5),
     '& *': {
       color: theme.palette.text.secondary,
@@ -56,11 +56,12 @@ const useStyles = makeStyles((theme: Theme) => ({
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
     },
+    '&:hover': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
   },
   active: {
-    '& .MuiListItem-root.Mui-selected, .MuiListItem-root.Mui-selected:hover': {
-      background: theme.palette.common.black,
-    },
+    background: `${theme.palette.cards.highlight} !important`,
   },
   profileDropdown: {
     margin: theme.spacing(0.25, 0, 0, 2.75),

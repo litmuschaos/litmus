@@ -19,6 +19,10 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.main,
       marginRight: theme.spacing(4.5),
     },
+
+    '& img': {
+      margin: theme.spacing(0, 0.25, -0.375, 0),
+    },
   },
 }));
 

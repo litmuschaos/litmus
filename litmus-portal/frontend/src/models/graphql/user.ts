@@ -127,3 +127,8 @@ export enum UserRole {
   admin = 'admin',
   user = 'user',
 }
+
+export enum InvitationStatus {
+  PENDING = 'Pending',
+  ACCEPTED = 'Accepted',
+}

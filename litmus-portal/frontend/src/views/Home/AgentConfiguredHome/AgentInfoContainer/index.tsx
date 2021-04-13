@@ -2,6 +2,7 @@ import { Paper, Typography } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { history } from '../../../../redux/configureStore';
 import {
   getProjectID,
@@ -17,7 +18,7 @@ const AgentInfoContainer: React.FC<AgentInfoContainerProps> = ({
   agentCount,
 }) => {
   const classes = useStyles();
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const projectID = getProjectID();
   const projectRole = getProjectRole();
@@ -31,35 +32,38 @@ const AgentInfoContainer: React.FC<AgentInfoContainerProps> = ({
             <div>
               <Typography id="agentCount">{agentCount}</Typography>
               {agentCount === 1 ? (
-                <Typography>Agent</Typography>
+                <Typography>
+                  {t('homeViews.agentConfiguredHome.agentInfoContainer.agent')}
+                </Typography>
               ) : (
-                <Typography>Agents</Typography>
+                <Typography>
+                  {t('homeViews.agentConfiguredHome.agentInfoContainer.agents')}
+                </Typography>
               )}
             </div>
             <div>
               <Typography id="agentDesc">
-                Cloud native chaos engineering can be setup on this cluster
-                using Litmus Chaos
+                {t(
+                  'homeViews.agentConfiguredHome.agentInfoContainer.description'
+                )}
               </Typography>
             </div>
           </div>
         </div>
-        {projectRole === 'Owner' && (
-          <ButtonOutlined
-            onClick={() => {
-              history.push({
-                pathname: '/targets',
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              });
-            }}
-            className={classes.infoContainerButton}
-          >
-            <Typography>
-              <ArrowUpwardIcon />
-              Deploy new Agent
-            </Typography>
-          </ButtonOutlined>
-        )}
+        <ButtonOutlined
+          onClick={() => {
+            history.push({
+              pathname: '/targets',
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
+          }}
+          className={classes.infoContainerButton}
+        >
+          <Typography>
+            <ArrowUpwardIcon />
+            {t('homeViews.agentConfiguredHome.agentInfoContainer.deploy')}
+          </Typography>
+        </ButtonOutlined>
       </Paper>
     </div>
   );

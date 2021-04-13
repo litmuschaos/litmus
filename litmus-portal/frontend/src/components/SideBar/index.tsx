@@ -103,7 +103,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="MyHubs"
+            label="ChaosHubs"
             selected={pathName === 'myhub'}
           >
             <MyHubIcon />
@@ -117,7 +117,7 @@ const SideBar: React.FC = () => {
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
-          label="Targets"
+          label="Agents"
           selected={['targets', 'target-connect'].includes(pathName)}
         >
           <TargetsIcon />

@@ -2,8 +2,15 @@ import { useQuery } from '@apollo/client';
 import { Paper, Typography } from '@material-ui/core';
 import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LIST_PROJECTS } from '../../../graphql';
-import { Member, Project, Projects } from '../../../models/graphql/user';
+import {
+  InvitationStatus,
+  Member,
+  Project,
+  Projects,
+  Role,
+} from '../../../models/graphql/user';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
@@ -13,7 +20,7 @@ import useStyles from './styles';
 
 const ProjectInfoContainer: React.FC = () => {
   const classes = useStyles();
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const tabs = useActions(TabActions);
 
   const userID = getUserId();
@@ -41,17 +48,17 @@ const ProjectInfoContainer: React.FC = () => {
     let projectOther = 0;
     projects.forEach((project) => {
       project.members.forEach((member: Member) => {
-        if (member.user_id === userID && member.role === 'Owner') {
+        if (member.user_id === userID && member.role === Role.owner) {
           projectOwner++;
         } else if (
           member.user_id === userID &&
-          member.invitation === 'Pending'
+          member.invitation === InvitationStatus.PENDING
         ) {
           projectInvitation++;
         } else if (
           member.user_id === userID &&
-          member.role !== 'Owner' &&
-          member.invitation === 'Accepted'
+          member.role !== Role.owner &&
+          member.invitation === InvitationStatus.ACCEPTED
         ) {
           projectOther++;
         }
@@ -73,22 +80,28 @@ const ProjectInfoContainer: React.FC = () => {
             <div>
               <Typography id="projectCount">{projectCount}</Typography>
               {projectCount === 1 ? (
-                <Typography>Project</Typography>
+                <Typography>
+                  {t('homeViews.projectInfoContainer.project')}
+                </Typography>
               ) : (
-                <Typography>Projects</Typography>
+                <Typography>{t('projectInfoContainer.projects')}</Typography>
               )}
             </div>
             <div>
               <Typography id="invitationCount">{invitationsCount}</Typography>
               {invitationsCount === 1 ? (
-                <Typography>Invitation</Typography>
+                <Typography>
+                  {t('homeViews.projectInfoContainer.invitation')}
+                </Typography>
               ) : (
-                <Typography>Invitations</Typography>
+                <Typography>
+                  {t('homeViews.projectInfoContainer.invitations')}
+                </Typography>
               )}
             </div>
           </div>
         </div>
-        {projectRole === 'Owner' && (
+        {projectRole === Role.owner && (
           <ButtonOutlined
             onClick={() => {
               tabs.changeSettingsTabs(1);
@@ -101,7 +114,7 @@ const ProjectInfoContainer: React.FC = () => {
           >
             <Typography>
               <img src="./icons/viewProjects.svg" alt="View projects" />
-              View all projects
+              {t('homeViews.projectInfoContainer.viewProjects')}
             </Typography>
           </ButtonOutlined>
         )}

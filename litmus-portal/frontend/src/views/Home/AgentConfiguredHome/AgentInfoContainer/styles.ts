@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
     '& svg': {
       margin: theme.spacing(0, 1, -0.625, 0),
     },
+    '& p': {
+      fontWeight: 500,
+    },
   },
 }));
 

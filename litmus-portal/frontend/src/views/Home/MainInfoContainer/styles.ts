@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: theme.spacing(1.875),
       display: 'flex',
       alignItems: 'center',
+      cursor: 'pointer',
       '& p': {
         fontWeight: 500,
         fontSize: '1rem',
