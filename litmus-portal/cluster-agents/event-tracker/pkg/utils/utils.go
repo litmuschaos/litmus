@@ -31,6 +31,8 @@ var (
 
 const (
 	ExternAgentConfigName = "agent-config"
+	ConditionPassed       = "ConditionPassed"
+	ConditionFailed       = "ConditionFailed"
 )
 
 func cases(key string, value string, operator string) bool {
@@ -160,9 +162,9 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 		check := conditionChecker(etp, dataInterface)
 		var result string
 		if check == true {
-			result = "ConditionPassed"
+			result = ConditionPassed
 		} else if check == false {
-			result = "ConditionFailed"
+			result = ConditionFailed
 		}
 
 		etp.Statuses = append(etp.Statuses, litmuschaosv1.EventTrackerPolicyStatus{

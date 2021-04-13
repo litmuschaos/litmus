@@ -47,6 +47,8 @@ type Response struct {
 // +kubebuilder:rbac:groups=eventtracker.litmuschaos.io,resources=eventtrackerpolicies,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=eventtracker.litmuschaos.io,resources=eventtrackerpolicies/status,verbs=get;update;patch
 
+const ConditionPassed = "ConditionPassed"
+
 func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	_ = context.Background()
 	_ = r.Log.WithValues("eventtrackerpolicy", req.NamespacedName)
@@ -61,7 +63,7 @@ func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	}
 
 	for index, status := range etp.Statuses {
-		if strings.ToLower(status.Result) == "conditionpassed" && strings.ToLower(status.IsTriggered) == "false" {
+		if string(status.Result) == ConditionPassed && strings.ToLower(status.IsTriggered) == "false" {
 			log.Print("ResourceName: " + status.ResourceName + "WorkflowID: " + status.WorkflowID)
 			response, err := utils.SendRequest(status.WorkflowID)
 			if err != nil {
