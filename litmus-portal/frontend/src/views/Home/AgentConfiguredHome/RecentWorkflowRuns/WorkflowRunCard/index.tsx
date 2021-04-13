@@ -135,7 +135,9 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            title="Browse workflow"
+            title={t(
+              'homeViews.agentConfiguredHome.recentWorkflowRuns.workflowRunCard.cardTitle'
+            )}
           >
             <div>
               <div id="statusDiv">

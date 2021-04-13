@@ -351,6 +351,7 @@ homeViews:
       explore: Explore pre defined workflows
     recentWorkflowRuns:
       workflowRunCard:
+        cardTitle: Browse workflow
         resilienceRate: 'Overall resilience rate:'
         lastRun: 'Last Run:'
         showAnalytics: Show the analytics
