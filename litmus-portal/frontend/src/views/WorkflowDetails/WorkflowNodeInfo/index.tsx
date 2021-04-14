@@ -1,8 +1,6 @@
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import YAML from 'yaml';
 import { ButtonOutlined } from 'litmus-ui';
 import { useSelector } from 'react-redux';
@@ -112,16 +110,30 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
           {/* Button to show Application Details */}
           {data.nodes[pod_name].type === 'ChaosEngine' && embeddedYAMLString && (
             <>
-              <Button
-                disabled={!YAML.parse(embeddedYAMLString).spec.appinfo}
+              <div
+                role="button"
+                onKeyPress={() => {}} // Keyboard Event handler not required for this button
                 onClick={() => setIsAppInfoVisible(!isAppInfoVisible)}
-                style={{ textTransform: 'none' }}
-                className={classes.buttonAlign}
+                className={`
+                  ${
+                    !YAML.parse(embeddedYAMLString).spec.appinfo
+                      ? classes.disabled
+                      : ''
+                  } ${classes.buttonFlex}`}
+                tabIndex={0}
               >
                 {isAppInfoVisible ? (
-                  <KeyboardArrowDownIcon className={classes.icon} />
+                  <img
+                    src="/icons/down-arrow.svg"
+                    alt="down-arrow icon"
+                    className={classes.icon}
+                  />
                 ) : (
-                  <ChevronRightIcon className={classes.icon} />
+                  <img
+                    src="/icons/right-arrow.svg"
+                    alt="right-arrow icon"
+                    className={classes.icon}
+                  />
                 )}
                 <Typography>
                   <strong>
@@ -130,7 +142,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
                     )}
                   </strong>
                 </Typography>
-              </Button>
+              </div>
               {isAppInfoVisible && (
                 <Typography className={classes.textMargin}>
                   {Object.keys(YAML.parse(embeddedYAMLString).spec.appinfo).map(

@@ -45,8 +45,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: theme.spacing(1, 0),
   },
 
-  buttonAlign: {
-    paddingLeft: theme.spacing(0),
+  buttonFlex: {
+    fontSize: '1rem',
+    display: 'flex',
+    margin: theme.spacing(1, 0),
+    cursor: 'pointer',
+    outline: 'none',
+    '&:hover': {
+      outline: 'none',
+    },
+    '&:focus': {
+      outline: 'none',
+    },
+  },
+
+  disabled: {
+    color: theme.palette.text.disabled,
   },
 
   icon: {
