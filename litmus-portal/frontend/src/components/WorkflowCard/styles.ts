@@ -119,10 +119,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    marginLeft: theme.spacing(1.5),
-    marginRight: theme.spacing(1),
+    margin: theme.spacing(0.75),
   },
 
   totalRuns: {
