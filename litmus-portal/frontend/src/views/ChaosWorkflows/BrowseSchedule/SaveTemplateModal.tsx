@@ -34,6 +34,8 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   const manifest: string = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
+  const [editManifest, setEditManifest] = useState(manifest);
+  const [yamlValid, setYamlValid] = useState(true);
   const [displayResult, setDisplayResult] = useState<boolean>(false);
   const [cloneResult, setCloneResult] = useState<CloneTemplateResult>({
     type: '',
@@ -44,7 +46,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
     {
       variables: {
         data: {
-          manifest: YAML.stringify(manifest),
+          manifest: YAML.stringify(editManifest),
           template_name: templateName,
           template_description: templateDesc,
           project_id: getProjectID(),
@@ -99,9 +101,15 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       />
       <br />
       <YamlEditor
-        content={manifest}
+        content={editManifest}
         filename="Workflow Template"
         readOnly={false}
+        setButtonState={(btnState: boolean) => {
+          setYamlValid(btnState);
+        }}
+        saveWorkflowChange={(updatedManifest: string) => {
+          setEditManifest(updatedManifest);
+        }}
       />
       <div className={classes.footerTemplateDiv}>
         <div className={classes.templateButtonsDiv}>
@@ -112,7 +120,13 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
             onClick={() => {
               addWorkflowTemplate();
             }}
-            disabled={loading || cloneResult.type === constants.success}
+            disabled={
+              loading ||
+              cloneResult.type === constants.success ||
+              templateName.trim().length === 0 ||
+              templateDesc.trim().length === 0 ||
+              !yamlValid
+            }
           >
             {loading ? (
               <Loader size={20} />

@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
   forwardRef,
@@ -76,6 +76,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [selectedExp, setSelectedExp] = useState('');
   const selectedProjectID = getProjectID();
   const [addExpModal, setAddExpModal] = useState(false);
+  const [editManifest, setEditManifest] = useState('');
+  const [confirmEdit, setConfirmEdit] = useState(false);
+  const [yamlValid, setYamlValid] = useState(true);
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
     crd: '',
@@ -463,6 +466,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       <ButtonOutlined
         onClick={() => {
           setYAMLModal(true);
+          setConfirmEdit(false);
         }}
         className={classes.editBtn}
       >
@@ -478,7 +482,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
         modalActions={
           <ButtonOutlined
             onClick={() => {
-              setYAMLModal(false);
+              if (editManifest === '') {
+                setYAMLModal(false);
+              } else {
+                setConfirmEdit(true);
+              }
             }}
             className={classes.closeBtn}
           >
@@ -486,14 +494,63 @@ const TuneWorkflow = forwardRef((_, ref) => {
           </ButtonOutlined>
         }
       >
-        <div>
-          <YamlEditor
-            content={
-              isCustomWorkflow ? YAML.stringify(generatedYAML) : manifest
-            }
-            filename={workflow.name}
-            readOnly={false}
-          />
+        <div className={classes.saveTemplateRoot}>
+          {confirmEdit ? (
+            <div className={classes.confirmDiv}>
+              <Typography className={classes.confirmText}>
+                {t('createWorkflow.tuneWorkflow.confirmText')}
+              </Typography>
+              <ButtonOutlined
+                className={classes.backBtn}
+                disabled={!yamlValid}
+                onClick={() => {
+                  setConfirmEdit(false);
+                }}
+              >
+                {t('createWorkflow.tuneWorkflow.back')}
+              </ButtonOutlined>
+              <ButtonFilled
+                className={classes.continueBtn}
+                disabled={!yamlValid}
+                onClick={() => {
+                  setYAMLModal(false);
+                  setEditManifest('');
+                }}
+              >
+                {t('createWorkflow.tuneWorkflow.continue')}
+              </ButtonFilled>
+            </div>
+          ) : (
+            <>
+              <Typography className={classes.updateText}>
+                {t('createWorkflow.tuneWorkflow.updateChanges')}
+              </Typography>
+              <YamlEditor
+                content={manifest}
+                filename={workflow.name}
+                readOnly={false}
+                setButtonState={(btnState: boolean) => {
+                  setYamlValid(btnState);
+                }}
+                saveWorkflowChange={(updatedManifest: string) => {
+                  setEditManifest(updatedManifest);
+                }}
+              />
+              <ButtonFilled
+                className={classes.continueBtn}
+                disabled={!yamlValid}
+                onClick={() => {
+                  workflowAction.setWorkflowManifest({
+                    manifest: editManifest === '' ? manifest : editManifest,
+                  });
+                  setEditManifest('');
+                  setYAMLModal(false);
+                }}
+              >
+                {t('createWorkflow.tuneWorkflow.saveChange')}
+              </ButtonFilled>
+            </>
+          )}
         </div>
       </Modal>
     </>

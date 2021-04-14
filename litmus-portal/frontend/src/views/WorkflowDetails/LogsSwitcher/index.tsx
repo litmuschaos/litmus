@@ -174,7 +174,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
           onChange={handleChange}
           TabIndicatorProps={{
             style: {
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor: theme.palette.highlight,
             },
           }}
         >

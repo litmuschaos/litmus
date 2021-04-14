@@ -67,7 +67,7 @@ const Workflows = () => {
           onChange={handleChange}
           TabIndicatorProps={{
             style: {
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor: theme.palette.highlight,
             },
           }}
           variant="fullWidth"

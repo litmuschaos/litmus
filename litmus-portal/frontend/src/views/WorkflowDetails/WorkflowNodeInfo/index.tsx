@@ -116,7 +116,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
                 disabled={!YAML.parse(embeddedYAMLString).spec.appinfo}
                 onClick={() => setIsAppInfoVisible(!isAppInfoVisible)}
                 style={{ textTransform: 'none' }}
-                className={classes.textMargin}
+                className={classes.buttonAlign}
               >
                 {isAppInfoVisible ? (
                   <KeyboardArrowDownIcon className={classes.icon} />

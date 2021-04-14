@@ -9,9 +9,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   text: {
-    opacity: 0.5,
     fontSize: '1rem',
     margin: theme.spacing(0, 1),
+    color: theme.palette.text.hint,
   },
 }));
 
