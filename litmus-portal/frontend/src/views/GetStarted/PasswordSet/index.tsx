@@ -3,6 +3,7 @@ import { Typography } from '@material-ui/core';
 import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getUsername } from '../../../utils/auth';
 import { validateConfirmPassword } from '../../../utils/validate';
 import useStyles from './styles';
 
@@ -52,7 +53,10 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
     <div className={classes.rootDiv}>
       <div className={classes.rootLitmusText}>
         <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
-        {/* TODO: Add translations */}
+        <Typography className={classes.HeaderText}>
+          {' '}
+          {t('getStarted.welcome')} {getUsername()}!
+        </Typography>
         <Typography className={classes.HeaderText}>
           {t('getStarted.password.info')}
         </Typography>

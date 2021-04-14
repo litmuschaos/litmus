@@ -4,6 +4,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
+import { UserRole } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
@@ -55,7 +56,7 @@ const Settings: React.FC = () => {
         >
           <StyledTab data-cy="my-account" label="My Account" {...tabProps(0)} />
           <StyledTab data-cy="teaming" label="Team" {...tabProps(1)} />
-          {role === 'admin' && (
+          {role === UserRole.admin && (
             <StyledTab
               data-cy="user-management"
               label="User Management"
@@ -65,7 +66,7 @@ const Settings: React.FC = () => {
           <StyledTab
             data-cy="gitOps"
             label="GitOps"
-            {...tabProps(role === 'admin' ? 3 : 2)}
+            {...tabProps(role === UserRole.admin ? 3 : 2)}
           />
         </Tabs>
       </Paper>
@@ -77,13 +78,16 @@ const Settings: React.FC = () => {
           <TeamingTab />
         </TabPanel>
       </div>
-      {role === 'admin' && (
+      {role === UserRole.admin && (
         <TabPanel value={settingsTabValue} index={2}>
           <UserManagement />
         </TabPanel>
       )}
       <div data-cy="GitOpsPanel">
-        <TabPanel value={settingsTabValue} index={role === 'admin' ? 3 : 2}>
+        <TabPanel
+          value={settingsTabValue}
+          index={role === UserRole.admin ? 3 : 2}
+        >
           <GitOpsTab />
         </TabPanel>
       </div>

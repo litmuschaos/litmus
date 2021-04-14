@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
 import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -65,7 +65,6 @@ const LoginPage: React.FC = () => {
         <div className={classes.rootDiv}>
           <div>
             <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
-            {/* TODO: Add translations */}
             <Typography className={classes.HeaderText}>
               {t('login.heading')}
             </Typography>
@@ -117,16 +116,29 @@ const LoginPage: React.FC = () => {
                 }
               />
             </div>
-
-            <ButtonFilled
-              className={classes.loginButton}
-              type="submit"
-              disabled={isLoading}
-            >
-              <div data-cy="loginButton">
-                {isLoading ? <Loader size={loaderSize} /> : 'Login'}
-              </div>
-            </ButtonFilled>
+            <div className={classes.buttonGroup}>
+              <ButtonFilled
+                className={classes.loginButton}
+                type="submit"
+                disabled={isLoading}
+              >
+                <div data-cy="loginButton">
+                  {isLoading ? <Loader size={loaderSize} /> : 'Login'}
+                </div>
+              </ButtonFilled>
+              <Tooltip
+                classes={{
+                  tooltip: classes.tooltip,
+                }}
+                disableFocusListener
+                placement="bottom"
+                title={<Typography>{t('login.tooltipText')}</Typography>}
+              >
+                <Typography className={classes.forgetPwdText}>
+                  {t('login.forgetPassword')}
+                </Typography>
+              </Tooltip>
+            </div>
           </form>
         </div>
       </Center>

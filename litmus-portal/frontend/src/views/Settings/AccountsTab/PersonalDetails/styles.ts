@@ -12,22 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   // button styles for saving the changes of personal details
   saveButton: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(12.4),
-    width: '7.0625rem',
-  },
-  // for closing the modal button
-  button: {
-    textTransform: 'none',
-    width: '8.5rem',
-    height: '2.93rem',
-    borderRadius: 0,
-    marginTop: theme.spacing(1.25),
-    backgroundColor: theme.palette.secondary.dark,
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
-    },
+    margin: theme.spacing(2, 0, 0, 12.4),
   },
 
   // styles for modal and its components
