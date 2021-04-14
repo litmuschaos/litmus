@@ -42,7 +42,7 @@ const WorkflowDetails: React.FC = () => {
   const { t } = useTranslation();
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
-  const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
+  const [isInfoToggled, setIsInfoToggled] = useState<boolean>(false);
   // State for Checking if workflow failed
   const [isWorkflowFailed, setWorkflowFailed] = useState<boolean>(false);
   const [
@@ -173,9 +173,6 @@ const WorkflowDetails: React.FC = () => {
             <Typography data-cy="wfName" className={classes.title}>
               {t('workflowDetailsView.headerDesc')} {workflow.workflow_name}
             </Typography>
-            <Typography className={classes.subtitle}>
-              {t('workflowDetailsView.headerMiniDesc')}
-            </Typography>
 
             {/* AppBar */}
             <AppBar
@@ -188,7 +185,7 @@ const WorkflowDetails: React.FC = () => {
                 onChange={handleChange}
                 TabIndicatorProps={{
                   style: {
-                    backgroundColor: theme.palette.secondary.dark,
+                    backgroundColor: theme.palette.highlight,
                   },
                 }}
                 variant="fullWidth"

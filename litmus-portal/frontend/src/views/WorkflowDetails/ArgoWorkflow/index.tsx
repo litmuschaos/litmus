@@ -123,7 +123,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({
       />
     </>
   ) : (
-    <div>{t('workflowDetailsView.argoWorkFlow.loading')}</div>
+    <div>{t('workflowDetailsView.argoWorkflow.loading')}</div>
   );
 };
 
