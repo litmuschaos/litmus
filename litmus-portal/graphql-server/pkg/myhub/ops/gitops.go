@@ -118,7 +118,6 @@ func (c MyHubConfig) getPrivateChaosChartRepo() (string, error) {
 func GitSyncHandlerForProjects(repoData model.CloningInput) error {
 	gitConfig := GitConfigConstruct(repoData)
 	if err := gitConfig.chaosChartSyncHandler(); err != nil {
-		log.Error(err)
 		return err
 	}
 	// Repository syncing completed

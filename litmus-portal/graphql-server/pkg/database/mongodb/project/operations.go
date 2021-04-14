@@ -2,7 +2,7 @@ package project
 
 import (
 	"context"
-	"log"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,8 +24,7 @@ func CreateProject(ctx context.Context, project *Project) error {
 	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	_, err := projectCollection.InsertOne(ctx, project)
 	if err != nil {
-		log.Print("Error creating Project: ", err)
-		return err
+		return errors.New("Error creating Project: " + err.Error())
 	}
 
 	return nil
@@ -37,8 +36,7 @@ func GetProject(ctx context.Context, query bson.D) (*Project, error) {
 	var project = new(Project)
 	err := projectCollection.FindOne(ctx, query).Decode(project)
 	if err != nil {
-		log.Print("Error getting project with query :", query)
-		return nil, err
+		return nil, errors.New("Error getting project " + err.Error())
 	}
 
 	return project, err
@@ -51,13 +49,11 @@ func GetProjectsByUserID(ctx context.Context, userID string) ([]Project, error) 
 	query := bson.M{"members": bson.M{"$elemMatch": bson.M{"user_id": userID, "invitation": bson.M{"$ne": DeclinedInvitation}}}}
 	cursor, err := projectCollection.Find(ctx, query)
 	if err != nil {
-		log.Print("Error getting project with userID: ", userID, " error: ", err)
-		return nil, err
+		return nil, errors.New("Error getting project with userID: " + userID + " error:" + err.Error())
 	}
 	err = cursor.All(ctx, &projects)
 	if err != nil {
-		log.Print("Error getting project with userID: ", userID, " error: ", err)
-		return nil, err
+		return nil, errors.New("Error getting project with userID: " + userID + " error:" + err.Error())
 	}
 
 	return projects, err
@@ -70,8 +66,7 @@ func AddMember(ctx context.Context, projectID string, member *Member) error {
 	update := bson.M{"$push": bson.M{"members": member}}
 	_, err := projectCollection.UpdateOne(ctx, query, update)
 	if err != nil {
-		log.Print("Error updating project with projectID: ", projectID, " error: ", err)
-		return err
+		return errors.New("Error updating project with projectID: " + projectID +  "error: " +  err.Error())
 	}
 	return nil
 }
@@ -83,12 +78,9 @@ func RemoveInvitation(ctx context.Context, projectID string, userID string, invi
 	_, err := projectCollection.UpdateOne(ctx, query, update)
 	if err != nil {
 		if invitation == AcceptedInvitation {
-			log.Print("Error Removing the member with userID:", userID, "from project with project id: ", projectID, err)
-			return err
+			return errors.New("Error Removing the member with userID:" + userID + "from project with project id: " + projectID + err.Error())
 		}
-		log.Print("Error Removing the invite with userID:", userID, "from project with project id: ", projectID, err)
-		return err
-
+		return errors.New("Error Removing the member with userID:" + userID + "from project with project id: " + projectID + err.Error())
 	}
 	return nil
 }
@@ -115,8 +107,7 @@ func UpdateInvite(ctx context.Context, projectID, userID string, invitation Invi
 	}
 	_, err := projectCollection.UpdateOne(ctx, query, update, options)
 	if err != nil {
-		log.Print("Error updating project with projectID: ", projectID, " error: ", err)
-		return err
+		return errors.New("Error updating project with projectID: " + projectID + " error: " + err.Error())
 	}
 	return nil
 }

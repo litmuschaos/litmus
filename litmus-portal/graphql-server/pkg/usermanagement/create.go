@@ -3,7 +3,6 @@ package usermanagement
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,7 +40,6 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 
 	err = dbOperationsUserManagement.InsertUser(ctx, newUser)
 	if err != nil {
-		log.Print("ERROR", err)
 		return nil, err
 	}
 

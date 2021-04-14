@@ -3,8 +3,6 @@ package workflowtemplate
 import (
 	"context"
 	"errors"
-	"log"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +18,7 @@ func init() {
 func CreateWorkflowTemplate(ctx context.Context, template *ManifestTemplate) error {
 	_, err := workflowtemplateCollection.InsertOne(ctx, template)
 	if err != nil {
-		log.Print("Error while creating template: ", err)
+		return errors.New("Error while creating template: " + err.Error())
 	}
 	return nil
 }
@@ -30,13 +28,12 @@ func GetTemplatesByProjectID(ctx context.Context, projectID string) ([]ManifestT
 	query := bson.M{"project_id": projectID, "is_removed": false}
 	cursor, err := workflowtemplateCollection.Find(ctx, query)
 	if err != nil {
-		log.Print("Error getting template: ", err)
+		return []ManifestTemplate{}, errors.New("Error getting template: " + err.Error())
 	}
 	var templates []ManifestTemplate
 	err = cursor.All(ctx, &templates)
 
 	if err != nil {
-		log.Println(err)
 		return []ManifestTemplate{}, err
 	}
 	return templates, nil

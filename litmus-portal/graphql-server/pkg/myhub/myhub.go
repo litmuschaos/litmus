@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -81,7 +80,6 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 	// Adding the new hub into database with the given username.
 	err = dbOperationsMyHub.CreateMyHub(ctx, newHub)
 	if err != nil {
-		log.Print("ERROR", err)
 		return nil, err
 	}
 
@@ -123,7 +121,6 @@ func SaveMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (
 	// Adding the new hub into database with the given username without cloning.
 	err = dbOperationsMyHub.CreateMyHub(ctx, newHub)
 	if err != nil {
-		log.Print("ERROR", err)
 		return nil, err
 	}
 
@@ -272,7 +269,6 @@ func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
 	// Updating the last_synced_at time using hubID
 	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
-		log.Print("ERROR", err)
 		return nil, err
 	}
 	return HubStatus(ctx, syncHubInput.ProjectID)
@@ -357,7 +353,6 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 	// Updating the new hub into database with the given username.
 	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
-		log.Print("ERROR", err)
 		return nil, err
 	}
 
@@ -375,7 +370,6 @@ func DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
 
 	err := dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
-		log.Print("ERROR", err)
 		return false, err
 	}
 	return true, nil

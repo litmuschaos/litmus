@@ -28,7 +28,6 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 	)
 	user, er := dbOperationsUserManagement.GetUserByUserID(ctx, userID)
 	if er != nil {
-		log.Print("ERROR", er)
 		return nil, er
 	}
 
@@ -52,7 +51,6 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 
 	err := dbOperationsProject.CreateProject(ctx, newProject)
 	if err != nil {
-		log.Print("ERROR", err)
 		return nil, err
 	}
 

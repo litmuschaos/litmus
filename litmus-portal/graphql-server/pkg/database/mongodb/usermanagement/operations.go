@@ -2,7 +2,7 @@ package usermanagement
 
 import (
 	"context"
-	"log"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -26,8 +26,7 @@ func InsertUser(ctx context.Context, user *User) error {
 	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	_, err := userCollection.InsertOne(ctx, user)
 	if err != nil {
-		log.Print("Error creating User : ", err)
-		return err
+		return errors.New("Error creating User: " + err.Error())
 	}
 
 	return nil
@@ -40,8 +39,7 @@ func GetUserByUserName(ctx context.Context, username string) (*User, error) {
 	query := bson.M{"username": username}
 	err := userCollection.FindOne(ctx, query).Decode(user)
 	if err != nil {
-		log.Print("Error getting user with username: ", username, " error: ", err)
-		return nil, err
+		return nil, errors.New("Error getting user with username: " + username + " error: " + err.Error())
 	}
 
 	return user, err
@@ -53,8 +51,7 @@ func GetUserByUserID(ctx context.Context, userID string) (*User, error) {
 	query := bson.M{"_id": userID}
 	err := userCollection.FindOne(ctx, query).Decode(user)
 	if err != nil {
-		log.Print("Error getting user with userID: ", userID, " error: ", err)
-		return nil, err
+		return nil, errors.New("Error getting user with userID: " + userID + " error: " + err.Error())
 	}
 
 	return user, err
@@ -66,14 +63,12 @@ func GetUsers(ctx context.Context) ([]User, error) {
 	query := bson.D{{}}
 	cursor, err := userCollection.Find(ctx, query)
 	if err != nil {
-		log.Print("ERROR GETTING USERS : ", err)
-		return []User{}, err
+		return []User{}, errors.New("Error getting users: " + err.Error())
 	}
 	var users []User
 	err = cursor.All(ctx, &users)
 	if err != nil {
-		log.Print("Error deserializing users in the user object : ", err)
-		return []User{}, err
+		return []User{}, errors.New("Error deserializing users in the user object : " + err.Error())
 	}
 	return users, nil
 }
@@ -86,8 +81,7 @@ func UpdateUser(ctx context.Context, user *User) error {
 
 	result, err := userCollection.UpdateOne(ctx, filter, update)
 	if err != nil || result.ModifiedCount != 1 {
-		log.Print("Error updating User : ", err)
-		return err
+		return errors.New("Error updating User : " + err.Error())
 	}
 
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
@@ -100,8 +94,7 @@ func UpdateUser(ctx context.Context, user *User) error {
 
 	_, err = projectCollection.UpdateMany(ctx, filter, update, opts)
 	if err != nil {
-		log.Print("Error updating User in projects : ", err)
-		return err
+		return errors.New("Error updating User in projects : " + err.Error())
 	}
 
 	return nil
