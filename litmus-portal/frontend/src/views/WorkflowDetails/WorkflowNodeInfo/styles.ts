@@ -45,6 +45,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: theme.spacing(1, 0),
   },
 
+  buttonAlign: {
+    paddingLeft: theme.spacing(0),
+  },
+
   icon: {
     marginRight: theme.spacing(1),
   },
