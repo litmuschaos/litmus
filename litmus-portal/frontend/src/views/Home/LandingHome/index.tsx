@@ -2,12 +2,13 @@ import { Typography } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MainInfoContainer } from '../MainInfoContainer';
 import { ProjectInfoContainer } from '../ProjectInfoContainer';
 import { AgentDeployModal } from './AgentDeployModal';
 
 const LandingHome: React.FC = () => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const handleClose = () => {
@@ -24,18 +25,12 @@ const LandingHome: React.FC = () => {
       <MainInfoContainer
         src="./icons/agentDeploy.svg"
         alt="Deploy Agent"
-        heading="Deploy your first agent"
-        description={` A Kubernetes cluster consists of a set of worker machines, called
-      nodes, that run containerized applications. Every cluster has at
-      least one worker node. The control plane manages the worker nodes
-      and the Pods in the cluster. In production environments, the control
-      plane usually runs across multiple computers and a cluster usually
-      runs multiple nodes, providing fault-tolerance and high
-      availability.`}
+        heading={t('homeViews.landingHome.heading')}
+        description={t('homeViews.landingHome.description')}
         button={
           <ButtonFilled onClick={handleOpen}>
             <ArrowUpwardIcon />
-            <Typography>Deploy</Typography>
+            <Typography>{t('homeViews.landingHome.deploy')}</Typography>
           </ButtonFilled>
         }
       />

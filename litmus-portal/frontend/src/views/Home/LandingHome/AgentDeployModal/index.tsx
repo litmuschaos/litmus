@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface AgentDeployModalProps {
@@ -10,6 +11,7 @@ interface AgentDeployModalProps {
 
 const AgentDeployModal: React.FC<AgentDeployModalProps> = ({ handleClose }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const [copying, setCopying] = useState<boolean>(false);
 
@@ -35,27 +37,33 @@ const AgentDeployModal: React.FC<AgentDeployModalProps> = ({ handleClose }) => {
     <div className={classes.modalContainer}>
       <div className={classes.heading}>
         <img src="./icons/agentDeployModal.svg" alt="Target Connect" />
-        <Typography>Connect a target</Typography>
+        <Typography>
+          {t('homeViews.landingHome.agentDeployModal.heading')}
+        </Typography>
       </div>
       <div className={classes.instructionSection}>
-        <Typography>1. Open the cluster console</Typography>
         <Typography>
-          2. Download
+          {t('homeViews.landingHome.agentDeployModal.firstStep')}
+        </Typography>
+        <Typography>
+          {t('homeViews.landingHome.agentDeployModal.secondStep')}
           <a
             href="https://github.com/litmuschaos/litmusctl"
             target="_blank"
             rel="noreferrer noopener"
           >
-            litmusctl
+            {t('homeViews.landingHome.agentDeployModal.litmusctl')}
           </a>
         </Typography>
         <Typography>
-          3. Paste and run the following command into the cluster console
+          {t('homeViews.landingHome.agentDeployModal.thirdStep')}
         </Typography>
       </div>
       <div className={classes.copyCommandSection}>
         <div className={classes.commandRect}>
-          <Typography>$ litmusctl agent register</Typography>
+          <Typography>
+            {t('homeViews.landingHome.agentDeployModal.agentRegister')}
+          </Typography>
         </div>
         <ButtonOutlined
           className={classes.copyButton}
@@ -66,14 +74,18 @@ const AgentDeployModal: React.FC<AgentDeployModalProps> = ({ handleClose }) => {
           ) : (
             <>
               <img src="./icons/copy.svg" alt="copy" />
-              <Typography>Copy</Typography>
+              <Typography>
+                {t('homeViews.landingHome.agentDeployModal.copy')}
+              </Typography>
             </>
           )}
         </ButtonOutlined>
       </div>
       <div className={classes.doneButton}>
         <ButtonFilled onClick={handleClose}>
-          <Typography>Done</Typography>
+          <Typography>
+            {t('homeViews.landingHome.agentDeployModal.done')}
+          </Typography>
         </ButtonFilled>
       </div>
     </div>

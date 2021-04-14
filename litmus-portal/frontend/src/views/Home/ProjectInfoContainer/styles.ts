@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
     '& img': {
       margin: theme.spacing(0, 1, -0.25, 0),
     },
+    '& p': {
+      fontWeight: 500,
+    },
   },
 }));
 

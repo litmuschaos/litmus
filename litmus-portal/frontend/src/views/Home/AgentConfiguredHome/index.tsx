@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client';
-import { Typography } from '@material-ui/core';
+import { Link, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
 import { WORKFLOW_DETAILS } from '../../../graphql';
@@ -10,6 +10,8 @@ import {
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
+import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import { MainInfoContainer } from '../MainInfoContainer';
@@ -24,8 +26,10 @@ interface AgentConfiguredHomeProps {
 const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   agentCount,
 }) => {
+  const { t } = useTranslation();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+  const tabs = useActions(TabActions);
 
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
@@ -41,7 +45,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
     console.error('Error fetching Workflow Data');
     return (
       <Center>
-        <Typography>Error fetching the data!</Typography>
+        <Typography>{t('homeViews.agentConfiguredHome.error')}</Typography>
       </Center>
     );
   }
@@ -68,31 +72,39 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
         <MainInfoContainer
           src="./icons/workflowScheduleHome.svg"
           alt="Schedule a workflow"
-          heading="Schedule your first workflow"
-          description={`Now it is successfully running on your Kubernetes cluster. Once you
-          schedule chaos workflows, reliability analytics will be displayed
-          here.`}
+          heading={t('homeViews.agentConfiguredHome.noWorkflow.heading')}
+          description={t(
+            'homeViews.agentConfiguredHome.noWorkflow.description'
+          )}
           button={
             <ButtonFilled
               onClick={() => {
+                history.push({
+                  pathname: '/create-workflow',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
+              }}
+            >
+              <Typography>
+                {t('homeViews.agentConfiguredHome.noWorkflow.schedule')}
+              </Typography>
+            </ButtonFilled>
+          }
+          link={
+            <Link
+              underline="none"
+              color="primary"
+              onClick={() => {
+                tabs.changeWorkflowsTabs(2);
                 history.push({
                   pathname: '/workflows',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
             >
-              <Typography>Schedule a workflow</Typography>
-            </ButtonFilled>
-          }
-          // TODO: Convert to IconButton with no Ripple/Hover effect
-          link={
-            <Link
-              to={{
-                pathname: '/workflows',
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              }}
-            >
-              <Typography>Explore pre defined workflows</Typography>
+              <Typography>
+                {t('homeViews.agentConfiguredHome.noWorkflow.explore')}
+              </Typography>
             </Link>
           }
         />
