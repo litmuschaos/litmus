@@ -84,6 +84,9 @@ workflowStepper:
   next: Next
   back: Back
 
+editor:
+  status: 'YAML Status:'
+
 ######################################
 ############    Pages    #############
 ######################################
@@ -781,6 +784,11 @@ createWorkflow:
     done: Done
     editSequence: Edit Sequence
     addANewExperiment: Add a new experiment
+    confirmText: Are you sure you want to continue without saving?
+    back: Back
+    continue: Continue
+    updateChanges: Update changes in the workflow manifest
+    saveChange: Save Changes
     verticalStepper:
       myHubInfo: MyHub and Experiment details
       annotationInfo: Provide target application details where you want to induce the chaos.

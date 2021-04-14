@@ -124,6 +124,30 @@ const useStyles = makeStyles((theme) => ({
   closeBtn: {
     color: theme.palette.secondary.contrastText,
   },
+  saveTemplateRoot: {
+    margin: theme.spacing(8, 5, 5, 5),
+  },
+
+  // Confirmation Modal
+  confirmDiv: {
+    margin: 'auto',
+    marginTop: theme.spacing(31.25),
+    width: '30rem',
+  },
+  confirmText: {
+    fontSize: '2.25rem',
+  },
+  backBtn: {
+    margin: theme.spacing(2.5, 5, 0, 0),
+  },
+  continueBtn: {
+    marginTop: theme.spacing(2.5),
+  },
+  updateText: {
+    fontSize: '1.6rem',
+    marginBottom: theme.spacing(3.75),
+    textAlign: 'left',
+  },
 }));
 
 export default useStyles;

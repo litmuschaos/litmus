@@ -38,6 +38,7 @@ import 'brace/mode/yaml';
 import 'brace/theme/cobalt';
 import React, { useEffect, useState } from 'react';
 import YAML from 'yaml';
+import { useTranslation } from 'react-i18next';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import useStyles from './styles';
@@ -47,15 +48,21 @@ interface YamlEditorProps {
   content: string;
   filename?: string;
   readOnly: boolean;
+  setButtonState?: (btnState: boolean) => void;
+  saveWorkflowChange?: (updatedManifest: string) => void;
 }
 
 const YamlEditor: React.FC<YamlEditorProps> = ({
   content,
   filename,
   readOnly,
+  setButtonState,
+  saveWorkflowChange,
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
+
+  const { t } = useTranslation();
 
   const workflow = useActions(WorkflowActions);
 
@@ -121,10 +128,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     }
     setModifiedYaml(value);
     setEditorState(stateObject as any);
-
-    workflow.setWorkflowManifest({
-      manifest: value,
-    });
+    if (saveWorkflowChange) saveWorkflowChange(value);
   };
 
   const downloadYamlFile = () => {
@@ -233,6 +237,10 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (setButtonState) setButtonState(isValid);
+  }, [isValid]);
+
   return (
     <div
       className={classes.editorBackgroundFull}
@@ -246,7 +254,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             : classes.statusHeadingOutModal
         }
       >
-        Status YAML:
+        {t('editor.status')}
         <Typography className={classes.saved} display="inline">
           &nbsp; &nbsp;
           <strong>
