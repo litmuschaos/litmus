@@ -133,6 +133,10 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
       <div className={classes.rootLitmusText}>
         <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
         <Typography className={classes.HeaderText}>
+          {' '}
+          {t('getStarted.welcome')} {getUsername()}!
+        </Typography>
+        <Typography className={classes.HeaderText}>
           {t('getStarted.project.info')}
         </Typography>
         <Typography className={classes.litmusText}>
@@ -170,7 +174,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
               {isLoading ? (
                 <Loader size={loaderSize} />
               ) : (
-                <Typography>{t('getStarted.button.letsStart')}</Typography>
+                <>{t('getStarted.button.finish')}</>
               )}
             </ButtonFilled>
           </div>

@@ -10,15 +10,18 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
+    '& img': {
+      marginBottom: theme.spacing(1.5),
+    },
   },
   HeaderText: {
     maxWidth: '23.56rem',
     fontWeight: 500,
     fontSize: '2rem',
     color: theme.palette.text.secondary,
-    margin: theme.spacing(1.5, 0, 2.5, 0),
   },
   litmusText: {
+    marginTop: theme.spacing(1.875),
     maxWidth: '23.56rem',
     fontWeight: 400,
     fontSize: '1rem',
@@ -42,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   submitButton: {
+    padding: theme.spacing(1.25, 4),
     background: theme.palette.primary.light,
     color: theme.palette.text.secondary,
     '&:disabled': {

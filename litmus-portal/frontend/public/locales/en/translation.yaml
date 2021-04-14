@@ -1,23 +1,23 @@
 getStarted:
+  welcome: Welcome
   button:
     continue: Next
     back: Back
-    letsStart: Continue to Portal
+    finish: Finish
     step: Step
     of: of
   project:
     name: projectName
     label: Project Name
-    info: You are almost there! Set your project name
-    desc: The project will be yours with owner access where you can create
-      workflows, view analytics and also invite others to your project.
+    info: Set your project name
+    desc: Choose an appropriate name for your project. This project name will be used when collaborating with your team members.
   password:
     name: password
     label: Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
     info: Set your new Password
-    desc: Set a new password which will be used when you login next time
+    desc: Use the new password at your next login.
 
 ###########################################
 ############    Components    #############
@@ -95,10 +95,12 @@ home:
   heading: Welcome,
 
 login:
-  heading: One-stop-shop for Chaos Engineering on Kubernetes
-  subHeading1: Browse, create, manage, monitor and analyze your chaos workflows.
+  heading: Chaos Engineering for your Cloud Native applications
+  subHeading1: Create, orchestrate, analyze and collaborate your Chaos Workflows.
   subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
   wrongCredentials: Wrong Credentials - Try again with correct username or password
+  forgetPassword: Forgot your password?
+  tooltipText: You need to contact your admin to reset your password.
 
 schedule:
   heading: 'Schedule a workflow'
@@ -684,7 +686,7 @@ createWorkflow:
     optionB: Create a new workflow by cloning an existing workflow
     optionC: Create a new workflow using the experiments from
     optionD: Import a workflow using YAML
-    myHubs: My Hubs
+    myHubs: MyHub
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name

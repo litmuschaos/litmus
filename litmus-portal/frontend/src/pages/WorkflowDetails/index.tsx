@@ -5,15 +5,20 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
-import BackButton from '../../components/Button/BackButton';
 import {
   SCHEDULE_DETAILS,
   WORKFLOW_DETAILS,
   WORKFLOW_EVENTS,
 } from '../../graphql';
+import {
+  ScheduleDataVars,
+  Schedules,
+  ScheduleWorkflow,
+} from '../../models/graphql/scheduleData';
 import {
   ExecutionData,
   Workflow,
@@ -21,20 +26,15 @@ import {
   WorkflowSubscription,
 } from '../../models/graphql/workflowData';
 import useActions from '../../redux/actions';
+import * as NodeSelectionActions from '../../redux/actions/nodeSelection';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
+import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
+import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
-import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
-import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
-import {
-  Schedules,
-  ScheduleDataVars,
-  ScheduleWorkflow,
-} from '../../models/graphql/scheduleData';
-import * as NodeSelectionActions from '../../redux/actions/nodeSelection';
 import useStyles from './styles';
 
 const WorkflowDetails: React.FC = () => {

@@ -84,7 +84,9 @@ const ProjectInfoContainer: React.FC = () => {
                   {t('homeViews.projectInfoContainer.project')}
                 </Typography>
               ) : (
-                <Typography>{t('projectInfoContainer.projects')}</Typography>
+                <Typography>
+                  {t('homeViews.projectInfoContainer.projects')}
+                </Typography>
               )}
             </div>
             <div>
