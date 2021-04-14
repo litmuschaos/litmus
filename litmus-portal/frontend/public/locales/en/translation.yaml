@@ -681,7 +681,7 @@ createWorkflow:
     optionB: Create a new workflow by cloning an existing workflow
     optionC: Create a new workflow using the experiments from
     optionD: Import a workflow using YAML
-    myHubs: My Hubs
+    myHubs: MyHub
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
