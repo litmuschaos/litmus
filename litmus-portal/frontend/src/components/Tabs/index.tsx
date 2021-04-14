@@ -32,7 +32,7 @@ const StyledTab = withStyles((theme) =>
   createStyles({
     root: {
       textTransform: 'none',
-      color: theme.palette.text.disabled,
+      color: theme.palette.text.hint,
       fontSize: '0.95rem',
       paddingTop: theme.spacing(1.875),
       paddingBottom: theme.spacing(1.875),
@@ -40,6 +40,9 @@ const StyledTab = withStyles((theme) =>
       '&:focus': {
         opacity: 1,
       },
+    },
+    selected: {
+      color: theme.palette.highlight,
     },
   })
 )((props: StyledTabProps) => <Tab {...props} />);

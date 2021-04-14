@@ -878,8 +878,8 @@ createWorkflow:
 
 targets:
   connectHome:
-    head: Targets
-    connectText: Connect the Target
+    head: Agents
+    connectText: Connect the Agent
   copy:
     copy: Copy
     copied: Copied
@@ -909,7 +909,7 @@ connectTargets:
 workflowCluster:
   header:
     status: Current Status
-    target: Target Cluster
+    target: Target Agent
     chooseAgent: Choose the target Kubernetes Agent
     creatingNew: You are creating a
     creatingNewBold: new chaos workflow.
