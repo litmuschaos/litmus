@@ -105,7 +105,11 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 					var worflowid = stsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 					if stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 						log.Print("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsNewObj.Name, stsNewObj.Namespace)
-						PolicyAuditor("StateFulSet", stsNewObj, worflowid)
+						err := PolicyAuditor("StateFulSet", stsNewObj, worflowid)
+						if err != nil {
+							log.Print(err)
+							return
+						}
 					}
 
 				}
@@ -157,7 +161,11 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 					var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 					if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 						log.Print("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
-						PolicyAuditor("DaemonSet", dsNewObj, worflowid)
+						err := PolicyAuditor("DaemonSet", dsNewObj, worflowid)
+						if err != nil {
+							log.Print(err)
+							return
+						}
 					}
 				}
 			}
