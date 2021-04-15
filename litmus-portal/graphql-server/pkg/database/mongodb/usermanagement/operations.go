@@ -5,26 +5,14 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
 
-var (
-	userCollection    *mongo.Collection
-	projectCollection *mongo.Collection
-)
-
-func init() {
-	userCollection = mongodb.Database.Collection("user")
-	projectCollection = mongodb.Database.Collection("project")
-}
-
-// InsertUser ...
-func InsertUser(ctx context.Context, user *User) error {
-	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	_, err := userCollection.InsertOne(ctx, user)
+// CreateUser inserts a new user to the database
+func CreateUser(ctx context.Context, user *User) error {
+	err := mongodb.Operator.Create(ctx, mongodb.UserCollection, user)
 	if err != nil {
 		log.Print("Error creating User : ", err)
 		return err
@@ -33,74 +21,97 @@ func InsertUser(ctx context.Context, user *User) error {
 	return nil
 }
 
-// GetUserByUserName ...
+// GetUserByUserName returns user details based on username
 func GetUserByUserName(ctx context.Context, username string) (*User, error) {
-	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	var user = new(User)
-	query := bson.M{"username": username}
-	err := userCollection.FindOne(ctx, query).Decode(user)
+	query := bson.D{{"username", username}}
+
+	result, err := mongodb.Operator.Get(ctx, mongodb.UserCollection, query)
 	if err != nil {
-		log.Print("Error getting user with username: ", username, " error: ", err)
+		log.Print("Error getting user with username: ", username, "\nError message: ", err)
+		return nil, err
+	}
+	err = result.Decode(user)
+	if err != nil {
+		log.Print("Error unmarshalling the result in user struct: ", err)
 		return nil, err
 	}
 
 	return user, err
 }
 
-// GetUserByUserID :returns user details based on userID
+// GetUserByUserID returns user details based on userID
 func GetUserByUserID(ctx context.Context, userID string) (*User, error) {
 	var user = new(User)
-	query := bson.M{"_id": userID}
-	err := userCollection.FindOne(ctx, query).Decode(user)
+	query := bson.D{{"_id", userID}}
+	result, err := mongodb.Operator.Get(ctx, mongodb.UserCollection, query)
 	if err != nil {
-		log.Print("Error getting user with userID: ", userID, " error: ", err)
+		log.Print("Error getting user with userID: ", userID, "\nError message: ", err)
+		return nil, err
+	}
+	err = result.Decode(user)
+	if err != nil {
+		log.Print("Error unmarshalling the result in user struct ", err)
 		return nil, err
 	}
 
 	return user, err
 }
 
-// GetUsers ...
+// GetUsers returns the list of users present in the project
 func GetUsers(ctx context.Context) ([]User, error) {
-	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.D{{}}
-	cursor, err := userCollection.Find(ctx, query)
+	result, err := mongodb.Operator.List(ctx, mongodb.UserCollection, query)
 	if err != nil {
-		log.Print("ERROR GETTING USERS : ", err)
+		log.Print("Error getting users : ", err)
 		return []User{}, err
 	}
 	var users []User
-	err = cursor.All(ctx, &users)
+	err = result.All(ctx, &users)
 	if err != nil {
-		log.Print("Error deserializing users in the user object : ", err)
+		log.Print("Error unmarshalling the result in users array: ", err)
 		return []User{}, err
 	}
+
 	return users, nil
 }
 
-// UpdateUser ...
+// UpdateUser updates the details of user in both user and project DB collections
 func UpdateUser(ctx context.Context, user *User) error {
 
-	filter := bson.M{"_id": user.ID}
-	update := bson.M{"$set": bson.M{"name": user.Name, "email": user.Email, "company_name": user.CompanyName, "updated_at": user.UpdatedAt}}
+	filter := bson.D{{"_id", user.ID}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"name", user.Name},
+			{"email", user.Email},
+			{"company_name", user.CompanyName},
+			{"updated_at", user.UpdatedAt},
+		}},
+	}
 
-	result, err := userCollection.UpdateOne(ctx, filter, update)
-	if err != nil || result.ModifiedCount != 1 {
-		log.Print("Error updating User : ", err)
+	_, err := mongodb.Operator.Update(ctx, mongodb.UserCollection, filter, update)
+	if err != nil {
+		log.Print("Error updating user: ", err)
 		return err
 	}
 
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.M{"elem.user_id": user.ID},
+			bson.D{{"elem.user_id", user.ID}},
 		},
 	})
-	filter = bson.M{}
-	update = bson.M{"$set": bson.M{"members.$[elem].name": user.Name, "members.$[elem].email": user.Email, "members.$[elem].company_name": user.CompanyName}}
+	filter = bson.D{{}}
+	update = bson.D{
+		{"$set", bson.D{
+			{"members.$[elem].name", user.Name},
+			{"members.$[elem].email", user.Email},
+			{"members.$[elem].company_name", user.CompanyName},
+		}},
+	}
 
-	_, err = projectCollection.UpdateMany(ctx, filter, update, opts)
+	_, err = mongodb.Operator.UpdateMany(ctx, mongodb.ProjectCollection, filter, update, opts)
 	if err != nil {
-		log.Print("Error updating User in projects : ", err)
+		log.Print("Error updating user in projects : ", err)
 		return err
 	}
 
