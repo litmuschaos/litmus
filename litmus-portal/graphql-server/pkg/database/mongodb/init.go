@@ -10,31 +10,78 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Enum for Database collections
+const (
+	ClusterCollection = iota
+	UserCollection
+	ProjectCollection
+	WorkflowCollection
+	GitOpsCollection
+	MyHubCollection
+	DataSourceCollection
+	PanelCollection
+	DashboardCollection
+)
+
+// MongoInterface requires a MongoClient that implements the Initialize method to create the Mongo DB client
+// and a initAllCollection method to initialize all DB Collections
+type MongoInterface interface {
+	Initialize() *MongoClient
+	initAllCollection()
+}
+
+// MongoClient structure contains all the Database collections and the instance of the Database
+type MongoClient struct {
+	Database             *mongo.Database
+	ClusterCollection    *mongo.Collection
+	UserCollection       *mongo.Collection
+	ProjectCollection    *mongo.Collection
+	WorkflowCollection   *mongo.Collection
+	GitOpsCollection     *mongo.Collection
+	MyHubCollection      *mongo.Collection
+	DataSourceCollection *mongo.Collection
+	PanelCollection      *mongo.Collection
+	DashboardCollection  *mongo.Collection
+}
+
 var (
-	// Database ...
+	Client MongoInterface = &MongoClient{}
+
+	collections = map[int]string{
+		ClusterCollection:    "cluster-collection",
+		UserCollection:       "user",
+		ProjectCollection:    "project",
+		WorkflowCollection:   "workflow-collection",
+		GitOpsCollection:     "gitops-collection",
+		MyHubCollection:      "myhub",
+		DataSourceCollection: "datasource-collection",
+		PanelCollection:      "panel-collection",
+		DashboardCollection:  "dashboard-collection",
+	}
+	// TODO: remove this
 	Database *mongo.Database
 	dbName   = "litmus"
 
+	ConnectionTimeout = 20 * time.Second
 	backgroundContext = context.Background()
 	err               error
 )
 
-// init initializes database connection
-func init() {
-
+// Initialize initializes database connection
+func (m *MongoClient) Initialize() *MongoClient {
 	var (
 		dbServer = os.Getenv("DB_SERVER")
-		username = os.Getenv("DB_USER")
-		pwd      = os.Getenv("DB_PASSWORD")
+		dbUser = os.Getenv("DB_USER")
+		dbPassword      = os.Getenv("DB_PASSWORD")
 	)
 
-	if dbServer == "" || username == "" || pwd == "" {
+	if dbServer == "" || dbUser == "" || dbPassword == "" {
 		log.Fatal("DB configuration failed")
 	}
 
 	credential := options.Credential{
-		Username: username,
-		Password: pwd,
+		Username: dbUser,
+		Password: dbPassword,
 	}
 
 	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
@@ -43,7 +90,7 @@ func init() {
 		log.Fatal(err)
 	}
 
-	ctx, _ := context.WithTimeout(backgroundContext, 20*time.Second)
+	ctx, _ := context.WithTimeout(backgroundContext, ConnectionTimeout)
 
 	// Check the connection
 	err = client.Ping(ctx, nil)
@@ -53,5 +100,20 @@ func init() {
 		log.Print("Connected To MONGODB")
 	}
 
-	Database = client.Database(dbName)
+	m.Database = client.Database(dbName)
+	m.initAllCollection()
+	return m
+}
+
+// initAllCollection initializes all the database collections
+func (m *MongoClient) initAllCollection() {
+	m.ClusterCollection = m.Database.Collection(collections[ClusterCollection])
+	m.UserCollection = m.Database.Collection(collections[UserCollection])
+	m.ProjectCollection = m.Database.Collection(collections[ProjectCollection])
+	m.WorkflowCollection = m.Database.Collection(collections[WorkflowCollection])
+	m.GitOpsCollection = m.Database.Collection(collections[GitOpsCollection])
+	m.MyHubCollection = m.Database.Collection(collections[MyHubCollection])
+	m.DataSourceCollection = m.Database.Collection(collections[DataSourceCollection])
+	m.PanelCollection = m.Database.Collection(collections[PanelCollection])
+	m.DashboardCollection = m.Database.Collection(collections[DashboardCollection])
 }
