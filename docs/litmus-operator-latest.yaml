@@ -160,8 +160,6 @@ spec:
             x-kubernetes-preserve-unknown-fields: true
             type: object
             properties:
-              monitoring:
-                type: boolean
               jobCleanUpPolicy:
                 type: string
                 pattern: ^(delete|retain)$
@@ -189,6 +187,8 @@ spec:
                 pattern: ^(active|stop)$
               chaosServiceAccount:
                 type: string
+              terminationGracePeriodSeconds:
+                type: integer
               components:
                 type: object
                 properties:
@@ -201,7 +201,7 @@ spec:
                       type:
                         type: string
                         pattern: ^(go)$
-                      runnerannotation:
+                      runnerAnnotation:
                         type: object
                         additionalProperties:
                           type: string
@@ -501,7 +501,7 @@ spec:
                                     type: string
                                   mountPath:
                                     type: string
-                            experimentannotation:
+                            experimentAnnotation:
                               type: object
                               additionalProperties:
                                 type: string
@@ -587,6 +587,8 @@ spec:
                           type: string
                   image:
                     type: string
+                  imagePullPolicy:
+                    type: string
                   labels:
                     type: object
                     additionalProperties:
@@ -624,7 +626,7 @@ spec:
                           type: array
                           items:
                             type: string
-                  configmaps:
+                  configMaps:
                     type: array
                     items:
                       type: object
