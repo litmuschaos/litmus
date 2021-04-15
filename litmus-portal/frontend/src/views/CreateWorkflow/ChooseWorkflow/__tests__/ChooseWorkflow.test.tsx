@@ -1,8 +1,8 @@
+import '@testing-library/jest-dom';
+import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
 import { render } from '../../../../testHelpers/test-util';
 import ChooseWorkflow from '../index';
-import '@testing-library/jest-dom';
 
 describe('ChooseWorkflow', () => {
   it('Renders', () => {
@@ -23,6 +23,35 @@ describe('ChooseWorkflow', () => {
       fireEvent.change(radio, { target: { value: 'radio button text' } });
       // check given value
       expect(radio).toHaveProperty('value', 'radio button text');
+    });
+  });
+
+  it('The Radio Button Values should be constant', () => {
+    render(<ChooseWorkflow />);
+
+    const radios = screen.getAllByRole('radio');
+
+    const values = ['A', 'B', 'C', 'D'];
+
+    radios.forEach((radio, i) => {
+      if (radio.getAttribute('value') === values[i]) {
+        expect(radio.getAttribute('value')).toEqual(values[i]);
+      }
+    });
+  });
+
+  it('The Radio Button have translation', () => {
+    render(<ChooseWorkflow />);
+
+    const options = screen.getAllByTestId('option');
+    const translations = [
+      'createWorkflow.chooseWorkflow.optionA',
+      'createWorkflow.chooseWorkflow.optionB',
+      'createWorkflow.chooseWorkflow.optionC',
+      'createWorkflow.chooseWorkflow.optionD',
+    ];
+    options.forEach((option, index) => {
+      expect(option.innerHTML).toBe(translations[index]);
     });
   });
 });
