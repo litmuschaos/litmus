@@ -179,10 +179,16 @@ func GetServerEndpoint() (string, error) {
 		exp := strings.ToLower(string(svc.Spec.Type))
 		switch exp {
 		case "loadbalancer":
-			log.Print("loadbalancer")
-			IPAddress = svc.Spec.LoadBalancerIP
-			if IPAddress == "" {
-				return "", errors.New("ExternalIP is not present for loadbalancer service type")
+			if len(svc.Status.LoadBalancer.Ingress) > 0 {
+				if svc.Status.LoadBalancer.Ingress[0].Hostname != "" {
+					IPAddress = svc.Status.LoadBalancer.Ingress[0].Hostname
+				} else if svc.Status.LoadBalancer.Ingress[0].IP != "" {
+					IPAddress = svc.Status.LoadBalancer.Ingress[0].IP
+				} else {
+					return "", errors.New("LoadBalancerIP/Hostname not present for loadbalancer service type")
+				}
+			} else {
+				return "", errors.New("LoadBalancerIP/Hostname not present for loadbalancer service type")
 			}
 			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port)) + "/query"
 		case "nodeport":
@@ -199,10 +205,11 @@ func GetServerEndpoint() (string, error) {
 				}
 			}
 
-			if IPAddress == "" {
-				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort)) + "/query"
-			} else if InternalIP == "" {
+			// Whichever one of External IP and Internal IP is present, that will be selected for Server Endpoint
+			if IPAddress != "" {
 				FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort)) + "/query"
+			} else if InternalIP != "" {
+				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort)) + "/query"
 			} else {
 				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
