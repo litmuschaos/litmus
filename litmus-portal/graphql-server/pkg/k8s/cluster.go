@@ -179,15 +179,16 @@ func GetServerEndpoint() (string, error) {
 		exp := strings.ToLower(string(svc.Spec.Type))
 		switch exp {
 		case "loadbalancer":
-			log.Print("loadbalancer")
 			if len(svc.Status.LoadBalancer.Ingress) > 0 {
 				if svc.Status.LoadBalancer.Ingress[0].Hostname != "" {
 					IPAddress = svc.Status.LoadBalancer.Ingress[0].Hostname
 				} else if svc.Status.LoadBalancer.Ingress[0].IP != "" {
 					IPAddress = svc.Status.LoadBalancer.Ingress[0].IP
 				} else {
-					return "", errors.New("ExternalIP is not present for loadbalancer service type")
+					return "", errors.New("LoadBalancerIP/Hostname not present for loadbalancer service type")
 				}
+			} else {
+				return "", errors.New("LoadBalancerIP/Hostname not present for loadbalancer service type")
 			}
 			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port)) + "/query"
 		case "nodeport":
