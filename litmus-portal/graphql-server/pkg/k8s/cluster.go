@@ -199,10 +199,11 @@ func GetServerEndpoint() (string, error) {
 				}
 			}
 
-			if IPAddress == "" {
-				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort)) + "/query"
-			} else if InternalIP == "" {
+			// Whichever one of External IP and Internal IP is present, that will be selected for Server Endpoint
+			if IPAddress != "" {
 				FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort)) + "/query"
+			} else if InternalIP != "" {
+				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort)) + "/query"
 			} else {
 				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
