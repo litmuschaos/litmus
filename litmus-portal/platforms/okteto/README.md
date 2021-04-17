@@ -1,14 +1,13 @@
 # Litmus Portal development environment setup for Okteto cloud
 
-This directory contains setup guide to start developing Litmus Portal on Okteto cloud. 
-
+This directory contains setup guide to start developing Litmus Portal on Okteto cloud.
 
 ## Prerequisites
 
 - Install `kubectl` for `kubernetes` from [here](https://kubernetes.io/docs/tasks/tools/install-kubectl)
 
 - Create an Okteto cloud account and install the Okteto CLI from [here](https://okteto.com)
-  
+
   For MAC/Linux:
 
   ```bash
@@ -42,11 +41,10 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   git checkout dev
   ```
 
-
 ## Instructions
 
 - <h4>STEP-1:</h4> Switch to `dev` branch from GitHub UI and click the `Develop on Okteto` button below to deploy litmus-portal on Okteto cloud and start developing.
-  
+
   [![Develop on Okteto](https://okteto.com/develop-okteto.svg)](https://cloud.okteto.com/deploy)
 
 - <h4>STEP-2:</h4> Login to Okteto cloud using the CLI to download your kubernetes credentials.
@@ -66,36 +64,40 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 - <h4>STEP-4:</h4> Start the selected component's service on its container to start developing and get the changes reflected on deployed litmus-portal component which can be accessed from Okteto UI or from `https://<service name>-<okteto-namespace>.cloud.okteto.net`. This may take several minutes to start running inside the docker container. Add the given `if block` after changing `<okteto-namespace>` with your GitHub username to `litmus-portal/frontend/src/config/index.ts` file just before the `export default` statement. Then enter username as `admin` and password as `litmus` to login from the UI.
 
   > `<okteto-namespace>`:litmusportal-frontend app>
+
   ```bash
   npm install && npm audit fix && cd src && npm start
   ```
 
   > Use your IDE or code editor to add the given `if block` after changing `<okteto-namespace>` with your GitHub username to `litmus-portal/frontend/src/config/index.ts` file just before the `export default` statement. <h5>Must be done before login.</h5>
+
   ```js
-  if (loc.href.includes('cloud.okteto.net')) {
+  if (loc.href.includes("cloud.okteto.net")) {
     authURL =
-      'https://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net/auth';
+      "https://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net/auth";
     apiURL =
-      'https://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net/api';
+      "https://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net/api";
     sockURL = `wss://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net/ws`;
   }
   ```
 
   > login as default user with username as `admin` and password as `litmus` from the browser via `https://litmusportal-frontend-service-<okteto-namespace>.cloud.okteto.net` replacing `<okteto-namespace>` with your GitHub username.
 
-- <h4>STEP-5:</h4> Schedule a chaos workflow from frontend selecting `namespaced-scope-chaos` from predefined workflow templates. Also replace the `adminModeNamespace` parameter's value field `litmus` with your GitHub username using the Yaml editor while scheduling. Now, you can start developing.
+- <h4>STEP-5:</h4> Schedule a chaos workflow by constructing one using a ChaosHub. Also replace the `adminModeNamespace` parameter's value field `litmus` with your GitHub username using the Yaml editor while scheduling. The `namespace:` field from workflow's metadata must be deleted and appropriate app name or label with the app namespace as your GitHub username should be provided to the Chaos Engine(s) in the constructed workflow. Now, you can start developing.
 
 - <h4>STEP-6:</h4> After you are done with the code changes, you may stop the development environment using `okteto down` and go to the `litmus-portal/frontend/src/config` directory of the cloned repository on `dev` branch from IDE or code editor and delete the `if block` which was added for okteto dev env setup from `index.ts` file. Then change to the root directory of the cloned repository i.e. `litmus` and push the changes to your fork's `dev` branch.
 
   > Exit the process and the container. Stop it using the given commands in sequence.
+
   ```bash
   exit && exit
   okteto down
   ```
-  
+
   > Go to `litmus-portal/frontend/src/config` directory of the clone from your IDE or code editor and delete the added `if block` for okteto env setup from `index.ts` file.
 
   > Change to the root directory of the cloned repository i.e. `litmus` and push the changes to your fork's `dev` branch.
+
   ```bash
   cd ../..
   git add .
@@ -104,7 +106,6 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   ```
 
 - <h4>STEP-7:</h4> Raise a pull request from the `dev` branch in your fork to https://github.com/litmuschaos/litmus using GitHub UI after pushing all the changes.
-
 
 ## Debugging
 
@@ -127,7 +128,6 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   ```
 
 - If `No cluster is registered with the selected projectID` message is displayed, select a project from header's project list dropdown.
-
 
 ## Optional
 
