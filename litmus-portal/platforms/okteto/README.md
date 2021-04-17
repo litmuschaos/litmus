@@ -83,7 +83,7 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
   > login as default user with username as `admin` and password as `litmus` from the browser via `https://litmusportal-frontend-service-<okteto-namespace>.cloud.okteto.net` replacing `<okteto-namespace>` with your GitHub username.
 
-- <h4>STEP-5:</h4> Schedule a chaos workflow by constructing one using a ChaosHub. Also replace the `adminModeNamespace` parameter's value field `litmus` with your GitHub username using the Yaml editor while scheduling. The `namespace:` field from workflow's metadata must be deleted and appropriate app name or label with the app namespace as your GitHub username should be provided to the Chaos Engine(s) in the constructed workflow. Now, you can start developing.
+- <h4>STEP-5:</h4> Schedule a chaos workflow by constructing one using `pod-delete` experiment from ChaosHub. Also replace the `adminModeNamespace` parameter's value field `litmus` with your GitHub username using the Yaml editor while scheduling. The `namespace:` field from workflow's metadata must be deleted using the yaml editor, `appns: '<GitHub-username>'` and `applabel: 'app=hello-world'` should be provided to the Chaos Engine in the constructed workflow. Now, you can start developing.
 
 - <h4>STEP-6:</h4> After you are done with the code changes, you may stop the development environment using `okteto down` and go to the `litmus-portal/frontend/src/config` directory of the cloned repository on `dev` branch from IDE or code editor and delete the `if block` which was added for okteto dev env setup from `index.ts` file. Then change to the root directory of the cloned repository i.e. `litmus` and push the changes to your fork's `dev` branch.
 

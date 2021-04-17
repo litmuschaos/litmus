@@ -3,16 +3,14 @@
 # ENV VAR SETUP
 export DB_SERVER=mongodb://localhost:27017
 export JWT_SECRET=litmus-portal@123
+export PORTAL_ENDPOINT=http://localhost:8080
 export SELF_CLUSTER=false # self-cluster needs k8s env
 export AGENT_SCOPE=cluster
 export AGENT_NAMESPACE=litmus
 export LITMUS_PORTAL_NAMESPACE=litmus
+export PORTAL_SCOPE=namespace
 export SUBSCRIBER_IMAGE=litmuschaos/litmusportal-subscriber:ci
 export EVENT_TRACKER_IMAGE=litmuschaos/litmusportal-event-tracker:ci
-export INGRESS=false
-export INGRESS_NAME=litmus-ingress
-export NODE_NAME=minikube
-export SERVER_SERVICE_NAME=litmusportal-server-service
 export CONTAINER_RUNTIME_EXECUTOR=k8sapi
 export ARGO_SERVER_IMAGE=argoproj/argocli:v2.9.3
 export ARGO_WORKFLOW_CONTROLLER_IMAGE=argoproj/workflow-controller:v2.9.3

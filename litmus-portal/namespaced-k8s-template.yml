@@ -148,16 +148,10 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
-            - name: NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            - name: SERVER_SERVICE_NAME
-              value: "litmusportal-server-service"
-            - name: INGRESS
-              value: "false"
-            - name: INGRESS_NAME
-              value: "litmus-ingress"
+            - name: PORTAL_SCOPE
+              value: "namespace"
+            - name: PORTAL_ENDPOINT
+              value: "http://litmusportal-server-service:9002"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE

@@ -153,6 +153,8 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
+            - name: PORTAL_SCOPE
+              value: "cluster"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:2.0.0-Beta3"
             - name: EVENT_TRACKER_IMAGE
