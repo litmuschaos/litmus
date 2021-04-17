@@ -128,7 +128,7 @@ spec:
             - name: LITMUS_PORTAL_NAMESPACE
               value: ${OKTETO_NAMESPACE}
             - name: PORTAL_SCOPE
-              value: "namespace"
+              value: "cluster"
             - name: SELF_CLUSTER
               value: "true"
             - name: AGENT_SCOPE

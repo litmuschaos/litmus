@@ -127,7 +127,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: PORTAL_SCOPE
-              value: "namespace"
+              value: "cluster"
             - name: PORTAL_ENDPOINT
               value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
