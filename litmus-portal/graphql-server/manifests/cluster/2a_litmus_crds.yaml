@@ -74,7 +74,7 @@ spec:
                         type:
                           type: string
                           pattern: ^(go)$
-                        runnerAnnotation:
+                        runnerAnnotations:
                           type: object
                           additionalProperties:
                             type: string
@@ -374,7 +374,7 @@ spec:
                                       type: string
                                     mountPath:
                                       type: string
-                              experimentAnnotation:
+                              experimentAnnotations:
                                 type: object
                                 additionalProperties:
                                   type: string
