@@ -63,7 +63,7 @@ func GetManifest(token string) ([]byte, int, error) {
 			return nil, 500, err
 		}
 	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
-		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT")
+		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
 	}
 
 	if !reqCluster.IsRegistered {
