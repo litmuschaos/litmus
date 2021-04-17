@@ -91,8 +91,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: PORTAL_SCOPE
-              value: "cluster"
             - name: SUBSCRIBER_IMAGE
               value: #{subscriber}
             - name: ARGO_SERVER_IMAGE
@@ -201,3 +199,4 @@ spec:
   selector:
     component: database
 ---
+

@@ -127,8 +127,6 @@ spec:
                   key: JWTSecret
             - name: LITMUS_PORTAL_NAMESPACE
               value: ${OKTETO_NAMESPACE}
-            - name: PORTAL_SCOPE
-              value: "cluster"
             - name: SELF_CLUSTER
               value: "true"
             - name: AGENT_SCOPE
@@ -177,6 +175,8 @@ spec:
               value: "litmuschaos/chaos-runner:1.13.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:1.13.0"
+            - name: CONTAINER_RUNTIME_EXECUTOR
+              value: "pns"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

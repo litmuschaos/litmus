@@ -126,10 +126,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: PORTAL_SCOPE
-              value: "cluster"
-            - name: PORTAL_ENDPOINT
-              value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
             - name: AGENT_SCOPE
@@ -178,6 +174,8 @@ spec:
               value: "litmuschaos/chaos-runner:1.13.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:1.13.0"
+            - name: CONTAINER_RUNTIME_EXECUTOR
+              value: "k8sapi"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

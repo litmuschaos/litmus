@@ -15,16 +15,17 @@ import (
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
-	AgentNamespace:          os.Getenv("AGENT_NAMESPACE"),
-	AgentScope:              os.Getenv("AGENT_SCOPE"),
-	SubscriberImage:         os.Getenv("SUBSCRIBER_IMAGE"),
-	EventTrackerImage:       os.Getenv("EVENT_TRACKER_IMAGE"),
-	ArgoServerImage:         os.Getenv("ARGO_SERVER_IMAGE"),
-	WorkflowControllerImage: os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
-	ChaosOperatorImage:      os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE"),
-	WorkflowExecutorImage:   os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE"),
-	ChaosRunnerImage:        os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
-	ChaosExporterImage:      os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE"),
+	AgentNamespace:           os.Getenv("AGENT_NAMESPACE"),
+	AgentScope:               os.Getenv("AGENT_SCOPE"),
+	SubscriberImage:          os.Getenv("SUBSCRIBER_IMAGE"),
+	EventTrackerImage:        os.Getenv("EVENT_TRACKER_IMAGE"),
+	ArgoServerImage:          os.Getenv("ARGO_SERVER_IMAGE"),
+	WorkflowControllerImage:  os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
+	ChaosOperatorImage:       os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE"),
+	WorkflowExecutorImage:    os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE"),
+	ChaosRunnerImage:         os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
+	ChaosExporterImage:       os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE"),
+	ContainerRuntimeExecutor: os.Getenv("CONTAINER_RUNTIME_EXECUTOR"),
 }
 
 // FileHandler dynamically generates the manifest file and sends it as a response
@@ -56,13 +57,9 @@ func GetManifest(token string) ([]byte, int, error) {
 		return nil, 500, err
 	}
 
-	if os.Getenv("PORTAL_SCOPE") == "cluster" {
-		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
-		if err != nil {
-			return nil, 500, err
-		}
-	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
-		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT")
+	subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
+	if err != nil {
+		return nil, 500, err
 	}
 
 	if !reqCluster.IsRegistered {

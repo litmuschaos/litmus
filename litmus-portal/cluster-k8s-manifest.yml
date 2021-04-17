@@ -153,8 +153,6 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
-            - name: PORTAL_SCOPE
-              value: "cluster"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
@@ -181,6 +179,8 @@ spec:
               value: "false"
             - name: INGRESS_NAME
               value: "litmus-ingress"
+            - name: CONTAINER_RUNTIME_EXECUTOR
+              value: "k8sapi"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
