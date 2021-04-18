@@ -126,10 +126,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: PORTAL_SCOPE
-              value: "namespace"
-            - name: PORTAL_ENDPOINT
-              value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
             - name: AGENT_SCOPE
@@ -152,6 +148,10 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
+            - name: PORTAL_SCOPE
+              value: "namespace"
+            - name: PORTAL_ENDPOINT
+              value: "http://litmusportal-server-service:9002"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
@@ -168,6 +168,8 @@ spec:
               value: "litmuschaos/chaos-runner:1.13.3"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:1.13.3"
+            - name: CONTAINER_RUNTIME_EXECUTOR
+              value: "k8sapi"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

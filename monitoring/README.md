@@ -17,7 +17,7 @@ This directory contains chaos interleaved grafana dashboards along with the util
 - Install the litmus chaos operator and CRDs
 
   ```
-  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.13.0.yaml
+  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.13.3.yaml
   ```
 
 - Install the litmus-admin serviceaccount for centralized/admin-mode of chaos execution
@@ -29,7 +29,7 @@ This directory contains chaos interleaved grafana dashboards along with the util
 - Install the chaos experiments in admin(litmus) namespace
 
   ```
-  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.13.0?file=charts/generic/experiments.yaml -n litmus
+  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.13.3?file=charts/generic/experiments.yaml -n litmus
   ```
 
 ## Setup the Monitoring Infrastructure
