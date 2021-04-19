@@ -2,7 +2,6 @@ package cluster
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -68,7 +67,6 @@ func GetClusterWithProjectID(projectID string, clusterType *string) ([]*Cluster,
 		query = bson.M{"project_id": projectID, "cluster_type": clusterType, "is_removed": false}
 	}
 
-	fmt.Print(query)
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	var clusters []*Cluster
 

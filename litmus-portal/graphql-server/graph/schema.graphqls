@@ -236,45 +236,45 @@ type GitConfigResponse {
   SSHPrivateKey: String
 }
 
-type ManifestTemplate{
-    template_id: ID!
-    manifest: String!
-    template_name: String!
-    template_description: String!
-    project_id: String!
-    project_name: String!
-    created_at: String!
-    is_removed: Boolean!
+type ManifestTemplate {
+  template_id: ID!
+  manifest: String!
+  template_name: String!
+  template_description: String!
+  project_id: String!
+  project_name: String!
+  created_at: String!
+  is_removed: Boolean!
 }
 
 input TemplateInput {
-    manifest: String!
-    template_name: String!
-    template_description: String!
-    project_id: String!
+  manifest: String!
+  template_name: String!
+  template_description: String!
+  project_id: String!
 }
 
-type KubeObjectResponse{
-    cluster_id: ID!
-    kube_obj: String!
+type KubeObjectResponse {
+  cluster_id: ID!
+  kube_obj: String!
 }
 
-input KubeObjectData{
-    request_id: ID!
-    cluster_id: ClusterIdentity!
-    kube_obj: String!
+input KubeObjectData {
+  request_id: ID!
+  cluster_id: ClusterIdentity!
+  kube_obj: String!
 }
 
-input KubeObjectRequest{
-    cluster_id: ID!
-    object_type: String!
-    kube_obj_request: KubeGVRRequest!
+input KubeObjectRequest {
+  cluster_id: ID!
+  object_type: String!
+  kube_obj_request: KubeGVRRequest!
 }
 
-input KubeGVRRequest{
-    group: String!
-    version: String!
-    resource: String!
+input KubeGVRRequest {
+  group: String!
+  version: String!
+  resource: String!
 }
 
 type Query {
@@ -316,10 +316,9 @@ type Query {
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
 
   # Manifest Template
-  ListManifestTemplate(project_id: String!):[ManifestTemplate]! @authorized
+  ListManifestTemplate(project_id: String!): [ManifestTemplate]! @authorized
 
-  GetTemplateManifestByID(template_id: String!):ManifestTemplate! @authorized
-
+  GetTemplateManifestByID(template_id: String!): ManifestTemplate! @authorized
 }
 
 type Mutation {
@@ -327,7 +326,8 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
@@ -354,6 +354,10 @@ type Mutation {
 
   #Used for leaving a project
   leaveProject(member: MemberInput!): String! @authorized
+
+  #Used to update project name
+  updateProjectName(projectID: String!, projectName: String!): String!
+    @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -412,10 +416,10 @@ type Mutation {
 
   # Manifest Template
 
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate! @authorized
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
+    @authorized
 
   deleteManifestTemplate(template_id: String!): Boolean! @authorized
-
 }
 
 type Subscription {
@@ -429,5 +433,6 @@ type Subscription {
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
-  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
+  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
+    @authorized
 }
