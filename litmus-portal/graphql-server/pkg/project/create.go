@@ -107,7 +107,7 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 	}
 
 	if invitation == dbSchemaProject.AcceptedInvitation {
-		return nil, errors.New("This user is already a member of this project")
+		return nil, errors.New("This user is already a member of your project")
 	} else if invitation == dbSchemaProject.PendingInvitation || invitation == dbSchemaProject.DeclinedInvitation || invitation == dbSchemaProject.ExitedProject {
 		err = dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.PendingInvitation, member.Role)
 		if err != nil {
@@ -136,72 +136,31 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 // AcceptInvitation :Accept an invitaion
 func AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 
-	invitation, err := getInvitation(ctx, member)
+	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.AcceptedInvitation, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
-
-	if invitation == dbSchemaProject.AcceptedInvitation {
-		return "Unsuccessful", errors.New("You are already a member of this project")
-	} else if invitation == dbSchemaProject.PendingInvitation {
-		err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.AcceptedInvitation, nil)
-		if err != nil {
-			return "Unsuccessful", err
-		}
-		return "Successfull", nil
-	} else if invitation == dbSchemaProject.DeclinedInvitation {
-		return "Unsuccessful", errors.New("You have already declined the request")
-	} else if invitation == dbSchemaProject.ExitedProject {
-		return "Unsuccessful", errors.New("You are no longer a member of this project")
-	}
-
-	return "Unsuccessful", errors.New("No invitation is present to accept")
+	return "Successfull", nil
 }
 
 // DeclineInvitation :Decline an Invitaion
 func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 
-	invitation, err := getInvitation(ctx, member)
+	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.DeclinedInvitation, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
-
-	if invitation == dbSchemaProject.AcceptedInvitation {
-		return "Unsuccessful", errors.New("You are already a member of this project")
-	} else if invitation == dbSchemaProject.PendingInvitation {
-		err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.DeclinedInvitation, nil)
-		if err != nil {
-			return "Unsuccessful", err
-		}
-		return "Successfull", nil
-	} else if invitation == dbSchemaProject.DeclinedInvitation {
-		return "Unsuccessful", errors.New("You have already declined the request")
-	} else if invitation == dbSchemaProject.ExitedProject {
-		return "Unsuccessful", errors.New("You are no longer a member of this project")
-	}
-
-	return "Unsuccessful", errors.New("No invitation is present to decline")
+	return "Successfull", nil
 }
 
 //LeaveProject :Leave a Project
 func LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
 
-	invitation, err := getInvitation(ctx, member)
+	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.ExitedProject, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
-
-	if invitation == dbSchemaProject.AcceptedInvitation {
-		err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.ExitedProject, nil)
-		if err != nil {
-			return "Unsuccessful", err
-		}
-		return "Successfull", err
-	} else if invitation == dbSchemaProject.PendingInvitation || invitation == dbSchemaProject.DeclinedInvitation || invitation == dbSchemaProject.ExitedProject {
-		return "Unsuccessful", errors.New("You are not a member of this project")
-	}
-
-	return "Unsuccessful", errors.New("No Project to perform this operation on (Leave Project)")
+	return "Successfull", err
 }
 
 // getInvitation :Returns the Invitation Status
@@ -227,15 +186,21 @@ func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, er
 	if err != nil {
 		return "Unsuccessful", err
 	}
-	if invitation == dbSchemaProject.AcceptedInvitation || invitation == dbSchemaProject.PendingInvitation {
-		er := dbOperationsProject.RemoveInvitation(ctx, member.ProjectID, member.UserID, invitation)
-		if er != nil {
-			return "Unsuccessful", er
+
+	switch invitation {
+	case dbSchemaProject.AcceptedInvitation, dbSchemaProject.PendingInvitation:
+		{
+			err := dbOperationsProject.RemoveInvitation(ctx, member.ProjectID, member.UserID, invitation)
+			if err != nil {
+				return "Unsuccessful", err
+			}
 		}
-	} else if invitation == dbSchemaProject.DeclinedInvitation {
-		return "Unsuccessful", errors.New("User has already declined the invitation")
-	} else if invitation == dbSchemaProject.ExitedProject {
-		return "Unsuccessful", errors.New("User is no longer a member of this project")
+
+	case dbSchemaProject.DeclinedInvitation, dbSchemaProject.ExitedProject:
+		{
+			return "Unsuccessful", errors.New("User is already not a part of your project")
+		}
 	}
+
 	return "Successful", nil
 }
