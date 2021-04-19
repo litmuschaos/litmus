@@ -33,7 +33,7 @@ several user flows. These are still not documented.
 
 One of the solutions mooted by the community and maintainers team is to create an initial set of "tutorials" based on [GoogleCodeLabs](https://github.com/googlecodelabs/tools) for a list of common user flows - that include usage of the litmus portal (2.0) & integration with other cloud native tools. These tutorials will be featured on the LitmusChaos project/docs website. 
 
-While the existing documentation framework (and upcoming one based on docusaurus-2) is expected to contain architecture, experiment and other conceptual 
+While the existing documentation framework (an upcoming one based on docusaurus-2) is expected to contain architecture, experiment and other conceptual 
 details that will help intermediate-level/advanced chaos practitioners build out their usecases, the tutorials are expected to be what the users will most 
 benefit from to get started and familiarize themselves with Litmus. 
 
