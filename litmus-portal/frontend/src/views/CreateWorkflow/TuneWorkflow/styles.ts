@@ -161,6 +161,25 @@ const useStyles = makeStyles((theme) => ({
   dropText: {
     fontSize: '1.2rem',
   },
+  radioList: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    height: '20rem',
+    overflowY: 'auto',
+  },
+  experimentCard: {
+    backgroundColor: theme.palette.cards.background,
+    lineHeight: '5rem', // Making the div content vertically aligned
+    padding: theme.spacing(0, 5),
+    margin: theme.spacing(1, 0),
+    width: '40rem',
+    display: 'flex',
+  },
+  experimentName: {
+    fontSize: '1rem',
+  },
 }));
 
 export default useStyles;
