@@ -59,7 +59,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 	defaultHub := model.CreateMyHub{
 		HubName:    "Chaos Hub",
 		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
-		RepoBranch: "master",
+		RepoBranch: os.Getenv("HUB_BRANCH_NAME"),
 	}
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
