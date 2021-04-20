@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   rightPanel: {
-    width: '100%',
+    width: '75%',
     height: '16rem',
   },
 
@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   buttonAlign: {
     paddingLeft: theme.spacing(0),
+    color: theme.palette.text.primary,
   },
 
   icon: {
