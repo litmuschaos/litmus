@@ -2,14 +2,14 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    minHeight: '25rem',
+    minHeight: '21.75rem',
     width: '100%',
     backgroundColor: theme.palette.cards.background,
-    padding: theme.spacing(4, 6, 6, 6),
+    padding: theme.spacing(4, 4, 4, 4),
   },
 
   header: {
-    height: '2rem',
+    height: '1.688rem',
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -26,12 +26,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   leftPanel: {
     margin: theme.spacing(3, 2, 0, 0),
-    width: '25%',
+    maxWidth: '30%',
   },
 
   rightPanel: {
-    width: '75%',
-    height: '16rem',
+    width: '70%',
+    height: '14.125rem',
   },
 
   subSection: {
@@ -41,13 +41,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   textMargin: {
-    fontSize: '1rem',
+    fontSize: '0.75rem',
     margin: theme.spacing(1, 0),
   },
 
   buttonAlign: {
     paddingLeft: theme.spacing(0),
     color: theme.palette.text.primary,
+    fontSize: '1.125rem',
   },
 
   icon: {
@@ -61,6 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   closeButton: {
     borderColor: theme.palette.border.main,
     float: 'right',
+    height: '0.451rem',
   },
 }));
 
