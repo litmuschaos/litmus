@@ -147,7 +147,7 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
 - Finally click on `Deploy`
 
-- (Optional): For connecting to an external agent using the portal, annotate the server service and edit the environment variable for server's deployment as follows then restart the the server before using `litmusctl` to connect the agent.
+- (Optional): For connecting to an external agent using the portal, annotate the server service and edit the environment variable for server's deployment as follows restarting the server before using `litmusctl` to connect the agent.
 
   > kubectl annotate svc --overwrite litmusportal-server-service 'dev.okteto.com/auto-ingress=true'
 
