@@ -28,7 +28,7 @@ OR
 
 - Tune the PromQL queries to match the labels with engine name and other parameters as per need.
 
-## Screenshot
+## Screenshots
 
 ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/mySQL-Overview-1.png?raw=true)
 

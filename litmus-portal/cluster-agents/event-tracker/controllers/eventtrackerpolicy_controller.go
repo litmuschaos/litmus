@@ -26,6 +26,7 @@ import (
 	"github.com/go-logr/logr"
 	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -58,7 +59,10 @@ func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 
 	var etp eventtrackerv1.EventTrackerPolicy
 	err := r.Client.Get(context.Background(), req.NamespacedName, &etp)
-	if err != nil {
+	if errors.IsNotFound(err) {
+		log.Print(req.NamespacedName, " not found")
+		return ctrl.Result{}, nil
+	} else if err != nil {
 		return ctrl.Result{}, err
 	}
 

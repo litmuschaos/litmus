@@ -6,6 +6,6 @@ metadata:
   namespace: #{AGENT-NAMESPACE}
 data:
   config: |
-    containerRuntimeExecutor: k8sapi
+    containerRuntimeExecutor: #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
     executor:
       imagePullPolicy: Always
