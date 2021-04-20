@@ -183,8 +183,8 @@ spec:
               value: "litmus-ingress"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
-            - name: HUB_VERSION
-              value: "1.13.3"
+            - name: HUB_BRANCH_NAME
+              value: "v1.13.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

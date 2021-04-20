@@ -5,7 +5,7 @@ on:
       - master
       - v*
     tags:
-      - '*'
+      - "*"
 jobs:
   backend-checks:
     runs-on: ubuntu-latest
@@ -213,7 +213,7 @@ jobs:
           source env-vars
           cd litmus-portal/frontend
           timestamp=`date "+%s"`
-          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${FRONTEND_IMAGE}:${IMG_TAG} --build-arg REACT_APP_KB_CHAOS_VERSION=${IMG_TAG} --build-arg REACT_APP_BUILD_TIME="$timestamp"
+          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${FRONTEND_IMAGE}:${IMG_TAG} --build-arg REACT_APP_KB_CHAOS_VERSION=${IMG_TAG} --build-arg REACT_APP_BUILD_TIME="$timestamp" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x"
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
