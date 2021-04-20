@@ -2,30 +2,6 @@
 
 This directory contains setup guide to start developing Litmus Portal on Okteto cloud.
 
-## (Optional): LitmusChaos Installation steps using Helm for chaos engineering an application under development.
-
-- Click the `Deploy` button on Okteto UI
-
-- select the helm chart of LitmusChaos for installation
-
-- Update the values on the editor as follows:
-
-  > `portalScope: cluster` to `portalScope: namespace`
-
-  > `CONTAINER_RUNTIME_EXECUTOR: "k8sapi"` to `CONTAINER_RUNTIME_EXECUTOR: "pns"`
-
-- Finally click on `Deploy`
-
-- (Optional): For connecting to an external agent using the portal, annotate the server service and edit the environment variable for server's deployment as follows then restart the the server before using `litmusctl` to connect the agent.
-
-  > kubectl annotate svc --overwrite litmusportal-server-service 'dev.okteto.com/auto-ingress=true'
-
-  > Edit the deployment using `kubectl edit deploy litmusportal-server`
-
-  > Update the `env` `PORTAL_ENDPOINT`'s value to `https://litmusportal-server-service-<okteto-namespace>.cloud.okteto.net` for`spec.container[0]`i.e the`graphql-server` and restart.
-
-  > Use the `litmusctl` for external egent connection.
-
 ## Prerequisites
 
 - Install `kubectl` for `kubernetes` from [here](https://kubernetes.io/docs/tasks/tools/install-kubectl)
@@ -156,3 +132,27 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 ## Optional
 
 - To compare the changes made during development phase with the actual production code you can visit `https://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net` after replacing `<okteto-namespace>` with your GitHub username.
+
+# (Optional): LitmusChaos Installation steps using Helm for chaos engineering an application under development.
+
+- Click the `Deploy` button on Okteto UI
+
+- select the helm chart of LitmusChaos for installation
+
+- Update the values on the editor as follows:
+
+  > `portalScope: cluster` to `portalScope: namespace`
+
+  > `CONTAINER_RUNTIME_EXECUTOR: "k8sapi"` to `CONTAINER_RUNTIME_EXECUTOR: "pns"`
+
+- Finally click on `Deploy`
+
+- (Optional): For connecting to an external agent using the portal, annotate the server service and edit the environment variable for server's deployment as follows then restart the the server before using `litmusctl` to connect the agent.
+
+  > kubectl annotate svc --overwrite litmusportal-server-service 'dev.okteto.com/auto-ingress=true'
+
+  > Edit the deployment using `kubectl edit deploy litmusportal-server`
+
+  > Update the `env` `PORTAL_ENDPOINT`'s value to `https://litmusportal-server-service-<okteto-namespace>.cloud.okteto.net` for`spec.container[0]`i.e the`graphql-server` and restart.
+
+  > Use the `litmusctl` for external egent connection.
