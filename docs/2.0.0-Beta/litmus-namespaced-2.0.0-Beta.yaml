@@ -170,6 +170,8 @@ spec:
               value: "litmuschaos/chaos-exporter:1.13.3"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
+            - name: HUB_VERSION
+              value: "1.13.3"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
