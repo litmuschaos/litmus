@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
   closeButton: {
     borderColor: theme.palette.border.main,
     float: 'right',
+    height: '0.451rem',
   },
 }));
 
