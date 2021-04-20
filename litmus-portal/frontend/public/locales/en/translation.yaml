@@ -490,14 +490,12 @@ settings:
       joined: Joined to team
       status: Status
     deleteModal:
-      header: Are you sure you want to remove the invitation to
-      text: the current user?
+      header: Are you sure you want to revoke the invitation to
       body: The user will lose access to the team’s work.
       yesButton: Yes
       noButton: No
     deleteUser:
-      header: Are you sure
-      text: to remove the current user?
+      header: Are you sure you want to remove
       body: The user will lose access to the team’s work
       yesButton: Yes
       noButton: No

@@ -48,6 +48,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
+  toolbarSecondCol: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
   filter: {
     display: 'flex',
     alignItems: 'center',
