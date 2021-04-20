@@ -22,6 +22,7 @@ export ADMIN_USERNAME=admin
 export ADMIN_PASSWORD=litmus
 export DB_USER=admin
 export DB_PASSWORD=1234
+export HUB_VERSION=1.13.3
 # Dependency Checks
 dir=($(pwd | tr "/" "\n"))
 count=${#dir[@]}
