@@ -152,7 +152,7 @@ spec:
             - name: PORTAL_SCOPE
               value: "namespace"
             - name: PORTAL_ENDPOINT
-              value: "http://litmusportal-server-service:9002"
+              value: "https://litmusportal-server-service-${OKTETO_NAMESPACE}.cloud.okteto.net"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
