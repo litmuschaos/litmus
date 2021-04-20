@@ -228,14 +228,24 @@ func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, er
 		return "Unsuccessful", err
 	}
 	if invitation == dbSchemaProject.AcceptedInvitation || invitation == dbSchemaProject.PendingInvitation {
-		er := dbOperationsProject.RemoveInvitation(ctx, member.ProjectID, member.UserID, invitation)
-		if er != nil {
-			return "Unsuccessful", er
+		err := dbOperationsProject.RemoveInvitation(ctx, member.ProjectID, member.UserID, invitation)
+		if err != nil {
+			return "Unsuccessful", err
 		}
 	} else if invitation == dbSchemaProject.DeclinedInvitation {
 		return "Unsuccessful", errors.New("User has already declined the invitation")
 	} else if invitation == dbSchemaProject.ExitedProject {
 		return "Unsuccessful", errors.New("User is no longer a member of this project")
+	}
+	return "Successful", nil
+}
+
+//  UpdateProjectName :Updates project name (Multiple projects can have same name)
+func UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error) {
+
+	err := dbOperationsProject.UpdateProjectName(ctx, projectID, projectName)
+	if err != nil {
+		return "Unsuccessful", errors.New("Error updating project name")
 	}
 	return "Successful", nil
 }
