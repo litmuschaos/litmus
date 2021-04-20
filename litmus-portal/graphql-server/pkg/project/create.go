@@ -204,3 +204,13 @@ func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, er
 
 	return "Successful", nil
 }
+
+//  UpdateProjectName :Updates project name (Multiple projects can have same name)
+func UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error) {
+
+	err := dbOperationsProject.UpdateProjectName(ctx, projectID, projectName)
+	if err != nil {
+		return "Unsuccessful", errors.New("Error updating project name")
+	}
+	return "Successful", nil
+}

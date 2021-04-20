@@ -241,6 +241,7 @@ type ComplexityRoot struct {
 		UpdateGitOps           func(childComplexity int, config model.GitConfig) int
 		UpdateMyHub            func(childComplexity int, myhubInput model.UpdateMyHub, projectID string) int
 		UpdatePanel            func(childComplexity int, panelInput []*model.Panel) int
+		UpdateProjectName      func(childComplexity int, projectID string, projectName string) int
 		UpdateUser             func(childComplexity int, user model.UpdateUserInput) int
 		UserClusterReg         func(childComplexity int, clusterInput model.ClusterInput) int
 	}
@@ -511,6 +512,7 @@ type MutationResolver interface {
 	DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	LeaveProject(ctx context.Context, member model.MemberInput) (string, error)
+	UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error)
 	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error)
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
@@ -1728,6 +1730,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdatePanel(childComplexity, args["panelInput"].([]*model.Panel)), true
+
+	case "Mutation.updateProjectName":
+		if e.complexity.Mutation.UpdateProjectName == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateProjectName_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateProjectName(childComplexity, args["projectID"].(string), args["projectName"].(string)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -3199,7 +3213,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3375,7 +3389,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3549,7 +3563,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -3581,7 +3595,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -3819,45 +3833,45 @@ type GitConfigResponse {
   SSHPrivateKey: String
 }
 
-type ManifestTemplate{
-    template_id: ID!
-    manifest: String!
-    template_name: String!
-    template_description: String!
-    project_id: String!
-    project_name: String!
-    created_at: String!
-    is_removed: Boolean!
+type ManifestTemplate {
+  template_id: ID!
+  manifest: String!
+  template_name: String!
+  template_description: String!
+  project_id: String!
+  project_name: String!
+  created_at: String!
+  is_removed: Boolean!
 }
 
 input TemplateInput {
-    manifest: String!
-    template_name: String!
-    template_description: String!
-    project_id: String!
+  manifest: String!
+  template_name: String!
+  template_description: String!
+  project_id: String!
 }
 
-type KubeObjectResponse{
-    cluster_id: ID!
-    kube_obj: String!
+type KubeObjectResponse {
+  cluster_id: ID!
+  kube_obj: String!
 }
 
-input KubeObjectData{
-    request_id: ID!
-    cluster_id: ClusterIdentity!
-    kube_obj: String!
+input KubeObjectData {
+  request_id: ID!
+  cluster_id: ClusterIdentity!
+  kube_obj: String!
 }
 
-input KubeObjectRequest{
-    cluster_id: ID!
-    object_type: String!
-    kube_obj_request: KubeGVRRequest!
+input KubeObjectRequest {
+  cluster_id: ID!
+  object_type: String!
+  kube_obj_request: KubeGVRRequest!
 }
 
-input KubeGVRRequest{
-    group: String!
-    version: String!
-    resource: String!
+input KubeGVRRequest {
+  group: String!
+  version: String!
+  resource: String!
 }
 
 type Query {
@@ -3899,10 +3913,9 @@ type Query {
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
 
   # Manifest Template
-  ListManifestTemplate(project_id: String!):[ManifestTemplate]! @authorized
+  ListManifestTemplate(project_id: String!): [ManifestTemplate]! @authorized
 
-  GetTemplateManifestByID(template_id: String!):ManifestTemplate! @authorized
-
+  GetTemplateManifestByID(template_id: String!): ManifestTemplate! @authorized
 }
 
 type Mutation {
@@ -3910,7 +3923,8 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
@@ -3937,6 +3951,10 @@ type Mutation {
 
   #Used for leaving a project
   leaveProject(member: MemberInput!): String! @authorized
+
+  #Used to update project name
+  updateProjectName(projectID: String!, projectName: String!): String!
+    @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -3995,10 +4013,10 @@ type Mutation {
 
   # Manifest Template
 
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate! @authorized
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
+    @authorized
 
   deleteManifestTemplate(template_id: String!): Boolean! @authorized
-
 }
 
 type Subscription {
@@ -4012,10 +4030,11 @@ type Subscription {
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
-  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
+  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
+    @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -4572,6 +4591,28 @@ func (ec *executionContext) field_Mutation_updatePanel_args(ctx context.Context,
 		}
 	}
 	args["panelInput"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectName_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectName"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectName"] = arg1
 	return args, nil
 }
 
@@ -9077,6 +9118,67 @@ func (ec *executionContext) _Mutation_leaveProject(ctx context.Context, field gr
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().LeaveProject(rctx, args["member"].(model.MemberInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateProjectName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateProjectName_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateProjectName(rctx, args["projectID"].(string), args["projectName"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -20668,6 +20770,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "leaveProject":
 			out.Values[i] = ec._Mutation_leaveProject(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateProjectName":
+			out.Values[i] = ec._Mutation_updateProjectName(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
