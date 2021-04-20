@@ -1,11 +1,11 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Theme } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   rootContainer: {
     position: 'fixed',
     width: '100%',
     height: '100%',
-    background: `linear-gradient(78.42deg, #403083 0.01%, #5B44BA 100.01%)`,
+    background: theme.palette.loginBackground,
   },
 }));
 export default useStyles;
