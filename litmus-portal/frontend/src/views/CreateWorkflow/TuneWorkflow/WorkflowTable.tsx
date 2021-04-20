@@ -71,7 +71,8 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
     const parsedYaml = YAML.parse(yamlText);
     const expData: ChaosCRDTable[] = [];
     addWeights(manifest);
-    parsedYaml.spec.templates.forEach((template: any, index: number) => {
+
+    const extractInfo = (template: any, index: number) => {
       if (template.inputs && template.inputs.artifacts) {
         template.inputs.artifacts.forEach((artifact: any) => {
           const chaosEngine = YAML.parse(artifact.raw.data);
@@ -87,7 +88,19 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           }
         });
       }
-    });
+    };
+
+    if (parsedYaml.kind === 'Workflow') {
+      parsedYaml.spec.templates.forEach((template: any, index: number) => {
+        extractInfo(template, index);
+      });
+    } else if (parsedYaml.kind === 'CronWorkflow') {
+      parsedYaml.spec.workflowSpec.templates.forEach(
+        (template: any, index: number) => {
+          extractInfo(template, index);
+        }
+      );
+    }
     setExperiments(expData);
   };
 

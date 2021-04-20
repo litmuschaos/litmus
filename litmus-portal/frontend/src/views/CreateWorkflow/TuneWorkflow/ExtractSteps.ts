@@ -8,7 +8,8 @@ export const extractSteps = (isCustom: boolean, crd: string) => {
     // If Custom YAML is provided then save the experiments Serially
     const parsedYaml = YAML.parse(crd);
     steps = [];
-    parsedYaml.spec.templates.forEach((template: any) => {
+
+    const customYAMLExtraction = (template: any) => {
       if (template.inputs !== undefined) {
         template.inputs.artifacts.forEach((artifact: any) => {
           const chaosEngine = YAML.parse(artifact.raw.data);
@@ -22,12 +23,22 @@ export const extractSteps = (isCustom: boolean, crd: string) => {
           }
         });
       }
-    });
+    };
+
+    if (parsedYaml.kind === 'Workflow') {
+      parsedYaml.spec.templates.forEach((template: any) => {
+        customYAMLExtraction(template);
+      });
+    } else if (parsedYaml.kind === 'CronWorkflow') {
+      parsedYaml.spec.workflowSpec.templates.forEach((template: any) => {
+        customYAMLExtraction(template);
+      });
+    }
   } else {
     // Save the Pre-defined experiments Serial/Parallel
     const parsedYaml = YAML.parse(crd);
-    steps = [];
-    parsedYaml.spec.templates.forEach((template: any) => {
+
+    const preDefinedExtraction = (template: any) => {
       // Extracting Run Chaos Steps and appending to the array
       if (
         template.name === 'argowf-chaos' &&
@@ -76,7 +87,18 @@ export const extractSteps = (isCustom: boolean, crd: string) => {
         // Nested Steps
         steps = template.steps as Steps[][];
       }
-    });
+    };
+
+    steps = [];
+    if (parsedYaml.kind === 'Workflow') {
+      parsedYaml.spec.templates.forEach((template: any) =>
+        preDefinedExtraction(template)
+      );
+    } else if (parsedYaml.kind === 'CronWorkflow') {
+      parsedYaml.spec.workflowSpec.templates.forEach((template: any) =>
+        preDefinedExtraction(template)
+      );
+    }
   }
   return steps;
 };

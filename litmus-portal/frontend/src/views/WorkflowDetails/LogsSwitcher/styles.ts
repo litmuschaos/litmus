@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'left',
   },
   text: {
-    fontSize: '1rem',
+    fontSize: '0.875rem',
     padding: theme.spacing(2.5),
   },
   tabBar: {

@@ -34,8 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   graphView: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '0.5rem 0.5rem',
-    height: '100%',
+    height: '65vh',
     backgroundColor: theme.palette.cards.header,
   },
 
