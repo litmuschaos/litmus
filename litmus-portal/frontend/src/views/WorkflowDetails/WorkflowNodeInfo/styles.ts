@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: '21.75rem',
     width: '100%',
     backgroundColor: theme.palette.cards.background,
-    padding: theme.spacing(4, 4, 4, 4),
+    padding: theme.spacing(4),
   },
 
   header: {
