@@ -2,6 +2,8 @@
 
 This directory contains setup guide to start developing Litmus Portal on Okteto cloud.
 
+### The `Develop on Okteto` button in the readme can directly be clicked to launch litmus 2.0 in your Okteto namespace to continuously chaos engineer applications under development.
+
 ## Prerequisites
 
 - Install `kubectl` for `kubernetes` from [here](https://kubernetes.io/docs/tasks/tools/install-kubectl)
@@ -143,7 +145,15 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
 - Finally click on `Deploy`
 
-- (Optional): For connecting to an external agent using the portal, annotate the server service and edit the environment variable for server's deployment as follows restarting the server before using `litmusctl` to connect the agent.
+### Optional steps:
+
+##### The kubeconfig has to be downloaded from Okteto UI and the kubectl context can be switched accordingly before performing the following steps.
+
+- For deploying Okteto's sample application `hello-world` for chaos engineering, run the given command.
+
+  > kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml
+
+- For connecting to an external agent using the portal, annotate the server service and edit the environment variable for server's deployment as follows restarting the server before using `litmusctl` to connect the agent.
 
   > kubectl annotate svc --overwrite litmusportal-server-service 'dev.okteto.com/auto-ingress=true'
 
@@ -151,4 +161,4 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
   > Update the `env` `PORTAL_ENDPOINT`'s value to `https://litmusportal-server-service-<okteto-namespace>.cloud.okteto.net` for`spec.container[0]`i.e the`graphql-server` and restart.
 
-  > Use the `litmusctl` for external egent connection.
+  > Use the `litmusctl` for external agent connection.
