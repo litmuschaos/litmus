@@ -170,7 +170,7 @@ spec:
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:1.13.3"
             - name: CONTAINER_RUNTIME_EXECUTOR
-              value: "pns"
+              value: "k8sapi"
             - name: HUB_BRANCH_NAME
               value: "v1.13.x"
           ports:
