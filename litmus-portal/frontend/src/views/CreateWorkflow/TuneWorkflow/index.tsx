@@ -37,6 +37,7 @@ import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
 import WorkflowTable from './WorkflowTable';
+import WorkflowSequence from './WorkflowSequence';
 
 interface WorkflowProps {
   name: string;
@@ -79,6 +80,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [editManifest, setEditManifest] = useState('');
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [yamlValid, setYamlValid] = useState(true);
+  const [editSequence, setEditSequence] = useState(false);
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
     crd: '',
@@ -606,11 +608,54 @@ const TuneWorkflow = forwardRef((_, ref) => {
       {/* Experiment Details */}
       <div className={classes.experimentWrapper}>
         {/* Edit Button */}
-        <ButtonOutlined>
-          <img src="./icons/editsequence.svg" alt="Edit Sequence" />{' '}
-          <Width width="0.5rem" />
-          {t('createWorkflow.tuneWorkflow.editSequence')}
-        </ButtonOutlined>
+        {manifest !== '' && (
+          <ButtonOutlined onClick={() => setEditSequence(true)}>
+            <img src="./icons/editsequence.svg" alt="Edit Sequence" />{' '}
+            <Width width="0.5rem" />
+            {t('createWorkflow.tuneWorkflow.editSequence')}
+          </ButtonOutlined>
+        )}
+        <Modal
+          open={editSequence}
+          onClose={() => {
+            setEditSequence(false);
+          }}
+          width="60%"
+          modalActions={
+            <ButtonOutlined
+              onClick={() => {
+                setEditSequence(false);
+              }}
+              className={classes.closeBtn}
+            >
+              <img src="./icons/cross-disabled.svg" alt="cross" />
+            </ButtonOutlined>
+          }
+        >
+          <div className={classes.sequenceMainDiv}>
+            <div className={classes.sequenceDiv}>
+              <Typography variant="h4">
+                {t('createWorkflow.tuneWorkflow.editSequence')}
+              </Typography>
+              <Typography className={classes.dropText}>
+                {t('createWorkflow.tuneWorkflow.dragndrop')}
+              </Typography>
+            </div>
+            <Row>
+              {/* To do */}
+              <Width width="40%">
+                <Typography>Graph to be added here</Typography>
+              </Width>
+              <Width width="60%">
+                <WorkflowSequence
+                  handleSequenceModal={(sequenceState: boolean) => {
+                    setEditSequence(sequenceState);
+                  }}
+                />
+              </Width>
+            </Row>
+          </div>
+        </Modal>
         {/* Details Section -> Graph on the Left and Table on the Right */}
         <Row>
           {/* Argo Workflow Graph */}

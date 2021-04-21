@@ -61,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
   // Modal
   closeButton: {
     borderColor: theme.palette.border.main,
+    marginTop: theme.spacing(-3.75),
   },
 
   modal: {
@@ -147,6 +148,18 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.6rem',
     marginBottom: theme.spacing(3.75),
     textAlign: 'left',
+  },
+
+  // Sequence Modal
+  sequenceMainDiv: {
+    padding: theme.spacing(7.5),
+  },
+  sequenceDiv: {
+    textAlign: 'left',
+    marginBottom: theme.spacing(6.25),
+  },
+  dropText: {
+    fontSize: '1.2rem',
   },
 }));
 

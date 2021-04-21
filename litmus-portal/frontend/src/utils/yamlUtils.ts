@@ -47,7 +47,7 @@ export const updateEngineName = (parsedYaml: any) => {
               // Edge Case: Condition to check the appns
               // Required because while parsing the chaos engine
               // '{{workflow.parameters.adminModeNamespace}}' changes to a JSON object
-              if (chaosEngine.spec.appinfo)
+              if (chaosEngine.spec.appinfo && chaosEngine.spec.appinfo.appns)
                 if (typeof chaosEngine.spec.appinfo.appns === 'object') {
                   // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
                   const appns = Object.keys(
