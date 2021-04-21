@@ -137,13 +137,9 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
 - Click the `Deploy` button on Okteto UI
 
-- select the helm chart of LitmusChaos for installation
+- select the helm chart of LitmusChaos 2.0 for installation
 
-- Update the values on the editor as follows:
-
-  > `portalScope: cluster` to `portalScope: namespace`
-
-  > `CONTAINER_RUNTIME_EXECUTOR: "k8sapi"` to `CONTAINER_RUNTIME_EXECUTOR: "pns"`
+- (Optional): Update the value for `portalScope` from `cluster` to `namespace` using the editor (if it is not already set to `namespace`)
 
 - Finally click on `Deploy`
 
