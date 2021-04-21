@@ -79,7 +79,8 @@ spec:
             - workflow-controller-configmap
             - --executor-image
             -  #{ARGO-WORKFLOW-EXECUTOR}
-            - --container-runtime-executor #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
+            - --container-runtime-executor
+            -  #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
           command:
             - workflow-controller
           image: #{ARGO-WORKFLOW-CONTROLLER}
