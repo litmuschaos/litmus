@@ -196,7 +196,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="timeout">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}(ms)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -210,7 +210,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
             </div>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="retry">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.retry')}
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.retry')}(times)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -226,7 +226,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="interval">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.interval')}
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.interval')}(ms)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -240,7 +240,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
             </div>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="polling">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}(ms)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -256,6 +256,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="initial-delay">
               {t('createWorkflow.tuneWorkflow.addProbe.labels.initialDelay')}
+              (ms)
             </InputLabel>
             <InputField
               variant="primary"

@@ -165,7 +165,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           </div>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="responseTimeout">
-              Response Timeout
+              Response Timeout(ms)
             </InputLabel>
             <InputField
               variant="primary"
