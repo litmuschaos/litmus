@@ -85,6 +85,7 @@ spec:
             - --executor-image
             -  #{ARGO-WORKFLOW-EXECUTOR}
             - --namespaced
+            - --container-runtime-executor #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
           command:
             - workflow-controller
           image: #{ARGO-WORKFLOW-CONTROLLER}
