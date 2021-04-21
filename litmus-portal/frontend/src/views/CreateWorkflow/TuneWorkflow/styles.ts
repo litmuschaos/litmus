@@ -162,6 +162,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.2rem',
   },
   radioList: {
+    paddingTop: '1.5rem',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',

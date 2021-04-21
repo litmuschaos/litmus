@@ -93,7 +93,6 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
         />
 
         <br />
-        <br />
         <div className={classes.radioList}>
           <RadioGroup value={selectedExp} onChange={onSelectChange}>
             {filteredExperiments.map((exp: ChartName) => (
