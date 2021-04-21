@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     background: theme.palette.cards.header,
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: '49% 49%',
     gridGap: theme.spacing(1.75),
     padding: theme.spacing(1, 1, 1, 1.75),
   },
