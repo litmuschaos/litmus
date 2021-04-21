@@ -147,7 +147,7 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
 ### Optional steps:
 
-#### The kubeconfig has to be downloaded from Okteto UI and the kubectl context can be switched accordingly before performing the following steps.
+##### The kubeconfig has to be downloaded from Okteto UI and the kubectl context can be switched accordingly before performing the following steps.
 
 - For deploying Okteto's sample application `hello-world` for chaos engineering, run the given command.
 
