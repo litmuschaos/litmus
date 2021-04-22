@@ -1,20 +1,20 @@
+import { Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import {
   DragDropContext,
   Draggable,
   DraggableProvided,
   Droppable,
 } from 'react-beautiful-dnd';
-import YAML from 'yaml';
-import { Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
 import { useTranslation } from 'react-i18next';
-import { RootState } from '../../../../redux/reducers';
-import { reorderSteps } from './reorder';
-import trimString from '../../../../utils/trim';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { RootState } from '../../../../redux/reducers';
+import trimString from '../../../../utils/trim';
+import { reorderSteps } from './reorder';
 import useStyles from './styles';
 
 interface ManifestSteps {
@@ -28,10 +28,12 @@ interface StepType {
 
 interface ExperimentSequenceProps {
   handleSequenceModal: (sequenceState: boolean) => void;
+  getSteps: (steps: StepType) => void;
 }
 
 const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
   handleSequenceModal,
+  getSteps,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -75,6 +77,8 @@ const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
     setSteps(modifiedSteps);
   }, []);
 
+  getSteps(steps);
+
   return (
     <div>
       <DragDropContext
@@ -85,13 +89,27 @@ const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
           if (!destination) {
             return;
           }
-          setSteps(reorderSteps(steps, source, destination));
+          const newSteps = reorderSteps(steps, source, destination);
+
+          const updatedSteps: Array<ManifestSteps[]> = [];
+          Object.entries(newSteps).forEach(([, value]) => {
+            if ((value as ManifestSteps[]).length !== 0) {
+              updatedSteps.push(value as ManifestSteps[]);
+            }
+          });
+
+          const modifiedSteps: StepType = {};
+          for (let i = 0; i < updatedSteps.length; i++) {
+            modifiedSteps[`stepname${i}`] = updatedSteps[i];
+          }
+          setSteps(modifiedSteps);
         }}
       >
         <div className={classes.dragdropDiv}>
           {Object.entries(steps).map(([key, value]) => {
             return (
               <Droppable
+                key={key}
                 droppableId={key}
                 type="CARD"
                 direction="horizontal"

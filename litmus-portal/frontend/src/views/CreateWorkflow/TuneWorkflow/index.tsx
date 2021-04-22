@@ -36,8 +36,8 @@ import { updateEngineName } from '../../../utils/yamlUtils';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
-import WorkflowTable from './WorkflowTable';
 import WorkflowSequence from './WorkflowSequence';
+import WorkflowTable from './WorkflowTable';
 
 interface WorkflowProps {
   name: string;
@@ -48,6 +48,15 @@ interface WorkflowProps {
 interface WorkflowExperiment {
   ChaosEngine: string;
   Experiment: string;
+}
+
+interface ManifestSteps {
+  name: string;
+  template: string;
+}
+
+interface StepType {
+  [key: string]: ManifestSteps[];
 }
 
 interface ChartName {
@@ -81,6 +90,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [yamlValid, setYamlValid] = useState(true);
   const [editSequence, setEditSequence] = useState(false);
+  const [steps, setSteps] = useState<StepType>({});
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
     crd: '',
@@ -459,6 +469,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
     return true;
   }
 
+  const handleSteps = (steps: any) => {
+    setSteps(steps);
+  };
+
   useImperativeHandle(ref, () => ({
     onNext,
   }));
@@ -642,12 +656,15 @@ const TuneWorkflow = forwardRef((_, ref) => {
               </Typography>
             </div>
             <Row>
-              {/* To do */}
               <Width width="40%">
-                <Typography>Graph to be added here</Typography>
+                <WorkflowPreview
+                  SequenceSteps={steps}
+                  isCustomWorkflow={isCustomWorkflow}
+                />
               </Width>
               <Width width="60%">
                 <WorkflowSequence
+                  getSteps={handleSteps}
                   handleSequenceModal={(sequenceState: boolean) => {
                     setEditSequence(sequenceState);
                   }}
