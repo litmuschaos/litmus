@@ -186,7 +186,6 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
       engineIndex
     ].inputs.artifacts[0].raw.data = YAML.stringify(engineManifest);
     workflow.setWorkflowManifest({
-      manifest: YAML.stringify(mainManifest),
       engineYAML: YAML.stringify(engineManifest),
     });
     return isCustom ? gotoStep(2) : gotoStep(1);

@@ -37,16 +37,21 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
       | { name?: string | undefined; value: unknown }
     >
   ) => {
-    if (
-      e.target.name === 'url' ||
-      e.target.name === 'insecureSkipVerify' ||
-      e.target.name === 'responseTimeout'
-    ) {
+    if (e.target.name === 'url' || e.target.name === 'responseTimeout') {
       setProbeData({
         ...probeData,
         'httpProbe/inputs': {
           ...probeData['httpProbe/inputs'],
           [e.target.name]: e.target.value,
+        },
+      });
+    }
+    if (e.target.name === 'insecureSkipVerify') {
+      setProbeData({
+        ...probeData,
+        'httpProbe/inputs': {
+          ...probeData['httpProbe/inputs'],
+          [e.target.name]: e.target.value === 'true',
         },
       });
     }
@@ -150,7 +155,12 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.insecure')}
             </InputLabel>
             <Select
-              value={probeData['httpProbe/inputs']?.insecureSkipVerify}
+              value={
+                typeof probeData['httpProbe/inputs']?.insecureSkipVerify ===
+                'boolean'
+                  ? probeData['httpProbe/inputs']?.insecureSkipVerify.toString()
+                  : probeData['httpProbe/inputs']?.insecureSkipVerify
+              }
               className={classes.inputSelect}
               variant="outlined"
               onChange={handleHttp}
