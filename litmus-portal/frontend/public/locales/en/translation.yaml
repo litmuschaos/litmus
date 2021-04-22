@@ -783,6 +783,7 @@ createWorkflow:
     selectExp: Select An Experiment
     done: Done
     editSequence: Edit Sequence
+    dragndrop: Drag and drop an experiment as per your desire for scheduling
     addANewExperiment: Add a new experiment
     confirmText: Are you sure you want to continue without saving?
     back: Back
@@ -1117,3 +1118,7 @@ customWorkflow:
     addExp: Add experiment
   viewYAML:
     view: View the YAML here
+  sequence:
+    dragexp: Drag the selected experiment between the rows or to the end of rows to make it sequential experiment or drag into the rows to make it parallel experiment.
+    saveChanges: Save changes
+    discard: Discard changes
