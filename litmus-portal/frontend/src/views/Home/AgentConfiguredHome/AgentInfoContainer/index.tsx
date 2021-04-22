@@ -1,13 +1,9 @@
 import { Paper, Typography } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import { ButtonOutlined } from 'litmus-ui';
-import React from 'react';
+import { ButtonOutlined, Modal } from 'litmus-ui';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { history } from '../../../../redux/configureStore';
-import {
-  getProjectID,
-  getProjectRole,
-} from '../../../../utils/getSearchParams';
+import { AgentDeployModal } from '../../AgentDeployModal';
 import useStyles from './styles';
 
 interface AgentInfoContainerProps {
@@ -20,8 +16,15 @@ const AgentInfoContainer: React.FC<AgentInfoContainerProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const projectID = getProjectID();
-  const projectRole = getProjectRole();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const handleClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleOpen = () => {
+    setModalOpen(true);
+  };
 
   return (
     <div>
@@ -51,12 +54,7 @@ const AgentInfoContainer: React.FC<AgentInfoContainerProps> = ({
           </div>
         </div>
         <ButtonOutlined
-          onClick={() => {
-            history.push({
-              pathname: '/targets',
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
+          onClick={handleOpen}
           className={classes.infoContainerButton}
         >
           <Typography>
@@ -64,6 +62,18 @@ const AgentInfoContainer: React.FC<AgentInfoContainerProps> = ({
             {t('homeViews.agentConfiguredHome.agentInfoContainer.deploy')}
           </Typography>
         </ButtonOutlined>
+
+        <Modal
+          height="50%"
+          width="50%"
+          open={modalOpen}
+          onClose={handleClose}
+          modalActions={
+            <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+          }
+        >
+          <AgentDeployModal handleClose={handleClose} />
+        </Modal>
       </Paper>
     </div>
   );
