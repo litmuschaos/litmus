@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
 import { WORKFLOW_DETAILS } from '../../../graphql';
+import { Role } from '../../../models/graphql/user';
 import {
   Workflow,
   WorkflowDataVars,
@@ -114,7 +115,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
       <AgentInfoContainer agentCount={agentCount} />
 
       {/* Project Level info container */}
-      <ProjectInfoContainer />
+      {projectRole === Role.owner && <ProjectInfoContainer />}
     </div>
   );
 };
