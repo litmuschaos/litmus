@@ -9,3 +9,4 @@ data:
     containerRuntimeExecutor: #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
     executor:
       imagePullPolicy: Always
+    instanceID: #{CLUSTER_ID}

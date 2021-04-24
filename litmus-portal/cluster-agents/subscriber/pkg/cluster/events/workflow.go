@@ -23,6 +23,7 @@ const (
 var (
 	AgentScope     = os.Getenv("AGENT_SCOPE")
 	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
+	ClusterID      = os.Getenv("CLUSTER_ID")
 )
 
 // initializes the Argo Workflow event watcher
@@ -68,6 +69,9 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 // responsible for extracting the required data from the event and streaming
 func workflowEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*v1alpha1.Workflow)
+	if val, ok := workflowObj.Labels["workflows.argoproj.io/controller-instanceid"]; !ok || val != ClusterID {
+		return
+	}
 	experimentFail := 0
 	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
 		return
