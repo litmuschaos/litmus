@@ -12,12 +12,23 @@ interface GraphData {
   links: d3Link[];
 }
 
+interface ManifestSteps {
+  name: string;
+  template: string;
+}
+
+interface StepType {
+  [key: string]: ManifestSteps[];
+}
+
 interface WorkflowPreviewProps {
   isCustomWorkflow: boolean;
+  SequenceSteps?: StepType;
 }
 
 const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
   isCustomWorkflow,
+  SequenceSteps,
 }) => {
   let steps: Steps[][] = [];
   const updatedSteps: Steps[][] = [];
@@ -28,7 +39,8 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
 
   // Graph orientation
   const horizontal = false;
-  const classes = useStyles({ horizontal });
+  const isSequence = SequenceSteps !== undefined;
+  const classes = useStyles({ horizontal, isSequence });
 
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
@@ -37,6 +49,9 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
 
   if (manifest !== '') {
     steps = extractSteps(isCustomWorkflow, manifest);
+  }
+  if (SequenceSteps !== undefined) {
+    steps = Object.values(SequenceSteps);
   }
 
   useEffect(() => {
@@ -182,7 +197,7 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
       nodes: [...data.nodes],
       links: [...data.links],
     });
-  }, [manifest]);
+  }, [manifest, SequenceSteps]);
 
   return graphData.nodes.length ? (
     <DagreGraph
