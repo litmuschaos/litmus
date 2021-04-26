@@ -70,6 +70,7 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 func workflowEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*v1alpha1.Workflow)
 	if val, ok := workflowObj.Labels["workflows.argoproj.io/controller-instanceid"]; !ok || val != ClusterID {
+		logrus.WithField("uid", string(workflowObj.ObjectMeta.UID)).Printf("WORKFLOW RUN IGNORED [NO MATCHING INSTANCE-ID]")
 		return
 	}
 	experimentFail := 0
