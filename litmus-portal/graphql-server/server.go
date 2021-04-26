@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"log"
 	"net/http"
 	"os"
@@ -39,6 +40,9 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+	// Initialize the mongo client
+	mongodb.Client = mongodb.Client.Initialize()
+
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})

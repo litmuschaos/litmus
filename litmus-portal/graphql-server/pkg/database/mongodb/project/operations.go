@@ -164,10 +164,10 @@ func UpdateInvite(ctx context.Context, projectID, userID string, invitation Invi
 
 // UpdateProjectName :Updates Name of the project
 func UpdateProjectName(ctx context.Context, projectID string, projectName string) error {
-	query := bson.M{"_id": projectID}
-	update := bson.M{"$set": bson.M{"name": projectName}}
+	query := bson.D{{"_id", projectID}}
+	update := bson.D{{"$set", bson.M{"name": projectName}}}
 
-	_, err := projectCollection.UpdateOne(ctx, query, update)
+	_, err := mongodb.Operator.Update(ctx, mongodb.ProjectCollection, query, update)
 	if err != nil {
 		return err
 	}
