@@ -15,7 +15,8 @@ type MongoOperator interface {
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	UpdateMany(ctx context.Context, collectionType int, query, update bson.D,
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
-	Replace(ctx context.Context, collectionType int, query, replace bson.D) error
+	Replace(ctx context.Context, collectionType int, query bson.D, replacement interface{}) (*mongo.UpdateResult, error)
+	Delete(ctx context.Context, collectionType int, query bson.D, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
 	CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error)
 	GetCollection(collectionType int) (*mongo.Collection, error)
 }
@@ -85,28 +86,43 @@ func (m *MongoOperations) UpdateMany(ctx context.Context, collectionType int, qu
 	return result, nil
 }
 
-func (m *MongoOperations) Replace(ctx context.Context, collectionType int, query, replace bson.D) error {
+func (m *MongoOperations) Replace(ctx context.Context, collectionType int, query bson.D, replacement interface{}) (*mongo.UpdateResult, error) {
+	var result *mongo.UpdateResult
 	collection, err := m.GetCollection(collectionType)
 	if err != nil {
-		return err
+		return result, err
 	}
 	// If the given item is not present then insert.
 	opts := options.Replace().SetUpsert(true)
-	_, err = collection.ReplaceOne(ctx, query, replace, opts)
+	result, err = collection.ReplaceOne(ctx, query, replacement, opts)
 	if err != nil {
-		return err
+		return result, err
 	}
-	return nil
+	return result, nil
 }
 
 func (m *MongoOperations) CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error) {
+	var result int64 = 0
 	collection, err := m.GetCollection(collectionType)
 	if err != nil {
-		return 0, err
+		return result, err
 	}
-	result, err := collection.CountDocuments(ctx, query, opts...)
+	result, err = collection.CountDocuments(ctx, query, opts...)
 	if err != nil {
-		return 0, err
+		return result, err
+	}
+	return result, nil
+}
+
+func (m *MongoOperations) Delete(ctx context.Context, collectionType int, query bson.D, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error) {
+	var result *mongo.DeleteResult
+	collection, err := m.GetCollection(collectionType)
+	if err != nil {
+		return result, err
+	}
+	result, err = collection.DeleteOne(ctx, query, opts...)
+	if err != nil {
+		return result, err
 	}
 	return result, nil
 }

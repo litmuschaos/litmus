@@ -136,6 +136,18 @@ func (m *MongoClient) initAllCollection() {
 
 	m.WorkflowTemplateCollection = m.Database.Collection(collections[WorkflowTemplateCollection])
 	m.GitOpsCollection = m.Database.Collection(collections[GitOpsCollection])
+	_, err = m.GitOpsCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
+		{
+			Keys: bson.M{
+				"project_id": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+	})
+	if err != nil {
+		log.Fatal("Error Creating Index for GitOps Collection : ", err)
+	}
+
 	m.MyHubCollection = m.Database.Collection(collections[MyHubCollection])
 	m.DataSourceCollection = m.Database.Collection(collections[DataSourceCollection])
 	m.PanelCollection = m.Database.Collection(collections[PanelCollection])
