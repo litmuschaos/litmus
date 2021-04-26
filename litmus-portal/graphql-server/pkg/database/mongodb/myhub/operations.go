@@ -11,7 +11,7 @@ import (
 
 // CreateMyHub creates a private chaosHub for the user in the database
 func CreateMyHub(ctx context.Context, myhub *MyHub) error {
-	err := mongodb.Operator.Create(ctx,mongodb.MyHubCollection, myhub)
+	err := mongodb.Operator.Create(ctx, mongodb.MyHubCollection, myhub)
 	if err != nil {
 		log.Print("Error creating MyHub: ", err)
 		return err
@@ -25,7 +25,7 @@ func GetMyHubByProjectID(ctx context.Context, projectID string) ([]MyHub, error)
 		{"project_id", projectID},
 		{"IsRemoved", false},
 	}
-	results, err := mongodb.Operator.List(ctx,mongodb.MyHubCollection, query)
+	results, err := mongodb.Operator.List(ctx, mongodb.MyHubCollection, query)
 	if err != nil {
 		log.Print("ERROR GETTING USERS : ", err)
 		return []MyHub{}, err
@@ -42,7 +42,7 @@ func GetMyHubByProjectID(ctx context.Context, projectID string) ([]MyHub, error)
 // GetHubs lists all the chaosHubs that are present
 func GetHubs(ctx context.Context) ([]MyHub, error) {
 	query := bson.D{{}}
-	results, err := mongodb.Operator.List(ctx,mongodb.MyHubCollection, query)
+	results, err := mongodb.Operator.List(ctx, mongodb.MyHubCollection, query)
 	if err != nil {
 		log.Print("Error getting myHubs: ", err)
 		return []MyHub{}, err
@@ -59,7 +59,7 @@ func GetHubs(ctx context.Context) ([]MyHub, error) {
 // GetHubByID returns a single chaosHub based on the hubID
 func GetHubByID(ctx context.Context, hubID string) (MyHub, error) {
 	var myHub MyHub
-	result, err := mongodb.Operator.Get(ctx,mongodb.MyHubCollection, bson.D{{"myhub_id", hubID}})
+	result, err := mongodb.Operator.Get(ctx, mongodb.MyHubCollection, bson.D{{"myhub_id", hubID}})
 	err = result.Decode(&myHub)
 	if err != nil {
 		return MyHub{}, err
@@ -70,7 +70,7 @@ func GetHubByID(ctx context.Context, hubID string) (MyHub, error) {
 
 // UpdateMyHub updates the chaosHub
 func UpdateMyHub(ctx context.Context, query bson.D, update bson.D) error {
-	updateResult, err := mongodb.Operator.Update(ctx,mongodb.MyHubCollection, query, update)
+	updateResult, err := mongodb.Operator.Update(ctx, mongodb.MyHubCollection, query, update)
 	if err != nil {
 		return err
 	}

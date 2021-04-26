@@ -2,29 +2,20 @@ package cluster
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
-	clusterCollection *mongo.Collection
 	backgroundContext = context.Background()
-	err               error
 )
-
-func init() {
-	clusterCollection = mongodb.Database.Collection("cluster-collection")
-}
 
 // InsertCluster takes details of a cluster and inserts into the database collection
 func InsertCluster(cluster Cluster) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	_, err := clusterCollection.InsertOne(ctx, cluster)
+	err := mongodb.Operator.Create(ctx, mongodb.ClusterCollection, cluster)
 	if err != nil {
 		return err
 	}
@@ -35,10 +26,11 @@ func InsertCluster(cluster Cluster) error {
 // GetCluster takes a clusterID to retrieve the cluster details from the database
 func GetCluster(clusterID string) (Cluster, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	query := bson.M{"cluster_id": clusterID}
+	query := bson.D{{"cluster_id", clusterID}}
 
 	var cluster Cluster
-	err = clusterCollection.FindOne(ctx, query).Decode(&cluster)
+	result, err := mongodb.Operator.Get(ctx, mongodb.ClusterCollection, query)
+	err = result.Decode(&cluster)
 	if err != nil {
 		return Cluster{}, err
 	}
@@ -50,7 +42,7 @@ func GetCluster(clusterID string) (Cluster, error) {
 func UpdateCluster(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	_, err := clusterCollection.UpdateOne(ctx, query, update)
+	_, err := mongodb.Operator.Update(ctx, mongodb.ClusterCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -61,23 +53,29 @@ func UpdateCluster(query bson.D, update bson.D) error {
 // GetClusterWithProjectID takes projectID and clusterType parameters to retrieve the cluster details from the database
 func GetClusterWithProjectID(projectID string, clusterType *string) ([]*Cluster, error) {
 
-	var query bson.M
+	var query bson.D
 	if clusterType == nil {
-		query = bson.M{"project_id": projectID, "is_removed": false}
+		query = bson.D{
+			{"project_id", projectID},
+			{"is_removed", false},
+		}
 	} else {
-		query = bson.M{"project_id": projectID, "cluster_type": clusterType, "is_removed": false}
+		query = bson.D{
+			{"project_id", projectID},
+			{"cluster_type", clusterType},
+			{"is_removed", false},
+		}
 	}
 
-	fmt.Print(query)
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	var clusters []*Cluster
 
-	cursor, err := clusterCollection.Find(ctx, query)
+	results, err := mongodb.Operator.List(ctx, mongodb.ClusterCollection, query)
 	if err != nil {
 		return []*Cluster{}, err
 	}
 
-	err = cursor.All(ctx, &clusters)
+	err = results.All(ctx, &clusters)
 	if err != nil {
 		return []*Cluster{}, err
 	}
