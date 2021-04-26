@@ -10,18 +10,21 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
+    '& img': {
+      marginBottom: theme.spacing(1.5),
+    },
   },
   HeaderText: {
     maxWidth: '23.56rem',
     fontWeight: 500,
     fontSize: '2rem',
     color: theme.palette.text.secondary,
-    margin: theme.spacing(1.5, 0, 2.5, 0),
   },
   litmusText: {
     maxWidth: '23.56rem',
     fontWeight: 400,
     fontSize: '1rem',
+    marginTop: theme.spacing(1.875),
     color: theme.palette.text.secondary,
   },
   inputDiv: {
@@ -34,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   inputValue: {
     margin: theme.spacing(1.875, 0, 1.875, 0),
     '& .MuiFormHelperText-root': {
-      background: theme.palette.primary.main,
+      background: theme.palette.loginBackground,
       marginTop: 0,
     },
     '& .MuiFormHelperText-contained': {
@@ -42,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   submitButton: {
+    padding: theme.spacing(1.25, 4),
     marginTop: theme.spacing(1.875),
     background: theme.palette.primary.light,
     color: theme.palette.text.secondary,

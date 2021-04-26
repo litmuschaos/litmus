@@ -3,13 +3,17 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Role } from '../../../models/graphql/user';
+import { getProjectRole } from '../../../utils/getSearchParams';
+import { AgentDeployModal } from '../AgentDeployModal';
 import { MainInfoContainer } from '../MainInfoContainer';
 import { ProjectInfoContainer } from '../ProjectInfoContainer';
-import { AgentDeployModal } from './AgentDeployModal';
 
 const LandingHome: React.FC = () => {
   const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const projectRole = getProjectRole();
 
   const handleClose = () => {
     setModalOpen(false);
@@ -46,7 +50,7 @@ const LandingHome: React.FC = () => {
         <AgentDeployModal handleClose={handleClose} />
       </Modal>
       {/* Project Level info container */}
-      <ProjectInfoContainer />
+      {projectRole === Role.owner && <ProjectInfoContainer />}
     </div>
   );
 };

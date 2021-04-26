@@ -271,10 +271,10 @@ export const getChaosQueryPromInputAndID = (
                   workflowID: schedule.workflow_id,
                   workflowName: workflowYaml.metadata.name,
                   experimentName: parsedEmbeddedYaml.spec.experiments[0].name,
-                  targetApp: parsedEmbeddedYaml.spec.appinfo.applabel.split(
+                  targetApp: parsedEmbeddedYaml.spec.appinfo?.applabel.split(
                     '='
                   )[1],
-                  targetNamespace: parsedEmbeddedYaml.spec.appinfo.appns,
+                  targetNamespace: parsedEmbeddedYaml.spec.appinfo?.appns,
                   runWiseChaosMetrics: getRunWiseChaosMetrics(
                     workflowRunWiseDetails.idsOfWorkflowRuns,
                     workflowRunWiseDetails.experimentNameWiseChaosDataOfWorkflowRuns,

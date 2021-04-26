@@ -1,23 +1,23 @@
 getStarted:
+  welcome: Welcome
   button:
     continue: Next
     back: Back
-    letsStart: Continue to Portal
+    finish: Finish
     step: Step
     of: of
   project:
     name: projectName
     label: Project Name
-    info: You are almost there! Set your project name
-    desc: The project will be yours with owner access where you can create
-      workflows, view analytics and also invite others to your project.
+    info: Set your project name
+    desc: Choose an appropriate name for your project. This project name will be used when collaborating with your team members.
   password:
     name: password
     label: Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
     info: Set your new Password
-    desc: Set a new password which will be used when you login next time
+    desc: Use the new password at your next login.
 
 ###########################################
 ############    Components    #############
@@ -84,6 +84,9 @@ workflowStepper:
   next: Next
   back: Back
 
+editor:
+  status: 'YAML Status:'
+
 ######################################
 ############    Pages    #############
 ######################################
@@ -92,10 +95,12 @@ home:
   heading: Welcome,
 
 login:
-  heading: One-stop-shop for Chaos Engineering on Kubernetes
-  subHeading1: Browse, create, manage, monitor and analyze your chaos workflows.
+  heading: Chaos Engineering for your Cloud Native applications
+  subHeading1: Create, orchestrate, analyze and collaborate your Chaos Workflows.
   subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
   wrongCredentials: Wrong Credentials - Try again with correct username or password
+  forgetPassword: Forgot your password?
+  tooltipText: You need to contact your admin to reset your password.
 
 schedule:
   heading: 'Schedule a workflow'
@@ -485,14 +490,12 @@ settings:
       joined: Joined to team
       status: Status
     deleteModal:
-      header: Are you sure you want to remove the invitation to
-      text: the current user?
+      header: Are you sure you want to revoke the invitation to
       body: The user will lose access to the team’s work.
       yesButton: Yes
       noButton: No
     deleteUser:
-      header: Are you sure
-      text: to remove the current user?
+      header: Are you sure you want to remove
       body: The user will lose access to the team’s work
       yesButton: Yes
       noButton: No
@@ -681,7 +684,7 @@ createWorkflow:
     optionB: Create a new workflow by cloning an existing workflow
     optionC: Create a new workflow using the experiments from
     optionD: Import a workflow using YAML
-    myHubs: My Hubs
+    myHubs: MyHub
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
@@ -780,7 +783,13 @@ createWorkflow:
     selectExp: Select An Experiment
     done: Done
     editSequence: Edit Sequence
+    dragndrop: Drag and drop an experiment as per your desire for scheduling
     addANewExperiment: Add a new experiment
+    confirmText: Are you sure you want to continue without saving?
+    back: Back
+    continue: Continue
+    updateChanges: Update changes in the workflow manifest
+    saveChange: Save Changes
     verticalStepper:
       myHubInfo: MyHub and Experiment details
       annotationInfo: Provide target application details where you want to induce the chaos.
@@ -878,8 +887,8 @@ createWorkflow:
 
 targets:
   connectHome:
-    head: Targets
-    connectText: Connect the Target
+    head: Agents
+    connectText: Connect the Agent
   copy:
     copy: Copy
     copied: Copied
@@ -909,7 +918,7 @@ connectTargets:
 workflowCluster:
   header:
     status: Current Status
-    target: Target Cluster
+    target: Target Agent
     chooseAgent: Choose the target Kubernetes Agent
     creatingNew: You are creating a
     creatingNewBold: new chaos workflow.
@@ -1109,3 +1118,7 @@ customWorkflow:
     addExp: Add experiment
   viewYAML:
     view: View the YAML here
+  sequence:
+    dragexp: Drag the selected experiment between the rows or to the end of rows to make it sequential experiment or drag into the rows to make it parallel experiment.
+    saveChanges: Save changes
+    discard: Discard changes

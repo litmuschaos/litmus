@@ -116,6 +116,16 @@ func (r *mutationResolver) LeaveProject(ctx context.Context, member model.Member
 	return project.LeaveProject(ctx, member)
 }
 
+func (r *mutationResolver) UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
+
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
+	return project.UpdateProjectName(ctx, projectID, projectName)
+}
+
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
 	return clusterHandler.ConfirmClusterRegistration(identity, *data_store.Store)
 }

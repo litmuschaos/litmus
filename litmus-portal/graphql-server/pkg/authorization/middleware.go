@@ -35,10 +35,8 @@ func RestMiddleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		jwt := ""
 		auth, err := r.Cookie(CookieName)
-		fmt.Println("auth: ", auth)
 		if err == nil {
 			jwt = auth.Value
-			fmt.Println("jwt: ", jwt)
 		} else if r.Header.Get("Authorization") != "" {
 			jwt = r.Header.Get("Authorization")
 		}

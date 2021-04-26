@@ -259,16 +259,11 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     className: classes.input,
                     style: {
                       color: theme.palette.text.primary,
-                      maxWidth: '21.38rem',
-                      minWidth: '21.38rem',
                     },
                   }}
                 />
               </div>
-              <div
-                data-cy="inviteNewMemberSendInviteButton"
-                className={classes.InviteBtn}
-              >
+              <div data-cy="inviteNewMemberSendInviteButton">
                 <ButtonFilled
                   disabled={!selected.length}
                   onClick={() => {

@@ -4,12 +4,9 @@ export default [
     title: 'sock-shop-chaos',
     chaosinfra: false,
     urlToIcon: '/icons/sock-shop.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/sock-shop-demo/usingCmdProbe/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/sock-shop-demo/usingCmdProbe/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/tree/master/workflows/sock-shop-demo',
+    chaosWkfCRDLink: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/sock-shop-demo/usingCmdProbe/workflow.yaml`,
+    chaosWkfCRDLink_Recur: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/sock-shop-demo/usingCmdProbe/workflow_cron.yaml`,
+    gitLink: `https://github.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/sock-shop-demo`,
     provider: 'ChaosNative',
     description: 'Induces chaos on Sock-Shop application',
     totalRuns: 110,
@@ -30,13 +27,10 @@ export default [
     workflowID: 1,
     title: 'kube-proxy-chaos',
     chaosinfra: true,
-    urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/kube-proxy-all',
+    urlToIcon: '/icons/kubernetes-platform.svg',
+    chaosWkfCRDLink: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all/workflow.yaml`,
+    chaosWkfCRDLink_Recur: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all/workflow_cron.yaml`,
+    gitLink: `https://github.com/litmuschaos/chaos-charts/blob/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all`,
     provider: 'MayaData',
     description: 'Induces chaos on kube proxy',
     totalRuns: 9000,
@@ -56,12 +50,9 @@ export default [
     title: 'podtato-head-chaos',
     chaosinfra: false,
     urlToIcon: '/icons/podtato_head.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/podtato-head/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/podtato-head/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/tree/master/workflows/podtato-head',
+    chaosWkfCRDLink: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/podtato-head/workflow.yaml`,
+    chaosWkfCRDLink_Recur: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/podtato-head/workflow_cron.yaml`,
+    gitLink: `https://github.com/litmuschaos/chaos-charts/tree/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/podtato-head`,
     provider: 'ChaosNative',
     description: 'Induces chaos on podtato-head application',
     totalRuns: 10,

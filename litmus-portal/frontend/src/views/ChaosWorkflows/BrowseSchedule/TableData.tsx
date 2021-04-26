@@ -25,6 +25,7 @@ import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import timeDifferenceForDate from '../../../utils/datesModifier';
@@ -32,7 +33,6 @@ import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
 import SaveTemplateModal from './SaveTemplateModal';
 import useStyles from './styles';
-import * as WorkflowActions from '../../../redux/actions/workflow';
 
 interface TableDataProps {
   data: ScheduleWorkflow;
@@ -366,7 +366,7 @@ const TableData: React.FC<TableDataProps> = ({
             <MenuItem value="Edit_Schedule" onClick={() => editSchedule()}>
               <div className={classes.expDiv}>
                 <img
-                  src="./icons/Edit.svg"
+                  src="/icons/Edit.svg"
                   alt="Edit Schedule"
                   className={classes.btnImg}
                 />
