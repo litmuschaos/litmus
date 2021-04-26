@@ -5,21 +5,13 @@ import (
 	"errors"
 	"log"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-var myhubCollection *mongo.Collection
-
-func init() {
-	myhubCollection = mongodb.Database.Collection("myhub")
-}
-
-// CreateMyHub ...
+// CreateMyHub creates a private chaosHub for the user in the database
 func CreateMyHub(ctx context.Context, myhub *MyHub) error {
-	_, err := myhubCollection.InsertOne(ctx, myhub)
+	err := mongodb.Operator.Create(ctx,mongodb.MyHubCollection, myhub)
 	if err != nil {
 		log.Print("Error creating MyHub: ", err)
 		return err
@@ -27,45 +19,48 @@ func CreateMyHub(ctx context.Context, myhub *MyHub) error {
 	return nil
 }
 
-// GetMyHubByProjectID ...
+// GetMyHubByProjectID returns a private Hub based on the projectID
 func GetMyHubByProjectID(ctx context.Context, projectID string) ([]MyHub, error) {
-	query := bson.M{"project_id": projectID, "IsRemoved": false}
-	cursor, err := myhubCollection.Find(ctx, query)
+	query := bson.D{
+		{"project_id", projectID},
+		{"IsRemoved", false},
+	}
+	results, err := mongodb.Operator.List(ctx,mongodb.MyHubCollection, query)
 	if err != nil {
 		log.Print("ERROR GETTING USERS : ", err)
 		return []MyHub{}, err
 	}
-	var myhubs []MyHub
-	err = cursor.All(ctx, &myhubs)
+	var myHubs []MyHub
+	err = results.All(ctx, &myHubs)
 	if err != nil {
-		log.Print("Error deserializing myhubs in myhub object : ", err)
+		log.Print("Error deserializing myHubs in myHub object : ", err)
 		return []MyHub{}, err
 	}
-	return myhubs, nil
+	return myHubs, nil
 }
 
-// GetHubs ...
+// GetHubs lists all the chaosHubs that are present
 func GetHubs(ctx context.Context) ([]MyHub, error) {
-	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.D{{}}
-	cursor, err := myhubCollection.Find(ctx, query)
+	results, err := mongodb.Operator.List(ctx,mongodb.MyHubCollection, query)
 	if err != nil {
-		log.Print("ERROR GETTING MYHUBS : ", err)
+		log.Print("Error getting myHubs: ", err)
 		return []MyHub{}, err
 	}
-	var MyHubs []MyHub
-	err = cursor.All(ctx, &MyHubs)
+	var myHubs []MyHub
+	err = results.All(ctx, &myHubs)
 	if err != nil {
-		log.Print("Error deserializing myhubs in the myhub object : ", err)
+		log.Print("Error deserializing myHubs in the myHub object: ", err)
 		return []MyHub{}, err
 	}
-	return MyHubs, nil
+	return myHubs, nil
 }
 
-// GetHubByID ...
+// GetHubByID returns a single chaosHub based on the hubID
 func GetHubByID(ctx context.Context, hubID string) (MyHub, error) {
 	var myHub MyHub
-	err := myhubCollection.FindOne(ctx, bson.M{"myhub_id": hubID}).Decode(&myHub)
+	result, err := mongodb.Operator.Get(ctx,mongodb.MyHubCollection, bson.D{{"myhub_id", hubID}})
+	err = result.Decode(&myHub)
 	if err != nil {
 		return MyHub{}, err
 	}
@@ -73,9 +68,9 @@ func GetHubByID(ctx context.Context, hubID string) (MyHub, error) {
 	return myHub, nil
 }
 
-// UpdateMyHub ...
+// UpdateMyHub updates the chaosHub
 func UpdateMyHub(ctx context.Context, query bson.D, update bson.D) error {
-	updateResult, err := myhubCollection.UpdateOne(ctx, query, update)
+	updateResult, err := mongodb.Operator.Update(ctx,mongodb.MyHubCollection, query, update)
 	if err != nil {
 		return err
 	}

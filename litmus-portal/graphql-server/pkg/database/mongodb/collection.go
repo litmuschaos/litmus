@@ -28,6 +28,8 @@ func (g *GetCollectionStruct) getCollection(collectionType int) (*mongo.Collecti
 		return mongoClient.(*MongoClient).ProjectCollection, nil
 	case WorkflowCollection:
 		return mongoClient.(*MongoClient).WorkflowCollection, nil
+	case WorkflowTemplateCollection:
+		return mongoClient.(*MongoClient).WorkflowTemplateCollection, nil
 	case GitOpsCollection:
 		return mongoClient.(*MongoClient).GitOpsCollection, nil
 	case MyHubCollection:

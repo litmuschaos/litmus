@@ -17,6 +17,7 @@ const (
 	UserCollection
 	ProjectCollection
 	WorkflowCollection
+	WorkflowTemplateCollection
 	GitOpsCollection
 	MyHubCollection
 	DataSourceCollection
@@ -33,31 +34,33 @@ type MongoInterface interface {
 
 // MongoClient structure contains all the Database collections and the instance of the Database
 type MongoClient struct {
-	Database             *mongo.Database
-	ClusterCollection    *mongo.Collection
-	UserCollection       *mongo.Collection
-	ProjectCollection    *mongo.Collection
-	WorkflowCollection   *mongo.Collection
-	GitOpsCollection     *mongo.Collection
-	MyHubCollection      *mongo.Collection
-	DataSourceCollection *mongo.Collection
-	PanelCollection      *mongo.Collection
-	DashboardCollection  *mongo.Collection
+	Database                   *mongo.Database
+	ClusterCollection          *mongo.Collection
+	UserCollection             *mongo.Collection
+	ProjectCollection          *mongo.Collection
+	WorkflowCollection         *mongo.Collection
+	WorkflowTemplateCollection *mongo.Collection
+	GitOpsCollection           *mongo.Collection
+	MyHubCollection            *mongo.Collection
+	DataSourceCollection       *mongo.Collection
+	PanelCollection            *mongo.Collection
+	DashboardCollection        *mongo.Collection
 }
 
 var (
 	Client MongoInterface = &MongoClient{}
 
 	collections = map[int]string{
-		ClusterCollection:    "cluster-collection",
-		UserCollection:       "user",
-		ProjectCollection:    "project",
-		WorkflowCollection:   "workflow-collection",
-		GitOpsCollection:     "gitops-collection",
-		MyHubCollection:      "myhub",
-		DataSourceCollection: "datasource-collection",
-		PanelCollection:      "panel-collection",
-		DashboardCollection:  "dashboard-collection",
+		ClusterCollection:          "cluster-collection",
+		UserCollection:             "user",
+		ProjectCollection:          "project",
+		WorkflowCollection:         "workflow-collection",
+		WorkflowTemplateCollection: "workflow-template",
+		GitOpsCollection:           "gitops-collection",
+		MyHubCollection:            "myhub",
+		DataSourceCollection:       "datasource-collection",
+		PanelCollection:            "panel-collection",
+		DashboardCollection:        "dashboard-collection",
 	}
 	// TODO: remove this
 	Database *mongo.Database
@@ -131,6 +134,7 @@ func (m *MongoClient) initAllCollection() {
 		log.Fatal("Error Creating Index for Workflow Collection: ", err)
 	}
 
+	m.WorkflowTemplateCollection = m.Database.Collection(collections[WorkflowTemplateCollection])
 	m.GitOpsCollection = m.Database.Collection(collections[GitOpsCollection])
 	m.MyHubCollection = m.Database.Collection(collections[MyHubCollection])
 	m.DataSourceCollection = m.Database.Collection(collections[DataSourceCollection])
