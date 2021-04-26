@@ -3,37 +3,10 @@ package gitops
 import (
 	"context"
 	"errors"
-	"log"
-	"time"
-
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
-
-var (
-	gitOpsCollection  *mongo.Collection
-	backgroundContext = context.Background()
-)
-
-const timeout = 15 * time.Second
-
-func init() {
-	gitOpsCollection = mongodb.Database.Collection("gitops-collection")
-	_, err := gitOpsCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
-		{
-			Keys: bson.M{
-				"project_id": 1,
-			},
-			Options: options.Index().SetUnique(true),
-		},
-	})
-	if err != nil {
-		log.Fatal("Error Creating Index for GitOps Collection : ", err)
-	}
-}
 
 // AddGitConfig inserts new git config for project
 func AddGitConfig(ctx context.Context, config *GitConfigDB) error {
