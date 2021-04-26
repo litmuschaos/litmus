@@ -1,21 +1,27 @@
 import { Modal, ButtonOutlined, ButtonFilled, InputField } from 'litmus-ui';
 import { MenuItem, Select, InputLabel } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect } from 'react';
+import React from 'react';
 import useStyles from './styles';
 import ProbeDetails from './ProbeDetails';
 
 interface AddProbeProps {
   probesValue: any;
-  setProbesValue: React.Dispatch<any>;
-  addProbe: () => void;
+  addProbe: (probes: any) => void;
   handleClose: () => void;
   open: boolean;
 }
 
+interface RunProperties {
+  probeTimeout: string;
+  retry: string;
+  interval: string;
+  probePollingInterval?: string;
+  initialDelaySeconds?: string;
+}
+
 const AddProbe: React.FC<AddProbeProps> = ({
   probesValue,
-  setProbesValue,
   addProbe,
   handleClose,
   open,
@@ -27,28 +33,26 @@ const AddProbe: React.FC<AddProbeProps> = ({
     probesValue && probesValue.length ? probesValue : []
   );
   const [probeType, setProbeType] = React.useState('httpProbe/inputs');
+  const [runProperties, setRunProperties] = React.useState<RunProperties>({
+    probeTimeout: '',
+    retry: '',
+    interval: '',
+    probePollingInterval: '',
+    initialDelaySeconds: '',
+  });
   const [probeData, setProbeData] = React.useState({
     name: '',
     type: 'httpProbe',
     mode: 'Continuous',
-    runProperties: {
-      probeTimeout: '',
-      retry: '',
-      interval: '',
-      probePollingInterval: '',
-      initialDelaySeconds: '',
-    },
+    runProperties: {},
     'httpProbe/inputs': {},
   });
   const handleRunProps = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setProbeData({
-      ...probeData,
-      runProperties: {
-        ...probeData.runProperties,
-        [e.target.name]: e.target.value,
-      },
+    setRunProperties({
+      ...runProperties,
+      [e.target.name]: parseInt(e.target.value, 10),
     });
   };
 
@@ -76,14 +80,22 @@ const AddProbe: React.FC<AddProbeProps> = ({
   };
 
   const handleAddProbe = () => {
-    allProbes.push(probeData);
+    const properties = runProperties;
+    if (Number.isNaN(parseInt(properties.initialDelaySeconds as string, 10))) {
+      delete properties.initialDelaySeconds;
+    }
+    if (Number.isNaN(parseInt(properties.probePollingInterval as string, 10))) {
+      delete properties.probePollingInterval;
+    }
+    allProbes.push({
+      ...probeData,
+      runProperties: {
+        ...properties,
+      },
+    });
     setAllProbes(allProbes);
-    addProbe();
+    addProbe(allProbes);
   };
-
-  useEffect(() => {
-    setProbesValue(allProbes);
-  }, [allProbes]);
 
   return (
     <Modal
@@ -117,6 +129,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
               id="name"
               name="name"
               type="text"
+              required
               value={probeData.name}
               onChange={(e) =>
                 setProbeData({ ...probeData, name: e.target.value })
@@ -203,8 +216,9 @@ const AddProbe: React.FC<AddProbeProps> = ({
                 width="50%"
                 id="timeout"
                 name="probeTimeout"
+                required
                 type="number"
-                value={probeData.runProperties.probeTimeout}
+                value={runProperties.probeTimeout}
                 onChange={handleRunProps}
               />
             </div>
@@ -217,8 +231,9 @@ const AddProbe: React.FC<AddProbeProps> = ({
                 width="50%"
                 id="retry"
                 name="retry"
+                required
                 type="number"
-                value={probeData.runProperties.retry}
+                value={runProperties.retry}
                 onChange={handleRunProps}
               />
             </div>
@@ -232,9 +247,10 @@ const AddProbe: React.FC<AddProbeProps> = ({
                 variant="primary"
                 width="50%"
                 id="interval"
+                required
                 name="interval"
                 type="number"
-                value={probeData.runProperties.interval}
+                value={runProperties.interval}
                 onChange={handleRunProps}
               />
             </div>
@@ -248,7 +264,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
                 id="polling"
                 name="probePollingInterval"
                 type="number"
-                value={probeData.runProperties.probePollingInterval}
+                value={runProperties.probePollingInterval}
                 onChange={handleRunProps}
               />
             </div>
@@ -263,7 +279,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
               id="initial-delay"
               name="initialDelaySeconds"
               type="number"
-              value={probeData.runProperties.initialDelaySeconds}
+              value={runProperties.initialDelaySeconds}
               onChange={handleRunProps}
             />
           </div>
