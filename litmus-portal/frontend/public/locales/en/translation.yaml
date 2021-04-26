@@ -805,6 +805,10 @@ createWorkflow:
       rollout: Rollout
       nodeselector: NodeSelector
       selector: 'kubernetes.io/hostname :'
+      nsError: Namespace not available
+      labelError: Label not available in the resource or namespace
+      deleteExp: Delete the experiment
+      editExp: Edit the experiment
     addProbe:
       heading: Add
       headingStrong: Probe
