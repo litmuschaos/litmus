@@ -16,6 +16,7 @@ type MongoOperator interface {
 	UpdateMany(ctx context.Context, collectionType int, query, update bson.D,
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	Replace(ctx context.Context, collectionType int, query, replace bson.D) error
+	CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error)
 	GetCollection(collectionType int) (*mongo.Collection, error)
 }
 
@@ -96,6 +97,18 @@ func (m *MongoOperations) Replace(ctx context.Context, collectionType int, query
 		return err
 	}
 	return nil
+}
+
+func (m *MongoOperations) CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error) {
+	collection, err := m.GetCollection(collectionType)
+	if err != nil {
+		return 0, err
+	}
+	result, err := collection.CountDocuments(ctx, query, opts...)
+	if err != nil {
+		return 0, err
+	}
+	return result, nil
 }
 
 func (m *MongoOperations) GetCollection(collectionType int) (*mongo.Collection, error) {

@@ -128,26 +128,26 @@ func UpdateInvite(ctx context.Context, projectID, userID string, invitation Invi
 	switch invitation {
 	case PendingInvitation:
 		update = bson.D{
-		{"$set", bson.D{
-			{"members.$[elem].invitation", invitation},
-			{"members.$[elem].role", Role},
-		}}}
+			{"$set", bson.D{
+				{"members.$[elem].invitation", invitation},
+				{"members.$[elem].role", Role},
+			}}}
 	case DeclinedInvitation:
 		update = bson.D{
-		{"$set", bson.D{
-			{"members.$[elem].invitation", invitation},
-		}}}
+			{"$set", bson.D{
+				{"members.$[elem].invitation", invitation},
+			}}}
 	case AcceptedInvitation:
 		update = bson.D{
-		{"$set", bson.D{
-			{"members.$[elem].invitation", invitation},
-			{"members.$[elem].joined_at", time.Now().Format(time.RFC1123Z)},
-		}}}
+			{"$set", bson.D{
+				{"members.$[elem].invitation", invitation},
+				{"members.$[elem].joined_at", time.Now().Format(time.RFC1123Z)},
+			}}}
 	case ExitedProject:
 		update = bson.D{
-		{"$set", bson.D{
-			{"members.$[elem].invitation", invitation},
-		}}}
+			{"$set", bson.D{
+				{"members.$[elem].invitation", invitation},
+			}}}
 	}
 
 	result, err := mongodb.Operator.Update(ctx, mongodb.ProjectCollection, query, update, opts)

@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -70,9 +71,9 @@ var (
 // Initialize initializes database connection
 func (m *MongoClient) Initialize() *MongoClient {
 	var (
-		dbServer = os.Getenv("DB_SERVER")
-		dbUser = os.Getenv("DB_USER")
-		dbPassword      = os.Getenv("DB_PASSWORD")
+		dbServer   = os.Getenv("DB_SERVER")
+		dbUser     = os.Getenv("DB_USER")
+		dbPassword = os.Getenv("DB_PASSWORD")
 	)
 
 	if dbServer == "" || dbUser == "" || dbPassword == "" {
@@ -110,7 +111,26 @@ func (m *MongoClient) initAllCollection() {
 	m.ClusterCollection = m.Database.Collection(collections[ClusterCollection])
 	m.UserCollection = m.Database.Collection(collections[UserCollection])
 	m.ProjectCollection = m.Database.Collection(collections[ProjectCollection])
+
 	m.WorkflowCollection = m.Database.Collection(collections[WorkflowCollection])
+	_, err := m.WorkflowCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
+		{
+			Keys: bson.M{
+				"workflow_id": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys: bson.M{
+				"workflow_name": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+	})
+	if err != nil {
+		log.Fatal("Error Creating Index for Workflow Collection: ", err)
+	}
+
 	m.GitOpsCollection = m.Database.Collection(collections[GitOpsCollection])
 	m.MyHubCollection = m.Database.Collection(collections[MyHubCollection])
 	m.DataSourceCollection = m.Database.Collection(collections[DataSourceCollection])
