@@ -27,7 +27,7 @@ export default [
     workflowID: 1,
     title: 'kube-proxy-chaos',
     chaosinfra: true,
-    urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
+    urlToIcon: '/icons/kubernetes-platform.svg',
     chaosWkfCRDLink: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all/workflow.yaml`,
     chaosWkfCRDLink_Recur: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all/workflow_cron.yaml`,
     gitLink: `https://github.com/litmuschaos/chaos-charts/blob/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all`,
