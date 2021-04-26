@@ -62,13 +62,10 @@ var (
 		PanelCollection:            "panel-collection",
 		DashboardCollection:        "dashboard-collection",
 	}
-	// TODO: remove this
-	Database *mongo.Database
-	dbName   = "litmus"
 
+	dbName            = "litmus"
 	ConnectionTimeout = 20 * time.Second
 	backgroundContext = context.Background()
-	err               error
 )
 
 // Initialize initializes database connection

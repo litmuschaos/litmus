@@ -9,6 +9,7 @@ import (
 
 type MongoOperator interface {
 	Create(ctx context.Context, collectionType int, document interface{}) error
+	CreateMany(ctx context.Context, collectionType int, documents []interface{}) error
 	Get(ctx context.Context, collectionType int, query bson.D) (*mongo.SingleResult, error)
 	List(ctx context.Context, collectionType int, query bson.D) (*mongo.Cursor, error)
 	Update(ctx context.Context, collectionType int, query, update bson.D,
@@ -24,9 +25,11 @@ type MongoOperator interface {
 type MongoOperations struct{}
 
 var (
+	// Operator contains all the CRUD operations of the mongo database
 	Operator MongoOperator = &MongoOperations{}
 )
 
+// Create puts a document in the database
 func (m *MongoOperations) Create(ctx context.Context, collectionType int, document interface{}) error {
 	collection, err := m.GetCollection(collectionType)
 	if err != nil {
@@ -39,6 +42,20 @@ func (m *MongoOperations) Create(ctx context.Context, collectionType int, docume
 	return nil
 }
 
+// CreateMany puts an array of documents in the database
+func (m *MongoOperations) CreateMany(ctx context.Context, collectionType int, documents []interface{}) error {
+	collection, err := m.GetCollection(collectionType)
+	if err != nil {
+		return err
+	}
+	_, err = collection.InsertMany(ctx, documents)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Get fetches a document from the database based on a query
 func (m *MongoOperations) Get(ctx context.Context, collectionType int, query bson.D) (*mongo.SingleResult, error) {
 	collection, err := m.GetCollection(collectionType)
 	if err != nil {
@@ -48,6 +65,7 @@ func (m *MongoOperations) Get(ctx context.Context, collectionType int, query bso
 	return result, nil
 }
 
+// List fetches a list of documents from the database based on a query
 func (m *MongoOperations) List(ctx context.Context, collectionType int, query bson.D) (*mongo.Cursor, error) {
 	collection, err := m.GetCollection(collectionType)
 	if err != nil {
@@ -60,6 +78,7 @@ func (m *MongoOperations) List(ctx context.Context, collectionType int, query bs
 	return result, nil
 }
 
+// Update updates a document in the database based on a query
 func (m *MongoOperations) Update(ctx context.Context, collectionType int, query, update bson.D, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var result *mongo.UpdateResult
 	collection, err := m.GetCollection(collectionType)
@@ -73,6 +92,7 @@ func (m *MongoOperations) Update(ctx context.Context, collectionType int, query,
 	return result, nil
 }
 
+// UpdateMany updates multiple documents in the database based on a query
 func (m *MongoOperations) UpdateMany(ctx context.Context, collectionType int, query, update bson.D, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var result *mongo.UpdateResult
 	collection, err := m.GetCollection(collectionType)
@@ -86,6 +106,7 @@ func (m *MongoOperations) UpdateMany(ctx context.Context, collectionType int, qu
 	return result, nil
 }
 
+// Replace changes a document with a new one in the database based on a query
 func (m *MongoOperations) Replace(ctx context.Context, collectionType int, query bson.D, replacement interface{}) (*mongo.UpdateResult, error) {
 	var result *mongo.UpdateResult
 	collection, err := m.GetCollection(collectionType)
@@ -101,19 +122,7 @@ func (m *MongoOperations) Replace(ctx context.Context, collectionType int, query
 	return result, nil
 }
 
-func (m *MongoOperations) CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error) {
-	var result int64 = 0
-	collection, err := m.GetCollection(collectionType)
-	if err != nil {
-		return result, err
-	}
-	result, err = collection.CountDocuments(ctx, query, opts...)
-	if err != nil {
-		return result, err
-	}
-	return result, nil
-}
-
+// Delete removes a document from the database based on a query
 func (m *MongoOperations) Delete(ctx context.Context, collectionType int, query bson.D, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error) {
 	var result *mongo.DeleteResult
 	collection, err := m.GetCollection(collectionType)
@@ -127,6 +136,21 @@ func (m *MongoOperations) Delete(ctx context.Context, collectionType int, query 
 	return result, nil
 }
 
+// CountDocuments returns the number of documents in the collection that matches a query
+func (m *MongoOperations) CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error) {
+	var result int64 = 0
+	collection, err := m.GetCollection(collectionType)
+	if err != nil {
+		return result, err
+	}
+	result, err = collection.CountDocuments(ctx, query, opts...)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+// GetCollection fetches the correct collection based on the collection type
 func (m *MongoOperations) GetCollection(collectionType int) (*mongo.Collection, error) {
 	return GetCollectionClient.getCollection(collectionType)
 }
