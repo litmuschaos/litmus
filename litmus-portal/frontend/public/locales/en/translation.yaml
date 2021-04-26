@@ -836,6 +836,7 @@ createWorkflow:
         contentType: Content Type
         criteria: Criteria
         responseCode: Response Code
+        responseTimeout: Response Timeout
         command: Command
         source: Source
         comparator: Comparator

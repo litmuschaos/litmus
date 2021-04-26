@@ -175,7 +175,10 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           </div>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="responseTimeout">
-              Response Timeout
+              {t(
+                'createWorkflow.tuneWorkflow.addProbe.inputLabels.responseTimeout'
+              )}
+              (ms)
             </InputLabel>
             <InputField
               variant="primary"
