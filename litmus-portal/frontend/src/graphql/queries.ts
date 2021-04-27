@@ -137,6 +137,7 @@ export const GET_CLUSTER = gql`
       no_of_workflows
       token
       last_workflow_timestamp
+      agent_namespace
     }
   }
 `;

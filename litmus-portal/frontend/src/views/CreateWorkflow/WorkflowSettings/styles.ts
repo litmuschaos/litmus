@@ -112,6 +112,13 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.25rem',
     marginBottom: theme.spacing(5),
   },
+  nsInput: {
+    marginLeft: theme.spacing(2.5),
+  },
+  mainDiv: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 }));
 
 export default useStyles;

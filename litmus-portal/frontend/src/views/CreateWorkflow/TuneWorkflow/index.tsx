@@ -99,6 +99,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const { manifest, isCustomWorkflow } = useSelector(
     (state: RootState) => state.workflowManifest
   );
+  const { namespace } = useSelector((state: RootState) => state.workflowData);
 
   const [YAMLModal, setYAMLModal] = useState<boolean>(false);
 
@@ -136,8 +137,16 @@ const TuneWorkflow = forwardRef((_, ref) => {
     onCompleted: (data) => {
       const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
       const wfmanifest = updateEngineName(YAML.parse(parsedYAML));
+      const updatedManifest = YAML.parse(wfmanifest);
+      updatedManifest.spec.arguments.parameters.forEach(
+        (parameter: any, index: number) => {
+          if (parameter.name === 'adminModeNamespace') {
+            updatedManifest.spec.arguments.parameters[index].value = namespace;
+          }
+        }
+      );
       workflowAction.setWorkflowManifest({
-        manifest: wfmanifest,
+        manifest: YAML.stringify(updatedManifest),
       });
     },
   });
@@ -163,14 +172,14 @@ const TuneWorkflow = forwardRef((_, ref) => {
     kind: 'Workflow',
     metadata: {
       name: `${workflow.name}-${Math.round(new Date().getTime() / 1000)}`,
-      namespace: `litmus`,
+      namespace,
     },
     spec: {
       arguments: {
         parameters: [
           {
             name: 'adminModeNamespace',
-            value: `litmus`,
+            value: namespace,
           },
         ],
       },
@@ -222,8 +231,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
       .then((data) => {
         data.text().then((yamlText) => {
           const wfmanifest = updateEngineName(YAML.parse(yamlText));
+          const updatedManifest = YAML.parse(wfmanifest);
+          updatedManifest.spec.arguments.parameters.forEach(
+            (parameter: any, index: number) => {
+              if (parameter.name === 'adminModeNamespace') {
+                updatedManifest.spec.arguments.parameters[
+                  index
+                ].value = namespace;
+              }
+            }
+          );
           workflowAction.setWorkflowManifest({
-            manifest: wfmanifest,
+            manifest: YAML.stringify(updatedManifest),
           });
         });
       })

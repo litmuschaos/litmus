@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client';
-import { Divider, IconButton, Typography } from '@material-ui/core';
+import { Divider, IconButton, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, EditableText, Modal } from 'litmus-ui';
@@ -13,6 +13,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import InfoIcon from '@material-ui/icons/Info';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../../components/YamlEditor/Validations';
@@ -54,6 +55,7 @@ const VerifyCommit = forwardRef(
       description: '',
       crd: '',
     });
+    const [subject, setSubject] = useState<string>('');
     const [weights, setWeights] = useState<experimentMap[]>([
       {
         experimentName: '',
@@ -80,33 +82,34 @@ const VerifyCommit = forwardRef(
       (state: RootState) => state.workflowManifest.manifest
     );
 
-    const saveWorkflowGenerateName = (manifest: string) => {
-      const parsedManifest = YAML.parse(manifest);
-      delete parsedManifest.metadata.generateName;
-      parsedManifest.metadata.name = `${workflow.name}-${Math.round(
-        new Date().getTime() / 1000
-      )}`;
-      if (parsedManifest.metadata.name.split('-').length > 1) {
-        workflowAction.setWorkflowManifest({
-          manifest: YAML.stringify(parsedManifest),
-        });
-      }
-    };
-
     useEffect(() => {
-      saveWorkflowGenerateName(manifest);
-    }, [workflow.name]);
-
-    useEffect(() => {
-      localforage.getItem('workflow').then(
-        (workflow) =>
-          workflow !== null &&
+      localforage.getItem('workflow').then((workflow) => {
+        if (workflow !== null) {
           setWorkflow({
             name: (workflow as WorkflowDetailsProps).name,
             description: (workflow as WorkflowDetailsProps).description,
             crd: (workflow as WorkflowDetailsProps).CRDLink,
-          })
-      );
+          });
+          setSubject(
+            `${(workflow as WorkflowDetailsProps).name}/${
+              workflowData.namespace
+            }`
+          );
+          const parsedManifest = YAML.parse(manifest);
+          delete parsedManifest.metadata.generateName;
+          parsedManifest.metadata.name = `${
+            (workflow as WorkflowDetailsProps).name
+          }-${Math.round(new Date().getTime() / 1000)}`;
+          parsedManifest.metadata['labels'] = {
+            subject: `${(workflow as WorkflowDetailsProps).name}/${
+              workflowData.namespace
+            }`,
+          };
+          workflowAction.setWorkflowManifest({
+            manifest: YAML.stringify(parsedManifest),
+          });
+        }
+      });
       localforage
         .getItem('weights')
         .then(
@@ -131,9 +134,16 @@ const VerifyCommit = forwardRef(
     };
 
     const handleNameChange = ({ changedName }: { changedName: string }) => {
-      const parsedYaml = YAML.parse(manifest);
-      parsedYaml.metadata.name = changedName;
-      const nameMappedYaml = YAML.stringify(parsedYaml);
+      setWorkflow({
+        ...workflow,
+        name: changedName,
+      });
+      const parsedManifest = YAML.parse(manifest);
+      delete parsedManifest.metadata.generateName;
+      parsedManifest.metadata.name = changedName;
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(parsedManifest),
+      });
       localforage.getItem('selectedScheduleOption').then((option) => {
         if (
           option !== null &&
@@ -144,7 +154,7 @@ const VerifyCommit = forwardRef(
               name: changedName,
               description: (w as WorkflowDetailsProps).description,
               icon: (w as WorkflowDetailsProps).icon,
-              CRDLink: nameMappedYaml,
+              CRDLink: (w as WorkflowDetailsProps).CRDLink,
             };
             localforage.setItem('workflow', data);
           });
@@ -157,9 +167,6 @@ const VerifyCommit = forwardRef(
               CRDLink: '',
             };
             localforage.setItem('workflow', data);
-          });
-          workflowAction.setWorkflowManifest({
-            manifest: nameMappedYaml,
           });
         }
       });
@@ -174,6 +181,23 @@ const VerifyCommit = forwardRef(
           CRDLink: (w as WorkflowDetailsProps).CRDLink,
         };
         localforage.setItem('workflow', data);
+      });
+      setWorkflow({
+        ...workflow,
+        description: changedDesc,
+      });
+    };
+
+    const handleSubjectChange = (
+      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      setSubject(event.target.value);
+      const parsedManifest = YAML.parse(manifest);
+      parsedManifest.metadata['labels'] = {
+        subject: event.target.value,
+      };
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(parsedManifest),
       });
     };
 
@@ -350,6 +374,37 @@ const VerifyCommit = forwardRef(
                   />
                 </div>
               </div>
+
+              <div className={classes.summaryDiv}>
+                <div className={classes.innerSumDiv}>
+                  <div style={{ display: 'flex' }}>
+                    <Typography className={classes.subject}>
+                      {t('createWorkflow.verifyCommit.summary.subject')}:
+                    </Typography>
+                    <Tooltip
+                      title={
+                        <Typography className={classes.subjectDesc}>
+                          {t('createWorkflow.verifyCommit.summary.subjectDesc')}
+                        </Typography>
+                      }
+                    >
+                      <IconButton aria-label="info">
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className={classes.col2}>
+                  <EditableText
+                    value={subject}
+                    id="subject"
+                    fullWidth
+                    multiline
+                    onChange={handleSubjectChange}
+                  />
+                </div>
+              </div>
+
               <div className={classes.summaryDiv}>
                 <div className={classes.innerSumDiv}>
                   <Typography className={classes.col1}>
