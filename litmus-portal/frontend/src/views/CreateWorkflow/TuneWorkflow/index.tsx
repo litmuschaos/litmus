@@ -460,7 +460,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   }, [engineDataLoading, experimentDataLoading]);
 
   function onNext() {
-    if (isCustomWorkflow && childRef.current) {
+    if (childRef.current) {
       if ((childRef.current.onNext() as unknown) === false) {
         alert.changeAlertState(true); // Custom Workflow has no experiments
         return false;
