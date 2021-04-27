@@ -67,7 +67,7 @@ a Kubernetes cluster (the instructions and assistance for last requirement will 
 |Budget Item|Amount(in USD)|Running Total| Notes |
 ------------|------|-------------|-------|
 |Tutorials Creation for Litmus 2.0| 6000.00 | 6000.00 |  |
-|Volunteer Stipends | 500 | 8000.00 | 4 volunteer stipends x 500 each |
+|Volunteer Stipends | 500 | 2000.00 | 4 volunteer stipends x 500 each |
 |**Total** | | 8000.00 | | 
 
 ### Mentors Team 
