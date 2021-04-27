@@ -55,6 +55,7 @@ const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
         updatedSteps.push(value as ManifestSteps[]);
       }
     });
+
     const updatedManifest = YAML.parse(manifest);
     delete updatedManifest.spec.templates[0].steps;
     updatedManifest.spec.templates[0].steps = updatedSteps;

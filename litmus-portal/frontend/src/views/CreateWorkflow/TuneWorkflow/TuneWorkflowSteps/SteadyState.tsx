@@ -101,11 +101,15 @@ const SteadyState: React.FC<SteadyStateProps> = ({
     handleMainYAMLChange();
   };
   // Function to handle add probes operation
-  const handleAddProbe = () => {
-    setProbesData(probesData);
+  const handleAddProbe = (probes: any) => {
+    setProbesData(probes);
+    setAddProbe(false);
+  };
+
+  const handleStepperClose = () => {
     chaosEngine.spec.experiments[0].spec.probe = probesData;
     handleMainYAMLChange();
-    setAddProbe(false);
+    return closeStepper();
   };
 
   return (
@@ -239,8 +243,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({
       </ButtonOutlined>
       <AddProbe
         probesValue={probesData}
-        setProbesValue={setProbesData}
-        addProbe={handleAddProbe}
+        addProbe={(probes: any) => handleAddProbe(probes)}
         handleClose={handleClose}
         open={addProbe}
       />
@@ -254,7 +257,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({
         <Button
           variant="contained"
           color="primary"
-          onClick={() => closeStepper()}
+          onClick={() => handleStepperClose()}
           className={classes.button}
         >
           Finish

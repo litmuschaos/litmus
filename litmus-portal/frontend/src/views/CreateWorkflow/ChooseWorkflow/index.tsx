@@ -40,7 +40,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const workflowAction = useActions(WorkflowActions);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.value);
-    if (event.target.value === 'C') {
+    if (event.target.value === 'C' || event.target.value === 'D') {
       workflowAction.setWorkflowManifest({
         isCustomWorkflow: true,
       });
@@ -100,15 +100,16 @@ const ChooseWorkflow = forwardRef((_, ref) => {
         <div className={classes.m5} />
 
         <RadioGroup
-          aria-label="gender"
-          name="gender1"
+          data-testid="workflowRadioButtons"
           value={selected}
           onChange={handleChange}
         >
           <Accordion expanded={selected === 'A'} className={classes.accordion}>
             <AccordionSummary>
               <RadioButton value="A" onChange={(e) => handleChange(e)}>
-                {t('createWorkflow.chooseWorkflow.optionA')}
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionA')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <ChoosePreDefinedExperiments />
@@ -123,7 +124,9 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="B" onChange={(e) => handleChange(e)}>
-                {t('createWorkflow.chooseWorkflow.optionB')}
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionB')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <ChooseWorkflowFromExisting />
@@ -138,7 +141,9 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="C" onChange={(e) => handleChange(e)}>
-                {t('createWorkflow.chooseWorkflow.optionC')}
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionC')}
+                </span>
                 <span className={classes.bold}>
                   {t('createWorkflow.chooseWorkflow.myHubs')}
                 </span>
@@ -156,7 +161,9 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="D" onChange={(e) => handleChange(e)}>
-                {t('createWorkflow.chooseWorkflow.optionD')}
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionD')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <UploadYAML />
