@@ -7,32 +7,15 @@ export const extractSteps = (isCustom: boolean, crd: string) => {
   if (isCustom) {
     // If Custom YAML is provided then save the experiments Serially
     const parsedYaml = YAML.parse(crd);
-    steps = [];
 
     const customYAMLExtraction = (template: any) => {
-      if (template.inputs !== undefined) {
-        template.inputs.artifacts.forEach((artifact: any) => {
-          const chaosEngine = YAML.parse(artifact.raw.data);
-          if (chaosEngine.kind === 'ChaosEngine') {
-            steps.push([
-              {
-                name: chaosEngine.metadata.name,
-                template: chaosEngine.metadata.template,
-              },
-            ]);
-          }
-        });
-      }
+      steps = template.steps && (template.steps as Steps[][]);
     };
 
     if (parsedYaml.kind === 'Workflow') {
-      parsedYaml.spec.templates.forEach((template: any) => {
-        customYAMLExtraction(template);
-      });
+      customYAMLExtraction(parsedYaml.spec.templates[0]);
     } else if (parsedYaml.kind === 'CronWorkflow') {
-      parsedYaml.spec.workflowSpec.templates.forEach((template: any) => {
-        customYAMLExtraction(template);
-      });
+      customYAMLExtraction(parsedYaml.spec.workflowSpec.templates[0]);
     }
   } else {
     // Save the Pre-defined experiments Serial/Parallel
