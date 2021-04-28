@@ -119,6 +119,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  descDiv: {
+    margin: theme.spacing(6, 0, 0, 0),
+  },
 }));
 
 export default useStyles;

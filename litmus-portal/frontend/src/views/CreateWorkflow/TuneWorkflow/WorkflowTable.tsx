@@ -185,7 +185,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
     if (experiments.length === 0) {
       return false; // Should show alert
     }
-    if (!isCustom && experiments.length !== 0) {
+    if (!isCustom) {
       return true;
     }
     toggleRevertChaos(manifest);

@@ -377,7 +377,7 @@ const VerifyCommit = forwardRef(
 
               <div className={classes.summaryDiv}>
                 <div className={classes.innerSumDiv}>
-                  <div style={{ display: 'flex' }}>
+                  <div className={classes.subjectDiv}>
                     <Typography className={classes.subject}>
                       {t('createWorkflow.verifyCommit.summary.subject')}:
                     </Typography>

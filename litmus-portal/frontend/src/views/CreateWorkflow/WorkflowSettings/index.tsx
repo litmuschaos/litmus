@@ -225,7 +225,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
                 value={workflowData.namespace}
               />
             </div>
-            <div aria-details="spacer" style={{ margin: '3rem 0' }} />
+            <div aria-details="spacer" className={classes.descDiv} />
             <InputField
               id="filled-workflowdescription-input"
               label={t('createWorkflow.chooseWorkflow.label.desc')}

@@ -89,6 +89,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   subjectDesc: {
     fontSize: '0.75rem',
   },
+  subjectDiv: {
+    display: 'flex',
+  },
   schedule: {
     fontSize: '0.85rem',
     paddingLeft: theme.spacing(2),
