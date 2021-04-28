@@ -21,6 +21,7 @@ interface Cluster {
   cluster_name: string;
   is_active: boolean;
   cluster_id: string;
+  agent_namespace: string;
 }
 
 const ChooseWorkflowAgent = forwardRef((_, ref) => {
@@ -53,6 +54,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
               cluster_name: e.cluster_name,
               is_active: e.is_active,
               cluster_id: e.cluster_id,
+              agent_namespace: e.agent_namespace,
             });
             // Setting the initial workflow yaml to be of type Workflow
             workflow.setWorkflowDetails({
@@ -113,6 +115,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
             clusterid: cluster.cluster_id,
             project_id: selectedProjectID,
             clustername: cluster.cluster_name,
+            namespace: cluster.agent_namespace,
           });
         }
       });

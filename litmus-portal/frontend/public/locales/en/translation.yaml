@@ -718,6 +718,7 @@ createWorkflow:
     label:
       workflowName: Workflow name
       desc: Description
+      namespace: Namespace
     button:
       edit: Edit workflow name
       cancel: Cancel
@@ -875,6 +876,8 @@ createWorkflow:
       viewYaml: View YAML
     summary:
       header: Summary
+      subjectDesc: The subject is used as a chaos workflow label. It’s value will be used for analysing chaos results and metrics. This subject will be also used to filter out chaos events in monitoring dashboards.
+      subject: Subject
       workflowName: Workflow name
       desc: Description
       schedule: Schedule

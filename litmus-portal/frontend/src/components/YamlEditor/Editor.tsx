@@ -37,10 +37,7 @@ import 'ace-builds/src-min-noconflict/ext-whitespace';
 import 'brace/mode/yaml';
 import 'brace/theme/cobalt';
 import React, { useEffect, useState } from 'react';
-import YAML from 'yaml';
 import { useTranslation } from 'react-i18next';
-import useActions from '../../redux/actions';
-import * as WorkflowActions from '../../redux/actions/workflow';
 import useStyles from './styles';
 import { AceValidations, parseYamlValidations } from './Validations';
 
@@ -63,8 +60,6 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   const { palette } = useTheme();
 
   const { t } = useTranslation();
-
-  const workflow = useActions(WorkflowActions);
 
   const [isValid, setIsValid] = useState(true);
 
@@ -229,12 +224,6 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       });
     }
     setEditorState(stateObject as any);
-    const yamlData = YAML.parse(content);
-    if (readOnly !== true) {
-      workflow.setWorkflowDetails({
-        namespace: yamlData.metadata.namespace,
-      });
-    }
   }, []);
 
   useEffect(() => {

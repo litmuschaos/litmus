@@ -40,7 +40,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const workflowAction = useActions(WorkflowActions);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.value);
-    if (event.target.value === 'C' || event.target.value === 'D') {
+    if (event.target.value === 'C') {
       workflowAction.setWorkflowManifest({
         isCustomWorkflow: true,
       });
