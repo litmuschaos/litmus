@@ -235,7 +235,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           const updatedManifest = YAML.parse(wfmanifest);
           updatedManifest.spec.arguments.parameters.forEach(
             (parameter: any, index: number) => {
-              if (parameter.name === 'adminModeNamespace') {
+              if (parameter.name === constants.adminMode) {
                 updatedManifest.spec.arguments.parameters[
                   index
                 ].value = namespace;
