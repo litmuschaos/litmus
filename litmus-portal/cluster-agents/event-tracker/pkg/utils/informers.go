@@ -165,36 +165,25 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 			newManifest := dsNewObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
 
 			var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
-				if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-					if oldManifest != "" && newManifest != "" {
-						var oldDm v1.StatefulSet
-						err := json.Unmarshal([]byte(oldManifest), &oldDm)
-						if err != nil {
-							log.Print(err)
-							return
-						}
-
-						var newDm v1.StatefulSet
-						err = json.Unmarshal([]byte(newManifest), &newDm)
-						if err != nil {
-							log.Print(err)
-							return
-						}
-
-						if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion() && !reflect.DeepEqual(newDm, oldDm) {
-							log.Print("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
-							err = PolicyAuditor("DaemonSet", dsNewObj, worflowid)
-							if err != nil {
-								log.Print(err)
-								return
-							}
-						}
-
+			if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
+				if oldManifest != "" && newManifest != "" {
+					var oldDm v1.StatefulSet
+					err := json.Unmarshal([]byte(oldManifest), &oldDm)
+					if err != nil {
+						log.Print(err)
+						return
 					}
 
-					if oldManifest == "" && newManifest != "" {
+					var newDm v1.StatefulSet
+					err = json.Unmarshal([]byte(newManifest), &newDm)
+					if err != nil {
+						log.Print(err)
+						return
+					}
+
+					if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion() && !reflect.DeepEqual(newDm, oldDm) {
 						log.Print("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
-						err := PolicyAuditor("DaemonSet", dsNewObj, worflowid)
+						err = PolicyAuditor("DaemonSet", dsNewObj, worflowid)
 						if err != nil {
 							log.Print(err)
 							return
@@ -202,6 +191,17 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 					}
 
 				}
+
+				if oldManifest == "" && newManifest != "" {
+					log.Print("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
+					err := PolicyAuditor("DaemonSet", dsNewObj, worflowid)
+					if err != nil {
+						log.Print(err)
+						return
+					}
+				}
+
+			}
 		},
 	})
 
