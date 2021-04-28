@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   descDiv: {
-    margin: theme.spacing(6, 0, 0, 0),
+    marginTop: theme.spacing(6),
   },
 }));
 
