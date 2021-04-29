@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ApolloError, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
   FormControl,
   IconButton,
@@ -9,12 +9,11 @@ import {
   OutlinedInput,
   Select,
   Typography,
-  useTheme,
 } from '@material-ui/core';
 import AutorenewOutlinedIcon from '@material-ui/icons/AutorenewOutlined';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
-import { ButtonOutlined, EventMetric, GraphMetric } from 'litmus-ui';
+import { ButtonOutlined } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,18 +21,8 @@ import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import DateRangeSelector from '../../components/DateRangeSelector';
 import Scaffold from '../../containers/layouts/Scaffold';
-import {
-  LIST_DASHBOARD,
-  LIST_DATASOURCE,
-  PROM_QUERY,
-  WORKFLOW_LIST_DETAILS,
-} from '../../graphql';
-import {
-  ChaosDataUpdates,
-  ChaosEventDetails,
-  ChaosInformation,
-  PanelNameAndID,
-} from '../../models/dashboardsData';
+import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../graphql';
+import { PanelNameAndID } from '../../models/dashboardsData';
 import {
   DashboardList,
   ListDashboardResponse,
@@ -46,25 +35,11 @@ import {
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../models/graphql/dataSourceDetails';
-import {
-  PrometheusQueryInput,
-  PrometheusQueryVars,
-  PrometheusResponse,
-} from '../../models/graphql/prometheus';
-import {
-  WorkflowList,
-  WorkflowListDataVars,
-} from '../../models/graphql/workflowListData';
 import useActions from '../../redux/actions';
 import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
-import {
-  chaosEventDataParserForPrometheus,
-  getChaosQueryPromInputAndID,
-} from '../../utils/promUtils';
-import ChaosAccordion from '../../views/AnalyticsDashboard/MonitoringDashboardPage/ChaosAccordion';
 import DataSourceInactiveModal from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DataSourceInactiveModal';
 import InfoDropdown from '../../views/AnalyticsDashboard/MonitoringDashboardPage/InfoDropdown';
 import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/Panel/DashboardPanelGroup';
@@ -72,11 +47,9 @@ import TopNavButtons from '../../views/AnalyticsDashboard/MonitoringDashboardPag
 import {
   ACTIVE,
   DEFAULT_REFRESH_RATE,
-  DEFAULT_RELATIVE_TIME_RANGE,
   DEFAULT_TOLERANCE_LIMIT,
   MAX_REFRESH_RATE,
   MINIMUM_TOLERANCE_LIMIT,
-  PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
 } from './constants';
 import refreshData from './refreshData';
 import useStyles, { useOutlinedInputStyles } from './styles';
@@ -94,38 +67,15 @@ interface SelectedDashboardInformation {
   panelNameAndIDList: PanelNameAndID[];
 }
 
-interface PrometheusQueryDataInterface {
-  promInput: PrometheusQueryInput;
-  chaosInput: string[];
-  numOfWorkflows: number;
-  firstLoad: Boolean;
-  chaosEvents: ChaosEventDetails[];
-  chaosEventsToBeShown: ChaosEventDetails[];
-}
-
-interface EventsToShowInterface {
-  eventsToShow: string[];
-  selectEvents: Boolean;
-}
-
 interface RefreshObjectType {
   label: string;
   value: number;
-}
-
-interface ChaosDataSet {
-  queryIDs: string[];
-  chaosData: Array<EventMetric>;
-  visibleChaos: Array<EventMetric>;
-  latestEventResult: string[];
 }
 
 const DashboardPage: React.FC = () => {
   const classes = useStyles();
   const outlinedInputClasses = useOutlinedInputStyles();
   const { t } = useTranslation();
-  const { palette } = useTheme();
-  const areaGraph: string[] = palette.graph.area;
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // get ProjectID
@@ -151,44 +101,14 @@ const DashboardPage: React.FC = () => {
     selectionOverride: false,
     panelNameAndIDList: [],
   });
-  const [
-    prometheusQueryData,
-    setPrometheusQueryData,
-  ] = React.useState<PrometheusQueryDataInterface>({
-    promInput: {
-      url: '',
-      start: '',
-      end: '',
-      queries: [],
-    },
-    chaosInput: [],
-    chaosEvents: [],
-    chaosEventsToBeShown: [],
-    numOfWorkflows: 0,
-    firstLoad: true,
-  });
-  const [eventsToShow, setEventsToShow] = React.useState<EventsToShowInterface>(
-    {
-      eventsToShow: [],
-      selectEvents: false,
-    }
-  );
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [refreshRate, setRefreshRate] = React.useState<number>(
-    selectedDashboard.refreshRate && !prometheusQueryData.firstLoad
-      ? selectedDashboard.refreshRate
-      : 0
+    selectedDashboard.refreshRate ? selectedDashboard.refreshRate : 0
   );
   const [dataSourceStatus, setDataSourceStatus] = React.useState<string>(
     'ACTIVE'
   );
   const open = Boolean(anchorEl);
-  const [chaosDataSet, setChaosDataSet] = React.useState<ChaosDataSet>({
-    queryIDs: [],
-    chaosData: [],
-    visibleChaos: [],
-    latestEventResult: [],
-  });
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -239,32 +159,9 @@ const DashboardPage: React.FC = () => {
       selectedDashboard.refreshRate !== MAX_REFRESH_RATE
     ) {
       clearTimeOuts().then(() => {
-        setPrometheusQueryData({
-          ...prometheusQueryData,
-          firstLoad: true,
-        });
         setRefreshRate(MAX_REFRESH_RATE);
       });
-    } else if (!(diff >= 0 && diff <= maxLim)) {
-      clearTimeOuts().then(() => {
-        setPrometheusQueryData({
-          ...prometheusQueryData,
-          firstLoad: true,
-        });
-      });
-    } else if (
-      diff >= 0 &&
-      diff <= maxLim &&
-      selectedDashboard.refreshRate === MAX_REFRESH_RATE
-    ) {
-      clearTimeOuts().then(() => {
-        setPrometheusQueryData({
-          ...prometheusQueryData,
-          firstLoad: true,
-        });
-      });
     }
-    // If none of the above conditions match, then user has selected a relative time range.
   };
   const [openRefresh, setOpenRefresh] = React.useState(false);
   const handleCloseRefresh = () => {
@@ -292,105 +189,6 @@ const DashboardPage: React.FC = () => {
       fetchPolicy: 'no-cache',
     }
   );
-
-  // Apollo query to get the scheduled workflow data
-  const { data: analyticsData, refetch } = useQuery<
-    WorkflowList,
-    WorkflowListDataVars
-  >(WORKFLOW_LIST_DETAILS, {
-    variables: { projectID, workflowIDs: [] },
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'no-cache',
-  });
-
-  // Apollo query to get the prometheus data
-  useQuery<PrometheusResponse, PrometheusQueryVars>(PROM_QUERY, {
-    variables: {
-      prometheusInput: prometheusQueryData?.promInput ?? {
-        url: '',
-        start: '',
-        end: '',
-        queries: [],
-      },
-    },
-    fetchPolicy: 'no-cache',
-    skip: prometheusQueryData?.promInput.url === '',
-    onCompleted: (eventData) => {
-      let chaosDataUpdates: ChaosDataUpdates = {
-        queryIDs: [],
-        chaosData: [],
-        reGenerate: false,
-        latestEventResult: [],
-      };
-      if (eventData && analyticsData) {
-        const selectedEndTime: number =
-          new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-          1000;
-        const selectedStartTime: number =
-          new Date(
-            moment(selectedDashboard.range.startDate).format()
-          ).getTime() / 1000;
-        chaosDataUpdates = chaosEventDataParserForPrometheus(
-          prometheusQueryData?.numOfWorkflows,
-          analyticsData,
-          eventData,
-          prometheusQueryData?.chaosEvents,
-          selectedStartTime,
-          selectedEndTime
-        );
-        if (
-          chaosDataUpdates.reGenerate &&
-          !prometheusQueryData.firstLoad &&
-          !selectedDashboard.forceUpdate
-        ) {
-          clearTimeOuts().then(() => {
-            dashboard.selectDashboard({
-              forceUpdate: true,
-            });
-          });
-        }
-        if (!chaosDataUpdates.reGenerate) {
-          if (selectedDashboard.forceUpdate) {
-            dashboard.selectDashboard({
-              forceUpdate: false,
-            });
-          }
-          if (!selectedDashboardInformation.selectionOverride) {
-            setChaosDataSet({
-              ...chaosDataSet,
-              queryIDs: chaosDataUpdates.queryIDs,
-              chaosData: chaosDataUpdates.chaosData,
-              visibleChaos: chaosDataUpdates.chaosData,
-              latestEventResult: chaosDataUpdates.latestEventResult,
-            });
-          } else {
-            setChaosDataSet({
-              ...chaosDataSet,
-              queryIDs: chaosDataUpdates.queryIDs,
-              chaosData: chaosDataUpdates.chaosData,
-              latestEventResult: chaosDataUpdates.latestEventResult,
-            });
-          }
-        }
-        chaosDataUpdates = {
-          queryIDs: [],
-          chaosData: [],
-          reGenerate: false,
-          latestEventResult: [],
-        };
-      }
-    },
-    onError: (error: ApolloError) => {
-      if (error.message === PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED) {
-        if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
-          dashboard.selectDashboard({
-            refreshRate: MAX_REFRESH_RATE,
-          });
-        }
-        setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
-      }
-    },
-  });
 
   useEffect(() => {
     if (dashboards && dashboards.ListDashboard.length) {
@@ -478,216 +276,6 @@ const DashboardPage: React.FC = () => {
       }
     }
   }, [selectedDashboardInformation.dashboardKey, dataSources]);
-
-  const generateChaosQueries = () => {
-    let chaosInformation: ChaosInformation = {
-      promQueries: prometheusQueryData.promInput.queries,
-      chaosQueryIDs: prometheusQueryData.chaosInput,
-      chaosEventList: prometheusQueryData.chaosEvents,
-      numberOfWorkflowsUnderConsideration: prometheusQueryData.numOfWorkflows,
-    };
-    if (prometheusQueryData.firstLoad && analyticsData?.ListWorkflow) {
-      const selectedEndTime: number =
-        new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-        1000;
-      const selectedStartTime: number =
-        new Date(moment(selectedDashboard.range.startDate).format()).getTime() /
-        1000;
-      const timeRangeDiff: number = selectedEndTime - selectedStartTime;
-      chaosInformation = getChaosQueryPromInputAndID(
-        analyticsData,
-        selectedDashboardInformation.agentID,
-        areaGraph,
-        timeRangeDiff,
-        selectedStartTime,
-        selectedEndTime,
-        prometheusQueryData.chaosEvents
-      );
-    }
-    setPrometheusQueryData({
-      ...prometheusQueryData,
-      promInput: {
-        url: selectedDataSource.selectedDataSourceURL,
-        start: `${
-          selectedDashboard.range
-            ? new Date(
-                moment(selectedDashboard.range.startDate).format()
-              ).getTime() / 1000
-            : Math.round(new Date().getTime() / 1000) -
-              DEFAULT_RELATIVE_TIME_RANGE
-        }`,
-        end: `${
-          selectedDashboard.range
-            ? new Date(
-                moment(selectedDashboard.range.endDate).format()
-              ).getTime() / 1000
-            : Math.round(new Date().getTime() / 1000)
-        }`,
-        queries: chaosInformation.promQueries,
-      },
-      chaosInput: chaosInformation.chaosQueryIDs,
-      chaosEvents: chaosInformation.chaosEventList,
-      chaosEventsToBeShown: chaosInformation.chaosEventList.filter(
-        (event) => event.showOnTable || chaosDataSet.queryIDs.includes(event.id)
-      ),
-      numOfWorkflows: chaosInformation.numberOfWorkflowsUnderConsideration,
-      firstLoad: !analyticsData?.ListWorkflow,
-    });
-    const existingEventIDs: string[] = prometheusQueryData.chaosEvents.map(
-      ({ id }) => id
-    );
-    const newEventIDs: string[] = chaosInformation.chaosEventList
-      .map(({ id }) => id)
-      .filter((id: string) => !existingEventIDs.includes(id));
-    if (newEventIDs.length) {
-      setEventsToShow({
-        eventsToShow: selectedDashboardInformation.selectionOverride
-          ? eventsToShow.eventsToShow
-          : eventsToShow.eventsToShow.concat(newEventIDs),
-        selectEvents: true,
-      });
-    }
-    chaosInformation = {
-      promQueries: [],
-      chaosQueryIDs: [],
-      chaosEventList: [],
-      numberOfWorkflowsUnderConsideration: 0,
-    };
-  };
-
-  const postEventSelectionRoutine = (selectedEvents: string[]) => {
-    setEventsToShow({
-      selectEvents: true,
-      eventsToShow: selectedEvents,
-    });
-    if (!selectedDashboardInformation.selectionOverride) {
-      setSelectedDashboardInformation({
-        ...selectedDashboardInformation,
-        selectionOverride: true,
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (prometheusQueryData.firstLoad) {
-      refetch();
-      generateChaosQueries();
-      if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
-        dashboard.selectDashboard({
-          range: {
-            startDate: moment
-              .unix(
-                Math.round(new Date().getTime() / 1000) -
-                  DEFAULT_RELATIVE_TIME_RANGE
-              )
-              .format(),
-            endDate: moment
-              .unix(Math.round(new Date().getTime() / 1000))
-              .format(),
-          },
-        });
-      }
-    }
-    if (!prometheusQueryData.firstLoad) {
-      // check and update range for the default relative time selection
-      // for user selections / check with entire range of relative time differences
-      // for absolute time no updates to the range therefore no data refresh / feature disabled
-      const endDate: number =
-        new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-        1000;
-      const now: number = Math.round(new Date().getTime() / 1000);
-      const diff: number = Math.abs(now - endDate);
-      const maxLim: number =
-        (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 !== 0
-          ? (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 +
-            MINIMUM_TOLERANCE_LIMIT
-          : DEFAULT_TOLERANCE_LIMIT;
-      if (
-        diff >= 0 &&
-        diff <= maxLim &&
-        selectedDashboard.refreshRate !== MAX_REFRESH_RATE
-      ) {
-        const startDate: number =
-          new Date(
-            moment(selectedDashboard.range.startDate).format()
-          ).getTime() / 1000;
-        const interval: number = endDate - startDate;
-        dashboard.selectDashboard({
-          range: {
-            startDate: moment
-              .unix(Math.round(new Date().getTime() / 1000) - interval)
-              .format(),
-            endDate: moment
-              .unix(Math.round(new Date().getTime() / 1000))
-              .format(),
-          },
-        });
-      }
-      setTimeout(
-        () => {
-          refetch();
-          generateChaosQueries();
-        },
-        selectedDashboard.refreshRate !== 0
-          ? selectedDashboard.refreshRate
-          : DEFAULT_REFRESH_RATE
-      );
-    }
-  }, [prometheusQueryData]);
-
-  useEffect(() => {
-    if (
-      chaosDataSet.chaosData.length <
-      prometheusQueryData?.chaosEventsToBeShown.length
-    ) {
-      clearTimeOuts().then(() => {
-        dashboard.selectDashboard({
-          forceUpdate: true,
-        });
-      });
-    } else {
-      let matchingEventsFound: ChaosEventDetails[] = [];
-      chaosDataSet.queryIDs.forEach((chaosQueryID: string, index: number) => {
-        matchingEventsFound = prometheusQueryData?.chaosEventsToBeShown.filter(
-          (event: ChaosEventDetails) => event.id === chaosQueryID
-        );
-        if (matchingEventsFound?.length === 0) {
-          clearTimeOuts().then(() => {
-            dashboard.selectDashboard({
-              forceUpdate: true,
-            });
-          });
-        } else if (
-          matchingEventsFound[0].result !==
-          chaosDataSet.latestEventResult[index]
-        ) {
-          clearTimeOuts().then(() => {
-            dashboard.selectDashboard({
-              forceUpdate: true,
-            });
-          });
-        }
-      });
-    }
-  }, [chaosDataSet]);
-
-  useEffect(() => {
-    if (selectedDashboard.forceUpdate) {
-      refetch();
-      setPrometheusQueryData({ ...prometheusQueryData, firstLoad: true });
-    }
-  }, [selectedDashboard.forceUpdate]);
-
-  useEffect(() => {
-    if (eventsToShow.selectEvents) {
-      const filteredChaosData: Array<GraphMetric> = chaosDataSet.chaosData.filter(
-        (data, index) =>
-          eventsToShow.eventsToShow.includes(chaosDataSet.queryIDs[index])
-      );
-      setEventsToShow({ ...eventsToShow, selectEvents: false });
-      setChaosDataSet({ ...chaosDataSet, visibleChaos: filteredChaosData });
-    }
-  }, [eventsToShow.selectEvents]);
 
   const getRefreshRateStatus = () => {
     if (selectedDashboard.range) {
@@ -923,10 +511,6 @@ const DashboardPage: React.FC = () => {
                       dashboard.selectDashboard({
                         forceUpdate: true,
                       });
-                      setPrometheusQueryData({
-                        ...prometheusQueryData,
-                        firstLoad: true,
-                      });
                     }
                   }}
                   input={<OutlinedInput classes={outlinedInputClasses} />}
@@ -977,13 +561,13 @@ const DashboardPage: React.FC = () => {
             className={classes.analyticsDiv}
             key={selectedDashboardInformation.dashboardKey}
           >
-            <div className={classes.chaosTableSection}>
+            {/* <div className={classes.chaosTableSection}>
               <ChaosAccordion
                 dashboardKey={selectedDashboardInformation.dashboardKey}
                 chaosEventsToBeShown={prometheusQueryData?.chaosEventsToBeShown}
                 postEventSelectionRoutine={postEventSelectionRoutine}
               />
-            </div>
+            </div> */}
             {selectedDashboardInformation.metaData[0] &&
               selectedDashboardInformation.metaData[0].panel_groups.map(
                 (panelGroup: PanelGroupResponse) => (
@@ -996,7 +580,6 @@ const DashboardPage: React.FC = () => {
                       panel_group_id={panelGroup.panel_group_id}
                       panel_group_name={panelGroup.panel_group_name}
                       panels={panelGroup.panels}
-                      chaos_data={chaosDataSet.visibleChaos}
                       selectedPanels={selectedPanels}
                     />
                   </div>

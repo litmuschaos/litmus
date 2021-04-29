@@ -1,7 +1,5 @@
-import { EventMetric } from 'litmus-ui';
+import { EventMetric, GraphMetric } from 'litmus-ui';
 import { PanelGroupResponse, PanelResponse } from './graphql/dashboardsDetails';
-import { promQueryInput } from './graphql/prometheus';
-import { ChaosData } from './graphql/workflowListData';
 
 export interface PanelGroupMap {
   groupName: string;
@@ -45,14 +43,19 @@ export interface PanelNameAndID {
   id: string;
 }
 
-export interface ChaosResultNamesAndNamespacesMap {
-  resultName: string;
-  resultNamespace: string;
-  workflowName: string;
-  experimentName: string;
-  selectedWorkflowIds: string[];
+export interface GraphPanelProps extends PanelResponse {
+  className?: string;
+  controllerPanelID?: string;
 }
 
+export interface GraphPanelGroupProps extends PanelGroupResponse {
+  selectedPanels?: string[];
+}
+
+export interface ParsedPrometheusData {
+  seriesData: Array<GraphMetric>;
+  chaosData: Array<EventMetric>;
+}
 export interface RunWiseChaosMetrics {
   runIndex: number;
   runID: string;
@@ -72,19 +75,6 @@ export interface WorkflowAndExperimentMetaDataMap {
   targetNamespace: string;
   runWiseChaosMetrics: RunWiseChaosMetrics[];
 }
-
-export interface ExperimentNameAndChaosDataMap {
-  experimentName: string;
-  chaosData: ChaosData;
-}
-
-export interface WorkflowRunWiseDetails {
-  idsOfWorkflowRuns: string[];
-  resilienceScoreForWorkflowRuns: number[];
-  statusOfWorkflowRuns: string[];
-  experimentNameWiseChaosDataOfWorkflowRuns: ExperimentNameAndChaosDataMap[][];
-}
-
 export interface ChaosEventDetails {
   id: string;
   legend: string;
@@ -94,28 +84,4 @@ export interface ChaosEventDetails {
   result: string;
   chaosMetrics: WorkflowAndExperimentMetaDataMap;
   showOnTable: Boolean;
-}
-
-export interface ChaosInformation {
-  promQueries: promQueryInput[];
-  chaosQueryIDs: string[];
-  chaosEventList: ChaosEventDetails[];
-  numberOfWorkflowsUnderConsideration: number;
-}
-
-export interface ChaosDataUpdates {
-  queryIDs: string[];
-  chaosData: Array<EventMetric>;
-  reGenerate: Boolean;
-  latestEventResult: string[];
-}
-
-export interface GraphPanelProps extends PanelResponse {
-  className?: string;
-  chaos_data?: Array<EventMetric>;
-}
-
-export interface GraphPanelGroupProps extends PanelGroupResponse {
-  chaos_data?: Array<EventMetric>;
-  selectedPanels?: string[];
 }
