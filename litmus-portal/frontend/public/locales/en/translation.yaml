@@ -810,6 +810,18 @@ createWorkflow:
       labelError: Label not available in the resource or namespace
       deleteExp: Delete the experiment
       editExp: Edit the experiment
+    steadyState:
+      name: Probe Name
+      type: Type
+      mode: Mode
+      details: Probe Details
+      properties: Properties
+      showDetails: Show Details
+      showProp: Show Properties
+      addProbe: Please add probes to see the data
+      addNewProbe: '+ Add a new Probe'
+      back: Back
+      finish: Finish
     addProbe:
       heading: Add
       headingStrong: Probe

@@ -50,13 +50,11 @@ interface TargetApplicationData {
 }
 
 interface TargetApplicationProp {
-  isCustom: boolean | undefined;
   engineIndex: number;
   gotoStep: (page: number) => void;
 }
 
 const TargetApplication: React.FC<TargetApplicationProp> = ({
-  isCustom,
   engineIndex,
   gotoStep,
 }) => {
@@ -188,7 +186,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(engineManifest),
     });
-    return isCustom ? gotoStep(2) : gotoStep(1);
+    return gotoStep(2);
   };
 
   /**
@@ -578,11 +576,10 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
       <br />
 
       <div>
-        {isCustom && (
-          <Button onClick={() => gotoStep(0)} className={classes.button}>
-            {t('workflowStepper.back')}
-          </Button>
-        )}
+        <Button onClick={() => gotoStep(0)} className={classes.button}>
+          {t('workflowStepper.back')}
+        </Button>
+
         <Button
           variant="contained"
           color="primary"
