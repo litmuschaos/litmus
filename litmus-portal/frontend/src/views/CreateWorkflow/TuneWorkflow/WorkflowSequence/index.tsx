@@ -1,20 +1,20 @@
-import { Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   DragDropContext,
   Draggable,
   DraggableProvided,
   Droppable,
 } from 'react-beautiful-dnd';
-import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import useActions from '../../../../redux/actions';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
+import { useTranslation } from 'react-i18next';
 import { RootState } from '../../../../redux/reducers';
-import trimString from '../../../../utils/trim';
 import { reorderSteps } from './reorder';
+import trimString from '../../../../utils/trim';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
+import useActions from '../../../../redux/actions';
 import useStyles from './styles';
 
 interface ManifestSteps {
@@ -79,7 +79,6 @@ const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
   }, []);
 
   getSteps(steps);
-
   return (
     <div>
       <DragDropContext
@@ -91,19 +90,7 @@ const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
             return;
           }
           const newSteps = reorderSteps(steps, source, destination);
-
-          const updatedSteps: Array<ManifestSteps[]> = [];
-          Object.entries(newSteps).forEach(([, value]) => {
-            if ((value as ManifestSteps[]).length !== 0) {
-              updatedSteps.push(value as ManifestSteps[]);
-            }
-          });
-
-          const modifiedSteps: StepType = {};
-          for (let i = 0; i < updatedSteps.length; i++) {
-            modifiedSteps[`stepname${i}`] = updatedSteps[i];
-          }
-          setSteps(modifiedSteps);
+          setSteps(newSteps);
         }}
       >
         <div className={classes.dragdropDiv}>

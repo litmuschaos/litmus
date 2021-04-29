@@ -448,9 +448,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
    */
   useEffect(() => {
     if (isCustomWorkflow) {
-      setGeneratedYAML(updateCRD(generatedYAML, experiment));
+      const savedManifest =
+        manifest !== '' ? YAML.parse(manifest) : generatedYAML;
+      const updatedManifest = updateCRD(savedManifest, experiment);
+      setGeneratedYAML(updatedManifest);
       workflowAction.setWorkflowManifest({
-        manifest: YAML.stringify(generatedYAML),
+        manifest: YAML.stringify(updatedManifest),
       });
     }
   }, [experiment]);
