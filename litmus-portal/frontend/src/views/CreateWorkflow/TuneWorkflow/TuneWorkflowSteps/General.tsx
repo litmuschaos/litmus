@@ -62,22 +62,24 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
   return (
     <div>
       <Typography>
-        {isCustom
-          ? t('createWorkflow.tuneWorkflow.verticalStepper.myHubInfo')
-          : 'Context Details'}
+        {t('createWorkflow.tuneWorkflow.verticalStepper.myHubInfo')}
       </Typography>
       <br />
       <div className={classes.generalContainer}>
         {isCustom && (
           <>
-            <InputField
-              label="Hub"
-              value={hubName}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-            <br />
+            {hubName.length > 0 && (
+              <>
+                <InputField
+                  label="Hub"
+                  value={hubName}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+                <br />
+              </>
+            )}
             <InputField
               label="Experiment Name"
               value={experimentName}
