@@ -112,7 +112,11 @@ const WeightSlider: React.FC<CustomSliderProps> = ({
           {weight} points
         </Typography>
       </div>
-      <div className={classes.sliderDiv} data-cy="WeightSlider">
+      <div
+        className={classes.sliderDiv}
+        data-testid="prettoSlider"
+        data-cy="WeightSlider"
+      >
         <PrettoSlider
           defaultValue={weight}
           aria-labelledby="discrete-slider-small-steps"

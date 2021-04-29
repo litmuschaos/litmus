@@ -192,7 +192,6 @@ const WorkflowSettings = forwardRef((_, ref) => {
             <Avatar
               variant="square"
               className={classes.avatar}
-              data-testid="avatar"
               alt="User"
               src={icon}
             />

@@ -17,12 +17,8 @@ const ReliablityScore = forwardRef((_, ref) => {
 
   const [weights, setWeights] = useState<experimentMap[]>([
     {
-      experimentName: 'pod-delete',
-      weight: 10,
-    },
-    {
-      experimentName: 'pod-cpu-hog',
-      weight: 10,
+      experimentName: '',
+      weight: 0,
     },
   ]);
 
