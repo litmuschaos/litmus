@@ -46,7 +46,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   const theme = useTheme();
   const workflow = useActions(WorkflowActions);
   const [experiments, setExperiments] = useState<ChaosCRDTable[]>([]);
-  const [revertChaos, setRevertChaos] = useState<boolean>(false);
+  const [revertChaos, setRevertChaos] = useState<boolean>(true);
   const [displayStepper, setDisplayStepper] = useState<boolean>(false);
   const [engineIndex, setEngineIndex] = useState<number>(0);
   const manifest = useSelector(
@@ -71,7 +71,8 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
     const parsedYaml = YAML.parse(yamlText);
     const expData: ChaosCRDTable[] = [];
     addWeights(manifest);
-    parsedYaml.spec.templates.forEach((template: any, index: number) => {
+
+    const extractInfo = (template: any, index: number) => {
       if (template.inputs && template.inputs.artifacts) {
         template.inputs.artifacts.forEach((artifact: any) => {
           const chaosEngine = YAML.parse(artifact.raw.data);
@@ -87,36 +88,73 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           }
         });
       }
-    });
+    };
+
+    if (parsedYaml.kind === 'Workflow') {
+      parsedYaml.spec.templates.forEach((template: any, index: number) => {
+        extractInfo(template, index);
+      });
+    } else if (parsedYaml.kind === 'CronWorkflow') {
+      parsedYaml.spec.workflowSpec.templates.forEach(
+        (template: any, index: number) => {
+          extractInfo(template, index);
+        }
+      );
+    }
     setExperiments(expData);
   };
 
   // Revert Chaos
   const toggleRevertChaos = (manifest: string) => {
-    let deleteEngines = 'kubectl delete chaosengine ';
     const parsedYAML = YAML.parse(manifest);
+    let deleteEngines = 'kubectl delete chaosengine ';
 
-    parsedYAML.spec.templates[0].steps.push([
-      {
+    // Else if Revert Chaos is set to true and it is not already set in the manifest
+    if (
+      revertChaos &&
+      parsedYAML.spec.templates[0].steps[
+        parsedYAML.spec.templates[0].steps.length - 1
+      ][0].name !== 'revert-chaos'
+    ) {
+      parsedYAML.spec.templates[0].steps.push([
+        {
+          name: 'revert-chaos',
+          template: 'revert-chaos',
+        },
+      ]);
+
+      parsed(manifest).forEach((_, i) => {
+        deleteEngines = `${
+          deleteEngines +
+          YAML.parse(
+            parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
+          ).metadata.name
+        } `;
+      });
+
+      deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';
+
+      parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
         name: 'revert-chaos',
-        template: 'revert-chaos',
-      },
-    ]);
+        container: {
+          image: 'litmuschaos/k8s:latest',
+          command: ['sh', '-c'],
+          args: [deleteEngines],
+        },
+      };
+    }
 
-    parsed(manifest).forEach((engine) => {
-      deleteEngines = `${deleteEngines + engine} `;
-    });
+    // Else if Revert Chaos is set to False and revert chaos template is present in the manifest
+    else if (
+      !revertChaos &&
+      parsedYAML.spec.templates[0].steps[
+        parsedYAML.spec.templates[0].steps.length - 1
+      ][0].name === 'revert-chaos'
+    ) {
+      parsedYAML.spec.templates[0].steps.pop(); // Remove the last step -> Revert Chaos
 
-    deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';
-
-    parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
-      name: 'revert-chaos',
-      container: {
-        image: 'litmuschaos/k8s:latest',
-        command: ['sh', '-c'],
-        args: [deleteEngines],
-      },
-    };
+      parsedYAML.spec.templates.pop(); // Remove the last template -> Revert Chaos Template
+    }
 
     workflow.setWorkflowManifest({
       manifest: YAML.stringify(parsedYAML),
@@ -147,7 +185,10 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
     if (experiments.length === 0) {
       return false; // Should show alert
     }
-    if (revertChaos === true) toggleRevertChaos(manifest);
+    if (!isCustom) {
+      return true;
+    }
+    toggleRevertChaos(manifest);
     return true; // Should not show any alert
   }
 

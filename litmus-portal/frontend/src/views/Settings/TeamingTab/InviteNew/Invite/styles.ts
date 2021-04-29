@@ -6,11 +6,12 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(-23),
   },
   toolbar: {
-    maxWidth: '31.18rem',
+    width: '31.18rem',
     borderBottom: `1px solid ${theme.palette.border.main}`,
     marginBottom: theme.spacing(1.25),
+    padding: 0,
   },
-  InviteBtn: {},
+
   table: {
     maxWidth: '31.18rem',
     maxHeight: '20.1875rem',
@@ -99,6 +100,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3.75),
   },
   inviteSomeone: {
+    width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
   },

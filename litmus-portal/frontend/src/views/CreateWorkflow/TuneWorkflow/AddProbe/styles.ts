@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   detailContainer: {
     display: 'flex',
     gap: '1rem',
-    width: '90%',
+    width: '100%',
   },
   form: {
     alignItems: 'left',
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     gap: '0.5rem',
     justifyContent: 'space-evenly',
     marginTop: theme.spacing(2),
-    width: '80%',
+    width: '90%',
   },
   formField: {
     alignItems: 'center',

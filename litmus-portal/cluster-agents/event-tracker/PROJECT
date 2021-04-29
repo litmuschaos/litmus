@@ -1,0 +1,7 @@
+domain: litmuschaos.io
+repo: github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker
+resources:
+- group: eventtracker
+  kind: EventTrackerPolicy
+  version: v1
+version: "2"

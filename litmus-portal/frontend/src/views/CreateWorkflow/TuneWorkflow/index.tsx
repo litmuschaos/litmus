@@ -1,11 +1,12 @@
 import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -13,12 +14,14 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import YamlEditor from '../../../components/YamlEditor/Editor';
+import { constants } from '../../../constants';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
   GET_CHARTS_DATA,
   GET_ENGINE_YAML,
   GET_EXPERIMENT_YAML,
+  GET_TEMPLATE_BY_ID,
 } from '../../../graphql/queries';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
@@ -34,6 +37,7 @@ import { updateEngineName } from '../../../utils/yamlUtils';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
+import WorkflowSequence from './WorkflowSequence';
 import WorkflowTable from './WorkflowTable';
 
 interface WorkflowProps {
@@ -45,6 +49,15 @@ interface WorkflowProps {
 interface WorkflowExperiment {
   ChaosEngine: string;
   Experiment: string;
+}
+
+interface ManifestSteps {
+  name: string;
+  template: string;
+}
+
+interface StepType {
+  [key: string]: ManifestSteps[];
 }
 
 interface ChartName {
@@ -70,9 +83,15 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [hubName, setHubName] = useState<string>('');
   const [experiment, setExperiment] = useState<WorkflowExperiment[]>([]);
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
+  const [selectedRadio, setSelectedRadio] = useState<string>('');
   const [selectedExp, setSelectedExp] = useState('');
   const selectedProjectID = getProjectID();
   const [addExpModal, setAddExpModal] = useState(false);
+  const [editManifest, setEditManifest] = useState('');
+  const [confirmEdit, setConfirmEdit] = useState(false);
+  const [yamlValid, setYamlValid] = useState(true);
+  const [editSequence, setEditSequence] = useState(false);
+  const [steps, setSteps] = useState<StepType>({});
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
     crd: '',
@@ -81,6 +100,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const { manifest, isCustomWorkflow } = useSelector(
     (state: RootState) => state.workflowManifest
   );
+  const { namespace } = useSelector((state: RootState) => state.workflowData);
 
   const [YAMLModal, setYAMLModal] = useState<boolean>(false);
 
@@ -111,7 +131,39 @@ const TuneWorkflow = forwardRef((_, ref) => {
     fetchPolicy: 'cache-and-network',
   });
 
+  /**
+   * Graphql query to get the templates list
+   */
+  const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
+    onCompleted: (data) => {
+      const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
+      const wfmanifest = updateEngineName(YAML.parse(parsedYAML));
+      const updatedManifest = YAML.parse(wfmanifest);
+      updatedManifest.spec.arguments.parameters.forEach(
+        (parameter: any, index: number) => {
+          if (parameter.name === constants.adminMode) {
+            updatedManifest.spec.arguments.parameters[index].value = namespace;
+          }
+        }
+      );
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(updatedManifest),
+      });
+    },
+  });
+
   const [installAllExp, setInstallAllExp] = useState<string>('');
+
+  useLayoutEffect(() => {
+    localforage
+      .getItem('selectedScheduleOption')
+      .then(
+        (value) =>
+          value !== null &&
+          (value as ChooseWorkflowRadio).selected === 'C' &&
+          setSelectedRadio('C')
+      );
+  }, []);
 
   /**
    * Default Manifest Template
@@ -121,14 +173,14 @@ const TuneWorkflow = forwardRef((_, ref) => {
     kind: 'Workflow',
     metadata: {
       name: `${workflow.name}-${Math.round(new Date().getTime() / 1000)}`,
-      namespace: `litmus`,
+      namespace,
     },
     spec: {
       arguments: {
         parameters: [
           {
             name: 'adminModeNamespace',
-            value: `litmus`,
+            value: namespace,
           },
         ],
       },
@@ -180,8 +232,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
       .then((data) => {
         data.text().then((yamlText) => {
           const wfmanifest = updateEngineName(YAML.parse(yamlText));
+          const updatedManifest = YAML.parse(wfmanifest);
+          updatedManifest.spec.arguments.parameters.forEach(
+            (parameter: any, index: number) => {
+              if (parameter.name === constants.adminMode) {
+                updatedManifest.spec.arguments.parameters[
+                  index
+                ].value = namespace;
+              }
+            }
+          );
           workflowAction.setWorkflowManifest({
-            manifest: wfmanifest,
+            manifest: YAML.stringify(updatedManifest),
           });
         });
       })
@@ -213,6 +275,21 @@ const TuneWorkflow = forwardRef((_, ref) => {
             manifest === ''
           )
             fetchYaml((value as WorkflowDetailsProps).CRDLink);
+        });
+      }
+      if (value !== null && (value as ChooseWorkflowRadio).selected === 'B') {
+        localforage.getItem('selectedScheduleOption').then((value) => {
+          if (
+            value !== null &&
+            (value as ChooseWorkflowRadio).id !== '' &&
+            manifest === ''
+          ) {
+            getTemplate({
+              variables: {
+                data: (value as ChooseWorkflowRadio).id,
+              },
+            });
+          }
         });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
@@ -403,7 +480,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   }, [engineDataLoading, experimentDataLoading]);
 
   function onNext() {
-    if (isCustomWorkflow && childRef.current) {
+    if (childRef.current) {
       if ((childRef.current.onNext() as unknown) === false) {
         alert.changeAlertState(true); // Custom Workflow has no experiments
         return false;
@@ -412,9 +489,108 @@ const TuneWorkflow = forwardRef((_, ref) => {
     return true;
   }
 
+  const handleSteps = (steps: any) => {
+    setSteps(steps);
+  };
+
   useImperativeHandle(ref, () => ({
     onNext,
   }));
+
+  const LeftButtonWrapper = () => (
+    <>
+      <ButtonOutlined
+        onClick={() => {
+          setYAMLModal(true);
+          setConfirmEdit(false);
+        }}
+        className={classes.editBtn}
+      >
+        <img src="./icons/viewYAMLicon.svg" alt="view YAML" />
+        <Width width="1rem" /> {t('createWorkflow.tuneWorkflow.edit')}
+      </ButtonOutlined>
+      <Modal
+        open={YAMLModal}
+        onClose={() => {
+          setYAMLModal(false);
+        }}
+        width="60%"
+        modalActions={
+          <ButtonOutlined
+            onClick={() => {
+              if (editManifest === '') {
+                setYAMLModal(false);
+              } else {
+                setConfirmEdit(true);
+              }
+            }}
+            className={classes.closeBtn}
+          >
+            <img src="./icons/cross-disabled.svg" alt="cross" />
+          </ButtonOutlined>
+        }
+      >
+        <div className={classes.saveTemplateRoot}>
+          {confirmEdit ? (
+            <div className={classes.confirmDiv}>
+              <Typography className={classes.confirmText}>
+                {t('createWorkflow.tuneWorkflow.confirmText')}
+              </Typography>
+              <ButtonOutlined
+                className={classes.backBtn}
+                disabled={!yamlValid}
+                onClick={() => {
+                  setConfirmEdit(false);
+                }}
+              >
+                {t('createWorkflow.tuneWorkflow.back')}
+              </ButtonOutlined>
+              <ButtonFilled
+                className={classes.continueBtn}
+                disabled={!yamlValid}
+                onClick={() => {
+                  setYAMLModal(false);
+                  setEditManifest('');
+                }}
+              >
+                {t('createWorkflow.tuneWorkflow.continue')}
+              </ButtonFilled>
+            </div>
+          ) : (
+            <>
+              <Typography className={classes.updateText}>
+                {t('createWorkflow.tuneWorkflow.updateChanges')}
+              </Typography>
+              <YamlEditor
+                content={manifest}
+                filename={workflow.name}
+                readOnly={false}
+                setButtonState={(btnState: boolean) => {
+                  setYamlValid(btnState);
+                }}
+                saveWorkflowChange={(updatedManifest: string) => {
+                  setEditManifest(updatedManifest);
+                }}
+              />
+              <ButtonFilled
+                className={classes.continueBtn}
+                disabled={!yamlValid}
+                onClick={() => {
+                  workflowAction.setWorkflowManifest({
+                    manifest: editManifest === '' ? manifest : editManifest,
+                  });
+                  setEditManifest('');
+                  setYAMLModal(false);
+                }}
+              >
+                {t('createWorkflow.tuneWorkflow.saveChange')}
+              </ButtonFilled>
+            </>
+          )}
+        </div>
+      </Modal>
+    </>
+  );
 
   return (
     <div className={classes.root}>
@@ -434,54 +610,24 @@ const TuneWorkflow = forwardRef((_, ref) => {
             <br />
             {t('createWorkflow.tuneWorkflow.description')}
           </Typography>
-          <div className={classes.headerBtn}>
-            <ButtonOutlined
-              onClick={() => {
-                setYAMLModal(true);
-              }}
-              className={classes.editBtn}
-            >
-              <img src="./icons/viewYAMLicon.svg" alt="view YAML" />
-              <Width width="1rem" /> {t('createWorkflow.tuneWorkflow.edit')}
-            </ButtonOutlined>
-            <Modal
-              open={YAMLModal}
-              onClose={() => {
-                setYAMLModal(false);
-              }}
-              width="60%"
-              modalActions={
-                <ButtonOutlined
-                  onClick={() => {
-                    setYAMLModal(false);
-                  }}
-                  className={classes.closeBtn}
-                >
-                  <img src="./icons/cross-disabled.svg" alt="cross" />
-                </ButtonOutlined>
-              }
-            >
-              <div>
-                <YamlEditor
-                  content={
-                    isCustomWorkflow ? YAML.stringify(generatedYAML) : manifest
-                  }
-                  filename={workflow.name}
-                  readOnly={false}
-                />
-              </div>
-            </Modal>
-            <ButtonOutlined
-              onClick={() => {
-                setSelectedExp('');
-                setAddExpModal(true);
-              }}
-            >
-              {t('createWorkflow.tuneWorkflow.addANewExperiment')}
-            </ButtonOutlined>
-          </div>
+          {selectedRadio === 'C' ? (
+            <div className={classes.headerBtn}>
+              {LeftButtonWrapper()}
+              <ButtonOutlined
+                onClick={() => {
+                  setSelectedExp('');
+                  setAddExpModal(true);
+                }}
+              >
+                {t('createWorkflow.tuneWorkflow.addANewExperiment')}
+              </ButtonOutlined>
+            </div>
+          ) : (
+            <>{LeftButtonWrapper()}</>
+          )}
         </Row>
       </div>
+
       {/* Add Experiment Modal */}
       <AddExperimentModal
         addExpModal={addExpModal}
@@ -492,14 +638,61 @@ const TuneWorkflow = forwardRef((_, ref) => {
         allExperiments={allExperiments}
         handleDone={handleDone}
       />
+
       {/* Experiment Details */}
       <div className={classes.experimentWrapper}>
         {/* Edit Button */}
-        <ButtonOutlined>
-          <img src="./icons/editsequence.svg" alt="Edit Sequence" />{' '}
-          <Width width="0.5rem" />
-          {t('createWorkflow.tuneWorkflow.editSequence')}
-        </ButtonOutlined>
+        {manifest !== '' && (
+          <ButtonOutlined onClick={() => setEditSequence(true)}>
+            <img src="./icons/editsequence.svg" alt="Edit Sequence" />{' '}
+            <Width width="0.5rem" />
+            {t('createWorkflow.tuneWorkflow.editSequence')}
+          </ButtonOutlined>
+        )}
+        <Modal
+          open={editSequence}
+          onClose={() => {
+            setEditSequence(false);
+          }}
+          width="60%"
+          modalActions={
+            <ButtonOutlined
+              onClick={() => {
+                setEditSequence(false);
+              }}
+              className={classes.closeBtn}
+            >
+              <img src="./icons/cross-disabled.svg" alt="cross" />
+            </ButtonOutlined>
+          }
+        >
+          <div className={classes.sequenceMainDiv}>
+            <div className={classes.sequenceDiv}>
+              <Typography variant="h4">
+                {t('createWorkflow.tuneWorkflow.editSequence')}
+              </Typography>
+              <Typography className={classes.dropText}>
+                {t('createWorkflow.tuneWorkflow.dragndrop')}
+              </Typography>
+            </div>
+            <Row>
+              <Width width="40%">
+                <WorkflowPreview
+                  SequenceSteps={steps}
+                  isCustomWorkflow={isCustomWorkflow}
+                />
+              </Width>
+              <Width width="60%">
+                <WorkflowSequence
+                  getSteps={handleSteps}
+                  handleSequenceModal={(sequenceState: boolean) => {
+                    setEditSequence(sequenceState);
+                  }}
+                />
+              </Width>
+            </Row>
+          </div>
+        </Modal>
         {/* Details Section -> Graph on the Left and Table on the Right */}
         <Row>
           {/* Argo Workflow Graph */}

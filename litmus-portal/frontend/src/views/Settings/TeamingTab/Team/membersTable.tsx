@@ -29,8 +29,6 @@ interface MembersTableProps {
 const MembersTable: React.FC<MembersTableProps> = ({
   acceptedFilteredData,
   showModal,
-  handleOpen,
-  open,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -77,13 +75,7 @@ const MembersTable: React.FC<MembersTableProps> = ({
                     key={row.user_id}
                     className={classes.TR}
                   >
-                    <TableData
-                      index={index}
-                      row={row}
-                      showModal={showModal}
-                      handleOpen={handleOpen}
-                      open={open}
-                    />
+                    <TableData index={index} row={row} showModal={showModal} />
                   </TableRow>
                 ))
             ) : (

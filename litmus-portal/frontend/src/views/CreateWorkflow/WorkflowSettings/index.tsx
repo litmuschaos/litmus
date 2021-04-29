@@ -8,19 +8,20 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import data from '../../../components/PredifinedWorkflows/data';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
+import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import { validateWorkflowName } from '../../../utils/validate';
 import useStyles from './styles';
 
 const WorkflowSettings = forwardRef((_, ref) => {
   const classes = useStyles();
-
   const [avatarModal, setAvatarModal] = useState<boolean>(false);
 
   // Workflow States
@@ -31,9 +32,9 @@ const WorkflowSettings = forwardRef((_, ref) => {
   const [description, setDescription] = useState<string>('');
   const [icon, setIcon] = useState<string>('');
   const [CRDLink, setCRDLink] = useState<string>('');
-
   // Actions
   const workflowAction = useActions(WorkflowActions);
+  const workflowData = useSelector((state: RootState) => state.workflowData);
 
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
@@ -88,6 +89,9 @@ const WorkflowSettings = forwardRef((_, ref) => {
           }
           return null;
         });
+      }
+      if ((value as ChooseWorkflowRadio).selected === 'B') {
+        workflowAction.setWorkflowManifest({ manifest: '' });
       }
       if ((value as ChooseWorkflowRadio).selected === 'C') {
         setName('custom-chaos-workflow');
@@ -197,7 +201,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
             />
           </div>
           <div className={classes.inputDiv}>
-            <div aria-details="spacer" style={{ width: '60%' }}>
+            <div aria-details="spacer" className={classes.mainDiv}>
               <InputField
                 label={t('createWorkflow.chooseWorkflow.label.workflowName')}
                 fullWidth
@@ -210,8 +214,16 @@ const WorkflowSettings = forwardRef((_, ref) => {
                 onChange={nameChangeHandle}
                 value={name}
               />
+              <InputField
+                InputProps={{
+                  readOnly: true,
+                }}
+                className={classes.nsInput}
+                label={t('createWorkflow.chooseWorkflow.label.namespace')}
+                value={workflowData.namespace}
+              />
             </div>
-            <div aria-details="spacer" style={{ margin: '3rem 0' }} />
+            <div aria-details="spacer" className={classes.descDiv} />
             <InputField
               id="filled-workflowdescription-input"
               label={t('createWorkflow.chooseWorkflow.label.desc')}
@@ -224,6 +236,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
               multiline
               rows={8}
             />
+            <br />
           </div>
         </div>
       </div>

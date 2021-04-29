@@ -41,8 +41,35 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '25rem',
   },
   annotationToggleBtn: {
-    width: 72,
-    height: 35,
+    width: '4.5rem',
+    height: '2.1875rem',
+  },
+
+  // Delete experiment
+  deleteExpDiv: {
+    display: 'flex',
+    marginTop: theme.spacing(10),
+    marginRight: theme.spacing(10),
+    marginLeft: theme.spacing(3.125),
+    justifyContent: 'space-between',
+  },
+
+  editExpText: {
+    fontSize: '1.5rem',
+  },
+
+  deleteBtn: {
+    border: `1px solid ${theme.palette.error.main}`,
+  },
+
+  deleteIcon: {
+    marginRight: theme.spacing(1.25),
+    height: '1.25rem',
+    width: '1.25rem',
+  },
+
+  deleteExpText: {
+    marginTop: theme.spacing(0.625),
   },
 
   // Stepper styles

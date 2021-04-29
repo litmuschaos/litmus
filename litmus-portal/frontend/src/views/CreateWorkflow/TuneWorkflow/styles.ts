@@ -61,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
   // Modal
   closeButton: {
     borderColor: theme.palette.border.main,
+    marginTop: theme.spacing(-3.75),
   },
 
   modal: {
@@ -123,6 +124,62 @@ const useStyles = makeStyles((theme) => ({
   },
   closeBtn: {
     color: theme.palette.secondary.contrastText,
+  },
+  saveTemplateRoot: {
+    margin: theme.spacing(8, 5, 5, 5),
+  },
+
+  // Confirmation Modal
+  confirmDiv: {
+    margin: 'auto',
+    marginTop: theme.spacing(31.25),
+    width: '30rem',
+  },
+  confirmText: {
+    fontSize: '2.25rem',
+  },
+  backBtn: {
+    margin: theme.spacing(2.5, 5, 0, 0),
+  },
+  continueBtn: {
+    marginTop: theme.spacing(2.5),
+  },
+  updateText: {
+    fontSize: '1.6rem',
+    marginBottom: theme.spacing(3.75),
+    textAlign: 'left',
+  },
+
+  // Sequence Modal
+  sequenceMainDiv: {
+    padding: theme.spacing(7.5),
+  },
+  sequenceDiv: {
+    textAlign: 'left',
+    marginBottom: theme.spacing(6.25),
+  },
+  dropText: {
+    fontSize: '1.2rem',
+  },
+  radioList: {
+    paddingTop: '1.5rem',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    height: '20rem',
+    overflowY: 'auto',
+  },
+  experimentCard: {
+    backgroundColor: theme.palette.cards.background,
+    lineHeight: '5rem', // Making the div content vertically aligned
+    padding: theme.spacing(0, 5),
+    margin: theme.spacing(1, 0),
+    width: '40rem',
+    display: 'flex',
+  },
+  experimentName: {
+    fontSize: '1rem',
   },
 }));
 

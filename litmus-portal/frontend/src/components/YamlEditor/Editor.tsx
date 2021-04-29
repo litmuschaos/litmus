@@ -37,9 +37,7 @@ import 'ace-builds/src-min-noconflict/ext-whitespace';
 import 'brace/mode/yaml';
 import 'brace/theme/cobalt';
 import React, { useEffect, useState } from 'react';
-import YAML from 'yaml';
-import useActions from '../../redux/actions';
-import * as WorkflowActions from '../../redux/actions/workflow';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 import { AceValidations, parseYamlValidations } from './Validations';
 
@@ -47,17 +45,21 @@ interface YamlEditorProps {
   content: string;
   filename?: string;
   readOnly: boolean;
+  setButtonState?: (btnState: boolean) => void;
+  saveWorkflowChange?: (updatedManifest: string) => void;
 }
 
 const YamlEditor: React.FC<YamlEditorProps> = ({
   content,
   filename,
   readOnly,
+  setButtonState,
+  saveWorkflowChange,
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
 
-  const workflow = useActions(WorkflowActions);
+  const { t } = useTranslation();
 
   const [isValid, setIsValid] = useState(true);
 
@@ -121,10 +123,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     }
     setModifiedYaml(value);
     setEditorState(stateObject as any);
-
-    workflow.setWorkflowManifest({
-      manifest: value,
-    });
+    if (saveWorkflowChange) saveWorkflowChange(value);
   };
 
   const downloadYamlFile = () => {
@@ -225,13 +224,11 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       });
     }
     setEditorState(stateObject as any);
-    const yamlData = YAML.parse(content);
-    if (readOnly !== true) {
-      workflow.setWorkflowDetails({
-        namespace: yamlData.metadata.namespace,
-      });
-    }
   }, []);
+
+  useEffect(() => {
+    if (setButtonState) setButtonState(isValid);
+  }, [isValid]);
 
   return (
     <div
@@ -246,7 +243,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             : classes.statusHeadingOutModal
         }
       >
-        Status YAML:
+        {t('editor.status')}
         <Typography className={classes.saved} display="inline">
           &nbsp; &nbsp;
           <strong>

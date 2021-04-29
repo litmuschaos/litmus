@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableFix: {
-    width: '97.4%',
+    width: '100%',
   },
 
   headerSection: {

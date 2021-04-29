@@ -1,8 +1,10 @@
-import { Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import { Paper, Tabs, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
+import { UserRole } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
@@ -12,29 +14,6 @@ import GitOpsTab from '../../views/Settings/GitOpsTab';
 import TeamingTab from '../../views/Settings/TeamingTab/Team';
 import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
 import useStyles from './styles';
-
-interface TabPanelProps {
-  children: React.ReactNode;
-  index: any;
-  value: any;
-}
-
-// TabPanel ise used to implement the functioning of tabs
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <div>{children}</div>}
-    </div>
-  );
-}
 
 // tabProps returns 'id' and 'aria-control' props of Tab
 function tabProps(index: any) {
@@ -75,19 +54,19 @@ const Settings: React.FC = () => {
             },
           }}
         >
-          <Tab data-cy="my-account" label="My Account" {...tabProps(0)} />
-          <Tab data-cy="teaming" label="Team" {...tabProps(1)} />
-          {role === 'admin' && (
-            <Tab
+          <StyledTab data-cy="my-account" label="My Account" {...tabProps(0)} />
+          <StyledTab data-cy="teaming" label="Team" {...tabProps(1)} />
+          {role === UserRole.admin && (
+            <StyledTab
               data-cy="user-management"
               label="User Management"
               {...tabProps(2)}
             />
           )}
-          <Tab
+          <StyledTab
             data-cy="gitOps"
             label="GitOps"
-            {...tabProps(role === 'admin' ? 3 : 2)}
+            {...tabProps(role === UserRole.admin ? 3 : 2)}
           />
         </Tabs>
       </Paper>
@@ -99,13 +78,16 @@ const Settings: React.FC = () => {
           <TeamingTab />
         </TabPanel>
       </div>
-      {role === 'admin' && (
+      {role === UserRole.admin && (
         <TabPanel value={settingsTabValue} index={2}>
           <UserManagement />
         </TabPanel>
       )}
       <div data-cy="GitOpsPanel">
-        <TabPanel value={settingsTabValue} index={role === 'admin' ? 3 : 2}>
+        <TabPanel
+          value={settingsTabValue}
+          index={role === UserRole.admin ? 3 : 2}
+        >
           <GitOpsTab />
         </TabPanel>
       </div>

@@ -1,15 +1,15 @@
+import { RadioGroup, Typography, useTheme } from '@material-ui/core';
 import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  Typography,
-} from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
-import React from 'react';
+  ButtonFilled,
+  ButtonOutlined,
+  Modal,
+  LitmusCard,
+  RadioButton,
+  Search,
+} from 'litmus-ui';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useStyles, { MenuProps } from './styles';
+import useStyles from './styles';
 
 interface ChartName {
   ChaosName: string;
@@ -42,6 +42,19 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const { palette } = useTheme();
+  const [search, setSearch] = useState<string | null>(null);
+
+  const filteredExperiments = allExperiments.filter((exp: ChartName) => {
+    if (search === null) return exp;
+    if (
+      exp.ChaosName.toLowerCase().includes(search.toLowerCase()) ||
+      exp.ExperimentName.toLowerCase().includes(search.toLowerCase())
+    )
+      return exp;
+    return null;
+  });
+
   return (
     <Modal
       open={addExpModal}
@@ -70,28 +83,41 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
           {t('createWorkflow.tuneWorkflow.selectAvailableExp')} {hubName} .{' '}
           {t('createWorkflow.tuneWorkflow.afterSelect')}
         </Typography>
-        <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="demo-simple-select-label" className={classes.label}>
-            {t('createWorkflow.tuneWorkflow.selectExp')}
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            value={selectedExp}
-            onChange={onSelectChange}
-            label="Cluster Status"
-            MenuProps={MenuProps}
-            input={<OutlinedInput labelWidth={150} />}
-          >
-            {allExperiments.map((exp: ChartName) => (
-              <MenuItem
+        <br />
+        <Search
+          data-cy="agentSearch"
+          id="input-with-icon-textfield"
+          placeholder="Search"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+
+        <br />
+        <div className={classes.radioList}>
+          <RadioGroup value={selectedExp} onChange={onSelectChange}>
+            {filteredExperiments.map((exp: ChartName) => (
+              <LitmusCard
+                width="100%"
+                height="5rem"
                 key={`${exp.ChaosName}/${exp.ExperimentName}`}
-                value={`${exp.ChaosName}/${exp.ExperimentName}`}
+                borderColor={
+                  selectedExp === `${exp.ChaosName}/${exp.ExperimentName}`
+                    ? palette.primary.main
+                    : palette.border.main
+                }
+                className={classes.experimentCard}
               >
-                {exp.ChaosName}/{exp.ExperimentName}
-              </MenuItem>
+                <RadioButton value={`${exp.ChaosName}/${exp.ExperimentName}`}>
+                  <div id="body">
+                    <Typography className={classes.experimentName}>
+                      {exp.ChaosName}/{exp.ExperimentName}
+                    </Typography>
+                  </div>
+                </RadioButton>
+              </LitmusCard>
             ))}
-          </Select>
-        </FormControl>
+          </RadioGroup>
+        </div>
         <ButtonFilled
           onClick={() => {
             handleDone();

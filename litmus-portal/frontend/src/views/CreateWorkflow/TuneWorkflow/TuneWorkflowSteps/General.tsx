@@ -23,8 +23,18 @@ const General: React.FC<GeneralProps> = ({ gotoStep }) => {
   const engine = useSelector(
     (state: RootState) => state.workflowManifest.engineYAML
   );
+  const namespace = useSelector(
+    (state: RootState) => state.workflowData.namespace
+  );
+  const engineYAML = YAML.parse(engine);
   const [experimentName, setExperimentName] = React.useState<string>(
-    YAML.parse(engine).metadata.name
+    engineYAML.metadata.name
+  );
+  const [context, setContext] = React.useState<string>(
+    engineYAML.metadata.labels !== undefined &&
+      engineYAML.metadata.labels.context !== undefined
+      ? engineYAML.metadata.labels.context
+      : `${namespace}-${experimentName}`
   );
   useEffect(() => {
     localforage.getItem('selectedScheduleOption').then((value) => {
@@ -39,6 +49,9 @@ const General: React.FC<GeneralProps> = ({ gotoStep }) => {
   const handleNext = () => {
     const parsedYAML = YAML.parse(engine);
     parsedYAML.metadata.name = experimentName;
+    parsedYAML.metadata['labels'] = {
+      context,
+    };
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(parsedYAML),
     });
@@ -48,8 +61,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep }) => {
   return (
     <div>
       <Typography>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
+        {t('createWorkflow.tuneWorkflow.verticalStepper.myHubInfo')}
       </Typography>
       <br />
       <div className={classes.generalContainer}>
@@ -66,6 +78,14 @@ const General: React.FC<GeneralProps> = ({ gotoStep }) => {
           value={experimentName}
           onChange={(e) => {
             setExperimentName(e.target.value);
+          }}
+        />
+        <br />
+        <InputField
+          label="Context"
+          value={context}
+          onChange={(e) => {
+            setContext(e.target.value);
           }}
         />
       </div>

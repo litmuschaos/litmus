@@ -10,7 +10,6 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
-  useRef,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +33,6 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
-  const childRef = useRef<ChildRef>();
   const [selected, setSelected] = useState<string>('');
   const workflowDetails = useSelector(
     (state: RootState) => state.workflowManifest.manifest
@@ -62,22 +60,16 @@ const ChooseWorkflow = forwardRef((_, ref) => {
       alert.changeAlertState(true);
       return false;
     }
-    if (childRef.current) {
-      alert.changeAlertState(true);
-      return childRef.current.onNext();
-    }
     alert.changeAlertState(false);
     return true;
   }
 
   useEffect(() => {
-    localforage
-      .getItem('selectedScheduleOption')
-      .then((value) =>
-        value
-          ? setSelected((value as ChooseWorkflowRadio).selected)
-          : setSelected('')
-      );
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      if (value) {
+        setSelected((value as ChooseWorkflowRadio).selected);
+      } else setSelected('');
+    });
     workflowAction.setWorkflowManifest({
       manifest: '',
     });
@@ -108,24 +100,33 @@ const ChooseWorkflow = forwardRef((_, ref) => {
         <div className={classes.m5} />
 
         <RadioGroup
-          aria-label="gender"
-          name="gender1"
+          data-testid="workflowRadioButtons"
           value={selected}
           onChange={handleChange}
         >
           <Accordion expanded={selected === 'A'} className={classes.accordion}>
             <AccordionSummary>
               <RadioButton value="A" onChange={(e) => handleChange(e)}>
-                {t('createWorkflow.chooseWorkflow.optionA')}
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionA')}
+                </span>
               </RadioButton>
             </AccordionSummary>
-            <ChoosePreDefinedExperiments ref={childRef} />
+            <ChoosePreDefinedExperiments />
           </Accordion>
 
-          <Accordion expanded={selected === 'B'} className={classes.accordion}>
+          <Accordion
+            expanded={selected === 'B'}
+            classes={{
+              root: classes.MuiAccordionroot,
+            }}
+            className={classes.accordion}
+          >
             <AccordionSummary>
               <RadioButton value="B" onChange={(e) => handleChange(e)}>
-                Create a new workflow by cloning an existing workflow
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionB')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <ChooseWorkflowFromExisting />
@@ -140,13 +141,15 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="C" onChange={(e) => handleChange(e)}>
-                {t('createWorkflow.chooseWorkflow.optionC')}
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionC')}
+                </span>
                 <span className={classes.bold}>
                   {t('createWorkflow.chooseWorkflow.myHubs')}
                 </span>
               </RadioButton>
             </AccordionSummary>
-            <SelectMyHub ref={childRef} />
+            <SelectMyHub />
           </Accordion>
 
           <Accordion
@@ -158,7 +161,9 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="D" onChange={(e) => handleChange(e)}>
-                {t('createWorkflow.chooseWorkflow.optionD')}
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionD')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <UploadYAML />

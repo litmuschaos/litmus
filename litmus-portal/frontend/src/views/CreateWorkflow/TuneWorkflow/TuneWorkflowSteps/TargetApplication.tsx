@@ -186,7 +186,6 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
       engineIndex
     ].inputs.artifacts[0].raw.data = YAML.stringify(engineManifest);
     workflow.setWorkflowManifest({
-      manifest: YAML.stringify(mainManifest),
       engineYAML: YAML.stringify(engineManifest),
     });
     return isCustom ? gotoStep(2) : gotoStep(1);
@@ -220,23 +219,31 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
   useEffect(() => {
     if (data !== undefined) {
       const appinfo: AppInfoData[] = [];
-      const kubeData: KubeObjData[] = JSON.parse(data.getKubeObject.kube_obj);
-      kubeData.forEach((obj: KubeObjData) => {
-        const applabel: string[] = [];
-        if (obj.data != null) {
-          obj.data.forEach((objData: KubeObjResource) => {
-            if (objData.labels != null) {
-              Object.entries(objData.labels).map(([key, value]) =>
-                applabel.push(`${key}=${value}`)
-              );
-            }
+      try {
+        const kubeData: KubeObjData[] = JSON.parse(data.getKubeObject.kube_obj);
+        kubeData.forEach((obj: KubeObjData) => {
+          const applabel: string[] = [];
+          if (obj.data != null) {
+            obj.data.forEach((objData: KubeObjResource) => {
+              if (objData.labels != null) {
+                Object.entries(objData.labels).map(([key, value]) =>
+                  applabel.push(`${key}=${value}`)
+                );
+              }
+            });
+          }
+          appinfo.push({
+            namespace: obj.namespace,
+            appLabel: applabel,
           });
-        }
-        appinfo.push({
-          namespace: obj.namespace,
-          appLabel: applabel,
         });
-      });
+      } catch (err) {
+        console.error(err);
+        appinfo.push({
+          namespace: '',
+          appLabel: [''],
+        });
+      }
       setAppInfoData(appinfo);
     }
   }, [data]);
@@ -356,136 +363,167 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
         <>
           {/* AutoComplete textfield for Namespace */}
           {engineManifest.spec.appinfo?.appns && (
-            <Autocomplete
-              id="combo-box-demo"
-              options={appinfoData.map((option) => option.namespace)}
-              freeSolo
-              value={targetApp.appns}
-              defaultValue={targetApp.appns}
-              className={classes.autoCompleteText}
-              onChange={(_, v: any) => {
-                setTargetApp({
-                  ...targetApp,
-                  appns: v,
-                });
-                handleLabelChange();
-              }}
-              renderInput={(params) => (
-                <InputField
-                  onChange={(event) => {
-                    setTargetApp({
-                      ...targetApp,
-                      appns: event.target.value,
-                    });
-                  }}
-                  {...params}
-                  label={constants.appns}
-                />
-              )}
-            />
+            <>
+              <Autocomplete
+                id="combo-box-demo"
+                options={appinfoData.map((option) => option.namespace)}
+                freeSolo
+                value={targetApp.appns}
+                defaultValue={targetApp.appns}
+                className={classes.autoCompleteText}
+                onChange={(_, v: any) => {
+                  setTargetApp({
+                    ...targetApp,
+                    appns: v,
+                  });
+                  handleLabelChange();
+                }}
+                renderInput={(params) => (
+                  <InputField
+                    onChange={(event) => {
+                      setTargetApp({
+                        ...targetApp,
+                        appns: event.target.value,
+                      });
+                    }}
+                    {...params}
+                    label={constants.appns}
+                    helperText={
+                      appinfoData.filter(
+                        (data) => data.namespace === targetApp.appns
+                      ).length === 0 ? (
+                        <Typography color="error">
+                          {t(
+                            'createWorkflow.tuneWorkflow.verticalStepper.nsError'
+                          )}
+                        </Typography>
+                      ) : (
+                        ''
+                      )
+                    }
+                  />
+                )}
+              />
+              <br />
+            </>
           )}
-          <br />
 
           {/* AppKind MenuList */}
           {engineManifest.spec.appinfo?.appkind && (
-            <FormControl variant="outlined">
-              <InputLabel id="appKind" className={classes.appKind}>
-                {t('createWorkflow.tuneWorkflow.verticalStepper.appkind')}
-              </InputLabel>
-              <Select
-                labelId="appKind"
-                value={targetApp.appkind}
-                onChange={(event) => {
-                  setTargetApp({
-                    ...targetApp,
-                    appkind: event.target.value as string,
-                  });
-                  handleLabelChange();
-                  if (event.target.value === constants.deployment) {
-                    setGVRObj({
-                      group: constants.apps,
-                      version: constants.v1,
-                      resource: constants.deployments,
-                    });
-                  } else if (event.target.value === constants.statefulset) {
-                    setGVRObj({
-                      group: constants.apps,
-                      version: constants.v1,
-                      resource: constants.statefulsets,
-                    });
-                  } else if (event.target.value === constants.daemonset) {
-                    setGVRObj({
-                      group: constants.apps,
-                      version: constants.v1,
-                      resource: constants.daemonsets,
-                    });
-                  } else if (
-                    event.target.value === constants.deploymentconfig
-                  ) {
-                    setGVRObj({
-                      group: constants.openshift,
-                      version: constants.v1,
-                      resource: constants.deploymentconfigs,
-                    });
-                  } else if (event.target.value === constants.rollout) {
-                    setGVRObj({
-                      group: constants.argoproj,
-                      version: constants.v1alpha1,
-                      resource: constants.rollouts,
-                    });
-                  } else {
-                    setGVRObj({
-                      group: '',
-                      version: '',
-                      resource: '',
-                    });
-                  }
-                }}
-                label={constants.appKind}
-              >
-                <MenuItem aria-label="None" value="" />
-                {applicationKind.map((kind) => {
-                  return (
-                    <MenuItem key={kind} value={kind}>
-                      {kind}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          )}
-          <br />
-
-          {/* AutoComplete textfield for applabel */}
-          {engineManifest.spec.appinfo?.applabel && (
-            <Autocomplete
-              id="combo-box-demo"
-              options={appLabel}
-              freeSolo
-              value={targetApp.applabel}
-              defaultValue={targetApp.applabel}
-              className={classes.autoCompleteText}
-              onChange={(_, v: any) => {
-                setTargetApp({
-                  ...targetApp,
-                  applabel: v,
-                });
-              }}
-              renderInput={(params) => (
-                <InputField
+            <>
+              <FormControl variant="outlined">
+                <InputLabel id="appKind" className={classes.appKind}>
+                  {t('createWorkflow.tuneWorkflow.verticalStepper.appkind')}
+                </InputLabel>
+                <Select
+                  labelId="appKind"
+                  value={targetApp.appkind}
                   onChange={(event) => {
                     setTargetApp({
                       ...targetApp,
-                      applabel: event.target.value,
+                      appkind: event.target.value as string,
                     });
+                    handleLabelChange();
+                    if (event.target.value === constants.deployment) {
+                      setGVRObj({
+                        group: constants.apps,
+                        version: constants.v1,
+                        resource: constants.deployments,
+                      });
+                    } else if (event.target.value === constants.statefulset) {
+                      setGVRObj({
+                        group: constants.apps,
+                        version: constants.v1,
+                        resource: constants.statefulsets,
+                      });
+                    } else if (event.target.value === constants.daemonset) {
+                      setGVRObj({
+                        group: constants.apps,
+                        version: constants.v1,
+                        resource: constants.daemonsets,
+                      });
+                    } else if (
+                      event.target.value === constants.deploymentconfig
+                    ) {
+                      setGVRObj({
+                        group: constants.openshift,
+                        version: constants.v1,
+                        resource: constants.deploymentconfigs,
+                      });
+                    } else if (event.target.value === constants.rollout) {
+                      setGVRObj({
+                        group: constants.argoproj,
+                        version: constants.v1alpha1,
+                        resource: constants.rollouts,
+                      });
+                    } else {
+                      setGVRObj({
+                        group: '',
+                        version: '',
+                        resource: '',
+                      });
+                    }
                   }}
-                  {...params}
-                  label={constants.appLabel}
-                />
-              )}
-            />
+                  label={constants.appKind}
+                >
+                  <MenuItem aria-label="None" value="" />
+                  {applicationKind.map((kind) => {
+                    return (
+                      <MenuItem key={kind} value={kind}>
+                        {kind}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+              <br />
+            </>
           )}
-          <br />
+
+          {/* AutoComplete textfield for applabel */}
+          {engineManifest.spec.appinfo?.applabel && (
+            <>
+              <Autocomplete
+                id="combo-box-demo"
+                options={appLabel}
+                freeSolo
+                value={targetApp.applabel}
+                defaultValue={targetApp.applabel}
+                className={classes.autoCompleteText}
+                onChange={(_, v: any) => {
+                  setTargetApp({
+                    ...targetApp,
+                    applabel: v,
+                  });
+                }}
+                renderInput={(params) => (
+                  <InputField
+                    onChange={(event) => {
+                      setTargetApp({
+                        ...targetApp,
+                        applabel: event.target.value,
+                      });
+                    }}
+                    helperText={
+                      appLabel.filter((data) => data === targetApp.applabel)
+                        .length === 0 ? (
+                        <Typography color="error">
+                          {t(
+                            'createWorkflow.tuneWorkflow.verticalStepper.labelError'
+                          )}
+                        </Typography>
+                      ) : (
+                        ''
+                      )
+                    }
+                    {...params}
+                    label={constants.appLabel}
+                  />
+                )}
+              />
+              <br />
+            </>
+          )}
 
           {/* JobCleanUpPolicy textfield */}
           <InputField

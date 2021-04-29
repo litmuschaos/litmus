@@ -46,7 +46,7 @@ spec:
   ports:
     - name: http
       port: 9091
-      targetPort: 80
+      targetPort: 8080
   selector:
     component: litmusportal-frontend
 ---
@@ -127,10 +127,6 @@ spec:
                   key: JWTSecret
             - name: LITMUS_PORTAL_NAMESPACE
               value: ${OKTETO_NAMESPACE}
-            - name: PORTAL_SCOPE
-              value: "namespace"
-            - name: PORTAL_ENDPOINT
-              value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
             - name: AGENT_SCOPE
@@ -153,8 +149,14 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
+            - name: PORTAL_SCOPE
+              value: "namespace"
+            - name: PORTAL_ENDPOINT
+              value: "https://litmusportal-server-service-${OKTETO_NAMESPACE}.cloud.okteto.net"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
+            - name: EVENT_TRACKER_IMAGE
+              value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
@@ -162,11 +164,15 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "argoproj/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.13.0"
+              value: "litmuschaos/chaos-operator:1.13.3"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.13.0"
+              value: "litmuschaos/chaos-runner:1.13.3"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:1.13.0"
+              value: "litmuschaos/chaos-exporter:1.13.3"
+            - name: CONTAINER_RUNTIME_EXECUTOR
+              value: "k8sapi"
+            - name: HUB_BRANCH_NAME
+              value: "v1.13.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
@@ -324,6 +330,6 @@ spec:
   ports:
     - name: http
       port: 9091
-      targetPort: 80
+      targetPort: 8080
   selector:
     component: litmusportal-production-frontend

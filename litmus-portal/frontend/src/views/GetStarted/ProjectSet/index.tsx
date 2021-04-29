@@ -133,6 +133,10 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
       <div className={classes.rootLitmusText}>
         <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
         <Typography className={classes.HeaderText}>
+          {' '}
+          {t('getStarted.welcome')} {getUsername()}!
+        </Typography>
+        <Typography className={classes.HeaderText}>
           {t('getStarted.project.info')}
         </Typography>
         <Typography className={classes.litmusText}>
@@ -145,6 +149,7 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
         className={classes.inputDiv}
       >
         <InputField
+          data-cy="inputProjectName"
           className={classes.inputValue}
           label={t('getStarted.project.label')}
           value={projectName}
@@ -160,17 +165,19 @@ const ProjectSet: React.FC<ProjectSetProps> = ({
           onChange={(e) => setProjectName(e.target.value)}
         />
         <div className={classes.buttonGroup}>
-          <ButtonFilled
-            type="submit"
-            className={classes.submitButton}
-            disabled={isError.current}
-          >
-            {isLoading ? (
-              <Loader size={loaderSize} />
-            ) : (
-              <Typography>{t('getStarted.button.letsStart')}</Typography>
-            )}
-          </ButtonFilled>
+          <div data-cy="startButton">
+            <ButtonFilled
+              type="submit"
+              className={classes.submitButton}
+              disabled={isError.current}
+            >
+              {isLoading ? (
+                <Loader size={loaderSize} />
+              ) : (
+                <>{t('getStarted.button.finish')}</>
+              )}
+            </ButtonFilled>
+          </div>
           <Typography className={classes.step}>
             {t('getStarted.button.step')} {currentStep}{' '}
             {t('getStarted.button.of')} {totalStep}

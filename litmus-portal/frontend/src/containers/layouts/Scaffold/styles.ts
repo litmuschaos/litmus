@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'grid',
     gridTemplateColumns: '20.5em auto',
     gridTemplateRows: '6.5em auto',
-    gridTemplateAreas: '"sidebar header" "sidebar content"',
+    gridTemplateAreas: '"header header" "sidebar content"',
 
     '& ::-webkit-scrollbar': {
       width: '0.4rem',

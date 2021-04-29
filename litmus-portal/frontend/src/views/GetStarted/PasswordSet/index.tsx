@@ -3,6 +3,7 @@ import { Typography } from '@material-ui/core';
 import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getUsername } from '../../../utils/auth';
 import { validateConfirmPassword } from '../../../utils/validate';
 import useStyles from './styles';
 
@@ -52,7 +53,10 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
     <div className={classes.rootDiv}>
       <div className={classes.rootLitmusText}>
         <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
-        {/* TODO: Add translations */}
+        <Typography className={classes.HeaderText}>
+          {' '}
+          {t('getStarted.welcome')} {getUsername()}!
+        </Typography>
         <Typography className={classes.HeaderText}>
           {t('getStarted.password.info')}
         </Typography>
@@ -62,6 +66,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
       </div>
       <form id="login-form" className={classes.inputDiv}>
         <InputField
+          data-cy="inputPassword"
           className={classes.inputValue}
           label={t('getStarted.password.label')}
           type="password"
@@ -77,6 +82,7 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
           }}
         />
         <InputField
+          data-cy="confirmInputPassword"
           className={classes.inputValue}
           label={t('getStarted.password.cnfLabel')}
           type="password"
@@ -96,14 +102,16 @@ const PasswordSet: React.FC<PasswordSetProps> = ({
           }
         />
         <div className={classes.buttonGroup}>
-          <ButtonFilled
-            className={classes.submitButton}
-            type="submit"
-            disabled={isError.current}
-            onClick={handleSubmit}
-          >
-            {t('getStarted.button.continue')}
-          </ButtonFilled>
+          <div data-cy="nextButton">
+            <ButtonFilled
+              className={classes.submitButton}
+              type="submit"
+              disabled={isError.current}
+              onClick={handleSubmit}
+            >
+              {t('getStarted.button.continue')}
+            </ButtonFilled>
+          </div>
           <Typography className={classes.step}>
             {t('getStarted.button.step')} {currentStep}{' '}
             {t('getStarted.button.of')} {totalStep}

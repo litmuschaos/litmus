@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  name: litmus-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              serviceName: litmusportal-frontend-service
+              servicePort: 9091
+            path: /(.*)
+            pathType: ImplementationSpecific
+          - backend:
+              serviceName: litmusportal-server-service
+              servicePort: 9002
+            path: /backend/(.*)
+            pathType: ImplementationSpecific

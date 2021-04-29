@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useQuery, useSubscription } from '@apollo/client';
 import { Tabs, Typography, useTheme } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useQuery, useSubscription } from '@apollo/client';
 import YAML from 'yaml';
+import { StyledTab, TabPanel } from '../../../components/Tabs';
+import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
 import {
   PodLog,
   PodLogRequest,
@@ -13,11 +15,9 @@ import {
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
+import { RootState } from '../../../redux/reducers';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
-import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
-import { RootState } from '../../../redux/reducers';
-import { TabPanel, StyledTab } from '../../../components/Tabs';
 
 interface ChaosDataVar {
   exp_pod: string;
@@ -174,7 +174,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
           onChange={handleChange}
           TabIndicatorProps={{
             style: {
-              backgroundColor: theme.palette.secondary.dark,
+              backgroundColor: theme.palette.highlight,
             },
           }}
         >

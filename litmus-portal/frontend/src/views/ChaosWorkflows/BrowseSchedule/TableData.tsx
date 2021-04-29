@@ -25,6 +25,7 @@ import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import timeDifferenceForDate from '../../../utils/datesModifier';
@@ -49,6 +50,8 @@ const TableData: React.FC<TableDataProps> = ({
 
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+
+  const workflow = useActions(WorkflowActions);
 
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -142,20 +145,40 @@ const TableData: React.FC<TableDataProps> = ({
     });
   };
 
+  const handleSaveWorkflowTemplate = (manifest: string) => {
+    const parsedYAML = YAML.parse(manifest);
+    if (parsedYAML.metadata.labels !== undefined) {
+      const labelData = parsedYAML.metadata.labels;
+      if (labelData.cluster_id !== undefined) {
+        delete labelData.cluster_id;
+      }
+      if (labelData.workflow_id !== undefined) {
+        delete labelData.workflow_id;
+      }
+    }
+    workflow.setWorkflowManifest({
+      manifest: YAML.stringify(parsedYAML),
+    });
+    setIsTemplateModalOpen(true);
+  };
+
+  const handleCloseTemplate = () => {
+    setIsTemplateModalOpen(false);
+  };
+
   return (
     <>
       <Modal
-        width="48.62%"
-        height="70.5%"
+        width="60%"
         open={isTemplateModalOpen}
-        onClose={() => setIsTemplateModalOpen(false)}
+        onClose={handleCloseTemplate}
         modalActions={
-          <ButtonOutlined onClick={() => setIsTemplateModalOpen(false)}>
+          <ButtonOutlined onClick={handleCloseTemplate}>
             &#x2715;
           </ButtonOutlined>
         }
       >
-        <SaveTemplateModal />
+        <SaveTemplateModal closeTemplate={handleCloseTemplate} />
       </Modal>
       <TableCell className={classes.workflowNameData}>
         <Typography>
@@ -343,7 +366,7 @@ const TableData: React.FC<TableDataProps> = ({
             <MenuItem value="Edit_Schedule" onClick={() => editSchedule()}>
               <div className={classes.expDiv}>
                 <img
-                  src="./icons/Edit.svg"
+                  src="/icons/Edit.svg"
                   alt="Edit Schedule"
                   className={classes.btnImg}
                 />
@@ -368,6 +391,7 @@ const TableData: React.FC<TableDataProps> = ({
             <></>
           )}
           {projectRole !== 'Viewer' &&
+            data.cronSyntax !== '' &&
             YAML.parse(data.workflow_manifest).spec.suspend !== true && (
               <MenuItem
                 value="Disable"
@@ -408,7 +432,7 @@ const TableData: React.FC<TableDataProps> = ({
           </MenuItem>
           <MenuItem
             value="Download"
-            onClick={() => setIsTemplateModalOpen(true)}
+            onClick={() => handleSaveWorkflowTemplate(data.workflow_manifest)}
           >
             <div className={classes.expDiv}>
               <InsertDriveFileOutlined className={classes.downloadBtn} />
@@ -416,7 +440,7 @@ const TableData: React.FC<TableDataProps> = ({
                 data-cy="downloadManifest"
                 className={classes.downloadText}
               >
-                Save Template
+                {t('chaosWorkflows.browseSchedules.saveTemplate')}
               </Typography>
             </div>
           </MenuItem>

@@ -140,7 +140,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           <Select
             value={clusterValue}
             onChange={changeCluster}
-            label="Target Cluster"
+            label="Target Agent"
             className={classes.selectText}
           >
             <MenuItem value="All">
