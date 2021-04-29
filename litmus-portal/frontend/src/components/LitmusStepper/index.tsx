@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import Loader from '../Loader';
 import { LitmusStepConnector } from './LitmusStepConnector';
 import { LitmusStepIcon } from './LitmusStepIcon';
 import { useStyles } from './styles';
@@ -12,6 +13,7 @@ interface LitmusStepperProps {
   activeStep: number;
   handleBack: () => void;
   handleNext: () => void;
+  loader: boolean;
   finishAction: React.ReactNode;
   hideNext?: boolean;
   disableNext?: boolean;
@@ -24,6 +26,7 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
   handleBack,
   handleNext,
   hideNext,
+  loader,
   disableNext,
   moreStepperActions,
   children,
@@ -85,6 +88,11 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
                 <Typography>{t('workflowStepper.next')}</Typography>
               </ButtonFilled>
             )
+          ) : loader ? (
+            <ButtonFilled disabled onClick={handleNext}>
+              {t('workflowStepper.finish')}{' '}
+              <span style={{ marginLeft: '0.5rem' }} /> <Loader size={20} />
+            </ButtonFilled>
           ) : (
             <ButtonFilled onClick={handleNext} disabled={disableNext}>
               <Typography>{t('workflowStepper.finish')}</Typography>

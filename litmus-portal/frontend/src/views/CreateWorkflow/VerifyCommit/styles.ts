@@ -79,6 +79,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: theme.spacing(0.5),
     verticalAlign: 'middle',
   },
+  subject: {
+    alignContent: 'center',
+    color: theme.palette.highlight,
+    fontSize: '1rem',
+    paddingTop: theme.spacing(1.25),
+    verticalAlign: 'middle',
+  },
+  subjectDesc: {
+    fontSize: '0.75rem',
+  },
+  subjectDiv: {
+    display: 'flex',
+  },
   schedule: {
     fontSize: '0.85rem',
     paddingLeft: theme.spacing(2),

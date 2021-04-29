@@ -40,4 +40,9 @@ export const constants = {
    */
   error: 'error',
   success: 'success',
+
+  /**
+   * Tuneworkflow index
+   */
+  adminMode: 'adminModeNamespace',
 };

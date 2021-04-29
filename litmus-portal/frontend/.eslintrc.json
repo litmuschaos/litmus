@@ -39,6 +39,7 @@
     "camelcase": 0,
     "jsx-a11y/anchor-is-valid": 0,
     "jsx-a11y/href-no-hash": ["off"],
+    "jest/no-conditional-expect": ["off"],
     "react/jsx-props-no-spreading": ["off"],
     "react/jsx-filename-extension": [
       "warn",

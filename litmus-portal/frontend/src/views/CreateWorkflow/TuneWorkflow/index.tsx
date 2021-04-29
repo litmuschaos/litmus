@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import YamlEditor from '../../../components/YamlEditor/Editor';
+import { constants } from '../../../constants';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
@@ -99,6 +100,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const { manifest, isCustomWorkflow } = useSelector(
     (state: RootState) => state.workflowManifest
   );
+  const { namespace } = useSelector((state: RootState) => state.workflowData);
 
   const [YAMLModal, setYAMLModal] = useState<boolean>(false);
 
@@ -136,8 +138,16 @@ const TuneWorkflow = forwardRef((_, ref) => {
     onCompleted: (data) => {
       const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
       const wfmanifest = updateEngineName(YAML.parse(parsedYAML));
+      const updatedManifest = YAML.parse(wfmanifest);
+      updatedManifest.spec.arguments.parameters.forEach(
+        (parameter: any, index: number) => {
+          if (parameter.name === constants.adminMode) {
+            updatedManifest.spec.arguments.parameters[index].value = namespace;
+          }
+        }
+      );
       workflowAction.setWorkflowManifest({
-        manifest: wfmanifest,
+        manifest: YAML.stringify(updatedManifest),
       });
     },
   });
@@ -163,14 +173,14 @@ const TuneWorkflow = forwardRef((_, ref) => {
     kind: 'Workflow',
     metadata: {
       name: `${workflow.name}-${Math.round(new Date().getTime() / 1000)}`,
-      namespace: `litmus`,
+      namespace,
     },
     spec: {
       arguments: {
         parameters: [
           {
             name: 'adminModeNamespace',
-            value: `litmus`,
+            value: namespace,
           },
         ],
       },
@@ -222,8 +232,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
       .then((data) => {
         data.text().then((yamlText) => {
           const wfmanifest = updateEngineName(YAML.parse(yamlText));
+          const updatedManifest = YAML.parse(wfmanifest);
+          updatedManifest.spec.arguments.parameters.forEach(
+            (parameter: any, index: number) => {
+              if (parameter.name === constants.adminMode) {
+                updatedManifest.spec.arguments.parameters[
+                  index
+                ].value = namespace;
+              }
+            }
+          );
           workflowAction.setWorkflowManifest({
-            manifest: wfmanifest,
+            manifest: YAML.stringify(updatedManifest),
           });
         });
       })
@@ -460,7 +480,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   }, [engineDataLoading, experimentDataLoading]);
 
   function onNext() {
-    if (isCustomWorkflow && childRef.current) {
+    if (childRef.current) {
       if ((childRef.current.onNext() as unknown) === false) {
         alert.changeAlertState(true); // Custom Workflow has no experiments
         return false;
