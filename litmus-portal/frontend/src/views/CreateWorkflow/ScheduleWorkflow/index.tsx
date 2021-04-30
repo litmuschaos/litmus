@@ -50,7 +50,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
-
+  const { namespace } = useSelector((state: RootState) => state.workflowData);
   // Redux States for Schedule
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -179,6 +179,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
       newParsedYaml.spec.schedule = workflowData.cronSyntax;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
+      newParsedYaml.metadata.namespace = namespace;
       newParsedYaml.metadata.labels = {
         workflow_id: workflowData.workflow_id,
       };
@@ -203,6 +204,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
       delete newParsedYaml.spec;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
+      newParsedYaml.metadata.namespace = namespace;
       newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
       newParsedYaml.metadata.labels = {
         workflow_id: workflowData.workflow_id,
@@ -222,6 +224,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
       //   newParsedYaml.spec.suspend = false;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
+      newParsedYaml.metadata.namespace = namespace;
       newParsedYaml.metadata.labels = { workflow_id: workflowData.workflow_id };
       const tz = {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
