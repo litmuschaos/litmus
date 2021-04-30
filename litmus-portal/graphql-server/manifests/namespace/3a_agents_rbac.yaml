@@ -32,6 +32,7 @@ rules:
       - workflowtemplates/finalizers
       - cronworkflows
       - cronworkflows/finalizers
+      - rollouts
     verbs:
       - create
       - get
@@ -48,11 +49,30 @@ rules:
       - list
       - watch
   - apiGroups:
-      - "apps"
+      - apps
     resources:
       - deployments
+      - statefulsets
+      - daemonsets
     verbs:
+      - get
+      - list
       - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - namespaces
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps.openshift.io
+    resources:
+      - deploymentconfigs
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
