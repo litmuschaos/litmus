@@ -69,20 +69,11 @@ metadata:
     name: litmus-server
 rules:
   - apiGroups:
-      - ""
+      - "*"
     resources:
-      - pods
-      - pods/exec
+      - "*"
     verbs:
-      - create
-      - patch
-      - update
-  - apiGroups:
-      - "apps"
-    resources:
-      - deployments
-    verbs:
-      - create
+      - "*"
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
