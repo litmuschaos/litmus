@@ -178,14 +178,14 @@ subjects:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: litmus-event-tracker-sa
+  name: event-tracker-sa
   namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   creationTimestamp: null
-  name: event-tracker-cluster-role
+  name: event-tracker-role
 rules:
   - apiGroups:
       - eventtracker.litmuschaos.io
@@ -225,12 +225,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: litmus-event-tracker-clusterole-binding
+  name: event-tracker-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: litmus-event-tracker-cluster-role
+  name: event-tracker-role
 subjects:
   - kind: ServiceAccount
-    name: litmus-event-tracker-sa
+    name: event-tracker-sa
     namespace: #{AGENT-NAMESPACE}
