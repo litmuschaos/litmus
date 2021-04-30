@@ -74,6 +74,7 @@ workflowStepper:
   workflowBtn: Go to Workflow
   step1:
     errorSnackbar: You haven't selected any Target Agent
+    errorSnackbarViewer: You cannot schedule a workflow as a Viewer
   step2:
     errorSnackbar: Please select a workflow type
   step3:
