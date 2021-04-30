@@ -64,6 +64,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n"
 	)
 
+	// Checking if the agent namespace does not exist and its scope of installation is not namespaced
 	if *cluster.AgentNsExists == false && cluster.AgentScope != "namespace" {
 		generatedYAML = append(generatedYAML, fmt.Sprintf(namspaceStr))
 	}
