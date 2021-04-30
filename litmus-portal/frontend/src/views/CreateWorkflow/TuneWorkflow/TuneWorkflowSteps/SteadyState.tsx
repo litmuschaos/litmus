@@ -15,6 +15,7 @@ import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import { useTranslation } from 'react-i18next';
 import AddProbe from '../AddProbe';
 import useStyles from './styles';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
@@ -25,17 +26,16 @@ import useActions from '../../../../redux/actions';
 interface SteadyStateProps {
   engineIndex: number;
   gotoStep: (page: number) => void;
-  isCustom: boolean;
   closeStepper: () => void;
 }
 
 const SteadyState: React.FC<SteadyStateProps> = ({
   engineIndex,
   gotoStep,
-  isCustom,
   closeStepper,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const workflow = useActions(WorkflowActions);
 
   const manifest: WorkflowManifest = useSelector(
@@ -118,11 +118,21 @@ const SteadyState: React.FC<SteadyStateProps> = ({
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Probe Name</TableCell>
-              <TableCell align="left">Type</TableCell>
-              <TableCell align="left">Mode</TableCell>
-              <TableCell align="left">Probe Details</TableCell>
-              <TableCell align="left">Properties</TableCell>
+              <TableCell>
+                {t('createWorkflow.tuneWorkflow.steadyState.name')}
+              </TableCell>
+              <TableCell align="left">
+                {t('createWorkflow.tuneWorkflow.steadyState.type')}
+              </TableCell>
+              <TableCell align="left">
+                {t('createWorkflow.tuneWorkflow.steadyState.mode')}
+              </TableCell>
+              <TableCell align="left">
+                {t('createWorkflow.tuneWorkflow.steadyState.details')}
+              </TableCell>
+              <TableCell align="left">
+                {t('createWorkflow.tuneWorkflow.steadyState.properties')}
+              </TableCell>
               <TableCell align="left" />
             </TableRow>
           </TableHead>
@@ -145,7 +155,11 @@ const SteadyState: React.FC<SteadyStateProps> = ({
                       }}
                       className={classes.btn1}
                     >
-                      <Typography> Show Details </Typography>
+                      <Typography>
+                        {t(
+                          'createWorkflow.tuneWorkflow.steadyState.showDetails'
+                        )}
+                      </Typography>
                     </ButtonOutlined>
                   </TableCell>
 
@@ -179,7 +193,9 @@ const SteadyState: React.FC<SteadyStateProps> = ({
                       }}
                       className={classes.btn1}
                     >
-                      <Typography> Show Properties </Typography>
+                      <Typography>
+                        {t('createWorkflow.tuneWorkflow.steadyState.showProp')}
+                      </Typography>
                     </ButtonOutlined>
                   </TableCell>
 
@@ -224,7 +240,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({
               <TableRow>
                 <TableCell colSpan={5}>
                   <Typography align="center">
-                    Please add probes to see the data
+                    {t('createWorkflow.tuneWorkflow.steadyState.addProbe')}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -239,7 +255,9 @@ const SteadyState: React.FC<SteadyStateProps> = ({
         }}
         className={classes.btn1}
       >
-        <Typography> + Add a new Probe </Typography>
+        <Typography>
+          {t('createWorkflow.tuneWorkflow.steadyState.addNewProbe')}
+        </Typography>
       </ButtonOutlined>
       <AddProbe
         probesValue={probesData}
@@ -248,11 +266,8 @@ const SteadyState: React.FC<SteadyStateProps> = ({
         open={addProbe}
       />
       <div>
-        <Button
-          onClick={() => (isCustom ? gotoStep(1) : gotoStep(0))}
-          className={classes.button}
-        >
-          Back
+        <Button onClick={() => gotoStep(1)} className={classes.button}>
+          {t('createWorkflow.tuneWorkflow.steadyState.back')}
         </Button>
         <Button
           variant="contained"
@@ -260,7 +275,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({
           onClick={() => handleStepperClose()}
           className={classes.button}
         >
-          Finish
+          {t('createWorkflow.tuneWorkflow.steadyState.finish')}
         </Button>
       </div>
     </div>
