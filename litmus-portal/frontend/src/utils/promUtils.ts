@@ -6,13 +6,15 @@ import {
 } from '../models/graphql/prometheus';
 import {
   DEFAULT_CHAOS_EVENT_NAME,
+  DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
   DEFAULT_METRIC_SERIES_NAME,
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
 } from '../pages/MonitoringDashboardPage/constants';
 
 export const getPromQueryInput = (
   prom_queries: PromQuery[],
-  timeRangeDiff: number
+  timeRangeDiff: number,
+  withEvents: Boolean
 ) => {
   const promQueries: promQueryInput[] = [];
   prom_queries.forEach((query: PromQuery) => {
@@ -32,26 +34,28 @@ export const getPromQueryInput = (
             ),
     });
   });
-  // promQueries.push({
-  //   queryid: 'chaos-interval',
-  //   query: 'litmuschaos_awaited_experiments{job="chaos-exporter"}',
-  //   legend: '{{chaosengine_name}}',
-  //   resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
-  //   minstep:
-  //     timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
-  //       ? 1
-  //       : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
-  // });
-  // promQueries.push({
-  //   queryid: 'chaos-verdict',
-  //   query: 'litmuschaos_experiment_verdict{job="chaos-exporter"}',
-  //   legend: '{{chaosengine_name}}',
-  //   resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
-  //   minstep:
-  //     timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
-  //       ? 1
-  //       : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
-  // });
+  if (withEvents) {
+    promQueries.push({
+      queryid: 'chaos-interval',
+      query: 'litmuschaos_awaited_experiments{job="chaos-exporter"}',
+      legend: '{{chaosengine_name}}',
+      resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+      minstep:
+        timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
+          ? 1
+          : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+    });
+    promQueries.push({
+      queryid: 'chaos-verdict',
+      query: 'litmuschaos_experiment_verdict{job="chaos-exporter"}',
+      legend: '{{chaosengine_name}}',
+      resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+      minstep:
+        timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
+          ? 1
+          : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+    });
+  }
   return promQueries;
 };
 

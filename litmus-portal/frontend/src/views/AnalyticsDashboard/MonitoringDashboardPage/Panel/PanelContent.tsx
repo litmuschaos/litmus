@@ -135,7 +135,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
           1000 -
         new Date(moment(selectedDashboard.range.startDate).format()).getTime() /
           1000;
-      promQueries = getPromQueryInput(prom_queries, timeRangeDiff);
+      promQueries = getPromQueryInput(prom_queries, timeRangeDiff, true);
     }
     setPrometheusQueryData({
       promInput: {
