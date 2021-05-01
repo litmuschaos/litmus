@@ -10,6 +10,7 @@ import Row from '../../containers/layouts/Row';
 import useActions from '../../redux/actions';
 import * as AlertActions from '../../redux/actions/alert';
 import { RootState } from '../../redux/reducers';
+import { getProjectRole } from '../../utils/getSearchParams';
 import ChooseAWorkflowAgent from '../../views/CreateWorkflow/ChooseAWorkflowAgent';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
@@ -190,7 +191,11 @@ const WorkflowStepper = () => {
   function getAlertMessage(stepNumber: number) {
     switch (stepNumber) {
       case 0:
+        if (getProjectRole() === 'Viewer') {
+          return t(`workflowStepper.step1.errorSnackbarViewer`);
+        }
         return t(`workflowStepper.step1.errorSnackbar`);
+
       case 1:
         return t(`workflowStepper.step2.errorSnackbar`);
       case 2:

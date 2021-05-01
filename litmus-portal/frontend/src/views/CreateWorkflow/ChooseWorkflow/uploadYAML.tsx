@@ -2,10 +2,12 @@ import { AccordionDetails, Button, Paper, Typography } from '@material-ui/core';
 import localforage from 'localforage';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
-import { updateEngineName } from '../../../utils/yamlUtils';
+import { RootState } from '../../../redux/reducers';
+import { updateEngineName, updateNamespace } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
@@ -18,6 +20,7 @@ const UploadYAML = () => {
   const [uploadedYAML, setUploadedYAML] = useState('');
   const [fileName, setFileName] = useState<string | null>('');
   const workflowAction = useActions(WorkflowActions);
+  const { namespace } = useSelector((state: RootState) => state.workflowData);
 
   const saveToLocalForage = () => {
     const selection: ChooseWorkflowRadio = {
@@ -40,8 +43,9 @@ const UploadYAML = () => {
         setUploadedYAML(readFile);
         setFileName(file.name);
         const wfmanifest = updateEngineName(YAML.parse(readFile));
+        const updatedManifest = updateNamespace(wfmanifest, namespace);
         workflowAction.setWorkflowManifest({
-          manifest: wfmanifest,
+          manifest: YAML.stringify(updatedManifest),
         });
       });
     saveToLocalForage();
@@ -58,8 +62,9 @@ const UploadYAML = () => {
       readFile.text().then((response) => {
         setUploadedYAML(response);
         const wfmanifest = updateEngineName(YAML.parse(response));
+        const updatedManifest = updateNamespace(wfmanifest, namespace);
         workflowAction.setWorkflowManifest({
-          manifest: wfmanifest,
+          manifest: YAML.stringify(updatedManifest),
         });
       });
     } else {

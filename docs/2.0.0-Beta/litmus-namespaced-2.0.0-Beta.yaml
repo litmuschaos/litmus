@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:2.0.0-Beta4
+          image: litmuschaos/litmusportal-frontend:2.0.0-Beta5
           resources:
             limits:
               cpu: 200m
@@ -69,20 +69,11 @@ metadata:
     name: litmus-server
 rules:
   - apiGroups:
-      - ""
+      - "*"
     resources:
-      - pods
-      - pods/exec
+      - "*"
     verbs:
-      - create
-      - patch
-      - update
-  - apiGroups:
-      - "apps"
-    resources:
-      - deployments
-    verbs:
-      - create
+      - "*"
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -115,7 +106,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:2.0.0-Beta4
+          image: litmuschaos/litmusportal-server:2.0.0-Beta5
           resources:
             limits:
               cpu: 200m
@@ -162,9 +153,9 @@ spec:
             - name: PORTAL_ENDPOINT
               value: "http://litmusportal-server-service:9002"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:2.0.0-Beta4"
+              value: "litmuschaos/litmusportal-subscriber:2.0.0-Beta5"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:2.0.0-Beta4"
+              value: "litmuschaos/litmusportal-event-tracker:2.0.0-Beta5"
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
@@ -185,7 +176,7 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:2.0.0-Beta4
+          image: litmuschaos/litmusportal-auth-server:2.0.0-Beta5
           resources:
             limits:
               cpu: 200m

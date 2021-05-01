@@ -13,9 +13,10 @@ import { RootState } from '../../../../redux/reducers';
 
 interface GeneralProps {
   gotoStep: (page: number) => void;
+  isCustom: boolean | undefined;
 }
 
-const General: React.FC<GeneralProps> = ({ gotoStep }) => {
+const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const [hubName, setHubName] = React.useState<string>('');
@@ -65,22 +66,30 @@ const General: React.FC<GeneralProps> = ({ gotoStep }) => {
       </Typography>
       <br />
       <div className={classes.generalContainer}>
-        <InputField
-          label="Hub"
-          value={hubName}
-          InputProps={{
-            readOnly: true,
-          }}
-        />
-        <br />
-        <InputField
-          label="Experiment Name"
-          value={experimentName}
-          onChange={(e) => {
-            setExperimentName(e.target.value);
-          }}
-        />
-        <br />
+        {isCustom && (
+          <>
+            {hubName.length > 0 && (
+              <>
+                <InputField
+                  label="Hub"
+                  value={hubName}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+                <br />
+              </>
+            )}
+            <InputField
+              label="Experiment Name"
+              value={experimentName}
+              onChange={(e) => {
+                setExperimentName(e.target.value);
+              }}
+            />
+            <br />
+          </>
+        )}
         <InputField
           label="Context"
           value={context}

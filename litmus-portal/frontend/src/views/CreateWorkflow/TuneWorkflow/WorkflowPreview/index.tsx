@@ -75,14 +75,16 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
         ]
       */
       for (let i = 0; i < steps.length; i++) {
-        updatedSteps.push(steps[i]);
-        if (i !== steps.length - 1) {
-          updatedSteps.push([
-            {
-              name: 'StepGroup',
-              template: 'StepGroup',
-            },
-          ]);
+        if (steps[i].length !== 0) {
+          updatedSteps.push(steps[i]);
+          if (i !== steps.length - 1) {
+            updatedSteps.push([
+              {
+                name: 'StepGroup',
+                template: 'StepGroup',
+              },
+            ]);
+          }
         }
       }
 

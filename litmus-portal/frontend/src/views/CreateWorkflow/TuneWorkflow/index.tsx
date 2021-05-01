@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import YamlEditor from '../../../components/YamlEditor/Editor';
-import { constants } from '../../../constants';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
@@ -33,7 +32,7 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
-import { updateEngineName } from '../../../utils/yamlUtils';
+import { updateEngineName, updateNamespace } from '../../../utils/yamlUtils';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
@@ -138,14 +137,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     onCompleted: (data) => {
       const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
       const wfmanifest = updateEngineName(YAML.parse(parsedYAML));
-      const updatedManifest = YAML.parse(wfmanifest);
-      updatedManifest.spec.arguments.parameters.forEach(
-        (parameter: any, index: number) => {
-          if (parameter.name === constants.adminMode) {
-            updatedManifest.spec.arguments.parameters[index].value = namespace;
-          }
-        }
-      );
+      const updatedManifest = updateNamespace(wfmanifest, namespace);
       workflowAction.setWorkflowManifest({
         manifest: YAML.stringify(updatedManifest),
       });
@@ -232,16 +224,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       .then((data) => {
         data.text().then((yamlText) => {
           const wfmanifest = updateEngineName(YAML.parse(yamlText));
-          const updatedManifest = YAML.parse(wfmanifest);
-          updatedManifest.spec.arguments.parameters.forEach(
-            (parameter: any, index: number) => {
-              if (parameter.name === constants.adminMode) {
-                updatedManifest.spec.arguments.parameters[
-                  index
-                ].value = namespace;
-              }
-            }
-          );
+          const updatedManifest = updateNamespace(wfmanifest, namespace);
           workflowAction.setWorkflowManifest({
             manifest: YAML.stringify(updatedManifest),
           });
@@ -448,9 +431,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
    */
   useEffect(() => {
     if (isCustomWorkflow) {
-      setGeneratedYAML(updateCRD(generatedYAML, experiment));
+      const savedManifest =
+        manifest !== '' ? YAML.parse(manifest) : generatedYAML;
+      const updatedManifest = updateCRD(savedManifest, experiment);
+      setGeneratedYAML(updatedManifest);
       workflowAction.setWorkflowManifest({
-        manifest: YAML.stringify(generatedYAML),
+        manifest: YAML.stringify(updatedManifest),
       });
     }
   }, [experiment]);

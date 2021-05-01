@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import Row from '../../../containers/layouts/Row';
+import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { experimentMap } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -49,6 +50,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   const [revertChaos, setRevertChaos] = useState<boolean>(true);
   const [displayStepper, setDisplayStepper] = useState<boolean>(false);
   const [engineIndex, setEngineIndex] = useState<number>(0);
+  const [selected, setSelected] = useState<string>('');
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
@@ -179,6 +181,11 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
     if (manifest.length) {
       parsing(manifest);
     }
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      if (value) {
+        setSelected((value as ChooseWorkflowRadio).selected);
+      } else setSelected('');
+    });
   }, [manifest]);
 
   function onNext() {
@@ -188,7 +195,9 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
     if (!isCustom) {
       return true;
     }
-    toggleRevertChaos(manifest);
+    if (selected === 'C') {
+      toggleRevertChaos(manifest);
+    }
     return true; // Should not show any alert
   }
 
@@ -260,7 +269,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
               </TableBody>
             </Table>
           </TableContainer>
-          {isCustom && (
+          {selected === 'C' && (
             <TableContainer className={classes.revertChaos} component={Paper}>
               <Row className={classes.wrapper}>
                 <div className={classes.key}>

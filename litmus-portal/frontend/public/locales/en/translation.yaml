@@ -74,6 +74,7 @@ workflowStepper:
   workflowBtn: Go to Workflow
   step1:
     errorSnackbar: You haven't selected any Target Agent
+    errorSnackbarViewer: You cannot schedule a workflow as a Viewer
   step2:
     errorSnackbar: Please select a workflow type
   step3:
@@ -792,7 +793,7 @@ createWorkflow:
     updateChanges: Update changes in the workflow manifest
     saveChange: Save Changes
     verticalStepper:
-      myHubInfo: MyHub and Experiment details
+      myHubInfo: Experiment details
       annotationInfo: Provide target application details where you want to induce the chaos.
       annotation: Annotation Check
       true: 'True'
@@ -810,6 +811,18 @@ createWorkflow:
       labelError: Label not available in the resource or namespace
       deleteExp: Delete the experiment
       editExp: Edit the experiment
+    steadyState:
+      name: Probe Name
+      type: Type
+      mode: Mode
+      details: Probe Details
+      properties: Properties
+      showDetails: Show Details
+      showProp: Show Properties
+      addProbe: Please add probes to see the data
+      addNewProbe: '+ Add a new Probe'
+      back: Back
+      finish: Finish
     addProbe:
       heading: Add
       headingStrong: Probe

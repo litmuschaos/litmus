@@ -32,58 +32,23 @@ function getStepContent(
   gotoStep: (page: number) => void,
   closeStepper: () => void
 ): React.ReactNode {
-  if (isCustom) {
-    switch (step) {
-      case 0:
-        return <General gotoStep={gotoStep} />;
-      case 1:
-        return (
-          <TargetApplication
-            isCustom
-            engineIndex={engineIndex}
-            gotoStep={gotoStep}
-          />
-        );
-      case 2:
-        return (
-          <SteadyState
-            isCustom
-            engineIndex={engineIndex}
-            gotoStep={gotoStep}
-            closeStepper={closeStepper}
-          />
-        );
-      default:
-        return <General gotoStep={gotoStep} />;
-    }
-  } else {
-    switch (step) {
-      case 0:
-        return (
-          <TargetApplication
-            isCustom={false}
-            engineIndex={engineIndex}
-            gotoStep={gotoStep}
-          />
-        );
-      case 1:
-        return (
-          <SteadyState
-            isCustom={false}
-            engineIndex={engineIndex}
-            gotoStep={gotoStep}
-            closeStepper={closeStepper}
-          />
-        );
-      default:
-        return (
-          <TargetApplication
-            isCustom={false}
-            engineIndex={engineIndex}
-            gotoStep={gotoStep}
-          />
-        );
-    }
+  switch (step) {
+    case 0:
+      return <General isCustom={isCustom} gotoStep={gotoStep} />;
+    case 1:
+      return (
+        <TargetApplication engineIndex={engineIndex} gotoStep={gotoStep} />
+      );
+    case 2:
+      return (
+        <SteadyState
+          engineIndex={engineIndex}
+          gotoStep={gotoStep}
+          closeStepper={closeStepper}
+        />
+      );
+    default:
+      return <General isCustom={isCustom} gotoStep={gotoStep} />;
   }
 }
 
@@ -99,13 +64,11 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
   const [activeStep, setActiveStep] = React.useState(0);
 
   // Steps of stepper for custom and predefined workflows
-  const steps = isCustom
-    ? [
-        'General',
-        'Target Application',
-        'Define the steady state for this application',
-      ]
-    : ['Target Application', 'Define the steady state for this application'];
+  const steps = [
+    'General',
+    'Target Application',
+    'Define the steady state for this application',
+  ];
 
   const gotoStep = (page: number) => {
     setActiveStep(page);

@@ -14,7 +14,7 @@ import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import { getProjectID } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface Cluster {
@@ -82,7 +82,11 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   });
 
   function onNext() {
-    if (clusterid === '') {
+    if (getProjectRole() === 'Viewer') {
+      alert.changeAlertState(true);
+      return false;
+    }
+    if (clusterid === '' || clusterData.length === 0) {
       alert.changeAlertState(true); // No Cluster has been selected and user clicked on Next
       return false;
     }

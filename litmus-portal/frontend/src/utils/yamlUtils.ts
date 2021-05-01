@@ -1,6 +1,7 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable no-loop-func */
 import YAML from 'yaml';
+import { constants } from '../constants';
 
 const nameextractor = (val: any) => {
   const embeddedworkflowyamlstring = val;
@@ -148,6 +149,30 @@ export const generateChaosQuery = (
     engineName
   );
   return queryStringWithEngineName.replaceAll('*{}', namespace);
+};
+
+export const updateNamespace = (manifest: string, namespace: string) => {
+  const updatedManifest = YAML.parse(manifest);
+  updatedManifest.metadata.namespace = namespace;
+  if (updatedManifest.kind.toLowerCase() === 'workflow')
+    updatedManifest.spec.arguments.parameters.forEach(
+      (parameter: any, index: number) => {
+        if (parameter.name === constants.adminMode) {
+          updatedManifest.spec.arguments.parameters[index].value = namespace;
+        }
+      }
+    );
+  if (updatedManifest.kind.toLowerCase() === 'cronworkflow')
+    updatedManifest.spec.workflowSpec.arguments.parameters.forEach(
+      (parameter: any, index: number) => {
+        if (parameter.name === constants.adminMode) {
+          updatedManifest.spec.workflowSpec.arguments.parameters[
+            index
+          ].value = namespace;
+        }
+      }
+    );
+  return updatedManifest;
 };
 
 // This is a utility function for extracting embedded
