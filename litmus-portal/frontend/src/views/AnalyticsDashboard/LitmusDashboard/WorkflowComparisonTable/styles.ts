@@ -10,9 +10,8 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     width: '100%',
     flexDirection: 'column',
-    marginTop: theme.spacing(-7),
+    marginTop: theme.spacing(2),
     paddingBottom: theme.spacing(3),
-    paddingLeft: theme.spacing(-1),
     overflow: 'hidden',
   },
 
@@ -28,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   heading: {
-    marginTop: theme.spacing(7),
     fontFamily: 'Ubuntu',
     fontSize: '1.5rem',
     color: theme.palette.text.primary,

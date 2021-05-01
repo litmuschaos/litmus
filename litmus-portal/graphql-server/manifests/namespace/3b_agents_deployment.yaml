@@ -62,7 +62,7 @@ spec:
       labels:
         app: event-tracker
     spec:
-      serviceAccountName: litmus-event-tracker-sa
+      serviceAccountName: event-tracker-sa
       containers:
         - image: #{EVENT-TRACKER-IMAGE}
           imagePullPolicy: Always

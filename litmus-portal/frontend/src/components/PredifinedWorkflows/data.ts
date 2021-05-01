@@ -1,16 +1,12 @@
 export default [
   {
     workflowID: 0,
-    title: 'sock-shop-resiliency-check',
+    title: 'sock-shop-chaos',
     chaosinfra: false,
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/sock-shop-demo/usingCmdProbe/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/sock-shop-demo/usingCmdProbe/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/tree/master/workflows/sock-shop-demo',
+    urlToIcon: '/icons/sock-shop.png',
+    chaosWkfCRDLink: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/sock-shop-demo/usingCmdProbe/workflow.yaml`,
+    chaosWkfCRDLink_Recur: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/sock-shop-demo/usingCmdProbe/workflow_cron.yaml`,
+    gitLink: `https://github.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/sock-shop-demo`,
     provider: 'ChaosNative',
     description: 'Induces chaos on Sock-Shop application',
     totalRuns: 110,
@@ -29,78 +25,16 @@ export default [
   },
   {
     workflowID: 1,
-    title: 'node-cpu-hog',
-    chaosinfra: true,
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-cpu-hog.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow_cron.yaml',
-
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-cpu-hog',
-    provider: 'MayaData',
-    description: 'Injects a CPU spike on a node',
-    totalRuns: 5300,
-    isCustom: false,
-    details:
-      'This experiment causes CPU resource exhaustion on the Kubernetes node.' +
-      'The experiment aims to verify resiliency of applications whose replicas may be ' +
-      'evicted on account on nodes turning unschedulable (Not Ready) due to lack of CPU resources.' +
-      ' Uses kube-proxy for identification of pod.',
-    recommendation:
-      'Check whether the application is resilient to the CPU hog, once the experiment (job) is completed.',
-    experimentinfo:
-      'Node CPU Hog can be effected using the chaos library: litmus, ' +
-      'The desired chaos library can be selected by setting litmus as value for the env variable LIB',
-  },
-  {
-    workflowID: 2,
-    title: 'node-memory-hog',
-    chaosinfra: true,
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-memory-hog.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog',
-    provider: 'MayaData',
-    description: 'Injects a memory spike on a node',
-    totalRuns: 4300,
-    isCustom: false,
-    details:
-      'This experiment causes Memory resource exhaustion on the Kubernetes node.' +
-      'The experiment aims to verify resiliency of applications whose replicas may be ' +
-      'evicted on account on nodes turning unschedulable (Not Ready) due to lack of Memory resources. ' +
-      'The Memory chaos is injected using a job running the linux stress-ng tool (a workload generator). ' +
-      'The chaos is effected for a period equalling the TOTAL_CHAOS_DURATION and upto ' +
-      'MEMORY_PERCENTAGE(out of 100). Application implies services. Can be reframed as: Tests application ' +
-      'resiliency upon replica evictions caused due to lack of Memory resources.' +
-      ' Uses kube-proxy for identification of pod.',
-    recommendation:
-      'Check whether the application is resilient to the Memory hog, once the experiment (job) is completed',
-    experimentinfo:
-      'Provide the application info in spec.appinfo Provide the auxiliary applications ' +
-      'info (ns & labels) in spec.auxiliaryAppInfo',
-  },
-  {
-    workflowID: 3,
     title: 'kube-proxy-chaos',
     chaosinfra: true,
-    urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/kube-proxy-all',
+    urlToIcon: '/icons/kubernetes-platform.svg',
+    chaosWkfCRDLink: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all/workflow.yaml`,
+    chaosWkfCRDLink_Recur: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all/workflow_cron.yaml`,
+    gitLink: `https://github.com/litmuschaos/chaos-charts/blob/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all`,
     provider: 'MayaData',
     description: 'Induces chaos on kube proxy',
     totalRuns: 9000,
-    isCustom: false,
+    isCustom: true,
     details:
       'Causes (forced/graceful) pod failure of specific/random replicas of kube proxy and the node it runs on' +
       'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
@@ -112,28 +46,27 @@ export default [
       'in experiments.spec.components.env ',
   },
   {
-    workflowID: 4,
-    title: 'namespaced-scope-chaos',
+    workflowID: 2,
+    title: 'podtato-head-chaos',
     chaosinfra: false,
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/namespaced-scope-chaos/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/namespaced-scope-chaos/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/namespaced-scope-chaos',
-    provider: 'MayaData',
-    description: 'Induces chaos on Hello world application',
-    totalRuns: 12000,
+    urlToIcon: '/icons/podtato_head.png',
+    chaosWkfCRDLink: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/podtato-head/workflow.yaml`,
+    chaosWkfCRDLink_Recur: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/podtato-head/workflow_cron.yaml`,
+    gitLink: `https://github.com/litmuschaos/chaos-charts/tree/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/podtato-head`,
+    provider: 'ChaosNative',
+    description: 'Induces chaos on podtato-head application',
+    totalRuns: 10,
     isCustom: false,
     details:
-      'Causes (forced/graceful) pod failure of specific/random replicas of hello world application resources ' +
-      'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
-      'of the application The pod delete by Powerfulseal is only supporting single pod ' +
-      'failure (kill_count = 1).',
+      'This workflow installs and executes chaos on the popular demo application podtato-head, ' +
+      'A demo project for showcasing cloud-native application delivery use cases using different tools for various use cases.' +
+      'It injects a transient fault on an upstream microservice ' +
+      'pod while continuously checking the availability of the website. This workflow allows execution ' +
+      'of the same chaos experiment against two versions of the podtato-head deployment: weak and resilient. ' +
+      'The weak is expected to result in a failed workflow while the resilient succeeds, ' +
+      'essentially highlighting the need for deployment best-practices.',
     recommendation:
-      'Check whether the application is resilient to the pod failure, once the experiment (job) is completed.',
+      'Check whether the application is resilient to the pod failure, once the workflow is completed.',
     experimentinfo:
       'Provide the application info in spec.appinfo Override the experiment tunables if desired ' +
       'in experiments.spec.components.env ',

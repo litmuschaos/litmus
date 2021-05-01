@@ -7,6 +7,7 @@ LABEL maintainer="LitmusChaos"
 
 ARG REACT_APP_KB_CHAOS_VERSION
 ARG REACT_APP_BUILD_TIME
+ARG REACT_APP_HUB_BRANCH_NAME
 
 # Checking environment variables
 RUN env

@@ -32,6 +32,52 @@ OR
 
 - Tune the PromQL queries to match the labels with engine name and other parameters as per need.
 
-## Screenshot
+## Screenshots
 
-![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Sock-Shop-Dashboard.png?raw=true)
+### Chaos Result selector dropdown:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/chaos-result-selector.png?raw=true)
+
+### Chaos Engine Context (Target application's NAMESPACE_LABEL) selector dropdown:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/chaos-engine-context-selector.png?raw=true)
+
+### Chaos Engines with Experiments as Chaos Results:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/chaos-experiments.png?raw=true)
+
+### Chaos event annotations:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/chaos-event-annotation.png?raw=true)
+
+### Chaos Result verdict annotations:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/chaos-result-verdict-annotation.png?raw=true)
+
+### Interleaved Chaos events:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/interleaved-events.png?raw=true)
+
+### Interleaved Chaos Result verdicts:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/interleaved-results.png?raw=true)
+
+### Chaos Result verdict failure alerts:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/verdict-failure-alert.png?raw=true)
+
+### Chaos Result probe failure alerts:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/probe-failure-alert.png?raw=true)
+
+### Systems healthy / in steady state OR no alerts to be issued:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/no-alerts-issued.png?raw=true)
+
+### Systems un-healthy / failed to regain steady state after chaos / meet SLO OR alerts are issued:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/alerts-active.png?raw=true)
+
+### Alerts issued:
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/sock-shop/alerts-sent.png?raw=true)

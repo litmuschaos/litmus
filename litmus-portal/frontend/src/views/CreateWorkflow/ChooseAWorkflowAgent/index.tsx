@@ -14,13 +14,14 @@ import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import { getProjectID } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface Cluster {
   cluster_name: string;
   is_active: boolean;
   cluster_id: string;
+  agent_namespace: string;
 }
 
 const ChooseWorkflowAgent = forwardRef((_, ref) => {
@@ -53,6 +54,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
               cluster_name: e.cluster_name,
               is_active: e.is_active,
               cluster_id: e.cluster_id,
+              agent_namespace: e.agent_namespace,
             });
             // Setting the initial workflow yaml to be of type Workflow
             workflow.setWorkflowDetails({
@@ -80,7 +82,11 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   });
 
   function onNext() {
-    if (clusterid === '') {
+    if (getProjectRole() === 'Viewer') {
+      alert.changeAlertState(true);
+      return false;
+    }
+    if (clusterid === '' || clusterData.length === 0) {
       alert.changeAlertState(true); // No Cluster has been selected and user clicked on Next
       return false;
     }
@@ -113,6 +119,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
             clusterid: cluster.cluster_id,
             project_id: selectedProjectID,
             clustername: cluster.cluster_name,
+            namespace: cluster.agent_namespace,
           });
         }
       });

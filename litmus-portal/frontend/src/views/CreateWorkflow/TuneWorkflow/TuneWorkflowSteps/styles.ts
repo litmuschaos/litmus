@@ -31,10 +31,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   inputDiv: {
     display: 'flex',
     flexDirection: 'column',
+    maxWidth: '25rem',
   },
   annotation: {
-    marginRight: theme.spacing(2),
-    marginTop: theme.spacing(0.6),
+    fontSize: '0.875rem',
+    margin: theme.spacing(0.6, 2, 0, 0),
+  },
+  annotationInfo: {
+    fontSize: '0.875rem',
+    maxWidth: '25rem',
   },
   annotationDesc: {
     fontSize: '0.75rem',
@@ -68,6 +73,29 @@ const useStyles = makeStyles((theme: Theme) => ({
   deleteIcon: {
     width: '1.25rem',
     height: '1.25rem',
+  },
+  formControl: {
+    margin: theme.spacing(1),
+  },
+
+  checkBoxText: {
+    fontSize: '0.9rem',
+    fontWeight: 400,
+  },
+  checkBoxDefault: {
+    color: theme.palette.primary.main,
+  },
+  autoCompleteText: {
+    width: '100%',
+  },
+  nodeSelectorText: {
+    margin: theme.spacing(1.875, 0.625, 0, 0),
+  },
+  flexDisplay: {
+    display: 'flex',
+  },
+  appKind: {
+    color: theme.palette.text.hint,
   },
 }));
 export default useStyles;

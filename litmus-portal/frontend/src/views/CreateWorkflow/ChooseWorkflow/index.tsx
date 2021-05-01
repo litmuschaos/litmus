@@ -17,12 +17,17 @@ import { useSelector } from 'react-redux';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import ChoosePreDefinedExperiments from './choosePreDefinedExperiments';
+import ChooseWorkflowFromExisting from './ChooseWorkflowFromExisting';
 import SelectMyHub from './SelectMyHub';
 import useStyles from './styles';
 import UploadYAML from './uploadYAML';
-import * as WorkflowActions from '../../../redux/actions/workflow';
+
+interface ChildRef {
+  onNext: () => void;
+}
 
 const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
@@ -35,7 +40,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const workflowAction = useActions(WorkflowActions);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.value);
-    if (event.target.value === 'C') {
+    if (event.target.value === 'C' || event.target.value === 'D') {
       workflowAction.setWorkflowManifest({
         isCustomWorkflow: true,
       });
@@ -55,17 +60,16 @@ const ChooseWorkflow = forwardRef((_, ref) => {
       alert.changeAlertState(true);
       return false;
     }
+    alert.changeAlertState(false);
     return true;
   }
 
   useEffect(() => {
-    localforage
-      .getItem('selectedScheduleOption')
-      .then((value) =>
-        value
-          ? setSelected((value as ChooseWorkflowRadio).selected)
-          : setSelected('')
-      );
+    localforage.getItem('selectedScheduleOption').then((value) => {
+      if (value) {
+        setSelected((value as ChooseWorkflowRadio).selected);
+      } else setSelected('');
+    });
     workflowAction.setWorkflowManifest({
       manifest: '',
     });
@@ -82,7 +86,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
         <div aria-label="header" className={classes.header}>
           <div aria-label="headerLeft">
             <Typography className={classes.title}>
-              <strong> {t('createWorkflow.chooseWorkflow.title')}</strong>
+              {t('createWorkflow.chooseWorkflow.title')}
             </Typography>
             <Typography className={classes.subtitle}>
               {t('createWorkflow.chooseWorkflow.subtitle')}
@@ -96,24 +100,37 @@ const ChooseWorkflow = forwardRef((_, ref) => {
         <div className={classes.m5} />
 
         <RadioGroup
-          aria-label="gender"
-          name="gender1"
+          data-testid="workflowRadioButtons"
           value={selected}
           onChange={handleChange}
         >
           <Accordion expanded={selected === 'A'} className={classes.accordion}>
             <AccordionSummary>
               <RadioButton value="A" onChange={(e) => handleChange(e)}>
-                Create a new workflow from one of the pre-defined chaos workflow
-                templates
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionA')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <ChoosePreDefinedExperiments />
           </Accordion>
 
-          <RadioButton value="B" onChange={(e) => handleChange(e)}>
-            Create a new workflow by cloning an existing workflow
-          </RadioButton>
+          <Accordion
+            expanded={selected === 'B'}
+            classes={{
+              root: classes.MuiAccordionroot,
+            }}
+            className={classes.accordion}
+          >
+            <AccordionSummary>
+              <RadioButton value="B" onChange={(e) => handleChange(e)}>
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionB')}
+                </span>
+              </RadioButton>
+            </AccordionSummary>
+            <ChooseWorkflowFromExisting />
+          </Accordion>
 
           <Accordion
             expanded={selected === 'C'}
@@ -124,8 +141,12 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="C" onChange={(e) => handleChange(e)}>
-                Create a new workflow using the experiments from
-                <strong> My Hubs</strong>
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionC')}
+                </span>
+                <span className={classes.bold}>
+                  {t('createWorkflow.chooseWorkflow.myHubs')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <SelectMyHub />
@@ -140,7 +161,9 @@ const ChooseWorkflow = forwardRef((_, ref) => {
           >
             <AccordionSummary>
               <RadioButton value="D" onChange={(e) => handleChange(e)}>
-                Import a workflow using YAML
+                <span data-testid="option">
+                  {t('createWorkflow.chooseWorkflow.optionD')}
+                </span>
               </RadioButton>
             </AccordionSummary>
             <UploadYAML />

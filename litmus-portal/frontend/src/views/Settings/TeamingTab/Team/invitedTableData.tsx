@@ -7,20 +7,17 @@ import {
   TableCell,
   Typography,
 } from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined, LightPills, Modal } from 'litmus-ui';
+import { ButtonFilled, LightPills } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Loader from '../../../../components/Loader';
 import {
   ALL_USERS,
   GET_PROJECT,
   GET_USER,
-  REMOVE_INVITATION,
   SEND_INVITE,
 } from '../../../../graphql';
 import {
   InvitationStatus,
-  MemberInvitation,
   MemberInviteNew,
 } from '../../../../models/graphql/invite';
 import {
@@ -31,27 +28,21 @@ import {
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
 import { getProjectID } from '../../../../utils/getSearchParams';
-import { userInitials } from '../../../../utils/user';
+import { userInitials } from '../../../../utils/userInitials';
+import RemoveMemberModal from './removeMemberModal';
 import useStyles from './styles';
 
 interface TableDataProps {
   row: Member;
   index: number;
   showModal: () => void;
-  handleOpen: () => void;
-  open: boolean;
 }
-const InvitedTableData: React.FC<TableDataProps> = ({
-  row,
-  showModal,
-  handleOpen,
-  open,
-}) => {
+const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
   const classes = useStyles();
   const projectID = getProjectID();
 
   const { t } = useTranslation();
-
+  const [open, setOpen] = useState<boolean>(false);
   const [role, setRole] = useState<string>(row.role);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClose = () => {
@@ -72,25 +63,6 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       },
     ],
   });
-
-  // mutation to remove member
-  const [removeMember, { loading }] = useMutation<MemberInvitation>(
-    REMOVE_INVITATION,
-    {
-      onCompleted: () => {
-        showModal();
-      },
-      refetchQueries: [
-        {
-          query: GET_PROJECT,
-          variables: { projectID },
-        },
-        {
-          query: ALL_USERS,
-        },
-      ],
-    }
-  );
 
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
 
@@ -214,7 +186,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
         <div className={classes.lastCell}>
           {row.invitation !== InvitationStatus.exited &&
             row.invitation !== InvitationStatus.declined && (
-              <IconButton onClick={handleOpen}>
+              <IconButton onClick={() => setOpen(true)}>
                 <img alt="delete" src="./icons/deleteBox.svg" height="45" />
               </IconButton>
             )}
@@ -236,73 +208,17 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           </ButtonFilled>
         </div>
       </TableCell>
-      <Modal
-        data-cy="modal"
-        open={open}
-        width="43.75rem"
-        disableBackdropClick
-        disableEscapeKeyDown
-        onClose={showModal}
-        modalActions={
-          <div className={classes.closeModal}>
-            <IconButton onClick={showModal}>
-              <img src="./icons/closeBtn.svg" alt="close" />
-            </IconButton>
-          </div>
-        }
-      >
-        <div className={classes.body}>
-          <img src="./icons/userDel.svg" alt="lock" />
-          <div className={classes.text}>
-            <Typography className={classes.typo} align="center">
-              {t('settings.teamingTab.deleteModal.header')}
-              <strong>
-                {' '}
-                <span className={classes.userName}>
-                  {memberDetails
-                    ? memberDetails.name
-                    : t('settings.teamingTab.deleteModal.text')}
-                </span>
-              </strong>
-            </Typography>
-          </div>
-          <div className={classes.textSecond}>
-            <Typography className={classes.typoSub} align="center">
-              <>{t('settings.teamingTab.deleteModal.body')}</>
-            </Typography>
-          </div>
-          <div className={classes.buttonGroup}>
-            <ButtonOutlined onClick={showModal}>
-              <>{t('settings.teamingTab.deleteModal.noButton')}</>
-            </ButtonOutlined>
-            <div className={classes.yesButton}>
-              <ButtonFilled
-                disabled={loading}
-                onClick={() => {
-                  removeMember({
-                    variables: {
-                      data: {
-                        project_id: projectID,
-                        user_id: row.user_id,
-                      },
-                    },
-                  });
-                }}
-              >
-                <>
-                  {loading ? (
-                    <div>
-                      <Loader size={20} />
-                    </div>
-                  ) : (
-                    <>{t('settings.teamingTab.deleteModal.yesButton')}</>
-                  )}
-                </>
-              </ButtonFilled>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      {open && (
+        <RemoveMemberModal
+          open={open}
+          handleClose={() => {
+            setOpen(false);
+          }}
+          row={row}
+          showModal={showModal}
+          isRemove={false}
+        />
+      )}
     </>
   );
 };

@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     flexDirection: 'column',
     overflow: 'hidden',
+    marginTop: theme.spacing(3),
   },
 
   headerSection: {

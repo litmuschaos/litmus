@@ -7,7 +7,7 @@ import {
   ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core';
-import { Done } from '@material-ui/icons';
+import DoneIcon from '@material-ui/icons/Done';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LIST_PROJECTS } from '../../graphql';
@@ -84,7 +84,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
           {!copying ? (
             <img src="/icons/copyProjectID.svg" alt="Copy project ID" />
           ) : (
-            <Done />
+            <DoneIcon />
           )}
         </IconButton>
       </ListItemSecondaryAction>

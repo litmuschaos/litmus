@@ -1,23 +1,23 @@
 getStarted:
+  welcome: Welcome
   button:
     continue: Next
     back: Back
-    letsStart: Continue to Portal
+    finish: Finish
     step: Step
     of: of
   project:
     name: projectName
     label: Project Name
-    info: You are almost there! Set your project name
-    desc: The project will be yours with owner access where you can create
-      workflows, view analytics and also invite others to your project.
+    info: Set your project name
+    desc: Choose an appropriate name for your project. This project name will be used when collaborating with your team members.
   password:
     name: password
     label: Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
     info: Set your new Password
-    desc: Set a new password which will be used when you login next time
+    desc: Use the new password at your next login.
 
 ###########################################
 ############    Components    #############
@@ -74,6 +74,7 @@ workflowStepper:
   workflowBtn: Go to Workflow
   step1:
     errorSnackbar: You haven't selected any Target Agent
+    errorSnackbarViewer: You cannot schedule a workflow as a Viewer
   step2:
     errorSnackbar: Please select a workflow type
   step3:
@@ -84,48 +85,23 @@ workflowStepper:
   next: Next
   back: Back
 
+editor:
+  status: 'YAML Status:'
+
 ######################################
 ############    Pages    #############
 ######################################
 
 home:
-  workflow:
-    heading: Let's Start
-    info: Schedule your first workflow
   heading: Welcome,
-  subHeading1: Congratulations!
-  subHeading2: You have established your first project on the Litmus portal.
-  subHeading3: Now it is successfully running on your Kubernetes cluster. Once you have scheduled your chaos workflows, reliability analytics will be displayed here.
-  button1: See pre-defined workflows
-  analytics:
-    heading: How busy is the Litmus Project?
-    moreInfo: See more
-  comingSoon: Coming soon !
-  resilienceScore: Resilience score
-  recentActivity: Recent activity
-  resilienceScoreComparisonOptions:
-    option1: Hourly
-    option2: Daily
-    option3: Monthly
-    granularity: Granularity
-  recentActivityEmpty: No recent activity.
-  NonAdmin:
-    noAgent: No LitmusChaos Agent has been discovered on any cluster.
-    agentDeployInfo: To configure your workflow you need to deploy an agent. Click on “Deploy your first Agent” to continue.
-    chaosAgent: Deploy LitmusChaos agent on your Kubernetes clusters.
-    agents: Agents
-    agent: Agent
-    chaosAgentInfo: Cloud native chaos engineering can be setup on this cluster using LitmusChaos
-    deployFirst: Deploy your first Agent
-    toProjects: To Projects
-    toAnalytics: To Analytics
-    deploy: Deploy another Agent
 
 login:
-  heading: One-stop-shop for Chaos Engineering on Kubernetes
-  subHeading1: Browse, create, manage, monitor and analyze your chaos workflows.
+  heading: Chaos Engineering for your Cloud Native applications
+  subHeading1: Create, orchestrate, analyze and collaborate your Chaos Workflows.
   subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
   wrongCredentials: Wrong Credentials - Try again with correct username or password
+  forgetPassword: Forgot your password?
+  tooltipText: You need to contact your admin to reset your password.
 
 schedule:
   heading: 'Schedule a workflow'
@@ -154,6 +130,15 @@ schedule:
   workflowBtn: Go to Workflow
   backBtn: Go Back
 
+editSchedule:
+  title: Edit Schedule
+  verify: Verify
+  cancel: Cancel
+  save: Save Changes
+  edit: Edit
+  theSchedule: The Schedule
+  successfullyCreated: is successfully created
+
 community:
   title: 'Community'
   heading: 'Litmus Insights'
@@ -164,6 +149,7 @@ community:
   follow: Follow
 
 analytics:
+  workflowAnalytics: Workflow Analytics
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon !
@@ -187,6 +173,12 @@ analytics:
     tableHead4: Resulting Points
     tableHead5: Last run
     close: Close
+  subData:
+    workflowStatus: Workflow Status
+    experimentStatus: Experiment Status
+    resilienceScore: Resilience Score
+    probeSuccessPercentage: Probe Success Percentage
+    experimentVerdict: Experiment Verdict
 
 analyticsDashboard:
   heading: Analytics
@@ -196,7 +188,19 @@ analyticsDashboard:
     dataSourceIs: Data source is
     reConfigureDashboard: Re-configure dashboard
     updateDataSource: Update data source
+    or: or
     headerInfoText: "View the chaos events and metrics in a given \n time interval by selecting a time interval."
+    infoButtonText: Info
+    infoDropdown:
+      header: Application Dashboard Information
+      close: Close Info
+      subHeading1: Dashboard Configuration Details
+      subHeading2: Selected Applications
+      subHeading3: Selected Metrics
+      metaData1: Name
+      metaData2: Type
+      metaData3: DataSource
+      metaData4: Agent
     rangeSelector:
       to: to
       selectPeriod: Select Period
@@ -218,7 +222,9 @@ analyticsDashboard:
       tableHead2: Workflow
       tableHead3: Experiment
       tableHead4: "Target \n ( namespace / pod )"
-      tableHead5: Result
+      tableHead5:
+        title: Result
+        infoText: Latest Chaos experiment verdict
       noRecords: No chaos happened during the interval
       showTable: Show Chaos during this interval
       hideTable: Hide Chaos during this interval
@@ -315,13 +321,55 @@ error:
   goBack: Go back
 
 workflowDetails:
-  detailedLog: Click on Info to see details of your workflow
+  workflowNotStarted: Please check the configuration, the workflow was not able to start
   fetchError: An error has occurred while fetching the data
-  overallRR: 'Overall RR: '
 
-######################################
-############    Views    #############
-######################################
+  ######################################
+  ############    Views    #############
+  ######################################
+
+homeViews:
+  landingHome:
+    heading: Deploy your first agent
+    description: A Kubernetes cluster consists of a set of worker machines, called nodes, that run containerized applications. Every cluster has at least one worker node. The control plane manages the worker nodes and the Pods in the cluster. In production environments, the control plane usually runs across multiple computers and a cluster usually runs multiple nodes, providing fault-tolerance and high availability.
+    deploy: Deploy
+    agentDeployModal:
+      heading: Connect an agent
+      firstStep: 1. Open the cluster console
+      secondStep: 2. Download
+      litmusctl: litmusctl
+      thirdStep: 3. Paste and run the following command into the cluster console
+      agentRegister: $ litmusctl agent register
+      copy: Copy
+      done: Done
+  projectInfoContainer:
+    project: Project
+    projects: Projects
+    invitation: Invitation
+    invitations: Invitations
+    viewProjects: View all projects
+  agentConfiguredHome:
+    error: Error fetching the data!
+    noWorkflow:
+      heading: Schedule your first workflow
+      description: Now it is successfully running on your Kubernetes cluster. Once you schedule chaos workflows, reliability analytics will be displayed here.
+      schedule: Schedule a workflow
+      explore: Explore pre defined workflows
+    recentWorkflowRuns:
+      workflowRunCard:
+        cardTitle: Browse workflow
+        resilienceRate: 'Overall resilience rate:'
+        lastRun: 'Last Run:'
+        showAnalytics: Show the analytics
+        downloadManifest: Download manifest
+      heading: Recent Workflow runs
+      viewAll: View all workflows
+      schedule: Schedule workflow
+    agentInfoContainer:
+      agent: Agent
+      agents: Agents
+      description: Cloud native chaos engineering can be setup on this cluster using Litmus Chaos
+      deploy: Deploy a new Agent
 
 chaosWorkflows:
   browseAnalytics:
@@ -336,7 +384,7 @@ chaosWorkflows:
       seeAnalytics: See analytics
   browseSchedules:
     name: Name
-    cluster: Cluster
+    agent: Agent
     experiments: Experiments
     schedule: Schedule
     nextRun: Next Run
@@ -352,6 +400,11 @@ chaosWorkflows:
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
+    saveTemplate: Save Template
+    updateEngine: 'Note: Make sure to update the chaos engine names'
+    saveChanges: Save Changes
+    savedSuccessfully: Successfully saved template.
+    cancel: Cancel
     options:
       all: Show All Workflows
       enabledOnly: Show Enabled Workflows Only
@@ -438,14 +491,12 @@ settings:
       joined: Joined to team
       status: Status
     deleteModal:
-      header: Are you sure you want to remove the invitation to
-      text: the current user?
+      header: Are you sure you want to revoke the invitation to
       body: The user will lose access to the team’s work.
       yesButton: Yes
       noButton: No
     deleteUser:
-      header: Are you sure
-      text: to remove the current user?
+      header: Are you sure you want to remove
       body: The user will lose access to the team’s work
       yesButton: Yes
       noButton: No
@@ -593,19 +644,15 @@ workflowDetailsView:
   workflowInfo:
     header: Overall Workflow Description
     resilienceScore: Resilience Score
+    Completed: Completed
     runTime:
       runTimeHeader: Run Time
       startTime: 'Start Time :'
       endTime: 'End Time :'
-    hostedOn:
-      hostedOnHeader: Hosted On
-      cluster: 'Cluster :'
-      namespace: 'Namespace :'
     targets:
-      targetsHeader: Targets
+      targetsHeader: Target
       cluster: 'Cluster :'
-      namespace: 'Namespace :'
-    application: 'Application :'
+      namespace: 'Workflow Namespace :'
   workflowNodeInfo:
     name: Name
     type: Type
@@ -628,27 +675,17 @@ workflowDetailsView:
     button:
       logs: Logs
       result: Chaos Result
-
-homeView:
-  averageResilienceScore:
-    header: Average Resilience Score
-    desc: Based on results of completed tests
-  passedVsFailed:
-    header: Passed Vs Failed
-    desc: Statistics taken from completed tests
-  totalWorkflows:
-    header: Number of total Workflows
-    subtitle: Average amount of workflows
-    perWeek: per week
-    desc: Average is calculated from the max of workflows
+    minutes: minutes
 
 createWorkflow:
   chooseWorkflow:
     title: Start creating your chaos workflow
     subtitle: Simulate the workflow run and see the suggested reliability score
-    header: Select or design workflow
-    info: Select one of the pre-defined chaos workflows or design your own workflow.
-    preDefined: pre-defined workflows
+    optionA: Create a new workflow from one of the pre-defined chaos workflow templates
+    optionB: Create a new workflow by cloning an existing workflow
+    optionC: Create a new workflow using the experiments from
+    optionD: Import a workflow using YAML
+    myHubs: MyHub
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
@@ -666,10 +703,23 @@ createWorkflow:
     continue: Do you want to continue?
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
+    pleaseAddExp: Please add experiments to see the data
+    revertSchedule: Revert Schedule
+    noTemplates: No template available.
+    addTemplate: You can add a template from the scheduled workflows table.
+    trueValue: 'True'
+    falseValue: 'False'
+    table:
+      head1: Sequence
+      head2: Name
+      head3: Namespace
+      head4: Application
+      head5: Probes
     selectMyHub: Select MyHub
     label:
       workflowName: Workflow name
       desc: Description
+      namespace: Namespace
     button:
       edit: Edit workflow name
       cancel: Cancel
@@ -735,7 +785,44 @@ createWorkflow:
     selectExp: Select An Experiment
     done: Done
     editSequence: Edit Sequence
+    dragndrop: Drag and drop an experiment as per your desire for scheduling
     addANewExperiment: Add a new experiment
+    confirmText: Are you sure you want to continue without saving?
+    back: Back
+    continue: Continue
+    updateChanges: Update changes in the workflow manifest
+    saveChange: Save Changes
+    verticalStepper:
+      myHubInfo: Experiment details
+      annotationInfo: Provide target application details where you want to induce the chaos.
+      annotation: Annotation Check
+      true: 'True'
+      false: 'False'
+      annotationDesc: The target application does not have an annotation “Chaos=true”. Ideally, you cannot run this experiment unless the annotation is patched to the application. However, this service account has the privileges to disable the enforcement of annotation checks. Mark the annotation as false to proceed.
+      appkind: appKind
+      deployment: Deployment
+      statefulset: Statefulset
+      daemonset: Daemonset
+      deploymentconfig: Deploymentconfig
+      rollout: Rollout
+      nodeselector: NodeSelector
+      selector: 'kubernetes.io/hostname :'
+      nsError: Namespace not available
+      labelError: Label not available in the resource or namespace
+      deleteExp: Delete the experiment
+      editExp: Edit the experiment
+    steadyState:
+      name: Probe Name
+      type: Type
+      mode: Mode
+      details: Probe Details
+      properties: Properties
+      showDetails: Show Details
+      showProp: Show Properties
+      addProbe: Please add probes to see the data
+      addNewProbe: '+ Add a new Probe'
+      back: Back
+      finish: Finish
     addProbe:
       heading: Add
       headingStrong: Probe
@@ -763,6 +850,7 @@ createWorkflow:
         contentType: Content Type
         criteria: Criteria
         responseCode: Response Code
+        responseTimeout: Response Timeout
         command: Command
         source: Source
         comparator: Comparator
@@ -794,11 +882,15 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
+    test: test
+    YAML: YAML
     button:
       edit: Edit
       viewYaml: View YAML
     summary:
       header: Summary
+      subjectDesc: The subject is used as a chaos workflow label. It’s value will be used for analysing chaos results and metrics. This subject will be also used to filter out chaos events in monitoring dashboards.
+      subject: Subject
       workflowName: Workflow name
       desc: Description
       schedule: Schedule
@@ -816,8 +908,8 @@ createWorkflow:
 
 targets:
   connectHome:
-    head: Targets
-    connectText: Connect the Target
+    head: Agents
+    connectText: Connect the Agent
   copy:
     copy: Copy
     copied: Copied
@@ -847,7 +939,7 @@ connectTargets:
 workflowCluster:
   header:
     status: Current Status
-    target: Target Cluster
+    target: Target Agent
     chooseAgent: Choose the target Kubernetes Agent
     creatingNew: You are creating a
     creatingNewBold: new chaos workflow.
@@ -892,6 +984,12 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+browseTemplate:
+  browseAWorkflow: Browse a workflow template
+  seeDetails: See details of your workflow template
+  back: Back
+  scheduleThisTemplate: Schedule this template
 
 #########################################
 ############    dataErrors    ###########
@@ -1041,3 +1139,7 @@ customWorkflow:
     addExp: Add experiment
   viewYAML:
     view: View the YAML here
+  sequence:
+    dragexp: Drag the selected experiment between the rows or to the end of rows to make it sequential experiment or drag into the rows to make it parallel experiment.
+    saveChanges: Save changes
+    discard: Discard changes

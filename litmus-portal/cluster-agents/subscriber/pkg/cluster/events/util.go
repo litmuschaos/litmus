@@ -18,7 +18,7 @@ import (
 )
 
 // util function, extracts the chaos data using the litmus go-client
-func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
+func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
 	cd := &types.ChaosData{}
 	cd.EngineName = engineName
 	cd.Namespace = engineNS
@@ -28,6 +28,9 @@ func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.Litmuschao
 	}
 	// considering chaos engine has only 1 experiment
 	if len(crd.Status.Experiments) == 1 {
+		if nodeStatus.StartedAt.Unix() > crd.ObjectMeta.CreationTimestamp.Unix() {
+			return nil, errors.New("chaosenginge resource older than current workflow node")
+		}
 		expRes, err := chaosClient.ChaosResults(cd.Namespace).Get(crd.Name+"-"+crd.Status.Experiments[0].Name, v1.GetOptions{})
 		if err != nil {
 			return nil, err
@@ -74,7 +77,7 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosCli
 					return nodeType, nil, errors.New("Chaos-Engine Generated Name couldn't be retrieved")
 				}
 			}
-			cd, err = getChaosData(name, obj.GetNamespace(), chaosClient)
+			cd, err = getChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
 			if err != nil {
 				return nodeType, nil, err
 			}

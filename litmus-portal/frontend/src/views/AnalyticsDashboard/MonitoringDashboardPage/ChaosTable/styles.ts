@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableObjects: {
+    textAlign: 'center',
     paddingLeft: theme.spacing(1),
     color: theme.palette.text.primary,
     height: '1.75rem',
@@ -61,8 +62,8 @@ const useStyles = makeStyles((theme) => ({
   nameContent: {
     color: theme.palette.text.primary,
     display: 'flex',
-    flexDirection: 'row',
     fontSize: '0.8rem',
+    justifyContent: 'center',
   },
 
   checkbox: {
@@ -87,22 +88,29 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.5rem',
   },
 
-  passColor: {
+  pass: {
     color: theme.palette.success.main,
+    marginRight: theme.spacing(1),
   },
 
-  failColor: {
+  fail: {
     color: theme.palette.error.main,
+    marginRight: theme.spacing(1),
   },
 
-  awaitedColor: {
+  awaited: {
     color: theme.palette.text.hint,
+    marginRight: theme.spacing(1),
   },
 
   colorBar: {
     height: '0.45rem',
     width: '2.75rem',
-    margin: theme.spacing(0.75, 0, 0, 0.75),
+    margin: theme.spacing(0.75, 0, 0, 1.5),
+  },
+
+  infoIcon: {
+    margin: theme.spacing(1.75, 0, 0, 0.5),
   },
 }));
 

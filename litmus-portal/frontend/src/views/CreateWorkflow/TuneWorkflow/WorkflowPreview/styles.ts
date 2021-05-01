@@ -2,13 +2,14 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 interface StyleProps {
   horizontal: boolean;
+  isSequence: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
   // Workflow Graph
   dagreGraph: {
     cursor: 'grab',
-    height: '20rem',
+    height: (props: StyleProps) => (props.isSequence ? '30rem' : '20rem'),
     width: '100%',
 
     // Styles for nodes

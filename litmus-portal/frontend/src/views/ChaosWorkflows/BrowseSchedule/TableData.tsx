@@ -8,18 +8,19 @@ import {
   TableCell,
   Typography,
 } from '@material-ui/core';
+import { InsertDriveFileOutlined } from '@material-ui/icons';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplayIcon from '@material-ui/icons/Replay';
+import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
-import parser from 'cron-parser';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
@@ -30,6 +31,7 @@ import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from './ExperimentPoints';
+import SaveTemplateModal from './SaveTemplateModal';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -49,12 +51,18 @@ const TableData: React.FC<TableDataProps> = ({
   const projectID = getProjectID();
   const projectRole = getProjectRole();
 
+  const workflow = useActions(WorkflowActions);
+
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
     null
   );
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState<boolean>(
+    false
+  );
+
   const tabs = useActions(TabActions);
   const open = Boolean(anchorEl);
   const isOpen = Boolean(popAnchorEl);
@@ -62,8 +70,6 @@ const TableData: React.FC<TableDataProps> = ({
   const handlePopOverClose = () => {
     setPopAnchorEl(null);
   };
-
-  const workflow = useActions(WorkflowActions);
 
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
@@ -125,13 +131,6 @@ const TableData: React.FC<TableDataProps> = ({
     });
   };
 
-  // If regularity is not Once then set recurring schedule state to true
-  if (data.cronSyntax !== '') {
-    workflow.setWorkflowDetails({
-      isRecurring: true,
-    });
-  }
-
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {
       tabs.changeWorkflowsTabs(0);
@@ -146,8 +145,41 @@ const TableData: React.FC<TableDataProps> = ({
     });
   };
 
+  const handleSaveWorkflowTemplate = (manifest: string) => {
+    const parsedYAML = YAML.parse(manifest);
+    if (parsedYAML.metadata.labels !== undefined) {
+      const labelData = parsedYAML.metadata.labels;
+      if (labelData.cluster_id !== undefined) {
+        delete labelData.cluster_id;
+      }
+      if (labelData.workflow_id !== undefined) {
+        delete labelData.workflow_id;
+      }
+    }
+    workflow.setWorkflowManifest({
+      manifest: YAML.stringify(parsedYAML),
+    });
+    setIsTemplateModalOpen(true);
+  };
+
+  const handleCloseTemplate = () => {
+    setIsTemplateModalOpen(false);
+  };
+
   return (
     <>
+      <Modal
+        width="60%"
+        open={isTemplateModalOpen}
+        onClose={handleCloseTemplate}
+        modalActions={
+          <ButtonOutlined onClick={handleCloseTemplate}>
+            &#x2715;
+          </ButtonOutlined>
+        }
+      >
+        <SaveTemplateModal closeTemplate={handleCloseTemplate} />
+      </Modal>
       <TableCell className={classes.workflowNameData}>
         <Typography>
           <span
@@ -334,7 +366,7 @@ const TableData: React.FC<TableDataProps> = ({
             <MenuItem value="Edit_Schedule" onClick={() => editSchedule()}>
               <div className={classes.expDiv}>
                 <img
-                  src="./icons/Edit.svg"
+                  src="/icons/Edit.svg"
                   alt="Edit Schedule"
                   className={classes.btnImg}
                 />
@@ -359,6 +391,7 @@ const TableData: React.FC<TableDataProps> = ({
             <></>
           )}
           {projectRole !== 'Viewer' &&
+            data.cronSyntax !== '' &&
             YAML.parse(data.workflow_manifest).spec.suspend !== true && (
               <MenuItem
                 value="Disable"
@@ -394,6 +427,20 @@ const TableData: React.FC<TableDataProps> = ({
                 className={classes.downloadText}
               >
                 {t('chaosWorkflows.browseSchedules.downloadManifest')}
+              </Typography>
+            </div>
+          </MenuItem>
+          <MenuItem
+            value="Download"
+            onClick={() => handleSaveWorkflowTemplate(data.workflow_manifest)}
+          >
+            <div className={classes.expDiv}>
+              <InsertDriveFileOutlined className={classes.downloadBtn} />
+              <Typography
+                data-cy="downloadManifest"
+                className={classes.downloadText}
+              >
+                {t('chaosWorkflows.browseSchedules.saveTemplate')}
               </Typography>
             </div>
           </MenuItem>

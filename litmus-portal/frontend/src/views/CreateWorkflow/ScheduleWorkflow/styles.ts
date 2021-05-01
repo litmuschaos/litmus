@@ -5,12 +5,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     background: theme.palette.background.paper,
     color: theme.palette.text.primary,
     padding: theme.spacing(0, 2),
-    margin: '0 auto',
+    margin: '1rem auto',
     width: '98%',
-    height: '100%',
     flexDirection: 'column',
     [theme.breakpoints.up('lg')]: {
       width: '99%',
+    },
+  },
+
+  title: {
+    padding: theme.spacing(0, 2),
+    fontWeight: 700,
+    fontSize: '2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '2.3rem',
     },
   },
 
@@ -28,7 +36,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   headerText: {
     marginTop: theme.spacing(1.25),
-    fontSize: '1.5625rem',
+    fontSize: '1.2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1.4rem',
+    },
   },
   schBody: {
     width: '32.18rem',
@@ -68,6 +79,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   checked: {},
+  buttonDiv: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
 
   /* For recurring schedule options */
   scRandom: {

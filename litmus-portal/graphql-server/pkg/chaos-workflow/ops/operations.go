@@ -118,6 +118,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 		workflowManifest.Labels = map[string]string{
 			"workflow_id": *workflow.WorkflowID,
 			"cluster_id":  workflow.ClusterID,
+			"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
 		}
 
 		for i, template := range workflowManifest.Spec.Templates {
@@ -190,12 +191,14 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 		cronWorkflowManifest.Labels = map[string]string{
 			"workflow_id": *workflow.WorkflowID,
 			"cluster_id":  workflow.ClusterID,
+			"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
 		}
 
 		cronWorkflowManifest.Spec.WorkflowMetadata = &v1.ObjectMeta{
 			Labels: map[string]string{
 				"workflow_id": *workflow.WorkflowID,
 				"cluster_id":  workflow.ClusterID,
+				"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
 			},
 		}
 

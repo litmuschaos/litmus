@@ -8,11 +8,8 @@ import {
 import createReducer from './createReducer';
 
 const initialState: WorkflowData = {
-  id: '',
-  isRecurring: false,
-  isDisabled: false,
   chaosEngineChanged: false,
-  namespace: 'litmus',
+  namespace: '',
   clusterid: '',
   cronSyntax: '',
   scheduleType: {

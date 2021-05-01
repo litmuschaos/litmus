@@ -15,3 +15,4 @@ export const DEFAULT_CHAOS_EVENT_NAME: string = 'chaos';
 export const DEFAULT_RELATIVE_TIME_RANGE: number = 1800;
 export const DASHBOARD_TYPE_1: string = 'Kubernetes Platform';
 export const DASHBOARD_TYPE_2: string = 'Sock Shop';
+export const DEFAULT_DASHBOARD_REFRESH_RATE_STRING: string = '10';

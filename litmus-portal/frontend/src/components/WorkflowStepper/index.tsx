@@ -10,6 +10,7 @@ import Row from '../../containers/layouts/Row';
 import useActions from '../../redux/actions';
 import * as AlertActions from '../../redux/actions/alert';
 import { RootState } from '../../redux/reducers';
+import { getProjectRole } from '../../utils/getSearchParams';
 import ChooseAWorkflowAgent from '../../views/CreateWorkflow/ChooseAWorkflowAgent';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
@@ -18,6 +19,7 @@ import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
 import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
 import WorkflowSettings from '../../views/CreateWorkflow/WorkflowSettings';
 import { LitmusStepper } from '../LitmusStepper';
+import Loader from '../Loader';
 import useStyles from './styles';
 
 interface ControlButtonProps {
@@ -46,36 +48,50 @@ function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-function getStepContent(
-  stepIndex: number,
-  childRef: React.MutableRefObject<ChildRef | undefined>
-): React.ReactNode {
-  switch (stepIndex) {
-    case 0:
-      return <ChooseAWorkflowAgent ref={childRef} />;
-    case 1:
-      return <ChooseWorkflow ref={childRef} />;
-    case 2:
-      return <WorkflowSettings ref={childRef} />;
-    case 3:
-      return <TuneWorkflow ref={childRef} />;
-    case 4:
-      return <ReliablityScore ref={childRef} />;
-    case 5:
-      return <ScheduleWorkflow ref={childRef} />;
-    case 6:
-      return <VerifyCommit ref={childRef} />;
-    default:
-      return <ChooseAWorkflowAgent ref={childRef} />;
-  }
-}
-
 const WorkflowStepper = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const childRef = useRef<ChildRef>();
 
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [activeStep, setActiveStep] = React.useState(0);
+
+  // Checks if the button is in loading state or not
+  const isButtonLoading = (status: boolean) => setLoading(status);
+
+  // Set the active step to the page props
+  const goToStep = (page: number) => setActiveStep(page);
+
+  function getStepContent(
+    stepIndex: number,
+    childRef: React.MutableRefObject<ChildRef | undefined>
+  ): React.ReactNode {
+    switch (stepIndex) {
+      case 0:
+        return <ChooseAWorkflowAgent ref={childRef} />;
+      case 1:
+        return <ChooseWorkflow ref={childRef} />;
+      case 2:
+        return <WorkflowSettings ref={childRef} />;
+      case 3:
+        return <TuneWorkflow ref={childRef} />;
+      case 4:
+        return <ReliablityScore ref={childRef} />;
+      case 5:
+        return <ScheduleWorkflow ref={childRef} />;
+      case 6:
+        return (
+          <VerifyCommit
+            isLoading={isButtonLoading}
+            handleGoToStep={goToStep}
+            ref={childRef}
+          />
+        );
+      default:
+        return <ChooseAWorkflowAgent ref={childRef} />;
+    }
+  }
+
   const [proceed, shouldProceed] = React.useState<boolean>(false);
 
   const isAlertOpen = useSelector(
@@ -88,12 +104,6 @@ const WorkflowStepper = () => {
       .getItem('selectedScheduleOption')
       .then((value) => (value ? shouldProceed(true) : shouldProceed(false)));
   }, [proceed]);
-
-  // } else if (activeStep === 1 && !proceed) {
-  //   // If none of the workflow options (Choose Predefined, Create Custom,  ..)
-  //   // are selected then do not proceed
-  //   setIsAlertOpen(true);
-  // } else {
 
   const handleNext = () => {
     if (childRef.current && childRef.current.onNext()) {
@@ -125,7 +135,14 @@ const WorkflowStepper = () => {
           position !== 'top' ? (
           <></>
         ) : activeStep === steps.length - 1 ? ( // Show Finish button at Bottom for Last Step
-          <ButtonFilled onClick={() => handleNext()}>Finish</ButtonFilled>
+          loading ? (
+            <ButtonFilled disabled onClick={() => handleNext()}>
+              Finish <span style={{ marginLeft: '0.5rem' }} />{' '}
+              <Loader size={20} />
+            </ButtonFilled>
+          ) : (
+            <ButtonFilled onClick={() => handleNext()}>Finish</ButtonFilled>
+          )
         ) : position === 'top' ? ( // Apply headerButtonWrapper style for top button's div
           <div className={classes.headerButtonWrapper} aria-label="buttons">
             <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
@@ -174,7 +191,11 @@ const WorkflowStepper = () => {
   function getAlertMessage(stepNumber: number) {
     switch (stepNumber) {
       case 0:
+        if (getProjectRole() === 'Viewer') {
+          return t(`workflowStepper.step1.errorSnackbarViewer`);
+        }
         return t(`workflowStepper.step1.errorSnackbar`);
+
       case 1:
         return t(`workflowStepper.step2.errorSnackbar`);
       case 2:
@@ -206,6 +227,7 @@ const WorkflowStepper = () => {
         steps={steps}
         activeStep={activeStep}
         handleBack={handleBack}
+        loader={loading}
         handleNext={() => handleNext()}
         finishAction={() => {}}
       >

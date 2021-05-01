@@ -22,7 +22,7 @@ func ClusterConnect(clusterData map[string]string) {
 	if serverURL.Scheme == "https" {
 		scheme = "wss"
 	}
-	u := url.URL{Scheme: scheme, Host: serverURL.Host, Path: "/query"}
+	u := url.URL{Scheme: scheme, Host: serverURL.Host, Path: serverURL.Path}
 	log.Printf("connecting to %s", u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)

@@ -48,7 +48,7 @@ func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, err
 	gitLock.Lock(config.RepoURL, &config.Branch)
 	defer gitLock.Unlock(config.RepoURL, &config.Branch)
 
-	_, err := dbOperationsProject.GetProject(ctx, config.ProjectID)
+	_, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", config.ProjectID}})
 	if err != nil {
 		return false, errors.New("Failed to setup GitOps : " + err.Error())
 	}

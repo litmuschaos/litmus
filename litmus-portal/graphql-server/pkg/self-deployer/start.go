@@ -23,7 +23,7 @@ func StartDeployer(projectID string) {
 
 	clusterInput := model.ClusterInput{
 		ProjectID:      projectID,
-		ClusterName:    "Self-Cluster",
+		ClusterName:    "Self-Agent",
 		ClusterType:    "internal",
 		PlatformName:   "others",
 		AgentScope:     agentScope,

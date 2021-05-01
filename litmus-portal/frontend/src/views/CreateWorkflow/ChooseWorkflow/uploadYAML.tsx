@@ -7,6 +7,7 @@ import YAML from 'yaml';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import { updateEngineName, updateNamespace } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
@@ -19,13 +20,14 @@ const UploadYAML = () => {
   const [uploadedYAML, setUploadedYAML] = useState('');
   const [fileName, setFileName] = useState<string | null>('');
   const workflowAction = useActions(WorkflowActions);
-  const workflowDetails = useSelector((state: RootState) => state.workflowData);
+  const { namespace } = useSelector((state: RootState) => state.workflowData);
 
   const saveToLocalForage = () => {
     const selection: ChooseWorkflowRadio = {
       selected: 'D',
     };
     localforage.setItem('selectedScheduleOption', selection);
+    localforage.setItem('hasSetWorkflowData', false);
   };
 
   // Function to handle when a File is dragged on the upload field
@@ -40,15 +42,10 @@ const UploadYAML = () => {
         const readFile = await file.text();
         setUploadedYAML(readFile);
         setFileName(file.name);
-        const workflowName = `custom-chaos-workflow-${Math.round(
-          new Date().getTime() / 1000
-        )}`;
-        const parsedYaml = YAML.parse(readFile);
-        parsedYaml.metadata.name = workflowName;
-        workflowAction.setWorkflowDetails({
-          ...workflowDetails,
-          name: workflowName,
-          yaml: YAML.stringify(parsedYaml),
+        const wfmanifest = updateEngineName(YAML.parse(readFile));
+        const updatedManifest = updateNamespace(wfmanifest, namespace);
+        workflowAction.setWorkflowManifest({
+          manifest: YAML.stringify(updatedManifest),
         });
       });
     saveToLocalForage();
@@ -64,10 +61,10 @@ const UploadYAML = () => {
     if ((extension === 'yaml' || extension === 'yml') && readFile) {
       readFile.text().then((response) => {
         setUploadedYAML(response);
-        const parsedYaml = YAML.parse(response);
-
+        const wfmanifest = updateEngineName(YAML.parse(response));
+        const updatedManifest = updateNamespace(wfmanifest, namespace);
         workflowAction.setWorkflowManifest({
-          manifest: YAML.stringify(parsedYaml),
+          manifest: YAML.stringify(updatedManifest),
         });
       });
     } else {

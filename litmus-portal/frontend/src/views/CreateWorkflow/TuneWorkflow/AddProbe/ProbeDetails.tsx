@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { InputField } from 'litmus-ui';
 import { MenuItem, Select, InputLabel } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
@@ -9,13 +9,25 @@ interface ProbeDetailsProps {
   probeData: any;
 }
 
+interface HTTPDataType {
+  criteria: string;
+  responseCode: string;
+  body: string;
+  contentType: string;
+}
+
 const ProbeDetails: React.FC<ProbeDetailsProps> = ({
   setProbeData,
   probeData,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-
+  const [httpData, setHttpData] = useState<HTTPDataType>({
+    criteria: '',
+    responseCode: '',
+    body: '',
+    contentType: '',
+  });
   const [httpMethod, setHttpMethod] = React.useState('get');
 
   const handleHttp = (
@@ -25,11 +37,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
       | { name?: string | undefined; value: unknown }
     >
   ) => {
-    if (
-      e.target.name === 'url' ||
-      e.target.name === 'insecureSkipVerify' ||
-      e.target.name === 'responseTimeout'
-    ) {
+    if (e.target.name === 'url' || e.target.name === 'responseTimeout') {
       setProbeData({
         ...probeData,
         'httpProbe/inputs': {
@@ -37,35 +45,15 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           [e.target.name]: e.target.value,
         },
       });
-    } else {
-      if (httpMethod === 'get') {
-        setProbeData({
-          ...probeData,
-          'httpProbe/inputs': {
-            ...probeData['httpProbe/inputs'],
-            method: {
-              ...probeData['httpProbe/inputs'].method,
-              get: {
-                [e.target.name as string]: e.target.value,
-              },
-            },
-          },
-        });
-      }
-      if (httpMethod === 'post') {
-        setProbeData({
-          ...probeData,
-          'httpProbe/inputs': {
-            ...probeData['httpProbe/inputs'],
-            method: {
-              ...probeData['httpProbe/inputs'].method,
-              post: {
-                [e.target.name as string]: e.target.value,
-              },
-            },
-          },
-        });
-      }
+    }
+    if (e.target.name === 'insecureSkipVerify') {
+      setProbeData({
+        ...probeData,
+        'httpProbe/inputs': {
+          ...probeData['httpProbe/inputs'],
+          [e.target.name]: e.target.value === 'true',
+        },
+      });
     }
   };
 
@@ -167,7 +155,12 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.insecure')}
             </InputLabel>
             <Select
-              value={probeData['httpProbe/inputs']?.insecureSkipVerify}
+              value={
+                typeof probeData['httpProbe/inputs']?.insecureSkipVerify ===
+                'boolean'
+                  ? probeData['httpProbe/inputs']?.insecureSkipVerify.toString()
+                  : probeData['httpProbe/inputs']?.insecureSkipVerify
+              }
               className={classes.inputSelect}
               variant="outlined"
               onChange={handleHttp}
@@ -182,7 +175,10 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           </div>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="responseTimeout">
-              Response Timeout
+              {t(
+                'createWorkflow.tuneWorkflow.addProbe.inputLabels.responseTimeout'
+              )}
+              (ms)
             </InputLabel>
             <InputField
               variant="primary"
@@ -205,7 +201,9 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               value={httpMethod}
               className={classes.inputSelect}
               variant="outlined"
-              onChange={(e) => setHttpMethod(e.target.value as string)}
+              onChange={(e) => {
+                setHttpMethod(e.target.value as string);
+              }}
               inputProps={{
                 id: 'method',
                 name: 'method',
@@ -227,8 +225,27 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="body"
                   name="body"
                   type="text"
-                  value={probeData.inputs?.request?.body}
-                  onChange={handleHttp}
+                  value={httpData.body}
+                  onChange={(e) => {
+                    setProbeData({
+                      ...probeData,
+                      'httpProbe/inputs': {
+                        ...probeData['httpProbe/inputs'],
+                        method: {
+                          post: {
+                            criteria: httpData.criteria,
+                            responseCode: httpData.responseCode,
+                            body: e.target.value,
+                            contentType: httpData.contentType,
+                          },
+                        },
+                      },
+                    });
+                    setHttpData({
+                      ...httpData,
+                      body: e.target.value,
+                    });
+                  }}
                 />
               </div>
               <div className={classes.inputFormField}>
@@ -243,8 +260,27 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="contentType"
                   name="contentType"
                   type="text"
-                  value={probeData.inputs?.request?.contentType}
-                  onChange={handleHttp}
+                  value={httpData.contentType}
+                  onChange={(e) => {
+                    setProbeData({
+                      ...probeData,
+                      'httpProbe/inputs': {
+                        ...probeData['httpProbe/inputs'],
+                        method: {
+                          post: {
+                            criteria: httpData.criteria,
+                            responseCode: httpData.responseCode,
+                            body: httpData.body,
+                            contentType: e.target.value,
+                          },
+                        },
+                      },
+                    });
+                    setHttpData({
+                      ...httpData,
+                      contentType: e.target.value,
+                    });
+                  }}
                 />
               </div>
             </>
@@ -259,8 +295,43 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="criteria"
               name="criteria"
               type="text"
-              value={probeData.inputs?.request?.criteria}
-              onChange={handleHttp}
+              value={httpData.criteria}
+              onChange={(e) => {
+                if (httpMethod === 'get') {
+                  setProbeData({
+                    ...probeData,
+                    'httpProbe/inputs': {
+                      ...probeData['httpProbe/inputs'],
+                      method: {
+                        get: {
+                          criteria: e.target.value,
+                          responseCode: httpData.responseCode,
+                        },
+                      },
+                    },
+                  });
+                }
+                if (httpMethod === 'post') {
+                  setProbeData({
+                    ...probeData,
+                    'httpProbe/inputs': {
+                      ...probeData['httpProbe/inputs'],
+                      method: {
+                        post: {
+                          criteria: e.target.value,
+                          responseCode: httpData.responseCode,
+                          body: httpData.body,
+                          contentType: httpData.contentType,
+                        },
+                      },
+                    },
+                  });
+                }
+                setHttpData({
+                  ...httpData,
+                  criteria: e.target.value,
+                });
+              }}
             />
           </div>
           <div className={classes.inputFormField}>
@@ -275,8 +346,43 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="response-code"
               name="responseCode"
               type="text"
-              value={probeData.inputs?.request?.responseCode}
-              onChange={handleHttp}
+              value={httpData.responseCode}
+              onChange={(e) => {
+                if (httpMethod === 'get') {
+                  setProbeData({
+                    ...probeData,
+                    'httpProbe/inputs': {
+                      ...probeData['httpProbe/inputs'],
+                      method: {
+                        get: {
+                          criteria: httpData.criteria,
+                          responseCode: e.target.value,
+                        },
+                      },
+                    },
+                  });
+                }
+                if (httpMethod === 'post') {
+                  setProbeData({
+                    ...probeData,
+                    'httpProbe/inputs': {
+                      ...probeData['httpProbe/inputs'],
+                      method: {
+                        post: {
+                          criteria: httpData.criteria,
+                          responseCode: e.target.value,
+                          body: httpData.body,
+                          contentType: httpData.contentType,
+                        },
+                      },
+                    },
+                  });
+                }
+                setHttpData({
+                  ...httpData,
+                  responseCode: e.target.value,
+                });
+              }}
             />
           </div>
         </>

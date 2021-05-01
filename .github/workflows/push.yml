@@ -5,7 +5,7 @@ on:
       - master
       - v*
     tags:
-      - '*'
+      - "*"
 jobs:
 
   get-envs:
@@ -159,7 +159,7 @@ jobs:
         run: |
           source env-vars
           cd litmus-portal/cluster-agents/event-tracker
-          docker build . -f build/Dockerfile -t ${{ secrets.REPONAME }}/${EVENT_TRACKER}:${IMG_TAG}
+          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${EVENT_TRACKER}:${IMG_TAG}
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -194,7 +194,7 @@ jobs:
           source env-vars
           cd litmus-portal/frontend
           timestamp=`date "+%s"`
-          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${FRONTEND_IMAGE}:${IMG_TAG} --build-arg REACT_APP_KB_CHAOS_VERSION=${IMG_TAG} --build-arg REACT_APP_BUILD_TIME="$timestamp"
+          docker build . -f Dockerfile -t ${{ secrets.REPONAME }}/${FRONTEND_IMAGE}:${IMG_TAG} --build-arg REACT_APP_KB_CHAOS_VERSION=${IMG_TAG} --build-arg REACT_APP_BUILD_TIME="$timestamp" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x"
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:

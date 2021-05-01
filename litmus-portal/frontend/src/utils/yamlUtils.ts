@@ -1,6 +1,7 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable no-loop-func */
 import YAML from 'yaml';
+import { constants } from '../constants';
 
 const nameextractor = (val: any) => {
   const embeddedworkflowyamlstring = val;
@@ -17,6 +18,63 @@ const nameextractor = (val: any) => {
   }
 
   return experimentNames;
+};
+
+export const updateEngineName = (parsedYaml: any) => {
+  let engineName = '';
+  try {
+    if (parsedYaml.spec !== undefined) {
+      const yamlData = parsedYaml.spec;
+      yamlData.templates.forEach((template: any) => {
+        if (template.inputs && template.inputs.artifacts) {
+          template.inputs.artifacts.forEach((artifact: any) => {
+            const chaosEngine = YAML.parse(artifact.raw.data);
+            // Condition to check for the kind as ChaosEngine
+            if (chaosEngine.kind === 'ChaosEngine') {
+              const updatedEngineName = `${
+                chaosEngine.metadata.name
+              }-${Math.round(new Date().getTime() / 1000)}`;
+              chaosEngine.metadata.name = updatedEngineName;
+
+              // Condition to check the namespace
+              if (typeof chaosEngine.metadata.namespace === 'object') {
+                // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
+                const namespace = Object.keys(
+                  chaosEngine.metadata.namespace
+                )[0].replace(/\s/g, '');
+                chaosEngine.metadata.namespace = `{${namespace}}`;
+              }
+
+              // Edge Case: Condition to check the appns
+              // Required because while parsing the chaos engine
+              // '{{workflow.parameters.adminModeNamespace}}' changes to a JSON object
+              if (chaosEngine.spec.appinfo && chaosEngine.spec.appinfo.appns)
+                if (typeof chaosEngine.spec.appinfo.appns === 'object') {
+                  // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
+                  const appns = Object.keys(
+                    chaosEngine.spec.appinfo.appns
+                  )[0].replace(/\s/g, '');
+                  chaosEngine.spec.appinfo.appns = `{${appns}}`;
+                }
+              engineName += `${updatedEngineName} `;
+            }
+            // Update the artifact in template
+            const artifactData = artifact;
+            artifactData.raw.data = YAML.stringify(chaosEngine);
+          });
+        }
+        if (template.name.includes('revert-')) {
+          // Update the args in revert chaos template
+          const revertTemplate = template;
+          revertTemplate.container.args[0] = `kubectl delete chaosengine ${engineName} -n {{workflow.parameters.adminModeNamespace}}`;
+        }
+      });
+    }
+    return YAML.stringify(parsedYaml);
+  } catch (err) {
+    console.error(err);
+    return YAML.stringify(parsedYaml);
+  }
 };
 
 const parsed = (yaml: string) => {
@@ -70,6 +128,10 @@ const parsed = (yaml: string) => {
   }
 };
 
+export const fetchWorkflowNameFromManifest = (manifest: string) => {
+  return YAML.parse(manifest).metadata.name;
+};
+
 export const getWorkflowParameter = (parameterString: string) => {
   return parameterString
     .substring(1, parameterString.length - 1)
@@ -89,6 +151,32 @@ export const generateChaosQuery = (
   return queryStringWithEngineName.replaceAll('*{}', namespace);
 };
 
+export const updateNamespace = (manifest: string, namespace: string) => {
+  const updatedManifest = YAML.parse(manifest);
+  updatedManifest.metadata.namespace = namespace;
+  if (updatedManifest.kind.toLowerCase() === 'workflow')
+    updatedManifest.spec.arguments.parameters.forEach(
+      (parameter: any, index: number) => {
+        if (parameter.name === constants.adminMode) {
+          updatedManifest.spec.arguments.parameters[index].value = namespace;
+        }
+      }
+    );
+  if (updatedManifest.kind.toLowerCase() === 'cronworkflow')
+    updatedManifest.spec.workflowSpec.arguments.parameters.forEach(
+      (parameter: any, index: number) => {
+        if (parameter.name === constants.adminMode) {
+          updatedManifest.spec.workflowSpec.arguments.parameters[
+            index
+          ].value = namespace;
+        }
+      }
+    );
+  return updatedManifest;
+};
+
+// This is a utility function for extracting embedded
+// yaml as a string for chaosengine with provided name
 export const stepEmbeddedYAMLExtractor = (
   manifest: string,
   stepName: string
@@ -101,10 +189,7 @@ export const stepEmbeddedYAMLExtractor = (
       if (parsedYaml.kind === 'CronWorkflow') {
         const totalSteps = parsedYaml.spec.workflowSpec.templates.length - 1; // Total Steps in CronWorkflow
         for (let i = 0; i < totalSteps; i++) {
-          if (
-            parsedYaml.spec.workflowSpec.templates[1 + i].inputs.artifacts[0]
-              .name === stepName
-          ) {
+          if (parsedYaml.spec.workflowSpec.templates[1 + i].name === stepName) {
             embeddedYaml =
               parsedYaml.spec.workflowSpec.templates[1 + i].inputs.artifacts[0]
                 .raw.data;
@@ -114,10 +199,7 @@ export const stepEmbeddedYAMLExtractor = (
       } else {
         const totalSteps = parsedYaml.spec.templates.length - 1; // Total Steps in Workflow
         for (let i = 0; i < totalSteps; i++) {
-          if (
-            parsedYaml.spec.templates[1 + i].inputs.artifacts[0].name ===
-            stepName
-          ) {
+          if (parsedYaml.spec.templates[1 + i].name === stepName) {
             embeddedYaml =
               parsedYaml.spec.templates[1 + i].inputs.artifacts[0].raw.data;
             break;

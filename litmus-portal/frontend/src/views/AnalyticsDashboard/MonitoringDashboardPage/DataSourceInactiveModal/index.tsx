@@ -1,5 +1,5 @@
 import { Typography } from '@material-ui/core';
-import { ButtonFilled, Modal } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,7 +9,6 @@ import {
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { history } from '../../../../redux/configureStore';
-import { ReactComponent as CrossMarkIcon } from '../../../../svg/crossmark.svg';
 import {
   getProjectID,
   getProjectRole,
@@ -37,30 +36,35 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
   const dashboard = useActions(DashboardActions);
 
   return (
-    <Modal open onClose={() => {}} width="60%">
-      <div className={classes.modal}>
-        <Typography align="center">
-          <CrossMarkIcon className={classes.icon} />
-        </Typography>
-        <Typography
-          className={classes.modalHeading}
-          align="center"
-          variant="h3"
+    <Modal
+      open
+      onClose={() => {
+        history.goBack();
+      }}
+      modalActions={
+        <ButtonOutlined
+          className={classes.closeButton}
+          onClick={() => {
+            history.goBack();
+          }}
         >
+          &#x2715;
+        </ButtonOutlined>
+      }
+      width="60%"
+      height="fit-content"
+    >
+      <div className={classes.modal}>
+        <Typography className={classes.modalHeading} align="left">
           {`${t(
             'analyticsDashboard.monitoringDashboardPage.dataSourceIs'
           )} ${dataSourceStatus}`}
         </Typography>
-        <Typography
-          align="center"
-          variant="body1"
-          className={classes.modalBody}
-        >
+        <Typography align="left" className={classes.modalBody}>
           {t('analyticsDashboard.monitoringDashboardPage.dataSourceError')}
         </Typography>
         <div className={classes.flexButtons}>
-          <ButtonFilled
-            variant="success"
+          <ButtonOutlined
             onClick={() => {
               let dashboardTemplateID: number = -1;
               if (dashboardType === DASHBOARD_TYPE_1) {
@@ -79,12 +83,21 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
               });
             }}
           >
-            {t(
-              'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
-            )}
-          </ButtonFilled>
-          <ButtonFilled
-            variant="success"
+            <img
+              src="/icons/disconnected.svg"
+              alt="disconnected"
+              className={classes.buttonIcon}
+            />
+            <Typography className={classes.buttonText}>
+              {t(
+                'analyticsDashboard.monitoringDashboardPage.reConfigureDashboard'
+              )}
+            </Typography>
+          </ButtonOutlined>
+          <Typography align="left" className={classes.modalBodyText}>
+            {t('analyticsDashboard.monitoringDashboardPage.or')}
+          </Typography>
+          <ButtonOutlined
             onClick={() => {
               history.push({
                 pathname: '/analytics/datasource/configure',
@@ -92,8 +105,15 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
               });
             }}
           >
-            {t('analyticsDashboard.monitoringDashboardPage.updateDataSource')}
-          </ButtonFilled>
+            <img
+              src="/icons/disconnected.svg"
+              alt="disconnected"
+              className={classes.buttonIcon}
+            />
+            <Typography className={classes.buttonText}>
+              {t('analyticsDashboard.monitoringDashboardPage.updateDataSource')}
+            </Typography>
+          </ButtonOutlined>
         </div>
       </div>
     </Modal>

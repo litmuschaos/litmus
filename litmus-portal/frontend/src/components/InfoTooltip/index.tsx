@@ -6,16 +6,17 @@ import React from 'react';
 
 const useStyles = makeStyles(() => ({
   infoImg: {
-    height: 15,
-    width: 15,
+    height: '1.15rem',
+    width: '1.15rem',
   },
 }));
 
 interface InfoTooltipProps {
   value: string;
+  className?: string;
 }
 
-const InfoTooltip: React.FC<InfoTooltipProps> = ({ value }) => {
+const InfoTooltip: React.FC<InfoTooltipProps> = ({ value, className }) => {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   const handleTooltipClose = () => {
@@ -29,7 +30,7 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({ value }) => {
   return (
     <>
       <ClickAwayListener onClickAway={handleTooltipClose}>
-        <div>
+        <div className={className}>
           <Tooltip
             PopperProps={{
               disablePortal: true,

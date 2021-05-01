@@ -5,15 +5,20 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
-import BackButton from '../../components/Button/BackButton';
 import {
   SCHEDULE_DETAILS,
   WORKFLOW_DETAILS,
   WORKFLOW_EVENTS,
 } from '../../graphql';
+import {
+  ScheduleDataVars,
+  Schedules,
+  ScheduleWorkflow,
+} from '../../models/graphql/scheduleData';
 import {
   ExecutionData,
   Workflow,
@@ -21,29 +26,23 @@ import {
   WorkflowSubscription,
 } from '../../models/graphql/workflowData';
 import useActions from '../../redux/actions';
+import * as NodeSelectionActions from '../../redux/actions/nodeSelection';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
+import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
+import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
-import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
-import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
-import {
-  Schedules,
-  ScheduleDataVars,
-  ScheduleWorkflow,
-} from '../../models/graphql/scheduleData';
-import * as NodeSelectionActions from '../../redux/actions/nodeSelection';
 import useStyles from './styles';
-import { FAILED } from '../../views/WorkflowDetails/workflowConstants';
 
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
-  const [isInfoToggled, setIsInfoToggled] = useState<boolean>(true);
+  const [isInfoToggled, setIsInfoToggled] = useState<boolean>(false);
   // State for Checking if workflow failed
   const [isWorkflowFailed, setWorkflowFailed] = useState<boolean>(false);
   const [
@@ -78,13 +77,13 @@ const WorkflowDetails: React.FC = () => {
   )[0];
 
   // Apollo query to get the scheduled data
-  const { data: SchedulesData } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
-    {
-      variables: { projectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const { data: SchedulesData, loading } = useQuery<
+    Schedules,
+    ScheduleDataVars
+  >(SCHEDULE_DETAILS, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   // Using subscription to get realtime data
   useEffect(() => {
@@ -147,8 +146,7 @@ const WorkflowDetails: React.FC = () => {
   useEffect(() => {
     if (workflow && pod_name === '') {
       if (
-        (JSON.parse(workflow.execution_data as string) as ExecutionData)
-          .phase !== FAILED
+        Object.keys(JSON.parse(workflow.execution_data as string).nodes).length
       ) {
         const firstNodeId = JSON.parse(workflow.execution_data as string).nodes[
           Object.keys(JSON.parse(workflow.execution_data as string).nodes)[0]
@@ -170,13 +168,10 @@ const WorkflowDetails: React.FC = () => {
           <BackButton />
         </div>
         {/* If workflow data is present then display the workflow details */}
-        {workflow && pod_name !== '' ? (
+        {workflow && pod_name !== '' && !loading ? (
           <div>
             <Typography data-cy="wfName" className={classes.title}>
               {t('workflowDetailsView.headerDesc')} {workflow.workflow_name}
-            </Typography>
-            <Typography className={classes.subtitle}>
-              {t('workflowDetailsView.headerMiniDesc')}
             </Typography>
 
             {/* AppBar */}
@@ -190,7 +185,7 @@ const WorkflowDetails: React.FC = () => {
                 onChange={handleChange}
                 TabIndicatorProps={{
                   style: {
-                    backgroundColor: theme.palette.secondary.dark,
+                    backgroundColor: theme.palette.highlight,
                   },
                 }}
                 variant="fullWidth"
@@ -268,8 +263,10 @@ const WorkflowDetails: React.FC = () => {
               />
             </TabPanel>
           </div>
-        ) : error || isWorkflowFailed ? (
+        ) : error ? (
           <Typography>{t('workflowDetails.fetchError')}</Typography>
+        ) : isWorkflowFailed ? (
+          <Typography>{t('workflowDetails.workflowNotStarted')}</Typography>
         ) : (
           <Loader />
         )}

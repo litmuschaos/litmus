@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -63,8 +64,9 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n"
 	)
 
-	if !*cluster.AgentNsExists {
-		generatedYAML = append(generatedYAML, namspaceStr)
+	// Checking if the agent namespace does not exist and its scope of installation is not namespaced
+	if *cluster.AgentNsExists == false && cluster.AgentScope != "namespace" {
+		generatedYAML = append(generatedYAML, fmt.Sprintf(namspaceStr))
 	}
 
 	if !*cluster.AgentSaExists {
@@ -106,6 +108,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-EXECUTOR}", subscriberConfig.WorkflowExecutorImage, -1)
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-RUNNER}", subscriberConfig.ChaosRunnerImage, -1)
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-EXPORTER}", subscriberConfig.ChaosExporterImage, -1)
+		newContent = strings.Replace(newContent, "#{ARGO-CONTAINER-RUNTIME-EXECUTOR}", subscriberConfig.ContainerRuntimeExecutor, -1)
 
 		generatedYAML = append(generatedYAML, newContent)
 	}

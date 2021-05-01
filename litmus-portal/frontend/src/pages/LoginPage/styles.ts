@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     width: '100%',
     height: '100%',
-    background: theme.palette.primary.main,
+    background: theme.palette.loginBackground,
   },
   rootDiv: {
     display: 'flex',
@@ -59,6 +59,22 @@ const useStyles = makeStyles((theme) => ({
     '&:disabled': {
       backgroundColor: theme.palette.primary.light,
     },
+  },
+  buttonGroup: {
+    width: '100%',
+    color: theme.palette.text.secondary,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  tooltip: {
+    padding: theme.spacing(3.75, 1.875),
+    maxWidth: '12.5rem',
+    color: theme.palette.text.primary,
+    background: theme.palette.background.paper,
+  },
+  forgetPwdText: {
+    textDecoration: 'underline',
   },
 }));
 export default useStyles;
