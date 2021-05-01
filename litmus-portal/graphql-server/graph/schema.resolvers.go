@@ -350,6 +350,10 @@ func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput
 	return analyticsHandler.GetPromQuery(query)
 }
 
+func (r *queryResolver) GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
+	return analyticsHandler.GetLabelNamesAndValues(series)
+}
+
 func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error) {
 	return analyticsHandler.QueryListDashboard(projectID)
 }

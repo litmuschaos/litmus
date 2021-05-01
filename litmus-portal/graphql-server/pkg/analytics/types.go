@@ -23,3 +23,20 @@ type TimeStampValue struct {
 	Timestamp *string `json:"timestamp"`
 	Value     *string `json:"value"`
 }
+
+type PromSeries struct {
+	Series string
+	URL    string
+	Start  string
+	End    string
+}
+
+type LabelValue struct {
+	Label  string    `json:"label"`
+	Values []*string `json:"values"`
+}
+
+type PromSeriesResponse struct {
+	Series      string        `json:"series"`
+	LabelValues []*LabelValue `json:"labelValues"`
+}

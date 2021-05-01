@@ -310,6 +310,8 @@ type Query {
 
   GetPromQuery(query: promInput): [promResponse!]! @authorized
 
+  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
+
   ListDashboard(project_id: String!): [listDashboardReponse] @authorized
 
   # Git Ops

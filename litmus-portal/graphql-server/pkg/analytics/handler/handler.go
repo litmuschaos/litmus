@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,10 +15,13 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops/prometheus"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cache"
 	dbOperationsAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbSchemaAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 )
+
+var AnalyticsCache = cache.NewCache()
 
 func CreateDataSource(datasource *model.DSInput) (*model.DSResponse, error) {
 
@@ -349,13 +353,59 @@ func GetPromQuery(promInput *model.PromInput) ([]*model.PromResponse, error) {
 			End:        promInput.End,
 		}
 
-		response, err := prometheus.Query(newPromQuery)
+		cacheKey := v.Queryid + "-" + promInput.Start + "-" + promInput.End + "-" + promInput.URL
+
+		queryType := "metrics"
+		if strings.Contains(v.Queryid, "litmuschaos_awaited_experiments") || strings.Contains(v.Queryid, "litmuschaos_experiment_verdict") {
+			queryType = "annotation"
+		}
+
+		if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
+			newPromResponse = append(newPromResponse, obj.(*model.PromResponse))
+		} else {
+			response, err := prometheus.Query(newPromQuery, queryType)
+			if err != nil {
+				return nil, err
+			}
+
+			cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+			if cacheError != nil {
+				log.Printf("Adding cache: %v\n", cacheError)
+			}
+
+			newPromResponse = append(newPromResponse, &response)
+		}
+	}
+	return newPromResponse, nil
+}
+
+func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
+	var newPromSeriesResponse *model.PromSeriesResponse
+	newPromSeriesInput := analytics.PromSeries{
+		Series: promSeriesInput.Series,
+		URL:    promSeriesInput.URL,
+		Start:  promSeriesInput.Start,
+		End:    promSeriesInput.End,
+	}
+	cacheKey := promSeriesInput.Series + "-" + promSeriesInput.Start + "-" + promSeriesInput.End + "-" + promSeriesInput.URL
+
+	if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
+		newPromSeriesResponse = obj.(*model.PromSeriesResponse)
+	} else {
+		response, err := prometheus.LabelNamesAndValues(newPromSeriesInput)
 		if err != nil {
 			return nil, err
 		}
-		newPromResponse = append(newPromResponse, &response)
+
+		cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+		if cacheError != nil {
+			log.Printf("Adding cache: %v\n", cacheError)
+		}
+
+		newPromSeriesResponse = &response
 	}
-	return newPromResponse, nil
+
+	return newPromSeriesResponse, nil
 }
 
 func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error) {

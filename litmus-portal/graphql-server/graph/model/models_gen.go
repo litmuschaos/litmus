@@ -535,6 +535,11 @@ type DeleteDSInput struct {
 	DsID        string `json:"ds_id"`
 }
 
+type LabelValue struct {
+	Label  string    `json:"label"`
+	Values []*string `json:"values"`
+}
+
 type ListDashboardReponse struct {
 	DsID        string                `json:"ds_id"`
 	DbID        string                `json:"db_id"`
@@ -639,6 +644,18 @@ type PromResponse struct {
 	Queryid string              `json:"queryid"`
 	Legends [][]*string         `json:"legends"`
 	Tsvs    [][]*TimeStampValue `json:"tsvs"`
+}
+
+type PromSeriesInput struct {
+	Series string `json:"series"`
+	URL    string `json:"url"`
+	Start  string `json:"start"`
+	End    string `json:"end"`
+}
+
+type PromSeriesResponse struct {
+	Series      string          `json:"series"`
+	LabelValues [][]*LabelValue `json:"labelValues"`
 }
 
 type TimeStampValue struct {

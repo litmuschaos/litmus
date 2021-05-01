@@ -309,24 +309,25 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetCharts               func(childComplexity int, hubName string, projectID string) int
-		GetCluster              func(childComplexity int, projectID string, clusterType *string) int
-		GetGitOpsDetails        func(childComplexity int, projectID string) int
-		GetHubExperiment        func(childComplexity int, experimentInput model.ExperimentInput) int
-		GetHubStatus            func(childComplexity int, projectID string) int
-		GetProject              func(childComplexity int, projectID string) int
-		GetPromQuery            func(childComplexity int, query *model.PromInput) int
-		GetScheduledWorkflows   func(childComplexity int, projectID string) int
-		GetTemplateManifestByID func(childComplexity int, templateID string) int
-		GetUser                 func(childComplexity int, username string) int
-		GetWorkFlowRuns         func(childComplexity int, projectID string) int
-		GetYAMLData             func(childComplexity int, experimentInput model.ExperimentInput) int
-		ListDashboard           func(childComplexity int, projectID string) int
-		ListDataSource          func(childComplexity int, projectID string) int
-		ListManifestTemplate    func(childComplexity int, projectID string) int
-		ListProjects            func(childComplexity int) int
-		ListWorkflow            func(childComplexity int, projectID string, workflowIds []*string) int
-		Users                   func(childComplexity int) int
+		GetCharts                  func(childComplexity int, hubName string, projectID string) int
+		GetCluster                 func(childComplexity int, projectID string, clusterType *string) int
+		GetGitOpsDetails           func(childComplexity int, projectID string) int
+		GetHubExperiment           func(childComplexity int, experimentInput model.ExperimentInput) int
+		GetHubStatus               func(childComplexity int, projectID string) int
+		GetProject                 func(childComplexity int, projectID string) int
+		GetPromLabelNamesAndValues func(childComplexity int, series *model.PromSeriesInput) int
+		GetPromQuery               func(childComplexity int, query *model.PromInput) int
+		GetScheduledWorkflows      func(childComplexity int, projectID string) int
+		GetTemplateManifestByID    func(childComplexity int, templateID string) int
+		GetUser                    func(childComplexity int, username string) int
+		GetWorkFlowRuns            func(childComplexity int, projectID string) int
+		GetYAMLData                func(childComplexity int, experimentInput model.ExperimentInput) int
+		ListDashboard              func(childComplexity int, projectID string) int
+		ListDataSource             func(childComplexity int, projectID string) int
+		ListManifestTemplate       func(childComplexity int, projectID string) int
+		ListProjects               func(childComplexity int) int
+		ListWorkflow               func(childComplexity int, projectID string, workflowIds []*string) int
+		Users                      func(childComplexity int) int
 	}
 
 	SSHKey struct {
@@ -431,6 +432,11 @@ type ComplexityRoot struct {
 		Token       func(childComplexity int) int
 	}
 
+	LabelValue struct {
+		Label  func(childComplexity int) int
+		Values func(childComplexity int) int
+	}
+
 	ListDashboardReponse struct {
 		ClusterID   func(childComplexity int) int
 		ClusterName func(childComplexity int) int
@@ -486,6 +492,11 @@ type ComplexityRoot struct {
 		Legends func(childComplexity int) int
 		Queryid func(childComplexity int) int
 		Tsvs    func(childComplexity int) int
+	}
+
+	PromSeriesResponse struct {
+		LabelValues func(childComplexity int) int
+		Series      func(childComplexity int) int
 	}
 
 	TimeStampValue struct {
@@ -555,6 +566,7 @@ type QueryResolver interface {
 	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 	ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error)
 	GetPromQuery(ctx context.Context, query *model.PromInput) ([]*model.PromResponse, error)
+	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
 	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
@@ -2147,6 +2159,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetProject(childComplexity, args["projectID"].(string)), true
 
+	case "Query.GetPromLabelNamesAndValues":
+		if e.complexity.Query.GetPromLabelNamesAndValues == nil {
+			break
+		}
+
+		args, err := ec.field_Query_GetPromLabelNamesAndValues_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPromLabelNamesAndValues(childComplexity, args["series"].(*model.PromSeriesInput)), true
+
 	case "Query.GetPromQuery":
 		if e.complexity.Query.GetPromQuery == nil {
 			break
@@ -2831,6 +2855,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClusterRegResponse.Token(childComplexity), true
 
+	case "labelValue.label":
+		if e.complexity.LabelValue.Label == nil {
+			break
+		}
+
+		return e.complexity.LabelValue.Label(childComplexity), true
+
+	case "labelValue.values":
+		if e.complexity.LabelValue.Values == nil {
+			break
+		}
+
+		return e.complexity.LabelValue.Values(childComplexity), true
+
 	case "listDashboardReponse.cluster_id":
 		if e.complexity.ListDashboardReponse.ClusterID == nil {
 			break
@@ -3104,6 +3142,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PromResponse.Tsvs(childComplexity), true
 
+	case "promSeriesResponse.labelValues":
+		if e.complexity.PromSeriesResponse.LabelValues == nil {
+			break
+		}
+
+		return e.complexity.PromSeriesResponse.LabelValues(childComplexity), true
+
+	case "promSeriesResponse.series":
+		if e.complexity.PromSeriesResponse.Series == nil {
+			break
+		}
+
+		return e.complexity.PromSeriesResponse.Series(childComplexity), true
+
 	case "timeStampValue.timestamp":
 		if e.complexity.TimeStampValue.Timestamp == nil {
 			break
@@ -3213,7 +3265,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3315,6 +3367,13 @@ input promInput {
     end: String!
 }
 
+input promSeriesInput {
+    series: String!
+    url: String!
+    start: String!
+    end: String!
+}
+
 input promQueryInput {
     queryid: String!
     query: String!
@@ -3332,6 +3391,16 @@ type promResponse {
 type timeStampValue{
     timestamp: String
     value: String
+}
+
+type promSeriesResponse {
+    series: String!
+    labelValues: [[labelValue]]
+}
+
+type labelValue {
+    label: String!
+    values: [String]
 }
 
 type listDashboardReponse {
@@ -3389,7 +3458,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3563,7 +3632,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
+	{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -3595,7 +3664,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -3907,6 +3976,8 @@ type Query {
 
   GetPromQuery(query: promInput): [promResponse!]! @authorized
 
+  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
+
   ListDashboard(project_id: String!): [listDashboardReponse] @authorized
 
   # Git Ops
@@ -4034,7 +4105,7 @@ type Subscription {
     @authorized
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
+	{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -4641,6 +4712,20 @@ func (ec *executionContext) field_Mutation_userClusterReg_args(ctx context.Conte
 		}
 	}
 	args["clusterInput"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetPromLabelNamesAndValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.PromSeriesInput
+	if tmp, ok := rawArgs["series"]; ok {
+		arg0, err = ec.unmarshalOpromSeriesInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["series"] = arg0
 	return args, nil
 }
 
@@ -12956,6 +13041,67 @@ func (ec *executionContext) _Query_GetPromQuery(ctx context.Context, field graph
 	return ec.marshalNpromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponseᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_GetPromLabelNamesAndValues(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_GetPromLabelNamesAndValues_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPromLabelNamesAndValues(rctx, args["series"].(*model.PromSeriesInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.PromSeriesResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PromSeriesResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PromSeriesResponse)
+	fc.Result = res
+	return ec.marshalNpromSeriesResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17005,6 +17151,71 @@ func (ec *executionContext) _clusterRegResponse_cluster_name(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _labelValue_label(ctx context.Context, field graphql.CollectedField, obj *model.LabelValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "labelValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Label, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _labelValue_values(ctx context.Context, field graphql.CollectedField, obj *model.LabelValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "labelValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Values, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _listDashboardReponse_ds_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18254,6 +18465,71 @@ func (ec *executionContext) _promResponse_tsvs(ctx context.Context, field graphq
 	res := resTmp.([][]*model.TimeStampValue)
 	fc.Result = res
 	return ec.marshalOtimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _promSeriesResponse_series(ctx context.Context, field graphql.CollectedField, obj *model.PromSeriesResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "promSeriesResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Series, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _promSeriesResponse_labelValues(ctx context.Context, field graphql.CollectedField, obj *model.PromSeriesResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "promSeriesResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LabelValues, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([][]*model.LabelValue)
+	fc.Result = res
+	return ec.marshalOlabelValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _timeStampValue_timestamp(ctx context.Context, field graphql.CollectedField, obj *model.TimeStampValue) (ret graphql.Marshaler) {
@@ -19779,6 +20055,42 @@ func (ec *executionContext) unmarshalInputpromQueryInput(ctx context.Context, ob
 		case "minstep":
 			var err error
 			it.Minstep, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputpromSeriesInput(ctx context.Context, obj interface{}) (model.PromSeriesInput, error) {
+	var it model.PromSeriesInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "series":
+			var err error
+			it.Series, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "url":
+			var err error
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "start":
+			var err error
+			it.Start, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "end":
+			var err error
+			it.End, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21449,6 +21761,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "GetPromLabelNamesAndValues":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_GetPromLabelNamesAndValues(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "ListDashboard":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -22285,6 +22611,35 @@ func (ec *executionContext) _clusterRegResponse(ctx context.Context, sel ast.Sel
 	return out
 }
 
+var labelValueImplementors = []string{"labelValue"}
+
+func (ec *executionContext) _labelValue(ctx context.Context, sel ast.SelectionSet, obj *model.LabelValue) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, labelValueImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("labelValue")
+		case "label":
+			out.Values[i] = ec._labelValue_label(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "values":
+			out.Values[i] = ec._labelValue_values(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var listDashboardReponseImplementors = []string{"listDashboardReponse"}
 
 func (ec *executionContext) _listDashboardReponse(ctx context.Context, sel ast.SelectionSet, obj *model.ListDashboardReponse) graphql.Marshaler {
@@ -22526,6 +22881,35 @@ func (ec *executionContext) _promResponse(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._promResponse_legends(ctx, field, obj)
 		case "tsvs":
 			out.Values[i] = ec._promResponse_tsvs(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var promSeriesResponseImplementors = []string{"promSeriesResponse"}
+
+func (ec *executionContext) _promSeriesResponse(ctx context.Context, sel ast.SelectionSet, obj *model.PromSeriesResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, promSeriesResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("promSeriesResponse")
+		case "series":
+			out.Values[i] = ec._promSeriesResponse_series(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "labelValues":
+			out.Values[i] = ec._promSeriesResponse_labelValues(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24093,6 +24477,20 @@ func (ec *executionContext) marshalNpromResponse2ᚖgithubᚗcomᚋlitmuschaos�
 	return ec._promResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNpromSeriesResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesResponse(ctx context.Context, sel ast.SelectionSet, v model.PromSeriesResponse) graphql.Marshaler {
+	return ec._promSeriesResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNpromSeriesResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesResponse(ctx context.Context, sel ast.SelectionSet, v *model.PromSeriesResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._promSeriesResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) ([]*model.UpdatePanelGroupInput, error) {
 	var vSlice []interface{}
 	if v != nil {
@@ -24747,6 +25145,97 @@ func (ec *executionContext) unmarshalOcreateDBInput2ᚖgithubᚗcomᚋlitmuschao
 	return &res, err
 }
 
+func (ec *executionContext) marshalOlabelValue2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v model.LabelValue) graphql.Marshaler {
+	return ec._labelValue(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOlabelValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v [][]*model.LabelValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOlabelValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOlabelValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v []*model.LabelValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOlabelValue2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOlabelValue2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v *model.LabelValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._labelValue(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOlistDashboardReponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx context.Context, sel ast.SelectionSet, v model.ListDashboardReponse) graphql.Marshaler {
 	return ec._listDashboardReponse(ctx, sel, &v)
 }
@@ -25052,6 +25541,18 @@ func (ec *executionContext) marshalOpromQueryResponse2ᚖgithubᚗcomᚋlitmusch
 		return graphql.Null
 	}
 	return ec._promQueryResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOpromSeriesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesInput(ctx context.Context, v interface{}) (model.PromSeriesInput, error) {
+	return ec.unmarshalInputpromSeriesInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOpromSeriesInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesInput(ctx context.Context, v interface{}) (*model.PromSeriesInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOpromSeriesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesInput(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) marshalOtimeStampValue2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx context.Context, sel ast.SelectionSet, v model.TimeStampValue) graphql.Marshaler {

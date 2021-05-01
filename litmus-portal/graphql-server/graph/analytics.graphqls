@@ -100,6 +100,13 @@ input promInput {
     end: String!
 }
 
+input promSeriesInput {
+    series: String!
+    url: String!
+    start: String!
+    end: String!
+}
+
 input promQueryInput {
     queryid: String!
     query: String!
@@ -117,6 +124,16 @@ type promResponse {
 type timeStampValue{
     timestamp: String
     value: String
+}
+
+type promSeriesResponse {
+    series: String!
+    labelValues: [[labelValue]]
+}
+
+type labelValue {
+    label: String!
+    values: [String]
 }
 
 type listDashboardReponse {

@@ -36,7 +36,7 @@ func CreateClient(url string) (apiV1.API, error) {
 }
 
 // Query is used to query prometheus using client
-func Query(prom analytics.PromQuery) (model.PromResponse, error) {
+func Query(prom analytics.PromQuery, queryType string) (model.PromResponse, error) {
 	client, err := CreateClient(prom.URL)
 	if err != nil {
 		return model.PromResponse{}, err
@@ -82,12 +82,24 @@ func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 			tempLegends []*string
 		)
 
-		for _, value := range v.Values {
-			temp := &analytics.TimeStampValue{
-				Timestamp: func(str string) *string { return &str }(fmt.Sprint(value.Timestamp)),
-				Value:     func(str string) *string { return &str }(fmt.Sprint(value.Value)),
+		if queryType == "metrics" {
+			for _, value := range v.Values {
+				temp := &analytics.TimeStampValue{
+					Timestamp: func(str string) *string { return &str }(fmt.Sprint(map[bool]int{true: int(value.Value) * 1000, false: 0}[value.Timestamp >= 0])),
+					Value:     func(str string) *string { return &str }(fmt.Sprint(map[bool]float64{true: float64(value.Value), false: 0.0}[value.Value >= 0])),
+				}
+
+				tempTSV = append(tempTSV, temp)
 			}
-			tempTSV = append(tempTSV, temp)
+		} else {
+			for _, value := range v.Values {
+				temp := &analytics.TimeStampValue{
+					Timestamp: func(str string) *string { return &str }(fmt.Sprint(map[bool]int{true: int(value.Value) * 1000, false: 0}[value.Timestamp >= 0])),
+					Value:     func(str string) *string { return &str }(fmt.Sprint(map[bool]int{true: int(value.Value), false: 0}[value.Value >= 0])),
+				}
+
+				tempTSV = append(tempTSV, temp)
+			}
 		}
 
 		newTSVs = append(newTSVs, tempTSV)
@@ -121,7 +133,75 @@ func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 	newResponse.Legends = newLegends
 
 	var resp model.PromResponse
-	copier.Copy(&resp, &newResponse)
+	if len(newLegends) != 0 && len(newLegends[0]) != 0 {
+		err := copier.Copy(&resp, &newResponse)
+		if err != nil {
+			return model.PromResponse{}, err
+		}
+	}
+
+	return resp, nil
+}
+
+// LabelNamesAndValues is used to query prometheus using client for label names and values of a series
+func LabelNamesAndValues(prom analytics.PromSeries) (model.PromSeriesResponse, error) {
+	client, err := CreateClient(prom.URL)
+	if err != nil {
+		return model.PromSeriesResponse{}, err
+	}
+
+	startTime, err := strconv.ParseInt(prom.Start, 10, 64)
+	if err != nil {
+		return model.PromSeriesResponse{}, err
+	}
+
+	endTime, err := strconv.ParseInt(prom.End, 10, 64)
+	if err != nil {
+		return model.PromSeriesResponse{}, err
+	}
+
+	start := time.Unix(startTime, 0).UTC()
+	end := time.Unix(endTime, 0).UTC()
+	matcher := []string{prom.Series}
+
+	labelNames, _, err := client.LabelNames(context.TODO(), matcher, start, end)
+	if err != nil {
+		return model.PromSeriesResponse{}, err
+	}
+
+	var (
+		newResponse    analytics.PromSeriesResponse
+		newLabelValues []*analytics.LabelValue
+	)
+
+	if len(labelNames) >= 1 {
+		for _, label := range labelNames {
+			var newValues []*string
+			values, _, err := client.LabelValues(context.TODO(), label, matcher, start, end)
+			if err != nil {
+				return model.PromSeriesResponse{}, err
+			}
+
+			for _, value := range values {
+				newValues = append(newValues, func(str string) *string { return &str }(fmt.Sprint(value)))
+			}
+
+			tempLabelValues := &analytics.LabelValue{
+				Label:  label,
+				Values: newValues,
+			}
+			newLabelValues = append(newLabelValues, tempLabelValues)
+		}
+	}
+
+	newResponse.Series = prom.Series
+	newResponse.LabelValues = newLabelValues
+
+	var resp model.PromSeriesResponse
+	copyError := copier.Copy(&resp, &newResponse)
+	if copyError != nil {
+		return model.PromSeriesResponse{}, err
+	}
 
 	return resp, nil
 }
