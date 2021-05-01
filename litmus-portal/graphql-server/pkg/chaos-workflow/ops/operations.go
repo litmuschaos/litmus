@@ -383,7 +383,7 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 
 // ResiliencyScoreCalculator calculates the Rscore and returns the execdata string
 func ResiliencyScoreCalculator(execData string, wfid string) string {
-	var resiliency_score, weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int
+	var resiliencyScore, weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int
 	var jsonData WorkflowEvent
 	err := json.Unmarshal([]byte(execData), &jsonData)
 	if err != nil {
@@ -412,10 +412,10 @@ func ResiliencyScoreCalculator(execData string, wfid string) string {
 		}
 	}
 	if weightSum == 0 {
-		resiliency_score = 0
+		resiliencyScore = 0
 	} else {
-		resiliency_score = (totalTestResult / weightSum)
+		resiliencyScore = (totalTestResult / weightSum)
 	}
-	execData = "{" + `"resiliency_score":` + `"` + strconv.Itoa(resiliency_score) + `",` + `"experiments_passed":` + `"` + strconv.Itoa(totalExperimentsPassed) + `",` + `"total_experiments":` + `"` + strconv.Itoa(totalExperiments) + `",` + execData[1:]
+	execData = "{" + `"resiliencyScore":` + `"` + strconv.Itoa(resiliencyScore) + `",` + `"experiments_passed":` + `"` + strconv.Itoa(totalExperimentsPassed) + `",` + `"total_experiments":` + `"` + strconv.Itoa(totalExperiments) + `",` + execData[1:]
 	return execData
 }
