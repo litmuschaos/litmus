@@ -456,10 +456,10 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 	if err != nil {
 		return nil, err
 	}
-	if IsExist == true {
-		return nil, errors.New("Template already exists")
+	if IsExist {
+		return nil, errors.New("template already exists")
 	}
-	projectData, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", templateInput.ProjectID}})
+	projectData, err := dbOperationsProject.GetProject(ctx, bson.D{{Key: "_id", Value: templateInput.ProjectID}})
 	if err != nil {
 		return nil, err
 	}
@@ -508,8 +508,8 @@ func QueryTemplateWorkflowByID(ctx context.Context, templateID string) (*model.M
 
 // DeleteWorkflowTemplate is used to delete the workflow template (update the is_removed field as true)
 func DeleteWorkflowTemplate(ctx context.Context, templateID string) (bool, error) {
-	query := bson.D{{"template_id", templateID}}
-	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
+	query := bson.D{{Key: "template_id", Value: templateID}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "is_removed", Value: true}}}}
 	err := dbOperationsWorkflowTemplate.UpdateTemplateManifest(ctx, query, update)
 	if err != nil {
 		log.Print("Err", err)

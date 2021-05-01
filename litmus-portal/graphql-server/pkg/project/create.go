@@ -76,7 +76,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 // GetProject ...
 func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 
-	project, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", projectID}})
+	project, err := dbOperationsProject.GetProject(ctx, bson.D{{Key: "_id", Value: projectID}})
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func LeaveProject(ctx context.Context, member model.MemberInput) (string, error)
 // getInvitation :Returns the Invitation Status
 func getInvitation(ctx context.Context, member model.MemberInput) (dbSchemaProject.Invitation, error) {
 
-	project, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", member.ProjectID}})
+	project, err := dbOperationsProject.GetProject(ctx, bson.D{{Key: "_id", Value: member.ProjectID}})
 	if err != nil {
 		return "", err
 	}

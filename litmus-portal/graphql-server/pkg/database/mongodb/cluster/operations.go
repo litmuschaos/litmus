@@ -70,7 +70,8 @@ func GetClusterWithProjectID(projectID string, clusterType *string) ([]*Cluster,
 		query = bson.M{"project_id": projectID, "cluster_type": clusterType, "is_removed": false}
 	}
 
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
 	var clusters []*Cluster
 
 	cursor, err := clusterCollection.Find(ctx, query)
