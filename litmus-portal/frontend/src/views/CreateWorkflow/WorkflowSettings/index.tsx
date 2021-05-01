@@ -196,7 +196,6 @@ const WorkflowSettings = forwardRef((_, ref) => {
             <Avatar
               variant="square"
               className={classes.avatar}
-              data-cy="avatar"
               alt="User"
               src={icon}
             />
@@ -205,7 +204,6 @@ const WorkflowSettings = forwardRef((_, ref) => {
             <div aria-details="spacer" className={classes.mainDiv}>
               <InputField
                 label={t('createWorkflow.chooseWorkflow.label.workflowName')}
-                data-cy="inputWorkflow"
                 fullWidth
                 helperText={
                   validateWorkflowName(name)
@@ -233,7 +231,6 @@ const WorkflowSettings = forwardRef((_, ref) => {
               InputProps={{
                 disableUnderline: true,
               }}
-              data-cy="inputWorkflowDescription"
               value={description}
               onChange={descriptionChangeHandle}
               multiline
