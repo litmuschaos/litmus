@@ -47,24 +47,27 @@ jobs:
       - name: golangci-lint event-tracker
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.29      
+          version: v1.39      
           working-directory: ./litmus-portal/cluster-agents/event-tracker
+          args: --timeout=5m0s
       - name: golangci-lint subscriber
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.29      
+          version: v1.39      
           working-directory: ./litmus-portal/cluster-agents/subscriber
+          args: --timeout 5m0s
       - name: golangci-lint graphql-server
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.29      
+          version: v1.39      
           working-directory: ./litmus-portal/graphql-server
-          args: --timeout=0
+          args: --timeout=5m0s
       - name: golangci-lint authentication server
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.29      
+          version: v1.39      
           working-directory: ./litmus-portal/authentication
+          args: --timeout 5m0s
       - shell: bash
         run: |
           cd litmus-portal
