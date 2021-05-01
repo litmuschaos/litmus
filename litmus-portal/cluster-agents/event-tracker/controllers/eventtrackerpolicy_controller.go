@@ -76,7 +76,7 @@ func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 			log.Print(response)
 
 			var res Response
-			json.Unmarshal([]byte(response), &res)
+			_ = json.Unmarshal([]byte(response), &res)
 
 			if res.Data.GitopsNotifer == "Gitops Disabled" {
 				etp.Statuses[index].IsTriggered = "false"

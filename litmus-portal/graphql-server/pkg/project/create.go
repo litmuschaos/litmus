@@ -15,7 +15,6 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
-	dbSchemaProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 )
@@ -33,17 +32,17 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 	}
 
 	uuid := uuid.New()
-	newProject := &dbSchemaProject.Project{
+	newProject := &dbOperationsProject.Project{
 		ID:   uuid.String(),
 		Name: projectName,
-		Members: []*dbSchemaProject.Member{
+		Members: []*dbOperationsProject.Member{
 			{
 				UserID:     user.ID,
 				UserName:   user.Username,
 				Name:       *user.Name,
 				Email:      *user.Email,
 				Role:       model.MemberRoleOwner,
-				Invitation: dbSchemaProject.AcceptedInvitation,
+				Invitation: dbOperationsProject.AcceptedInvitation,
 				JoinedAt:   time.Now().Format(time.RFC1123Z),
 			},
 		},
@@ -106,10 +105,10 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 		return nil, err
 	}
 
-	if invitation == dbSchemaProject.AcceptedInvitation {
-		return nil, errors.New("This user is already a member of your project")
-	} else if invitation == dbSchemaProject.PendingInvitation || invitation == dbSchemaProject.DeclinedInvitation || invitation == dbSchemaProject.ExitedProject {
-		err = dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.PendingInvitation, member.Role)
+	if invitation == dbOperationsProject.AcceptedInvitation {
+		return nil, errors.New("this user is already a member of your project")
+	} else if invitation == dbOperationsProject.PendingInvitation || invitation == dbOperationsProject.DeclinedInvitation || invitation == dbOperationsProject.ExitedProject {
+		err = dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbOperationsProject.PendingInvitation, member.Role)
 		if err != nil {
 			return nil, errors.New("Unsuccessful")
 		}
@@ -120,13 +119,13 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 	if err != nil {
 		return nil, err
 	}
-	newMember := &dbSchemaProject.Member{
+	newMember := &dbOperationsProject.Member{
 		UserID:     user.ID,
 		UserName:   user.Username,
 		Name:       *user.Name,
 		Email:      *user.Email,
 		Role:       *member.Role,
-		Invitation: dbSchemaProject.PendingInvitation,
+		Invitation: dbOperationsProject.PendingInvitation,
 	}
 
 	err = dbOperationsProject.AddMember(ctx, member.ProjectID, newMember)
@@ -136,7 +135,7 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 // AcceptInvitation :Accept an invitaion
 func AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 
-	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.AcceptedInvitation, nil)
+	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbOperationsProject.AcceptedInvitation, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -146,7 +145,7 @@ func AcceptInvitation(ctx context.Context, member model.MemberInput) (string, er
 // DeclineInvitation :Decline an Invitaion
 func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 
-	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.DeclinedInvitation, nil)
+	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbOperationsProject.DeclinedInvitation, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -156,7 +155,7 @@ func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, e
 //LeaveProject :Leave a Project
 func LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
 
-	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.ExitedProject, nil)
+	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbOperationsProject.ExitedProject, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -164,7 +163,7 @@ func LeaveProject(ctx context.Context, member model.MemberInput) (string, error)
 }
 
 // getInvitation :Returns the Invitation Status
-func getInvitation(ctx context.Context, member model.MemberInput) (dbSchemaProject.Invitation, error) {
+func getInvitation(ctx context.Context, member model.MemberInput) (dbOperationsProject.Invitation, error) {
 
 	project, err := dbOperationsProject.GetProject(ctx, bson.D{{Key: "_id", Value: member.ProjectID}})
 	if err != nil {
@@ -188,7 +187,7 @@ func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, er
 	}
 
 	switch invitation {
-	case dbSchemaProject.AcceptedInvitation, dbSchemaProject.PendingInvitation:
+	case dbOperationsProject.AcceptedInvitation, dbOperationsProject.PendingInvitation:
 		{
 			err := dbOperationsProject.RemoveInvitation(ctx, member.ProjectID, member.UserID, invitation)
 			if err != nil {
@@ -196,9 +195,9 @@ func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, er
 			}
 		}
 
-	case dbSchemaProject.DeclinedInvitation, dbSchemaProject.ExitedProject:
+	case dbOperationsProject.DeclinedInvitation, dbOperationsProject.ExitedProject:
 		{
-			return "Unsuccessful", errors.New("User is already not a part of your project")
+			return "Unsuccessful", errors.New("user is already not a part of your project")
 		}
 	}
 
@@ -210,7 +209,7 @@ func UpdateProjectName(ctx context.Context, projectID string, projectName string
 
 	err := dbOperationsProject.UpdateProjectName(ctx, projectID, projectName)
 	if err != nil {
-		return "Unsuccessful", errors.New("Error updating project name")
+		return "Unsuccessful", errors.New("error updating project name")
 	}
 	return "Successful", nil
 }

@@ -136,7 +136,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 				return err
 			}
 
-			err = json.Unmarshal(mar, &dataInterface)
+			_ = json.Unmarshal(mar, &dataInterface)
 		case "statefulset":
 			sts := obj.(*v1.StatefulSet)
 			resourceName = sts.GetName()
@@ -145,7 +145,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 				return err
 			}
 
-			err = json.Unmarshal(mar, &dataInterface)
+			_ = json.Unmarshal(mar, &dataInterface)
 		case "daemonset":
 			sts := obj.(*v1.DaemonSet)
 			resourceName = sts.GetName()
@@ -154,16 +154,16 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 				return err
 			}
 
-			err = json.Unmarshal(mar, &dataInterface)
+			_ = json.Unmarshal(mar, &dataInterface)
 		default:
-			return errors.New("Resource not supported")
+			return errors.New("resource not supported")
 		}
 
 		check := conditionChecker(etp, dataInterface)
 		var result string
-		if check == true {
+		if check {
 			result = ConditionPassed
-		} else if check == false {
+		} else if !check {
 			result = ConditionFailed
 		}
 
