@@ -368,7 +368,7 @@ func GetPromQuery(promInput *model.PromInput) ([]*model.PromResponse, error) {
 				return nil, err
 			}
 
-			cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+			cacheError := cache.AddCache(AnalyticsCache, cacheKey, &response)
 			if cacheError != nil {
 				log.Printf("Adding cache: %v\n", cacheError)
 			}
@@ -397,7 +397,7 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 			return nil, err
 		}
 
-		cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+		cacheError := cache.AddCache(AnalyticsCache, cacheKey, &response)
 		if cacheError != nil {
 			log.Printf("Adding cache: %v\n", cacheError)
 		}
