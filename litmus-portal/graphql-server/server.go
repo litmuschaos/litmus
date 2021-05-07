@@ -7,6 +7,8 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -39,6 +41,9 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+	// Initialize the mongo client
+	mongodb.Client = mongodb.Client.Initialize()
+
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})

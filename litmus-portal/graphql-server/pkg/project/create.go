@@ -20,16 +20,16 @@ import (
 	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 )
 
-// CreateProjectWithUser :creates a project for the user
+// CreateProjectWithUser creates a project for the user
 func CreateProjectWithUser(ctx context.Context, projectName string, userID string) (*model.Project, error) {
 
 	var (
-		self_cluster = os.Getenv("SELF_CLUSTER")
+		selfCluster = os.Getenv("SELF_CLUSTER")
 	)
-	user, er := dbOperationsUserManagement.GetUserByUserID(ctx, userID)
-	if er != nil {
-		log.Print("ERROR", er)
-		return nil, er
+	user, err := dbOperationsUserManagement.GetUserByUserID(ctx, userID)
+	if err != nil {
+		log.Print("Error in fetching the user", err)
+		return nil, err
 	}
 
 	uuid := uuid.New()
@@ -50,9 +50,9 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 		CreatedAt: time.Now().String(),
 	}
 
-	err := dbOperationsProject.CreateProject(ctx, newProject)
+	err = dbOperationsProject.CreateProject(ctx, newProject)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Print("Error in creating the project", err)
 		return nil, err
 	}
 
@@ -65,7 +65,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
 	go myhub.AddMyHub(context.Background(), defaultHub, newProject.ID)
 
-	if strings.ToLower(self_cluster) == "true" && strings.ToLower(*user.Role) == "admin" {
+	if strings.ToLower(selfCluster) == "true" && strings.ToLower(*user.Role) == "admin" {
 		log.Print("Starting self deployer")
 		go selfDeployer.StartDeployer(newProject.ID)
 	}
@@ -73,7 +73,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 	return newProject.GetOutputProject(), nil
 }
 
-// GetProject ...
+// GetProject queries the project with a given projectID from the database
 func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 
 	project, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", projectID}})
@@ -83,7 +83,7 @@ func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 	return project.GetOutputProject(), nil
 }
 
-// GetProjectsByUserID ...
+// GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, error) {
 
 	projects, err := dbOperationsProject.GetProjectsByUserID(ctx, userID)
@@ -91,14 +91,15 @@ func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, 
 		return nil, err
 	}
 
-	outputProjects := []*model.Project{}
+	var outputProjects []*model.Project
 	for _, project := range projects {
 		outputProjects = append(outputProjects, project.GetOutputProject())
 	}
 	return outputProjects, nil
 }
 
-// SendInvitation :Send an invitation
+// SendInvitation send an invitation to a new user and
+// returns an error if the member is already part of the project
 func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
 
 	invitation, err := getInvitation(ctx, member)
@@ -107,7 +108,7 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 	}
 
 	if invitation == dbSchemaProject.AcceptedInvitation {
-		return nil, errors.New("This user is already a member of your project")
+		return nil, errors.New("this user is already a member of this project")
 	} else if invitation == dbSchemaProject.PendingInvitation || invitation == dbSchemaProject.DeclinedInvitation || invitation == dbSchemaProject.ExitedProject {
 		err = dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.PendingInvitation, member.Role)
 		if err != nil {
@@ -133,37 +134,37 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 	return newMember.GetOutputMember(), err
 }
 
-// AcceptInvitation :Accept an invitaion
+// AcceptInvitation accept an invitation
 func AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 
 	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.AcceptedInvitation, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
-	return "Successfull", nil
+	return "Successful", nil
 }
 
-// DeclineInvitation :Decline an Invitaion
+// DeclineInvitation decline an Invitation
 func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 
 	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.DeclinedInvitation, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
-	return "Successfull", nil
+	return "Successful", nil
 }
 
-//LeaveProject :Leave a Project
+//LeaveProject leaves a project
 func LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
 
 	err := dbOperationsProject.UpdateInvite(ctx, member.ProjectID, member.UserID, dbSchemaProject.ExitedProject, nil)
 	if err != nil {
 		return "Unsuccessful", err
 	}
-	return "Successfull", err
+	return "Successful", err
 }
 
-// getInvitation :Returns the Invitation Status
+// getInvitation returns the Invitation status
 func getInvitation(ctx context.Context, member model.MemberInput) (dbSchemaProject.Invitation, error) {
 
 	project, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", member.ProjectID}})
@@ -179,7 +180,7 @@ func getInvitation(ctx context.Context, member model.MemberInput) (dbSchemaProje
 	return "", nil
 }
 
-// RemoveInvitation :Removes member or cancels invitation
+// RemoveInvitation removes member or cancels invitation
 func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 
 	invitation, err := getInvitation(ctx, member)

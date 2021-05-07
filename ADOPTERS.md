@@ -18,6 +18,7 @@ Please send PRs to add or remove organizations/users.
 |[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
 |[RedHat](https://www.redhat.com/en)|[RedHat Openshift Virtualization Maturity](https://www.youtube.com/watch?v=VITGHJ47gx8&list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&index=7)|[Our Story](adopters/organizations/redhat.md)|
 |[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
+|[Kitopi](https://www.kitopi.com/)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/kitopi.md)|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
