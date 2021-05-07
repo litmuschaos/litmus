@@ -85,7 +85,7 @@ func Query(prom analytics.PromQuery, queryType string) (model.PromResponse, erro
 		if queryType == "metrics" {
 			for _, value := range v.Values {
 				temp := &analytics.TimeStampValue{
-					Timestamp: func(str string) *string { return &str }(fmt.Sprint(map[bool]int{true: int(value.Value) * 1000, false: 0}[int(value.Timestamp) >= 0])),
+					Timestamp: func(str string) *string { return &str }(fmt.Sprint(map[bool]int{true: int(value.Timestamp), false: 0}[int(value.Timestamp) >= 0])),
 					Value:     func(str string) *string { return &str }(fmt.Sprint(map[bool]float64{true: float64(value.Value), false: 0.0}[float64(value.Value) >= 0.0])),
 				}
 
@@ -94,7 +94,7 @@ func Query(prom analytics.PromQuery, queryType string) (model.PromResponse, erro
 		} else {
 			for _, value := range v.Values {
 				temp := &analytics.TimeStampValue{
-					Timestamp: func(str string) *string { return &str }(fmt.Sprint(map[bool]int{true: int(value.Value) * 1000, false: 0}[int(value.Timestamp) >= 0])),
+					Timestamp: func(str string) *string { return &str }(fmt.Sprint(map[bool]int{true: int(value.Timestamp), false: 0}[int(value.Timestamp) >= 0])),
 					Value:     func(str string) *string { return &str }(fmt.Sprint(map[bool]int{true: int(value.Value), false: 0}[int(value.Value) >= 0])),
 				}
 
