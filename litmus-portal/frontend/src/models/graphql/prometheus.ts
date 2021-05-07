@@ -20,15 +20,31 @@ export interface PrometheusQueryInput {
   queries: promQueryInput[];
 }
 
-export interface timeStampValue {
-  timestamp?: string;
-  value?: string;
+export interface metricsTimeStampValue {
+  date: number;
+  value: number;
+}
+
+export interface annotationsTimeStampValue {
+  date: number;
+  value: number;
+}
+
+export interface metricsPromResponse {
+  queryid: string;
+  legends: string[];
+  tsvs: metricsTimeStampValue[][];
+}
+
+export interface annotationsPromResponse {
+  queryid: string;
+  legends: string[];
+  tsvs: annotationsTimeStampValue[][];
 }
 
 export interface promResponse {
-  queryid: string;
-  legends: string[][];
-  tsvs: timeStampValue[][];
+  metricsResponse: metricsPromResponse[];
+  annotationsResponse: annotationsPromResponse[];
 }
 
 export interface PrometheusQueryVars {
@@ -36,5 +52,29 @@ export interface PrometheusQueryVars {
 }
 
 export interface PrometheusResponse {
-  GetPromQuery: promResponse[];
+  GetPromQuery: promResponse;
+}
+
+export interface promSeriesInput {
+  series: string;
+  url: string;
+  start: string;
+  end: string;
+}
+
+export interface LabelValue {
+  label: string;
+  values?: string[];
+}
+export interface promSeriesResponse {
+  series: string;
+  labelValues?: LabelValue[];
+}
+
+export interface PrometheusSeriesQueryVars {
+  prometheusInput: promSeriesInput;
+}
+
+export interface PrometheusSeriesResponse {
+  GetPromLabelNamesAndValues: promSeriesResponse;
 }
