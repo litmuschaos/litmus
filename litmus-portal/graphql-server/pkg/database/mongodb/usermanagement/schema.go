@@ -2,7 +2,7 @@ package usermanagement
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
-// User ...
+// User contains the required fields to be stored in the database for a user
 type User struct {
 	ID              string  `bson:"_id"`
 	Username        string  `bson:"username"`
@@ -17,7 +17,7 @@ type User struct {
 	RemovedAt       string  `bson:"removed_at"`
 }
 
-// GetOutputUser ...
+// GetOutputUser takes a User struct as input and returns the graphQL model equivalent
 func (user User) GetOutputUser() *model.User {
 
 	return &model.User{
