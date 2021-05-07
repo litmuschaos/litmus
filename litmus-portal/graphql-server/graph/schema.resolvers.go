@@ -346,7 +346,7 @@ func (r *queryResolver) ListDataSource(ctx context.Context, projectID string) ([
 	return analyticsHandler.QueryListDataSource(projectID)
 }
 
-func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput) ([]*model.PromResponse, error) {
+func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error) {
 	return analyticsHandler.GetPromQuery(query)
 }
 

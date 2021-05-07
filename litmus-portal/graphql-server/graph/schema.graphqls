@@ -308,7 +308,7 @@ type Query {
 
   ListDataSource(project_id: String!): [DSResponse]! @authorized
 
-  GetPromQuery(query: promInput): [promResponse!]! @authorized
+  GetPromQuery(query: promInput): promResponse! @authorized
 
   GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
 

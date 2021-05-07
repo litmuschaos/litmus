@@ -426,6 +426,17 @@ type ComplexityRoot struct {
 		WorkflowRunID func(childComplexity int) int
 	}
 
+	AnnotationsPromResponse struct {
+		Legends func(childComplexity int) int
+		Queryid func(childComplexity int) int
+		Tsvs    func(childComplexity int) int
+	}
+
+	AnnotationsTimeStampValue struct {
+		Date  func(childComplexity int) int
+		Value func(childComplexity int) int
+	}
+
 	ClusterRegResponse struct {
 		ClusterID   func(childComplexity int) int
 		ClusterName func(childComplexity int) int
@@ -453,6 +464,17 @@ type ComplexityRoot struct {
 		RefreshRate func(childComplexity int) int
 		StartTime   func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
+	}
+
+	MetricsPromResponse struct {
+		Legends func(childComplexity int) int
+		Queryid func(childComplexity int) int
+		Tsvs    func(childComplexity int) int
+	}
+
+	MetricsTimeStampValue struct {
+		Date  func(childComplexity int) int
+		Value func(childComplexity int) int
 	}
 
 	PanelGroupResponse struct {
@@ -489,19 +511,13 @@ type ComplexityRoot struct {
 	}
 
 	PromResponse struct {
-		Legends func(childComplexity int) int
-		Queryid func(childComplexity int) int
-		Tsvs    func(childComplexity int) int
+		AnnotationsResponse func(childComplexity int) int
+		MetricsResponse     func(childComplexity int) int
 	}
 
 	PromSeriesResponse struct {
 		LabelValues func(childComplexity int) int
 		Series      func(childComplexity int) int
-	}
-
-	TimeStampValue struct {
-		Timestamp func(childComplexity int) int
-		Value     func(childComplexity int) int
 	}
 
 	Weightages struct {
@@ -565,7 +581,7 @@ type QueryResolver interface {
 	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
 	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 	ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error)
-	GetPromQuery(ctx context.Context, query *model.PromInput) ([]*model.PromResponse, error)
+	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
 	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
 	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
@@ -2834,6 +2850,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRuns.WorkflowRunID(childComplexity), true
 
+	case "annotationsPromResponse.legends":
+		if e.complexity.AnnotationsPromResponse.Legends == nil {
+			break
+		}
+
+		return e.complexity.AnnotationsPromResponse.Legends(childComplexity), true
+
+	case "annotationsPromResponse.queryid":
+		if e.complexity.AnnotationsPromResponse.Queryid == nil {
+			break
+		}
+
+		return e.complexity.AnnotationsPromResponse.Queryid(childComplexity), true
+
+	case "annotationsPromResponse.tsvs":
+		if e.complexity.AnnotationsPromResponse.Tsvs == nil {
+			break
+		}
+
+		return e.complexity.AnnotationsPromResponse.Tsvs(childComplexity), true
+
+	case "annotationsTimeStampValue.date":
+		if e.complexity.AnnotationsTimeStampValue.Date == nil {
+			break
+		}
+
+		return e.complexity.AnnotationsTimeStampValue.Date(childComplexity), true
+
+	case "annotationsTimeStampValue.value":
+		if e.complexity.AnnotationsTimeStampValue.Value == nil {
+			break
+		}
+
+		return e.complexity.AnnotationsTimeStampValue.Value(childComplexity), true
+
 	case "clusterRegResponse.cluster_id":
 		if e.complexity.ClusterRegResponse.ClusterID == nil {
 			break
@@ -2973,6 +3024,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListDashboardReponse.UpdatedAt(childComplexity), true
+
+	case "metricsPromResponse.legends":
+		if e.complexity.MetricsPromResponse.Legends == nil {
+			break
+		}
+
+		return e.complexity.MetricsPromResponse.Legends(childComplexity), true
+
+	case "metricsPromResponse.queryid":
+		if e.complexity.MetricsPromResponse.Queryid == nil {
+			break
+		}
+
+		return e.complexity.MetricsPromResponse.Queryid(childComplexity), true
+
+	case "metricsPromResponse.tsvs":
+		if e.complexity.MetricsPromResponse.Tsvs == nil {
+			break
+		}
+
+		return e.complexity.MetricsPromResponse.Tsvs(childComplexity), true
+
+	case "metricsTimeStampValue.date":
+		if e.complexity.MetricsTimeStampValue.Date == nil {
+			break
+		}
+
+		return e.complexity.MetricsTimeStampValue.Date(childComplexity), true
+
+	case "metricsTimeStampValue.value":
+		if e.complexity.MetricsTimeStampValue.Value == nil {
+			break
+		}
+
+		return e.complexity.MetricsTimeStampValue.Value(childComplexity), true
 
 	case "panelGroupResponse.panel_group_id":
 		if e.complexity.PanelGroupResponse.PanelGroupID == nil {
@@ -3121,26 +3207,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PromQueryResponse.Resolution(childComplexity), true
 
-	case "promResponse.legends":
-		if e.complexity.PromResponse.Legends == nil {
+	case "promResponse.annotationsResponse":
+		if e.complexity.PromResponse.AnnotationsResponse == nil {
 			break
 		}
 
-		return e.complexity.PromResponse.Legends(childComplexity), true
+		return e.complexity.PromResponse.AnnotationsResponse(childComplexity), true
 
-	case "promResponse.queryid":
-		if e.complexity.PromResponse.Queryid == nil {
+	case "promResponse.metricsResponse":
+		if e.complexity.PromResponse.MetricsResponse == nil {
 			break
 		}
 
-		return e.complexity.PromResponse.Queryid(childComplexity), true
-
-	case "promResponse.tsvs":
-		if e.complexity.PromResponse.Tsvs == nil {
-			break
-		}
-
-		return e.complexity.PromResponse.Tsvs(childComplexity), true
+		return e.complexity.PromResponse.MetricsResponse(childComplexity), true
 
 	case "promSeriesResponse.labelValues":
 		if e.complexity.PromSeriesResponse.LabelValues == nil {
@@ -3155,20 +3234,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PromSeriesResponse.Series(childComplexity), true
-
-	case "timeStampValue.timestamp":
-		if e.complexity.TimeStampValue.Timestamp == nil {
-			break
-		}
-
-		return e.complexity.TimeStampValue.Timestamp(childComplexity), true
-
-	case "timeStampValue.value":
-		if e.complexity.TimeStampValue.Value == nil {
-			break
-		}
-
-		return e.complexity.TimeStampValue.Value(childComplexity), true
 
 	case "weightages.experiment_name":
 		if e.complexity.Weightages.ExperimentName == nil {
@@ -3382,20 +3447,36 @@ input promQueryInput {
     minstep: Int!
 }
 
-type promResponse {
+type metricsPromResponse {
     queryid: String!
-    legends: [[String]]
-    tsvs: [[timeStampValue]]
+    legends: [String]
+    tsvs: [[metricsTimeStampValue]]
 }
 
-type timeStampValue{
-    timestamp: String
-    value: String
+type metricsTimeStampValue{
+    date: Int
+    value:  Float
+}
+
+type annotationsPromResponse {
+    queryid: String!
+    legends: [String]
+    tsvs: [[annotationsTimeStampValue]]
+}
+
+type annotationsTimeStampValue{
+    date: Int
+    value:  Int
+}
+
+type promResponse {
+    metricsResponse: [metricsPromResponse]
+    annotationsResponse: [annotationsPromResponse]
 }
 
 type promSeriesResponse {
     series: String!
-    labelValues: [[labelValue]]
+    labelValues: [labelValue]
 }
 
 type labelValue {
@@ -3974,7 +4055,7 @@ type Query {
 
   ListDataSource(project_id: String!): [DSResponse]! @authorized
 
-  GetPromQuery(query: promInput): [promResponse!]! @authorized
+  GetPromQuery(query: promInput): promResponse! @authorized
 
   GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
 
@@ -13021,10 +13102,10 @@ func (ec *executionContext) _Query_GetPromQuery(ctx context.Context, field graph
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.PromResponse); ok {
+		if data, ok := tmp.(*model.PromResponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PromResponse`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PromResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13036,9 +13117,9 @@ func (ec *executionContext) _Query_GetPromQuery(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.PromResponse)
+	res := resTmp.(*model.PromResponse)
 	fc.Result = res
-	return ec.marshalNpromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponseᚄ(ctx, field.Selections, res)
+	return ec.marshalNpromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetPromLabelNamesAndValues(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -17049,6 +17130,164 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _annotationsPromResponse_queryid(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "annotationsPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Queryid, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _annotationsPromResponse_legends(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "annotationsPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Legends, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _annotationsPromResponse_tsvs(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "annotationsPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tsvs, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([][]*model.AnnotationsTimeStampValue)
+	fc.Result = res
+	return ec.marshalOannotationsTimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _annotationsTimeStampValue_date(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsTimeStampValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "annotationsTimeStampValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Date, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _annotationsTimeStampValue_value(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsTimeStampValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "annotationsTimeStampValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _clusterRegResponse_token(ctx context.Context, field graphql.CollectedField, obj *model.ClusterRegResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17711,6 +17950,164 @@ func (ec *executionContext) _listDashboardReponse_updated_at(ctx context.Context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _metricsPromResponse_queryid(ctx context.Context, field graphql.CollectedField, obj *model.MetricsPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricsPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Queryid, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricsPromResponse_legends(ctx context.Context, field graphql.CollectedField, obj *model.MetricsPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricsPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Legends, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricsPromResponse_tsvs(ctx context.Context, field graphql.CollectedField, obj *model.MetricsPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricsPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tsvs, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([][]*model.MetricsTimeStampValue)
+	fc.Result = res
+	return ec.marshalOmetricsTimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsTimeStampValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricsTimeStampValue_date(ctx context.Context, field graphql.CollectedField, obj *model.MetricsTimeStampValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricsTimeStampValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Date, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricsTimeStampValue_value(ctx context.Context, field graphql.CollectedField, obj *model.MetricsTimeStampValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricsTimeStampValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _panelGroupResponse_panels(ctx context.Context, field graphql.CollectedField, obj *model.PanelGroupResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18371,7 +18768,7 @@ func (ec *executionContext) _promQueryResponse_close_area(ctx context.Context, f
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _promResponse_queryid(ctx context.Context, field graphql.CollectedField, obj *model.PromResponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _promResponse_metricsResponse(ctx context.Context, field graphql.CollectedField, obj *model.PromResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -18388,24 +18785,21 @@ func (ec *executionContext) _promResponse_queryid(ctx context.Context, field gra
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Queryid, nil
+		return obj.MetricsResponse, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.([]*model.MetricsPromResponse)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOmetricsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _promResponse_legends(ctx context.Context, field graphql.CollectedField, obj *model.PromResponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _promResponse_annotationsResponse(ctx context.Context, field graphql.CollectedField, obj *model.PromResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -18422,7 +18816,7 @@ func (ec *executionContext) _promResponse_legends(ctx context.Context, field gra
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Legends, nil
+		return obj.AnnotationsResponse, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18431,40 +18825,9 @@ func (ec *executionContext) _promResponse_legends(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([][]*string)
+	res := resTmp.([]*model.AnnotationsPromResponse)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚕᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _promResponse_tsvs(ctx context.Context, field graphql.CollectedField, obj *model.PromResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "promResponse",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Tsvs, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([][]*model.TimeStampValue)
-	fc.Result = res
-	return ec.marshalOtimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx, field.Selections, res)
+	return ec.marshalOannotationsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _promSeriesResponse_series(ctx context.Context, field graphql.CollectedField, obj *model.PromSeriesResponse) (ret graphql.Marshaler) {
@@ -18527,71 +18890,9 @@ func (ec *executionContext) _promSeriesResponse_labelValues(ctx context.Context,
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([][]*model.LabelValue)
+	res := resTmp.([]*model.LabelValue)
 	fc.Result = res
-	return ec.marshalOlabelValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _timeStampValue_timestamp(ctx context.Context, field graphql.CollectedField, obj *model.TimeStampValue) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "timeStampValue",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Timestamp, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _timeStampValue_value(ctx context.Context, field graphql.CollectedField, obj *model.TimeStampValue) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "timeStampValue",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOlabelValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _weightages_experiment_name(ctx context.Context, field graphql.CollectedField, obj *model.Weightages) (ret graphql.Marshaler) {
@@ -22574,6 +22875,63 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var annotationsPromResponseImplementors = []string{"annotationsPromResponse"}
+
+func (ec *executionContext) _annotationsPromResponse(ctx context.Context, sel ast.SelectionSet, obj *model.AnnotationsPromResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, annotationsPromResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("annotationsPromResponse")
+		case "queryid":
+			out.Values[i] = ec._annotationsPromResponse_queryid(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "legends":
+			out.Values[i] = ec._annotationsPromResponse_legends(ctx, field, obj)
+		case "tsvs":
+			out.Values[i] = ec._annotationsPromResponse_tsvs(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var annotationsTimeStampValueImplementors = []string{"annotationsTimeStampValue"}
+
+func (ec *executionContext) _annotationsTimeStampValue(ctx context.Context, sel ast.SelectionSet, obj *model.AnnotationsTimeStampValue) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, annotationsTimeStampValueImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("annotationsTimeStampValue")
+		case "date":
+			out.Values[i] = ec._annotationsTimeStampValue_date(ctx, field, obj)
+		case "value":
+			out.Values[i] = ec._annotationsTimeStampValue_value(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var clusterRegResponseImplementors = []string{"clusterRegResponse"}
 
 func (ec *executionContext) _clusterRegResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterRegResponse) graphql.Marshaler {
@@ -22711,6 +23069,63 @@ func (ec *executionContext) _listDashboardReponse(ctx context.Context, sel ast.S
 			out.Values[i] = ec._listDashboardReponse_created_at(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._listDashboardReponse_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var metricsPromResponseImplementors = []string{"metricsPromResponse"}
+
+func (ec *executionContext) _metricsPromResponse(ctx context.Context, sel ast.SelectionSet, obj *model.MetricsPromResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metricsPromResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("metricsPromResponse")
+		case "queryid":
+			out.Values[i] = ec._metricsPromResponse_queryid(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "legends":
+			out.Values[i] = ec._metricsPromResponse_legends(ctx, field, obj)
+		case "tsvs":
+			out.Values[i] = ec._metricsPromResponse_tsvs(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var metricsTimeStampValueImplementors = []string{"metricsTimeStampValue"}
+
+func (ec *executionContext) _metricsTimeStampValue(ctx context.Context, sel ast.SelectionSet, obj *model.MetricsTimeStampValue) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metricsTimeStampValueImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("metricsTimeStampValue")
+		case "date":
+			out.Values[i] = ec._metricsTimeStampValue_date(ctx, field, obj)
+		case "value":
+			out.Values[i] = ec._metricsTimeStampValue_value(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22872,15 +23287,10 @@ func (ec *executionContext) _promResponse(ctx context.Context, sel ast.Selection
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("promResponse")
-		case "queryid":
-			out.Values[i] = ec._promResponse_queryid(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "legends":
-			out.Values[i] = ec._promResponse_legends(ctx, field, obj)
-		case "tsvs":
-			out.Values[i] = ec._promResponse_tsvs(ctx, field, obj)
+		case "metricsResponse":
+			out.Values[i] = ec._promResponse_metricsResponse(ctx, field, obj)
+		case "annotationsResponse":
+			out.Values[i] = ec._promResponse_annotationsResponse(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22910,32 +23320,6 @@ func (ec *executionContext) _promSeriesResponse(ctx context.Context, sel ast.Sel
 			}
 		case "labelValues":
 			out.Values[i] = ec._promSeriesResponse_labelValues(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var timeStampValueImplementors = []string{"timeStampValue"}
-
-func (ec *executionContext) _timeStampValue(ctx context.Context, sel ast.SelectionSet, obj *model.TimeStampValue) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, timeStampValueImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("timeStampValue")
-		case "timestamp":
-			out.Values[i] = ec._timeStampValue_timestamp(ctx, field, obj)
-		case "value":
-			out.Values[i] = ec._timeStampValue_value(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24430,43 +24814,6 @@ func (ec *executionContext) marshalNpromResponse2githubᚗcomᚋlitmuschaosᚋli
 	return ec._promResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNpromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponseᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PromResponse) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNpromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponse(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
 func (ec *executionContext) marshalNpromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponse(ctx context.Context, sel ast.SelectionSet, v *model.PromResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -24644,6 +24991,29 @@ func (ec *executionContext) marshalODSResponse2ᚖgithubᚗcomᚋlitmuschaosᚋl
 	return ec._DSResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	return graphql.UnmarshalFloat(v)
+}
+
+func (ec *executionContext) marshalOFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	return graphql.MarshalFloat(v)
+}
+
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOFloat2float64(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOFloat2float64(ctx, sel, *v)
+}
+
 func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalID(v)
 }
@@ -24796,38 +25166,6 @@ func (ec *executionContext) unmarshalOString2string(ctx context.Context, v inter
 
 func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	return graphql.MarshalString(v)
-}
-
-func (ec *executionContext) unmarshalOString2ᚕᚕᚖstring(ctx context.Context, v interface{}) ([][]*string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([][]*string, len(vSlice))
-	for i := range vSlice {
-		res[i], err = ec.unmarshalOString2ᚕᚖstring(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOString2ᚕᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v [][]*string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalOString2ᚕᚖstring(ctx, sel, v[i])
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
@@ -25133,23 +25471,11 @@ func (ec *executionContext) marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgen�
 	return ec.___Type(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOcreateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateDBInput(ctx context.Context, v interface{}) (model.CreateDBInput, error) {
-	return ec.unmarshalInputcreateDBInput(ctx, v)
+func (ec *executionContext) marshalOannotationsPromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx context.Context, sel ast.SelectionSet, v model.AnnotationsPromResponse) graphql.Marshaler {
+	return ec._annotationsPromResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) unmarshalOcreateDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateDBInput(ctx context.Context, v interface{}) (*model.CreateDBInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOcreateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateDBInput(ctx, v)
-	return &res, err
-}
-
-func (ec *executionContext) marshalOlabelValue2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v model.LabelValue) graphql.Marshaler {
-	return ec._labelValue(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOlabelValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v [][]*model.LabelValue) graphql.Marshaler {
+func (ec *executionContext) marshalOannotationsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx context.Context, sel ast.SelectionSet, v []*model.AnnotationsPromResponse) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -25176,7 +25502,7 @@ func (ec *executionContext) marshalOlabelValue2ᚕᚕᚖgithubᚗcomᚋlitmuscha
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOlabelValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx, sel, v[i])
+			ret[i] = ec.marshalOannotationsPromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -25187,6 +25513,120 @@ func (ec *executionContext) marshalOlabelValue2ᚕᚕᚖgithubᚗcomᚋlitmuscha
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) marshalOannotationsPromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx context.Context, sel ast.SelectionSet, v *model.AnnotationsPromResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._annotationsPromResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOannotationsTimeStampValue2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx context.Context, sel ast.SelectionSet, v model.AnnotationsTimeStampValue) graphql.Marshaler {
+	return ec._annotationsTimeStampValue(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOannotationsTimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx context.Context, sel ast.SelectionSet, v [][]*model.AnnotationsTimeStampValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOannotationsTimeStampValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOannotationsTimeStampValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx context.Context, sel ast.SelectionSet, v []*model.AnnotationsTimeStampValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOannotationsTimeStampValue2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOannotationsTimeStampValue2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx context.Context, sel ast.SelectionSet, v *model.AnnotationsTimeStampValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._annotationsTimeStampValue(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOcreateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateDBInput(ctx context.Context, v interface{}) (model.CreateDBInput, error) {
+	return ec.unmarshalInputcreateDBInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOcreateDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateDBInput(ctx context.Context, v interface{}) (*model.CreateDBInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOcreateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateDBInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOlabelValue2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v model.LabelValue) graphql.Marshaler {
+	return ec._labelValue(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalOlabelValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v []*model.LabelValue) graphql.Marshaler {
@@ -25285,6 +25725,148 @@ func (ec *executionContext) marshalOlistDashboardReponse2ᚖgithubᚗcomᚋlitmu
 		return graphql.Null
 	}
 	return ec._listDashboardReponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOmetricsPromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx context.Context, sel ast.SelectionSet, v model.MetricsPromResponse) graphql.Marshaler {
+	return ec._metricsPromResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOmetricsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx context.Context, sel ast.SelectionSet, v []*model.MetricsPromResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOmetricsPromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOmetricsPromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx context.Context, sel ast.SelectionSet, v *model.MetricsPromResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._metricsPromResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOmetricsTimeStampValue2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsTimeStampValue(ctx context.Context, sel ast.SelectionSet, v model.MetricsTimeStampValue) graphql.Marshaler {
+	return ec._metricsTimeStampValue(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOmetricsTimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsTimeStampValue(ctx context.Context, sel ast.SelectionSet, v [][]*model.MetricsTimeStampValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOmetricsTimeStampValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsTimeStampValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOmetricsTimeStampValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsTimeStampValue(ctx context.Context, sel ast.SelectionSet, v []*model.MetricsTimeStampValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOmetricsTimeStampValue2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsTimeStampValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOmetricsTimeStampValue2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsTimeStampValue(ctx context.Context, sel ast.SelectionSet, v *model.MetricsTimeStampValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._metricsTimeStampValue(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOpanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPanel(ctx context.Context, v interface{}) (model.Panel, error) {
@@ -25553,97 +26135,6 @@ func (ec *executionContext) unmarshalOpromSeriesInput2ᚖgithubᚗcomᚋlitmusch
 	}
 	res, err := ec.unmarshalOpromSeriesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesInput(ctx, v)
 	return &res, err
-}
-
-func (ec *executionContext) marshalOtimeStampValue2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx context.Context, sel ast.SelectionSet, v model.TimeStampValue) graphql.Marshaler {
-	return ec._timeStampValue(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOtimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx context.Context, sel ast.SelectionSet, v [][]*model.TimeStampValue) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOtimeStampValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalOtimeStampValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx context.Context, sel ast.SelectionSet, v []*model.TimeStampValue) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOtimeStampValue2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalOtimeStampValue2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeStampValue(ctx context.Context, sel ast.SelectionSet, v *model.TimeStampValue) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._timeStampValue(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOupdataDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdataDBInput(ctx context.Context, v interface{}) (model.UpdataDBInput, error) {

@@ -13,15 +13,26 @@ type PromQuery struct {
 	End        string
 }
 
-type Response struct {
-	Queryid string              `json:"queryid"`
-	Legends [][]*string         `json:"legends"`
-	Tsvs    [][]*TimeStampValue `json:"tsvs"`
+type MetricsResponse struct {
+	Queryid string                     `json:"queryid"`
+	Legends []*string                  `json:"legends"`
+	Tsvs    [][]*MetricsTimeStampValue `json:"tsvs"`
 }
 
-type TimeStampValue struct {
-	Timestamp *string `json:"timestamp"`
-	Value     *string `json:"value"`
+type MetricsTimeStampValue struct {
+	Date  *int     `json:"date"`
+	Value *float64 `json:"value"`
+}
+
+type AnnotationsResponse struct {
+	Queryid string                         `json:"queryid"`
+	Legends []*string                      `json:"legends"`
+	Tsvs    [][]*AnnotationsTimeStampValue `json:"tsvs"`
+}
+
+type AnnotationsTimeStampValue struct {
+	Date  *int `json:"date"`
+	Value *int `json:"value"`
 }
 
 type PromSeries struct {

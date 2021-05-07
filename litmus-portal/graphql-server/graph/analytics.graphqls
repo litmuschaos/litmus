@@ -115,20 +115,36 @@ input promQueryInput {
     minstep: Int!
 }
 
-type promResponse {
+type metricsPromResponse {
     queryid: String!
-    legends: [[String]]
-    tsvs: [[timeStampValue]]
+    legends: [String]
+    tsvs: [[metricsTimeStampValue]]
 }
 
-type timeStampValue{
-    timestamp: String
-    value: String
+type metricsTimeStampValue{
+    date: Int
+    value:  Float
+}
+
+type annotationsPromResponse {
+    queryid: String!
+    legends: [String]
+    tsvs: [[annotationsTimeStampValue]]
+}
+
+type annotationsTimeStampValue{
+    date: Int
+    value:  Int
+}
+
+type promResponse {
+    metricsResponse: [metricsPromResponse]
+    annotationsResponse: [annotationsPromResponse]
 }
 
 type promSeriesResponse {
     series: String!
-    labelValues: [[labelValue]]
+    labelValues: [labelValue]
 }
 
 type labelValue {

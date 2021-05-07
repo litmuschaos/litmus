@@ -6,6 +6,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -339,44 +340,71 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 	return newDatasources, nil
 }
 
-func GetPromQuery(promInput *model.PromInput) ([]*model.PromResponse, error) {
-	var newPromResponse []*model.PromResponse
+func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
+	var (
+		metrics     []*model.MetricsPromResponse
+		annotations []*model.AnnotationsPromResponse
+	)
+
+	var wg sync.WaitGroup
+	wg.Add(len(promInput.Queries))
 	for _, v := range promInput.Queries {
-		newPromQuery := analytics.PromQuery{
-			Queryid:    v.Queryid,
-			Query:      v.Query,
-			Legend:     v.Legend,
-			Resolution: v.Resolution,
-			Minstep:    v.Minstep,
-			URL:        promInput.URL,
-			Start:      promInput.Start,
-			End:        promInput.End,
-		}
+		go func(val *model.PromQueryInput) {
+			defer wg.Done()
 
-		cacheKey := v.Query + "-" + promInput.Start + "-" + promInput.End + "-" + promInput.URL
-
-		queryType := "metrics"
-		if strings.Contains(v.Queryid, "litmuschaos_awaited_experiments") || strings.Contains(v.Queryid, "litmuschaos_experiment_verdict") {
-			queryType = "annotation"
-		}
-
-		if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
-			newPromResponse = append(newPromResponse, obj.(*model.PromResponse))
-		} else {
-			response, err := prometheus.Query(newPromQuery, queryType)
-			if err != nil {
-				return nil, err
+			newPromQuery := analytics.PromQuery{
+				Queryid:    val.Queryid,
+				Query:      val.Query,
+				Legend:     val.Legend,
+				Resolution: val.Resolution,
+				Minstep:    val.Minstep,
+				URL:        promInput.URL,
+				Start:      promInput.Start,
+				End:        promInput.End,
 			}
 
-			cacheError := cache.AddCache(AnalyticsCache, cacheKey, &response)
-			if cacheError != nil {
-				log.Printf("Adding cache: %v\n", cacheError)
+			cacheKey := val.Query + "-" + promInput.Start + "-" + promInput.End + "-" + promInput.URL
+
+			queryType := "metrics"
+			if strings.Contains(val.Queryid, "chaos-interval") || strings.Contains(val.Queryid, "chaos-verdict") {
+				queryType = "annotation"
 			}
 
-			newPromResponse = append(newPromResponse, &response)
-		}
+			if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
+				if queryType == "metrics" {
+					metrics = append(metrics, obj.(*model.MetricsPromResponse))
+				} else {
+					annotations = append(annotations, obj.(*model.AnnotationsPromResponse))
+				}
+			} else {
+				response, err := prometheus.Query(newPromQuery, queryType)
+
+				if err != nil {
+					return
+				}
+
+				cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+				if cacheError != nil {
+					log.Printf("Adding cache: %v\n", cacheError)
+				}
+
+				if queryType == "metrics" {
+					metrics = append(metrics, response.(*model.MetricsPromResponse))
+				} else {
+					annotations = append(annotations, response.(*model.AnnotationsPromResponse))
+				}
+			}
+		}(v)
 	}
-	return newPromResponse, nil
+
+	wg.Wait()
+
+	newPromResponse := model.PromResponse{
+		MetricsResponse:     metrics,
+		AnnotationsResponse: annotations,
+	}
+
+	return &newPromResponse, nil
 }
 
 func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
@@ -397,12 +425,12 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 			return nil, err
 		}
 
-		cacheError := cache.AddCache(AnalyticsCache, cacheKey, &response)
+		cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
 		if cacheError != nil {
 			log.Printf("Adding cache: %v\n", cacheError)
 		}
 
-		newPromSeriesResponse = &response
+		newPromSeriesResponse = response
 	}
 
 	return newPromSeriesResponse, nil
@@ -413,16 +441,19 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 
 	dashboards, err := dbOperationsAnalytics.ListDashboard(query)
 	if err != nil {
-		return nil, fmt.Errorf("error on query from dashboard collection by projectid", err)
+		return nil, fmt.Errorf("error on query from dashboard collection by projectid: %v\n", err)
 	}
 
 	var newListDashboard []*model.ListDashboardReponse
-	copier.Copy(&newListDashboard, &dashboards)
+	err = copier.Copy(&newListDashboard, &dashboards)
+	if err != nil {
+		return nil, err
+	}
 
 	for _, dashboard := range newListDashboard {
 		datasource, err := dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
 		if err != nil {
-			return nil, fmt.Errorf("error on querying from datasource collection", err)
+			return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
 		}
 
 		dashboard.DsType = &datasource.DsType
@@ -430,22 +461,25 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 
 		cluster, err := dbOperationsCluster.GetCluster(dashboard.ClusterID)
 		if err != nil {
-			return nil, fmt.Errorf("error on querying from cluster collection", err)
+			return nil, fmt.Errorf("error on querying from cluster collection: %v\n", err)
 		}
 
 		dashboard.ClusterName = &cluster.ClusterName
 
-		for _, panelgroup := range dashboard.PanelGroups {
-			query := bson.M{"panel_group_id": panelgroup.PanelGroupID, "is_removed": false}
+		for _, panelGroup := range dashboard.PanelGroups {
+			query := bson.M{"panel_group_id": panelGroup.PanelGroupID, "is_removed": false}
 			panels, err := dbOperationsAnalytics.ListPanel(query)
 			if err != nil {
-				return nil, fmt.Errorf("error on querying from promquery collection", err)
+				return nil, fmt.Errorf("error on querying from promquery collection: %v\n", err)
 			}
 
 			var tempPanels []*model.PanelResponse
-			copier.Copy(&tempPanels, &panels)
+			err = copier.Copy(&tempPanels, &panels)
+			if err != nil {
+				return nil, err
+			}
 
-			panelgroup.Panels = tempPanels
+			panelGroup.Panels = tempPanels
 		}
 	}
 
