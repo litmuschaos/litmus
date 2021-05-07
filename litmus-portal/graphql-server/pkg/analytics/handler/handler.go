@@ -353,7 +353,7 @@ func GetPromQuery(promInput *model.PromInput) ([]*model.PromResponse, error) {
 			End:        promInput.End,
 		}
 
-		cacheKey := v.Queryid + "-" + promInput.Start + "-" + promInput.End + "-" + promInput.URL
+		cacheKey := v.Query + "-" + promInput.Start + "-" + promInput.End + "-" + promInput.URL
 
 		queryType := "metrics"
 		if strings.Contains(v.Queryid, "litmuschaos_awaited_experiments") || strings.Contains(v.Queryid, "litmuschaos_experiment_verdict") {
