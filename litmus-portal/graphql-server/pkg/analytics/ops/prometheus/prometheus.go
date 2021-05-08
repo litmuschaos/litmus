@@ -237,3 +237,49 @@ func LabelNamesAndValues(prom analytics.PromSeries) (*model.PromSeriesResponse, 
 
 	return &resp, nil
 }
+
+// SeriesList is used to query prometheus using client for names of time series
+func SeriesList(prom analytics.PromDSDetails) (*model.PromSeriesListResponse, error) {
+	client, err := CreateClient(prom.URL)
+	if err != nil {
+		return &model.PromSeriesListResponse{}, err
+	}
+
+	startTime, err := strconv.ParseInt(prom.Start, 10, 64)
+	if err != nil {
+		return &model.PromSeriesListResponse{}, err
+	}
+
+	endTime, err := strconv.ParseInt(prom.End, 10, 64)
+	if err != nil {
+		return &model.PromSeriesListResponse{}, err
+	}
+
+	start := time.Unix(startTime, 0).UTC()
+	end := time.Unix(endTime, 0).UTC()
+
+	var (
+		matcher     []string
+		newValues   []*string
+		newResponse analytics.PromSeriesListResponse
+	)
+
+	labelValues, _, err := client.LabelValues(context.TODO(), "__name__", matcher, start, end)
+	if err != nil {
+		return &model.PromSeriesListResponse{}, err
+	}
+
+	for _, labelValue := range labelValues {
+		newValues = append(newValues, func(str string) *string { return &str }(fmt.Sprint(labelValue)))
+	}
+
+	newResponse.SeriesList = newValues
+
+	var resp model.PromSeriesListResponse
+	copyError := copier.Copy(&resp, &newResponse)
+	if copyError != nil {
+		return &model.PromSeriesListResponse{}, err
+	}
+
+	return &resp, nil
+}

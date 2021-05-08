@@ -107,6 +107,12 @@ input promSeriesInput {
     end: String!
 }
 
+input promSeriesListInput {
+    url: String!
+    start: String!
+    end: String!
+}
+
 input promQueryInput {
     queryid: String!
     query: String!
@@ -145,6 +151,10 @@ type promResponse {
 type promSeriesResponse {
     series: String!
     labelValues: [labelValue]
+}
+
+type promSeriesListResponse {
+    seriesList: [String]
 }
 
 type labelValue {

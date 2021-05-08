@@ -674,6 +674,16 @@ type PromSeriesInput struct {
 	End    string `json:"end"`
 }
 
+type PromSeriesListInput struct {
+	URL   string `json:"url"`
+	Start string `json:"start"`
+	End   string `json:"end"`
+}
+
+type PromSeriesListResponse struct {
+	SeriesList []*string `json:"seriesList"`
+}
+
 type PromSeriesResponse struct {
 	Series      string        `json:"series"`
 	LabelValues []*LabelValue `json:"labelValues"`

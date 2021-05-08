@@ -474,39 +474,67 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 	return newPromSeriesResponse, nil
 }
 
+func GetSeriesList(promSeriesListInput *model.PromSeriesListInput) (*model.PromSeriesListResponse, error) {
+	var newPromSeriesListResponse *model.PromSeriesListResponse
+	newPromSeriesListInput := analytics.PromDSDetails{
+		URL:   promSeriesListInput.URL,
+		Start: promSeriesListInput.Start,
+		End:   promSeriesListInput.End,
+	}
+	cacheKey := promSeriesListInput.Start + "-" + promSeriesListInput.End + "-" + promSeriesListInput.URL
+
+	if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
+		newPromSeriesListResponse = obj.(*model.PromSeriesListResponse)
+	} else {
+		response, err := prometheus.SeriesList(newPromSeriesListInput)
+		if err != nil {
+			return nil, err
+		}
+
+		cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+		if cacheError != nil {
+			log.Printf("Adding cache: %v\n", cacheError)
+		}
+
+		newPromSeriesListResponse = response
+	}
+
+	return newPromSeriesListResponse, nil
+}
+
 func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"is_removed", false},
 	}
-	
+
 	dashboards, err := dbOperationsAnalytics.ListDashboard(query)
 	if err != nil {
 		return nil, fmt.Errorf("error on query from dashboard collection by projectid: %v\n", err)
 	}
-	
+
 	var newListDashboard []*model.ListDashboardReponse
 	err = copier.Copy(&newListDashboard, &dashboards)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	for _, dashboard := range newListDashboard {
 		datasource, err := dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
 		if err != nil {
 			return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
 		}
-		
+
 		dashboard.DsType = &datasource.DsType
 		dashboard.DsName = &datasource.DsName
-		
+
 		cluster, err := dbOperationsCluster.GetCluster(dashboard.ClusterID)
 		if err != nil {
 			return nil, fmt.Errorf("error on querying from cluster collection: %v\n", err)
 		}
-		
+
 		dashboard.ClusterName = &cluster.ClusterName
-		
+
 		for _, panelGroup := range dashboard.PanelGroups {
 			query := bson.D{
 				{"panel_group_id", panelGroup.PanelGroupID},
@@ -516,16 +544,16 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 			if err != nil {
 				return nil, fmt.Errorf("error on querying from promquery collection: %v\n", err)
 			}
-			
+
 			var tempPanels []*model.PanelResponse
 			err = copier.Copy(&tempPanels, &panels)
 			if err != nil {
 				return nil, err
 			}
-			
+
 			panelGroup.Panels = tempPanels
 		}
 	}
-	
+
 	return newListDashboard, nil
 }

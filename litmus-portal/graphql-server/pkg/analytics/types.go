@@ -42,6 +42,16 @@ type PromSeries struct {
 	End    string
 }
 
+type PromDSDetails struct {
+	URL   string
+	Start string
+	End   string
+}
+
+type PromSeriesListResponse struct {
+	SeriesList []*string `json:"seriesList"`
+}
+
 type LabelValue struct {
 	Label  string    `json:"label"`
 	Values []*string `json:"values"`

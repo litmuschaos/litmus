@@ -317,6 +317,7 @@ type ComplexityRoot struct {
 		GetProject                 func(childComplexity int, projectID string) int
 		GetPromLabelNamesAndValues func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery               func(childComplexity int, query *model.PromInput) int
+		GetPromSeriesList          func(childComplexity int, dsDetails *model.PromSeriesListInput) int
 		GetScheduledWorkflows      func(childComplexity int, projectID string) int
 		GetTemplateManifestByID    func(childComplexity int, templateID string) int
 		GetUser                    func(childComplexity int, username string) int
@@ -515,6 +516,10 @@ type ComplexityRoot struct {
 		MetricsResponse     func(childComplexity int) int
 	}
 
+	PromSeriesListResponse struct {
+		SeriesList func(childComplexity int) int
+	}
+
 	PromSeriesResponse struct {
 		LabelValues func(childComplexity int) int
 		Series      func(childComplexity int) int
@@ -583,6 +588,7 @@ type QueryResolver interface {
 	ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error)
 	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
 	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
+	GetPromSeriesList(ctx context.Context, dsDetails *model.PromSeriesListInput) (*model.PromSeriesListResponse, error)
 	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
@@ -2199,6 +2205,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPromQuery(childComplexity, args["query"].(*model.PromInput)), true
 
+	case "Query.GetPromSeriesList":
+		if e.complexity.Query.GetPromSeriesList == nil {
+			break
+		}
+
+		args, err := ec.field_Query_GetPromSeriesList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPromSeriesList(childComplexity, args["ds_details"].(*model.PromSeriesListInput)), true
+
 	case "Query.getScheduledWorkflows":
 		if e.complexity.Query.GetScheduledWorkflows == nil {
 			break
@@ -3221,6 +3239,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PromResponse.MetricsResponse(childComplexity), true
 
+	case "promSeriesListResponse.seriesList":
+		if e.complexity.PromSeriesListResponse.SeriesList == nil {
+			break
+		}
+
+		return e.complexity.PromSeriesListResponse.SeriesList(childComplexity), true
+
 	case "promSeriesResponse.labelValues":
 		if e.complexity.PromSeriesResponse.LabelValues == nil {
 			break
@@ -3439,6 +3464,12 @@ input promSeriesInput {
     end: String!
 }
 
+input promSeriesListInput {
+    url: String!
+    start: String!
+    end: String!
+}
+
 input promQueryInput {
     queryid: String!
     query: String!
@@ -3477,6 +3508,10 @@ type promResponse {
 type promSeriesResponse {
     series: String!
     labelValues: [labelValue]
+}
+
+type promSeriesListResponse {
+    seriesList: [String]
 }
 
 type labelValue {
@@ -4058,6 +4093,8 @@ type Query {
   GetPromQuery(query: promInput): promResponse! @authorized
 
   GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
+
+  GetPromSeriesList(ds_details: promSeriesListInput): promSeriesListResponse! @authorized
 
   ListDashboard(project_id: String!): [listDashboardReponse] @authorized
 
@@ -4821,6 +4858,20 @@ func (ec *executionContext) field_Query_GetPromQuery_args(ctx context.Context, r
 		}
 	}
 	args["query"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetPromSeriesList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.PromSeriesListInput
+	if tmp, ok := rawArgs["ds_details"]; ok {
+		arg0, err = ec.unmarshalOpromSeriesListInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["ds_details"] = arg0
 	return args, nil
 }
 
@@ -13183,6 +13234,67 @@ func (ec *executionContext) _Query_GetPromLabelNamesAndValues(ctx context.Contex
 	return ec.marshalNpromSeriesResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_GetPromSeriesList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_GetPromSeriesList_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPromSeriesList(rctx, args["ds_details"].(*model.PromSeriesListInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.PromSeriesListResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PromSeriesListResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PromSeriesListResponse)
+	fc.Result = res
+	return ec.marshalNpromSeriesListResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18830,6 +18942,37 @@ func (ec *executionContext) _promResponse_annotationsResponse(ctx context.Contex
 	return ec.marshalOannotationsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _promSeriesListResponse_seriesList(ctx context.Context, field graphql.CollectedField, obj *model.PromSeriesListResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "promSeriesListResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SeriesList, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _promSeriesResponse_series(ctx context.Context, field graphql.CollectedField, obj *model.PromSeriesResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -20377,6 +20520,36 @@ func (ec *executionContext) unmarshalInputpromSeriesInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
+		case "url":
+			var err error
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "start":
+			var err error
+			it.Start, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "end":
+			var err error
+			it.End, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputpromSeriesListInput(ctx context.Context, obj interface{}) (model.PromSeriesListInput, error) {
+	var it model.PromSeriesListInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
 		case "url":
 			var err error
 			it.URL, err = ec.unmarshalNString2string(ctx, v)
@@ -22076,6 +22249,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "GetPromSeriesList":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_GetPromSeriesList(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "ListDashboard":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -23291,6 +23478,30 @@ func (ec *executionContext) _promResponse(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._promResponse_metricsResponse(ctx, field, obj)
 		case "annotationsResponse":
 			out.Values[i] = ec._promResponse_annotationsResponse(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var promSeriesListResponseImplementors = []string{"promSeriesListResponse"}
+
+func (ec *executionContext) _promSeriesListResponse(ctx context.Context, sel ast.SelectionSet, obj *model.PromSeriesListResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, promSeriesListResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("promSeriesListResponse")
+		case "seriesList":
+			out.Values[i] = ec._promSeriesListResponse_seriesList(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24824,6 +25035,20 @@ func (ec *executionContext) marshalNpromResponse2ᚖgithubᚗcomᚋlitmuschaos�
 	return ec._promResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNpromSeriesListResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListResponse(ctx context.Context, sel ast.SelectionSet, v model.PromSeriesListResponse) graphql.Marshaler {
+	return ec._promSeriesListResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNpromSeriesListResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListResponse(ctx context.Context, sel ast.SelectionSet, v *model.PromSeriesListResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._promSeriesListResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNpromSeriesResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesResponse(ctx context.Context, sel ast.SelectionSet, v model.PromSeriesResponse) graphql.Marshaler {
 	return ec._promSeriesResponse(ctx, sel, &v)
 }
@@ -26134,6 +26359,18 @@ func (ec *executionContext) unmarshalOpromSeriesInput2ᚖgithubᚗcomᚋlitmusch
 		return nil, nil
 	}
 	res, err := ec.unmarshalOpromSeriesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOpromSeriesListInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListInput(ctx context.Context, v interface{}) (model.PromSeriesListInput, error) {
+	return ec.unmarshalInputpromSeriesListInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOpromSeriesListInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListInput(ctx context.Context, v interface{}) (*model.PromSeriesListInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOpromSeriesListInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListInput(ctx, v)
 	return &res, err
 }
 

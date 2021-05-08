@@ -312,6 +312,8 @@ type Query {
 
   GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
 
+  GetPromSeriesList(ds_details: promSeriesListInput): promSeriesListResponse! @authorized
+
   ListDashboard(project_id: String!): [listDashboardReponse] @authorized
 
   # Git Ops
