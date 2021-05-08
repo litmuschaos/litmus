@@ -78,3 +78,21 @@ export interface PrometheusSeriesQueryVars {
 export interface PrometheusSeriesResponse {
   GetPromLabelNamesAndValues: promSeriesResponse;
 }
+
+export interface promSeriesListInput {
+  url: string;
+  start: string;
+  end: string;
+}
+
+export interface promSeriesListResponse {
+  seriesList: string[];
+}
+
+export interface PrometheusSeriesListQueryVars {
+  prometheusDSInput: promSeriesListInput;
+}
+
+export interface PrometheusSeriesListResponse {
+  GetPromSeriesList: promSeriesListResponse;
+}

@@ -439,6 +439,14 @@ export const PROM_LABEL_VALUES = gql`
   }
 `;
 
+export const PROM_SERIES_LIST = gql`
+  query PrometheusSeriesList($prometheusDSInput: promSeriesListInput) {
+    GetPromSeriesList(ds_details: $prometheusDSInput) {
+      seriesList
+    }
+  }
+`;
+
 export const GET_TEMPLATE_BY_ID = gql`
   query GetManifestTemplate($data: String!) {
     GetTemplateManifestByID(template_id: $data) {
