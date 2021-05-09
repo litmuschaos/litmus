@@ -23,6 +23,7 @@ type ChaosWorkflowRun struct {
 	LastUpdated   string `bson:"last_updated"`
 	ExecutionData string `bson:"execution_data"`
 	Completed     bool   `bson:"completed"`
+	NotAvailable  *bool `bson:"not_available"`
 }
 
 // WeightagesInput contains the required fields to be stored in the database for a weightages input

@@ -3,6 +3,7 @@ package ops
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -409,4 +410,43 @@ func ResiliencyScoreCalculator(execData string, wfid string) string {
 	}
 	execData = "{" + `"resiliency_score":` + `"` + strconv.Itoa(resiliency_score) + `",` + `"experiments_passed":` + `"` + strconv.Itoa(totalExperimentsPassed) + `",` + `"total_experiments":` + `"` + strconv.Itoa(totalExperiments) + `",` + execData[1:]
 	return execData
+}
+
+func DeletePendingWorkflows(){
+	workflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{}})
+	if err != nil {
+		log.Print(err)
+	}
+
+	for _, workflow := range workflows {
+		if len(workflow.WorkflowRuns) > 0 {
+			last_run := workflow.WorkflowRuns[len(workflow.WorkflowRuns) - 1]
+			if last_run.Completed == false {
+				i, err := strconv.ParseInt(last_run.LastUpdated, 10, 64)
+				if err != nil {
+					log.Print(err)
+				}
+
+				modTime := time.Unix(i, 0).Add(10 * time.Minute)
+
+				currentTime := time.Now()
+
+				if currentTime.Unix() > modTime.Unix() {
+					trueBool := true
+					workflow.WorkflowRuns[len(workflow.WorkflowRuns) - 1].NotAvailable =&trueBool
+				}
+			}
+
+			query := bson.D{{"workflow_id", workflow.WorkflowID}, {"project_id", workflow.ProjectID}}
+			update := bson.D{{"$set", bson.D{{"workflow_runs", workflow.WorkflowRuns}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+			err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
+			if err != nil {
+				log.Print(err)
+			}
+
+		}
+	}
+
+
 }

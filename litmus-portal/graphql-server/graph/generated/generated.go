@@ -411,8 +411,10 @@ type ComplexityRoot struct {
 		ClusterID     func(childComplexity int) int
 		ClusterName   func(childComplexity int) int
 		ClusterType   func(childComplexity int) int
+		Completed     func(childComplexity int) int
 		ExecutionData func(childComplexity int) int
 		LastUpdated   func(childComplexity int) int
+		NotAvailable  func(childComplexity int) int
 		ProjectID     func(childComplexity int) int
 		WorkflowID    func(childComplexity int) int
 		WorkflowName  func(childComplexity int) int
@@ -420,8 +422,10 @@ type ComplexityRoot struct {
 	}
 
 	WorkflowRuns struct {
+		Completed     func(childComplexity int) int
 		ExecutionData func(childComplexity int) int
 		LastUpdated   func(childComplexity int) int
+		NotAvailable  func(childComplexity int) int
 		WorkflowRunID func(childComplexity int) int
 	}
 
@@ -2747,6 +2751,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRun.ClusterType(childComplexity), true
 
+	case "WorkflowRun.completed":
+		if e.complexity.WorkflowRun.Completed == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.Completed(childComplexity), true
+
 	case "WorkflowRun.execution_data":
 		if e.complexity.WorkflowRun.ExecutionData == nil {
 			break
@@ -2760,6 +2771,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkflowRun.LastUpdated(childComplexity), true
+
+	case "WorkflowRun.not_available":
+		if e.complexity.WorkflowRun.NotAvailable == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.NotAvailable(childComplexity), true
 
 	case "WorkflowRun.project_id":
 		if e.complexity.WorkflowRun.ProjectID == nil {
@@ -2789,6 +2807,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRun.WorkflowRunID(childComplexity), true
 
+	case "WorkflowRuns.completed":
+		if e.complexity.WorkflowRuns.Completed == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRuns.Completed(childComplexity), true
+
 	case "WorkflowRuns.execution_data":
 		if e.complexity.WorkflowRuns.ExecutionData == nil {
 			break
@@ -2802,6 +2827,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkflowRuns.LastUpdated(childComplexity), true
+
+	case "WorkflowRuns.not_available":
+		if e.complexity.WorkflowRuns.NotAvailable == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRuns.NotAvailable(childComplexity), true
 
 	case "WorkflowRuns.workflow_run_id":
 		if e.complexity.WorkflowRuns.WorkflowRunID == nil {
@@ -3721,6 +3753,8 @@ type WorkflowRun {
   workflow_name: String!
   cluster_type: String
   execution_data: String!
+  completed: Boolean!
+  not_available: Boolean
 }
 
 input WorkflowRunInput {
@@ -3798,6 +3832,8 @@ type WorkflowRuns {
   execution_data: String!
   workflow_run_id: ID!
   last_updated: String!
+  completed: Boolean!
+  not_available: Boolean
 }
 
 type clusterRegResponse {
@@ -3821,6 +3857,7 @@ input GitConfig {
   Password: String
   SSHPrivateKey: String
 }
+
 type GitConfigResponse {
   Enabled: Boolean!
   ProjectID: String!
@@ -3996,7 +4033,6 @@ type Mutation {
   updateGitOps(config: GitConfig!): Boolean! @authorized
 
   # Analytics
-
   createDataSource(datasource: DSInput): DSResponse @authorized
 
   createDashBoard(dashboard: createDBInput): String! @authorized
@@ -4012,9 +4048,7 @@ type Mutation {
   deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 
   # Manifest Template
-
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
-    @authorized
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate! @authorized
 
   deleteManifestTemplate(template_id: String!): Boolean! @authorized
 }
@@ -15750,6 +15784,71 @@ func (ec *executionContext) _WorkflowRun_execution_data(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkflowRun_completed(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Completed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_not_available(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NotAvailable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkflowRuns_execution_data(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRuns) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15850,6 +15949,71 @@ func (ec *executionContext) _WorkflowRuns_last_updated(ctx context.Context, fiel
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRuns_completed(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRuns) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRuns",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Completed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRuns_not_available(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRuns) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRuns",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NotAvailable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -21959,6 +22123,13 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "completed":
+			out.Values[i] = ec._WorkflowRun_completed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "not_available":
+			out.Values[i] = ec._WorkflowRun_not_available(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -21996,6 +22167,13 @@ func (ec *executionContext) _WorkflowRuns(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "completed":
+			out.Values[i] = ec._WorkflowRuns_completed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "not_available":
+			out.Values[i] = ec._WorkflowRuns_not_available(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

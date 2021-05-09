@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
+	"github.com/robfig/cron"
 	"log"
 	"net/http"
 	"os"
@@ -61,6 +63,10 @@ func main() {
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 	}).Handler)
+
+	c := cron.New()
+	c.AddFunc("@every 10s", ops.DeletePendingWorkflows)
+	c.Start()
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 

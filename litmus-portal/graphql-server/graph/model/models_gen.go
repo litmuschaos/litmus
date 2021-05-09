@@ -495,6 +495,8 @@ type WorkflowRun struct {
 	WorkflowName  string  `json:"workflow_name"`
 	ClusterType   *string `json:"cluster_type"`
 	ExecutionData string  `json:"execution_data"`
+	Completed     bool    `json:"completed"`
+	NotAvailable  *bool   `json:"not_available"`
 }
 
 type WorkflowRunInput struct {
@@ -510,6 +512,8 @@ type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
 	LastUpdated   string `json:"last_updated"`
+	Completed     bool   `json:"completed"`
+	NotAvailable  *bool  `json:"not_available"`
 }
 
 type ClusterRegResponse struct {

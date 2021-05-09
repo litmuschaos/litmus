@@ -139,6 +139,8 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 				ExecutionData: wfrun.ExecutionData,
 				ClusterName:   cluster.ClusterName,
 				ClusterType:   &cluster.ClusterType,
+				Completed: wfrun.Completed,
+				NotAvailable: wfrun.NotAvailable,
 			}
 			result = append(result, &newWorkflowRun)
 		}

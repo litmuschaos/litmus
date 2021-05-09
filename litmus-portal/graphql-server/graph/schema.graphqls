@@ -124,6 +124,8 @@ type WorkflowRun {
   workflow_name: String!
   cluster_type: String
   execution_data: String!
+  completed: Boolean!
+  not_available: Boolean
 }
 
 input WorkflowRunInput {
@@ -201,6 +203,8 @@ type WorkflowRuns {
   execution_data: String!
   workflow_run_id: ID!
   last_updated: String!
+  completed: Boolean!
+  not_available: Boolean
 }
 
 type clusterRegResponse {
@@ -224,6 +228,7 @@ input GitConfig {
   Password: String
   SSHPrivateKey: String
 }
+
 type GitConfigResponse {
   Enabled: Boolean!
   ProjectID: String!
@@ -399,7 +404,6 @@ type Mutation {
   updateGitOps(config: GitConfig!): Boolean! @authorized
 
   # Analytics
-
   createDataSource(datasource: DSInput): DSResponse @authorized
 
   createDashBoard(dashboard: createDBInput): String! @authorized
@@ -415,9 +419,7 @@ type Mutation {
   deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 
   # Manifest Template
-
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
-    @authorized
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate! @authorized
 
   deleteManifestTemplate(template_id: String!): Boolean! @authorized
 }
