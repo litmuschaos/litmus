@@ -166,6 +166,7 @@ type ComplexityRoot struct {
 		CreatedAt         func(childComplexity int) int
 		ImageRegistryID   func(childComplexity int) int
 		ImageRegistryInfo func(childComplexity int) int
+		IsRemoved         func(childComplexity int) int
 		ProjectID         func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 	}
@@ -1183,6 +1184,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ImageRegistryResponse.ImageRegistryInfo(childComplexity), true
+
+	case "ImageRegistryResponse.is_removed":
+		if e.complexity.ImageRegistryResponse.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.ImageRegistryResponse.IsRemoved(childComplexity), true
 
 	case "ImageRegistryResponse.project_id":
 		if e.complexity.ImageRegistryResponse.ProjectID == nil {
@@ -3553,15 +3561,10 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/image_registry.graphqls", Input: `enum imageRegistryType {
-    public
-    private
-}
-
-type imageRegistry {
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
-    image_registry_type: imageRegistryType!
+    image_registry_type: String!
     secret_name: String
     secret_namespace: String
     enable_registry: Boolean
@@ -3570,7 +3573,7 @@ type imageRegistry {
 input imageRegistryInput {
     image_registry_name: String!
     image_repo_name: String!
-    image_registry_type: imageRegistryType!
+    image_registry_type: String!
     secret_name: String
     secret_namespace: String
     enable_registry: Boolean
@@ -3582,6 +3585,7 @@ type ImageRegistryResponse {
     project_id: String!
     updated_at: String
     created_at: String
+    is_removed: Boolean
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
@@ -8077,6 +8081,37 @@ func (ec *executionContext) _ImageRegistryResponse_created_at(ctx context.Contex
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ImageRegistryResponse_is_removed(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistryResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ImageRegistryResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _KubeObjectResponse_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.KubeObjectResponse) (ret graphql.Marshaler) {
@@ -17875,9 +17910,9 @@ func (ec *executionContext) _imageRegistry_image_registry_type(ctx context.Conte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.ImageRegistryType)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNimageRegistryType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryType(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _imageRegistry_secret_name(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistry) (ret graphql.Marshaler) {
@@ -20518,7 +20553,7 @@ func (ec *executionContext) unmarshalInputimageRegistryInput(ctx context.Context
 			}
 		case "image_registry_type":
 			var err error
-			it.ImageRegistryType, err = ec.unmarshalNimageRegistryType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryType(ctx, v)
+			it.ImageRegistryType, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21492,6 +21527,8 @@ func (ec *executionContext) _ImageRegistryResponse(ctx context.Context, sel ast.
 			out.Values[i] = ec._ImageRegistryResponse_updated_at(ctx, field, obj)
 		case "created_at":
 			out.Values[i] = ec._ImageRegistryResponse_created_at(ctx, field, obj)
+		case "is_removed":
+			out.Values[i] = ec._ImageRegistryResponse_is_removed(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25138,15 +25175,6 @@ func (ec *executionContext) unmarshalNdeleteDSInput2githubᚗcomᚋlitmuschaos�
 
 func (ec *executionContext) unmarshalNimageRegistryInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryInput(ctx context.Context, v interface{}) (model.ImageRegistryInput, error) {
 	return ec.unmarshalInputimageRegistryInput(ctx, v)
-}
-
-func (ec *executionContext) unmarshalNimageRegistryType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryType(ctx context.Context, v interface{}) (model.ImageRegistryType, error) {
-	var res model.ImageRegistryType
-	return res, res.UnmarshalGQL(v)
-}
-
-func (ec *executionContext) marshalNimageRegistryType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryType(ctx context.Context, sel ast.SelectionSet, v model.ImageRegistryType) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) unmarshalNpanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPanelGroup(ctx context.Context, v interface{}) ([]*model.PanelGroup, error) {

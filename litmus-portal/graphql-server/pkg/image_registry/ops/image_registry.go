@@ -2,33 +2,28 @@ package ops
 
 import (
 	"context"
-	"encoding/json"
+	"strconv"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/image_registry"
 	"go.mongodb.org/mongo-driver/bson"
-	"strconv"
-	"time"
 )
 
 func CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 	var (
 		currentTime = strconv.FormatInt(time.Now().Unix(), 10)
 		id          = uuid.New().String()
-		irType      image_registry.ImageRegistryType
+		bl          = false
 	)
-
-	err := json.Unmarshal([]byte(imageRegistryInfo.ImageRegistryType), &irType)
-	if err != nil {
-		return nil, err
-	}
 
 	imageRegistry := image_registry.ImageRegistry{
 		ImageRegistryID:   id,
 		ProjectID:         projectID,
 		ImageRegistryName: imageRegistryInfo.ImageRegistryName,
 		ImageRepoName:     imageRegistryInfo.ImageRepoName,
-		ImageRegistryType: irType,
+		ImageRegistryType: imageRegistryInfo.ImageRegistryType,
 		SecretName:        imageRegistryInfo.SecretName,
 		SecretNamespace:   imageRegistryInfo.SecretNamespace,
 		EnableRegistry:    imageRegistryInfo.EnableRegistry,
@@ -36,7 +31,7 @@ func CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInf
 		UpdatedAt:         currentTime,
 	}
 
-	err = image_registry.InsertImageRegistry(ctx, imageRegistry)
+	err := image_registry.InsertImageRegistry(ctx, imageRegistry)
 	if err != nil {
 		return nil, err
 	}
@@ -54,12 +49,16 @@ func CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInf
 		},
 		UpdatedAt: &currentTime,
 		CreatedAt: &currentTime,
+		IsRemoved: &bl,
 	}, nil
 }
 
 func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 
-	var currentTime = strconv.FormatInt(time.Now().Unix(), 10)
+	var (
+		currentTime = strconv.FormatInt(time.Now().Unix(), 10)
+		bl          = false
+	)
 
 	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}}
 	update := bson.D{{"$set", bson.D{
@@ -89,6 +88,7 @@ func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 			EnableRegistry:    imageRegistryInfo.EnableRegistry,
 		},
 		UpdatedAt: &currentTime,
+		IsRemoved: &bl,
 	}, nil
 }
 
@@ -102,7 +102,6 @@ func DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 	}
 
 	return "image registry deleted", nil
-
 }
 
 func GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error) {
@@ -112,17 +111,11 @@ func GetImageRegistry(ctx context.Context, imageRegistryID string, projectID str
 		return nil, err
 	}
 
-	var irType model.ImageRegistryType
-	err = json.Unmarshal([]byte(imageRegistry.ImageRegistryType), &irType)
-	if err != nil {
-		return nil, err
-	}
-
 	return &model.ImageRegistryResponse{
 		ImageRegistryInfo: &model.ImageRegistry{
 			ImageRegistryName: imageRegistry.ImageRegistryName,
 			ImageRepoName:     imageRegistry.ImageRegistryName,
-			ImageRegistryType: irType,
+			ImageRegistryType: imageRegistry.ImageRegistryType,
 			SecretName:        imageRegistry.SecretName,
 			SecretNamespace:   imageRegistry.SecretNamespace,
 			EnableRegistry:    imageRegistry.EnableRegistry,
@@ -131,6 +124,7 @@ func GetImageRegistry(ctx context.Context, imageRegistryID string, projectID str
 		ProjectID:       projectID,
 		UpdatedAt:       &imageRegistry.UpdatedAt,
 		CreatedAt:       imageRegistry.CreatedAt,
+		IsRemoved:       &imageRegistry.IsRemoved,
 	}, nil
 }
 
@@ -142,18 +136,13 @@ func ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageR
 	}
 
 	var irResponse []*model.ImageRegistryResponse
-	for _, ir := range imageRegistries {
-		var irType model.ImageRegistryType
-		err = json.Unmarshal([]byte(ir.ImageRegistryType), &irType)
-		if err != nil {
-			return nil, err
-		}
 
+	for _, ir := range imageRegistries {
 		irResponse = append(irResponse, &model.ImageRegistryResponse{
 			ImageRegistryInfo: &model.ImageRegistry{
 				ImageRegistryName: ir.ImageRegistryName,
 				ImageRepoName:     ir.ImageRegistryName,
-				ImageRegistryType: irType,
+				ImageRegistryType: ir.ImageRegistryType,
 				SecretName:        ir.SecretName,
 				SecretNamespace:   ir.SecretNamespace,
 				EnableRegistry:    ir.EnableRegistry,
@@ -162,6 +151,7 @@ func ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageR
 			ProjectID:       projectID,
 			UpdatedAt:       &ir.UpdatedAt,
 			CreatedAt:       ir.CreatedAt,
+			IsRemoved:       &ir.IsRemoved,
 		})
 	}
 
