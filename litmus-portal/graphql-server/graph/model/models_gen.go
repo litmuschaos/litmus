@@ -234,6 +234,14 @@ type GitConfigResponse struct {
 	SSHPrivateKey *string   `json:"SSHPrivateKey"`
 }
 
+type ImageRegistryResponse struct {
+	ImageRegistryInfo *ImageRegistry `json:"image_registry_info"`
+	ImageRegistryID   string         `json:"image_registry_id"`
+	ProjectID         string         `json:"project_id"`
+	UpdatedAt         *string        `json:"updated_at"`
+	CreatedAt         *string        `json:"created_at"`
+}
+
 type KubeGVRRequest struct {
 	Group    string `json:"group"`
 	Version  string `json:"version"`
@@ -535,6 +543,24 @@ type DeleteDSInput struct {
 	DsID        string `json:"ds_id"`
 }
 
+type ImageRegistry struct {
+	ImageRegistryName string            `json:"image_registry_name"`
+	ImageRepoName     string            `json:"image_repo_name"`
+	ImageRegistryType ImageRegistryType `json:"image_registry_type"`
+	SecretName        *string           `json:"secret_name"`
+	SecretNamespace   *string           `json:"secret_namespace"`
+	EnableRegistry    *bool             `json:"enable_registry"`
+}
+
+type ImageRegistryInput struct {
+	ImageRegistryName string            `json:"image_registry_name"`
+	ImageRepoName     string            `json:"image_repo_name"`
+	ImageRegistryType ImageRegistryType `json:"image_registry_type"`
+	SecretName        *string           `json:"secret_name"`
+	SecretNamespace   *string           `json:"secret_namespace"`
+	EnableRegistry    *bool             `json:"enable_registry"`
+}
+
 type ListDashboardReponse struct {
 	DsID        string                `json:"ds_id"`
 	DbID        string                `json:"db_id"`
@@ -752,5 +778,46 @@ func (e *MemberRole) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ImageRegistryType string
+
+const (
+	ImageRegistryTypePublic  ImageRegistryType = "public"
+	ImageRegistryTypePrivate ImageRegistryType = "private"
+)
+
+var AllImageRegistryType = []ImageRegistryType{
+	ImageRegistryTypePublic,
+	ImageRegistryTypePrivate,
+}
+
+func (e ImageRegistryType) IsValid() bool {
+	switch e {
+	case ImageRegistryTypePublic, ImageRegistryTypePrivate:
+		return true
+	}
+	return false
+}
+
+func (e ImageRegistryType) String() string {
+	return string(e)
+}
+
+func (e *ImageRegistryType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ImageRegistryType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid imageRegistryType", str)
+	}
+	return nil
+}
+
+func (e ImageRegistryType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -1,0 +1,30 @@
+enum imageRegistryType {
+    public
+    private
+}
+
+type imageRegistry {
+    image_registry_name: String!
+    image_repo_name: String!
+    image_registry_type: imageRegistryType!
+    secret_name: String
+    secret_namespace: String
+    enable_registry: Boolean
+}
+
+input imageRegistryInput {
+    image_registry_name: String!
+    image_repo_name: String!
+    image_registry_type: imageRegistryType!
+    secret_name: String
+    secret_namespace: String
+    enable_registry: Boolean
+}
+
+type ImageRegistryResponse {
+    image_registry_info: imageRegistry
+    image_registry_id: String!
+    project_id: String!
+    updated_at: String
+    created_at: String
+}

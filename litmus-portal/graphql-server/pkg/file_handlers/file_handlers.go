@@ -84,5 +84,4 @@ func GetManifest(token string) ([]byte, int, error) {
 	} else {
 		return []byte("Cluster is already registered"), 409, nil
 	}
-
 }
