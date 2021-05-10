@@ -1,6 +1,7 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable no-loop-func */
 import YAML from 'yaml';
+import { v4 as uuidv4 } from 'uuid';
 import { constants } from '../constants';
 
 const nameextractor = (val: any) => {
@@ -21,7 +22,7 @@ const nameextractor = (val: any) => {
 };
 
 export const updateEngineName = (parsedYaml: any) => {
-  let engineName = '';
+  const engineInstance: string[] = [];
   try {
     if (parsedYaml.spec !== undefined) {
       const yamlData = parsedYaml.spec;
@@ -31,11 +32,11 @@ export const updateEngineName = (parsedYaml: any) => {
             const chaosEngine = YAML.parse(artifact.raw.data);
             // Condition to check for the kind as ChaosEngine
             if (chaosEngine.kind === 'ChaosEngine') {
-              const updatedEngineName = `${
-                chaosEngine.metadata.name
-              }-${Math.round(new Date().getTime() / 1000)}`;
-              chaosEngine.metadata.name = updatedEngineName;
-
+              chaosEngine.metadata.generateName = chaosEngine.metadata.name;
+              delete chaosEngine.metadata.name;
+              chaosEngine.metadata['labels'] = {
+                instance_id: uuidv4(),
+              };
               // Condition to check the namespace
               if (typeof chaosEngine.metadata.namespace === 'object') {
                 // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
@@ -56,7 +57,9 @@ export const updateEngineName = (parsedYaml: any) => {
                   )[0].replace(/\s/g, '');
                   chaosEngine.spec.appinfo.appns = `{${appns}}`;
                 }
-              engineName += `${updatedEngineName} `;
+              engineInstance.push(
+                `${chaosEngine.metadata.labels['instance_id']}`
+              );
             }
             // Update the artifact in template
             const artifactData = artifact;
@@ -66,7 +69,9 @@ export const updateEngineName = (parsedYaml: any) => {
         if (template.name.includes('revert-')) {
           // Update the args in revert chaos template
           const revertTemplate = template;
-          revertTemplate.container.args[0] = `kubectl delete chaosengine ${engineName} -n {{workflow.parameters.adminModeNamespace}}`;
+          revertTemplate.container.args[0] = `kubectl delete chaosengine -l 'instance_id in (${engineInstance.join(
+            ' , '
+          )})' -n {{workflow.parameters.adminModeNamespace}} `;
         }
       });
     }

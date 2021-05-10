@@ -81,7 +81,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           if (chaosEngine.kind === 'ChaosEngine') {
             expData.push({
               StepIndex: index,
-              Name: chaosEngine.metadata.name,
+              Name: chaosEngine.metadata.generateName,
               Namespace: chaosEngine.spec.appinfo?.appns ?? '',
               Application: chaosEngine.spec.appinfo?.applabel ?? '',
               Probes: chaosEngine.spec.experiments[0].spec.probe?.length ?? 0,
@@ -109,7 +109,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   // Revert Chaos
   const toggleRevertChaos = (manifest: string) => {
     const parsedYAML = YAML.parse(manifest);
-    let deleteEngines = 'kubectl delete chaosengine ';
+    const deleteEngines: string[] = [];
 
     // Else if Revert Chaos is set to true and it is not already set in the manifest
     if (
@@ -126,22 +126,25 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
       ]);
 
       parsed(manifest).forEach((_, i) => {
-        deleteEngines = `${
-          deleteEngines +
-          YAML.parse(
-            parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
-          ).metadata.name
-        } `;
+        deleteEngines.push(
+          `${
+            YAML.parse(
+              parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
+            ).metadata.labels['instance_id']
+          }`
+        );
       });
-
-      deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';
 
       parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
         name: 'revert-chaos',
         container: {
           image: 'litmuschaos/k8s:latest',
           command: ['sh', '-c'],
-          args: [deleteEngines],
+          args: [
+            `kubectl delete chaosengine -l 'instance_id in (${deleteEngines.join(
+              ' , '
+            )})' -n {{workflow.parameters.adminModeNamespace}} `,
+          ],
         },
       };
     }

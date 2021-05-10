@@ -115,6 +115,15 @@ func GetExperimentYAMLPath(ctx context.Context, experimentInput model.Experiment
 	return ExperimentYAMLPath
 }
 
+// GetPredefinedExperimentManifest is used to construct path for given chartsversion.yaml.
+func GetPredefinedExperimentManifest(ctx context.Context, experimentInput model.ExperimentInput) string {
+	ProjectID := experimentInput.ProjectID
+	HubName := experimentInput.HubName
+	experimentName := experimentInput.ExperimentName
+	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/workflows/" + experimentName + "/workflow.yaml"
+	return ExperimentPath
+}
+
 // GetChartsData is used to get details of charts like experiments.
 func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	var AllChartsDetails Charts
@@ -167,4 +176,18 @@ func ReadExperimentYAMLFile(path string) (string, error) {
 	}
 	s = string(YAMLData)
 	return s, nil
+}
+
+// GetPredefinedExperimentFileList reads the workflow directory for all the predefined experiments
+func GetPredefinedExperimentFileList(hubname string, projectID string) ([]string, error) {
+	ExperimentsPath := defaultPath + projectID + "/" + hubname + "/workflows"
+	var expNames []string
+	files, err := ioutil.ReadDir(ExperimentsPath)
+	if err != nil {
+		return nil, err
+	}
+	for _, file := range files {
+		expNames = append(expNames, file.Name())
+	}
+	return expNames, nil
 }
