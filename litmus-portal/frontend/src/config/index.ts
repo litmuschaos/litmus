@@ -11,10 +11,6 @@ if (
   process.env.NODE_ENV.trim() === 'development' ||
   process.env.NODE_ENV.trim() === 'test'
 ) {
-  authURL = `${window.location.protocol}//${window.location.hostname}:3000`;
-  apiURL = `${window.location.protocol}//${window.location.hostname}:8080`;
-  sockURL += `//${window.location.hostname}:8080`;
-} else {
   authURL = '/auth';
   apiURL = '/api';
   sockURL += `//${loc.host}/ws`;
