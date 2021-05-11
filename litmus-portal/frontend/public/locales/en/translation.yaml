@@ -476,6 +476,7 @@ settings:
     header: Members
     invitedProject: Projects you were invited to
     noUsers: No users available
+    editProjectLabel: Project ID
     label:
       search: Search...
       role: Role
