@@ -25,7 +25,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 )
 
-const defaultPort = "3001"
+const defaultPort = "8080"
 
 func init() {
 	log.Printf("Go Version: %s", runtime.Version())
