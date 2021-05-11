@@ -1,3 +1,4 @@
+/* eslint-disable no-const-assign */
 import { Typography, useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -81,7 +82,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           if (chaosEngine.kind === 'ChaosEngine') {
             expData.push({
               StepIndex: index,
-              Name: chaosEngine.metadata.name,
+              Name: chaosEngine.metadata.generateName,
               Namespace: chaosEngine.spec.appinfo?.appns ?? '',
               Application: chaosEngine.spec.appinfo?.applabel ?? '',
               Probes: chaosEngine.spec.experiments[0].spec.probe?.length ?? 0,
@@ -109,7 +110,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   // Revert Chaos
   const toggleRevertChaos = (manifest: string) => {
     const parsedYAML = YAML.parse(manifest);
-    let deleteEngines = 'kubectl delete chaosengine ';
+    let deleteEngines: string = '';
 
     // Else if Revert Chaos is set to true and it is not already set in the manifest
     // For Workflows
@@ -128,22 +129,21 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
       ]);
 
       parsed(manifest).forEach((_, i) => {
-        deleteEngines = `${
-          deleteEngines +
+        deleteEngines += `${
           YAML.parse(
             parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
-          ).metadata.name
-        } `;
+          ).metadata.labels['instance_id']
+        }, `;
       });
-
-      deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';
 
       parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
         name: 'revert-chaos',
         container: {
           image: 'litmuschaos/k8s:latest',
           command: ['sh', '-c'],
-          args: [deleteEngines],
+          args: [
+            `kubectl delete chaosengine -l 'instance_id in (${deleteEngines})' -n {{workflow.parameters.adminModeNamespace}} `,
+          ],
         },
       };
     }

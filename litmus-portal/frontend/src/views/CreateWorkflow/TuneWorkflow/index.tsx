@@ -13,6 +13,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import { v4 as uuidv4 } from 'uuid';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
@@ -136,8 +137,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     onCompleted: (data) => {
       const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
-      const wfmanifest = updateEngineName(YAML.parse(parsedYAML));
-      const updatedManifest = updateNamespace(wfmanifest, namespace);
+      const updatedManifest = updateNamespace(parsedYAML, namespace);
       workflowAction.setWorkflowManifest({
         manifest: YAML.stringify(updatedManifest),
       });
@@ -394,11 +394,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
       const ChaosEngine = YAML.parse(Object.values(data.ChaosEngine)[0]);
       const ExpName = YAML.parse(Object.values(data.Experiment)[0]).metadata
         .name;
-      ChaosEngine.metadata.name = `${
+      ChaosEngine.metadata.generateName = `${
         YAML.parse(Object.values(data.Experiment)[0]).metadata.name
-      }-${Math.round(new Date().getTime() / 1000)}`;
+      }`;
+      delete ChaosEngine.metadata.name;
       ChaosEngine.metadata.namespace =
         '{{workflow.parameters.adminModeNamespace}}';
+      ChaosEngine.metadata['labels'] = {
+        instance_id: uuidv4(),
+      };
+      if (ChaosEngine.spec.jobCleanUpPolicy) {
+        ChaosEngine.spec.jobCleanUpPolicy = 'retain';
+      }
       ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
       generatedYAML.spec.templates.push({
         name: ExpName,
