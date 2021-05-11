@@ -114,7 +114,7 @@ func GetImageRegistry(ctx context.Context, imageRegistryID string, projectID str
 	return &model.ImageRegistryResponse{
 		ImageRegistryInfo: &model.ImageRegistry{
 			ImageRegistryName: imageRegistry.ImageRegistryName,
-			ImageRepoName:     imageRegistry.ImageRegistryName,
+			ImageRepoName:     imageRegistry.ImageRepoName,
 			ImageRegistryType: imageRegistry.ImageRegistryType,
 			SecretName:        imageRegistry.SecretName,
 			SecretNamespace:   imageRegistry.SecretNamespace,
@@ -141,7 +141,7 @@ func ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageR
 		irResponse = append(irResponse, &model.ImageRegistryResponse{
 			ImageRegistryInfo: &model.ImageRegistry{
 				ImageRegistryName: ir.ImageRegistryName,
-				ImageRepoName:     ir.ImageRegistryName,
+				ImageRepoName:     ir.ImageRepoName,
 				ImageRegistryType: ir.ImageRegistryType,
 				SecretName:        ir.SecretName,
 				SecretNamespace:   ir.SecretNamespace,
