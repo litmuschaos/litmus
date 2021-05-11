@@ -22,7 +22,7 @@ const nameextractor = (val: any) => {
 };
 
 export const updateEngineName = (parsedYaml: any) => {
-  const engineInstance: string[] = [];
+  let engineInstance: string = '';
   try {
     if (parsedYaml.spec !== undefined) {
       const yamlData = parsedYaml.spec;
@@ -57,9 +57,7 @@ export const updateEngineName = (parsedYaml: any) => {
                   )[0].replace(/\s/g, '');
                   chaosEngine.spec.appinfo.appns = `{${appns}}`;
                 }
-              engineInstance.push(
-                `${chaosEngine.metadata.labels['instance_id']}`
-              );
+              engineInstance += `${chaosEngine.metadata.labels['instance_id']}, `;
             }
             // Update the artifact in template
             const artifactData = artifact;
@@ -69,9 +67,7 @@ export const updateEngineName = (parsedYaml: any) => {
         if (template.name.includes('revert-')) {
           // Update the args in revert chaos template
           const revertTemplate = template;
-          revertTemplate.container.args[0] = `kubectl delete chaosengine -l 'instance_id in (${engineInstance.join(
-            ' , '
-          )})' -n {{workflow.parameters.adminModeNamespace}} `;
+          revertTemplate.container.args[0] = `kubectl delete chaosengine -l 'instance_id in (${engineInstance})' -n {{workflow.parameters.adminModeNamespace}} `;
         }
       });
     }

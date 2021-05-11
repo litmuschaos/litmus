@@ -110,7 +110,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   // Revert Chaos
   const toggleRevertChaos = (manifest: string) => {
     const parsedYAML = YAML.parse(manifest);
-    const deleteEngines: string[] = [];
+    let deleteEngines: string = '';
 
     // Else if Revert Chaos is set to true and it is not already set in the manifest
     if (
@@ -127,13 +127,11 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
       ]);
 
       parsed(manifest).forEach((_, i) => {
-        deleteEngines.push(
-          `${
-            YAML.parse(
-              parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
-            ).metadata.labels['instance_id']
-          }`
-        );
+        deleteEngines += `${
+          YAML.parse(
+            parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
+          ).metadata.labels['instance_id']
+        }, `;
       });
 
       parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
@@ -142,9 +140,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           image: 'litmuschaos/k8s:latest',
           command: ['sh', '-c'],
           args: [
-            `kubectl delete chaosengine -l 'instance_id in (${deleteEngines.join(
-              ' , '
-            )})' -n {{workflow.parameters.adminModeNamespace}} `,
+            `kubectl delete chaosengine -l 'instance_id in (${deleteEngines})' -n {{workflow.parameters.adminModeNamespace}} `,
           ],
         },
       };
