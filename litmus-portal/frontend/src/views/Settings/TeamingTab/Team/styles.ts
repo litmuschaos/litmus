@@ -17,6 +17,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(1.5),
     color: theme.palette.primary.main,
   },
+  underline: {
+    '&&&:before': {
+      borderBottom: 'none',
+    },
+    '&&:after': {
+      borderBottom: 'none',
+    },
+  },
   members: {
     display: 'flex',
     justifyContent: 'flex-start',
@@ -233,12 +241,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
   },
   projectName: {
-    margin: theme.spacing(0, 0, 0, 1.56),
     textTransform: 'uppercase',
     fontWeight: 500,
     fontSize: '1rem',
   },
-
+  editToggleIcon: {
+    marginRight: theme.spacing(1),
+  },
+  projectNameText: {
+    marginLeft: theme.spacing(8),
+    width: 100,
+    '& .MuiInputBase-root.Mui-disabled': {
+      color: theme.palette.text.primary,
+    },
+  },
   active: {
     textTransform: 'capitalize',
     color: theme.palette.primary.main,

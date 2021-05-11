@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import {
   Box,
   FormControl,
@@ -12,11 +12,16 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
-import { Search } from 'litmus-ui';
+import { EditableText, Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Center from '../../../../containers/layouts/Center';
-import { ALL_USERS, GET_PROJECT, LIST_PROJECTS } from '../../../../graphql';
+import {
+  ALL_USERS,
+  GET_PROJECT,
+  LIST_PROJECTS,
+  UPDATE_PROJECT_NAME,
+} from '../../../../graphql';
 import { UserInvite } from '../../../../models/graphql/invite';
 import {
   Member,
@@ -93,7 +98,6 @@ const TeamingTab: React.FC = () => {
   const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
 
   const [activeTab, setActiveTab] = useState<number>(0);
-  const [selectedProjectName, setselectedProjectName] = useState<string>('');
 
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
@@ -104,7 +108,6 @@ const TeamingTab: React.FC = () => {
     ProjectDetailVars
   >(GET_PROJECT, {
     variables: { projectID },
-    onCompleted: (data) => setselectedProjectName(data.getProject.name),
     fetchPolicy: 'cache-and-network',
   });
 
@@ -231,6 +234,15 @@ const TeamingTab: React.FC = () => {
     setInvitationCount(projectInvitation);
     setProjectOtherCount(projectOther);
   }, [projects, dataProject, deleteMemberOpen, inviteNewOpen, activeTab]);
+
+  const [updateProjectName] = useMutation(UPDATE_PROJECT_NAME, {
+    refetchQueries: [
+      {
+        query: GET_PROJECT,
+        variables: { projectID },
+      },
+    ],
+  });
   return (
     <div>
       {!loading ? (
@@ -282,12 +294,22 @@ const TeamingTab: React.FC = () => {
             </Center>
             <div>
               <Paper className={classes.myProject} elevation={0}>
-                <div className={classes.project}>
-                  <Typography className={classes.projectName}>
-                    {/* Check for removal of userData */}
-                    {selectedProjectName}
-                  </Typography>
-                </div>
+                <Center>
+                  <div className={classes.project}>
+                    <EditableText
+                      label="Project ID"
+                      defaultValue={dataB ? dataB.getProject.name : ''}
+                      onSave={(value) => {
+                        updateProjectName({
+                          variables: {
+                            projectID,
+                            projectName: value,
+                          },
+                        });
+                      }}
+                    />
+                  </div>
+                </Center>
                 <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
                   {/* Search user */}
                   <div

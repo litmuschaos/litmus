@@ -54,6 +54,12 @@ export const CREATE_PROJECT = gql`
   }
 `;
 
+export const UPDATE_PROJECT_NAME = gql`
+  mutation updateProjectName($projectID: String!, $projectName: String!) {
+    updateProjectName(projectID: $projectID, projectName: $projectName)
+  }
+`;
+
 export const SEND_INVITE = gql`
   mutation sendInvite($member: MemberInput!) {
     sendInvitation(member: $member) {
