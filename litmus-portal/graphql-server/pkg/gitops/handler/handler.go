@@ -40,7 +40,6 @@ var (
 	backgroundContext = context.Background()
 )
 
-// TODO add projectID and user permission validation
 // EnableGitOpsHandler enables gitops for a particular project
 func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, error) {
 	gitLock.Lock(config.ProjectID, nil)
