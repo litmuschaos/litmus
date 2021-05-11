@@ -128,7 +128,7 @@ type metricsPromResponse {
 }
 
 type metricsTimeStampValue{
-    date: Int
+    date: Float
     value:  Float
 }
 
@@ -139,7 +139,7 @@ type annotationsPromResponse {
 }
 
 type annotationsTimeStampValue{
-    date: Int
+    date: Float
     value:  Int
 }
 

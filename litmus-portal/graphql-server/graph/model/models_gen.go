@@ -519,8 +519,8 @@ type AnnotationsPromResponse struct {
 }
 
 type AnnotationsTimeStampValue struct {
-	Date  *int `json:"date"`
-	Value *int `json:"value"`
+	Date  *float64 `json:"date"`
+	Value *int     `json:"value"`
 }
 
 type ClusterRegResponse struct {
@@ -576,7 +576,7 @@ type MetricsPromResponse struct {
 }
 
 type MetricsTimeStampValue struct {
-	Date  *int     `json:"date"`
+	Date  *float64 `json:"date"`
 	Value *float64 `json:"value"`
 }
 

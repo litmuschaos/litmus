@@ -20,7 +20,7 @@ type MetricsResponse struct {
 }
 
 type MetricsTimeStampValue struct {
-	Date  *int     `json:"date"`
+	Date  *float64 `json:"date"`
 	Value *float64 `json:"value"`
 }
 
@@ -31,8 +31,8 @@ type AnnotationsResponse struct {
 }
 
 type AnnotationsTimeStampValue struct {
-	Date  *int `json:"date"`
-	Value *int `json:"value"`
+	Date  *float64 `json:"date"`
+	Value *int     `json:"value"`
 }
 
 type PromSeries struct {

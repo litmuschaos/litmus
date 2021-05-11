@@ -3485,7 +3485,7 @@ type metricsPromResponse {
 }
 
 type metricsTimeStampValue{
-    date: Int
+    date: Float
     value:  Float
 }
 
@@ -3496,7 +3496,7 @@ type annotationsPromResponse {
 }
 
 type annotationsTimeStampValue{
-    date: Int
+    date: Float
     value:  Int
 }
 
@@ -17364,9 +17364,9 @@ func (ec *executionContext) _annotationsTimeStampValue_date(ctx context.Context,
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*int)
+	res := resTmp.(*float64)
 	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _annotationsTimeStampValue_value(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsTimeStampValue) (ret graphql.Marshaler) {
@@ -18184,9 +18184,9 @@ func (ec *executionContext) _metricsTimeStampValue_date(ctx context.Context, fie
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*int)
+	res := resTmp.(*float64)
 	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _metricsTimeStampValue_value(ctx context.Context, field graphql.CollectedField, obj *model.MetricsTimeStampValue) (ret graphql.Marshaler) {
