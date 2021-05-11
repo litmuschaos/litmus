@@ -441,6 +441,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
     }
   }, [experiment]);
 
+  useEffect(() => {
+    const parsedManifest =
+      manifest !== '' ? YAML.parse(manifest) : generatedYAML;
+    parsedManifest.metadata.name = `${workflow.name}-${Math.round(
+      new Date().getTime() / 1000
+    )}`;
+
+    workflowAction.setWorkflowManifest({
+      manifest: YAML.stringify(parsedManifest),
+    });
+  }, [workflow.name]);
+
   const onModalClose = () => {
     setAddExpModal(false);
   };
