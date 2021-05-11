@@ -23,6 +23,7 @@ import (
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
@@ -268,6 +269,32 @@ func (r *mutationResolver) DeleteManifestTemplate(ctx context.Context, templateI
 	return wfHandler.DeleteWorkflowTemplate(ctx, templateID)
 }
 
+func (r *mutationResolver) CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
+	ciResponse, err := imageRegistryOps.CreateImageRegistry(ctx, projectID, imageRegistryInfo)
+	if err != nil {
+		log.Print(err)
+	}
+	return ciResponse, err
+}
+
+func (r *mutationResolver) UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
+	uiRegistry, err := imageRegistryOps.UpdateImageRegistry(ctx, imageRegistryID, projectID, imageRegistryInfo)
+	if err != nil {
+		log.Print(err)
+	}
+
+	return uiRegistry, err
+}
+
+func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error) {
+	diRegistry, err := imageRegistryOps.DeleteImageRegistry(ctx, imageRegistryID, projectID)
+	if err != nil {
+		log.Print(err)
+	}
+
+	return diRegistry, err
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
 	if err != nil {
@@ -384,6 +411,24 @@ func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID stri
 
 func (r *queryResolver) GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error) {
 	return wfHandler.QueryTemplateWorkflowByID(ctx, templateID)
+}
+
+func (r *queryResolver) ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error) {
+	imageRegistries, err := imageRegistryOps.ListImageRegistries(ctx, projectID)
+	if err != nil {
+		log.Print(err)
+	}
+
+	return imageRegistries, err
+}
+
+func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error) {
+	imageRegistry, err := imageRegistryOps.GetImageRegistry(ctx, imageRegistryID, projectID)
+	if err != nil {
+		log.Print(err)
+	}
+
+	return imageRegistry, err
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
