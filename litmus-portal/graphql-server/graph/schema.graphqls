@@ -306,6 +306,10 @@ type Query {
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 
+  GetPredefinedExperimentList(HubName: String!, projectID: String!): [String!]!
+
+  GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+
   ListDataSource(project_id: String!): [DSResponse]! @authorized
 
   GetPromQuery(query: promInput): [promResponse!]! @authorized

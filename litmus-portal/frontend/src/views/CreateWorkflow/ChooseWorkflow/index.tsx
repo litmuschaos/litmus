@@ -143,7 +143,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
               <RadioButton value="C" onChange={(e) => handleChange(e)}>
                 <span data-testid="option">
                   {t('createWorkflow.chooseWorkflow.optionC')}
-                </span>
+                </span>{' '}
                 <span className={classes.bold}>
                   {t('createWorkflow.chooseWorkflow.myHubs')}
                 </span>

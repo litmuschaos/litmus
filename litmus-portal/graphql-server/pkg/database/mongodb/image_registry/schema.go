@@ -11,5 +11,5 @@ type ImageRegistry struct {
 	EnableRegistry    *bool   `bson:"enable_registry"`
 	UpdatedAt         string  `bson:"updated_at"`
 	CreatedAt         *string `bson:"created_at"`
-	IsRemoved         bool    `bson:"isRemoved"`
+	IsRemoved         bool    `bson:"is_removed"`
 }

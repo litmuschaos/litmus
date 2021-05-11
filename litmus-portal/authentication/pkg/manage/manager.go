@@ -1,7 +1,6 @@
 package manage
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -119,7 +118,6 @@ func (m *Manager) CreateUser(user *models.UserCredentials) (*models.PublicUserIn
 	} else if exists {
 		return nil, errors.ErrUserExists
 	}
-	fmt.Println("here")
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), types.PasswordEncryptionCost)
 	if err != nil {
 		return nil, err

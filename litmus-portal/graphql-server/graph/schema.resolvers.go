@@ -210,14 +210,26 @@ func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.
 }
 
 func (r *mutationResolver) EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
+	err := validate.ValidateRole(ctx, config.ProjectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return false, err
+	}
 	return gitOpsHandler.EnableGitOpsHandler(ctx, config)
 }
 
 func (r *mutationResolver) DisableGitOps(ctx context.Context, projectID string) (bool, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return false, err
+	}
 	return gitOpsHandler.DisableGitOpsHandler(ctx, projectID)
 }
 
 func (r *mutationResolver) UpdateGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
+	err := validate.ValidateRole(ctx, config.ProjectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return false, err
+	}
 	return gitOpsHandler.UpdateGitOpsDetailsHandler(ctx, config)
 }
 
@@ -367,6 +379,14 @@ func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*
 
 func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
 	return myhub.GetYAMLData(ctx, experimentInput)
+}
+
+func (r *queryResolver) GetPredefinedExperimentList(ctx context.Context, hubName string, projectID string) ([]string, error) {
+	return myhub.GetPredefinedExperiementList(hubName, projectID)
+}
+
+func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	return myhub.GetPredefinedExperimentYAMLData(ctx, experimentInput)
 }
 
 func (r *queryResolver) ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error) {

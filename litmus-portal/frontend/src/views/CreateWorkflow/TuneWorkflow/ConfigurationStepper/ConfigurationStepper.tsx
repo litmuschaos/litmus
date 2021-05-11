@@ -92,7 +92,7 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
     /**
      * Get the workflow name according to the experiment index
      */
-    const wfName = YAML.parse(manifest.engineYAML).metadata.name;
+    const wfName = YAML.parse(manifest.engineYAML).metadata.generateName;
 
     /**
      * if the template is a revert-chaos template

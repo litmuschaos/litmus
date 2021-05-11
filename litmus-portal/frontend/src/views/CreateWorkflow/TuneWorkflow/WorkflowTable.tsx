@@ -1,3 +1,4 @@
+/* eslint-disable no-const-assign */
 import { Typography, useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -81,7 +82,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           if (chaosEngine.kind === 'ChaosEngine') {
             expData.push({
               StepIndex: index,
-              Name: chaosEngine.metadata.name,
+              Name: chaosEngine.metadata.generateName,
               Namespace: chaosEngine.spec.appinfo?.appns ?? '',
               Application: chaosEngine.spec.appinfo?.applabel ?? '',
               Probes: chaosEngine.spec.experiments[0].spec.probe?.length ?? 0,
@@ -109,11 +110,13 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   // Revert Chaos
   const toggleRevertChaos = (manifest: string) => {
     const parsedYAML = YAML.parse(manifest);
-    let deleteEngines = 'kubectl delete chaosengine ';
+    let deleteEngines: string = '';
 
     // Else if Revert Chaos is set to true and it is not already set in the manifest
+    // For Workflows
     if (
       revertChaos &&
+      parsedYAML.kind === 'Workflow' &&
       parsedYAML.spec.templates[0].steps[
         parsedYAML.spec.templates[0].steps.length - 1
       ][0].name !== 'revert-chaos'
@@ -126,17 +129,56 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
       ]);
 
       parsed(manifest).forEach((_, i) => {
+        deleteEngines += `${
+          YAML.parse(
+            parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
+          ).metadata.labels['instance_id']
+        }, `;
+      });
+
+      parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
+        name: 'revert-chaos',
+        container: {
+          image: 'litmuschaos/k8s:latest',
+          command: ['sh', '-c'],
+          args: [
+            `kubectl delete chaosengine -l 'instance_id in (${deleteEngines})' -n {{workflow.parameters.adminModeNamespace}} `,
+          ],
+        },
+      };
+    }
+
+    // Else if Revert Chaos is set to True and it is not already set in the manifest
+    // For Cron Workflow
+    else if (
+      revertChaos &&
+      parsedYAML.kind === 'CronWorkflow' &&
+      parsedYAML.spec.workflowSpec.templates[0].steps[
+        parsedYAML.spec.workflowSpec.templates[0].steps.length - 1
+      ][0].name !== 'revert-chaos'
+    ) {
+      parsedYAML.spec.workflowSpec.templates[0].steps.push([
+        {
+          name: 'revert-chaos',
+          template: 'revert-chaos',
+        },
+      ]);
+
+      parsed(manifest).forEach((_, i) => {
         deleteEngines = `${
           deleteEngines +
           YAML.parse(
-            parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
+            parsedYAML.spec.workflowSpec.templates[2 + i].inputs.artifacts[0]
+              .raw.data
           ).metadata.name
         } `;
       });
 
       deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';
 
-      parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
+      parsedYAML.spec.workflowSpec.templates[
+        parsedYAML.spec.workflowSpec.templates.length
+      ] = {
         name: 'revert-chaos',
         container: {
           image: 'litmuschaos/k8s:latest',

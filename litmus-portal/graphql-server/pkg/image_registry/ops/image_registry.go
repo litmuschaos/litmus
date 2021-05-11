@@ -94,7 +94,7 @@ func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 
 func DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error) {
 	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}}
-	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
+	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
 
 	err := image_registry.UpdateImageRegistry(ctx, query, update)
 	if err != nil {

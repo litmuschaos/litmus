@@ -321,26 +321,28 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetCharts               func(childComplexity int, hubName string, projectID string) int
-		GetCluster              func(childComplexity int, projectID string, clusterType *string) int
-		GetGitOpsDetails        func(childComplexity int, projectID string) int
-		GetHubExperiment        func(childComplexity int, experimentInput model.ExperimentInput) int
-		GetHubStatus            func(childComplexity int, projectID string) int
-		GetImageRegistry        func(childComplexity int, imageRegistryID string, projectID string) int
-		GetProject              func(childComplexity int, projectID string) int
-		GetPromQuery            func(childComplexity int, query *model.PromInput) int
-		GetScheduledWorkflows   func(childComplexity int, projectID string) int
-		GetTemplateManifestByID func(childComplexity int, templateID string) int
-		GetUser                 func(childComplexity int, username string) int
-		GetWorkFlowRuns         func(childComplexity int, projectID string) int
-		GetYAMLData             func(childComplexity int, experimentInput model.ExperimentInput) int
-		ListDashboard           func(childComplexity int, projectID string) int
-		ListDataSource          func(childComplexity int, projectID string) int
-		ListImageRegistry       func(childComplexity int, projectID string) int
-		ListManifestTemplate    func(childComplexity int, projectID string) int
-		ListProjects            func(childComplexity int) int
-		ListWorkflow            func(childComplexity int, projectID string, workflowIds []*string) int
-		Users                   func(childComplexity int) int
+		GetCharts                   func(childComplexity int, hubName string, projectID string) int
+		GetCluster                  func(childComplexity int, projectID string, clusterType *string) int
+		GetGitOpsDetails            func(childComplexity int, projectID string) int
+		GetHubExperiment            func(childComplexity int, experimentInput model.ExperimentInput) int
+		GetHubStatus                func(childComplexity int, projectID string) int
+		GetImageRegistry            func(childComplexity int, imageRegistryID string, projectID string) int
+		GetPredefinedExperimentList func(childComplexity int, hubName string, projectID string) int
+		GetPredefinedExperimentYaml func(childComplexity int, experimentInput model.ExperimentInput) int
+		GetProject                  func(childComplexity int, projectID string) int
+		GetPromQuery                func(childComplexity int, query *model.PromInput) int
+		GetScheduledWorkflows       func(childComplexity int, projectID string) int
+		GetTemplateManifestByID     func(childComplexity int, templateID string) int
+		GetUser                     func(childComplexity int, username string) int
+		GetWorkFlowRuns             func(childComplexity int, projectID string) int
+		GetYAMLData                 func(childComplexity int, experimentInput model.ExperimentInput) int
+		ListDashboard               func(childComplexity int, projectID string) int
+		ListDataSource              func(childComplexity int, projectID string) int
+		ListImageRegistry           func(childComplexity int, projectID string) int
+		ListManifestTemplate        func(childComplexity int, projectID string) int
+		ListProjects                func(childComplexity int) int
+		ListWorkflow                func(childComplexity int, projectID string, workflowIds []*string) int
+		Users                       func(childComplexity int) int
 	}
 
 	SSHKey struct {
@@ -579,6 +581,8 @@ type QueryResolver interface {
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
 	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
+	GetPredefinedExperimentList(ctx context.Context, hubName string, projectID string) ([]string, error)
+	GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 	ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error)
 	GetPromQuery(ctx context.Context, query *model.PromInput) ([]*model.PromResponse, error)
 	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error)
@@ -2252,6 +2256,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetImageRegistry(childComplexity, args["image_registry_id"].(string), args["project_id"].(string)), true
+
+	case "Query.GetPredefinedExperimentList":
+		if e.complexity.Query.GetPredefinedExperimentList == nil {
+			break
+		}
+
+		args, err := ec.field_Query_GetPredefinedExperimentList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPredefinedExperimentList(childComplexity, args["HubName"].(string), args["projectID"].(string)), true
+
+	case "Query.GetPredefinedExperimentYAML":
+		if e.complexity.Query.GetPredefinedExperimentYaml == nil {
+			break
+		}
+
+		args, err := ec.field_Query_GetPredefinedExperimentYAML_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPredefinedExperimentYaml(childComplexity, args["experimentInput"].(model.ExperimentInput)), true
 
 	case "Query.getProject":
 		if e.complexity.Query.GetProject == nil {
@@ -4102,6 +4130,10 @@ type Query {
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 
+  GetPredefinedExperimentList(HubName: String!, projectID: String!): [String!]!
+
+  GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+
   ListDataSource(project_id: String!): [DSResponse]! @authorized
 
   GetPromQuery(query: promInput): [promResponse!]! @authorized
@@ -4941,6 +4973,42 @@ func (ec *executionContext) field_Query_GetImageRegistry_args(ctx context.Contex
 		}
 	}
 	args["project_id"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetPredefinedExperimentList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["HubName"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["HubName"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetPredefinedExperimentYAML_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ExperimentInput
+	if tmp, ok := rawArgs["experimentInput"]; ok {
+		arg0, err = ec.unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentInput"] = arg0
 	return args, nil
 }
 
@@ -13507,6 +13575,88 @@ func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetYAMLData(rctx, args["experimentInput"].(model.ExperimentInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_GetPredefinedExperimentList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_GetPredefinedExperimentList_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPredefinedExperimentList(rctx, args["HubName"].(string), args["projectID"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_GetPredefinedExperimentYAML(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_GetPredefinedExperimentYAML_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPredefinedExperimentYaml(rctx, args["experimentInput"].(model.ExperimentInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22522,6 +22672,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getYAMLData(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "GetPredefinedExperimentList":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_GetPredefinedExperimentList(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "GetPredefinedExperimentYAML":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_GetPredefinedExperimentYAML(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
