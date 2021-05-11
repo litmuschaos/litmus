@@ -288,7 +288,7 @@ func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (st
 	return YAMLData, nil
 }
 
-// GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
+// GetPredefinedExperimentYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
 func GetPredefinedExperimentYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
 	YAMLPath := handler.GetPredefinedExperimentManifest(ctx, experimentInput)
 	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
