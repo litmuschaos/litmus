@@ -134,16 +134,14 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           }`
         );
       });
-
+      const engineIds = deleteEngines.join(' , ');
       parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
         name: 'revert-chaos',
         container: {
           image: 'litmuschaos/k8s:latest',
           command: ['sh', '-c'],
           args: [
-            `kubectl delete chaosengine -l 'instance_id in (${deleteEngines.join(
-              ' , '
-            )})' -n {{workflow.parameters.adminModeNamespace}} `,
+            `kubectl delete chaosengine -l 'instance_id in (${engineIds})' -n {{workflow.parameters.adminModeNamespace}} `,
           ],
         },
       };
