@@ -9,7 +9,7 @@ export default [
     gitLink: `https://github.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/sock-shop-demo`,
     provider: 'ChaosNative',
     description: 'Induces chaos on Sock-Shop application',
-    totalRuns: 110,
+    totalRuns: 1000,
     isCustom: false,
     details:
       'This workflow installs and executes chaos on the popular demo application sock-shop, ' +
@@ -25,28 +25,6 @@ export default [
   },
   {
     workflowID: 1,
-    title: 'kube-proxy-chaos',
-    chaosinfra: true,
-    urlToIcon: '/icons/kubernetes-platform.svg',
-    chaosWkfCRDLink: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all/workflow.yaml`,
-    chaosWkfCRDLink_Recur: `https://raw.githubusercontent.com/litmuschaos/chaos-charts/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all/workflow_cron.yaml`,
-    gitLink: `https://github.com/litmuschaos/chaos-charts/blob/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/kube-proxy-all`,
-    provider: 'MayaData',
-    description: 'Induces chaos on kube proxy',
-    totalRuns: 9000,
-    isCustom: true,
-    details:
-      'Causes (forced/graceful) pod failure of specific/random replicas of kube proxy and the node it runs on' +
-      'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
-      'of the application The workflow also simulates memory spike on kube proxy pod and its node.',
-    recommendation:
-      'Check whether the application is resilient to the kube proxy failure, once the argo chaos workflow is completed.',
-    experimentinfo:
-      'Provide the application info in spec.appinfo Override the individual experiment tunables if desired ' +
-      'in experiments.spec.components.env ',
-  },
-  {
-    workflowID: 2,
     title: 'podtato-head-chaos',
     chaosinfra: false,
     urlToIcon: '/icons/podtato_head.png',
@@ -55,7 +33,7 @@ export default [
     gitLink: `https://github.com/litmuschaos/chaos-charts/tree/${process.env.REACT_APP_HUB_BRANCH_NAME}/workflows/podtato-head`,
     provider: 'ChaosNative',
     description: 'Induces chaos on podtato-head application',
-    totalRuns: 10,
+    totalRuns: 300,
     isCustom: false,
     details:
       'This workflow installs and executes chaos on the popular demo application podtato-head, ' +
