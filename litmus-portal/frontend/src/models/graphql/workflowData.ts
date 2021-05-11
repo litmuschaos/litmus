@@ -53,6 +53,8 @@ export interface WorkflowRun {
   workflow_run_id: string;
   cluster_type: string;
   cluster_id: string;
+  completed: boolean;
+  not_available: boolean;
 }
 
 export interface Workflow {

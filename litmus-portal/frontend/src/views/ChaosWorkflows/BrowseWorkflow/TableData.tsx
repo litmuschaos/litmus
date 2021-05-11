@@ -96,7 +96,13 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
     <>
       <TableCell className={classes.tableDataStatus}>
         <CustomStatus
-          status={exeData.finishedAt.length === 0 ? 'Running' : exeData.phase}
+          status={
+            data.not_available === true
+              ? 'Not Available'
+              : data.completed !== true
+              ? 'Running'
+              : exeData.phase
+          }
         />
       </TableCell>
       <TableCell
