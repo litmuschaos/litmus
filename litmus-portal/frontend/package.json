@@ -63,7 +63,7 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "subscriptions-transport-ws": "^0.9.17",
-    "uuid": "^8.3.1",
+    "uuid": "^8.3.2",
     "yaml": "^1.10.0"
   },
   "lint-staged": {

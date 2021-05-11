@@ -118,24 +118,26 @@ const TableData: React.FC<TableDataProps> = ({
           </div>
         ) : null}
       </StyledTableCell>
-      <StyledTableCell className={classes.tableCellWidth}>
-        <Button
-          onClick={() => {
-            handleClose();
-            onViewLogsClick();
-          }}
-          style={{ textTransform: 'none' }}
-        >
-          <div className={classes.applicationDetails}>
-            <img src="/icons/eye.svg" alt="eye" />
-            <Typography>
-              <span className={classes.viewLogs}>
-                <strong>{t('workflowDetailsView.tableView.viewLogs')}</strong>
-              </span>
-            </Typography>
-          </div>
-        </Button>
-      </StyledTableCell>
+      {data.type === 'ChaosEngine' && (
+        <StyledTableCell className={classes.tableCellWidth}>
+          <Button
+            onClick={() => {
+              handleClose();
+              onViewLogsClick();
+            }}
+            style={{ textTransform: 'none' }}
+          >
+            <div className={classes.applicationDetails}>
+              <img src="/icons/eye.svg" alt="eye" />
+              <Typography>
+                <span className={classes.viewLogs}>
+                  <strong>{t('workflowDetailsView.tableView.viewLogs')}</strong>
+                </span>
+              </Typography>
+            </div>
+          </Button>
+        </StyledTableCell>
+      )}
     </>
   );
 };
