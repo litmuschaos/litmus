@@ -109,7 +109,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   // Revert Chaos
   const toggleRevertChaos = (manifest: string) => {
     const parsedYAML = YAML.parse(manifest);
-    const deleteEngines: string[] = [];
+    const deleteEngines: any[] = [];
 
     // Else if Revert Chaos is set to true and it is not already set in the manifest
     if (
