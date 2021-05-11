@@ -235,16 +235,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 500,
     fontSize: '1rem',
   },
-  editToggleIcon: {
-    marginRight: theme.spacing(1),
-  },
-  projectNameText: {
-    marginLeft: theme.spacing(8),
-    width: 100,
-    '& .MuiInputBase-root.Mui-disabled': {
-      color: theme.palette.text.primary,
-    },
-  },
   active: {
     textTransform: 'capitalize',
     color: theme.palette.primary.main,
