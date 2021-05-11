@@ -62,15 +62,15 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& path.errorIcon': {
         transform: (props: StyleProps) =>
-          `scale(1.8) translate(-8px, ${props.horizontal ? -8.5 : -2.8}px)`,
+          `scale(1.8) translate(-8px, ${props.horizontal ? -8.5 : -5.8}px)`,
       },
       '& path.omittedIcon': {
         transform: (props: StyleProps) =>
-          `scale(1.8) translate(-8.5px, ${props.horizontal ? -9 : -2.8}px)`,
+          `scale(1.8) translate(-8.5px, ${props.horizontal ? -9 : -6}px)`,
       },
       '& path.skippedIcon': {
         transform: (props: StyleProps) =>
-          `scale(1.8) translate(-8px, ${props.horizontal ? -8 : -2.8}px)`,
+          `scale(1.8) translate(-8px, ${props.horizontal ? -8 : -5}px)`,
       },
       '& g.Succeeded': {
         '& circle': {
