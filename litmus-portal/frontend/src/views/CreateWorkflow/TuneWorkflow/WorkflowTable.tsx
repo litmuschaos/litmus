@@ -1,3 +1,4 @@
+/* eslint-disable no-const-assign */
 import { Typography, useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -109,7 +110,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   // Revert Chaos
   const toggleRevertChaos = (manifest: string) => {
     const parsedYAML = YAML.parse(manifest);
-    const deleteEngines: any[] = [];
+    const deleteEngines: string[] = [];
 
     // Else if Revert Chaos is set to true and it is not already set in the manifest
     if (
@@ -134,14 +135,16 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           }`
         );
       });
-      const engineIds = deleteEngines.join(' , ');
+
       parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
         name: 'revert-chaos',
         container: {
           image: 'litmuschaos/k8s:latest',
           command: ['sh', '-c'],
           args: [
-            `kubectl delete chaosengine -l 'instance_id in (${engineIds})' -n {{workflow.parameters.adminModeNamespace}} `,
+            `kubectl delete chaosengine -l 'instance_id in (${deleteEngines.join(
+              ' , '
+            )})' -n {{workflow.parameters.adminModeNamespace}} `,
           ],
         },
       };
