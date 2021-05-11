@@ -63,7 +63,6 @@ interface SelectedDashboardInformation {
   dashboardListForAgent: ListDashboardResponse[];
   metaData: ListDashboardResponse[];
   dashboardKey: string;
-  selectionOverride: Boolean;
   panelNameAndIDList: PanelNameAndID[];
 }
 
@@ -98,7 +97,6 @@ const DashboardPage: React.FC = () => {
     dashboardListForAgent: [],
     metaData: [],
     dashboardKey: 'Default',
-    selectionOverride: false,
     panelNameAndIDList: [],
   });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -260,10 +258,6 @@ const DashboardPage: React.FC = () => {
               selectedDataSourceURL: selectedDataSource.ds_url,
               selectedDataSourceID: selectedDataSource.ds_id,
               selectedDataSourceName: selectedDataSource.ds_name,
-            });
-            setSelectedDashboardInformation({
-              ...selectedDashboardInformation,
-              selectionOverride: false,
             });
           }
           if (
