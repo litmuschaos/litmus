@@ -102,6 +102,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(5),
     width: '75%',
   },
+  validation: {
+    marginLeft: theme.spacing(2),
+    color: theme.palette.error.main,
+  },
   schCol2: {
     marginLeft: theme.spacing(5),
     display: 'flex',
