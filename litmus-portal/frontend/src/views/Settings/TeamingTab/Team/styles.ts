@@ -17,14 +17,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(1.5),
     color: theme.palette.primary.main,
   },
-  underline: {
-    '&&&:before': {
-      borderBottom: 'none',
-    },
-    '&&:after': {
-      borderBottom: 'none',
-    },
-  },
   members: {
     display: 'flex',
     justifyContent: 'flex-start',
@@ -237,8 +229,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   project: {
     margin: theme.spacing(3.875, 'auto', 2.5, 'auto'),
-    display: 'flex',
-    alignItems: 'center',
   },
   projectName: {
     textTransform: 'uppercase',

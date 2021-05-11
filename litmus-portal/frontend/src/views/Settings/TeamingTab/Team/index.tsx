@@ -297,7 +297,7 @@ const TeamingTab: React.FC = () => {
                 <Center>
                   <div className={classes.project}>
                     <EditableText
-                      label="Project ID"
+                      label={t('settings.teamingTab.editProjectLabel')}
                       defaultValue={dataB ? dataB.getProject.name : ''}
                       onSave={(value) => {
                         updateProjectName({
