@@ -45,7 +45,6 @@ export const constants = {
    * Tuneworkflow index
    */
   adminMode: 'adminModeNamespace',
-
   chaosHub: 'Chaos Hub',
   workflow: 'Workflow',
 };
