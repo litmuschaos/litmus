@@ -349,6 +349,10 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(3),
     marginLeft: theme.spacing(2),
   },
+
+  tableRowSelected: {
+    backgroundColor: `${theme.palette.background.paper} !important`,
+  },
 }));
 
 export const useOutlinedInputStyles = makeStyles((theme) => ({

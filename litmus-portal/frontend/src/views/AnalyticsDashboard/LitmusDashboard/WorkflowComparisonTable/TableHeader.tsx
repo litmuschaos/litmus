@@ -3,7 +3,7 @@ import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBoxWhite } from '../../../../components/CheckBox';
 import useStyles, { StyledTableCell } from './styles';
 
 interface SortData {
@@ -49,7 +49,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
       <TableRow className={classes.tableHead}>
         <StyledTableCell padding="checkbox" className={classes.checkbox}>
           {comparisonState === false ? (
-            <CheckBox
+            <CheckBoxWhite
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}

@@ -3,7 +3,7 @@ import Icon from '@material-ui/core/Icon';
 import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBoxBlue } from '../../../../components/CheckBox';
 import DashboardList from '../../../../components/PreconfiguredDashboards/data';
 import {
   DashboardConfigurationDetails,
@@ -100,17 +100,17 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'analyticsDashboard.monitoringDashboardPage.infoDropdown.metaData2'
               )}
             </Typography>
-            <div>
+            <div className={classes.iconWithTextDiv}>
+              <img
+                src={`/icons/${
+                  dashboardConfigurationDetails.type === DashboardList[0].name
+                    ? 'kubernetes-platform'
+                    : 'sock-shop'
+                }.svg`}
+                alt="dashboard Icon"
+                className={classes.inlineIcon}
+              />
               <Typography className={classes.infoValue}>
-                <img
-                  src={`/icons/${
-                    dashboardConfigurationDetails.type === DashboardList[0].name
-                      ? 'kubernetes-platform'
-                      : 'sock-shop'
-                  }.svg`}
-                  alt="dashboard Icon"
-                  className={classes.dashboardIcon}
-                />
                 {dashboardConfigurationDetails.type}
               </Typography>
             </div>
@@ -121,8 +121,15 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'analyticsDashboard.monitoringDashboardPage.infoDropdown.metaData3'
               )}
             </Typography>
-            <Typography className={classes.infoValue}>
-              {dashboardConfigurationDetails.dataSourceName}
+            <div className={classes.iconWithTextDiv}>
+              <img
+                src="/icons/prometheus.svg"
+                alt="data source Icon"
+                className={classes.inlineIcon}
+              />
+              <Typography className={classes.infoValue}>
+                {dashboardConfigurationDetails.dataSourceName}
+              </Typography>
               <Icon
                 onClick={() => {
                   window.open(dashboardConfigurationDetails.dataSourceURL);
@@ -134,7 +141,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                   className={classes.linkIcon}
                 />
               </Icon>
-            </Typography>
+            </div>
           </div>
           <div className={classes.dashboardMetaDataItem}>
             <Typography className={classes.infoKey}>
@@ -158,7 +165,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               <FormGroup key="application-group">
                 <FormControlLabel
                   control={
-                    <CheckBox
+                    <CheckBoxBlue
                       checked={selectedApplications.includes(application)}
                       onChange={() => handleApplicationSelect(application)}
                       name={application}
@@ -181,7 +188,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               <FormGroup key="application-group">
                 <FormControlLabel
                   control={
-                    <CheckBox
+                    <CheckBoxBlue
                       checked={selectedMetrics.includes(metric.id)}
                       onChange={() => handleMetricSelect(metric.id)}
                       name={metric.name}

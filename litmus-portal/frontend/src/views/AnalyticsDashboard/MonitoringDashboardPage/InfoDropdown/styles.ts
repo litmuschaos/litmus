@@ -8,6 +8,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     background: theme.palette.disabledBackground,
+    height: '3.25rem',
+    paddingTop: theme.spacing(0.5),
   },
   headerText: {
     fontWeight: 'bold',
@@ -70,19 +72,25 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: '1fr 1fr',
     maxHeight: '8rem',
     overflowY: 'scroll',
+    paddingLeft: theme.spacing(1),
   },
   formControlLabel: {
     fontSize: '0.625rem',
     letterSpacing: '0.02em',
     lineHeight: '150%',
   },
-  dashboardIcon: {
-    marginRight: theme.spacing(0.5),
+  inlineIcon: {
+    margin: theme.spacing(0.5, 1, 0, 0),
     width: '1rem',
     height: '1rem',
   },
   linkIcon: {
-    marginLeft: theme.spacing(0.5),
+    margin: theme.spacing(0, 0, 0.45, 0.75),
+    width: '1rem',
+    height: '1rem',
+  },
+  iconWithTextDiv: {
+    display: 'flex',
   },
 }));
 

@@ -218,6 +218,8 @@ export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.hint,
     background: theme.palette.background.paper,
   },
+  focused: {},
+  notchedOutline: {},
 }));
 
 export default useStyles;

@@ -1,9 +1,29 @@
 import { Checkbox, withStyles } from '@material-ui/core';
 
-const CheckBox = withStyles((theme) => ({
+export const CheckBoxWhite = withStyles((theme) => ({
   root: {
-    color: theme.palette.text.hint,
+    color: theme.palette.border.main,
+    '&$checked': {
+      color: theme.palette.background.paper,
+      '& .MuiSvgIcon-root': {
+        background: theme.palette.secondary.main,
+        borderRadius: '0.25rem',
+      },
+    },
   },
+  checked: {},
 }))(Checkbox);
 
-export default CheckBox;
+export const CheckBoxBlue = withStyles((theme) => ({
+  root: {
+    color: theme.palette.border.main,
+    '&$checked': {
+      color: theme.palette.cards.header,
+      '& .MuiSvgIcon-root': {
+        background: theme.palette.secondary.main,
+        borderRadius: '0.25rem',
+      },
+    },
+  },
+  checked: {},
+}))(Checkbox);

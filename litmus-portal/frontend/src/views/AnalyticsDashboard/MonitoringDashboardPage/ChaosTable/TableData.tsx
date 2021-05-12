@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBoxBlue } from '../../../../components/CheckBox';
 import { StyledTableCell } from '../../../../components/StyledTableCell';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
 import {
@@ -25,7 +25,7 @@ const TableData: React.FC<TableDataProps> = ({
   return (
     <>
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
-        <CheckBox
+        <CheckBoxBlue
           checked={itemSelectionStatus}
           inputProps={{ 'aria-labelledby': labelIdentifier }}
         />

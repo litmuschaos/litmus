@@ -705,13 +705,6 @@ const WorkflowComparisonTable = () => {
           </section>
           <section className="table section">
             <Paper className={classes.tableBody}>
-              {/* <MuiThemeProvider
-                theme={
-                  compare === false
-                    ? customThemeAnalyticsTable
-                    : customThemeAnalyticsTableCompareMode
-                }
-              > */}
               <TableContainer
                 className={
                   compare === false && selected.length <= 2
@@ -778,6 +771,7 @@ const WorkflowComparisonTable = () => {
                               tabIndex={-1}
                               key={data.workflow_id}
                               selected={isItemSelected}
+                              classes={{ selected: classes.tableRowSelected }}
                             >
                               <TableData
                                 data={data}
