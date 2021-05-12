@@ -85,7 +85,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
             setName(w.title);
             setDescription(w.details);
             setIcon(w.urlToIcon);
-            setCRDLink(w.chaosWkfCRDLink);
+            setCRDLink(w.experimentPath);
           }
           return null;
         });

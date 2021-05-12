@@ -425,3 +425,9 @@ export const GET_TEMPLATE_BY_ID = gql`
     }
   }
 `;
+
+export const GET_PREDEFINED_EXPERIMENT_YAML = gql`
+  query GetPredefinedExperimentYAML($experimentInput: ExperimentInput!) {
+    GetPredefinedExperimentYAML(experimentInput: $experimentInput)
+  }
+`;

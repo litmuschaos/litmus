@@ -78,6 +78,64 @@ export const updateEngineName = (parsedYaml: any) => {
   }
 };
 
+export const updateWorkflowNameLabel = (
+  parsedYaml: any,
+  workflowName: string
+) => {
+  try {
+    if (parsedYaml.spec !== undefined) {
+      const yamlData =
+        parsedYaml.kind === constants.workflow
+          ? parsedYaml.spec
+          : parsedYaml.spec.workflowSpec;
+      yamlData.templates.forEach((template: any) => {
+        if (template.inputs && template.inputs.artifacts) {
+          template.inputs.artifacts.forEach((artifact: any) => {
+            const chaosEngine = YAML.parse(artifact.raw.data);
+            // Condition to check for the kind as ChaosEngine
+            if (chaosEngine.kind === 'ChaosEngine') {
+              if (chaosEngine.metadata.labels !== undefined) {
+                chaosEngine.metadata.labels['workflow_name'] = workflowName;
+              } else {
+                chaosEngine.metadata['labels'] = {
+                  workflow_name: workflowName,
+                };
+              }
+              // Condition to check the namespace
+              if (typeof chaosEngine.metadata.namespace === 'object') {
+                // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
+                const namespace = Object.keys(
+                  chaosEngine.metadata.namespace
+                )[0].replace(/\s/g, '');
+                chaosEngine.metadata.namespace = `{${namespace}}`;
+              }
+
+              // Edge Case: Condition to check the appns
+              // Required because while parsing the chaos engine
+              // '{{workflow.parameters.adminModeNamespace}}' changes to a JSON object
+              if (chaosEngine.spec.appinfo && chaosEngine.spec.appinfo.appns)
+                if (typeof chaosEngine.spec.appinfo.appns === 'object') {
+                  // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
+                  const appns = Object.keys(
+                    chaosEngine.spec.appinfo.appns
+                  )[0].replace(/\s/g, '');
+                  chaosEngine.spec.appinfo.appns = `{${appns}}`;
+                }
+            }
+            // Update the artifact in template
+            const artifactData = artifact;
+            artifactData.raw.data = YAML.stringify(chaosEngine);
+          });
+        }
+      });
+    }
+    return parsedYaml;
+  } catch (err) {
+    console.error(err);
+    return parsedYaml;
+  }
+};
+
 const parsed = (yaml: string) => {
   const file = yaml;
   if (file === 'error') {
