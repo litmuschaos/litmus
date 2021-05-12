@@ -12,8 +12,8 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import YAML from 'yaml';
 import { v4 as uuidv4 } from 'uuid';
+import YAML from 'yaml';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
@@ -458,7 +458,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     workflowAction.setWorkflowManifest({
       manifest: YAML.stringify(parsedManifest),
     });
-  }, [workflow.name]);
+  }, [manifest]);
 
   const onModalClose = () => {
     setAddExpModal(false);

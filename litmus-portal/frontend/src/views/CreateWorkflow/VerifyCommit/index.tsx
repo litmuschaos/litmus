@@ -325,14 +325,13 @@ const VerifyCommit = forwardRef(
               {t('createWorkflow.verifyCommit.summary.header')}
             </Typography>
 
-            <div className={classes.outerSum}>
-              <div className={classes.summaryDiv}>
-                <div className={classes.innerSumDiv}>
-                  <Typography className={classes.col1}>
-                    {t('createWorkflow.verifyCommit.summary.workflowName')}:
-                  </Typography>
-                </div>
-                <div className={classes.col2} data-cy="WorkflowName">
+            <div className={classes.summaryWrapper}>
+              <div className={classes.itemWrapper}>
+                <Typography className={classes.left}>
+                  {t('createWorkflow.verifyCommit.summary.workflowName')}:
+                </Typography>
+
+                <div className={classes.right} data-cy="WorkflowName">
                   <EditableText
                     defaultValue={fetchWorkflowNameFromManifest(manifest)}
                     id="name"
@@ -342,24 +341,20 @@ const VerifyCommit = forwardRef(
                 </div>
               </div>
 
-              <div className={classes.summaryDiv}>
-                <div className={classes.innerSumDiv}>
-                  <Typography className={classes.col1}>
-                    {t('createWorkflow.verifyCommit.summary.clustername')}:
-                  </Typography>
-                </div>
-                <Typography className={classes.clusterName}>
-                  {clustername}
+              <div className={classes.itemWrapper}>
+                <Typography className={classes.left}>
+                  {t('createWorkflow.verifyCommit.summary.clustername')}:
                 </Typography>
+
+                <Typography className={classes.right}>{clustername}</Typography>
               </div>
 
-              <div className={classes.summaryDiv}>
-                <div className={classes.innerSumDiv}>
-                  <Typography className={classes.col1}>
-                    {t('createWorkflow.verifyCommit.summary.desc')}:
-                  </Typography>
-                </div>
-                <div className={classes.col2}>
+              <div className={classes.itemWrapper}>
+                <Typography className={classes.left}>
+                  {t('createWorkflow.verifyCommit.summary.desc')}:
+                </Typography>
+
+                <div className={classes.right}>
                   {workflow.description !== '' ? (
                     <EditableText
                       defaultValue={workflow.description}
@@ -374,26 +369,25 @@ const VerifyCommit = forwardRef(
                 </div>
               </div>
 
-              <div className={classes.summaryDiv}>
-                <div className={classes.innerSumDiv}>
-                  <div className={classes.subjectDiv}>
-                    <Typography className={classes.subject}>
-                      {t('createWorkflow.verifyCommit.summary.subject')}:
-                    </Typography>
-                    <Tooltip
-                      title={
-                        <Typography className={classes.subjectDesc}>
-                          {t('createWorkflow.verifyCommit.summary.subjectDesc')}
-                        </Typography>
-                      }
-                    >
-                      <IconButton aria-label="info">
-                        <InfoIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </div>
+              <div className={classes.itemWrapper}>
+                <div className={classes.leftFlex}>
+                  <Typography className={classes.verticalAlign}>
+                    {t('createWorkflow.verifyCommit.summary.subject')}:
+                  </Typography>
+                  <Tooltip
+                    title={
+                      <Typography className={classes.subjectDesc}>
+                        {t('createWorkflow.verifyCommit.summary.subjectDesc')}
+                      </Typography>
+                    }
+                  >
+                    <IconButton aria-label="info">
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
                 </div>
-                <div className={classes.col2}>
+
+                <div className={classes.right}>
                   {subject !== '' ? (
                     <EditableText
                       defaultValue={subject}
@@ -408,44 +402,41 @@ const VerifyCommit = forwardRef(
                 </div>
               </div>
 
-              <div className={classes.summaryDiv}>
-                <div className={classes.innerSumDiv}>
-                  <Typography className={classes.col1}>
-                    {t('createWorkflow.verifyCommit.summary.schedule')}:
-                  </Typography>
-                </div>
-                <div className={classes.schCol2}>
+              <div className={classes.itemWrapper}>
+                <Typography className={classes.left}>
+                  {t('createWorkflow.verifyCommit.summary.schedule')}:
+                </Typography>
+
+                <div className={classes.right}>
                   {cronSyntax === '' ? (
-                    <Typography className={classes.schedule}>
+                    <Typography>
                       {t('createWorkflow.verifyCommit.summary.schedulingNow')}
                     </Typography>
                   ) : (
-                    <Typography className={classes.schedule}>
-                      {cronstrue.toString(cronSyntax)}
-                    </Typography>
+                    <Typography>{cronstrue.toString(cronSyntax)}</Typography>
                   )}
 
-                  <div className={classes.editButton}>
-                    <IconButton onClick={() => handleGoToStep(5)}>
-                      <EditIcon className={classes.editIcon} data-cy="edit" />
-                    </IconButton>
-                  </div>
+                  <IconButton
+                    className={classes.iconBtn}
+                    onClick={() => handleGoToStep(5)}
+                  >
+                    <EditIcon className={classes.editIcon} data-cy="edit" />
+                  </IconButton>
                 </div>
               </div>
-              <div className={classes.summaryDiv}>
-                <div className={classes.innerSumDiv}>
-                  <Typography className={classes.col1}>
-                    {t('createWorkflow.verifyCommit.summary.adjustedWeights')}:
-                  </Typography>
-                </div>
+
+              <div className={classes.itemWrapper}>
+                <Typography className={classes.left}>
+                  {t('createWorkflow.verifyCommit.summary.adjustedWeights')}:
+                </Typography>
                 {weights.length === 0 ? (
-                  <div>
-                    <Typography className={classes.errorText}>
-                      {t('createWorkflow.verifyCommit.error')}
-                    </Typography>
-                  </div>
+                  <Typography
+                    className={`${classes.errorText} ${classes.right}`}
+                  >
+                    {t('createWorkflow.verifyCommit.error')}
+                  </Typography>
                 ) : (
-                  <div className={classes.adjWeights}>
+                  <div className={classes.right}>
                     <div className={classes.progress}>
                       {WorkflowTestData.map((Test) => (
                         <AdjustedWeights
@@ -468,15 +459,14 @@ const VerifyCommit = forwardRef(
                   </div>
                 )}
               </div>
-              <div className={classes.summaryDiv}>
-                <div className={classes.innerSumDiv}>
-                  <Typography className={classes.col1}>
-                    {t('createWorkflow.verifyCommit.YAML')}
-                  </Typography>
-                </div>
-                <div className={classes.yamlFlex}>
+
+              <div className={classes.itemWrapper}>
+                <Typography className={classes.left}>
+                  {t('createWorkflow.verifyCommit.YAML')}
+                </Typography>
+                <div className={classes.rightColumn}>
                   {weights.length === 0 ? (
-                    <Typography className={classes.spacingHorizontal}>
+                    <Typography className={classes.errorText}>
                       {t('createWorkflow.verifyCommit.errYaml')}
                     </Typography>
                   ) : (
