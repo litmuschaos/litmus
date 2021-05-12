@@ -38,18 +38,18 @@ func CreateClient(url string) (apiV1.API, error) {
 
 // Query is used to query prometheus using client
 func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
-	client, err := CreateClient(prom.URL)
+	client, err := CreateClient(prom.DSdetails.URL)
 
 	if err != nil {
 		return nil, err
 	}
 
-	startTime, err := strconv.ParseInt(prom.Start, 10, 64)
+	startTime, err := strconv.ParseInt(prom.DSdetails.Start, 10, 64)
 	if err != nil {
 		return nil, err
 	}
 
-	endTime, err := strconv.ParseInt(prom.End, 10, 64)
+	endTime, err := strconv.ParseInt(prom.DSdetails.End, 10, 64)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 	data, ok := value.(md.Matrix)
 	if !ok {
-		log.Print("Unsupported result format: %s", value.Type().String())
+		log.Printf("Unsupported result format: %s", value.Type().String())
 	}
 
 	var (
@@ -169,17 +169,17 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 // LabelNamesAndValues is used to query prometheus using client for label names and values of a series
 func LabelNamesAndValues(prom analytics.PromSeries) (*model.PromSeriesResponse, error) {
-	client, err := CreateClient(prom.URL)
+	client, err := CreateClient(prom.DSdetails.URL)
 	if err != nil {
 		return &model.PromSeriesResponse{}, err
 	}
 
-	startTime, err := strconv.ParseInt(prom.Start, 10, 64)
+	startTime, err := strconv.ParseInt(prom.DSdetails.Start, 10, 64)
 	if err != nil {
 		return &model.PromSeriesResponse{}, err
 	}
 
-	endTime, err := strconv.ParseInt(prom.End, 10, 64)
+	endTime, err := strconv.ParseInt(prom.DSdetails.End, 10, 64)
 	if err != nil {
 		return &model.PromSeriesResponse{}, err
 	}

@@ -8,9 +8,7 @@ type PromQuery struct {
 	Legend     *string
 	Resolution *string
 	Minstep    int
-	URL        string
-	Start      string
-	End        string
+	DSdetails  *PromDSDetails
 }
 
 type MetricsResponse struct {
@@ -36,10 +34,8 @@ type AnnotationsTimeStampValue struct {
 }
 
 type PromSeries struct {
-	Series string
-	URL    string
-	Start  string
-	End    string
+	Series    string
+	DSdetails *PromDSDetails
 }
 
 type PromDSDetails struct {

@@ -332,7 +332,7 @@ type ComplexityRoot struct {
 		GetProject                  func(childComplexity int, projectID string) int
 		GetPromLabelNamesAndValues  func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery                func(childComplexity int, query *model.PromInput) int
-		GetPromSeriesList           func(childComplexity int, dsDetails *model.PromSeriesListInput) int
+		GetPromSeriesList           func(childComplexity int, dsDetails *model.DsDetails) int
 		GetScheduledWorkflows       func(childComplexity int, projectID string) int
 		GetTemplateManifestByID     func(childComplexity int, templateID string) int
 		GetUser                     func(childComplexity int, username string) int
@@ -622,7 +622,7 @@ type QueryResolver interface {
 	ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error)
 	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
 	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
-	GetPromSeriesList(ctx context.Context, dsDetails *model.PromSeriesListInput) (*model.PromSeriesListResponse, error)
+	GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error)
 	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
@@ -2365,7 +2365,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetPromSeriesList(childComplexity, args["ds_details"].(*model.PromSeriesListInput)), true
+		return e.complexity.Query.GetPromSeriesList(childComplexity, args["ds_details"].(*model.DsDetails)), true
 
 	case "Query.getScheduledWorkflows":
 		if e.complexity.Query.GetScheduledWorkflows == nil {
@@ -3663,19 +3663,15 @@ input promQuery {
 
 input promInput {
     queries: [promQueryInput]
-    url: String!
-    start: String!
-    end: String!
+    ds_details: dsDetails!
 }
 
 input promSeriesInput {
     series: String!
-    url: String!
-    start: String!
-    end: String!
+    ds_details: dsDetails!
 }
 
-input promSeriesListInput {
+input dsDetails {
     url: String!
     start: String!
     end: String!
@@ -4340,7 +4336,7 @@ type Query {
 
   GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
 
-  GetPromSeriesList(ds_details: promSeriesListInput): promSeriesListResponse! @authorized
+  GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
   ListDashboard(project_id: String!): [listDashboardReponse] @authorized
 
@@ -5247,9 +5243,9 @@ func (ec *executionContext) field_Query_GetPromQuery_args(ctx context.Context, r
 func (ec *executionContext) field_Query_GetPromSeriesList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.PromSeriesListInput
+	var arg0 *model.DsDetails
 	if tmp, ok := rawArgs["ds_details"]; ok {
-		arg0, err = ec.unmarshalOpromSeriesListInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListInput(ctx, tmp)
+		arg0, err = ec.unmarshalOdsDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -14113,7 +14109,7 @@ func (ec *executionContext) _Query_GetPromSeriesList(ctx context.Context, field 
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetPromSeriesList(rctx, args["ds_details"].(*model.PromSeriesListInput))
+			return ec.resolvers.Query().GetPromSeriesList(rctx, args["ds_details"].(*model.DsDetails))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -21452,6 +21448,36 @@ func (ec *executionContext) unmarshalInputdeleteDSInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputdsDetails(ctx context.Context, obj interface{}) (model.DsDetails, error) {
+	var it model.DsDetails
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "url":
+			var err error
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "start":
+			var err error
+			it.Start, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "end":
+			var err error
+			it.End, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputimageRegistryInput(ctx context.Context, obj interface{}) (model.ImageRegistryInput, error) {
 	var it model.ImageRegistryInput
 	var asMap = obj.(map[string]interface{})
@@ -21638,21 +21664,9 @@ func (ec *executionContext) unmarshalInputpromInput(ctx context.Context, obj int
 			if err != nil {
 				return it, err
 			}
-		case "url":
+		case "ds_details":
 			var err error
-			it.URL, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "start":
-			var err error
-			it.Start, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "end":
-			var err error
-			it.End, err = ec.unmarshalNString2string(ctx, v)
+			it.DsDetails, err = ec.unmarshalNdsDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21770,51 +21784,9 @@ func (ec *executionContext) unmarshalInputpromSeriesInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "url":
+		case "ds_details":
 			var err error
-			it.URL, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "start":
-			var err error
-			it.Start, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "end":
-			var err error
-			it.End, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputpromSeriesListInput(ctx context.Context, obj interface{}) (model.PromSeriesListInput, error) {
-	var it model.PromSeriesListInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "url":
-			var err error
-			it.URL, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "start":
-			var err error
-			it.Start, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "end":
-			var err error
-			it.End, err = ec.unmarshalNString2string(ctx, v)
+			it.DsDetails, err = ec.unmarshalNdsDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26406,6 +26378,18 @@ func (ec *executionContext) unmarshalNdeleteDSInput2githubᚗcomᚋlitmuschaos�
 	return ec.unmarshalInputdeleteDSInput(ctx, v)
 }
 
+func (ec *executionContext) unmarshalNdsDetails2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx context.Context, v interface{}) (model.DsDetails, error) {
+	return ec.unmarshalInputdsDetails(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNdsDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx context.Context, v interface{}) (*model.DsDetails, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNdsDetails2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) unmarshalNimageRegistryInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryInput(ctx context.Context, v interface{}) (model.ImageRegistryInput, error) {
 	return ec.unmarshalInputimageRegistryInput(ctx, v)
 }
@@ -27336,6 +27320,18 @@ func (ec *executionContext) unmarshalOcreateDBInput2ᚖgithubᚗcomᚋlitmuschao
 	return &res, err
 }
 
+func (ec *executionContext) unmarshalOdsDetails2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx context.Context, v interface{}) (model.DsDetails, error) {
+	return ec.unmarshalInputdsDetails(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOdsDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx context.Context, v interface{}) (*model.DsDetails, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOdsDetails2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) marshalOimageRegistry2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistry(ctx context.Context, sel ast.SelectionSet, v model.ImageRegistry) graphql.Marshaler {
 	return ec._imageRegistry(ctx, sel, &v)
 }
@@ -27907,18 +27903,6 @@ func (ec *executionContext) unmarshalOpromSeriesInput2ᚖgithubᚗcomᚋlitmusch
 		return nil, nil
 	}
 	res, err := ec.unmarshalOpromSeriesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesInput(ctx, v)
-	return &res, err
-}
-
-func (ec *executionContext) unmarshalOpromSeriesListInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListInput(ctx context.Context, v interface{}) (model.PromSeriesListInput, error) {
-	return ec.unmarshalInputpromSeriesListInput(ctx, v)
-}
-
-func (ec *executionContext) unmarshalOpromSeriesListInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListInput(ctx context.Context, v interface{}) (*model.PromSeriesListInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOpromSeriesListInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromSeriesListInput(ctx, v)
 	return &res, err
 }
 

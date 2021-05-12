@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -401,7 +401,7 @@ func (r *queryResolver) GetPromLabelNamesAndValues(ctx context.Context, series *
 	return analyticsHandler.GetLabelNamesAndValues(series)
 }
 
-func (r *queryResolver) GetPromSeriesList(ctx context.Context, dsDetails *model.PromSeriesListInput) (*model.PromSeriesListResponse, error) {
+func (r *queryResolver) GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error) {
 	return analyticsHandler.GetSeriesList(dsDetails)
 }
 

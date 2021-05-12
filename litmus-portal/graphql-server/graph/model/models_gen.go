@@ -555,6 +555,12 @@ type DeleteDSInput struct {
 	DsID        string `json:"ds_id"`
 }
 
+type DsDetails struct {
+	URL   string `json:"url"`
+	Start string `json:"start"`
+	End   string `json:"end"`
+}
+
 type ImageRegistry struct {
 	ImageRegistryName string  `json:"image_registry_name"`
 	ImageRepoName     string  `json:"image_repo_name"`
@@ -659,10 +665,8 @@ type PanelResponse struct {
 }
 
 type PromInput struct {
-	Queries []*PromQueryInput `json:"queries"`
-	URL     string            `json:"url"`
-	Start   string            `json:"start"`
-	End     string            `json:"end"`
+	Queries   []*PromQueryInput `json:"queries"`
+	DsDetails *DsDetails        `json:"ds_details"`
 }
 
 type PromQuery struct {
@@ -699,16 +703,8 @@ type PromResponse struct {
 }
 
 type PromSeriesInput struct {
-	Series string `json:"series"`
-	URL    string `json:"url"`
-	Start  string `json:"start"`
-	End    string `json:"end"`
-}
-
-type PromSeriesListInput struct {
-	URL   string `json:"url"`
-	Start string `json:"start"`
-	End   string `json:"end"`
+	Series    string     `json:"series"`
+	DsDetails *DsDetails `json:"ds_details"`
 }
 
 type PromSeriesListResponse struct {

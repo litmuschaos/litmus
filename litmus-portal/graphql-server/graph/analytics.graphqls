@@ -95,19 +95,15 @@ input promQuery {
 
 input promInput {
     queries: [promQueryInput]
-    url: String!
-    start: String!
-    end: String!
+    ds_details: dsDetails!
 }
 
 input promSeriesInput {
     series: String!
-    url: String!
-    start: String!
-    end: String!
+    ds_details: dsDetails!
 }
 
-input promSeriesListInput {
+input dsDetails {
     url: String!
     start: String!
     end: String!

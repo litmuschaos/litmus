@@ -316,7 +316,7 @@ type Query {
 
   GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
 
-  GetPromSeriesList(ds_details: promSeriesListInput): promSeriesListResponse! @authorized
+  GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
   ListDashboard(project_id: String!): [listDashboardReponse] @authorized
 

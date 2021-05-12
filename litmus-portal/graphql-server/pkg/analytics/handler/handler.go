@@ -11,18 +11,18 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops/prometheus"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cache"
 	dbOperationsAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbSchemaAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
-var AnalyticsCache = cache.NewCache()
+var AnalyticsCache = utils.NewCache()
 
 func CreateDataSource(datasource *model.DSInput) (*model.DSResponse, error) {
 
@@ -396,12 +396,10 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 				Legend:     val.Legend,
 				Resolution: val.Resolution,
 				Minstep:    val.Minstep,
-				URL:        promInput.URL,
-				Start:      promInput.Start,
-				End:        promInput.End,
+				DSdetails:  (*analytics.PromDSDetails)(promInput.DsDetails),
 			}
 
-			cacheKey := val.Query + "-" + promInput.Start + "-" + promInput.End + "-" + promInput.URL
+			cacheKey := val.Query + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 
 			queryType := "metrics"
 			if strings.Contains(val.Queryid, "chaos-interval") || strings.Contains(val.Queryid, "chaos-verdict") {
@@ -421,7 +419,7 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 					return
 				}
 
-				cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+				cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 				if cacheError != nil {
 					log.Printf("Adding cache: %v\n", cacheError)
 				}
@@ -448,12 +446,10 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
 	var newPromSeriesResponse *model.PromSeriesResponse
 	newPromSeriesInput := analytics.PromSeries{
-		Series: promSeriesInput.Series,
-		URL:    promSeriesInput.URL,
-		Start:  promSeriesInput.Start,
-		End:    promSeriesInput.End,
+		Series:    promSeriesInput.Series,
+		DSdetails: (*analytics.PromDSDetails)(promSeriesInput.DsDetails),
 	}
-	cacheKey := promSeriesInput.Series + "-" + promSeriesInput.Start + "-" + promSeriesInput.End + "-" + promSeriesInput.URL
+	cacheKey := promSeriesInput.Series + "-" + promSeriesInput.DsDetails.Start + "-" + promSeriesInput.DsDetails.End + "-" + promSeriesInput.DsDetails.URL
 
 	if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
 		newPromSeriesResponse = obj.(*model.PromSeriesResponse)
@@ -463,7 +459,7 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 			return nil, err
 		}
 
-		cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+		cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 		if cacheError != nil {
 			log.Printf("Adding cache: %v\n", cacheError)
 		}
@@ -474,7 +470,7 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 	return newPromSeriesResponse, nil
 }
 
-func GetSeriesList(promSeriesListInput *model.PromSeriesListInput) (*model.PromSeriesListResponse, error) {
+func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListResponse, error) {
 	var newPromSeriesListResponse *model.PromSeriesListResponse
 	newPromSeriesListInput := analytics.PromDSDetails{
 		URL:   promSeriesListInput.URL,
@@ -491,7 +487,7 @@ func GetSeriesList(promSeriesListInput *model.PromSeriesListInput) (*model.PromS
 			return nil, err
 		}
 
-		cacheError := cache.AddCache(AnalyticsCache, cacheKey, response)
+		cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 		if cacheError != nil {
 			log.Printf("Adding cache: %v\n", cacheError)
 		}
