@@ -13,9 +13,9 @@ import {
   ParsedPrometheusData,
 } from '../../../../models/dashboardsData';
 import {
-  PrometheusQueryInput,
   PrometheusQueryVars,
   PrometheusResponse,
+  promInput,
   promQueryInput,
 } from '../../../../models/graphql/prometheus';
 import {
@@ -40,7 +40,7 @@ import {
 import useStyles from './styles';
 
 interface PrometheusQueryDataInterface {
-  promInput: PrometheusQueryInput;
+  promInput: promInput;
   firstLoad: Boolean;
 }
 
@@ -66,9 +66,11 @@ const PanelContent: React.FC<GraphPanelProps> = ({
     setPrometheusQueryData,
   ] = React.useState<PrometheusQueryDataInterface>({
     promInput: {
-      url: '',
-      start: '',
-      end: '',
+      ds_details: {
+        url: '',
+        start: '',
+        end: '',
+      },
       queries: [],
     },
     firstLoad: true,
@@ -91,16 +93,18 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   useQuery<PrometheusResponse, PrometheusQueryVars>(PROM_QUERY, {
     variables: {
       prometheusInput: prometheusQueryData?.promInput ?? {
-        url: '',
-        start: '',
-        end: '',
+        ds_details: {
+          url: '',
+          start: '',
+          end: '',
+        },
         queries: [],
       },
     },
     fetchPolicy: 'no-cache',
     skip:
       prometheusQueryData?.promInput.queries?.length === 0 ||
-      prometheusQueryData?.promInput.url === '',
+      prometheusQueryData?.promInput.ds_details.url === '',
     onCompleted: (prometheusData) => {
       if (prometheusData) {
         let parsedData: ParsedPrometheusData = DataParserForPrometheus(
@@ -128,7 +132,8 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   });
 
   const generatePromQueries = () => {
-    let promQueries: promQueryInput[] = prometheusQueryData.promInput.queries;
+    let promQueries: promQueryInput[] =
+      prometheusQueryData.promInput.queries ?? [];
     if (prometheusQueryData.firstLoad) {
       const timeRangeDiff: number =
         new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
@@ -139,16 +144,19 @@ const PanelContent: React.FC<GraphPanelProps> = ({
     }
     setPrometheusQueryData({
       promInput: {
-        url: selectedDataSource.selectedDataSourceURL,
-        start: `${
-          new Date(
-            moment(selectedDashboard.range.startDate).format()
-          ).getTime() / 1000
-        }`,
-        end: `${
-          new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-          1000
-        }`,
+        ds_details: {
+          url: selectedDataSource.selectedDataSourceURL,
+          start: `${
+            new Date(
+              moment(selectedDashboard.range.startDate).format()
+            ).getTime() / 1000
+          }`,
+          end: `${
+            new Date(
+              moment(selectedDashboard.range.endDate).format()
+            ).getTime() / 1000
+          }`,
+        },
         queries: promQueries,
       },
       firstLoad: false,

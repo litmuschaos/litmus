@@ -442,7 +442,7 @@ export const PROM_LABEL_VALUES = gql`
 `;
 
 export const PROM_SERIES_LIST = gql`
-  query PrometheusSeriesList($prometheusDSInput: promSeriesListInput) {
+  query PrometheusSeriesList($prometheusDSInput: dsDetails) {
     GetPromSeriesList(ds_details: $prometheusDSInput) {
       seriesList
     }

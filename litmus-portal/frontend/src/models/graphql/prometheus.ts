@@ -7,17 +7,8 @@ export interface promQueryInput {
 }
 
 export interface promInput {
-  url: string;
-  start: string;
-  end: string;
+  ds_details: dsDetails;
   queries?: promQueryInput[];
-}
-
-export interface PrometheusQueryInput {
-  url: string;
-  start: string;
-  end: string;
-  queries: promQueryInput[];
 }
 
 export interface metricsTimeStampValue {
@@ -82,7 +73,7 @@ export interface PrometheusSeriesResponse {
   GetPromLabelNamesAndValues: promSeriesResponse;
 }
 
-export interface promSeriesListInput {
+export interface dsDetails {
   url: string;
   start: string;
   end: string;
@@ -93,7 +84,7 @@ export interface promSeriesListResponse {
 }
 
 export interface PrometheusSeriesListQueryVars {
-  prometheusDSInput: promSeriesListInput;
+  prometheusDSInput: dsDetails;
 }
 
 export interface PrometheusSeriesListResponse {
