@@ -31,7 +31,10 @@ import {
 } from '../../../models/graphql/user';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
-import { validateStartEmptySpacing } from '../../../utils/validate';
+import {
+  isValidWebUrl,
+  validateStartEmptySpacing,
+} from '../../../utils/validate';
 import useStyles from './styles';
 
 interface GitHub {
@@ -445,7 +448,14 @@ const MyHub: React.FC = () => {
                 </div>
               </div>
               <div className={classes.submitBtnDiv}>
-                <ButtonFilled variant="success" type="submit">
+                <ButtonFilled
+                  variant="success"
+                  type="submit"
+                  disabled={
+                    !isValidWebUrl(gitHub.GitURL) ||
+                    validateStartEmptySpacing(gitHub.GitBranch)
+                  }
+                >
                   {t('myhub.connectHubPage.submitBtn')}
                 </ButtonFilled>
               </div>
