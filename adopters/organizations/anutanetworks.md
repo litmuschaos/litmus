@@ -1,4 +1,4 @@
-# Red Hat
+# AnutaNetworks
 [Anuta Networks](https://www.anutanetworks.com/) is a leading provider of Web-Scale On-prem and Cloud Network Orchestration and Assurance software for the branch, campus, data center and service provider-managed multi-vendor enterprise networks.
 
 ## Why do we need Chaos Tooling
