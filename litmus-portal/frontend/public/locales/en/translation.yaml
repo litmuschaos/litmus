@@ -628,6 +628,23 @@ settings:
     edit: Edit
     cancel: Cancel
     proceed: Yes, proceed
+  imageRegistry:
+    heading: Image Registry
+    headingDesc: Your image registry for the workflow manifest
+    defaultValues: Use the default values
+    defaultText: All YAML files use these default values provided by Litmus. The values cannot be changed.
+    registry: 'Registry : '
+    repo: 'Repository : '
+    repoType: 'Registry Type : '
+    dockerio: 'docker.io'
+    litmus: 'litmuschaos'
+    public: Public
+    private: Private
+    defaultReg: Use Default Registry
+    customValues: Use custom values
+    registryLabel: Registry Type
+    additionalInfo: Provide addtional details
+    save: Save Changes
 
 workflowDetailsView:
   headerDesc: Workflow dashboard of

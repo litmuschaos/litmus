@@ -425,3 +425,30 @@ export const GET_TEMPLATE_BY_ID = gql`
     }
   }
 `;
+
+export const LIST_IMAGE_REGISTRY = gql`
+  query ListImageRegistry($data: String!) {
+    ListImageRegistry(project_id: $data) {
+      image_registry_info {
+        enable_registry
+      }
+      image_registry_id
+    }
+  }
+`;
+
+export const GET_IMAGE_REGISTRY = gql`
+  query GetImageRegistry($registryid: String!, $projectid: String!) {
+    GetImageRegistry(image_registry_id: $registryid, project_id: $projectid) {
+      image_registry_info {
+        enable_registry
+        secret_name
+        secret_namespace
+        image_registry_name
+        image_repo_name
+        image_registry_type
+      }
+      image_registry_id
+    }
+  }
+`;
