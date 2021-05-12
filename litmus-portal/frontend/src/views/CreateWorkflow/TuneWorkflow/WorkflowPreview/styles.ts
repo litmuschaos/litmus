@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Workflow Graph
   dagreGraph: {
     cursor: 'grab',
-    height: (props: StyleProps) => (props.isSequence ? '30rem' : '20rem'),
+    height: (props: StyleProps) => (props.isSequence ? '30rem' : '23rem'),
     width: '100%',
 
     // Styles for nodes
