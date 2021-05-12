@@ -42,7 +42,28 @@ kubectl create ns monitoring
 
 ### Setup prometheus TSDB
 
-#### Model-1 (optional): Service monitor and prometheus operator model.
+#### Model-1 (optional): Prometheus scrape config model.
+
+> Deploy prometheus components
+
+```
+kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
+```
+
+> Deploy metrics exporters
+
+```
+kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
+kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
+```
+
+> Deploy chaos-exporter when the cluster is not connected to litmus 2.0 control plane via litmus agent (exporter is installed as a part of the agent bundle)
+
+```
+kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
+```
+
+#### Model-2 (optional): Service monitor and prometheus operator model.
 
 > Create the operator to instantiate all CRDs
 
@@ -55,6 +76,11 @@ kubectl -n monitoring apply -f utils/prometheus/prometheus-operator/
 ```
 kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/node-exporter/
 kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/kube-state-metrics/
+```
+
+> Deploy chaos-exporter when the cluster is not connected to litmus 2.0 control plane via litmus agent (exporter is installed as a part of the agent bundle)
+
+```
 kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
 ```
 
@@ -70,22 +96,6 @@ kubectl -n monitoring apply -f utils/prometheus/prometheus-configuration/
 
 ```
 kubectl -n monitoring apply -f utils/alert-manager-with-service-monitor/
-```
-
-#### Model-2 (optional): Prometheus scrape config model.
-
-> Deploy prometheus components
-
-```
-kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
-```
-
-> Deploy metrics exporters
-
-```
-kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
-kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
-kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
 ```
 
 ### Setup Grafana
