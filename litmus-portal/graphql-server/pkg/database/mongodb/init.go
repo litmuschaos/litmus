@@ -23,6 +23,7 @@ const (
 	DataSourceCollection
 	PanelCollection
 	DashboardCollection
+	ImageRegistryCollection
 )
 
 // MongoInterface requires a MongoClient that implements the Initialize method to create the Mongo DB client
@@ -45,6 +46,7 @@ type MongoClient struct {
 	DataSourceCollection       *mongo.Collection
 	PanelCollection            *mongo.Collection
 	DashboardCollection        *mongo.Collection
+	ImageRegistryCollection    *mongo.Collection
 }
 
 var (
@@ -61,6 +63,7 @@ var (
 		DataSourceCollection:       "datasource-collection",
 		PanelCollection:            "panel-collection",
 		DashboardCollection:        "dashboard-collection",
+		ImageRegistryCollection:    "image-registry-collection",
 	}
 
 	dbName            = "litmus"
@@ -149,4 +152,5 @@ func (m *MongoClient) initAllCollection() {
 	m.DataSourceCollection = m.Database.Collection(collections[DataSourceCollection])
 	m.PanelCollection = m.Database.Collection(collections[PanelCollection])
 	m.DashboardCollection = m.Database.Collection(collections[DashboardCollection])
+	m.ImageRegistryCollection = m.Database.Collection(collections[ImageRegistryCollection])
 }

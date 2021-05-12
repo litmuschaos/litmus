@@ -288,6 +288,16 @@ func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (st
 	return YAMLData, nil
 }
 
+// GetPredefinedExperimentYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
+func GetPredefinedExperimentYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	YAMLPath := handler.GetPredefinedExperimentManifest(ctx, experimentInput)
+	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
+	if err != nil {
+		return "", err
+	}
+	return YAMLData, nil
+}
+
 // GetAllHubs ...
 func GetAllHubs(ctx context.Context) ([]*model.MyHub, error) {
 
@@ -424,4 +434,12 @@ func RecurringHubSync() {
 		// Syncing Completed
 		time.Sleep(timeInterval)
 	}
+}
+
+func GetPredefinedExperiementList(hubname string, projectID string) ([]string, error) {
+	expList, err := handler.GetPredefinedExperimentFileList(hubname, projectID)
+	if err != nil {
+		return nil, err
+	}
+	return expList, nil
 }

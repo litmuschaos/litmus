@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { Divider, IconButton, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import InfoIcon from '@material-ui/icons/Info';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, EditableText, Modal } from 'litmus-ui';
 import localforage from 'localforage';
@@ -13,7 +14,6 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import InfoIcon from '@material-ui/icons/Info';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../../components/YamlEditor/Validations';
@@ -91,17 +91,14 @@ const VerifyCommit = forwardRef(
             crd: (workflow as WorkflowDetailsProps).CRDLink,
           });
           setSubject(
-            `${(workflow as WorkflowDetailsProps).name}/${
+            `${(workflow as WorkflowDetailsProps).name}-${
               workflowData.namespace
             }`
           );
           const parsedManifest = YAML.parse(manifest);
           delete parsedManifest.metadata.generateName;
-          parsedManifest.metadata.name = `${
-            (workflow as WorkflowDetailsProps).name
-          }-${Math.round(new Date().getTime() / 1000)}`;
           parsedManifest.metadata['labels'] = {
-            subject: `${(workflow as WorkflowDetailsProps).name}/${
+            subject: `${(workflow as WorkflowDetailsProps).name}-${
               workflowData.namespace
             }`,
           };
@@ -188,13 +185,15 @@ const VerifyCommit = forwardRef(
       });
     };
 
-    const handleSubjectChange = (
-      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      setSubject(event.target.value);
+    const handleSubjectChange = ({
+      changedSubject,
+    }: {
+      changedSubject: string;
+    }) => {
+      setSubject(changedSubject);
       const parsedManifest = YAML.parse(manifest);
       parsedManifest.metadata['labels'] = {
-        subject: event.target.value,
+        subject: changedSubject,
       };
       workflowAction.setWorkflowManifest({
         manifest: YAML.stringify(parsedManifest),
@@ -335,12 +334,10 @@ const VerifyCommit = forwardRef(
                 </div>
                 <div className={classes.col2} data-cy="WorkflowName">
                   <EditableText
-                    value={fetchWorkflowNameFromManifest(manifest)}
+                    defaultValue={fetchWorkflowNameFromManifest(manifest)}
                     id="name"
                     fullWidth
-                    onChange={(e) =>
-                      handleNameChange({ changedName: e.target.value })
-                    }
+                    onSave={(value) => handleNameChange({ changedName: value })}
                   />
                 </div>
               </div>
@@ -363,15 +360,17 @@ const VerifyCommit = forwardRef(
                   </Typography>
                 </div>
                 <div className={classes.col2}>
-                  <EditableText
-                    value={workflow.description}
-                    id="desc"
-                    fullWidth
-                    multiline
-                    onChange={(e) =>
-                      handleDescChange({ changedDesc: e.target.value })
-                    }
-                  />
+                  {workflow.description !== '' ? (
+                    <EditableText
+                      defaultValue={workflow.description}
+                      id="desc"
+                      fullWidth
+                      multiline
+                      onSave={(value) =>
+                        handleDescChange({ changedDesc: value })
+                      }
+                    />
+                  ) : null}
                 </div>
               </div>
 
@@ -395,13 +394,17 @@ const VerifyCommit = forwardRef(
                   </div>
                 </div>
                 <div className={classes.col2}>
-                  <EditableText
-                    value={subject}
-                    id="subject"
-                    fullWidth
-                    multiline
-                    onChange={handleSubjectChange}
-                  />
+                  {subject !== '' ? (
+                    <EditableText
+                      defaultValue={subject}
+                      id="subject"
+                      fullWidth
+                      multiline
+                      onSave={(value) =>
+                        handleSubjectChange({ changedSubject: value })
+                      }
+                    />
+                  ) : null}
                 </div>
               </div>
 

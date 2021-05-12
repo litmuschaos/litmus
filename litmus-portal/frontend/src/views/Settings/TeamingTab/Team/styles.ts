@@ -229,16 +229,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   project: {
     margin: theme.spacing(3.875, 'auto', 2.5, 'auto'),
-    display: 'flex',
-    alignItems: 'center',
   },
   projectName: {
-    margin: theme.spacing(0, 0, 0, 1.56),
     textTransform: 'uppercase',
     fontWeight: 500,
     fontSize: '1rem',
   },
-
   active: {
     textTransform: 'capitalize',
     color: theme.palette.primary.main,
