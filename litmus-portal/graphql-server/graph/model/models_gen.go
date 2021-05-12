@@ -575,7 +575,7 @@ type ImageRegistryInput struct {
 
 type LabelValue struct {
 	Label  string    `json:"label"`
-	Values []*string `json:"values"`
+	Values []*Option `json:"values"`
 }
 
 type ListDashboardReponse struct {
@@ -605,6 +605,10 @@ type MetricsPromResponse struct {
 type MetricsTimeStampValue struct {
 	Date  *float64 `json:"date"`
 	Value *float64 `json:"value"`
+}
+
+type Option struct {
+	Name string `json:"name"`
 }
 
 type Panel struct {

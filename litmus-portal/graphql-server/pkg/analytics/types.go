@@ -54,7 +54,11 @@ type PromSeriesListResponse struct {
 
 type LabelValue struct {
 	Label  string    `json:"label"`
-	Values []*string `json:"values"`
+	Values []*Option `json:"values"`
+}
+
+type Option struct {
+	Name string `json:"name"`
 }
 
 type PromSeriesResponse struct {

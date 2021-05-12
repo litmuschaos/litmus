@@ -503,6 +503,10 @@ type ComplexityRoot struct {
 		Value func(childComplexity int) int
 	}
 
+	Option struct {
+		Name func(childComplexity int) int
+	}
+
 	PanelGroupResponse struct {
 		PanelGroupID   func(childComplexity int) int
 		PanelGroupName func(childComplexity int) int
@@ -3278,6 +3282,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MetricsTimeStampValue.Value(childComplexity), true
 
+	case "option.name":
+		if e.complexity.Option.Name == nil {
+			break
+		}
+
+		return e.complexity.Option.Name(childComplexity), true
+
 	case "panelGroupResponse.panel_group_id":
 		if e.complexity.PanelGroupResponse.PanelGroupID == nil {
 			break
@@ -3716,7 +3727,11 @@ type promSeriesListResponse {
 
 type labelValue {
     label: String!
-    values: [String]
+    values: [option]
+}
+
+type option {
+    name: String!
 }
 
 type listDashboardReponse {
@@ -18715,9 +18730,9 @@ func (ec *executionContext) _labelValue_values(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]*model.Option)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOoption2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐOption(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _listDashboardReponse_ds_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
@@ -19371,6 +19386,40 @@ func (ec *executionContext) _metricsTimeStampValue_value(ctx context.Context, fi
 	res := resTmp.(*float64)
 	fc.Result = res
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _option_name(ctx context.Context, field graphql.CollectedField, obj *model.Option) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "option",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _panelGroupResponse_panels(ctx context.Context, field graphql.CollectedField, obj *model.PanelGroupResponse) (ret graphql.Marshaler) {
@@ -24676,6 +24725,33 @@ func (ec *executionContext) _metricsTimeStampValue(ctx context.Context, sel ast.
 	return out
 }
 
+var optionImplementors = []string{"option"}
+
+func (ec *executionContext) _option(ctx context.Context, sel ast.SelectionSet, obj *model.Option) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, optionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("option")
+		case "name":
+			out.Values[i] = ec._option_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var panelGroupResponseImplementors = []string{"panelGroupResponse"}
 
 func (ec *executionContext) _panelGroupResponse(ctx context.Context, sel ast.SelectionSet, obj *model.PanelGroupResponse) graphql.Marshaler {
@@ -27513,6 +27589,57 @@ func (ec *executionContext) marshalOmetricsTimeStampValue2ᚖgithubᚗcomᚋlitm
 		return graphql.Null
 	}
 	return ec._metricsTimeStampValue(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOoption2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐOption(ctx context.Context, sel ast.SelectionSet, v model.Option) graphql.Marshaler {
+	return ec._option(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOoption2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐOption(ctx context.Context, sel ast.SelectionSet, v []*model.Option) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOoption2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐOption(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOoption2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐOption(ctx context.Context, sel ast.SelectionSet, v *model.Option) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._option(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOpanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPanel(ctx context.Context, v interface{}) (model.Panel, error) {

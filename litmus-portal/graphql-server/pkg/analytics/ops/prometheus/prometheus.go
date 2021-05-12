@@ -205,14 +205,14 @@ func LabelNamesAndValues(prom analytics.PromSeries) (*model.PromSeriesResponse, 
 			if index != 0 {
 				go func(index int, label string) {
 					defer wg.Done()
-					var newValues []*string
+					var newValues []*analytics.Option
 					values, _, err := client.LabelValues(context.TODO(), label, matcher, start, end)
 					if err != nil {
 						return
 					}
 
 					for _, value := range values {
-						newValues = append(newValues, func(str string) *string { return &str }(fmt.Sprint(value)))
+						newValues = append(newValues, func(str string) *analytics.Option { return &analytics.Option{Name: str} }(fmt.Sprint(value)))
 					}
 
 					tempLabelValues := &analytics.LabelValue{

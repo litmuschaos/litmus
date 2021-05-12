@@ -159,7 +159,11 @@ type promSeriesListResponse {
 
 type labelValue {
     label: String!
-    values: [String]
+    values: [option]
+}
+
+type option {
+    name: String!
 }
 
 type listDashboardReponse {
