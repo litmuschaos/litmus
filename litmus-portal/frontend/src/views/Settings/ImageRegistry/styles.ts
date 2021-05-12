@@ -53,9 +53,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(5),
   },
   formControl: {
-    marginTop: theme.spacing(2.5),
+    margin: theme.spacing(2.5, 0, 2.5, 0),
     width: '12.5rem',
-    marginBottom: theme.spacing(2.5),
   },
   labelText: {
     color: theme.palette.common.black,

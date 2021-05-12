@@ -13,6 +13,7 @@ import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
+import { constants } from '../../../constants';
 import {
   GET_IMAGE_REGISTRY,
   LIST_IMAGE_REGISTRY,
@@ -51,7 +52,7 @@ const ImageRegistry = () => {
   const [registryInfo, setRegistryInfo] = useState<RegistryInfo>({
     registry_name: '',
     repo_name: '',
-    registry_type: 'Public',
+    registry_type: constants.public,
     secret_name: '',
     secret_namespace: '',
     enable_registry: true,
@@ -115,14 +116,14 @@ const ImageRegistry = () => {
     if (data !== undefined) {
       if (
         data.GetImageRegistry.image_registry_info.image_repo_name ===
-        'litmuschaos'
+        constants.litmus
       ) {
         setRegistry('disabled');
         setIsCustomRegistryEnabled(false);
         setRegistryData({
-          registry_name: 'Docker Hub',
-          repo_name: 'litmuschaos',
-          registry_type: 'Public',
+          registry_name: constants.docker,
+          repo_name: constants.litmus,
+          registry_type: constants.public,
         });
       } else {
         setRegistry('enabled');
@@ -230,9 +231,9 @@ const ImageRegistry = () => {
                             imageRegistryID: registryID,
                             projectID,
                             imageRegistryInfo: {
-                              image_registry_name: 'docker.io',
-                              image_repo_name: 'litmuschaos',
-                              image_registry_type: 'Public',
+                              image_registry_name: constants.dockerio,
+                              image_repo_name: constants.litmus,
+                              image_registry_type: constants.public,
                               secret_name: '',
                               secret_namespace: '',
                               enable_registry: true,

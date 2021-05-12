@@ -45,4 +45,13 @@ export const constants = {
    * Tuneworkflow index
    */
   adminMode: 'adminModeNamespace',
+
+  /**
+   * Image Registry constants
+   */
+  dockerio: 'docker.io',
+  docker: 'Docker Hub',
+  litmus: 'litmuschaos',
+  public: 'Public',
+  private: 'Private',
 };
