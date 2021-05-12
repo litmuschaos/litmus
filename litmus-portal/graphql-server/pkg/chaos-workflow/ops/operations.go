@@ -115,10 +115,16 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 			return nil, errors.New("failed to unmarshal workflow manifest")
 		}
 
-		workflowManifest.Labels = map[string]string{
-			"workflow_id": *workflow.WorkflowID,
-			"cluster_id":  workflow.ClusterID,
-			"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
+		if workflowManifest.Labels == nil {
+			workflowManifest.Labels = map[string]string{
+				"workflow_id": *workflow.WorkflowID,
+				"cluster_id":  workflow.ClusterID,
+				"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
+			}
+		} else {
+			workflowManifest.Labels["workflow_id"] = *workflow.WorkflowID
+			workflowManifest.Labels["cluster_id"] = workflow.ClusterID
+			workflowManifest.Labels["workflows.argoproj.io/controller-instanceid"] = workflow.ClusterID
 		}
 
 		for i, template := range workflowManifest.Spec.Templates {
@@ -188,18 +194,38 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 			return nil, errors.New("failed to unmarshal workflow manifest")
 		}
 
-		cronWorkflowManifest.Labels = map[string]string{
-			"workflow_id": *workflow.WorkflowID,
-			"cluster_id":  workflow.ClusterID,
-			"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
-		}
-
-		cronWorkflowManifest.Spec.WorkflowMetadata = &v1.ObjectMeta{
-			Labels: map[string]string{
+		if cronWorkflowManifest.Labels == nil {
+			cronWorkflowManifest.Labels = map[string]string{
 				"workflow_id": *workflow.WorkflowID,
 				"cluster_id":  workflow.ClusterID,
 				"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
-			},
+			}
+		} else {
+			cronWorkflowManifest.Labels["workflow_id"] = *workflow.WorkflowID
+			cronWorkflowManifest.Labels["cluster_id"] = workflow.ClusterID
+			cronWorkflowManifest.Labels["workflows.argoproj.io/controller-instanceid"] = workflow.ClusterID
+		}
+
+		if cronWorkflowManifest.Spec.WorkflowMetadata == nil {
+			cronWorkflowManifest.Spec.WorkflowMetadata = &v1.ObjectMeta{
+				Labels: map[string]string{
+					"workflow_id": *workflow.WorkflowID,
+					"cluster_id":  workflow.ClusterID,
+					"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
+				},
+			}
+		} else {
+			if cronWorkflowManifest.Spec.WorkflowMetadata.Labels == nil {
+				cronWorkflowManifest.Spec.WorkflowMetadata.Labels = map[string]string{
+					"workflow_id": *workflow.WorkflowID,
+					"cluster_id":  workflow.ClusterID,
+					"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
+				}
+			} else {
+				cronWorkflowManifest.Spec.WorkflowMetadata.Labels["workflow_id"] = *workflow.WorkflowID
+				cronWorkflowManifest.Spec.WorkflowMetadata.Labels["cluster_id"] = workflow.ClusterID
+				cronWorkflowManifest.Spec.WorkflowMetadata.Labels["workflows.argoproj.io/controller-instanceid"] = workflow.ClusterID
+			}
 		}
 
 		for i, template := range cronWorkflowManifest.Spec.WorkflowSpec.Templates {
