@@ -6,7 +6,7 @@ metadata:
   namespace: monitoring
 spec:
   ports:
-    - nodePort: 31687
+    - nodePort: 31688
       port: 3000
       protocol: TCP
       targetPort: 3000

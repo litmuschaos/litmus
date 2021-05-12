@@ -95,6 +95,15 @@ input promQuery {
 
 input promInput {
     queries: [promQueryInput]
+    ds_details: dsDetails!
+}
+
+input promSeriesInput {
+    series: String!
+    ds_details: dsDetails!
+}
+
+input dsDetails {
     url: String!
     start: String!
     end: String!
@@ -108,15 +117,49 @@ input promQueryInput {
     minstep: Int!
 }
 
-type promResponse {
+type metricsPromResponse {
     queryid: String!
-    legends: [[String]]
-    tsvs: [[timeStampValue]]
+    legends: [String]
+    tsvs: [[metricsTimeStampValue]]
 }
 
-type timeStampValue{
-    timestamp: String
-    value: String
+type metricsTimeStampValue{
+    date: Float
+    value:  Float
+}
+
+type annotationsPromResponse {
+    queryid: String!
+    legends: [String]
+    tsvs: [[annotationsTimeStampValue]]
+}
+
+type annotationsTimeStampValue{
+    date: Float
+    value:  Int
+}
+
+type promResponse {
+    metricsResponse: [metricsPromResponse]
+    annotationsResponse: [annotationsPromResponse]
+}
+
+type promSeriesResponse {
+    series: String!
+    labelValues: [labelValue]
+}
+
+type promSeriesListResponse {
+    seriesList: [String]
+}
+
+type labelValue {
+    label: String!
+    values: [option]
+}
+
+type option {
+    name: String!
 }
 
 type listDashboardReponse {

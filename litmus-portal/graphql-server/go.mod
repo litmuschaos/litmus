@@ -14,11 +14,12 @@ require (
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/litmuschaos/chaos-operator v0.0.0-20210126054859-85bb0ad85bfa
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.2.1
-	github.com/prometheus/common v0.7.0
+	github.com/prometheus/client_golang v1.10.0
+	github.com/prometheus/common v0.24.0
 	github.com/rs/cors v1.6.0
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.6.0
 	github.com/tidwall/gjson v1.6.0
 	github.com/tidwall/sjson v1.1.1
 	github.com/vektah/gqlparser/v2 v2.0.1
