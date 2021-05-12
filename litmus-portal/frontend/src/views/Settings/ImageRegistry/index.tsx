@@ -48,7 +48,12 @@ const ImageRegistry = () => {
   /**
    * GetRegistryData to fetch Registry Data by ID
    */
-  const [getRegistryData, { data, loading }] = useLazyQuery(GET_IMAGE_REGISTRY);
+  const [getRegistryData, { data, loading }] = useLazyQuery(
+    GET_IMAGE_REGISTRY,
+    {
+      fetchPolicy: 'network-only',
+    }
+  );
   const [registryInfo, setRegistryInfo] = useState<RegistryInfo>({
     registry_name: '',
     repo_name: '',
@@ -69,6 +74,7 @@ const ImageRegistry = () => {
     variables: {
       data: projectID,
     },
+    fetchPolicy: 'network-only',
     onCompleted: (data) => {
       setRegistryID(data.ListImageRegistry[0].image_registry_id);
       getRegistryData({
