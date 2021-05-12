@@ -111,7 +111,7 @@ const ProfileDropdown: React.FC = () => {
                 onClick={() => logout()}
               >
                 {t('header.profileDropdown.logout')}
-                <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
+                <img id="logoutIcon" src="/icons/logout.svg" alt="logout" />
               </ButtonFilled>
             </div>
             <ButtonOutlined
