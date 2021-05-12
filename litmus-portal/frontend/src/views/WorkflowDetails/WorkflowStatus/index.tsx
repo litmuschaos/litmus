@@ -1,7 +1,15 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RUNNING, SUCCEEDED, PENDING, FAILED } from '../workflowConstants';
+import {
+  RUNNING,
+  SUCCEEDED,
+  PENDING,
+  FAILED,
+  ERROR,
+  SKIPPED,
+  OMITTED,
+} from '../workflowConstants';
 import useStyles from './styles';
 
 interface WorkflowStatusProps {
@@ -22,6 +30,12 @@ const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
         return `${classes.textBold} ${classes.failed}`;
       case PENDING:
         return `${classes.textBold} ${classes.pending}`;
+      case OMITTED:
+        return `${classes.textBold} ${classes.omitted}`;
+      case SKIPPED:
+        return `${classes.textBold} ${classes.skipped}`;
+      case ERROR:
+        return `${classes.textBold} ${classes.error}`;
       default:
         return `${classes.textBold} ${classes.pending}`;
     }
