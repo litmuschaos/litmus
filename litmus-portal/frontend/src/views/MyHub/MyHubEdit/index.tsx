@@ -29,7 +29,10 @@ import {
 import { HubStatus } from '../../../models/redux/myhub';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
-import { validateStartEmptySpacing } from '../../../utils/validate';
+import {
+  isValidWebUrl,
+  validateStartEmptySpacing,
+} from '../../../utils/validate';
 import useStyles from './styles';
 
 interface MyHubParams {
@@ -385,7 +388,7 @@ const MyHub: React.FC = () => {
                                           {!copying ? (
                                             <div className={classes.rowDiv}>
                                               <img
-                                                src="./icons/copy.svg"
+                                                src="/icons/copy.svg"
                                                 className={classes.copyBtnImg}
                                                 alt="copy"
                                               />
@@ -415,7 +418,14 @@ const MyHub: React.FC = () => {
                   </div>
                 </div>
                 <div className={classes.submitBtnDiv}>
-                  <ButtonFilled variant="success" type="submit">
+                  <ButtonFilled
+                    variant="success"
+                    type="submit"
+                    disabled={
+                      !isValidWebUrl(gitHub.GitURL) ||
+                      validateStartEmptySpacing(gitHub.GitBranch)
+                    }
+                  >
                     {t('myhub.editPage.submit')}
                   </ButtonFilled>
                 </div>
