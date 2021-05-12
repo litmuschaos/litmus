@@ -238,7 +238,7 @@ const EditSchedule: React.FC = () => {
 
   return (
     <Scaffold>
-      {loading ? (
+      {loading || !manifest ? (
         <Loader />
       ) : (
         <>
