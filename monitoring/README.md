@@ -57,7 +57,7 @@ kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
 kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
 ```
 
-> Deploy chaos-exporter when the cluster is not connected to litmus 2.0 control plane via litmus agent (exporter is installed as part of the agent bundle)
+> Deploy chaos-exporter when the cluster is not connected to litmus 2.0 control plane via litmus agent (exporter is installed as a part of the agent bundle)
 
 ```
 kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
