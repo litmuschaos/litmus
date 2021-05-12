@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -25,6 +26,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 
 	var (
 		selfCluster = os.Getenv("SELF_CLUSTER")
+		bl_true     = true
 	)
 	user, err := dbOperationsUserManagement.GetUserByUserID(ctx, userID)
 	if err != nil {
@@ -64,6 +66,18 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
 	go myhub.AddMyHub(context.Background(), defaultHub, newProject.ID)
+	_, err = imageRegistryOps.CreateImageRegistry(ctx, newProject.ID, model.ImageRegistryInput{
+		ImageRegistryName: "docker.io",
+		ImageRepoName:     "litmuschaos",
+		ImageRegistryType: "public",
+		SecretName:        nil,
+		SecretNamespace:   nil,
+		EnableRegistry:    &bl_true,
+	})
+
+	if err != nil {
+		return nil, err
+	}
 
 	if strings.ToLower(selfCluster) == "true" && strings.ToLower(*user.Role) == "admin" {
 		log.Print("Starting self deployer")

@@ -354,6 +354,7 @@ spec:
                               data:
                                 type: string
                         components:
+                          x-kubernetes-preserve-unknown-fields: true 
                           type: object
                           properties:
                             statusCheckTimeouts:
@@ -365,7 +366,17 @@ spec:
                                   type: integer
                             nodeSelector:
                               type: object
-                              minLength: 1
+                              additionalProperties:
+                                type: string
+                                properties:
+                                  key:
+                                    type: string
+                                    minLength: 1
+                                    allowEmptyValue: false
+                                  value:
+                                    type: string
+                                    minLength: 1
+                                    allowEmptyValue: false
                             experimentImage:
                               type: string
                             env:
@@ -562,10 +573,10 @@ spec:
             x-kubernetes-preserve-unknown-fields: true
             type: object            
           spec:
-            x-kubernetes-preserve-unknown-fields: true
             type: object
             properties:
               definition:
+                x-kubernetes-preserve-unknown-fields: true
                 type: object
                 properties:
                   args:

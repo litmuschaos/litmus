@@ -179,7 +179,7 @@ const useStyles = makeStyles((theme) => ({
   radioList: {
     width: '100%',
     alignItems: 'center',
-    height: '28rem',
+    height: '26rem',
     overflowY: 'auto',
   },
   experimentCard: {
@@ -187,11 +187,7 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: '5rem', // Making the div content vertically aligned
     padding: theme.spacing(0, 5),
     margin: theme.spacing(1, 0),
-    width: '40rem',
     display: 'flex',
-    [theme.breakpoints.up('lg')]: {
-      width: '60rem',
-    },
   },
   experimentName: {
     fontSize: '1rem',

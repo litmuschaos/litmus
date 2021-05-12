@@ -29,7 +29,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
   );
   const engineYAML = YAML.parse(engine);
   const [experimentName, setExperimentName] = React.useState<string>(
-    engineYAML.metadata.name
+    engineYAML.metadata.generateName
   );
   const [context, setContext] = React.useState<string>(
     engineYAML.metadata.labels !== undefined &&
@@ -49,7 +49,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
 
   const handleNext = () => {
     const parsedYAML = YAML.parse(engine);
-    parsedYAML.metadata.name = experimentName;
+    parsedYAML.metadata.generateName = experimentName;
     parsedYAML.metadata['labels'] = {
       context,
     };
