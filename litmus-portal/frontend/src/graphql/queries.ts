@@ -433,7 +433,9 @@ export const PROM_LABEL_VALUES = gql`
       series
       labelValues {
         label
-        values
+        values {
+          name
+        }
       }
     }
   }

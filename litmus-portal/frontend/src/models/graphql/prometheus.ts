@@ -62,9 +62,12 @@ export interface promSeriesInput {
   end: string;
 }
 
+export interface Option {
+  name: string;
+}
 export interface LabelValue {
   label: string;
-  values?: string[];
+  values?: Option[];
 }
 export interface promSeriesResponse {
   series: string;
