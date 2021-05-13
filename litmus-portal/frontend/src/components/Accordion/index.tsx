@@ -23,6 +23,7 @@ const Accordion = withStyles({
       height: '2.5rem',
     },
   },
+  expanded: {},
 })(MuiAccordion);
 
 export { Accordion };

@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import { StyledTableCell } from '../../../../components/StyledTableCell';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
 import {

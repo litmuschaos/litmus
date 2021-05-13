@@ -407,12 +407,44 @@ export const LIST_DASHBOARD = gql`
 export const PROM_QUERY = gql`
   query PrometheusQuery($prometheusInput: promInput) {
     GetPromQuery(query: $prometheusInput) {
-      queryid
-      legends
-      tsvs {
-        timestamp
-        value
+      metricsResponse {
+        queryid
+        legends
+        tsvs {
+          date
+          value
+        }
       }
+      annotationsResponse {
+        queryid
+        legends
+        tsvs {
+          date
+          value
+        }
+      }
+    }
+  }
+`;
+
+export const PROM_LABEL_VALUES = gql`
+  query PrometheusLabelValues($prometheusInput: promSeriesInput) {
+    GetPromLabelNamesAndValues(series: $prometheusInput) {
+      series
+      labelValues {
+        label
+        values {
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const PROM_SERIES_LIST = gql`
+  query PrometheusSeriesList($prometheusDSInput: dsDetails) {
+    GetPromSeriesList(ds_details: $prometheusDSInput) {
+      seriesList
     }
   }
 `;

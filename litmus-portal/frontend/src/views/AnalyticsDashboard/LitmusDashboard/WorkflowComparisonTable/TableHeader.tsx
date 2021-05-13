@@ -3,7 +3,7 @@ import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import useStyles, { StyledTableCell } from './styles';
 
 interface SortData {

@@ -1,22 +1,26 @@
 import { ApolloError, useQuery } from '@apollo/client';
 import { IconButton, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
-import { ButtonOutlined, GraphMetric, LineAreaGraph, Modal } from 'litmus-ui';
+import { ButtonOutlined, LineAreaGraph, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { ToolTip } from '../../../../components/ToolTip';
 import { PROM_QUERY } from '../../../../graphql';
-import { GraphPanelProps } from '../../../../models/dashboardsData';
 import {
-  PrometheusQueryInput,
+  GraphPanelProps,
+  ParsedPrometheusData,
+} from '../../../../models/dashboardsData';
+import {
   PrometheusQueryVars,
   PrometheusResponse,
+  promInput,
   promQueryInput,
 } from '../../../../models/graphql/prometheus';
 import {
   DEFAULT_REFRESH_RATE,
+  DEFAULT_RELATIVE_TIME_RANGE,
   DEFAULT_TOLERANCE_LIMIT,
   MAX_REFRESH_RATE,
   MINIMUM_TOLERANCE_LIMIT,
@@ -30,29 +34,31 @@ import { ReactComponent as DisableViewChaosMetric } from '../../../../svg/alignm
 import { ReactComponent as Expand } from '../../../../svg/arrowsOut.svg';
 import { ReactComponent as Edit } from '../../../../svg/edit.svg';
 import {
+  DataParserForPrometheus,
   getPromQueryInput,
-  seriesDataParserForPrometheus,
 } from '../../../../utils/promUtils';
 import useStyles from './styles';
 
 interface PrometheusQueryDataInterface {
-  promInput: PrometheusQueryInput;
+  promInput: promInput;
   firstLoad: Boolean;
 }
 
 const PanelContent: React.FC<GraphPanelProps> = ({
+  panel_id,
   panel_name,
   prom_queries,
   y_axis_left,
   unit,
-  chaos_data,
   className,
+  controllerPanelID,
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
   const { t } = useTranslation();
   const dashboard = useActions(DashboardActions);
   const lineGraph: string[] = palette.graph.line;
+  const areaGraph: string[] = palette.graph.area;
   const [popout, setPopout] = useState(false);
   const [viewEventMetric, setViewEventMetric] = useState(false);
   const [
@@ -60,15 +66,20 @@ const PanelContent: React.FC<GraphPanelProps> = ({
     setPrometheusQueryData,
   ] = React.useState<PrometheusQueryDataInterface>({
     promInput: {
-      url: '',
-      start: '',
-      end: '',
+      ds_details: {
+        url: '',
+        start: '',
+        end: '',
+      },
       queries: [],
     },
     firstLoad: true,
   });
 
-  const [graphData, setGraphData] = React.useState<Array<GraphMetric>>([]);
+  const [graphData, setGraphData] = React.useState<ParsedPrometheusData>({
+    seriesData: [],
+    chaosData: [],
+  });
 
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
@@ -82,22 +93,26 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   useQuery<PrometheusResponse, PrometheusQueryVars>(PROM_QUERY, {
     variables: {
       prometheusInput: prometheusQueryData?.promInput ?? {
-        url: '',
-        start: '',
-        end: '',
+        ds_details: {
+          url: '',
+          start: '',
+          end: '',
+        },
         queries: [],
       },
     },
     fetchPolicy: 'no-cache',
     skip:
       prometheusQueryData?.promInput.queries?.length === 0 ||
-      prometheusQueryData?.promInput.url === '',
+      prometheusQueryData?.promInput.ds_details.url === '',
     onCompleted: (prometheusData) => {
-      let seriesData: Array<GraphMetric> = [];
       if (prometheusData) {
-        seriesData = seriesDataParserForPrometheus(prometheusData, lineGraph);
-        setGraphData(seriesData);
-        seriesData = [];
+        const parsedData: ParsedPrometheusData = DataParserForPrometheus(
+          prometheusData,
+          lineGraph,
+          areaGraph
+        );
+        setGraphData(parsedData);
       }
     },
     onError: (error: ApolloError) => {
@@ -113,39 +128,93 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   });
 
   const generatePromQueries = () => {
-    let promQueries: promQueryInput[] = prometheusQueryData.promInput.queries;
+    let promQueries: promQueryInput[] =
+      prometheusQueryData.promInput.queries ?? [];
     if (prometheusQueryData.firstLoad) {
       const timeRangeDiff: number =
         new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
           1000 -
         new Date(moment(selectedDashboard.range.startDate).format()).getTime() /
           1000;
-      promQueries = getPromQueryInput(prom_queries, timeRangeDiff);
+      promQueries = getPromQueryInput(prom_queries, timeRangeDiff, true);
     }
     setPrometheusQueryData({
       promInput: {
-        url: selectedDataSource.selectedDataSourceURL,
-        start: `${
-          new Date(
-            moment(selectedDashboard.range.startDate).format()
-          ).getTime() / 1000
-        }`,
-        end: `${
-          new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-          1000
-        }`,
+        ds_details: {
+          url: selectedDataSource.selectedDataSourceURL,
+          start: `${
+            new Date(
+              moment(selectedDashboard.range.startDate).format()
+            ).getTime() / 1000
+          }`,
+          end: `${
+            new Date(
+              moment(selectedDashboard.range.endDate).format()
+            ).getTime() / 1000
+          }`,
+        },
         queries: promQueries,
       },
       firstLoad: false,
     });
-    promQueries = [];
   };
 
   useEffect(() => {
     if (prometheusQueryData.firstLoad) {
       generatePromQueries();
+      if (
+        selectedDashboard.refreshRate !== MAX_REFRESH_RATE &&
+        panel_id === controllerPanelID
+      ) {
+        dashboard.selectDashboard({
+          range: {
+            startDate: moment
+              .unix(
+                Math.round(new Date().getTime() / 1000) -
+                  DEFAULT_RELATIVE_TIME_RANGE
+              )
+              .format(),
+            endDate: moment
+              .unix(Math.round(new Date().getTime() / 1000))
+              .format(),
+          },
+        });
+      }
     }
     if (!prometheusQueryData.firstLoad) {
+      if (panel_id === controllerPanelID) {
+        const endDate: number =
+          new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
+          1000;
+        const now: number = Math.round(new Date().getTime() / 1000);
+        const diff: number = Math.abs(now - endDate);
+        const maxLim: number =
+          (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 !== 0
+            ? (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 +
+              MINIMUM_TOLERANCE_LIMIT
+            : DEFAULT_TOLERANCE_LIMIT;
+        if (
+          diff >= 0 &&
+          diff <= maxLim &&
+          selectedDashboard.refreshRate !== MAX_REFRESH_RATE
+        ) {
+          const startDate: number =
+            new Date(
+              moment(selectedDashboard.range.startDate).format()
+            ).getTime() / 1000;
+          const interval: number = endDate - startDate;
+          dashboard.selectDashboard({
+            range: {
+              startDate: moment
+                .unix(Math.round(new Date().getTime() / 1000) - interval)
+                .format(),
+              endDate: moment
+                .unix(Math.round(new Date().getTime() / 1000))
+                .format(),
+            },
+          });
+        }
+      }
       setTimeout(
         () => {
           generatePromQueries();
@@ -265,12 +334,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             <Typography className={classes.title}>{panel_name}</Typography>
             <LineAreaGraph
               legendTableHeight={120}
-              openSeries={graphData}
-              eventSeries={chaos_data ?? []}
+              openSeries={graphData.seriesData}
+              eventSeries={graphData.chaosData}
               showPoints={false}
               showLegendTable
               showEventTable
-              showTips
+              showTips={false}
               showEventMarkers
               marginLeftEventTable={10}
               unit={unit}
@@ -284,12 +353,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
       <div className={classes.singleGraph}>
         <LineAreaGraph
           legendTableHeight={120}
-          openSeries={graphData}
-          eventSeries={chaos_data ?? []}
+          openSeries={graphData.seriesData}
+          eventSeries={graphData.chaosData}
           showPoints={false}
           showEventTable={viewEventMetric}
           showLegendTable
-          showTips
+          showTips={false}
           showEventMarkers
           unit={unit}
           yLabel={y_axis_left}

@@ -1,7 +1,7 @@
 import { TableHead, TableRow } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import InfoTooltip from '../../../../components/InfoTooltip';
 import { StyledTableCell } from '../../../../components/StyledTableCell';
 import useStyles from './styles';

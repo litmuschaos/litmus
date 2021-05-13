@@ -40,6 +40,7 @@ const Accordion = withStyles((theme) => ({
       cursor: 'default',
     },
   },
+  expanded: {},
 }))(MuiAccordion);
 
 const AccordionSummary = withStyles({
