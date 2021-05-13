@@ -5,9 +5,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    background: theme.palette.disabledBackground,
+    background: theme.palette.cards.header,
     height: '3.25rem',
     paddingTop: theme.spacing(0.5),
   },
@@ -17,27 +15,10 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: '140%',
     padding: theme.spacing(1.5, 0, 0, 3),
   },
-  button: {
-    background: 'none',
-    boxShadow: 'none',
-    '&:hover': {
-      background: 'none',
-      boxShadow: 'none',
-      cursor: 'pointer !important',
-    },
-  },
-  closeText: {
-    fontSize: '0.75rem',
-    lineHeight: '150%',
-    color: theme.palette.text.hint,
-  },
-  closeIcon: {
-    marginLeft: theme.spacing(1.5),
-  },
   body: {
     display: 'flex',
     justifyContent: 'space-evenly',
-    background: theme.palette.cards.header,
+    background: theme.palette.background.paper,
     padding: theme.spacing(0, 1),
   },
   infoSectionElement: {

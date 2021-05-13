@@ -1,6 +1,5 @@
 import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
-import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckBox } from '../../../../components/CheckBox';
@@ -17,7 +16,6 @@ interface InfoDropdownProps {
   applicationsToBeShown: string[];
   postPanelSelectionRoutine: (selectedPanelList: string[]) => void;
   postApplicationSelectionRoutine: (selectedApplicationList: string[]) => void;
-  closeInfo: () => void;
 }
 
 const InfoDropdown: React.FC<InfoDropdownProps> = ({
@@ -26,7 +24,6 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
   applicationsToBeShown,
   postPanelSelectionRoutine,
   postApplicationSelectionRoutine,
-  closeInfo,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -61,21 +58,6 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
         <Typography className={classes.headerText}>
           {t('analyticsDashboard.monitoringDashboardPage.infoDropdown.header')}
         </Typography>
-        <ButtonFilled
-          className={classes.button}
-          onClick={() => {
-            closeInfo();
-          }}
-        >
-          <Typography className={classes.closeText}>
-            {t('analyticsDashboard.monitoringDashboardPage.infoDropdown.close')}
-          </Typography>
-          <img
-            src="/icons/closeIcon.svg"
-            alt="close"
-            className={classes.closeIcon}
-          />
-        </ButtonFilled>
       </div>
       <div className={classes.body}>
         <div className={classes.infoSectionElement}>

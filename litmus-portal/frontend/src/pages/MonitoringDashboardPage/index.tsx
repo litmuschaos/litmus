@@ -401,9 +401,6 @@ const DashboardPage: React.FC = () => {
                 postApplicationSelectionRoutine={(
                   selectedApplicationList: string[]
                 ) => {}}
-                closeInfo={() => {
-                  setIsInfoOpen(false);
-                }}
               />
             </div>
           )}

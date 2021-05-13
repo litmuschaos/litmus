@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     marginTop: theme.spacing(3.5),
     paddingTop: theme.spacing(2.15),
-    backgroundColor: theme.palette.disabledBackground,
+    backgroundColor: theme.palette.cards.header,
     minHeight: '5rem',
   },
 
