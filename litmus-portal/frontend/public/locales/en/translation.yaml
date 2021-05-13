@@ -643,7 +643,7 @@ settings:
     defaultReg: Use Default Registry
     customValues: Use custom values
     registryLabel: Registry Type
-    additionalInfo: Provide addtional details
+    additionalInfo: Provide additional details
     save: Save Changes
 
 workflowDetailsView:
