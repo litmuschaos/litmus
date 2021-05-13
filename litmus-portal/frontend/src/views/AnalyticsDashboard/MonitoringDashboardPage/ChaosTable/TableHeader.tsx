@@ -1,7 +1,7 @@
 import { TableHead, TableRow } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckBoxBlue } from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import InfoTooltip from '../../../../components/InfoTooltip';
 import { StyledTableCell } from '../../../../components/StyledTableCell';
 import useStyles from './styles';
@@ -24,7 +24,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     <TableHead>
       <TableRow className={classes.tableHead}>
         <StyledTableCell padding="checkbox" className={classes.checkbox}>
-          <CheckBoxBlue
+          <CheckBox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}

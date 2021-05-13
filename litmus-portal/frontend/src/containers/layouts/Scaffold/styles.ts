@@ -12,9 +12,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridTemplateAreas: '"header header" "sidebar content"',
 
     '& ::-webkit-scrollbar': {
-      width: '0.35rem',
+      width: '0.4rem',
     },
     '& ::-webkit-scrollbar-track': {
+      marginTop: theme.spacing(1),
       webkitBoxShadow: `inset 0 0 8px ${theme.palette.common.black}`,
       backgroundColor: theme.palette.border.main,
     },

@@ -69,11 +69,11 @@ export const DataParserForPrometheus = (
   };
   prometheusData.GetPromQuery.annotationsResponse?.forEach(
     (queryResponse, mainIndex) => {
-      if (queryResponse && queryResponse.legends) {
+      if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
         parsedPrometheusData.chaosData.push(
-          ...queryResponse.legends?.map((elem, index) => ({
+          ...queryResponse.legends.map((elem, index) => ({
             metricName: elem,
-            data: queryResponse.tsvs[index]?.map((dataPoint) => ({
+            data: queryResponse.tsvs[index].map((dataPoint) => ({
               ...dataPoint,
             })),
             baseColor:
@@ -88,11 +88,11 @@ export const DataParserForPrometheus = (
   );
   prometheusData.GetPromQuery.metricsResponse?.forEach(
     (queryResponse, mainIndex) => {
-      if (queryResponse && queryResponse.legends) {
+      if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
         parsedPrometheusData.seriesData.push(
-          ...queryResponse.legends?.map((elem, index) => ({
+          ...queryResponse.legends.map((elem, index) => ({
             metricName: elem,
-            data: queryResponse.tsvs[index]?.map((dataPoint) => ({
+            data: queryResponse.tsvs[index].map((dataPoint) => ({
               ...dataPoint,
             })),
             baseColor:

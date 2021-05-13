@@ -107,16 +107,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
       prometheusQueryData?.promInput.ds_details.url === '',
     onCompleted: (prometheusData) => {
       if (prometheusData) {
-        let parsedData: ParsedPrometheusData = DataParserForPrometheus(
+        const parsedData: ParsedPrometheusData = DataParserForPrometheus(
           prometheusData,
           lineGraph,
           areaGraph
         );
         setGraphData(parsedData);
-        parsedData = {
-          seriesData: [],
-          chaosData: [],
-        };
       }
     },
     onError: (error: ApolloError) => {
@@ -161,7 +157,6 @@ const PanelContent: React.FC<GraphPanelProps> = ({
       },
       firstLoad: false,
     });
-    promQueries = [];
   };
 
   useEffect(() => {

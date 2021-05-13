@@ -3,7 +3,7 @@ import Icon from '@material-ui/core/Icon';
 import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckBoxBlue } from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import DashboardList from '../../../../components/PreconfiguredDashboards/data';
 import {
   DashboardConfigurationDetails,
@@ -165,7 +165,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               <FormGroup key="application-group">
                 <FormControlLabel
                   control={
-                    <CheckBoxBlue
+                    <CheckBox
                       checked={selectedApplications.includes(application)}
                       onChange={() => handleApplicationSelect(application)}
                       name={application}
@@ -188,7 +188,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               <FormGroup key="application-group">
                 <FormControlLabel
                   control={
-                    <CheckBoxBlue
+                    <CheckBox
                       checked={selectedMetrics.includes(metric.id)}
                       onChange={() => handleMetricSelect(metric.id)}
                       name={metric.name}

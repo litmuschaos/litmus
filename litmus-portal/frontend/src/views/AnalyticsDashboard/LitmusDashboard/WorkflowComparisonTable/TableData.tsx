@@ -4,7 +4,7 @@ import cronstrue from 'cronstrue';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckBoxWhite } from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import { Workflow } from '../../../../models/graphql/workflowListData';
 import { history } from '../../../../redux/configureStore';
 import {
@@ -42,7 +42,7 @@ const TableData: React.FC<TableDataProps> = ({
     <>
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
         {comparisonState === false && (
-          <CheckBoxWhite
+          <CheckBox
             checked={itemSelectionStatus}
             inputProps={{ 'aria-labelledby': labelIdentifier }}
           />

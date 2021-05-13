@@ -4,7 +4,7 @@ import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
-import { CheckBoxWhite } from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import { LIST_DATASOURCE } from '../../../../graphql';
 import { DataSourceDetails } from '../../../../models/dataSourceData';
 import {
@@ -249,7 +249,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
           <div className={classes.inputDivCheckBox}>
             <FormControlLabel
               control={
-                <CheckBoxWhite
+                <CheckBox
                   color="primary"
                   checked={dataSourceDetails.noAuth}
                   onChange={handleAuthChange}
@@ -261,7 +261,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             <FormControlLabel
               className={classes.basicAuth}
               control={
-                <CheckBoxWhite
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.basicAuth}
@@ -274,7 +274,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             <FormControlLabel
               className={classes.withCredentials}
               control={
-                <CheckBoxWhite
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.withCredentials}
@@ -288,7 +288,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
           <div className={classes.inputDivCheckBox}>
             <FormControlLabel
               control={
-                <CheckBoxWhite
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.tlsClientAuth}
@@ -301,7 +301,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             <FormControlLabel
               className={classes.withCACert}
               control={
-                <CheckBoxWhite
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.withCACert}
