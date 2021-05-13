@@ -47,4 +47,13 @@ export const constants = {
   adminMode: 'adminModeNamespace',
   chaosHub: 'Chaos Hub',
   workflow: 'Workflow',
+
+  /**
+   * Image Registry constants
+   */
+  dockerio: 'docker.io',
+  docker: 'Docker Hub',
+  litmus: 'litmuschaos',
+  public: 'Public',
+  private: 'Private',
 };
