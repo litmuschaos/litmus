@@ -35,12 +35,13 @@ export const updateEngineName = (parsedYaml: any) => {
             // Condition to check for the kind as ChaosEngine
             if (chaosEngine.kind === 'ChaosEngine') {
               if (chaosEngine.metadata.generateName === undefined) {
-                chaosEngine.metadata.generateName = chaosEngine.metadata.name;
+                chaosEngine.metadata['generateName'] =
+                  chaosEngine.metadata.name;
                 delete chaosEngine.metadata.name;
-                chaosEngine.metadata['labels'] = {
-                  instance_id: uuidv4(),
-                };
               }
+              chaosEngine.metadata['labels'] = {
+                instance_id: uuidv4(),
+              };
               // Condition to check the namespace
               if (typeof chaosEngine.metadata.namespace === 'object') {
                 // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
