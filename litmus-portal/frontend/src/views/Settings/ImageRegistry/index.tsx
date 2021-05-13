@@ -176,9 +176,7 @@ const ImageRegistry = () => {
       </Typography>
 
       {listLoading && loading ? (
-        <>
-          <Loader />
-        </>
+        <Loader />
       ) : (
         <form id="login-form" autoComplete="on" onSubmit={handleSubmit}>
           <FormControl component="fieldset" style={{ width: '70%' }}>
@@ -273,22 +271,20 @@ const ImageRegistry = () => {
                 />
 
                 {isCustomRegistryEnabled ? (
-                  <>
-                    <div className={classes.registryInfoDiv}>
-                      <Typography className={classes.registryInfoText}>
-                        {t('settings.imageRegistry.registry')}
-                        <strong>{registryData.registry_name}</strong>
-                      </Typography>
-                      <Typography className={classes.registryInfoText}>
-                        {t('settings.imageRegistry.repo')}
-                        <strong>{registryData.repo_name}</strong>
-                      </Typography>
-                      <Typography className={classes.registryInfoText}>
-                        {t('settings.imageRegistry.repoType')}
-                        <strong>{registryData.registry_type}</strong>
-                      </Typography>
-                    </div>
-                  </>
+                  <div className={classes.registryInfoDiv}>
+                    <Typography className={classes.registryInfoText}>
+                      {t('settings.imageRegistry.registry')}
+                      <strong>{registryData.registry_name}</strong>
+                    </Typography>
+                    <Typography className={classes.registryInfoText}>
+                      {t('settings.imageRegistry.repo')}
+                      <strong>{registryData.repo_name}</strong>
+                    </Typography>
+                    <Typography className={classes.registryInfoText}>
+                      {t('settings.imageRegistry.repoType')}
+                      <strong>{registryData.registry_type}</strong>
+                    </Typography>
+                  </div>
                 ) : (
                   <>
                     <div className={classes.customDiv}>
