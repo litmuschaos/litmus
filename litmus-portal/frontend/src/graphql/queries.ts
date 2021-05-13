@@ -458,6 +458,12 @@ export const GET_TEMPLATE_BY_ID = gql`
   }
 `;
 
+export const GET_PREDEFINED_EXPERIMENT_YAML = gql`
+  query GetPredefinedExperimentYAML($experimentInput: ExperimentInput!) {
+    GetPredefinedExperimentYAML(experimentInput: $experimentInput)
+  }
+`;
+
 export const LIST_IMAGE_REGISTRY = gql`
   query ListImageRegistry($data: String!) {
     ListImageRegistry(project_id: $data) {

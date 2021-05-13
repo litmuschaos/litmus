@@ -32,7 +32,10 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
-import { fetchWorkflowNameFromManifest } from '../../../utils/yamlUtils';
+import {
+  fetchWorkflowNameFromManifest,
+  updateWorkflowNameLabel,
+} from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface WorkflowProps {
@@ -251,7 +254,11 @@ const VerifyCommit = forwardRef(
         /* JSON.stringify takes 3 parameters [object to be converted,
         a function to alter the conversion, spaces to be shown in final result for indentation ] */
         const yml = YAML.parse(manifest);
-        const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
+        const updatedYaml = updateWorkflowNameLabel(
+          yml,
+          fetchWorkflowNameFromManifest(manifest)
+        );
+        const yamlJson = JSON.stringify(updatedYaml, null, 2); // Converted to Stringified JSON
 
         const chaosWorkFlowInputs = {
           workflow_manifest: yamlJson,
