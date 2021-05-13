@@ -1,9 +1,8 @@
 import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
-import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import DashboardList from '../../../../components/PreconfiguredDashboards/data';
 import {
   DashboardConfigurationDetails,
@@ -17,7 +16,6 @@ interface InfoDropdownProps {
   applicationsToBeShown: string[];
   postPanelSelectionRoutine: (selectedPanelList: string[]) => void;
   postApplicationSelectionRoutine: (selectedApplicationList: string[]) => void;
-  closeInfo: () => void;
 }
 
 const InfoDropdown: React.FC<InfoDropdownProps> = ({
@@ -26,7 +24,6 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
   applicationsToBeShown,
   postPanelSelectionRoutine,
   postApplicationSelectionRoutine,
-  closeInfo,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -61,21 +58,6 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
         <Typography className={classes.headerText}>
           {t('analyticsDashboard.monitoringDashboardPage.infoDropdown.header')}
         </Typography>
-        <ButtonFilled
-          className={classes.button}
-          onClick={() => {
-            closeInfo();
-          }}
-        >
-          <Typography className={classes.closeText}>
-            {t('analyticsDashboard.monitoringDashboardPage.infoDropdown.close')}
-          </Typography>
-          <img
-            src="/icons/closeIcon.svg"
-            alt="close"
-            className={classes.closeIcon}
-          />
-        </ButtonFilled>
       </div>
       <div className={classes.body}>
         <div className={classes.infoSectionElement}>
@@ -100,17 +82,17 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'analyticsDashboard.monitoringDashboardPage.infoDropdown.metaData2'
               )}
             </Typography>
-            <div>
+            <div className={classes.iconWithTextDiv}>
+              <img
+                src={`/icons/${
+                  dashboardConfigurationDetails.type === DashboardList[0].name
+                    ? 'kubernetes-platform'
+                    : 'sock-shop'
+                }.svg`}
+                alt="dashboard Icon"
+                className={classes.inlineIcon}
+              />
               <Typography className={classes.infoValue}>
-                <img
-                  src={`/icons/${
-                    dashboardConfigurationDetails.type === DashboardList[0].name
-                      ? 'kubernetes-platform'
-                      : 'sock-shop'
-                  }.svg`}
-                  alt="dashboard Icon"
-                  className={classes.dashboardIcon}
-                />
                 {dashboardConfigurationDetails.type}
               </Typography>
             </div>
@@ -121,8 +103,15 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'analyticsDashboard.monitoringDashboardPage.infoDropdown.metaData3'
               )}
             </Typography>
-            <Typography className={classes.infoValue}>
-              {dashboardConfigurationDetails.dataSourceName}
+            <div className={classes.iconWithTextDiv}>
+              <img
+                src="/icons/prometheus.svg"
+                alt="data source Icon"
+                className={classes.inlineIcon}
+              />
+              <Typography className={classes.infoValue}>
+                {dashboardConfigurationDetails.dataSourceName}
+              </Typography>
               <Icon
                 onClick={() => {
                   window.open(dashboardConfigurationDetails.dataSourceURL);
@@ -134,7 +123,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                   className={classes.linkIcon}
                 />
               </Icon>
-            </Typography>
+            </div>
           </div>
           <div className={classes.dashboardMetaDataItem}>
             <Typography className={classes.infoKey}>

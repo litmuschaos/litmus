@@ -1,15 +1,10 @@
 /* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Typography,
-} from '@material-ui/core';
+import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import { LIST_DATASOURCE } from '../../../../graphql';
 import { DataSourceDetails } from '../../../../models/dataSourceData';
 import {
@@ -279,7 +274,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             <FormControlLabel
               className={classes.withCredentials}
               control={
-                <Checkbox
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.withCredentials}
@@ -293,7 +288,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
           <div className={classes.inputDivCheckBox}>
             <FormControlLabel
               control={
-                <Checkbox
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.tlsClientAuth}
@@ -306,7 +301,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             <FormControlLabel
               className={classes.withCACert}
               control={
-                <Checkbox
+                <CheckBox
                   color="primary"
                   disabled
                   checked={dataSourceDetails.withCACert}

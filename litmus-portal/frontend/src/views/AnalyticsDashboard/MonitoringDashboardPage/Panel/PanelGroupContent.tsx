@@ -1,7 +1,6 @@
 import { Typography } from '@material-ui/core';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import { EventMetric } from 'litmus-ui';
 import React from 'react';
 import { Accordion } from '../../../../components/Accordion';
 import { PanelResponse } from '../../../../models/graphql/dashboardsDetails';
@@ -14,7 +13,6 @@ interface DashboardPanelGroupContentProps {
   panels: PanelResponse[];
   panel_group_name: string;
   panel_group_id: string;
-  chaos_data?: Array<EventMetric>;
   selectedPanels?: string[];
 }
 
@@ -22,7 +20,6 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
   panels,
   panel_group_id,
   panel_group_name,
-  chaos_data,
   selectedPanels,
 }) => {
   const classes = useStyles();
@@ -64,7 +61,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
                   y_axis_right={panel.y_axis_right}
                   x_axis_down={panel.x_axis_down}
                   unit={panel.unit}
-                  chaos_data={chaos_data}
+                  controllerPanelID={selectedPanels ? selectedPanels[0] : ''}
                 />
               ))}
         </AccordionDetails>

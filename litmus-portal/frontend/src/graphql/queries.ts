@@ -407,12 +407,44 @@ export const LIST_DASHBOARD = gql`
 export const PROM_QUERY = gql`
   query PrometheusQuery($prometheusInput: promInput) {
     GetPromQuery(query: $prometheusInput) {
-      queryid
-      legends
-      tsvs {
-        timestamp
-        value
+      metricsResponse {
+        queryid
+        legends
+        tsvs {
+          date
+          value
+        }
       }
+      annotationsResponse {
+        queryid
+        legends
+        tsvs {
+          date
+          value
+        }
+      }
+    }
+  }
+`;
+
+export const PROM_LABEL_VALUES = gql`
+  query PrometheusLabelValues($prometheusInput: promSeriesInput) {
+    GetPromLabelNamesAndValues(series: $prometheusInput) {
+      series
+      labelValues {
+        label
+        values {
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const PROM_SERIES_LIST = gql`
+  query PrometheusSeriesList($prometheusDSInput: dsDetails) {
+    GetPromSeriesList(ds_details: $prometheusDSInput) {
+      seriesList
     }
   }
 `;
@@ -422,6 +454,39 @@ export const GET_TEMPLATE_BY_ID = gql`
     GetTemplateManifestByID(template_id: $data) {
       template_id
       manifest
+    }
+  }
+`;
+
+export const GET_PREDEFINED_EXPERIMENT_YAML = gql`
+  query GetPredefinedExperimentYAML($experimentInput: ExperimentInput!) {
+    GetPredefinedExperimentYAML(experimentInput: $experimentInput)
+  }
+`;
+
+export const LIST_IMAGE_REGISTRY = gql`
+  query ListImageRegistry($data: String!) {
+    ListImageRegistry(project_id: $data) {
+      image_registry_info {
+        enable_registry
+      }
+      image_registry_id
+    }
+  }
+`;
+
+export const GET_IMAGE_REGISTRY = gql`
+  query GetImageRegistry($registryid: String!, $projectid: String!) {
+    GetImageRegistry(image_registry_id: $registryid, project_id: $projectid) {
+      image_registry_info {
+        enable_registry
+        secret_name
+        secret_namespace
+        image_registry_name
+        image_repo_name
+        image_registry_type
+      }
+      image_registry_id
     }
   }
 `;

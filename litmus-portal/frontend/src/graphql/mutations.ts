@@ -285,3 +285,23 @@ export const UPDATE_PANEL = gql`
     updatePanel(panelInput: $panelInput)
   }
 `;
+
+export const UPDATE_IMAGE_REGISTRY = gql`
+  mutation updateImageRegistry(
+    $imageRegistryID: String!
+    $projectID: String!
+    $imageRegistryInfo: imageRegistryInput!
+  ) {
+    updateImageRegistry(
+      image_registry_id: $imageRegistryID
+      project_id: $projectID
+      imageRegistryInfo: $imageRegistryInfo
+    ) {
+      image_registry_info {
+        image_repo_name
+        image_registry_name
+        image_registry_type
+      }
+    }
+  }
+`;

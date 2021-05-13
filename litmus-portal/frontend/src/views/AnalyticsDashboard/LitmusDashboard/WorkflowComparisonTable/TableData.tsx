@@ -4,7 +4,7 @@ import cronstrue from 'cronstrue';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CheckBox from '../../../../components/CheckBox';
+import { CheckBox } from '../../../../components/CheckBox';
 import { Workflow } from '../../../../models/graphql/workflowListData';
 import { history } from '../../../../redux/configureStore';
 import {

@@ -18,6 +18,7 @@ export interface preDefinedWorkflowData {
   recommendation?: string;
   experimentinfo?: string;
   chaosinfra?: boolean;
+  experimentPath?: string;
 }
 
 export interface workflowDetails {

@@ -11,6 +11,7 @@ import { RootState } from '../../redux/reducers';
 import { getUserRole } from '../../utils/auth';
 import AccountSettings from '../../views/Settings/AccountsTab/AccountSettings';
 import GitOpsTab from '../../views/Settings/GitOpsTab';
+import ImageRegistry from '../../views/Settings/ImageRegistry';
 import TeamingTab from '../../views/Settings/TeamingTab/Team';
 import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
 import useStyles from './styles';
@@ -68,6 +69,11 @@ const Settings: React.FC = () => {
             label="GitOps"
             {...tabProps(role === UserRole.admin ? 3 : 2)}
           />
+          <StyledTab
+            data-cy="image-registry"
+            label="Image Registry"
+            {...tabProps(role === UserRole.admin ? 4 : 3)}
+          />
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
@@ -89,6 +95,14 @@ const Settings: React.FC = () => {
           index={role === UserRole.admin ? 3 : 2}
         >
           <GitOpsTab />
+        </TabPanel>
+      </div>
+      <div data-cy="ImageRegistry">
+        <TabPanel
+          value={settingsTabValue}
+          index={role === UserRole.admin ? 4 : 3}
+        >
+          <ImageRegistry />
         </TabPanel>
       </div>
     </Scaffold>
