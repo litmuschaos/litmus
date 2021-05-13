@@ -1,8 +1,10 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable no-loop-func */
+/* eslint-disable no-param-reassign */
 import YAML from 'yaml';
 import { v4 as uuidv4 } from 'uuid';
 import { constants } from '../constants';
+import { ImageRegistryInfo } from '../models/graphql/createWorkflowData';
 
 const nameextractor = (val: any) => {
   const embeddedworkflowyamlstring = val;
@@ -277,3 +279,44 @@ export const stepEmbeddedYAMLExtractor = (
 };
 
 export default parsed;
+
+/**
+ * updateManifestImage updates the image registry of the workflow manifest
+ */
+export const updateManifestImage = (
+  parsedYaml: any,
+  registryData: ImageRegistryInfo
+) => {
+  if (parsedYaml.spec !== undefined) {
+    if (registryData.image_registry_type.toLocaleLowerCase() === 'private') {
+      if (parsedYaml.kind.toLowerCase() === 'workflow') {
+        parsedYaml.spec['imagePullSecrets'] = [
+          {
+            name: registryData.secret_name,
+          },
+        ];
+      }
+      if (parsedYaml.kind.toLowerCase() === 'cronworkflow') {
+        parsedYaml.spec.workflowSpec['imagePullSecrets'] = [
+          {
+            name: registryData.secret_name,
+          },
+        ];
+      }
+    }
+    parsedYaml.spec.templates.forEach((template: any) => {
+      if (template.container) {
+        if (registryData.image_repo_name !== constants.litmus) {
+          const imageData = template.container.image.split('/');
+          const imageName = imageData[imageData.length - 1];
+          template.container.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
+        } else {
+          const imageData = template.container.image.split('/');
+          const imageName = imageData[imageData.length - 1];
+          template.container.image = `${constants.litmus}/${imageName}`;
+        }
+      }
+    });
+  }
+  return YAML.stringify(parsedYaml);
+};

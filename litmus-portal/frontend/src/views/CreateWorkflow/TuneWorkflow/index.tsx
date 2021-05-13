@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
@@ -22,9 +22,12 @@ import {
   GET_CHARTS_DATA,
   GET_ENGINE_YAML,
   GET_EXPERIMENT_YAML,
+  GET_IMAGE_REGISTRY,
   GET_PREDEFINED_EXPERIMENT_YAML,
   GET_TEMPLATE_BY_ID,
+  LIST_IMAGE_REGISTRY,
 } from '../../../graphql/queries';
+import { ImageRegistryInfo } from '../../../models/graphql/createWorkflowData';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
@@ -35,7 +38,11 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
-import { updateEngineName, updateNamespace } from '../../../utils/yamlUtils';
+import {
+  updateEngineName,
+  updateManifestImage,
+  updateNamespace,
+} from '../../../utils/yamlUtils';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
@@ -114,6 +121,28 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   const { t } = useTranslation();
 
+  const [getRegistryData, { data: registryData }] = useLazyQuery(
+    GET_IMAGE_REGISTRY,
+    {
+      fetchPolicy: 'network-only',
+    }
+  );
+
+  useQuery(LIST_IMAGE_REGISTRY, {
+    variables: {
+      data: selectedProjectID,
+    },
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      getRegistryData({
+        variables: {
+          registryid: data.ListImageRegistry[0].image_registry_id,
+          projectid: selectedProjectID,
+        },
+      });
+    },
+  });
+
   /**
    * Graphql query to get charts
    */
@@ -143,7 +172,14 @@ const TuneWorkflow = forwardRef((_, ref) => {
         const wfmanifest = updateEngineName(
           YAML.parse(data.GetPredefinedExperimentYAML)
         );
-        const updatedManifest = updateNamespace(wfmanifest, namespace);
+        const updatedManifestImage = updateManifestImage(
+          YAML.parse(wfmanifest),
+          registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
+        );
+        const updatedManifest = updateNamespace(
+          updatedManifestImage,
+          namespace
+        );
         workflowAction.setWorkflowManifest({
           manifest: YAML.stringify(updatedManifest),
         });
@@ -157,7 +193,15 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     onCompleted: (data) => {
       const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
-      const updatedManifest = updateNamespace(parsedYAML, namespace);
+      const updatedManifestImage = updateManifestImage(
+        parsedYAML,
+        registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
+      );
+      const updatedManifest = updateNamespace(
+        YAML.parse(updatedManifestImage),
+        namespace
+      );
+
       workflowAction.setWorkflowManifest({
         manifest: YAML.stringify(updatedManifest),
       });
@@ -448,13 +492,17 @@ const TuneWorkflow = forwardRef((_, ref) => {
    * when a new experiment is added from MyHub
    */
   useEffect(() => {
-    if (isCustomWorkflow) {
+    if (isCustomWorkflow && registryData !== undefined) {
       const savedManifest =
         manifest !== '' ? YAML.parse(manifest) : generatedYAML;
       const updatedManifest = updateCRD(savedManifest, experiment);
-      setGeneratedYAML(updatedManifest);
+      const updatedManifestImage = updateManifestImage(
+        updatedManifest,
+        registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
+      );
+      setGeneratedYAML(YAML.parse(updatedManifestImage));
       workflowAction.setWorkflowManifest({
-        manifest: YAML.stringify(updatedManifest),
+        manifest: updatedManifestImage,
       });
     }
   }, [experiment]);
