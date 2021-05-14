@@ -160,11 +160,11 @@ spec:
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:2.0.0-Beta5"
             - name: ARGO_SERVER_IMAGE
-              value: "argoproj/argocli:v2.9.3"
+              value: "litmuschaos/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "argoproj/workflow-controller:v2.9.3"
+              value: "litmuschaos/workflow-controller:v2.9.3"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "argoproj/argoexec:v2.9.3"
+              value: "litmuschaos/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
               value: "litmuschaos/chaos-operator:1.13.3"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
@@ -257,7 +257,7 @@ spec:
     spec:
       containers:
         - name: mongo
-          image: mongo:4.2.8
+          image: litmuschaos/mongo:4.2.8
           ports:
             - containerPort: 27017
           imagePullPolicy: Always
