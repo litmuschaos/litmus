@@ -96,6 +96,21 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.background.paper,
     borderRadius: 4,
     textTransform: 'none',
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+      boxShadow: `0px 4px 5px -2px ${fade(
+        theme.palette.highlight,
+        0.2
+      )},0px 7px 10px 1px ${fade(
+        theme.palette.highlight,
+        0.14
+      )},0px 2px 16px 1px ${fade(theme.palette.highlight, 0.12)}`,
+      background: theme.palette.background.paper,
+    },
+    '&$focused': {
+      borderColor: theme.palette.primary.main,
+      background: theme.palette.background.paper,
+    },
   },
 
   displayDate: {
@@ -210,6 +225,7 @@ export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
     },
     '&$focused $notchedOutline': {
       borderColor: theme.palette.primary.main,
+      background: theme.palette.background.paper,
     },
     '& .MuiInputLabel-root': {
       color: `${theme.palette.text.hint} !important`,
