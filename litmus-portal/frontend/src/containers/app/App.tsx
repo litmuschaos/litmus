@@ -28,8 +28,8 @@ const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
 const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
-const AnalyticsPage = lazy(() => import('../../pages/WorkflowAnalyticsPage'));
-const AnalyticsDashboard = lazy(() => import('../../pages/Analytics'));
+const AnalyticsPage = lazy(() => import('../../pages/WorkflowAnalytics'));
+const AnalyticsDashboard = lazy(() => import('../../pages/AnalyticsPage'));
 const DataSourceSelectPage = lazy(
   () => import('../../pages/SelectAndConfigureDataSource/Select')
 );
@@ -42,7 +42,7 @@ const DashboardSelectPage = lazy(
 const DashboardConfigurePage = lazy(
   () => import('../../pages/SelectAndConfigureDashboards/Configure')
 );
-const DashboardPage = lazy(() => import('../../pages/MonitoringDashboardPage'));
+const DashboardPage = lazy(() => import('../../pages/ApplicationDashboard'));
 const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
