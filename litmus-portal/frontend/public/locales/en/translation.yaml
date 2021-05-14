@@ -81,6 +81,8 @@ workflowStepper:
     errorSnackbar: Please provide a valid Workflow Name
   step4:
     errorSnackbar: Please select atleast one experiment to proceed
+  step6:
+    errorSnackbar: Please validate and retry scheduling with correct parameters
   finish: Finish
   next: Next
   back: Back
@@ -900,6 +902,8 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
+    workflowNameValidationMessage: Workflow name can only be alpha numeric and should not contain capital letters
+    subjectValidationMessage: Subject can only have alphanumeric characters and - . _ in-between
     test: test
     YAML: YAML
     button:

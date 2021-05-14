@@ -19,6 +19,15 @@ export const validateEmail = (value: string) => {
   return false;
 };
 
+export const validateSubject = (value: string) => {
+  const subjectValid = /(^[a-z0-9A-Z-._]{0,63}$)/;
+  if (value?.length > 0) {
+    if (value.match(subjectValid)) return false;
+    return true;
+  }
+  return false;
+};
+
 export const validateWorkflowName = (value: string) => {
   const workflowValid = /(^[a-z0-9-]{0,55}$)/;
   if (value.length > 0) {
