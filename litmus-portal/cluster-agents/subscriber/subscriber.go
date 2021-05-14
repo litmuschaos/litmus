@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"github.com/sirupsen/logrus"
 	"os/signal"
 	"runtime"
 
@@ -35,6 +36,14 @@ func init() {
 
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()
+
+	// check agent component status
+	components, err := k8s.CheckComponentStatus()
+	if err != nil {
+		log.Fatal(err)
+	}
+	clusterData["COMPONENTS"] = components
+	logrus.Info("all components live...starting up subscriber")
 
 	isConfirmed, newKey, err := k8s.IsClusterConfirmed()
 	if err != nil {

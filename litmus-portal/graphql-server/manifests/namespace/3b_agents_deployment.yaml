@@ -10,6 +10,8 @@ data:
   ACCESS_KEY: #{ACCESS_KEY}
   AGENT_SCOPE: #{AGENT-SCOPE}
   IS_CLUSTER_CONFIRMED: "false"
+  COMPONENTS: |
+    DEPLOYMENTS: ["chaos-operator-ce", "workflow-controller", "argo-server", "chaos-exporter", "event-tracker"]
 ---
 apiVersion: apps/v1
 kind: Deployment
