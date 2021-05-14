@@ -647,6 +647,8 @@ settings:
     registryLabel: Registry Type
     additionalInfo: Provide additional details
     save: Save Changes
+    provideInfo: Please provide the namespace and secret name. For more information,
+    visit: visit here
 
 workflowDetailsView:
   headerDesc: Workflow dashboard of

@@ -61,7 +61,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   additionalDetails: {
     fontSize: '1rem',
-    marginTop: theme.spacing(2.5),
+    margin: theme.spacing(2.5, 1, 0, 0),
+  },
+  infoText: {
+    padding: theme.spacing(2),
+    width: '15.625rem',
+  },
+  iconBtn: {
+    marginTop: theme.spacing(1.25),
   },
 }));
 export default useStyles;
