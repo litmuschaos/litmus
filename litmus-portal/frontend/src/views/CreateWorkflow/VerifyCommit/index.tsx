@@ -367,7 +367,6 @@ const VerifyCommit = forwardRef(
             </Typography>
 
             <div className={classes.summaryWrapper}>
-              isError
               <div className={classes.itemWrapper}>
                 <Typography className={classes.left}>
                   {t('createWorkflow.verifyCommit.summary.workflowName')}:

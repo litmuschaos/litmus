@@ -29,7 +29,11 @@ export const validateSubject = (value: string) => {
 };
 
 export const validateWorkflowName = (value: string) => {
-  const workflowValid = /(^[a-z0-9-]{0,55}$)/;
+  /**
+   * Workflow name is 54 chars max + generated timestamp is 10 chars
+   * => Total 54 + 10 = 64 chars maximum
+   * */
+  const workflowValid = /(^[a-z0-9-]{0,54}$)/;
   if (value.length > 0) {
     if (value.match(workflowValid)) return false;
     return true;
