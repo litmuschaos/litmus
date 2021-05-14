@@ -123,7 +123,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(-2.5),
   },
   verifyYAMLButton: {
-    width: '40%',
+    width: '10rem',
   },
 
   // Modal

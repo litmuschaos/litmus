@@ -9,6 +9,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,11 +28,18 @@ import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
+import * as AlertActions from '../../../redux/actions/alert';
 import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
+import {
+  validateStartEmptySpacing,
+  validateSubject,
+  validateTextEmpty,
+  validateWorkflowName,
+} from '../../../utils/validate';
 import {
   fetchWorkflowNameFromManifest,
   updateWorkflowNameLabel,
@@ -53,6 +61,8 @@ const VerifyCommit = forwardRef(
   ({ handleGoToStep, isLoading }: VerifyCommitProps, ref) => {
     const classes = useStyles();
     const { t } = useTranslation();
+    const isNameError = useRef<boolean>(false);
+    const isSubjectError = useRef<boolean>(false);
     const [workflow, setWorkflow] = useState<WorkflowProps>({
       name: '',
       description: '',
@@ -74,6 +84,7 @@ const VerifyCommit = forwardRef(
 
     const tabs = useActions(TabActions);
     const workflowAction = useActions(WorkflowActions);
+    const alert = useActions(AlertActions);
 
     const workflowData: WorkflowData = useSelector(
       (state: RootState) => state.workflowData
@@ -298,15 +309,38 @@ const VerifyCommit = forwardRef(
     };
 
     function onNext() {
-      handleMutation();
+      if (!isNameError.current && !isSubjectError.current) {
+        handleMutation();
+      } else {
+        alert.changeAlertState(true);
+      }
     }
 
     useImperativeHandle(ref, () => ({
       onNext,
     }));
 
-    // const preventDefault = (event: React.SyntheticEvent) =>
-    //  event.preventDefault();
+    const checkNameValidation = (): boolean =>
+      validateTextEmpty(fetchWorkflowNameFromManifest(manifest)) ||
+      validateStartEmptySpacing(fetchWorkflowNameFromManifest(manifest)) ||
+      validateWorkflowName(fetchWorkflowNameFromManifest(manifest));
+
+    const checkSubjectValidation = (): boolean =>
+      validateStartEmptySpacing(subject) || validateSubject(subject);
+
+    useEffect(() => {
+      if (checkNameValidation()) {
+        isNameError.current = true;
+      } else {
+        isNameError.current = false;
+      }
+      if (checkSubjectValidation()) {
+        isSubjectError.current = true;
+      } else {
+        isSubjectError.current = false;
+      }
+    }, [manifest, subject]);
+
     return (
       <>
         <div className={classes.root}>
@@ -333,6 +367,7 @@ const VerifyCommit = forwardRef(
             </Typography>
 
             <div className={classes.summaryWrapper}>
+              isError
               <div className={classes.itemWrapper}>
                 <Typography className={classes.left}>
                   {t('createWorkflow.verifyCommit.summary.workflowName')}:
@@ -343,11 +378,18 @@ const VerifyCommit = forwardRef(
                     defaultValue={fetchWorkflowNameFromManifest(manifest)}
                     id="name"
                     fullWidth
+                    error={checkNameValidation()}
                     onSave={(value) => handleNameChange({ changedName: value })}
+                    helperText={
+                      checkNameValidation()
+                        ? `${t(
+                            `createWorkflow.verifyCommit.workflowNameValidationMessage`
+                          )}`
+                        : undefined
+                    }
                   />
                 </div>
               </div>
-
               <div className={classes.itemWrapper}>
                 <Typography className={classes.left}>
                   {t('createWorkflow.verifyCommit.summary.clustername')}:
@@ -355,7 +397,6 @@ const VerifyCommit = forwardRef(
 
                 <Typography className={classes.right}>{clustername}</Typography>
               </div>
-
               <div className={classes.itemWrapper}>
                 <Typography className={classes.left}>
                   {t('createWorkflow.verifyCommit.summary.desc')}:
@@ -375,7 +416,6 @@ const VerifyCommit = forwardRef(
                   ) : null}
                 </div>
               </div>
-
               <div className={classes.itemWrapper}>
                 <div className={classes.leftFlex}>
                   <Typography className={classes.verticalAlign}>
@@ -401,14 +441,21 @@ const VerifyCommit = forwardRef(
                       id="subject"
                       fullWidth
                       multiline
+                      error={checkSubjectValidation()}
                       onSave={(value) =>
                         handleSubjectChange({ changedSubject: value })
+                      }
+                      helperText={
+                        checkSubjectValidation()
+                          ? `${t(
+                              'createWorkflow.verifyCommit.subjectValidationMessage'
+                            )}`
+                          : undefined
                       }
                     />
                   ) : null}
                 </div>
               </div>
-
               <div className={classes.itemWrapper}>
                 <Typography className={classes.left}>
                   {t('createWorkflow.verifyCommit.summary.schedule')}:
@@ -431,7 +478,6 @@ const VerifyCommit = forwardRef(
                   </IconButton>
                 </div>
               </div>
-
               <div className={classes.itemWrapper}>
                 <Typography className={classes.left}>
                   {t('createWorkflow.verifyCommit.summary.adjustedWeights')}:
@@ -466,7 +512,6 @@ const VerifyCommit = forwardRef(
                   </div>
                 )}
               </div>
-
               <div className={classes.itemWrapper}>
                 <Typography className={classes.left}>
                   {t('createWorkflow.verifyCommit.YAML')}
