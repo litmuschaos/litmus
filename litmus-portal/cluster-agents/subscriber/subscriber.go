@@ -3,19 +3,16 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"github.com/sirupsen/logrus"
+	"log"
+	"os"
 	"os/signal"
 	"runtime"
 
-	"log"
-	"os"
-
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
-
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
-
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/gql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	"github.com/sirupsen/logrus"
 )
 
 var (

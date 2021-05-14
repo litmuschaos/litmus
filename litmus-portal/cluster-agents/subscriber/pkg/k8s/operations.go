@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	yaml2 "gopkg.in/yaml.v2"
 	"log"
 	"os"
 	"strings"
@@ -13,6 +12,7 @@ import (
 
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
+	yaml2 "gopkg.in/yaml.v2"
 	corev1 "k8s.io/api/core/v1"
 	k8s_errors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
