@@ -524,7 +524,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     workflowAction.setWorkflowManifest({
       manifest: YAML.stringify(parsedManifest),
     });
-  }, [manifest]);
+  }, [manifest, workflow.name]);
 
   const onModalClose = () => {
     setAddExpModal(false);

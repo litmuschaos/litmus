@@ -2,8 +2,10 @@ import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import {
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
+  Popover,
   Radio,
   RadioGroup,
   Select,
@@ -12,6 +14,7 @@ import {
 import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import InfoIcon from '@material-ui/icons/Info';
 import Loader from '../../../components/Loader';
 import { constants } from '../../../constants';
 import {
@@ -67,6 +70,25 @@ const ImageRegistry = () => {
     repo_name: '',
     registry_type: '',
   });
+
+  /**
+   * State variables to manage popover actions
+   */
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
   /**
    * ListImageRegistry is used to fetch the list of image registries
    */
@@ -346,9 +368,43 @@ const ImageRegistry = () => {
                     {registryType === 'Private' && (
                       <>
                         <hr />
-                        <Typography className={classes.additionalDetails}>
-                          {t('settings.imageRegistry.additionalInfo')}
-                        </Typography>
+                        <div style={{ display: 'flex' }}>
+                          <Typography className={classes.additionalDetails}>
+                            {t('settings.imageRegistry.additionalInfo')}
+                          </Typography>
+                          <IconButton
+                            className={classes.iconBtn}
+                            onClick={handleClick}
+                            aria-label="info"
+                          >
+                            <InfoIcon />
+                          </IconButton>
+                          <Popover
+                            id={id}
+                            open={open}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                              vertical: 'top',
+                              horizontal: 'center',
+                            }}
+                          >
+                            <Typography className={classes.infoText}>
+                              {t('settings.imageRegistry.provideInfo')}{' '}
+                              <a
+                                href="https://kubernetes.io/docs/concepts/configuration/secret/"
+                                target="_"
+                              >
+                                {t('settings.imageRegistry.visit')}
+                              </a>
+                              .
+                            </Typography>
+                          </Popover>
+                        </div>
                         <div className={classes.customDiv}>
                           <InputField
                             label="Custom Image Secret"
