@@ -3,18 +3,16 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"log"
+	"os"
 	"os/signal"
 	"runtime"
 
-	"log"
-	"os"
-
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
-
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
-
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/gql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -24,6 +22,7 @@ var (
 		"SERVER_ADDR":          os.Getenv("SERVER_ADDR"),
 		"IS_CLUSTER_CONFIRMED": os.Getenv("IS_CLUSTER_CONFIRMED"),
 		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
+		"COMPONENTS":           os.Getenv("COMPONENTS"),
 	}
 
 	err error
@@ -35,6 +34,13 @@ func init() {
 
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()
+
+	// check agent component status
+	err := k8s.CheckComponentStatus(clusterData["COMPONENTS"])
+	if err != nil {
+		log.Fatal(err)
+	}
+	logrus.Info("all components live...starting up subscriber")
 
 	isConfirmed, newKey, err := k8s.IsClusterConfirmed()
 	if err != nil {
