@@ -339,7 +339,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               showPoints={false}
               showLegendTable
               showEventTable
-              showTips={false}
+              showTips
               showEventMarkers
               marginLeftEventTable={10}
               unit={unit}
@@ -358,7 +358,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
           showPoints={false}
           showEventTable={viewEventMetric}
           showLegendTable
-          showTips={false}
+          showTips
           showEventMarkers
           unit={unit}
           yLabel={y_axis_left}
