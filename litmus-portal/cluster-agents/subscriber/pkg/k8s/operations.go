@@ -82,20 +82,31 @@ func checkDeploymentStatus(components *AgentComponents, clientset *kubernetes.Cl
 	defer wait.Done()
 	for retries < LiveCheckMaxTries {
 		for _, dep := range components.Deployments {
-			depSpec, err := clientset.AppsV1().Deployments(AgentNamespace).Get(dep, metav1.GetOptions{})
+			podList, err := clientset.CoreV1().Pods(AgentNamespace).List(metav1.ListOptions{LabelSelector: dep})
 			if err != nil {
-				logrus.Errorf("failed to get deployments %v , err : %v", dep, err.Error())
+				logrus.Errorf("failed to get deployment pods %v , err : %v", dep, err.Error())
 				downCount += 1
 				continue
 			}
-			if depSpec == nil {
-				logrus.Errorf("failed to get deployments %v , err : deployment not found", dep)
+			if len(podList.Items) == 0 {
+				logrus.Errorf("failed to get deployments pods %v , err : pods not found", dep)
 				downCount += 1
 				continue
 			}
-			if depSpec.Status.Replicas != depSpec.Status.AvailableReplicas {
-				logrus.Errorf("failed to get replica count match for dep %v", dep)
-				downCount += 1
+		outer:
+			for _, pod := range podList.Items {
+				if pod.Status.Phase != corev1.PodRunning {
+					logrus.Errorf("failed to get running pods for dep %v", dep)
+					downCount += 1
+					break
+				}
+				for _, containerStatus := range pod.Status.ContainerStatuses {
+					if !containerStatus.Ready {
+						logrus.Errorf("failed to get ready containers for pod %v, dep %v", pod.Name, dep)
+						downCount += 1
+						break outer
+					}
+				}
 			}
 		}
 		if downCount == 0 {
