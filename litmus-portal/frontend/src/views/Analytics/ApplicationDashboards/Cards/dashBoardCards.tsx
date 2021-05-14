@@ -8,7 +8,7 @@ import {
   getProjectRole,
 } from '../../../../utils/getSearchParams';
 import DashboardCard from './index';
-import useStyles from '../../DataSource/Cards/styles';
+import useStyles from '../../DataSources/Cards/styles';
 
 interface DashboardCardsProps {
   dashboards: DashboardData[];

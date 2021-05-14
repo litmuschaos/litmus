@@ -3,7 +3,7 @@ import React from 'react';
 import BackButton from '../../components/Button/BackButton';
 import DashboardList from '../../components/PreconfiguredDashboards/data';
 import Scaffold from '../../containers/layouts/Scaffold';
-import DashboardCards from '../../views/AnalyticsDashboard/KubernetesDashboards/Cards/dashBoardCards';
+import DashboardCards from '../../views/Analytics/ApplicationDashboards/Cards/dashBoardCards';
 import useStyles from './styles';
 
 const DashboardSelectPage: React.FC = () => {

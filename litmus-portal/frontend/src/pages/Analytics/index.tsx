@@ -9,10 +9,10 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
-import DataSourceTable from '../../views/AnalyticsDashboard/DataSource/Table';
-import DashboardTable from '../../views/AnalyticsDashboard/KubernetesDashboards/Table';
-import WorkflowComparisonTable from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowComparisonTable';
-import Overview from '../../views/AnalyticsDashboard/Overview';
+import DataSourceTable from '../../views/Analytics/DataSources/Table';
+import DashboardTable from '../../views/Analytics/ApplicationDashboards/Table';
+import WorkflowComparisonTable from '../../views/Analytics/WorkflowDashboard/WorkflowComparisonTable';
+import Overview from '../../views/Analytics/Overview';
 import useStyles from './styles';
 
 const AnalyticsDashboard = () => {

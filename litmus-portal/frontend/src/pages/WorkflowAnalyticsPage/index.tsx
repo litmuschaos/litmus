@@ -18,9 +18,9 @@ import {
   WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
 import { getProjectID } from '../../utils/getSearchParams';
-import PopOver from '../../views/AnalyticsDashboard/LitmusDashboard/PopOver';
-import WorkflowDetailsTable from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowRunDetailsTable';
-import WorkflowRunsBarChart from '../../views/AnalyticsDashboard/LitmusDashboard/WorkflowRunsBarChart';
+import PopOver from '../../views/Analytics/WorkflowDashboard/PopOver';
+import WorkflowDetailsTable from '../../views/Analytics/WorkflowDashboard/WorkflowRunDetailsTable';
+import WorkflowRunsBarChart from '../../views/Analytics/WorkflowDashboard/WorkflowRunsBarChart';
 import useStyles from './styles';
 
 interface WorkflowRunData {

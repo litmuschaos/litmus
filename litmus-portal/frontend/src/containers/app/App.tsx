@@ -28,10 +28,8 @@ const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
 const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
-const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
-const AnalyticsDashboard = lazy(
-  () => import('../../pages/AnalyticsDashboards')
-);
+const AnalyticsPage = lazy(() => import('../../pages/WorkflowAnalyticsPage'));
+const AnalyticsDashboard = lazy(() => import('../../pages/Analytics'));
 const DataSourceSelectPage = lazy(
   () => import('../../pages/SelectAndConfigureDataSource/Select')
 );

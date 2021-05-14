@@ -15,7 +15,7 @@ import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { isValidWebUrl, validateTimeInSeconds } from '../../utils/validate';
-import ConfigurePrometheus from '../../views/AnalyticsDashboard/DataSource/Forms/prometheus';
+import ConfigurePrometheus from '../../views/Analytics/DataSources/Forms/prometheus';
 import useStyles from './styles';
 
 interface DataSourceConfigurePageProps {

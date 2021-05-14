@@ -19,7 +19,7 @@ import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import ConfigureDashboard from '../../views/AnalyticsDashboard/KubernetesDashboards/Form';
+import ConfigureDashboard from '../../views/Analytics/ApplicationDashboards/Form';
 import {
   DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
   DEFAULT_RELATIVE_TIME_RANGE,
