@@ -6,7 +6,7 @@ import { ChaosEventDetails } from '../../../../models/dashboardsData';
 import {
   CHAOS_EXPERIMENT_VERDICT_FAIL,
   CHAOS_EXPERIMENT_VERDICT_PASS,
-} from '../../../../pages/MonitoringDashboardPage/constants';
+} from '../../../../pages/ApplicationDashboard/constants';
 import useStyles from './styles';
 
 interface TableDataProps {

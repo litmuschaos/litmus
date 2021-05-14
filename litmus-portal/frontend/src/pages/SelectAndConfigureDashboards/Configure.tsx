@@ -23,7 +23,7 @@ import ConfigureDashboard from '../../views/Analytics/ApplicationDashboards/Form
 import {
   DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
   DEFAULT_RELATIVE_TIME_RANGE,
-} from '../MonitoringDashboardPage/constants';
+} from '../ApplicationDashboard/constants';
 import useStyles from './styles';
 
 interface DashboardConfigurePageProps {

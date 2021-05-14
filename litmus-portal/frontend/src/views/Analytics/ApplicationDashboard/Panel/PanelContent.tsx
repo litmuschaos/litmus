@@ -25,7 +25,7 @@ import {
   MAX_REFRESH_RATE,
   MINIMUM_TOLERANCE_LIMIT,
   PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
-} from '../../../../pages/MonitoringDashboardPage/constants';
+} from '../../../../pages/ApplicationDashboard/constants';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { RootState } from '../../../../redux/reducers';
