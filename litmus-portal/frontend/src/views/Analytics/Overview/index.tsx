@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-destructuring */
-/* eslint-disable no-console */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-return-assign */
 

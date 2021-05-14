@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-loop-func */
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
