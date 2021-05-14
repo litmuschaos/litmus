@@ -43,25 +43,21 @@ var (
 	AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
 )
 
-func CheckComponentStatus() (string, error) {
+func CheckComponentStatus(componentEnv string) error {
+	if componentEnv == "" {
+		return errors.New("components not found in agent config")
+	}
+
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
-		return "", err
-	}
-	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(ExternAgentConfigName, metav1.GetOptions{})
-	if err != nil {
-		return "", err
+		return err
 	}
 
 	var components AgentComponents
-	cmps := getCM.Data["COMPONENTS"]
-	if cmps == "" {
-		return "", errors.New("components not found in agent config")
-	}
 
-	err = yaml2.Unmarshal([]byte(strings.TrimSpace(cmps)), &components)
+	err = yaml2.Unmarshal([]byte(strings.TrimSpace(componentEnv)), &components)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	components.LiveStatus = true
@@ -75,9 +71,9 @@ func CheckComponentStatus() (string, error) {
 
 	wait.Wait()
 	if !components.LiveStatus {
-		return "", errors.New("all components failed to startup")
+		return errors.New("all components failed to startup")
 	}
-	return cmps, nil
+	return nil
 }
 
 func checkDeploymentStatus(components *AgentComponents, clientset *kubernetes.Clientset, wait *sync.WaitGroup) {

@@ -22,6 +22,7 @@ var (
 		"SERVER_ADDR":          os.Getenv("SERVER_ADDR"),
 		"IS_CLUSTER_CONFIRMED": os.Getenv("IS_CLUSTER_CONFIRMED"),
 		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
+		"COMPONENTS":           os.Getenv("COMPONENTS"),
 	}
 
 	err error
@@ -35,11 +36,10 @@ func init() {
 	flag.Parse()
 
 	// check agent component status
-	components, err := k8s.CheckComponentStatus()
+	err := k8s.CheckComponentStatus(clusterData["COMPONENTS"])
 	if err != nil {
 		log.Fatal(err)
 	}
-	clusterData["COMPONENTS"] = components
 	logrus.Info("all components live...starting up subscriber")
 
 	isConfirmed, newKey, err := k8s.IsClusterConfirmed()
