@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '1.25rem',
   },
   draggableDiv: {
-    width: '9.375rem',
+    width: '100%',
   },
   expName: {
     fontSize: '0.85rem',

@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
   // Table
   table: {
     minWidth: '40rem',
-    minHeight: '20rem',
+    minHeight: '23rem',
   },
   revertChaos: {
     margin: theme.spacing(3, 0),
