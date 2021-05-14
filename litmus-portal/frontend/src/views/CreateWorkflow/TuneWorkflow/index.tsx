@@ -492,18 +492,25 @@ const TuneWorkflow = forwardRef((_, ref) => {
    * when a new experiment is added from MyHub
    */
   useEffect(() => {
-    if (isCustomWorkflow && registryData !== undefined) {
+    if (isCustomWorkflow) {
       const savedManifest =
         manifest !== '' ? YAML.parse(manifest) : generatedYAML;
       const updatedManifest = updateCRD(savedManifest, experiment);
-      const updatedManifestImage = updateManifestImage(
-        updatedManifest,
-        registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
-      );
-      setGeneratedYAML(YAML.parse(updatedManifestImage));
-      workflowAction.setWorkflowManifest({
-        manifest: updatedManifestImage,
-      });
+      if (registryData !== undefined) {
+        const updatedManifestImage = updateManifestImage(
+          updatedManifest,
+          registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
+        );
+        setGeneratedYAML(YAML.parse(updatedManifestImage));
+        workflowAction.setWorkflowManifest({
+          manifest: updatedManifestImage,
+        });
+      } else {
+        setGeneratedYAML(updatedManifest);
+        workflowAction.setWorkflowManifest({
+          manifest: YAML.stringify(updatedManifest),
+        });
+      }
     }
   }, [experiment]);
 
