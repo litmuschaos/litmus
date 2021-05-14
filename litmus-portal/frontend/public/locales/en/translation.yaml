@@ -649,6 +649,7 @@ settings:
     save: Save Changes
     provideInfo: Please provide the namespace and secret name. For more information,
     visit: visit here
+    noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your chaos workflows.
 
 workflowDetailsView:
   headerDesc: Workflow dashboard of

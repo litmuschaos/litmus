@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(1.875),
   },
   registryInfoDiv: {
-    marginTop: theme.spacing(2.5),
+    margin: theme.spacing(2.5, 0, 2.5, 0),
     display: 'flex',
     justifyContent: 'space-between',
     width: '46.15rem',
