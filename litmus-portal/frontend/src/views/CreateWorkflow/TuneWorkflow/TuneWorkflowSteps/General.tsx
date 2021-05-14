@@ -1,15 +1,15 @@
 import { Button, Typography } from '@material-ui/core';
-import React, { useEffect } from 'react';
 import { InputField } from 'litmus-ui';
 import localforage from 'localforage';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import { useTranslation } from 'react-i18next';
-import useStyles from './styles';
 import { ChooseWorkflowRadio } from '../../../../models/localforage/radioButton';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
 import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
+import useStyles from './styles';
 
 interface GeneralProps {
   gotoStep: (page: number) => void;
@@ -31,12 +31,36 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
   const [experimentName, setExperimentName] = React.useState<string>(
     engineYAML.metadata.generateName
   );
-  const [context, setContext] = React.useState<string>(
-    engineYAML.metadata.labels !== undefined &&
+  const getContext = () => {
+    let context = '';
+    if (
+      engineYAML.metadata.labels !== undefined &&
       engineYAML.metadata.labels.context !== undefined
-      ? engineYAML.metadata.labels.context
-      : `${namespace}-${experimentName}`
-  );
+    ) {
+      return engineYAML.metadata.labels.context;
+    }
+    /**
+     * Split the experiments according to - in their names
+     * For index 0 to n-1 concat the experiment words with _
+     * For final index do not concat the _
+     * Adding Namespace to the front of the concatenated Exp Name
+     * to form the context
+     * */
+
+    experimentName.split('-').map((name, i) => {
+      if (i < experimentName.split('-').length - 1)
+        context = `${context + name}_`;
+      else context += name;
+      return null;
+    });
+    context = `${namespace}_${context}`;
+    return context;
+  };
+
+  useEffect(() => {
+    getContext();
+  });
+  const [context, setContext] = React.useState<string>(getContext());
   useEffect(() => {
     localforage.getItem('selectedScheduleOption').then((value) => {
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'C') {
