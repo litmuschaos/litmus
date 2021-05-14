@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   DASHBOARD_TYPE_1,
   DASHBOARD_TYPE_2,
-} from '../../../../pages/MonitoringDashboardPage/constants';
+} from '../../../../pages/ApplicationDashboard/constants';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { history } from '../../../../redux/configureStore';

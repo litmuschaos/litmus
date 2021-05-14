@@ -25,7 +25,7 @@ import {
   MAX_REFRESH_RATE,
   MINIMUM_TOLERANCE_LIMIT,
   PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
-} from '../../../../pages/MonitoringDashboardPage/constants';
+} from '../../../../pages/ApplicationDashboard/constants';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { RootState } from '../../../../redux/reducers';
@@ -339,7 +339,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               showPoints={false}
               showLegendTable
               showEventTable
-              showTips={false}
+              showTips
               showEventMarkers
               marginLeftEventTable={10}
               unit={unit}
@@ -358,7 +358,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
           showPoints={false}
           showEventTable={viewEventMetric}
           showLegendTable
-          showTips={false}
+          showTips
           showEventMarkers
           unit={unit}
           yLabel={y_axis_left}

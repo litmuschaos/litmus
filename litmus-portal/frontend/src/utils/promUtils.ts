@@ -8,7 +8,7 @@ import {
 import {
   DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
-} from '../pages/MonitoringDashboardPage/constants';
+} from '../pages/ApplicationDashboard/constants';
 
 export const getPromQueryInput = (
   prom_queries: PromQuery[],

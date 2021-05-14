@@ -1,57 +1,20 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 
-// Component styles
 const useStyles = makeStyles((theme) => ({
-  rootContainer: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    overflowX: 'hidden',
-  },
-
-  popOverRootContainer: {
-    height: '20%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-
-  popOverRoot: {
-    marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(6),
-    marginBottom: theme.spacing(8),
-  },
-
-  root: {
-    marginLeft: theme.spacing(1),
-    marginBottom: theme.spacing(8),
-  },
-
-  headerDiv: {
+  header: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    marginTop: theme.spacing(3),
+    color: theme.palette.text.primary,
+    margin: theme.spacing(1, 1.5, 2.5, 1.5),
   },
-
-  analyticsDiv: {
-    marginTop: theme.spacing(5),
+  scheduleBtn: {
+    marginLeft: 'auto',
   },
-
-  waitingText: {
-    fontSize: '2rem',
-    marginLeft: '30%',
-    marginTop: '20%',
-    marginBottom: '10%',
-  },
-
-  waitingScreen: {
-    alignContent: 'center',
-  },
-
-  button: {
-    marginBottom: theme.spacing(3),
-    marginLeft: theme.spacing(-2),
+  appBar: {
+    background: 'transparent',
+    boxShadow: 'none',
+    paddingLeft: theme.spacing(1.5),
   },
 }));
 

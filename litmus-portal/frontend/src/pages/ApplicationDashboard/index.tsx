@@ -40,10 +40,10 @@ import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
-import DataSourceInactiveModal from '../../views/AnalyticsDashboard/MonitoringDashboardPage/DataSourceInactiveModal';
-import InfoDropdown from '../../views/AnalyticsDashboard/MonitoringDashboardPage/InfoDropdown';
-import DashboardPanelGroup from '../../views/AnalyticsDashboard/MonitoringDashboardPage/Panel/DashboardPanelGroup';
-import TopNavButtons from '../../views/AnalyticsDashboard/MonitoringDashboardPage/TopNavButtons';
+import DataSourceInactiveModal from '../../views/Analytics/ApplicationDashboard/DataSourceInactiveModal';
+import InfoDropdown from '../../views/Analytics/ApplicationDashboard/InfoDropdown';
+import DashboardPanelGroup from '../../views/Analytics/ApplicationDashboard/Panel/DashboardPanelGroup';
+import TopNavButtons from '../../views/Analytics/ApplicationDashboard/TopNavButtons';
 import {
   ACTIVE,
   DEFAULT_REFRESH_RATE,
