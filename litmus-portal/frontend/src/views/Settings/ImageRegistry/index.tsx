@@ -18,6 +18,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import Loader from '../../../components/Loader';
 import { constants } from '../../../constants';
 import {
+  ADD_IMAGE_REGISTRY,
   GET_IMAGE_REGISTRY,
   LIST_IMAGE_REGISTRY,
   UPDATE_IMAGE_REGISTRY,
@@ -48,6 +49,7 @@ const ImageRegistry = () => {
   const [registryID, setRegistryID] = useState('');
   const [registryType, setRegistryType] = useState('Public');
   const [isCustomRegistryEnabled, setIsCustomRegistryEnabled] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(true);
   /**
    * GetRegistryData to fetch Registry Data by ID
    */
@@ -98,13 +100,21 @@ const ImageRegistry = () => {
     },
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      setRegistryID(data.ListImageRegistry[0].image_registry_id);
-      getRegistryData({
-        variables: {
-          registryid: data.ListImageRegistry[0].image_registry_id,
-          projectid: projectID,
-        },
-      });
+      if (
+        data.ListImageRegistry !== null &&
+        data.ListImageRegistry.length > 0
+      ) {
+        setRegistryID(data.ListImageRegistry[0].image_registry_id);
+        getRegistryData({
+          variables: {
+            registryid: data.ListImageRegistry[0].image_registry_id,
+            projectid: projectID,
+          },
+        });
+      } else {
+        setIsAvailable(false);
+        setRegistry('disabled');
+      }
     },
   });
 
@@ -136,6 +146,25 @@ const ImageRegistry = () => {
       },
     }
   );
+
+  const [createImageRegistry] = useMutation(ADD_IMAGE_REGISTRY, {
+    refetchQueries: [
+      {
+        query: LIST_IMAGE_REGISTRY,
+        variables: {
+          data: projectID,
+        },
+      },
+    ],
+    onCompleted: (data) => {
+      if (data !== undefined) {
+        setIsAvailable(true);
+      }
+    },
+    onError: () => {
+      setIsAvailable(false);
+    },
+  });
 
   /**
    * UseEffect to set the initial data of image registry
@@ -244,28 +273,50 @@ const ImageRegistry = () => {
                     <strong> {t('settings.imageRegistry.public')}</strong>
                   </Typography>
                 </div>
-
-                {registry === 'disabled' && isCustomRegistryEnabled === true ? (
+                {!isAvailable ? (
+                  <Typography color="error">
+                    {t('settings.imageRegistry.noRegistry')}
+                  </Typography>
+                ) : (
+                  <></>
+                )}
+                {(registry === 'disabled' &&
+                  isCustomRegistryEnabled === true) ||
+                !isAvailable ? (
                   <div>
                     <ButtonFilled
                       className={classes.defaultBtn}
                       data-cy="disableGitopsButton"
                       disabled={updateLoader}
                       onClick={() =>
-                        updateImageRegistry({
-                          variables: {
-                            imageRegistryID: registryID,
-                            projectID,
-                            imageRegistryInfo: {
-                              image_registry_name: constants.dockerio,
-                              image_repo_name: constants.litmus,
-                              image_registry_type: constants.public,
-                              secret_name: '',
-                              secret_namespace: '',
-                              enable_registry: true,
-                            },
-                          },
-                        })
+                        !isAvailable
+                          ? createImageRegistry({
+                              variables: {
+                                projectID,
+                                imageRegistryInfo: {
+                                  image_registry_name: constants.dockerio,
+                                  image_repo_name: constants.litmus,
+                                  image_registry_type: constants.public,
+                                  secret_name: '',
+                                  secret_namespace: '',
+                                  enable_registry: true,
+                                },
+                              },
+                            })
+                          : updateImageRegistry({
+                              variables: {
+                                imageRegistryID: registryID,
+                                projectID,
+                                imageRegistryInfo: {
+                                  image_registry_name: constants.dockerio,
+                                  image_repo_name: constants.litmus,
+                                  image_registry_type: constants.public,
+                                  secret_name: '',
+                                  secret_namespace: '',
+                                  enable_registry: true,
+                                },
+                              },
+                            })
                       }
                     >
                       {t('settings.imageRegistry.defaultReg')}

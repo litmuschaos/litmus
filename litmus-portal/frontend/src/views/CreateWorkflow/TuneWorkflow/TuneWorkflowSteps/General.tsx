@@ -74,9 +74,13 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
   const handleNext = () => {
     const parsedYAML = YAML.parse(engine);
     parsedYAML.metadata.generateName = experimentName;
-    parsedYAML.metadata['labels'] = {
-      context,
-    };
+    if (parsedYAML.metadata.labels) {
+      parsedYAML.metadata.labels['context'] = context;
+    } else {
+      parsedYAML.metadata['labels'] = {
+        context,
+      };
+    }
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(parsedYAML),
     });
