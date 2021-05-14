@@ -211,6 +211,17 @@ type Experiments struct {
 	Desc string `json:"Desc"`
 }
 
+type GetWorkflowRunsInput struct {
+	ProjectID      string      `json:"project_id"`
+	WorkflowRunIds []*string   `json:"workflow_run_ids"`
+	Pagination     *Pagination `json:"pagination"`
+}
+
+type GetWorkflowsOutput struct {
+	TotalNoOfWorkflowRuns int            `json:"total_no_of_workflow_runs"`
+	WorkflowRuns          []*WorkflowRun `json:"workflow_runs"`
+}
+
 type GitConfig struct {
 	ProjectID     string   `json:"ProjectID"`
 	Branch        string   `json:"Branch"`
@@ -348,6 +359,11 @@ type MyHubStatus struct {
 type PackageInformation struct {
 	PackageName string         `json:"PackageName"`
 	Experiments []*Experiments `json:"Experiments"`
+}
+
+type Pagination struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
 }
 
 type PodLog struct {

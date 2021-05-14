@@ -115,15 +115,27 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 	}, nil
 }
 
-// GetWorkflowRuns sends all the workflow runs for a project from the DB
-func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
-	workflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
+// QueryWorkflowRuns sends all the workflow runs for a project from the DB
+func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
+	var query bson.D
+	if len(input.WorkflowRunIds) != 0 {
+		query = bson.D{
+			{"project_id", input.ProjectID},
+			{"workflow_run_id", bson.M{"$in": input.WorkflowRunIds}},
+		}
+	} else {
+		query = bson.D{
+			{"project_id", input.ProjectID},
+		}
+	}
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(query)
+
 	if err != nil {
 		return nil, err
 	}
-	result := []*model.WorkflowRun{}
+	var result []*model.WorkflowRun
 
-	for _, workflow := range workflows {
+	for _, workflow := range chaosWorkflows {
 		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
@@ -143,9 +155,21 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 			result = append(result, &newWorkflowRun)
 		}
 	}
-	return result, nil
-}
+	totalNoOfRuns := len(result)
 
+	if input.Pagination != nil {
+		startIndex := (input.Pagination.Page - 1) * input.Pagination.Limit
+		endIndex := input.Pagination.Page * input.Pagination.Limit
+		result = result[startIndex : endIndex]
+	}
+
+	output := model.GetWorkflowsOutput{
+		TotalNoOfWorkflowRuns: totalNoOfRuns,
+		WorkflowRuns: result,
+	}
+	return &output, nil
+}
+// Deprecated
 func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
@@ -185,22 +209,32 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 	return result, nil
 }
 
-func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
-	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
+// QueryListWorkflow returns all the workflows present in the given project
+func QueryListWorkflow(project_id string, workflowIds []*string) ([]*model.Workflow, error) {
+	var query bson.D
+	if len(workflowIds) != 0 {
+		query = bson.D{
+			{"project_id", project_id},
+			{"workflow_id", bson.M{"$in": workflowIds}},
+		}
+	} else {
+		query = bson.D{
+			{"project_id", project_id},
+		}
+	}
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(query)
+
 	if err != nil {
 		return nil, err
 	}
-
-	result := []*model.Workflow{}
+	var result []*model.Workflow
 	for _, workflow := range chaosWorkflows {
-
 		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
 		var Weightages []*model.Weightages
 		copier.Copy(&Weightages, &workflow.Weightages)
-
 		var WorkflowRuns []*model.WorkflowRuns
 		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
 
@@ -223,48 +257,6 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 		}
 		result = append(result, &newChaosWorkflows)
 	}
-	return result, nil
-}
-
-func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
-
-	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": workflow_ids}}})
-	if err != nil {
-		return nil, err
-	}
-	result := []*model.Workflow{}
-
-	for _, workflow := range chaosWorkflows {
-		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
-		if err != nil {
-			return nil, err
-		}
-
-		var Weightages []*model.Weightages
-		copier.Copy(&Weightages, &workflow.Weightages)
-
-		var WorkflowRuns []*model.WorkflowRuns
-		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
-
-		newChaosWorkflows := model.Workflow{
-			WorkflowID:          workflow.WorkflowID,
-			WorkflowManifest:    workflow.WorkflowManifest,
-			WorkflowName:        workflow.WorkflowName,
-			CronSyntax:          workflow.CronSyntax,
-			WorkflowDescription: workflow.WorkflowDescription,
-			Weightages:          Weightages,
-			IsCustomWorkflow:    workflow.IsCustomWorkflow,
-			UpdatedAt:           workflow.UpdatedAt,
-			CreatedAt:           workflow.CreatedAt,
-			ProjectID:           workflow.ProjectID,
-			ClusterName:         cluster.ClusterName,
-			ClusterID:           cluster.ClusterID,
-			ClusterType:         cluster.ClusterType,
-			WorkflowRuns:        WorkflowRuns,
-		}
-		result = append(result, &newChaosWorkflows)
-	}
-
 	return result, nil
 }
 
