@@ -1,5 +1,4 @@
 /* eslint-disable no-const-assign */
-import { useLazyQuery, useQuery } from '@apollo/client';
 import { Typography, useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -20,14 +19,11 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import Row from '../../../containers/layouts/Row';
-import { GET_IMAGE_REGISTRY, LIST_IMAGE_REGISTRY } from '../../../graphql';
-import { ImageRegistryInfo } from '../../../models/graphql/createWorkflowData';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { experimentMap } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import { getProjectID } from '../../../utils/getSearchParams';
 import parsed, { updateManifestImage } from '../../../utils/yamlUtils';
 import ConfigurationStepper from './ConfigurationStepper/ConfigurationStepper';
 import useStyles from './styles';
@@ -50,7 +46,6 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   const { t } = useTranslation();
 
   const theme = useTheme();
-  const selectedProjectID = getProjectID();
   const workflow = useActions(WorkflowActions);
   const [experiments, setExperiments] = useState<ChaosCRDTable[]>([]);
   const [revertChaos, setRevertChaos] = useState<boolean>(true);
@@ -60,7 +55,9 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
-
+  const imageRegistryData = useSelector(
+    (state: RootState) => state.selectedImageRegistry
+  );
   const addWeights = (manifest: string) => {
     const arr: experimentMap[] = [];
     const hashMap = new Map();
@@ -111,28 +108,6 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
     }
     setExperiments(expData);
   };
-
-  const [getRegistryData, { data: registryData }] = useLazyQuery(
-    GET_IMAGE_REGISTRY,
-    {
-      fetchPolicy: 'network-only',
-    }
-  );
-
-  useQuery(LIST_IMAGE_REGISTRY, {
-    variables: {
-      data: selectedProjectID,
-    },
-    fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      getRegistryData({
-        variables: {
-          registryid: data.ListImageRegistry[0].image_registry_id,
-          projectid: selectedProjectID,
-        },
-      });
-    },
-  });
 
   // Revert Chaos
   const toggleRevertChaos = (manifest: string) => {
@@ -227,19 +202,10 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
       parsedYAML.spec.templates.pop(); // Remove the last template -> Revert Chaos Template
     }
 
-    if (registryData !== undefined) {
-      const updatedManifest = updateManifestImage(
-        parsedYAML,
-        registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
-      );
-      workflow.setWorkflowManifest({
-        manifest: updatedManifest,
-      });
-    } else {
-      workflow.setWorkflowManifest({
-        manifest: YAML.stringify(parsedYAML),
-      });
-    }
+    const updatedManifest = updateManifestImage(parsedYAML, imageRegistryData);
+    workflow.setWorkflowManifest({
+      manifest: updatedManifest,
+    });
   };
 
   const closeConfigurationStepper = () => {

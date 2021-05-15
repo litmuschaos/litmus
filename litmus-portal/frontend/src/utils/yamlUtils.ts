@@ -4,7 +4,7 @@
 import YAML from 'yaml';
 import { v4 as uuidv4 } from 'uuid';
 import { constants } from '../constants';
-import { ImageRegistryInfo } from '../models/graphql/createWorkflowData';
+import { ImageRegistryInfo } from '../models/redux/image_registry';
 
 const nameextractor = (val: any) => {
   const embeddedworkflowyamlstring = val;
