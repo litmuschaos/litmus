@@ -85,6 +85,29 @@ spec:
                             value:
                               type: string
                               minLength: 1
+                      tolerations:
+                        description: Pod's tolerations.
+                        items:
+                          description: The pod with this Toleration tolerates any taint matches the <key,value,effect> using the matching operator <operator>.
+                          properties:
+                            effect:
+                              description: Effect to match. Empty means all effects.
+                              type: string
+                            key:
+                              description: Taint key the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists.
+                              type: string
+                            operator:
+                              description: Operators are Exists or Equal. Defaults to Equal.
+                              type: string
+                            tolerationSeconds:
+                              description: Period of time the toleration tolerates the taint.
+                              format: int64
+                              type: integer
+                            value:
+                              description: If the operator is Exists, the value should be empty, otherwise just a regular string.
+                              type: string
+                          type: object
+                        type: array
               experiments:
                 type: array
                 items:
@@ -398,6 +421,29 @@ spec:
                                     type: string
                                     minLength: 1
                                     allowEmptyValue: false
+                            tolerations:
+                              description: Pod's tolerations.
+                              items:
+                                description: The pod with this Toleration tolerates any taint matches the <key,value,effect> using the matching operator <operator>.
+                                properties:
+                                  effect:
+                                    description: Effect to match. Empty means all effects.
+                                    type: string
+                                  key:
+                                    description: Taint key the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists.
+                                    type: string
+                                  operator:
+                                    description: Operators are Exists or Equal. Defaults to Equal.
+                                    type: string
+                                  tolerationSeconds:
+                                    description: Period of time the toleration tolerates the taint.
+                                    format: int64
+                                    type: integer
+                                  value:
+                                    description: If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                    type: string
+                                type: object
+                              type: array
 
           status:
             x-kubernetes-preserve-unknown-fields: true
