@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
@@ -22,12 +22,10 @@ import {
   GET_CHARTS_DATA,
   GET_ENGINE_YAML,
   GET_EXPERIMENT_YAML,
-  GET_IMAGE_REGISTRY,
   GET_PREDEFINED_EXPERIMENT_YAML,
   GET_TEMPLATE_BY_ID,
-  LIST_IMAGE_REGISTRY,
 } from '../../../graphql/queries';
-import { ImageRegistryInfo } from '../../../models/graphql/createWorkflowData';
+
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
@@ -109,10 +107,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const { manifest, isCustomWorkflow } = useSelector(
     (state: RootState) => state.workflowManifest
   );
+  const imageRegistryData = useSelector(
+    (state: RootState) => state.selectedImageRegistry
+  );
   const { namespace } = useSelector((state: RootState) => state.workflowData);
 
   const [YAMLModal, setYAMLModal] = useState<boolean>(false);
-
   /**
    * Actions
    */
@@ -120,28 +120,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const alert = useActions(AlertActions);
 
   const { t } = useTranslation();
-
-  const [getRegistryData, { data: registryData }] = useLazyQuery(
-    GET_IMAGE_REGISTRY,
-    {
-      fetchPolicy: 'network-only',
-    }
-  );
-
-  useQuery(LIST_IMAGE_REGISTRY, {
-    variables: {
-      data: selectedProjectID,
-    },
-    fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      getRegistryData({
-        variables: {
-          registryid: data.ListImageRegistry[0].image_registry_id,
-          projectid: selectedProjectID,
-        },
-      });
-    },
-  });
 
   /**
    * Graphql query to get charts
@@ -174,7 +152,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
         );
         const updatedManifestImage = updateManifestImage(
           YAML.parse(wfmanifest),
-          registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
+          imageRegistryData
         );
         const updatedManifest = updateNamespace(
           updatedManifestImage,
@@ -195,7 +173,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
       const updatedManifestImage = updateManifestImage(
         parsedYAML,
-        registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
+        imageRegistryData
       );
       const updatedManifest = updateNamespace(
         YAML.parse(updatedManifestImage),
@@ -496,21 +474,14 @@ const TuneWorkflow = forwardRef((_, ref) => {
       const savedManifest =
         manifest !== '' ? YAML.parse(manifest) : generatedYAML;
       const updatedManifest = updateCRD(savedManifest, experiment);
-      if (registryData !== undefined) {
-        const updatedManifestImage = updateManifestImage(
-          updatedManifest,
-          registryData.GetImageRegistry.image_registry_info as ImageRegistryInfo
-        );
-        setGeneratedYAML(YAML.parse(updatedManifestImage));
-        workflowAction.setWorkflowManifest({
-          manifest: updatedManifestImage,
-        });
-      } else {
-        setGeneratedYAML(updatedManifest);
-        workflowAction.setWorkflowManifest({
-          manifest: YAML.stringify(updatedManifest),
-        });
-      }
+      const updatedManifestImage = updateManifestImage(
+        updatedManifest,
+        imageRegistryData
+      );
+      setGeneratedYAML(YAML.parse(updatedManifestImage));
+      workflowAction.setWorkflowManifest({
+        manifest: updatedManifestImage,
+      });
     }
   }, [experiment]);
 
