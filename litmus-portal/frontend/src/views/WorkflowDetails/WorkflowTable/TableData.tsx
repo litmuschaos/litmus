@@ -118,8 +118,8 @@ const TableData: React.FC<TableDataProps> = ({
           </div>
         ) : null}
       </StyledTableCell>
-      {data.type === 'ChaosEngine' && (
-        <StyledTableCell className={classes.tableCellWidth}>
+      <StyledTableCell className={classes.tableCellWidth}>
+        {data.type === 'ChaosEngine' && (
           <Button
             onClick={() => {
               handleClose();
@@ -136,8 +136,8 @@ const TableData: React.FC<TableDataProps> = ({
               </Typography>
             </div>
           </Button>
-        </StyledTableCell>
-      )}
+        )}
+      </StyledTableCell>
     </>
   );
 };
