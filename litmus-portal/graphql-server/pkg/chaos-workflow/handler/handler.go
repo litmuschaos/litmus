@@ -121,7 +121,13 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	if len(input.WorkflowRunIds) != 0 {
 		query = bson.D{
 			{"project_id", input.ProjectID},
-			{"workflow_run_id", bson.M{"$in": input.WorkflowRunIds}},
+			{"workflow_runs", bson.D{
+				{"$elemMatch", bson.D{
+					{"workflow_run_id", bson.D{
+						{"$in", input.WorkflowRunIds},
+					}},
+				}},
+			}},
 		}
 	} else {
 		query = bson.D{
@@ -157,18 +163,34 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 	totalNoOfRuns := len(result)
 
+	var filteredResult []*model.WorkflowRun
+	m := make(map[string]bool)
+
+	for _, wfID := range input.WorkflowRunIds {
+		m[*wfID] = true
+	}
+
+	for _, wfRun := range result {
+		if m[wfRun.WorkflowRunID] {
+			filteredResult = append(filteredResult, wfRun)
+		}
+	}
+
+	result = filteredResult
+
 	if input.Pagination != nil {
 		startIndex := (input.Pagination.Page - 1) * input.Pagination.Limit
 		endIndex := input.Pagination.Page * input.Pagination.Limit
-		result = result[startIndex : endIndex]
+		result = result[startIndex:endIndex]
 	}
 
 	output := model.GetWorkflowsOutput{
 		TotalNoOfWorkflowRuns: totalNoOfRuns,
-		WorkflowRuns: result,
+		WorkflowRuns:          result,
 	}
 	return &output, nil
 }
+
 // Deprecated
 func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
