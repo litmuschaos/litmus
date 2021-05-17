@@ -15,14 +15,17 @@ import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import YamlEditor from '../../../components/YamlEditor/Editor';
+import { constants } from '../../../constants';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
   GET_CHARTS_DATA,
   GET_ENGINE_YAML,
   GET_EXPERIMENT_YAML,
+  GET_PREDEFINED_EXPERIMENT_YAML,
   GET_TEMPLATE_BY_ID,
 } from '../../../graphql/queries';
+
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
@@ -33,7 +36,11 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
-import { updateEngineName, updateNamespace } from '../../../utils/yamlUtils';
+import {
+  updateEngineName,
+  updateManifestImage,
+  updateNamespace,
+} from '../../../utils/yamlUtils';
 import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
@@ -100,10 +107,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const { manifest, isCustomWorkflow } = useSelector(
     (state: RootState) => state.workflowManifest
   );
+  const imageRegistryData = useSelector(
+    (state: RootState) => state.selectedImageRegistry
+  );
   const { namespace } = useSelector((state: RootState) => state.workflowData);
 
   const [YAMLModal, setYAMLModal] = useState<boolean>(false);
-
   /**
    * Actions
    */
@@ -132,12 +141,45 @@ const TuneWorkflow = forwardRef((_, ref) => {
   });
 
   /**
+   * This query fetches the manifest for pre-defined workflows
+   */
+  const [getPredefinedExperimentYaml] = useLazyQuery(
+    GET_PREDEFINED_EXPERIMENT_YAML,
+    {
+      onCompleted: (data) => {
+        const wfmanifest = updateEngineName(
+          YAML.parse(data.GetPredefinedExperimentYAML)
+        );
+        const updatedManifestImage = updateManifestImage(
+          YAML.parse(wfmanifest),
+          imageRegistryData
+        );
+        const updatedManifest = updateNamespace(
+          updatedManifestImage,
+          namespace
+        );
+        workflowAction.setWorkflowManifest({
+          manifest: YAML.stringify(updatedManifest),
+        });
+      },
+    }
+  );
+
+  /**
    * Graphql query to get the templates list
    */
   const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     onCompleted: (data) => {
       const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
-      const updatedManifest = updateNamespace(parsedYAML, namespace);
+      const updatedManifestImage = updateManifestImage(
+        parsedYAML,
+        imageRegistryData
+      );
+      const updatedManifest = updateNamespace(
+        YAML.parse(updatedManifestImage),
+        namespace
+      );
+
       workflowAction.setWorkflowManifest({
         manifest: YAML.stringify(updatedManifest),
       });
@@ -217,25 +259,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
   );
 
   /**
-   * This function fetches the manifest for pre-defined workflows
-   */
-  const fetchYaml = (link: string) => {
-    fetch(link)
-      .then((data) => {
-        data.text().then((yamlText) => {
-          const wfmanifest = updateEngineName(YAML.parse(yamlText));
-          const updatedManifest = updateNamespace(wfmanifest, namespace);
-          workflowAction.setWorkflowManifest({
-            manifest: YAML.stringify(updatedManifest),
-          });
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
-
-  /**
    * Index DB Fetching for extracting selected Button and Workflow Details
    */
   const getSelectedWorkflowDetails = () => {
@@ -257,7 +280,17 @@ const TuneWorkflow = forwardRef((_, ref) => {
             (value as WorkflowDetailsProps).CRDLink !== '' &&
             manifest === ''
           )
-            fetchYaml((value as WorkflowDetailsProps).CRDLink);
+            getPredefinedExperimentYaml({
+              variables: {
+                experimentInput: {
+                  ProjectID: selectedProjectID,
+                  ChartName: '',
+                  ExperimentName: (value as WorkflowDetailsProps).CRDLink,
+                  HubName: constants.chaosHub,
+                  FileType: '',
+                },
+              },
+            });
         });
       }
       if (value !== null && (value as ChooseWorkflowRadio).selected === 'B') {
@@ -441,9 +474,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
       const savedManifest =
         manifest !== '' ? YAML.parse(manifest) : generatedYAML;
       const updatedManifest = updateCRD(savedManifest, experiment);
-      setGeneratedYAML(updatedManifest);
+      const updatedManifestImage = updateManifestImage(
+        updatedManifest,
+        imageRegistryData
+      );
+      setGeneratedYAML(YAML.parse(updatedManifestImage));
       workflowAction.setWorkflowManifest({
-        manifest: YAML.stringify(updatedManifest),
+        manifest: updatedManifestImage,
       });
     }
   }, [experiment]);
@@ -458,7 +495,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     workflowAction.setWorkflowManifest({
       manifest: YAML.stringify(parsedManifest),
     });
-  }, [manifest]);
+  }, [manifest, workflow.name]);
 
   const onModalClose = () => {
     setAddExpModal(false);

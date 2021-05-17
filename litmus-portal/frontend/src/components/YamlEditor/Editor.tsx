@@ -474,7 +474,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
               onLoad={(editor) => {
                 editor.setReadOnly(readOnly);
                 editor.setOptions({
-                  fontFamily: 'Ubuntu Mono',
+                  fontFamily: 'monospace',
                   highlightGutterLine: false,
                   autoScrollEditorIntoView: true,
                   tooltipFollowsMouse: true,

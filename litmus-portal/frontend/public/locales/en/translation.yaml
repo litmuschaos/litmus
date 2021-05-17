@@ -81,6 +81,8 @@ workflowStepper:
     errorSnackbar: Please provide a valid Workflow Name
   step4:
     errorSnackbar: Please select atleast one experiment to proceed
+  step6:
+    errorSnackbar: Please validate and retry scheduling with correct parameters
   finish: Finish
   next: Next
   back: Back
@@ -628,6 +630,26 @@ settings:
     edit: Edit
     cancel: Cancel
     proceed: Yes, proceed
+  imageRegistry:
+    heading: Image Registry
+    headingDesc: Your image registry for the workflow manifest
+    defaultValues: Use the default values
+    defaultText: All YAML files use these default values provided by Litmus. The values cannot be changed.
+    registry: 'Registry : '
+    repo: 'Repository : '
+    repoType: 'Registry Type : '
+    dockerio: 'docker.io'
+    litmus: 'litmuschaos'
+    public: Public
+    private: Private
+    defaultReg: Use Default Registry
+    customValues: Use custom values
+    registryLabel: Registry Type
+    additionalInfo: Provide additional details
+    save: Save Changes
+    provideInfo: Please provide the namespace and secret name. For more information,
+    visit: visit here
+    noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your chaos workflows.
 
 workflowDetailsView:
   headerDesc: Workflow dashboard of
@@ -883,6 +905,8 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
+    workflowNameValidationMessage: Workflow name can only be alpha numeric and should not contain capital letters
+    subjectValidationMessage: Subject can only have alphanumeric characters and - . _ in-between
     test: test
     YAML: YAML
     button:

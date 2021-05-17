@@ -537,6 +537,17 @@ type WorkflowRuns struct {
 	LastUpdated   string `json:"last_updated"`
 }
 
+type AnnotationsPromResponse struct {
+	Queryid string                         `json:"queryid"`
+	Legends []*string                      `json:"legends"`
+	Tsvs    [][]*AnnotationsTimeStampValue `json:"tsvs"`
+}
+
+type AnnotationsTimeStampValue struct {
+	Date  *float64 `json:"date"`
+	Value *int     `json:"value"`
+}
+
 type ClusterRegResponse struct {
 	Token       string `json:"token"`
 	ClusterID   string `json:"cluster_id"`
@@ -560,6 +571,12 @@ type DeleteDSInput struct {
 	DsID        string `json:"ds_id"`
 }
 
+type DsDetails struct {
+	URL   string `json:"url"`
+	Start string `json:"start"`
+	End   string `json:"end"`
+}
+
 type ImageRegistry struct {
 	ImageRegistryName string  `json:"image_registry_name"`
 	ImageRepoName     string  `json:"image_repo_name"`
@@ -578,6 +595,11 @@ type ImageRegistryInput struct {
 	EnableRegistry    *bool   `json:"enable_registry"`
 }
 
+type LabelValue struct {
+	Label  string    `json:"label"`
+	Values []*Option `json:"values"`
+}
+
 type ListDashboardReponse struct {
 	DsID        string                `json:"ds_id"`
 	DbID        string                `json:"db_id"`
@@ -594,6 +616,21 @@ type ListDashboardReponse struct {
 	ClusterID   string                `json:"cluster_id"`
 	CreatedAt   *string               `json:"created_at"`
 	UpdatedAt   *string               `json:"updated_at"`
+}
+
+type MetricsPromResponse struct {
+	Queryid string                     `json:"queryid"`
+	Legends []*string                  `json:"legends"`
+	Tsvs    [][]*MetricsTimeStampValue `json:"tsvs"`
+}
+
+type MetricsTimeStampValue struct {
+	Date  *float64 `json:"date"`
+	Value *float64 `json:"value"`
+}
+
+type Option struct {
+	Name string `json:"name"`
 }
 
 type Panel struct {
@@ -644,10 +681,8 @@ type PanelResponse struct {
 }
 
 type PromInput struct {
-	Queries []*PromQueryInput `json:"queries"`
-	URL     string            `json:"url"`
-	Start   string            `json:"start"`
-	End     string            `json:"end"`
+	Queries   []*PromQueryInput `json:"queries"`
+	DsDetails *DsDetails        `json:"ds_details"`
 }
 
 type PromQuery struct {
@@ -679,14 +714,22 @@ type PromQueryResponse struct {
 }
 
 type PromResponse struct {
-	Queryid string              `json:"queryid"`
-	Legends [][]*string         `json:"legends"`
-	Tsvs    [][]*TimeStampValue `json:"tsvs"`
+	MetricsResponse     []*MetricsPromResponse     `json:"metricsResponse"`
+	AnnotationsResponse []*AnnotationsPromResponse `json:"annotationsResponse"`
 }
 
-type TimeStampValue struct {
-	Timestamp *string `json:"timestamp"`
-	Value     *string `json:"value"`
+type PromSeriesInput struct {
+	Series    string     `json:"series"`
+	DsDetails *DsDetails `json:"ds_details"`
+}
+
+type PromSeriesListResponse struct {
+	SeriesList []*string `json:"seriesList"`
+}
+
+type PromSeriesResponse struct {
+	Series      string        `json:"series"`
+	LabelValues []*LabelValue `json:"labelValues"`
 }
 
 type UpdataDBInput struct {

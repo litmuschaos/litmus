@@ -1,20 +1,19 @@
+import { Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import {
   DragDropContext,
   Draggable,
   DraggableProvided,
   Droppable,
 } from 'react-beautiful-dnd';
-import YAML from 'yaml';
-import { Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import YAML from 'yaml';
+import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
 import { reorderSteps } from './reorder';
-import trimString from '../../../../utils/trim';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
-import useActions from '../../../../redux/actions';
 import useStyles from './styles';
 
 interface ManifestSteps {
@@ -134,7 +133,7 @@ const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
                                           alt={step.name}
                                         />
                                         <Typography className={classes.expName}>
-                                          {trimString(step.name, 15)}
+                                          {step.name}
                                         </Typography>
                                       </div>
                                     </div>

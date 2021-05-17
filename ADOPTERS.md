@@ -19,6 +19,7 @@ Please send PRs to add or remove organizations/users.
 |[RedHat](https://www.redhat.com/en)|[RedHat Openshift Virtualization Maturity](https://www.youtube.com/watch?v=VITGHJ47gx8&list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&index=7)|[Our Story](adopters/organizations/redhat.md)|
 |[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
 |[Kitopi](https://www.kitopi.com/)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/kitopi.md)|
+|[AnutaNetworks](https://www.anutanetworks.com/)|Chaos Engineering as part of SRE practices in QA environments |[Our Story](adopters/organizations/anutanetworks.md)|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |

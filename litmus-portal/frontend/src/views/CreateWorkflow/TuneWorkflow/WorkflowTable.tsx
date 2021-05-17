@@ -24,7 +24,7 @@ import { experimentMap } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import parsed from '../../../utils/yamlUtils';
+import parsed, { updateManifestImage } from '../../../utils/yamlUtils';
 import ConfigurationStepper from './ConfigurationStepper/ConfigurationStepper';
 import useStyles from './styles';
 
@@ -55,7 +55,9 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
   const manifest = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
-
+  const imageRegistryData = useSelector(
+    (state: RootState) => state.selectedImageRegistry
+  );
   const addWeights = (manifest: string) => {
     const arr: experimentMap[] = [];
     const hashMap = new Map();
@@ -200,8 +202,9 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
       parsedYAML.spec.templates.pop(); // Remove the last template -> Revert Chaos Template
     }
 
+    const updatedManifest = updateManifestImage(parsedYAML, imageRegistryData);
     workflow.setWorkflowManifest({
-      manifest: YAML.stringify(parsedYAML),
+      manifest: updatedManifest,
     });
   };
 

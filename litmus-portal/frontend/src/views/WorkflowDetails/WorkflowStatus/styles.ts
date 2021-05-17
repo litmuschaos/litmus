@@ -18,6 +18,18 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.status.completed.text,
   },
 
+  error: {
+    color: '#FFA600',
+  },
+
+  skipped: {
+    color: '#0098DD',
+  },
+
+  omitted: {
+    color: '#A93DDB',
+  },
+
   textBold: {
     fontWeight: 'bold',
   },

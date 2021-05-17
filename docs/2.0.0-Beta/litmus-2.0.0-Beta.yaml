@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:2.0.0-Beta5
+          image: litmuschaos/litmusportal-frontend:2.0.0-Beta6
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -115,7 +115,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:2.0.0-Beta5
+          image: litmuschaos/litmusportal-server:2.0.0-Beta6
           env:
             - name: DB_SERVER
               valueFrom:
@@ -156,15 +156,15 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:2.0.0-Beta5"
+              value: "litmuschaos/litmusportal-subscriber:2.0.0-Beta6"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:2.0.0-Beta5"
+              value: "litmuschaos/litmusportal-event-tracker:2.0.0-Beta6"
             - name: ARGO_SERVER_IMAGE
-              value: "argoproj/argocli:v2.9.3"
+              value: "litmuschaos/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "argoproj/workflow-controller:v2.9.3"
+              value: "litmuschaos/workflow-controller:v2.9.3"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "argoproj/argoexec:v2.9.3"
+              value: "litmuschaos/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
               value: "litmuschaos/chaos-operator:1.13.3"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
@@ -189,7 +189,7 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:2.0.0-Beta5
+          image: litmuschaos/litmusportal-auth-server:2.0.0-Beta6
           env:
             - name: DB_SERVER
               valueFrom:
@@ -257,7 +257,7 @@ spec:
     spec:
       containers:
         - name: mongo
-          image: mongo:4.2.8
+          image: litmuschaos/mongo:4.2.8
           ports:
             - containerPort: 27017
           imagePullPolicy: Always

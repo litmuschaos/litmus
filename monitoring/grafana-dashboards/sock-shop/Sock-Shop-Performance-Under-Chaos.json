@@ -1,46 +1,10 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_DS_PROMETHEUS",
-      "label": "DS_PROMETHEUS",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "7.5.2"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    }
-  ],
   "annotations": {
     "list": [
       {
         "$$hashKey": "object:258",
         "builtIn": 1,
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "enable": true,
         "expr": "litmuschaos_awaited_experiments{chaosresult_name=~\"$chaosresult_name\", job=\"litmus/chaos-exporter\", app=\"chaos-exporter\"}",
         "hide": false,
@@ -55,7 +19,7 @@
         "type": "dashboard"
       },
       {
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "enable": true,
         "expr": "litmuschaos_experiment_verdict{chaosresult_name=~\"$chaosresult_name\",chaosengine_context=~\"$chaosengine_context\", job=\"litmus/chaos-exporter\", app=\"chaos-exporter\"}",
         "hide": false,
@@ -74,12 +38,12 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1618492014483,
+  "iteration": 1619881847590,
   "links": [],
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -97,7 +61,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "unit": "none"
@@ -135,7 +99,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -192,7 +156,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "unit": "none"
@@ -230,7 +194,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -247,7 +211,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "litmuschaos_awaited_experiments",
+          "expr": "litmuschaos_awaited_experiments{job=\"litmus/chaos-exporter\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{chaosresult_name}}",
@@ -299,7 +263,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -341,11 +305,11 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(litmuschaos_passed_experiments + litmuschaos_failed_experiments)",
+          "expr": "sum(litmuschaos_passed_experiments{job=\"litmus/chaos-exporter\"} + litmuschaos_failed_experiments{job=\"litmus/chaos-exporter\"})",
           "instant": false,
           "interval": "",
           "intervalFactor": 2,
@@ -361,7 +325,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -403,10 +367,11 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "targets": [
         {
-          "expr": "sum(litmuschaos_passed_experiments)",
+          "exemplar": true,
+          "expr": "sum(litmuschaos_passed_experiments{job=\"litmus/chaos-exporter\"})",
           "instant": false,
           "interval": "",
           "intervalFactor": 2,
@@ -422,7 +387,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -464,10 +429,11 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "targets": [
         {
-          "expr": "sum(litmuschaos_failed_experiments)",
+          "exemplar": true,
+          "expr": "sum(litmuschaos_failed_experiments{job=\"litmus/chaos-exporter\"})",
           "instant": false,
           "interval": "",
           "intervalFactor": 2,
@@ -481,7 +447,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -523,13 +489,14 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "targets": [
         {
-          "expr": "sum(litmuschaos_awaited_experiments)",
+          "exemplar": true,
+          "expr": "sum(litmuschaos_awaited_experiments{job=\"litmus/chaos-exporter\"})",
           "instant": true,
           "interval": "",
-          "intervalFactor": 3,
+          "intervalFactor": 10,
           "legendFormat": "",
           "refId": "A"
         }
@@ -572,7 +539,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "unit": "none"
@@ -610,7 +577,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -724,7 +691,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "unit": "none"
@@ -762,7 +729,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -844,7 +811,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -862,7 +829,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -896,7 +863,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1005,7 +972,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1039,7 +1006,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1160,7 +1127,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1178,7 +1145,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1214,7 +1181,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1324,7 +1291,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1358,7 +1325,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1481,7 +1448,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1499,7 +1466,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1533,7 +1500,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1605,7 +1572,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1639,7 +1606,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1711,7 +1678,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1729,7 +1696,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1763,7 +1730,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1836,7 +1803,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1870,7 +1837,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1942,7 +1909,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1960,7 +1927,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1994,7 +1961,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2062,7 +2029,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2096,7 +2063,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2168,7 +2135,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2186,7 +2153,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2220,7 +2187,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2288,7 +2255,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2322,7 +2289,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2394,7 +2361,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2412,7 +2379,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2446,7 +2413,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2514,7 +2481,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2548,7 +2515,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2628,7 +2595,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values(litmuschaos_awaited_experiments{app=~\"chaos-exporter\"}, chaosresult_name)",
         "description": "Chaos results",
         "error": null,
@@ -2655,7 +2622,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values(litmuschaos_experiment_verdict{app=~\"chaos-exporter\"}, chaosengine_context)",
         "description": "Chaos Engine contexts",
         "error": null,

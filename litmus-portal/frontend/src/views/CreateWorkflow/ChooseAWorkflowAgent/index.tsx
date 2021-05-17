@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import { Typography, useTheme } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
 import React, {
@@ -9,13 +9,20 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { GET_CLUSTER } from '../../../graphql';
+import {
+  GET_CLUSTER,
+  GET_IMAGE_REGISTRY,
+  LIST_IMAGE_REGISTRY,
+} from '../../../graphql';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
+import * as ImageRegistryActions from '../../../redux/actions/image_registry';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
+import { ImageRegistryInfo } from '../../../models/redux/image_registry';
+import { constants } from '../../../constants';
 
 interface Cluster {
   cluster_name: string;
@@ -31,7 +38,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
 
   const workflow = useActions(WorkflowActions);
   const alert = useActions(AlertActions);
-
+  const imageRegistry = useActions(ImageRegistryActions);
   const clusterid: string = useSelector(
     (state: RootState) => state.workflowData.clusterid
   );
@@ -42,6 +49,53 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   const [currentlySelectedAgent, setCurrentlySelectedAgent] = useState<string>(
     ''
   );
+
+  const [getRegistryData] = useLazyQuery(GET_IMAGE_REGISTRY, {
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      if (data !== undefined) {
+        const regData = data.GetImageRegistry
+          .image_registry_info as ImageRegistryInfo;
+        imageRegistry.selectImageRegistry({
+          image_registry_name: regData.image_registry_name,
+          image_repo_name: regData.image_repo_name,
+          image_registry_type: regData.image_registry_type,
+          secret_name: regData.secret_name,
+          secret_namespace: regData.secret_namespace,
+          enable_registry: regData.enable_registry,
+        });
+      }
+    },
+  });
+
+  useQuery(LIST_IMAGE_REGISTRY, {
+    variables: {
+      data: selectedProjectID,
+    },
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      if (
+        data.ListImageRegistry !== null &&
+        data.ListImageRegistry.length > 0
+      ) {
+        getRegistryData({
+          variables: {
+            registryid: data.ListImageRegistry[0].image_registry_id,
+            projectid: selectedProjectID,
+          },
+        });
+      } else {
+        imageRegistry.selectImageRegistry({
+          image_registry_name: constants.dockerio,
+          image_repo_name: constants.litmus,
+          image_registry_type: constants.public,
+          secret_name: '',
+          secret_namespace: '',
+          enable_registry: true,
+        });
+      }
+    },
+  });
 
   const [getCluster] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
