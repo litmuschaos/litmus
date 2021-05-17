@@ -56,6 +56,7 @@ export interface Spec {
   securityContext: SecurityContext;
   arguments: Arguments;
   templates: Template[];
+  workflowSpec?: any;
 }
 
 export interface CustomYAML {

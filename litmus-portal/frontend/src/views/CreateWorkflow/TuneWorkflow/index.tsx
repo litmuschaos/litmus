@@ -25,7 +25,6 @@ import {
   GET_PREDEFINED_EXPERIMENT_YAML,
   GET_TEMPLATE_BY_ID,
 } from '../../../graphql/queries';
-
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
@@ -382,7 +381,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
     const generatedYAML: CustomYAML = crd;
     let installAll = '';
     const modifyYAML = (link: string) => {
-      const steps = generatedYAML.spec.templates[0]?.steps;
+      const steps =
+        generatedYAML.kind === 'Workflow'
+          ? generatedYAML.spec.templates[0]?.steps
+          : generatedYAML.spec.workflowSpec.templates[0]?.steps;
       if (steps !== undefined)
         steps.push([
           {
@@ -393,7 +395,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
       installAll = `${installAllExp}kubectl apply -f /tmp/${
         YAML.parse(link as string).metadata.name
       }.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
-      const arg = generatedYAML.spec.templates[1]?.container;
+      const arg =
+        generatedYAML.kind === 'Workflow'
+          ? generatedYAML.spec.templates[1]?.container
+          : generatedYAML.spec.workflowSpec.templates[1]?.container;
       if (arg !== undefined) arg.args = [`${installAll} sleep 30`];
       setInstallAllExp(installAll);
     };
@@ -410,7 +415,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
        * Adding experiment YAML
        */
       const ExperimentYAML = YAML.parse(Object.values(data.Experiment)[0]);
-      const artifacts = generatedYAML.spec.templates[1].inputs?.artifacts;
+      const artifacts =
+        generatedYAML.kind === 'Workflow'
+          ? generatedYAML.spec.templates[1].inputs?.artifacts
+          : generatedYAML.spec.workflowSpec.templates[1].inputs?.artifacts;
       if (artifacts !== undefined) {
         artifacts.push({
           name: ExperimentYAML.metadata.name,
@@ -439,8 +447,8 @@ const TuneWorkflow = forwardRef((_, ref) => {
       if (ChaosEngine.spec.jobCleanUpPolicy) {
         ChaosEngine.spec.jobCleanUpPolicy = 'retain';
       }
-      ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
-      generatedYAML.spec.templates.push({
+
+      const templateToBePushed = {
         name: ExpName,
         inputs: {
           artifacts: [
@@ -460,7 +468,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
           ],
           image: 'litmuschaos/litmus-checker:latest',
         },
-      });
+      };
+      ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
+      if (generatedYAML.kind === 'Workflow')
+        generatedYAML.spec.templates.push(templateToBePushed);
+      else generatedYAML.spec.workflowSpec.templates.push(templateToBePushed);
     });
     return generatedYAML;
   };
@@ -491,6 +503,30 @@ const TuneWorkflow = forwardRef((_, ref) => {
     parsedManifest.metadata.name = `${workflow.name}-${Math.round(
       new Date().getTime() / 1000
     )}`;
+
+    if (
+      manifest.length &&
+      parsedManifest.kind === 'Workflow' &&
+      parsedManifest.spec.templates[0].steps[
+        parsedManifest.spec.templates[0].steps.length - 1
+      ][0].name === 'revert-chaos'
+    ) {
+      parsedManifest.spec.templates[0].steps.pop(); // Remove the last step -> Revert Chaos
+
+      parsedManifest.spec.templates.pop(); // Remove the last template -> Revert Chaos Template
+    }
+
+    if (
+      manifest.length &&
+      parsedManifest.kind === 'CronWorkflow' &&
+      parsedManifest.spec.workflowSpec.templates[0].steps[
+        parsedManifest.spec.workflowSpec.templates[0].steps.length - 1
+      ][0].name === 'revert-chaos'
+    ) {
+      parsedManifest.spec.workflowSpec.templates[0].steps.pop(); // Remove the last step -> Revert Chaos
+
+      parsedManifest.spec.workflowSpec.templates.pop(); // Remove the last template -> Revert Chaos Template
+    }
 
     workflowAction.setWorkflowManifest({
       manifest: YAML.stringify(parsedManifest),
