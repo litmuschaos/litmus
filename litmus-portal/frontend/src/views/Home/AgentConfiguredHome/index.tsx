@@ -35,7 +35,11 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
     {
-      variables: { projectID },
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+        },
+      },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -52,7 +56,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   }
 
   if (data) {
-    workflowRunCount = data.getWorkFlowRuns.length;
+    workflowRunCount = data.getWorkflowRuns.workflow_runs.length;
   } else {
     return (
       <Center>

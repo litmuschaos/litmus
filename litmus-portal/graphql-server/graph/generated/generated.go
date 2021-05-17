@@ -341,7 +341,7 @@ type ComplexityRoot struct {
 		GetScheduledWorkflows       func(childComplexity int, projectID string) int
 		GetTemplateManifestByID     func(childComplexity int, templateID string) int
 		GetUser                     func(childComplexity int, username string) int
-		GetWorkFlowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
+		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
 		GetYAMLData                 func(childComplexity int, experimentInput model.ExperimentInput) int
 		ListDashboard               func(childComplexity int, projectID string) int
 		ListDataSource              func(childComplexity int, projectID string) int
@@ -610,7 +610,7 @@ type MutationResolver interface {
 	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
 }
 type QueryResolver interface {
-	GetWorkFlowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error)
+	GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error)
 	GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
 	GetUser(ctx context.Context, username string) (*model.User, error)
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
@@ -2422,17 +2422,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetUser(childComplexity, args["username"].(string)), true
 
-	case "Query.getWorkFlowRuns":
-		if e.complexity.Query.GetWorkFlowRuns == nil {
+	case "Query.getWorkflowRuns":
+		if e.complexity.Query.GetWorkflowRuns == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getWorkFlowRuns_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_getWorkflowRuns_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetWorkFlowRuns(childComplexity, args["workflowRunsInput"].(model.GetWorkflowRunsInput)), true
+		return e.complexity.Query.GetWorkflowRuns(childComplexity, args["workflowRunsInput"].(model.GetWorkflowRunsInput)), true
 
 	case "Query.getYAMLData":
 		if e.complexity.Query.GetYAMLData == nil {
@@ -4333,7 +4333,7 @@ input KubeGVRRequest {
 }
 
 type Query {
-  getWorkFlowRuns(workflowRunsInput: GetWorkflowRunsInput!): GetWorkflowsOutput! @authorized
+  getWorkflowRuns(workflowRunsInput: GetWorkflowRunsInput!): GetWorkflowsOutput! @authorized
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
@@ -5522,7 +5522,7 @@ func (ec *executionContext) field_Query_getUser_args(ctx context.Context, rawArg
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getWorkFlowRuns_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_getWorkflowRuns_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.GetWorkflowRunsInput
@@ -13223,7 +13223,7 @@ func (ec *executionContext) _Provider_Name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getWorkFlowRuns(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_getWorkflowRuns(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13239,7 +13239,7 @@ func (ec *executionContext) _Query_getWorkFlowRuns(ctx context.Context, field gr
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getWorkFlowRuns_args(ctx, rawArgs)
+	args, err := ec.field_Query_getWorkflowRuns_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13248,7 +13248,7 @@ func (ec *executionContext) _Query_getWorkFlowRuns(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetWorkFlowRuns(rctx, args["workflowRunsInput"].(model.GetWorkflowRunsInput))
+			return ec.resolvers.Query().GetWorkflowRuns(rctx, args["workflowRunsInput"].(model.GetWorkflowRunsInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -23504,7 +23504,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "getWorkFlowRuns":
+		case "getWorkflowRuns":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -23512,7 +23512,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getWorkFlowRuns(ctx, field)
+				res = ec._Query_getWorkflowRuns(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

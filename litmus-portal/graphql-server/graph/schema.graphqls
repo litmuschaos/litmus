@@ -294,7 +294,7 @@ input KubeGVRRequest {
 }
 
 type Query {
-  getWorkFlowRuns(workflowRunsInput: GetWorkflowRunsInput!): GetWorkflowsOutput! @authorized
+  getWorkflowRuns(workflowRunsInput: GetWorkflowRunsInput!): GetWorkflowsOutput! @authorized
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 

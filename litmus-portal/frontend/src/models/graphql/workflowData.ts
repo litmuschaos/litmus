@@ -55,14 +55,28 @@ export interface WorkflowRun {
   cluster_id: string;
 }
 
+interface GetWorkflowRunsOutput {
+  total_no_of_workflow_runs: number;
+  workflow_runs: WorkflowRun[];
+}
+
 export interface Workflow {
-  getWorkFlowRuns: WorkflowRun[];
+  getWorkflowRuns: GetWorkflowRunsOutput;
 }
 
 export interface WorkflowSubscription {
   workflowEventListener: WorkflowRun;
 }
 
+interface Pagination {
+  page: number;
+  limit: number;
+}
+
 export interface WorkflowDataVars {
-  projectID: string;
+  workflowRunsInput: {
+    project_id: string;
+    workflow_run_ids?: string[];
+    pagination?: Pagination;
+  };
 }

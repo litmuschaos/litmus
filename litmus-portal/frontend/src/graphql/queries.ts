@@ -1,17 +1,20 @@
 import { gql } from '@apollo/client';
 
 export const WORKFLOW_DETAILS = gql`
-  query workflowDetails($projectID: String!) {
-    getWorkFlowRuns(project_id: $projectID) {
-      workflow_id
-      workflow_name
-      workflow_run_id
-      execution_data
-      project_id
-      cluster_name
-      last_updated
-      cluster_type
-      cluster_id
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_id
+        workflow_name
+        workflow_run_id
+        project_id
+        cluster_name
+        last_updated
+        cluster_type
+        cluster_id
+        execution_data
+      }
     }
   }
 `;

@@ -23,7 +23,7 @@ const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
   const projectID = getProjectID();
   const projectRole = getProjectRole();
 
-  const filteredData = data.getWorkFlowRuns.slice(-3).reverse();
+  const filteredData = data.getWorkflowRuns.workflow_runs.slice(-3).reverse();
 
   return (
     <Paper className={classes.workflowRunContainer}>

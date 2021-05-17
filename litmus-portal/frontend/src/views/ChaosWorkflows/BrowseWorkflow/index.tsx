@@ -67,7 +67,11 @@ const BrowseWorkflow: React.FC = () => {
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
     {
-      variables: { projectID },
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+        },
+      },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -76,14 +80,20 @@ const BrowseWorkflow: React.FC = () => {
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
-      variables: { projectID },
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+        },
+      },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
-        const modifiedWorkflows = prev.getWorkFlowRuns.slice();
+        const modifiedWorkflows = prev.getWorkflowRuns.workflow_runs.slice();
         const newWorkflow = subscriptionData.data.workflowEventListener;
 
         // Updating the query data
         let i = 0;
+        let totalNoOfWorkflows = prev.getWorkflowRuns.total_no_of_workflow_runs;
+
         for (; i < modifiedWorkflows.length; i++) {
           if (
             modifiedWorkflows[i].workflow_run_id === newWorkflow.workflow_run_id
@@ -92,10 +102,18 @@ const BrowseWorkflow: React.FC = () => {
             break;
           }
         }
-        if (i === modifiedWorkflows.length)
+        if (i === modifiedWorkflows.length) {
+          totalNoOfWorkflows++;
           modifiedWorkflows.unshift(newWorkflow);
+        }
 
-        return { ...prev, getWorkFlowRuns: modifiedWorkflows };
+        return {
+          ...prev,
+          getWorkflowRuns: {
+            total_no_of_workflow_runs: totalNoOfWorkflows,
+            workflow_runs: modifiedWorkflows,
+          },
+        };
       },
     });
   }, [data]);
@@ -153,7 +171,7 @@ const BrowseWorkflow: React.FC = () => {
     return uniqueList;
   };
 
-  const filteredData = data?.getWorkFlowRuns
+  const filteredData = data?.getWorkflowRuns.workflow_runs
     .filter((dataRow) =>
       dataRow.workflow_name.toLowerCase().includes(filters.search.toLowerCase())
     )

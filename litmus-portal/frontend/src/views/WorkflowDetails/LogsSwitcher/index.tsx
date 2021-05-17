@@ -47,10 +47,16 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
 
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID } }
+    {
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+        },
+      },
+    }
   );
 
-  const workflow = workflow_data?.getWorkFlowRuns.filter(
+  const workflow = workflow_data?.getWorkflowRuns.workflow_runs.filter(
     (w) => w.workflow_run_id === workflow_run_id
   )[0];
 

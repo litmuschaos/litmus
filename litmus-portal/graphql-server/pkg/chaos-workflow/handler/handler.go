@@ -146,15 +146,15 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		if err != nil {
 			return nil, err
 		}
-		for _, wfrun := range workflow.WorkflowRuns {
+		for _, wfRun := range workflow.WorkflowRuns {
 			newWorkflowRun := model.WorkflowRun{
 				WorkflowName:  workflow.WorkflowName,
 				WorkflowID:    workflow.WorkflowID,
-				WorkflowRunID: wfrun.WorkflowRunID,
-				LastUpdated:   wfrun.LastUpdated,
+				WorkflowRunID: wfRun.WorkflowRunID,
+				LastUpdated:   wfRun.LastUpdated,
 				ProjectID:     workflow.ProjectID,
 				ClusterID:     workflow.ClusterID,
-				ExecutionData: wfrun.ExecutionData,
+				ExecutionData: wfRun.ExecutionData,
 				ClusterName:   cluster.ClusterName,
 				ClusterType:   &cluster.ClusterType,
 			}
@@ -163,20 +163,22 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 	totalNoOfRuns := len(result)
 
-	var filteredResult []*model.WorkflowRun
-	m := make(map[string]bool)
+	if input.WorkflowRunIds != nil {
+		var filteredResult []*model.WorkflowRun
+		m := make(map[string]bool)
 
-	for _, wfID := range input.WorkflowRunIds {
-		m[*wfID] = true
-	}
-
-	for _, wfRun := range result {
-		if m[wfRun.WorkflowRunID] {
-			filteredResult = append(filteredResult, wfRun)
+		for _, wfID := range input.WorkflowRunIds {
+			m[*wfID] = true
 		}
-	}
 
-	result = filteredResult
+		for _, wfRun := range result {
+			if m[wfRun.WorkflowRunID] {
+				filteredResult = append(filteredResult, wfRun)
+			}
+		}
+
+		result = filteredResult
+	}
 
 	if input.Pagination != nil {
 		startIndex := (input.Pagination.Page - 1) * input.Pagination.Limit
