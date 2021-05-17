@@ -2,6 +2,7 @@ package gql
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 
@@ -45,11 +46,15 @@ func GenerateWorkflowPayload(cid, accessKey, completed string, wfEvent types.Wor
 func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	logDetails := types.PodLog{}
 	mainLog, err := logs.GetLogs(podLog.PodName, podLog.PodNamespace, "main")
+	// try getting argo pod logs
 	if err != nil {
-		return logDetails, err
+		logrus.Errorf("failed to get argo pod %v logs, err: %v", podLog.PodName, err)
+		logDetails.MainPod = "Failed to get argo pod logs"
+	} else {
+		logDetails.MainPod = strconv.Quote(strings.Replace(mainLog, `"`, `'`, -1))
+		logDetails.MainPod = logDetails.MainPod[1 : len(logDetails.MainPod)-1]
 	}
-	logDetails.MainPod = strconv.Quote(strings.Replace(mainLog, `"`, `'`, -1))
-	logDetails.MainPod = logDetails.MainPod[1 : len(logDetails.MainPod)-1]
+	// try getting experiment pod logs if requested
 	if strings.ToLower(podLog.PodType) == "chaosengine" && podLog.ChaosNamespace != nil {
 		chaosLog := make(map[string]string)
 		if podLog.ExpPod != nil {
@@ -57,6 +62,8 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 			if err == nil {
 				chaosLog[*podLog.ExpPod] = strconv.Quote(strings.Replace(expLog, `"`, `'`, -1))
 				chaosLog[*podLog.ExpPod] = chaosLog[*podLog.ExpPod][1 : len(chaosLog[*podLog.ExpPod])-1]
+			} else {
+				logrus.Errorf("failed to get experiment pod %v logs, err: %v", *podLog.ExpPod, err)
 			}
 		}
 		if podLog.RunnerPod != nil {
@@ -64,6 +71,8 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 			if err == nil {
 				chaosLog[*podLog.RunnerPod] = strconv.Quote(strings.Replace(runnerLog, `"`, `'`, -1))
 				chaosLog[*podLog.RunnerPod] = chaosLog[*podLog.RunnerPod][1 : len(chaosLog[*podLog.RunnerPod])-1]
+			} else {
+				logrus.Errorf("failed to get runner pod %v logs, err: %v", *podLog.RunnerPod, err)
 			}
 		}
 		if podLog.ExpPod == nil && podLog.RunnerPod == nil {

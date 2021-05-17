@@ -93,7 +93,7 @@ func ClusterConnect(clusterData map[string]string) {
 				continue
 			}
 			// send pod logs
-			logrus.Print("LOG REQUEST ", podRequest)
+			logrus.Print("LOG REQUEST ", r.Payload.Data.ClusterConnect.Action.ExternalData.(string))
 			SendPodLogs(clusterData, podRequest)
 		} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
 			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
