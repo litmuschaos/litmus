@@ -7,6 +7,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '0 auto',
     padding: theme.spacing(2),
   },
+  back: {
+    width: '90%',
+    margin: '0 auto',
+    padding: theme.spacing(1, 0),
+  },
   contentWrapper: {
     background: theme.palette.cards.background,
     padding: theme.spacing(1),
