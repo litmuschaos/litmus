@@ -73,14 +73,13 @@ const WorkflowDetails: React.FC = () => {
       variables: {
         workflowRunsInput: {
           project_id: projectID,
+          workflow_run_ids: [workflowRunId],
         },
       },
     }
   );
 
-  const workflow = data?.getWorkflowRuns.workflow_runs.filter(
-    (w) => w.workflow_run_id === workflowRunId
-  )[0];
+  const workflow = data?.getWorkflowRuns.workflow_runs[0];
 
   // Apollo query to get the scheduled data
   const { data: SchedulesData, loading } = useQuery<

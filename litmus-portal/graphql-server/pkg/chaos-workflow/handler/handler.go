@@ -161,8 +161,8 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 			result = append(result, &newWorkflowRun)
 		}
 	}
-	totalNoOfRuns := len(result)
 
+	// Filtering
 	if input.WorkflowRunIds != nil {
 		var filteredResult []*model.WorkflowRun
 		m := make(map[string]bool)
@@ -180,9 +180,15 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		result = filteredResult
 	}
 
+	// Calculate length of result after filtering
+	totalNoOfRuns := len(result)
+
 	if input.Pagination != nil {
-		startIndex := (input.Pagination.Page - 1) * input.Pagination.Limit
-		endIndex := input.Pagination.Page * input.Pagination.Limit
+		startIndex := input.Pagination.Page * input.Pagination.Limit
+		endIndex := (input.Pagination.Page + 1) * input.Pagination.Limit
+		if endIndex > len(result) {
+			endIndex = len(result)
+		}
 		result = result[startIndex:endIndex]
 	}
 

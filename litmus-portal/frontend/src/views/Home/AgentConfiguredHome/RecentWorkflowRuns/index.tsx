@@ -3,7 +3,7 @@ import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Workflow } from '../../../../models/graphql/workflowData';
+import { WorkflowRun } from '../../../../models/graphql/workflowData';
 import { history } from '../../../../redux/configureStore';
 import {
   getProjectID,
@@ -13,7 +13,7 @@ import useStyles from './styles';
 import { WorkflowRunCard } from './WorkflowRunCard';
 
 interface RecentWorkflowRunsProps {
-  data: Workflow;
+  data: WorkflowRun[];
 }
 
 const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
@@ -22,8 +22,6 @@ const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
 
   const projectID = getProjectID();
   const projectRole = getProjectRole();
-
-  const filteredData = data.getWorkflowRuns.workflow_runs.slice(-3).reverse();
 
   return (
     <Paper className={classes.workflowRunContainer}>
@@ -59,7 +57,7 @@ const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {
 
       {/* WorkflowRuns Data */}
 
-      {filteredData.map((workflow) => {
+      {data.map((workflow) => {
         return <WorkflowRunCard key={workflow.workflow_id} data={workflow} />;
       })}
     </Paper>

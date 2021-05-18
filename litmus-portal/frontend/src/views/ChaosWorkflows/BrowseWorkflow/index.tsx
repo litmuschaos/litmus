@@ -63,6 +63,12 @@ const BrowseWorkflow: React.FC = () => {
   const projectID = getProjectID();
   const { t } = useTranslation();
 
+  // State for pagination
+  const [paginationData, setPaginationData] = useState<PaginationData>({
+    pageNo: 0,
+    rowsPerPage: 5,
+  });
+
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
@@ -70,6 +76,10 @@ const BrowseWorkflow: React.FC = () => {
       variables: {
         workflowRunsInput: {
           project_id: projectID,
+          pagination: {
+            page: paginationData.pageNo,
+            limit: paginationData.rowsPerPage,
+          },
         },
       },
       fetchPolicy: 'cache-and-network',
@@ -130,12 +140,6 @@ const BrowseWorkflow: React.FC = () => {
     lastRun: { sort: true, ascending: true },
     name: { sort: false, ascending: true },
     noOfSteps: { sort: false, ascending: false },
-  });
-
-  // State for pagination
-  const [paginationData, setPaginationData] = useState<PaginationData>({
-    pageNo: 0,
-    rowsPerPage: 5,
   });
 
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
@@ -438,13 +442,7 @@ const BrowseWorkflow: React.FC = () => {
                   </TableCell>
                 </TableRow>
               ) : filteredData && filteredData.length ? (
-                filteredData
-                  .slice(
-                    paginationData.pageNo * paginationData.rowsPerPage,
-                    paginationData.pageNo * paginationData.rowsPerPage +
-                      paginationData.rowsPerPage
-                  )
-                  .map((dataRow) => dataPerRow(dataRow))
+                filteredData.map((dataRow) => dataPerRow(dataRow))
               ) : (
                 <TableRow>
                   <TableCell colSpan={7}>
@@ -462,7 +460,7 @@ const BrowseWorkflow: React.FC = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={filteredData?.length ?? 0}
+          count={data?.getWorkflowRuns.total_no_of_workflow_runs ?? 0}
           rowsPerPage={paginationData.rowsPerPage}
           page={paginationData.pageNo}
           onChangePage={(_, page) =>

@@ -51,14 +51,13 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
       variables: {
         workflowRunsInput: {
           project_id: projectID,
+          workflow_run_ids: [workflow_run_id],
         },
       },
     }
   );
 
-  const workflow = workflow_data?.getWorkflowRuns.workflow_runs.filter(
-    (w) => w.workflow_run_id === workflow_run_id
-  )[0];
+  const workflow = workflow_data?.getWorkflowRuns.workflow_runs[0];
 
   const [chaosData, setChaosData] = useState<ChaosDataVar>({
     exp_pod: '',
