@@ -197,6 +197,11 @@ type DSResponse struct {
 	UpdatedAt         *string `json:"updated_at"`
 }
 
+type DateRange struct {
+	StartDate string `json:"start_date"`
+	EndDate   string `json:"end_date"`
+}
+
 type ExperimentInput struct {
 	ProjectID      string  `json:"ProjectID"`
 	ChartName      string  `json:"ChartName"`
@@ -212,9 +217,11 @@ type Experiments struct {
 }
 
 type GetWorkflowRunsInput struct {
-	ProjectID      string      `json:"project_id"`
-	WorkflowRunIds []*string   `json:"workflow_run_ids"`
-	Pagination     *Pagination `json:"pagination"`
+	ProjectID      string                  `json:"project_id"`
+	WorkflowRunIds []*string               `json:"workflow_run_ids"`
+	Pagination     *Pagination             `json:"pagination"`
+	Sort           *SortInput              `json:"sort"`
+	Filter         *WorkflowRunFilterInput `json:"filter"`
 }
 
 type GetWorkflowsOutput struct {
@@ -429,6 +436,11 @@ type ScheduledWorkflows struct {
 	IsRemoved           bool          `json:"isRemoved"`
 }
 
+type SortInput struct {
+	Name *SortType `json:"name"`
+	Time *SortType `json:"time"`
+}
+
 type Spec struct {
 	DisplayName         string        `json:"DisplayName"`
 	CategoryDescription string        `json:"CategoryDescription"`
@@ -520,6 +532,13 @@ type WorkflowRun struct {
 	WorkflowName  string  `json:"workflow_name"`
 	ClusterType   *string `json:"cluster_type"`
 	ExecutionData string  `json:"execution_data"`
+}
+
+type WorkflowRunFilterInput struct {
+	WorkflowName   *string            `json:"workflow_name"`
+	ClusterName    *string            `json:"cluster_name"`
+	WorkflowStatus *WorkflowRunStatus `json:"workflow_status"`
+	DateRange      *DateRange         `json:"date_range"`
 }
 
 type WorkflowRunInput struct {
@@ -838,5 +857,91 @@ func (e *MemberRole) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type SortType string
+
+const (
+	SortTypeAsc  SortType = "Asc"
+	SortTypeDesc SortType = "Desc"
+)
+
+var AllSortType = []SortType{
+	SortTypeAsc,
+	SortTypeDesc,
+}
+
+func (e SortType) IsValid() bool {
+	switch e {
+	case SortTypeAsc, SortTypeDesc:
+		return true
+	}
+	return false
+}
+
+func (e SortType) String() string {
+	return string(e)
+}
+
+func (e *SortType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = SortType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid SortType", str)
+	}
+	return nil
+}
+
+func (e SortType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type WorkflowRunStatus string
+
+const (
+	WorkflowRunStatusAll       WorkflowRunStatus = "All"
+	WorkflowRunStatusFailed    WorkflowRunStatus = "Failed"
+	WorkflowRunStatusRunning   WorkflowRunStatus = "Running"
+	WorkflowRunStatusSucceeded WorkflowRunStatus = "Succeeded"
+)
+
+var AllWorkflowRunStatus = []WorkflowRunStatus{
+	WorkflowRunStatusAll,
+	WorkflowRunStatusFailed,
+	WorkflowRunStatusRunning,
+	WorkflowRunStatusSucceeded,
+}
+
+func (e WorkflowRunStatus) IsValid() bool {
+	switch e {
+	case WorkflowRunStatusAll, WorkflowRunStatusFailed, WorkflowRunStatusRunning, WorkflowRunStatusSucceeded:
+		return true
+	}
+	return false
+}
+
+func (e WorkflowRunStatus) String() string {
+	return string(e)
+}
+
+func (e *WorkflowRunStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WorkflowRunStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WorkflowRunStatus", str)
+	}
+	return nil
+}
+
+func (e WorkflowRunStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

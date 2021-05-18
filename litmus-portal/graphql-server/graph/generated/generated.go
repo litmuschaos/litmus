@@ -4153,34 +4153,6 @@ type ChaosWorkFlowResponse {
   isCustomWorkflow: Boolean!
 }
 
-input Pagination {
-    page: Int!
-    limit: Int!
-}
-
-input GetWorkflowRunsInput {
-    project_id: String!
-    workflow_run_ids: [ID]
-    pagination: Pagination
-}
-
-type WorkflowRun {
-  workflow_run_id: ID!
-  workflow_id: ID!
-  cluster_name: String!
-  last_updated: String!
-  project_id: String!
-  cluster_id: ID!
-  workflow_name: String!
-  cluster_type: String
-  execution_data: String!
-}
-
-type GetWorkflowsOutput {
-    total_no_of_workflow_runs: Int!
-    workflow_runs: [WorkflowRun]!
-}
-
 input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
@@ -4333,7 +4305,9 @@ input KubeGVRRequest {
 }
 
 type Query {
-  getWorkflowRuns(workflowRunsInput: GetWorkflowRunsInput!): GetWorkflowsOutput! @authorized
+  getWorkflowRuns(
+    workflowRunsInput: GetWorkflowRunsInput!
+  ): GetWorkflowsOutput! @authorized
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
@@ -4368,7 +4342,8 @@ type Query {
 
   GetPromQuery(query: promInput): promResponse! @authorized
 
-  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
+  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse!
+    @authorized
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
@@ -4385,7 +4360,10 @@ type Query {
   #Image Registry Queries
   ListImageRegistry(project_id: String!): [ImageRegistryResponse!] @authorized
 
-  GetImageRegistry(image_registry_id: String!, project_id: String!): ImageRegistryResponse! @authorized
+  GetImageRegistry(
+    image_registry_id: String!
+    project_id: String!
+  ): ImageRegistryResponse! @authorized
 }
 
 type Mutation {
@@ -4423,7 +4401,8 @@ type Mutation {
   leaveProject(member: MemberInput!): String! @authorized
 
   #Used to update project name
-  updateProjectName(projectID: String!, projectName: String!): String! @authorized
+  updateProjectName(projectID: String!, projectName: String!): String!
+    @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -4443,7 +4422,8 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
 
@@ -4478,16 +4458,25 @@ type Mutation {
   deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 
   # Manifest Template
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate! @authorized
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
+    @authorized
 
   deleteManifestTemplate(template_id: String!): Boolean! @authorized
 
   #Image Registry Mutations
-  createImageRegistry(project_id: String!, imageRegistryInfo: imageRegistryInput!): ImageRegistryResponse! @authorized
+  createImageRegistry(
+    project_id: String!
+    imageRegistryInfo: imageRegistryInput!
+  ): ImageRegistryResponse! @authorized
 
-  updateImageRegistry(image_registry_id: String!, project_id: String!, imageRegistryInfo: imageRegistryInput!): ImageRegistryResponse! @authorized
+  updateImageRegistry(
+    image_registry_id: String!
+    project_id: String!
+    imageRegistryInfo: imageRegistryInput!
+  ): ImageRegistryResponse! @authorized
 
-  deleteImageRegistry(image_registry_id: String!, project_id: String!): String! @authorized
+  deleteImageRegistry(image_registry_id: String!, project_id: String!): String!
+    @authorized
 }
 
 type Subscription {
@@ -4501,7 +4490,8 @@ type Subscription {
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
-  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
+  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
+    @authorized
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
@@ -4533,6 +4523,65 @@ input UpdateUserInput {
   name: String
   email: String
   company_name: String
+}
+`, BuiltIn: false},
+	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum SortType {
+  Asc
+  Desc
+}
+
+enum WorkflowRunStatus {
+  All
+  Failed
+  Running
+  Succeeded
+}
+
+input DateRange {
+  start_date: String!
+  end_date: String!
+}
+
+input WorkflowRunFilterInput {
+  workflow_name: String
+  cluster_name: String
+  workflow_status: WorkflowRunStatus
+  date_range: DateRange
+}
+
+input Pagination {
+  page: Int!
+  limit: Int!
+}
+
+input SortInput {
+  name: SortType
+  time: SortType
+}
+
+input GetWorkflowRunsInput {
+  project_id: String!
+  workflow_run_ids: [ID]
+  pagination: Pagination
+  sort: SortInput
+  filter: WorkflowRunFilterInput
+}
+
+type WorkflowRun {
+  workflow_run_id: ID!
+  workflow_id: ID!
+  cluster_name: String!
+  last_updated: String!
+  project_id: String!
+  cluster_id: ID!
+  workflow_name: String!
+  cluster_type: String
+  execution_data: String!
+}
+
+type GetWorkflowsOutput {
+  total_no_of_workflow_runs: Int!
+  workflow_runs: [WorkflowRun]!
 }
 `, BuiltIn: false},
 }
@@ -20908,6 +20957,30 @@ func (ec *executionContext) unmarshalInputDSInput(ctx context.Context, obj inter
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDateRange(ctx context.Context, obj interface{}) (model.DateRange, error) {
+	var it model.DateRange
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "start_date":
+			var err error
+			it.StartDate, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "end_date":
+			var err error
+			it.EndDate, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, obj interface{}) (model.ExperimentInput, error) {
 	var it model.ExperimentInput
 	var asMap = obj.(map[string]interface{})
@@ -20971,6 +21044,18 @@ func (ec *executionContext) unmarshalInputGetWorkflowRunsInput(ctx context.Conte
 		case "pagination":
 			var err error
 			it.Pagination, err = ec.unmarshalOPagination2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPagination(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sort":
+			var err error
+			it.Sort, err = ec.unmarshalOSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "filter":
+			var err error
+			it.Filter, err = ec.unmarshalOWorkflowRunFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunFilterInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21292,6 +21377,30 @@ func (ec *executionContext) unmarshalInputPodLogRequest(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSortInput(ctx context.Context, obj interface{}) (model.SortInput, error) {
+	var it model.SortInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalOSortType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "time":
+			var err error
+			it.Time, err = ec.unmarshalOSortType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTemplateInput(ctx context.Context, obj interface{}) (model.TemplateInput, error) {
 	var it model.TemplateInput
 	var asMap = obj.(map[string]interface{})
@@ -21457,6 +21566,42 @@ func (ec *executionContext) unmarshalInputWeightagesInput(ctx context.Context, o
 		case "weightage":
 			var err error
 			it.Weightage, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputWorkflowRunFilterInput(ctx context.Context, obj interface{}) (model.WorkflowRunFilterInput, error) {
+	var it model.WorkflowRunFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "workflow_name":
+			var err error
+			it.WorkflowName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cluster_name":
+			var err error
+			it.ClusterName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workflow_status":
+			var err error
+			it.WorkflowStatus, err = ec.unmarshalOWorkflowRunStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "date_range":
+			var err error
+			it.DateRange, err = ec.unmarshalODateRange2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDateRange(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26852,6 +26997,18 @@ func (ec *executionContext) marshalODSResponse2ᚖgithubᚗcomᚋlitmuschaosᚋl
 	return ec._DSResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalODateRange2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDateRange(ctx context.Context, v interface{}) (model.DateRange, error) {
+	return ec.unmarshalInputDateRange(ctx, v)
+}
+
+func (ec *executionContext) unmarshalODateRange2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDateRange(ctx context.Context, v interface{}) (*model.DateRange, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalODateRange2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDateRange(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) unmarshalOFloat2float64(ctx context.Context, v interface{}) (float64, error) {
 	return graphql.UnmarshalFloat(v)
 }
@@ -27073,6 +27230,42 @@ func (ec *executionContext) marshalOScheduledWorkflows2ᚖgithubᚗcomᚋlitmusc
 	return ec._ScheduledWorkflows(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx context.Context, v interface{}) (model.SortInput, error) {
+	return ec.unmarshalInputSortInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx context.Context, v interface{}) (*model.SortInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOSortType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx context.Context, v interface{}) (model.SortType, error) {
+	var res model.SortType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOSortType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx context.Context, sel ast.SelectionSet, v model.SortType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOSortType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx context.Context, v interface{}) (*model.SortType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOSortType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOSortType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx context.Context, sel ast.SelectionSet, v *model.SortType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalString(v)
 }
@@ -27160,6 +27353,42 @@ func (ec *executionContext) marshalOWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋ
 		return graphql.Null
 	}
 	return ec._WorkflowRun(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOWorkflowRunFilterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunFilterInput(ctx context.Context, v interface{}) (model.WorkflowRunFilterInput, error) {
+	return ec.unmarshalInputWorkflowRunFilterInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOWorkflowRunFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunFilterInput(ctx context.Context, v interface{}) (*model.WorkflowRunFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOWorkflowRunFilterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunFilterInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOWorkflowRunStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunStatus(ctx context.Context, v interface{}) (model.WorkflowRunStatus, error) {
+	var res model.WorkflowRunStatus
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOWorkflowRunStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunStatus(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRunStatus) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOWorkflowRunStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunStatus(ctx context.Context, v interface{}) (*model.WorkflowRunStatus, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOWorkflowRunStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunStatus(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOWorkflowRunStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunStatus(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowRunStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOWorkflowRuns2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRuns(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRuns) graphql.Marshaler {

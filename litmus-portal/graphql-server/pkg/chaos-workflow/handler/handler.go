@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -162,7 +163,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		}
 	}
 
-	// Filtering
+	// Filtering based on workflow run ID
 	if input.WorkflowRunIds != nil {
 		var filteredResult []*model.WorkflowRun
 		m := make(map[string]bool)
@@ -178,6 +179,74 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		}
 
 		result = filteredResult
+	}
+
+	// Filtering based on multiple parameters
+	if input.Filter != nil {
+
+		// Filtering based on workflow name
+		if input.Filter.WorkflowName != nil {
+			var filteredResult []*model.WorkflowRun
+			for _, wfRun := range result {
+				if strings.Contains(wfRun.WorkflowName, *input.Filter.WorkflowName) {
+					filteredResult = append(filteredResult, wfRun)
+				}
+			}
+			result = filteredResult
+		}
+
+		// Filtering based on cluster name
+		if input.Filter.ClusterName != nil {
+			var filteredResult []*model.WorkflowRun
+			for _, wfRun := range result {
+				if wfRun.ClusterName == *input.Filter.ClusterName {
+					filteredResult = append(filteredResult, wfRun)
+				}
+			}
+			result = filteredResult
+		}
+
+		// Filtering based on date range
+		if input.Filter.DateRange != nil {
+			var filteredResult []*model.WorkflowRun
+			for _, wfRun := range result {
+				if wfRun.LastUpdated >= input.Filter.DateRange.StartDate &&
+					wfRun.LastUpdated <= input.Filter.DateRange.EndDate {
+					filteredResult = append(filteredResult, wfRun)
+				}
+			}
+			result = filteredResult
+		}
+	}
+
+	// Sorting based on basis of last updated time
+	sort.SliceStable(result, func(i, j int) bool {
+		return result[i].LastUpdated > result[j].LastUpdated
+	})
+
+	// Sorting based on workflow name and lastupdated time
+	if input.Sort != nil {
+		if input.Sort.Time != nil {
+			if *input.Sort.Time == model.SortTypeAsc {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].LastUpdated < result[j].LastUpdated
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].LastUpdated > result[j].LastUpdated
+				})
+			}
+		} else if input.Sort.Name != nil {
+			if *input.Sort.Name == model.SortTypeAsc {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].WorkflowName < result[j].WorkflowName
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].WorkflowName > result[j].WorkflowName
+				})
+			}
+		}
 	}
 
 	// Calculate length of result after filtering
