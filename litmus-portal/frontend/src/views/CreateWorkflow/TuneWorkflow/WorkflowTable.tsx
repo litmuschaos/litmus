@@ -178,18 +178,6 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
       };
     }
 
-    // Else if Revert Chaos is set to False and revert chaos template is present in the manifest
-    // else if (
-    //   !revertChaos &&
-    //   parsedYAML.spec.templates[0].steps[
-    //     parsedYAML.spec.templates[0].steps.length - 1
-    //   ][0].name === 'revert-chaos'
-    // ) {
-    //   parsedYAML.spec.templates[0].steps.pop(); // Remove the last step -> Revert Chaos
-
-    //   parsedYAML.spec.templates.pop(); // Remove the last template -> Revert Chaos Template
-    // }
-
     const updatedManifest = updateManifestImage(parsedYAML, imageRegistryData);
     workflow.setWorkflowManifest({
       manifest: updatedManifest,
