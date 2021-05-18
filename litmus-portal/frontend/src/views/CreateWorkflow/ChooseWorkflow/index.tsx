@@ -101,6 +101,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
 
         <RadioGroup
           data-testid="workflowRadioButtons"
+          data-cy="WorkflowsRadioGroup"
           value={selected}
           onChange={handleChange}
         >

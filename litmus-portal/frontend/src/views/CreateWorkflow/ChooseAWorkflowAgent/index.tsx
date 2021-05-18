@@ -215,7 +215,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
         />
 
         {/* Cluster Data */}
-        <div className={classes.agentWrapperDiv}>
+        <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
           {filteredCluster.map((cluster) => (
             <LitmusCard
               key={cluster.cluster_id}
