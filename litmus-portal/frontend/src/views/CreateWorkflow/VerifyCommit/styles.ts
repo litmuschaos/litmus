@@ -104,7 +104,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   editIcon: {
     cursor: 'pointer',
     color: theme.palette.text.hint,
-    // height: '1rem',
   },
   spacingHorizontal: {
     margin: theme.spacing(0, 1),
