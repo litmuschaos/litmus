@@ -447,7 +447,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       if (ChaosEngine.spec.jobCleanUpPolicy) {
         ChaosEngine.spec.jobCleanUpPolicy = 'retain';
       }
-
+      ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
       const templateToBePushed = {
         name: ExpName,
         inputs: {
@@ -469,7 +469,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
           image: 'litmuschaos/litmus-checker:latest',
         },
       };
-      ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
       if (generatedYAML.kind === 'Workflow')
         generatedYAML.spec.templates.push(templateToBePushed);
       else generatedYAML.spec.workflowSpec.templates.push(templateToBePushed);
