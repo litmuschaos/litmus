@@ -3,6 +3,7 @@ import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import localforage from 'localforage';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import BackButton from '../../../components/Button/BackButton';
 import data from '../../../components/PredifinedWorkflows/data';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
@@ -57,6 +58,9 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
 
   return (
     <Scaffold>
+      <div className={classes.back}>
+        <BackButton />
+      </div>
       <div className={classes.root}>
         <Typography className={classes.headerTitle}>
           {t('browseTemplate.browseAWorkflow')}

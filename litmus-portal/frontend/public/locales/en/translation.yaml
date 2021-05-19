@@ -900,7 +900,7 @@ createWorkflow:
         continuous: Continuous
   verifyCommit:
     header: Confirmation of Results
-    info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
+    info: Before committing the workflow changes to your agent, verify and if needed go back to a corresponding section of the wizard to modify.
     error: Invalid Workflow CRD found ! Please correct the errors.
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
