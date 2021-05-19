@@ -25,7 +25,7 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
   return (
     <>
       <div className={label}>
-        <Typography className={classes.statusFont}>
+        <Typography data-testid="status" className={classes.statusFont}>
           {status === SUCCEEDED
             ? `${t('workflowDetailsView.workflowInfo.Completed')}`
             : status}

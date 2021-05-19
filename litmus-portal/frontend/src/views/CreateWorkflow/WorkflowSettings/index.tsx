@@ -203,6 +203,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
           <div className={classes.inputDiv}>
             <div aria-details="spacer" className={classes.mainDiv}>
               <InputField
+                title="workflowName"
                 label={t('createWorkflow.chooseWorkflow.label.workflowName')}
                 fullWidth
                 helperText={
