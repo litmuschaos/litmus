@@ -506,6 +506,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
     if (
       manifest.length &&
+      selectedRadio === 'C' &&
       parsedManifest.kind === 'Workflow' &&
       parsedManifest.spec.templates[0].steps[
         parsedManifest.spec.templates[0].steps.length - 1
@@ -518,6 +519,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
     if (
       manifest.length &&
+      selectedRadio === 'C' &&
       parsedManifest.kind === 'CronWorkflow' &&
       parsedManifest.spec.workflowSpec.templates[0].steps[
         parsedManifest.spec.workflowSpec.templates[0].steps.length - 1
