@@ -16,32 +16,26 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../graphql';
 import {
-  ExecutionData,
+  GET_CLUSTER_NAMES,
+  WORKFLOW_DETAILS,
+  WORKFLOW_EVENTS,
+} from '../../../graphql';
+import { Clusters, ClusterVars } from '../../../models/graphql/clusterData';
+import {
   Pagination,
   SortInput,
   Workflow,
   WorkflowDataVars,
   WorkflowRun,
+  WorkflowRunFilterInput,
+  WorkflowStatus,
   WorkflowSubscription,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
-
-interface FilterOptions {
-  search: string;
-  status: string;
-  cluster: string;
-}
-
-interface DateData {
-  dateValue: string;
-  fromDate: string;
-  toDate: string;
-}
 
 const BrowseWorkflow: React.FC = () => {
   const classes = useStyles();
@@ -55,17 +49,36 @@ const BrowseWorkflow: React.FC = () => {
   });
 
   // States for filters
-  const [filters, setFilters] = useState<FilterOptions>({
-    search: '',
-    status: 'All',
-    cluster: 'All',
+  const [filters, setFilters] = useState<WorkflowRunFilterInput>({
+    workflow_name: '',
+    cluster_name: 'All',
+    workflow_status: 'All',
+    date_range: {
+      start_date: new Date(0).valueOf().toString(),
+      end_date: new Date().valueOf().toString(),
+    },
   });
+
+  // State for date to be displayed
+  const [displayDate, setDisplayDate] = React.useState<string>(
+    'Select a period'
+  );
 
   // State for sorting
   const [sortData, setSortData] = useState<SortInput>({
     field: 'Time',
     descending: true,
   });
+
+  // Query to get list of Clusters
+  const { data: clusterList } = useQuery<Partial<Clusters>, ClusterVars>(
+    GET_CLUSTER_NAMES,
+    {
+      variables: {
+        project_id: projectID,
+      },
+    }
+  );
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -79,6 +92,7 @@ const BrowseWorkflow: React.FC = () => {
             limit: paginationData.limit,
           },
           sort: sortData,
+          filter: filters,
         },
       },
       fetchPolicy: 'cache-and-network',
@@ -143,55 +157,13 @@ const BrowseWorkflow: React.FC = () => {
     setOpen(true);
   };
 
-  // State for start date and end date
-  const [dateRange, setDateRange] = React.useState<DateData>({
-    dateValue: 'Select a period',
-    fromDate: new Date(0).toString(),
-    toDate: new Date(new Date().setHours(23, 59, 59)).toString(),
-  });
-
-  const getClusters = (searchingData: WorkflowRun[]) => {
-    const uniqueList: string[] = [];
-    searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.cluster_name)) {
-        uniqueList.push(data.cluster_name);
-      }
-    });
-    return uniqueList;
-  };
-
-  const filteredData = data?.getWorkflowRuns.workflow_runs
-    .filter((dataRow) =>
-      dataRow.workflow_name.toLowerCase().includes(filters.search.toLowerCase())
-    )
-    .filter((dataRow) =>
-      filters.status === 'All'
-        ? true
-        : (JSON.parse(dataRow.execution_data) as ExecutionData).phase.includes(
-            filters.status
-          )
-    )
-    .filter((dataRow) =>
-      filters.cluster === 'All'
-        ? true
-        : dataRow.cluster_name
-            .toLowerCase()
-            .includes(filters.cluster.toLowerCase())
-    )
-    .filter((dataRow) => {
-      return dateRange.fromDate && dateRange.toDate === undefined
-        ? true
-        : parseInt(dataRow.last_updated, 10) * 1000 >=
-            new Date(moment(dateRange.fromDate).format()).getTime() &&
-            parseInt(dataRow.last_updated, 10) * 1000 <=
-              new Date(moment(dateRange.toDate).format()).getTime();
-    });
+  const workflowRuns = data?.getWorkflowRuns.workflow_runs;
 
   // Functions passed as props in the headerSection
   const changeSearch = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    setFilters({ ...filters, search: event.target.value as string });
+    setFilters({ ...filters, workflow_name: event.target.value as string });
     setPaginationData({ ...paginationData, page: 0 });
   };
 
@@ -201,7 +173,10 @@ const BrowseWorkflow: React.FC = () => {
       value: unknown;
     }>
   ) => {
-    setFilters({ ...filters, status: event.target.value as string });
+    setFilters({
+      ...filters,
+      workflow_status: event.target.value as WorkflowStatus,
+    });
     setPaginationData({ ...paginationData, page: 0 });
   };
 
@@ -211,20 +186,37 @@ const BrowseWorkflow: React.FC = () => {
       value: unknown;
     }>
   ) => {
-    setFilters({ ...filters, cluster: event.target.value as string });
+    setFilters({ ...filters, cluster_name: event.target.value as string });
     setPaginationData({ ...paginationData, page: 0 });
   };
 
   // Function to set the date range for filtering
-  const dateChange = (selectFromDate: string, selectToDate: string) => {
-    setDateRange({
-      dateValue: `${moment(selectFromDate)
-        .format('DD.MM.YYYY')
-        .toString()}-${moment(selectToDate).format('DD.MM.YYYY').toString()}`,
-      fromDate: new Date(new Date(selectFromDate).setHours(0, 0, 0)).toString(),
-      toDate: new Date(new Date(selectToDate).setHours(23, 59, 59)).toString(),
+  const dateChange = (selectStartDate: string, selectEndDate: string) => {
+    // Change filter value for date range
+    setFilters({
+      ...filters,
+      date_range: {
+        start_date: new Date(selectStartDate)
+          .setHours(0, 0, 0)
+          .valueOf()
+          .toString(),
+        end_date: new Date(selectEndDate)
+          .setHours(23, 59, 59)
+          .valueOf()
+          .toString(),
+      },
     });
+
+    // Change the display value of date range
+    setDisplayDate(
+      `${moment(selectStartDate).format('DD.MM.YYYY').toString()}-${moment(
+        selectEndDate
+      )
+        .format('DD.MM.YYYY')
+        .toString()}`
+    );
   };
+
   // Function to validate execution_data JSON
   const dataPerRow = (dataRow: WorkflowRun) => {
     let exe_data;
@@ -246,20 +238,19 @@ const BrowseWorkflow: React.FC = () => {
       <section className="Heading section">
         {/* Header Section */}
         <HeaderSection
-          searchValue={filters.search}
+          searchValue={filters.workflow_name}
           changeSearch={changeSearch}
-          statusValue={filters.status}
+          statusValue={filters.workflow_status}
           changeStatus={changeStatus}
-          clusterValue={filters.cluster}
+          clusterValue={filters.cluster_name}
           changeCluster={changeCluster}
           popOverClick={handlePopOverClick}
           popOverClose={handlePopOverClose}
           isOpen={isOpen}
-          data={data}
-          getClusters={getClusters}
+          clusterList={clusterList}
           popAnchorEl={popAnchorEl}
           isDateOpen={open}
-          displayDate={dateRange.dateValue}
+          displayDate={displayDate}
           selectDate={dateChange}
         />
       </section>
@@ -380,8 +371,8 @@ const BrowseWorkflow: React.FC = () => {
                     </Typography>
                   </TableCell>
                 </TableRow>
-              ) : filteredData && filteredData.length ? (
-                filteredData.map((dataRow) => dataPerRow(dataRow))
+              ) : workflowRuns && workflowRuns.length ? (
+                workflowRuns.map((dataRow) => dataPerRow(dataRow))
               ) : (
                 <TableRow>
                   <TableCell colSpan={7}>

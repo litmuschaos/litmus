@@ -86,10 +86,17 @@ interface DateRange {
   end_date: string;
 }
 
+export type WorkflowStatus =
+  | 'All'
+  | 'Failed'
+  | 'Running'
+  | 'Succeeded'
+  | undefined;
+
 export interface WorkflowRunFilterInput {
   workflow_name?: string;
   cluster_name?: string;
-  workflow_status?: 'All' | 'Failed' | 'Running' | 'Succeeded';
+  workflow_status?: WorkflowStatus;
   date_range?: DateRange;
 }
 export interface WorkflowDataVars {

@@ -169,6 +169,14 @@ export const GET_CLUSTER_LENGTH = gql`
   }
 `;
 
+export const GET_CLUSTER_NAMES = gql`
+  query getClusters($project_id: String!) {
+    getCluster(project_id: $project_id) {
+      cluster_name
+    }
+  }
+`;
+
 export const ALL_USERS = gql`
   query allUsers {
     users {

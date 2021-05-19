@@ -196,7 +196,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		}
 
 		// Filtering based on cluster name
-		if input.Filter.ClusterName != nil {
+		if input.Filter.ClusterName != nil && *input.Filter.ClusterName != "All" {
 			var filteredResult []*model.WorkflowRun
 			for _, wfRun := range result {
 				if wfRun.ClusterName == *input.Filter.ClusterName {
