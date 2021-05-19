@@ -91,7 +91,7 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
 
           {/* Buttons */}
           <div className={classes.spaceBetween}>
-            <ButtonOutlined onClick={() => history.push('/workflows')}>
+            <ButtonOutlined onClick={() => history.goBack()}>
               {t('browseTemplate.back')}
             </ButtonOutlined>
             <ButtonFilled variant="success" onClick={() => preSelectWorkflow()}>

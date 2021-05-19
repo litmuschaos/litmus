@@ -38,12 +38,14 @@ interface TableDataProps {
   data: ScheduleWorkflow;
   deleteRow: (wfid: string) => void;
   handleDisableSchedule: (schedule: ScheduleWorkflow) => void;
+  handleEnableSchedule: (schedule: ScheduleWorkflow) => void;
 }
 
 const TableData: React.FC<TableDataProps> = ({
   data,
   deleteRow,
   handleDisableSchedule,
+  handleEnableSchedule,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -410,6 +412,30 @@ const TableData: React.FC<TableDataProps> = ({
                     className={classes.downloadText}
                   >
                     {t('chaosWorkflows.browseSchedules.disableSchedule')}
+                  </Typography>
+                </div>
+              </MenuItem>
+            )}
+
+          {projectRole !== 'Viewer' &&
+            YAML.parse(data.workflow_manifest).spec.suspend === true && (
+              <MenuItem
+                value="Enable"
+                onClick={() => {
+                  handleEnableSchedule(data);
+                }}
+              >
+                <div className={classes.expDiv}>
+                  <img
+                    src="/icons/disableSchedule.svg"
+                    alt="Enable Schedule"
+                    className={classes.btnImg}
+                  />
+                  <Typography
+                    data-cy="enableSchedule"
+                    className={classes.downloadText}
+                  >
+                    {t('chaosWorkflows.browseSchedules.enableSchedule')}
                   </Typography>
                 </div>
               </MenuItem>

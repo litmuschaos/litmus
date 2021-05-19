@@ -29,6 +29,7 @@ import {
   SCHEDULE_DETAILS,
   UPDATE_SCHEDULE,
 } from '../../../graphql';
+import { WeightMap } from '../../../models/graphql/createWorkflowData';
 import {
   DeleteSchedule,
   ScheduleDataVars,
@@ -44,7 +45,6 @@ import {
 } from '../../../utils/sort';
 import useStyles from './styles';
 import TableData from './TableData';
-import { WeightMap } from '../../../models/graphql/createWorkflowData';
 
 interface FilterOption {
   search: string;
@@ -86,10 +86,11 @@ const BrowseSchedule: React.FC = () => {
     suspended: 'All',
   });
 
-  const [disableSchedule] = useMutation(UPDATE_SCHEDULE, {
+  const [updateSchedule] = useMutation(UPDATE_SCHEDULE, {
     refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
   });
 
+  // Disable a schedule
   const handleDisableSchedule = (schedule: ScheduleWorkflow) => {
     const yaml = YAML.parse(schedule.workflow_manifest);
     yaml.spec.suspend = true;
@@ -103,7 +104,38 @@ const BrowseSchedule: React.FC = () => {
       });
     });
 
-    disableSchedule({
+    updateSchedule({
+      variables: {
+        ChaosWorkFlowInput: {
+          workflow_id: schedule.workflow_id,
+          workflow_name: schedule.workflow_name,
+          workflow_description: schedule.workflow_description,
+          isCustomWorkflow: schedule.isCustomWorkflow,
+          cronSyntax: schedule.cronSyntax,
+          workflow_manifest: JSON.stringify(yaml, null, 2),
+          project_id: schedule.project_id,
+          cluster_id: schedule.cluster_id,
+          weightages: weightData,
+        },
+      },
+    });
+  };
+
+  // Re-enable a disabled schedule
+  const handleEnableSchedule = (schedule: ScheduleWorkflow) => {
+    const yaml = YAML.parse(schedule.workflow_manifest);
+    yaml.spec.suspend = false;
+
+    const weightData: WeightMap[] = [];
+
+    schedule.weightages.forEach((weightEntry) => {
+      weightData.push({
+        experiment_name: weightEntry.experiment_name,
+        weightage: weightEntry.weightage,
+      });
+    });
+
+    updateSchedule({
       variables: {
         ChaosWorkFlowInput: {
           workflow_id: schedule.workflow_id,
@@ -367,6 +399,7 @@ const BrowseSchedule: React.FC = () => {
                         data={data}
                         deleteRow={deleteRow}
                         handleDisableSchedule={handleDisableSchedule}
+                        handleEnableSchedule={handleEnableSchedule}
                       />
                     </TableRow>
                   ))

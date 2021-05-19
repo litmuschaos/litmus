@@ -402,6 +402,7 @@ chaosWorkflows:
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
+    enableSchedule: Enable Schedule
     saveTemplate: Save Template
     updateEngine: 'Note: Make sure to update the chaos engine names'
     saveChanges: Save Changes
