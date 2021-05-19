@@ -68,15 +68,36 @@ export interface WorkflowSubscription {
   workflowEventListener: WorkflowRun;
 }
 
-interface Pagination {
+// Pagination
+export interface Pagination {
   page: number;
   limit: number;
 }
 
+// Sort
+export interface SortInput {
+  field: 'Name' | 'Time';
+  descending?: boolean;
+}
+
+// Filter
+interface DateRange {
+  start_date: string;
+  end_date: string;
+}
+
+export interface WorkflowRunFilterInput {
+  workflow_name?: string;
+  cluster_name?: string;
+  workflow_status?: 'All' | 'Failed' | 'Running' | 'Succeeded';
+  date_range?: DateRange;
+}
 export interface WorkflowDataVars {
   workflowRunsInput: {
     project_id: string;
     workflow_run_ids?: string[];
     pagination?: Pagination;
+    sort?: SortInput;
+    filter?: WorkflowRunFilterInput;
   };
 }

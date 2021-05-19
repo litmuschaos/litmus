@@ -82,6 +82,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
       key: 'selection',
     },
   ]);
+
   return (
     <div>
       <div className={classes.headerSection}>

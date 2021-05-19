@@ -13,7 +13,7 @@ import useStyles from './styles';
 import { WorkflowRunCard } from './WorkflowRunCard';
 
 interface RecentWorkflowRunsProps {
-  data: WorkflowRun[];
+  data: Partial<WorkflowRun>[];
 }
 
 const RecentWorkflowRuns: React.FC<RecentWorkflowRunsProps> = ({ data }) => {

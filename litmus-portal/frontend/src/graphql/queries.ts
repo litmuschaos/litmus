@@ -19,6 +19,22 @@ export const WORKFLOW_DETAILS = gql`
   }
 `;
 
+export const WORKFLOW_DETAILS_MIN = gql`
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_id
+        workflow_name
+        workflow_run_id
+        cluster_name
+        last_updated
+        execution_data
+      }
+    }
+  }
+`;
+
 export const SCHEDULE_DETAILS = gql`
   query scheduleDetails($projectID: String!) {
     getScheduledWorkflows(project_id: $projectID) {

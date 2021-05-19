@@ -5,7 +5,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
-import { WORKFLOW_DETAILS } from '../../../graphql';
+import { WORKFLOW_DETAILS_MIN } from '../../../graphql';
 import { Role } from '../../../models/graphql/user';
 import {
   Workflow,
@@ -33,7 +33,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   const tabs = useActions(TabActions);
 
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
+    WORKFLOW_DETAILS_MIN,
     {
       variables: {
         workflowRunsInput: {

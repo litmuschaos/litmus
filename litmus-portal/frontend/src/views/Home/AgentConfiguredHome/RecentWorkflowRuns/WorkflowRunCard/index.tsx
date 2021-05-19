@@ -19,7 +19,7 @@ import {
 import useStyles from './styles';
 
 interface WorkflowRunCardProps {
-  data: WorkflowRun;
+  data: Partial<WorkflowRun>;
 }
 
 const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
@@ -56,7 +56,7 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
     return classes.highScore;
   }
 
-  const executionData = JSON.parse(data.execution_data);
+  const executionData = JSON.parse(data?.execution_data ?? '');
 
   return (
     <Link

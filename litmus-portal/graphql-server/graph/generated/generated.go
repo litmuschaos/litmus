@@ -4525,12 +4525,7 @@ input UpdateUserInput {
   company_name: String
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum SortType {
-  Asc
-  Desc
-}
-
-enum WorkflowRunStatus {
+	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
   Running
@@ -4554,9 +4549,14 @@ input Pagination {
   limit: Int!
 }
 
+enum WorkflowRunSortingField {
+  Name
+  Time
+}
+
 input SortInput {
-  name: SortType
-  time: SortType
+  field: WorkflowRunSortingField!
+  descending: Boolean
 }
 
 input GetWorkflowRunsInput {
@@ -21383,15 +21383,15 @@ func (ec *executionContext) unmarshalInputSortInput(ctx context.Context, obj int
 
 	for k, v := range asMap {
 		switch k {
-		case "name":
+		case "field":
 			var err error
-			it.Name, err = ec.unmarshalOSortType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx, v)
+			it.Field, err = ec.unmarshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "time":
+		case "descending":
 			var err error
-			it.Time, err = ec.unmarshalOSortType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx, v)
+			it.Descending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26485,6 +26485,15 @@ func (ec *executionContext) unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschao
 	return ec.unmarshalInputWorkflowRunInput(ctx, v)
 }
 
+func (ec *executionContext) unmarshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx context.Context, v interface{}) (model.WorkflowRunSortingField, error) {
+	var res model.WorkflowRunSortingField
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRunSortingField) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -27240,30 +27249,6 @@ func (ec *executionContext) unmarshalOSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋ
 	}
 	res, err := ec.unmarshalOSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx, v)
 	return &res, err
-}
-
-func (ec *executionContext) unmarshalOSortType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx context.Context, v interface{}) (model.SortType, error) {
-	var res model.SortType
-	return res, res.UnmarshalGQL(v)
-}
-
-func (ec *executionContext) marshalOSortType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx context.Context, sel ast.SelectionSet, v model.SortType) graphql.Marshaler {
-	return v
-}
-
-func (ec *executionContext) unmarshalOSortType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx context.Context, v interface{}) (*model.SortType, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOSortType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx, v)
-	return &res, err
-}
-
-func (ec *executionContext) marshalOSortType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortType(ctx context.Context, sel ast.SelectionSet, v *model.SortType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

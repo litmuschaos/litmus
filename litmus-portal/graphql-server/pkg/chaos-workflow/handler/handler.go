@@ -219,34 +219,34 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		}
 	}
 
-	// Sorting based on basis of last updated time
-	sort.SliceStable(result, func(i, j int) bool {
-		return result[i].LastUpdated > result[j].LastUpdated
-	})
-
-	// Sorting based on workflow name and lastupdated time
-	if input.Sort != nil {
-		if input.Sort.Time != nil {
-			if *input.Sort.Time == model.SortTypeAsc {
-				sort.SliceStable(result, func(i, j int) bool {
-					return result[i].LastUpdated < result[j].LastUpdated
-				})
-			} else {
-				sort.SliceStable(result, func(i, j int) bool {
-					return result[i].LastUpdated > result[j].LastUpdated
-				})
-			}
-		} else if input.Sort.Name != nil {
-			if *input.Sort.Name == model.SortTypeAsc {
-				sort.SliceStable(result, func(i, j int) bool {
-					return result[i].WorkflowName < result[j].WorkflowName
-				})
-			} else {
-				sort.SliceStable(result, func(i, j int) bool {
-					return result[i].WorkflowName > result[j].WorkflowName
-				})
-			}
+	switch {
+	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldTime:
+		// Sorting based on LastUpdated time
+		if input.Sort.Descending != nil && *input.Sort.Descending {
+			sort.SliceStable(result, func(i, j int) bool {
+				return result[i].LastUpdated > result[j].LastUpdated
+			})
+		} else {
+			sort.SliceStable(result, func(i, j int) bool {
+				return result[i].LastUpdated < result[j].LastUpdated
+			})
 		}
+	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldName:
+		// Sorting based on WorkflowName time
+		if input.Sort.Descending != nil && *input.Sort.Descending {
+			sort.SliceStable(result, func(i, j int) bool {
+				return result[i].WorkflowName > result[j].WorkflowName
+			})
+		} else {
+			sort.SliceStable(result, func(i, j int) bool {
+				return result[i].WorkflowName < result[j].WorkflowName
+			})
+		}
+	default:
+		// Default sorting: sorts it by LastUpdated time in descending order
+		sort.SliceStable(result, func(i, j int) bool {
+			return result[i].LastUpdated > result[j].LastUpdated
+		})
 	}
 
 	// Calculate length of result after filtering

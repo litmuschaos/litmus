@@ -19,18 +19,14 @@ import { useTranslation } from 'react-i18next';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../graphql';
 import {
   ExecutionData,
+  Pagination,
+  SortInput,
   Workflow,
   WorkflowDataVars,
   WorkflowRun,
   WorkflowSubscription,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
-import {
-  sortAlphaAsc,
-  sortAlphaDesc,
-  sortNumAsc,
-  sortNumDesc,
-} from '../../../utils/sort';
 import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
@@ -39,17 +35,6 @@ interface FilterOptions {
   search: string;
   status: string;
   cluster: string;
-}
-
-interface PaginationData {
-  pageNo: number;
-  rowsPerPage: number;
-}
-
-interface SortData {
-  lastRun: { sort: boolean; ascending: boolean };
-  name: { sort: boolean; ascending: boolean };
-  noOfSteps: { sort: boolean; ascending: boolean };
 }
 
 interface DateData {
@@ -64,9 +49,22 @@ const BrowseWorkflow: React.FC = () => {
   const { t } = useTranslation();
 
   // State for pagination
-  const [paginationData, setPaginationData] = useState<PaginationData>({
-    pageNo: 0,
-    rowsPerPage: 5,
+  const [paginationData, setPaginationData] = useState<Pagination>({
+    page: 0,
+    limit: 5,
+  });
+
+  // States for filters
+  const [filters, setFilters] = useState<FilterOptions>({
+    search: '',
+    status: 'All',
+    cluster: 'All',
+  });
+
+  // State for sorting
+  const [sortData, setSortData] = useState<SortInput>({
+    field: 'Time',
+    descending: true,
   });
 
   // Query to get workflows
@@ -77,9 +75,10 @@ const BrowseWorkflow: React.FC = () => {
         workflowRunsInput: {
           project_id: projectID,
           pagination: {
-            page: paginationData.pageNo,
-            limit: paginationData.rowsPerPage,
+            page: paginationData.page,
+            limit: paginationData.limit,
           },
+          sort: sortData,
         },
       },
       fetchPolicy: 'cache-and-network',
@@ -127,20 +126,6 @@ const BrowseWorkflow: React.FC = () => {
       },
     });
   }, [data]);
-
-  // States for filters
-  const [filters, setFilters] = useState<FilterOptions>({
-    search: '',
-    status: 'All',
-    cluster: 'All',
-  });
-
-  // State for sorting
-  const [sortData, setSortData] = useState<SortData>({
-    lastRun: { sort: true, ascending: true },
-    name: { sort: false, ascending: true },
-    noOfSteps: { sort: false, ascending: false },
-  });
 
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
     null
@@ -200,54 +185,14 @@ const BrowseWorkflow: React.FC = () => {
             new Date(moment(dateRange.fromDate).format()).getTime() &&
             parseInt(dataRow.last_updated, 10) * 1000 <=
               new Date(moment(dateRange.toDate).format()).getTime();
-    })
-    .sort((a: WorkflowRun, b: WorkflowRun) => {
-      // Sorting based on unique fields
-      if (sortData.name.sort) {
-        const x = a.workflow_name;
-        const y = b.workflow_name;
-
-        return sortData.name.ascending
-          ? sortAlphaAsc(x, y)
-          : sortAlphaDesc(x, y);
-      }
-
-      if (sortData.lastRun.sort) {
-        const x = parseInt(a.last_updated, 10);
-        const y = parseInt(b.last_updated, 10);
-
-        return sortData.lastRun.ascending
-          ? sortNumAsc(y, x)
-          : sortNumDesc(y, x);
-      }
-
-      return 0;
-    })
-    .sort((a: WorkflowRun, b: WorkflowRun) => {
-      // Sorting based on non-unique fields
-      if (sortData.noOfSteps.sort) {
-        const x = Object.keys(
-          (JSON.parse(a.execution_data) as ExecutionData).nodes
-        ).length;
-
-        const y = Object.keys(
-          (JSON.parse(b.execution_data) as ExecutionData).nodes
-        ).length;
-
-        return sortData.noOfSteps.ascending
-          ? sortNumAsc(x, y)
-          : sortNumDesc(x, y);
-      }
-
-      return 0;
     });
 
-  // Functions passed as props in the headerSeaction
+  // Functions passed as props in the headerSection
   const changeSearch = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     setFilters({ ...filters, search: event.target.value as string });
-    setPaginationData({ ...paginationData, pageNo: 0 });
+    setPaginationData({ ...paginationData, page: 0 });
   };
 
   const changeStatus = (
@@ -257,7 +202,7 @@ const BrowseWorkflow: React.FC = () => {
     }>
   ) => {
     setFilters({ ...filters, status: event.target.value as string });
-    setPaginationData({ ...paginationData, pageNo: 0 });
+    setPaginationData({ ...paginationData, page: 0 });
   };
 
   const changeCluster = (
@@ -267,7 +212,7 @@ const BrowseWorkflow: React.FC = () => {
     }>
   ) => {
     setFilters({ ...filters, cluster: event.target.value as string });
-    setPaginationData({ ...paginationData, pageNo: 0 });
+    setPaginationData({ ...paginationData, page: 0 });
   };
 
   // Function to set the date range for filtering
@@ -343,9 +288,7 @@ const BrowseWorkflow: React.FC = () => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ...sortData,
-                            name: { sort: true, ascending: true },
-                            lastRun: { sort: false, ascending: true },
+                            field: 'Name',
                           })
                         }
                       >
@@ -356,9 +299,8 @@ const BrowseWorkflow: React.FC = () => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ...sortData,
-                            name: { sort: true, ascending: false },
-                            lastRun: { sort: false, ascending: false },
+                            field: 'Name',
+                            descending: true,
                           })
                         }
                       >
@@ -401,9 +343,8 @@ const BrowseWorkflow: React.FC = () => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ...sortData,
-                            lastRun: { sort: true, ascending: true },
-                            name: { sort: false, ascending: true },
+                            field: 'Time',
+                            descending: true,
                           })
                         }
                       >
@@ -414,9 +355,7 @@ const BrowseWorkflow: React.FC = () => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ...sortData,
-                            lastRun: { sort: true, ascending: false },
-                            name: { sort: false, ascending: true },
+                            field: 'Time',
                           })
                         }
                       >
@@ -461,16 +400,16 @@ const BrowseWorkflow: React.FC = () => {
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={data?.getWorkflowRuns.total_no_of_workflow_runs ?? 0}
-          rowsPerPage={paginationData.rowsPerPage}
-          page={paginationData.pageNo}
+          rowsPerPage={paginationData.limit}
+          page={paginationData.page}
           onChangePage={(_, page) =>
-            setPaginationData({ ...paginationData, pageNo: page })
+            setPaginationData({ ...paginationData, page })
           }
           onChangeRowsPerPage={(event) =>
             setPaginationData({
               ...paginationData,
-              pageNo: 0,
-              rowsPerPage: parseInt(event.target.value, 10),
+              page: 0,
+              limit: parseInt(event.target.value, 10),
             })
           }
         />
