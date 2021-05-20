@@ -38,7 +38,6 @@ interface TableDataProps {
   data: ScheduleWorkflow;
   deleteRow: (wfid: string) => void;
   handleToggleSchedule: (schedule: ScheduleWorkflow) => void;
-  // handleEnableSchedule: (schedule: ScheduleWorkflow) => void;
 }
 
 const TableData: React.FC<TableDataProps> = ({

@@ -372,7 +372,6 @@ const BrowseSchedule: React.FC = () => {
                         data={data}
                         deleteRow={deleteRow}
                         handleToggleSchedule={handleToggleSchedule}
-                        // handleEnableSchedule={handleEnableSchedule}
                       />
                     </TableRow>
                   ))
