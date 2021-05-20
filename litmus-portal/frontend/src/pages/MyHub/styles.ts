@@ -60,8 +60,8 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2),
   },
   connected: {
-    height: '26px',
-    width: '88px',
+    height: '1.625rem',
+    width: '5.5rem',
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.text.secondary,
     fontSize: '0.625rem',
@@ -171,14 +171,14 @@ const useStyles = makeStyles((theme) => ({
   },
   syncText: {
     textAlign: 'center',
-    fontSize: '13px',
+    fontSize: '0.813rem',
     marginTop: theme.spacing(0.625),
   },
   lastSyncDiv: {
     marginTop: theme.spacing(3.75),
   },
   lastSyncText: {
-    fontSize: '12px',
+    fontSize: '0.75rem',
     color: theme.palette.text.hint,
   },
 }));
