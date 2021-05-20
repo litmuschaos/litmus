@@ -67,6 +67,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
       borderColor={palette.border.main}
       key={hub.id}
       className={classes.cardDivChart}
+      data-cy="myhubCard"
     >
       {/* Card Header for Status and Menu Option */}
       <CardHeader
@@ -90,7 +91,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                   aria-controls="long-menu"
                   aria-haspopup="true"
                   onClick={handleClick}
-                  data-cy="browseScheduleOptions"
+                  data-cy="myHubCardOption"
                   className={classes.iconButton}
                 >
                   <MoreVertIcon className={classes.cardOption} />
@@ -103,6 +104,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                   onClose={handleClose}
                 >
                   <MenuItem
+                    data-cy="myHubRefresh"
                     value="Refresh"
                     onClick={() => {
                       handleRefresh(hub.id);
@@ -120,6 +122,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                     </div>
                   </MenuItem>
                   <MenuItem
+                    data-cy="myHubEdit"
                     value="View"
                     onClick={() => {
                       history.push({
@@ -141,6 +144,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                   </MenuItem>
 
                   <MenuItem
+                    data-cy="myHubDelete"
                     value="Delete"
                     onClick={() => {
                       handleDelete(hub.id);

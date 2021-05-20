@@ -274,6 +274,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
             <div className={classes.inputDiv}>
               <div className={classes.hubNameInput}>
                 <InputField
+                  data-cy="hubName"
                   label="Hub Name"
                   value={gitHub.HubName}
                   helperText={
@@ -365,6 +366,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                           />
                           {privateHub === 'token' ? (
                             <InputField
+                              data-cy="token"
                               label="Access Token"
                               value={accessToken}
                               helperText={
@@ -453,12 +455,13 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                 </div>
               </div>
               <div className={classes.btnDiv}>
-                <ButtonOutlined className={classes.cancelBtn}>
+                <ButtonOutlined data-cy="cancel" className={classes.cancelBtn}>
                   {t('myhub.connectHubPage.cancel')}
                 </ButtonOutlined>
                 <ButtonFilled
                   style={{ width: 140 }}
                   variant="success"
+                  data-cy="MyHubSubmit"
                   type="submit"
                   disabled={
                     !isValidWebUrl(gitHub.GitURL) ||
