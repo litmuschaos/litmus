@@ -90,41 +90,14 @@ const BrowseSchedule: React.FC = () => {
     refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
   });
 
-  // Disable a schedule
-  const handleDisableSchedule = (schedule: ScheduleWorkflow) => {
+  // Disable and re-enable a schedule
+  const handleToggleSchedule = (schedule: ScheduleWorkflow) => {
     const yaml = YAML.parse(schedule.workflow_manifest);
-    yaml.spec.suspend = true;
-
-    const weightData: WeightMap[] = [];
-
-    schedule.weightages.forEach((weightEntry) => {
-      weightData.push({
-        experiment_name: weightEntry.experiment_name,
-        weightage: weightEntry.weightage,
-      });
-    });
-
-    updateSchedule({
-      variables: {
-        ChaosWorkFlowInput: {
-          workflow_id: schedule.workflow_id,
-          workflow_name: schedule.workflow_name,
-          workflow_description: schedule.workflow_description,
-          isCustomWorkflow: schedule.isCustomWorkflow,
-          cronSyntax: schedule.cronSyntax,
-          workflow_manifest: JSON.stringify(yaml, null, 2),
-          project_id: schedule.project_id,
-          cluster_id: schedule.cluster_id,
-          weightages: weightData,
-        },
-      },
-    });
-  };
-
-  // Re-enable a disabled schedule
-  const handleEnableSchedule = (schedule: ScheduleWorkflow) => {
-    const yaml = YAML.parse(schedule.workflow_manifest);
-    yaml.spec.suspend = false;
+    if (yaml.spec.suspend === undefined || yaml.spec.suspend === false) {
+      yaml.spec.suspend = true;
+    } else {
+      yaml.spec.suspend = false;
+    }
 
     const weightData: WeightMap[] = [];
 
@@ -398,8 +371,8 @@ const BrowseSchedule: React.FC = () => {
                       <TableData
                         data={data}
                         deleteRow={deleteRow}
-                        handleDisableSchedule={handleDisableSchedule}
-                        handleEnableSchedule={handleEnableSchedule}
+                        handleToggleSchedule={handleToggleSchedule}
+                        // handleEnableSchedule={handleEnableSchedule}
                       />
                     </TableRow>
                   ))

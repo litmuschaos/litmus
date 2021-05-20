@@ -37,15 +37,14 @@ import useStyles from './styles';
 interface TableDataProps {
   data: ScheduleWorkflow;
   deleteRow: (wfid: string) => void;
-  handleDisableSchedule: (schedule: ScheduleWorkflow) => void;
-  handleEnableSchedule: (schedule: ScheduleWorkflow) => void;
+  handleToggleSchedule: (schedule: ScheduleWorkflow) => void;
+  // handleEnableSchedule: (schedule: ScheduleWorkflow) => void;
 }
 
 const TableData: React.FC<TableDataProps> = ({
   data,
   deleteRow,
-  handleDisableSchedule,
-  handleEnableSchedule,
+  handleToggleSchedule,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -398,7 +397,7 @@ const TableData: React.FC<TableDataProps> = ({
               <MenuItem
                 value="Disable"
                 onClick={() => {
-                  handleDisableSchedule(data);
+                  handleToggleSchedule(data);
                 }}
               >
                 <div className={classes.expDiv}>
@@ -422,7 +421,7 @@ const TableData: React.FC<TableDataProps> = ({
               <MenuItem
                 value="Enable"
                 onClick={() => {
-                  handleEnableSchedule(data);
+                  handleToggleSchedule(data);
                 }}
               >
                 <div className={classes.expDiv}>
