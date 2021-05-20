@@ -1,34 +1,19 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  mainDiv: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    marginTop: theme.spacing(3),
-  },
-  root: {
-    minWidth: '28.125rem',
-    marginLeft: 'auto',
-  },
   header: {
-    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     color: theme.palette.text.primary,
-    margin: theme.spacing(4.5, 1.5, 2.5, 1.5),
+    marginLeft: theme.spacing(5),
+    marginTop: theme.spacing(4),
   },
   detailsDiv: {
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: theme.palette.background.paper,
-    border: `1px solid ${theme.palette.border.main}`,
     padding: theme.spacing(2.5),
-  },
-  connectText: {
-    fontSize: '0.875rem',
-    marginTop: theme.spacing(1.25),
+    marginLeft: theme.spacing(2),
   },
   inputDiv: {
     display: 'flex',
@@ -40,40 +25,9 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2.5),
     marginLeft: theme.spacing(2),
   },
-  inputField: {
-    marginLeft: theme.spacing(2),
-    marginBottom: theme.spacing(2.5),
-    width: '20rem',
-  },
-  inputFieldBranch: {
-    marginBottom: theme.spacing(2.5),
-    marginRight: theme.spacing(2.5),
-    marginLeft: theme.spacing(2.5),
-    width: '10rem',
-  },
-  videoDescription: {
-    marginTop: theme.spacing(-6.25),
-    marginLeft: theme.spacing(5.625),
-    width: '18.75rem',
-    marginBottom: theme.spacing(5),
-    fontSize: '1rem',
-  },
   backBtnDiv: {
     marginLeft: theme.spacing(-1),
     marginBottom: theme.spacing(2.5),
-  },
-  submitBtnDiv: {
-    marginLeft: theme.spacing(2),
-    marginBottom: theme.spacing(2.5),
-  },
-  enterInfoText: {
-    fontSize: '1.5rem',
-  },
-  checkImg: {
-    marginBottom: theme.spacing(2.5),
-  },
-  quickActionDiv: {
-    marginLeft: theme.spacing(5.625),
   },
   rowDiv: {
     display: 'flex',
@@ -114,8 +68,9 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(3.125),
   },
   sshDiv: {
-    backgroundColor: theme.palette.disabledBackground,
+    backgroundColor: theme.palette.cards.header,
     padding: theme.spacing(2.5),
+    maxWidth: '34.375rem',
   },
   alertText: {
     marginBottom: theme.spacing(2.5),
@@ -151,29 +106,7 @@ const useStyles = makeStyles((theme) => ({
   sshRadioBtn: {
     marginTop: theme.spacing(1.25),
   },
-  toggleActive: {
-    height: '2.25rem',
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.text.secondary,
-    width: '6.25rem',
-    textTransform: 'none',
-    '&:hover': {
-      backgroundColor: theme.palette.primary.main,
-    },
-  },
-  toggleInactive: {
-    height: '2.25rem',
-    backgroundColor: theme.palette.disabledBackground,
-    color: theme.palette.text.hint,
-    width: '6.25rem',
-    textTransform: 'none',
-    '&:hover': {
-      backgroundColor: theme.palette.disabledBackground,
-    },
-  },
-  toggleFont: {
-    fontSize: '0.875rem',
-  },
+
   radio: {
     color: theme.palette.primary.main,
     '&$checked': {
@@ -181,20 +114,20 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   checked: {},
-  modalDiv: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '25rem',
-    alignItems: 'center',
-    justifyContent: 'center',
+  drawer: {
+    width: 'fit-content',
+    flexShrink: 0,
   },
-  modalHeading: {
-    fontSize: '2.25rem',
+  drawerPaper: {
+    width: 'fit-content',
   },
-  modalDesc: {
-    fontSize: '1rem',
-    width: '21.875',
-    marginBottom: theme.spacing(2.5),
+  btnDiv: {
+    marginLeft: 'auto',
+    marginRight: theme.spacing(3.75),
+    marginTop: theme.spacing(2.5),
+  },
+  cancelBtn: {
+    marginRight: theme.spacing(2.5),
   },
 }));
 
