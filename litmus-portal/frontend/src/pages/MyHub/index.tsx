@@ -1,33 +1,28 @@
 import { useMutation, useQuery } from '@apollo/client';
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  Typography,
-} from '@material-ui/core';
+import { Snackbar, Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert } from '@material-ui/lab';
 import DeveloperGuide from '../../components/DeveloperGuide';
 import Loader from '../../components/Loader';
-import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
-import VideoCarousel from '../../components/VideoCarousel';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
-import { history } from '../../redux/configureStore';
-import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
+import { getProjectID } from '../../utils/getSearchParams';
 import CustomMyHubCard from './customMyHubCard';
 import useStyles from './styles';
+import MyHubConnectDrawer from './MyHubConnectDrawer';
+import { constants } from '../../constants';
 
 interface DeleteHub {
   deleteHubModal: boolean;
   hubID: string;
 }
 
-interface RefreshState {
-  openSnackBar: boolean;
-  refreshText: string;
+interface CloneResult {
+  type: string;
+  message: string;
 }
 
 const MyHub: React.FC = () => {
@@ -36,8 +31,12 @@ const MyHub: React.FC = () => {
 
   // Get selected projectID from the URL
   const projectID = getProjectID();
-  // Set userRole
-  const userRole = getProjectRole();
+
+  const [displayResult, setDisplayResult] = useState<boolean>(false);
+  const [cloneResult, setCloneResult] = useState<CloneResult>({
+    type: '',
+    message: '',
+  });
 
   // Get MyHubs with Status
   const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {
@@ -45,7 +44,22 @@ const MyHub: React.FC = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  const [loader, setLoader] = useState(false);
+  const [drawerState, setDrawerState] = useState(false);
+
+  const handleDrawerClose = () => {
+    setDrawerState(false);
+  };
+
+  const handleDrawerCloseWithRefetch = () => {
+    setDrawerState(false);
+    refetch();
+  };
+
+  const handleAlertClose = () => {
+    setDisplayResult(false);
+  };
+
+  const [key, setKey] = useState('');
 
   // Mutation to refresh a repo
   const [refreshRepo, { loading: refreshLoading }] = useMutation(SYNC_REPO, {
@@ -60,18 +74,6 @@ const MyHub: React.FC = () => {
     },
   });
 
-  // Mutation to sync a repo
-  const [syncRepo] = useMutation(SYNC_REPO, {
-    onCompleted: () => {
-      refetch();
-      setLoader(false);
-    },
-    onError: () => {
-      refetch();
-      setLoader(false);
-    },
-  });
-
   // Mutation to delete a repo
   const [deleteRepo] = useMutation(DELETE_HUB, {
     onCompleted: () => {
@@ -81,21 +83,10 @@ const MyHub: React.FC = () => {
 
   const totalHubs = data && data.getHubStatus;
 
-  const [github, setGithub] = useState(true);
-  const [key, setKey] = useState('');
   const [deleteHub, setDeleteHub] = useState<DeleteHub>({
     deleteHubModal: false,
     hubID: '',
   });
-  const handleSync = (hubId: string) => {
-    syncRepo({
-      variables: {
-        id: hubId,
-      },
-    });
-    setKey(hubId);
-    setLoader(true);
-  };
 
   const handleHubDelete = () => {
     deleteRepo({
@@ -140,131 +131,110 @@ const MyHub: React.FC = () => {
         <>
           {/* Header Div */}
           <div className={classes.header}>
-            <Typography variant="h3" gutterBottom>
-              {t('myhub.mainPage.header')}
-            </Typography>
+            <Typography variant="h3">{t('myhub.mainPage.header')}</Typography>
+            <ButtonFilled
+              onClick={() => setDrawerState(true)}
+              className={classes.connectNewHub}
+            >
+              {t('myhub.mainPage.connect')}
+            </ButtonFilled>
           </div>
           {/* Charts Div */}
           <div className={classes.mainDiv}>
-            <div className={classes.detailsDiv}>
-              {github ? (
-                <div className={classes.githubConfirmed}>
-                  <Typography variant="h4" gutterBottom>
-                    <strong>{t('myhub.mainPage.availableHubs')}</strong>
-                  </Typography>
-                  <Typography className={classes.connectHub}>
-                    {t('myhub.mainPage.switchHub')}
-                  </Typography>
-                  <div className={classes.noHub}>
-                    {totalHubs && totalHubs.length === 0 ? (
-                      <DeveloperGuide
-                        header={t('myhub.mainPage.devGuideHeader')}
-                        description={t('myhub.mainPage.devGuideDescription')}
-                        expAvailable={false}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                    <div className={classes.chartsGroup}>
-                      {totalHubs &&
-                        totalHubs.map((hub: HubDetails) => (
-                          <CustomMyHubCard
-                            key={hub.id}
-                            hub={hub}
-                            loader={loader}
-                            keyValue={key}
-                            handleSync={handleSync}
-                            handleDelete={handleDelete}
-                            handleRefresh={handleRefresh}
-                            refreshLoader={refreshLoading}
-                          />
-                        ))}
-                      {userRole !== 'Viewer' ? (
-                        <Card
-                          elevation={3}
-                          className={classes.cardDiv}
-                          onClick={() => {
-                            history.push({
-                              pathname: '/myhub/connect',
-                              search: `?projectID=${projectID}&projectRole=${userRole}`,
-                            });
-                          }}
-                        >
-                          <CardActionArea>
-                            <CardContent className={classes.cardContent}>
-                              <img src="/icons/add-hub.svg" alt="add-hub" />
-                              <Typography variant="h6" align="center">
-                                {t('myhub.mainPage.connectNewHub')}
-                              </Typography>
-                            </CardContent>
-                          </CardActionArea>
-                        </Card>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                //  No GitHub connected div
-                <div className={classes.noGithubAccount}>
-                  <img src="/icons/myhub-crossed.svg" alt="myhub" />
-                  <Typography variant="h4" className={classes.noGitHubText}>
-                    <strong>{t('myhub.mainPage.noGithubCredentials')}</strong>
-                  </Typography>
-                  <ButtonFilled
-                    variant="success"
-                    onClick={() => {
-                      setGithub(true);
-                    }}
-                  >
-                    {t('myhub.mainPage.submitBtn')}
-                  </ButtonFilled>
-                </div>
-              )}
-              {deleteHub.deleteHubModal ? (
-                <Modal
-                  open={deleteHub.deleteHubModal}
-                  onClose={handleClose}
-                  modalActions={
-                    <ButtonOutlined onClick={handleClose}>
-                      &#x2715;
-                    </ButtonOutlined>
-                  }
-                >
-                  <div className={classes.modalDiv}>
-                    <img src="/icons/red-cross.svg" alt="disconnect" />
-                    <Typography className={classes.disconnectHeader}>
-                      {t('myhub.mainPage.disconnectHeader')}
-                    </Typography>
-                    <Typography className={classes.disconnectConfirm}>
-                      {t('myhub.mainPage.disconnectDesc')}
-                    </Typography>
-                    <div className={classes.disconnectBtns}>
-                      <ButtonOutlined onClick={handleClose}>
-                        {t('myhub.mainPage.cancel')}
-                      </ButtonOutlined>
-                      <ButtonFilled variant="error" onClick={handleHubDelete}>
-                        {t('myhub.mainPage.deleteHub')}
-                      </ButtonFilled>
-                    </div>
-                  </div>
-                </Modal>
-              ) : null}
-            </div>
-
-            <div className={classes.root}>
-              {/* Video Carousel Div */}
-              <VideoCarousel />
-              <Typography className={classes.videoDescription}>
-                {t('myhub.mainPage.videoDescription')}
+            <div className={classes.githubConfirmed}>
+              <Typography className={classes.connectHub}>
+                {t('myhub.mainPage.switchHub')}
               </Typography>
-              <div className={classes.quickActionDiv}>
-                <LocalQuickActionCard variant="homePage" />
+              <div className={classes.noHub}>
+                {totalHubs && totalHubs.length === 0 ? (
+                  <DeveloperGuide
+                    header={t('myhub.mainPage.devGuideHeader')}
+                    description={t('myhub.mainPage.devGuideDescription')}
+                    expAvailable={false}
+                  />
+                ) : (
+                  <></>
+                )}
+                <div className={classes.chartsGroup}>
+                  {totalHubs &&
+                    totalHubs.map((hub: HubDetails) => (
+                      <CustomMyHubCard
+                        key={hub.id}
+                        hub={hub}
+                        keyValue={key}
+                        handleDelete={handleDelete}
+                        handleRefresh={handleRefresh}
+                        refreshLoader={refreshLoading}
+                      />
+                    ))}
+                </div>
               </div>
             </div>
+            {deleteHub.deleteHubModal ? (
+              <Modal
+                open={deleteHub.deleteHubModal}
+                onClose={handleClose}
+                modalActions={
+                  <ButtonOutlined onClick={handleClose}>
+                    &#x2715;
+                  </ButtonOutlined>
+                }
+              >
+                <div className={classes.modalDiv}>
+                  <img src="/icons/red-cross.svg" alt="disconnect" />
+                  <Typography className={classes.disconnectHeader}>
+                    {t('myhub.mainPage.disconnectHeader')}
+                  </Typography>
+                  <Typography className={classes.disconnectConfirm}>
+                    {t('myhub.mainPage.disconnectDesc')}
+                  </Typography>
+                  <div className={classes.disconnectBtns}>
+                    <ButtonOutlined onClick={handleClose}>
+                      {t('myhub.mainPage.cancel')}
+                    </ButtonOutlined>
+                    <ButtonFilled variant="error" onClick={handleHubDelete}>
+                      {t('myhub.mainPage.deleteHub')}
+                    </ButtonFilled>
+                  </div>
+                </div>
+              </Modal>
+            ) : null}
           </div>
         </>
       )}
-      {/* Header Div */}
+
+      {/* Add MyHub Drawer */}
+      <MyHubConnectDrawer
+        drawerState={drawerState}
+        handleDrawerClose={handleDrawerClose}
+        refetchQuery={handleDrawerCloseWithRefetch}
+        setAlertState={(alert) => setDisplayResult(alert)}
+        setAlertResult={(alertResult) => setCloneResult(alertResult)}
+      />
+      <Snackbar
+        open={displayResult}
+        autoHideDuration={6000}
+        onClose={() => {
+          if (cloneResult.type === constants.error) {
+            setDisplayResult(false);
+          } else {
+            handleAlertClose();
+          }
+        }}
+      >
+        <Alert
+          onClose={() => {
+            if (cloneResult.type === constants.error) {
+              setDisplayResult(false);
+            } else {
+              handleAlertClose();
+            }
+          }}
+          severity={cloneResult.type === constants.error ? 'error' : 'success'}
+        >
+          {cloneResult.message}
+        </Alert>
+      </Snackbar>
     </Scaffold>
   );
 };

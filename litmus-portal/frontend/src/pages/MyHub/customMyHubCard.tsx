@@ -1,17 +1,19 @@
 import {
   CardContent,
+  CardHeader,
   IconButton,
   Menu,
   MenuItem,
-  Paper,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled } from 'litmus-ui';
+import { LitmusCard } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
+import Center from '../../containers/layouts/Center';
 import { HubDetails } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
@@ -20,24 +22,20 @@ import useStyles from './styles';
 interface customMyHubCardProp {
   hub: HubDetails;
   keyValue: string;
-  handleSync: (hubId: string) => void;
   handleDelete: (hubId: string) => void;
   handleRefresh: (hubId: string) => void;
-  loader: boolean;
   refreshLoader: boolean;
 }
 
 const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
   hub,
   keyValue,
-  handleSync,
+  refreshLoader,
   handleDelete,
   handleRefresh,
-  loader,
-  refreshLoader,
 }) => {
   const classes = useStyles();
-
+  const { palette } = useTheme();
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -63,154 +61,157 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
   };
 
   return (
-    <Paper key={hub.id} elevation={3} className={classes.cardDivChart}>
-      <CardContent className={classes.cardContent}>
-        <div className={classes.mainCardDiv}>
-          <Typography
-            className={hub.IsAvailable ? classes.connected : classes.error}
-          >
-            {hub.IsAvailable ? 'Connected' : 'Error'}
-          </Typography>
-          {userRole !== 'Viewer' && (
-            <>
-              <IconButton
-                aria-label="more"
-                aria-controls="long-menu"
-                aria-haspopup="true"
-                onClick={handleClick}
-                data-cy="browseScheduleOptions"
-                className={classes.iconButton}
-              >
-                <MoreVertIcon className={classes.cardOption} />
-              </IconButton>
-              <Menu
-                id="long-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={open}
-                onClose={handleClose}
-              >
-                <MenuItem
-                  value="Refresh"
-                  onClick={() => {
-                    handleRefresh(hub.id);
-                  }}
-                >
-                  <div className={classes.cardMenu}>
-                    <img
-                      src="./icons/refresh.svg"
-                      alt="Refresh"
-                      className={classes.refreshImg}
-                    />
-                    <Typography data-cy="viewHub">
-                      {t('myhub.refresh')}
-                    </Typography>
-                  </div>
-                </MenuItem>
-                <MenuItem
-                  value="View"
-                  onClick={() => {
-                    history.push({
-                      pathname: `/myhub/edit/${hub.HubName}`,
-                      search: `?projectID=${projectID}&projectRole=${userRole}`,
-                    });
-                  }}
-                >
-                  <div className={classes.cardMenu}>
-                    <img
-                      src="./icons/Edit.svg"
-                      alt="Edit"
-                      className={classes.editImg}
-                    />
-                    <Typography data-cy="viewHub">{t('myhub.edit')}</Typography>
-                  </div>
-                </MenuItem>
+    <LitmusCard
+      width="220px"
+      height="320px"
+      borderColor={palette.border.main}
+      key={hub.id}
+      className={classes.cardDivChart}
+    >
+      {/* Card Header for Status and Menu Option */}
+      <CardHeader
+        className={classes.cardHeader}
+        action={
+          <div className={classes.mainCardDiv}>
+            <div
+              className={hub.IsAvailable ? classes.connected : classes.error}
+            >
+              <Center>
+                <Typography className={classes.statusText}>
+                  {hub.IsAvailable ? 'Connected' : 'Error'}
+                </Typography>
+              </Center>
+            </div>
 
-                <MenuItem
-                  value="Delete"
-                  onClick={() => {
-                    handleDelete(hub.id);
-                  }}
+            {userRole !== 'Viewer' && (
+              <>
+                <IconButton
+                  aria-label="more"
+                  aria-controls="long-menu"
+                  aria-haspopup="true"
+                  onClick={handleClick}
+                  data-cy="browseScheduleOptions"
+                  className={classes.iconButton}
                 >
-                  <div className={classes.cardMenu}>
-                    <img
-                      src="./icons/bin-red.svg"
-                      alt="disconnect"
-                      className={classes.disconnectImg}
-                    />
-                    <Typography
-                      className={classes.disconnectText}
-                      data-cy="viewHub"
-                    >
-                      {t('myhub.disconnect')}
-                    </Typography>
-                  </div>
-                </MenuItem>
-              </Menu>
-            </>
-          )}
-        </div>
-        <img
-          src={`./icons/${
-            hub.HubName === 'Chaos Hub'
-              ? 'myhub-litmus.svg'
-              : 'my-hub-charts.svg'
-          }`}
-          className={classes.hubImage}
-          alt="add-hub"
-        />
-        <Typography variant="h6" align="center" className={classes.hubName}>
-          {hub.HubName}
-        </Typography>
-        {keyValue === hub.id && refreshLoader ? (
-          <>
-            <Loader />
-            <Typography>Refreshing Hub</Typography>
-          </>
-        ) : (
-          <>
-            <Typography>Last synced at:</Typography>
+                  <MoreVertIcon className={classes.cardOption} />
+                </IconButton>
+                <Menu
+                  id="long-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={open}
+                  onClose={handleClose}
+                >
+                  <MenuItem
+                    value="Refresh"
+                    onClick={() => {
+                      handleRefresh(hub.id);
+                    }}
+                  >
+                    <div className={classes.cardMenu}>
+                      <img
+                        src="./icons/refresh.svg"
+                        alt="Refresh"
+                        className={classes.refreshImg}
+                      />
+                      <Typography data-cy="viewHub">
+                        {t('myhub.refresh')}
+                      </Typography>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    value="View"
+                    onClick={() => {
+                      history.push({
+                        pathname: `/myhub/edit/${hub.HubName}`,
+                        search: `?projectID=${projectID}&projectRole=${userRole}`,
+                      });
+                    }}
+                  >
+                    <div className={classes.cardMenu}>
+                      <img
+                        src="./icons/Edit.svg"
+                        alt="Edit"
+                        className={classes.editImg}
+                      />
+                      <Typography data-cy="viewHub">
+                        {t('myhub.edit')}
+                      </Typography>
+                    </div>
+                  </MenuItem>
 
-            <Typography>{formatDate(hub.LastSyncedAt)}</Typography>
-            <Typography className={classes.totalExp}>
-              {parseInt(hub.TotalExp, 10) > 0
-                ? `${hub.TotalExp} experiments`
-                : t('myhub.error')}
-            </Typography>
-            <hr className={classes.horizontalLine} />
-            {hub.IsAvailable ? (
-              <ButtonFilled
-                style={{
-                  width: '100%',
-                }}
-                onClick={() => {
-                  history.push({
-                    pathname: `/myhub/${hub.HubName}`,
-                    search: `?projectID=${projectID}&projectRole=${userRole}`,
-                  });
-                }}
-                fullWidth
-              >
-                {t('myhub.view')}
-              </ButtonFilled>
-            ) : (
-              <ButtonFilled
-                variant="error"
-                disabled={keyValue === hub.id && loader}
-                onClick={() => {
-                  handleSync(hub.id);
-                }}
-                fullWidth
-              >
-                {keyValue === hub.id && loader
-                  ? t('myhub.mainPage.sync')
-                  : t('myhub.mainPage.retry')}
-              </ButtonFilled>
+                  <MenuItem
+                    value="Delete"
+                    onClick={() => {
+                      handleDelete(hub.id);
+                    }}
+                  >
+                    <div className={classes.cardMenu}>
+                      <img
+                        src="./icons/bin-red.svg"
+                        alt="disconnect"
+                        className={classes.disconnectImg}
+                      />
+                      <Typography
+                        className={classes.disconnectText}
+                        data-cy="viewHub"
+                      >
+                        {t('myhub.disconnect')}
+                      </Typography>
+                    </div>
+                  </MenuItem>
+                </Menu>
+              </>
             )}
-          </>
+          </div>
+        }
+      />
+      {/* Card Content */}
+      <CardContent
+        onClick={() => {
+          history.push({
+            pathname: `/myhub/${hub.HubName}`,
+            search: `?projectID=${projectID}&projectRole=${userRole}`,
+          });
+        }}
+      >
+        <div className={classes.cardContent}>
+          <img
+            src={`./icons/${
+              hub.HubName === 'Chaos Hub'
+                ? 'myhub-litmus.svg'
+                : 'my-hub-charts.svg'
+            }`}
+            alt="add-hub"
+          />
+          <Typography variant="h6" align="center" className={classes.hubName}>
+            <strong>{hub.HubName}</strong>/{hub.RepoBranch}
+          </Typography>
+          <Typography className={classes.totalExp} gutterBottom>
+            {parseInt(hub.TotalExp, 10) > 0
+              ? `${hub.TotalExp} experiments`
+              : t('myhub.error')}
+          </Typography>
+        </div>
+        {keyValue === hub.id && refreshLoader ? (
+          <div>
+            <Loader />
+            <Typography className={classes.syncText}>
+              {t('myhub.mainPage.sync')}
+            </Typography>
+          </div>
+        ) : (
+          <div className={classes.lastSyncDiv}>
+            <Typography className={classes.lastSyncText}>
+              {t('myhub.lastSync')}
+            </Typography>
+            <Typography className={classes.lastSyncText}>
+              {formatDate(hub.LastSyncedAt)}
+            </Typography>
+          </div>
         )}
       </CardContent>
-    </Paper>
+    </LitmusCard>
   );
 };
 

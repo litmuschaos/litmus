@@ -10,12 +10,9 @@ const useStyles = makeStyles((theme) => ({
   header: {
     width: '100%',
     color: theme.palette.text.primary,
-    margin: theme.spacing(1, 1.5, 2.5, 1.5),
-  },
-  backdrop: {
-    // background: theme.palette.modal.backdrop,
+    margin: theme.spacing(1, 1.5, 2.5, 2.8),
     display: 'flex',
-    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   noGithubAccount: {
     margin: 'auto',
@@ -34,12 +31,7 @@ const useStyles = makeStyles((theme) => ({
   githubConfirmed: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  detailsDiv: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    border: `1px solid ${theme.palette.cards.background}`,
-    padding: theme.spacing(5),
+    marginLeft: 12,
   },
   chartsGroup: {
     display: 'flex',
@@ -51,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    height: '1.875rem',
   },
   cardDiv: {
     maxWidth: '12.5rem',
@@ -61,32 +52,20 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2),
   },
   cardDivChart: {
-    width: '12.5rem',
-    border: `1px solid ${theme.palette.cards.background}`,
     '&:hover': {
       border: `1.1px solid ${theme.palette.primary.light}`,
       cursor: 'pointer',
-      borderRadius: theme.spacing(0.375),
     },
     borderRadius: theme.spacing(0.375),
     margin: theme.spacing(2),
   },
-  cardContent: {
-    height: '17.625rem',
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: theme.palette.background.paper,
-    alignItems: 'center',
-    flexDirection: 'column',
-    margin: '0 auto',
-  },
   connected: {
-    padding: theme.spacing(0.375, 1.25, 0.375, 1.25),
+    height: '26px',
+    width: '88px',
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.text.secondary,
     fontSize: '0.625rem',
     borderRadius: theme.spacing(0.375),
-    marginBottom: theme.spacing(1),
   },
   error: {
     padding: theme.spacing(0.375, 1.25, 0.375, 1.25),
@@ -96,50 +75,15 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.spacing(0.375),
     marginBottom: theme.spacing(1),
   },
-  videoDescription: {
-    marginTop: theme.spacing(-6.25),
-    marginLeft: theme.spacing(5.625),
-    width: '18.75rem',
-    marginBottom: theme.spacing(5),
-    fontSize: '1rem',
-  },
-  horizontalLine: {
-    border: `1px solid  ${theme.palette.border.main}`,
-    width: '95%',
-    marginTop: theme.spacing(1.25),
-    marginBottom: theme.spacing(1.25),
-  },
-  failedBtn: {
-    backgroundColor: theme.palette.error.dark,
-    color: theme.palette.text.secondary,
-    textTransform: 'none',
-    width: '100%',
-    height: '2.8125rem',
-    '&:hover': {
-      backgroundColor: theme.palette.error.dark,
-    },
-  },
-  totalExp: {
-    fontSize: '0.75rem',
-  },
   connectHub: {
-    fontSize: '0.875rem',
+    fontSize: '1.125rem',
+    marginLeft: theme.spacing(2),
+  },
+  connectNewHub: {
+    marginRight: theme.spacing(5),
   },
   noHub: {
     marginTop: theme.spacing(2.5),
-  },
-  quickActionDiv: {
-    marginLeft: theme.spacing(5.625),
-  },
-  root: {
-    minWidth: '28.125rem',
-    marginLeft: 'auto',
-  },
-  hubName: {
-    marginTop: theme.spacing(1.25),
-  },
-  hubBranch: {
-    fontSize: '0.875rem',
   },
   iconButton: {
     marginTop: theme.spacing(-0.75),
@@ -199,6 +143,43 @@ const useStyles = makeStyles((theme) => ({
     height: '0.9375rem',
     marginRight: theme.spacing(1.25),
     marginTop: theme.spacing(0.375),
+  },
+  cardHeader: {
+    margin: 'auto',
+    display: 'block',
+  },
+  statusText: {
+    fontSize: '0.75rem',
+    textAlign: 'center',
+  },
+  cardContent: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  hubName: {
+    fontSize: '0.9375rem',
+    marginTop: theme.spacing(1.25),
+  },
+  totalExp: {
+    fontSize: '0.8125rem',
+    marginTop: theme.spacing(0.625),
+    color: theme.palette.text.hint,
+  },
+  syncText: {
+    textAlign: 'center',
+    fontSize: '13px',
+    marginTop: theme.spacing(0.625),
+  },
+  lastSyncDiv: {
+    marginTop: theme.spacing(3.75),
+  },
+  lastSyncText: {
+    fontSize: '12px',
+    color: theme.palette.text.hint,
   },
 }));
 
