@@ -54,7 +54,7 @@ export interface WorkflowRun {
   cluster_type: string;
   cluster_id: string;
   phase: string;
-  resiliency_score: number;
+  resiliency_score?: number;
   experiments_passed: number;
   total_experiments: number;
 }

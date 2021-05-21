@@ -102,9 +102,7 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
             <Typography
               className={getResiliencyScoreVariant(data.resiliency_score ?? 0)}
             >
-              {data.resiliency_score && data.resiliency_score !== -1
-                ? `${data.resiliency_score}%`
-                : 'NA'}
+              {data.resiliency_score ? `${data.resiliency_score}%` : 'NA'}
             </Typography>
           </div>
 

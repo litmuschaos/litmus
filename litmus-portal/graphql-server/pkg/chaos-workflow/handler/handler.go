@@ -157,11 +157,12 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 			}
 
 			// Check if the workflow has finished running, if not send resiliencyScore as -1
-			var resiliencyScore float64
+			var resiliencyScore *float64
 			if wfRun.Completed {
-				resiliencyScore = executionData.ResiliencyScore
+				resiliencyScore = new(float64)
+				*resiliencyScore = executionData.ResiliencyScore
 			} else {
-				resiliencyScore = -1.0
+				resiliencyScore = nil
 			}
 
 			newWorkflowRun := model.WorkflowRun{
@@ -172,7 +173,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 				ProjectID:         workflow.ProjectID,
 				ClusterID:         workflow.ClusterID,
 				Phase:             executionData.Phase,
-				ResiliencyScore:   &resiliencyScore,
+				ResiliencyScore:   resiliencyScore,
 				ExperimentsPassed: executionData.ExperimentsPassed,
 				TotalExperiments:  executionData.TotalExperiments,
 				ExecutionData:     wfRun.ExecutionData,
@@ -427,11 +428,12 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 	}
 
 	// Check if the workflow has finished running, if not send resiliencyScore as -1
-	var resiliencyScore float64
+	var resiliencyScore *float64
 	if input.Completed {
-		resiliencyScore = executionData.ResiliencyScore
+		resiliencyScore = new(float64)
+		*resiliencyScore = executionData.ResiliencyScore
 	} else {
-		resiliencyScore = -1.0
+		resiliencyScore = nil
 	}
 
 	ops.SendWorkflowEvent(model.WorkflowRun{
@@ -442,7 +444,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		WorkflowRunID:     input.WorkflowRunID,
 		WorkflowName:      input.WorkflowName,
 		Phase:             executionData.Phase,
-		ResiliencyScore:   &resiliencyScore,
+		ResiliencyScore:   resiliencyScore,
 		ExperimentsPassed: executionData.ExperimentsPassed,
 		TotalExperiments:  executionData.TotalExperiments,
 		ExecutionData:     input.ExecutionData,
