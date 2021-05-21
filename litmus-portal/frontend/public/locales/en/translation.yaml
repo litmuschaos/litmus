@@ -399,6 +399,7 @@ chaosWorkflows:
     reRunSchedule: Rerun Schedule
     downloadManifest: Download Manifest
     deleteSchedule: Delete Schedule
+    deleteWorkflow: Delete Workflow
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
