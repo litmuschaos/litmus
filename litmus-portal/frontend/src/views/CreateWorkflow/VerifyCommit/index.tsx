@@ -373,20 +373,25 @@ const VerifyCommit = forwardRef(
                 </Typography>
 
                 <div className={classes.right} data-cy="WorkflowName">
-                  <EditableText
-                    defaultValue={fetchWorkflowNameFromManifest(manifest)}
-                    id="name"
-                    fullWidth
-                    error={checkNameValidation()}
-                    onSave={(value) => handleNameChange({ changedName: value })}
-                    helperText={
-                      checkNameValidation()
-                        ? `${t(
-                            `createWorkflow.verifyCommit.workflowNameValidationMessage`
-                          )}`
-                        : undefined
-                    }
-                  />
+                  <div style={{ width: '100%' }}>
+                    <EditableText
+                      defaultValue={fetchWorkflowNameFromManifest(manifest)}
+                      id="name"
+                      fullWidth
+                      multiline
+                      error={checkNameValidation()}
+                      onSave={(value) =>
+                        handleNameChange({ changedName: value })
+                      }
+                      helperText={
+                        checkNameValidation()
+                          ? `${t(
+                              `createWorkflow.verifyCommit.workflowNameValidationMessage`
+                            )}`
+                          : undefined
+                      }
+                    />
+                  </div>
                 </div>
               </div>
               <div className={classes.itemWrapper}>
@@ -403,15 +408,17 @@ const VerifyCommit = forwardRef(
 
                 <div className={classes.right}>
                   {workflow.description !== '' ? (
-                    <EditableText
-                      defaultValue={workflow.description}
-                      id="desc"
-                      fullWidth
-                      multiline
-                      onSave={(value) =>
-                        handleDescChange({ changedDesc: value })
-                      }
-                    />
+                    <div style={{ width: '100%' }}>
+                      <EditableText
+                        defaultValue={workflow.description}
+                        id="desc"
+                        fullWidth
+                        multiline
+                        onSave={(value) =>
+                          handleDescChange({ changedDesc: value })
+                        }
+                      />
+                    </div>
                   ) : null}
                 </div>
               </div>
@@ -435,23 +442,25 @@ const VerifyCommit = forwardRef(
 
                 <div className={classes.right}>
                   {subject !== '' ? (
-                    <EditableText
-                      defaultValue={subject}
-                      id="subject"
-                      fullWidth
-                      multiline
-                      error={checkSubjectValidation()}
-                      onSave={(value) =>
-                        handleSubjectChange({ changedSubject: value })
-                      }
-                      helperText={
-                        checkSubjectValidation()
-                          ? `${t(
-                              'createWorkflow.verifyCommit.subjectValidationMessage'
-                            )}`
-                          : undefined
-                      }
-                    />
+                    <div style={{ width: '100%' }}>
+                      <EditableText
+                        defaultValue={subject}
+                        id="subject"
+                        fullWidth
+                        multiline
+                        error={checkSubjectValidation()}
+                        onSave={(value) =>
+                          handleSubjectChange({ changedSubject: value })
+                        }
+                        helperText={
+                          checkSubjectValidation()
+                            ? `${t(
+                                'createWorkflow.verifyCommit.subjectValidationMessage'
+                              )}`
+                            : undefined
+                        }
+                      />
+                    </div>
                   ) : null}
                 </div>
               </div>
@@ -461,20 +470,21 @@ const VerifyCommit = forwardRef(
                 </Typography>
 
                 <div className={classes.right}>
-                  {cronSyntax === '' ? (
-                    <Typography>
-                      {t('createWorkflow.verifyCommit.summary.schedulingNow')}
-                    </Typography>
-                  ) : (
-                    <Typography>{cronstrue.toString(cronSyntax)}</Typography>
-                  )}
+                  <div className={classes.spaceBetween}>
+                    {cronSyntax === '' ? (
+                      <Typography>
+                        {t('createWorkflow.verifyCommit.summary.schedulingNow')}
+                      </Typography>
+                    ) : (
+                      <Typography>{cronstrue.toString(cronSyntax)}</Typography>
+                    )}
 
-                  <IconButton
-                    className={classes.iconBtn}
-                    onClick={() => handleGoToStep(5)}
-                  >
-                    <EditIcon className={classes.editIcon} data-cy="edit" />
-                  </IconButton>
+                    <EditIcon
+                      onClick={() => handleGoToStep(5)}
+                      className={classes.editIcon}
+                      data-cy="edit"
+                    />
+                  </div>
                 </div>
               </div>
               <div className={classes.itemWrapper}>

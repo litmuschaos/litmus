@@ -116,13 +116,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
 
     // Else if Revert Chaos is set to true and it is not already set in the manifest
     // For Workflows
-    if (
-      revertChaos &&
-      parsedYAML.kind === 'Workflow' &&
-      parsedYAML.spec.templates[0].steps[
-        parsedYAML.spec.templates[0].steps.length - 1
-      ][0].name !== 'revert-chaos'
-    ) {
+    if (revertChaos && parsedYAML.kind === 'Workflow') {
       parsedYAML.spec.templates[0].steps.push([
         {
           name: 'revert-chaos',
@@ -152,13 +146,7 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
 
     // Else if Revert Chaos is set to True and it is not already set in the manifest
     // For Cron Workflow
-    else if (
-      revertChaos &&
-      parsedYAML.kind === 'CronWorkflow' &&
-      parsedYAML.spec.workflowSpec.templates[0].steps[
-        parsedYAML.spec.workflowSpec.templates[0].steps.length - 1
-      ][0].name !== 'revert-chaos'
-    ) {
+    else if (revertChaos && parsedYAML.kind === 'CronWorkflow') {
       parsedYAML.spec.workflowSpec.templates[0].steps.push([
         {
           name: 'revert-chaos',
@@ -188,18 +176,6 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
           args: [deleteEngines],
         },
       };
-    }
-
-    // Else if Revert Chaos is set to False and revert chaos template is present in the manifest
-    else if (
-      !revertChaos &&
-      parsedYAML.spec.templates[0].steps[
-        parsedYAML.spec.templates[0].steps.length - 1
-      ][0].name === 'revert-chaos'
-    ) {
-      parsedYAML.spec.templates[0].steps.pop(); // Remove the last step -> Revert Chaos
-
-      parsedYAML.spec.templates.pop(); // Remove the last template -> Revert Chaos Template
     }
 
     const updatedManifest = updateManifestImage(parsedYAML, imageRegistryData);

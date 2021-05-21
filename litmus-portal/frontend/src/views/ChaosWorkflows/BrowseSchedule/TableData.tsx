@@ -37,13 +37,13 @@ import useStyles from './styles';
 interface TableDataProps {
   data: ScheduleWorkflow;
   deleteRow: (wfid: string) => void;
-  handleDisableSchedule: (schedule: ScheduleWorkflow) => void;
+  handleToggleSchedule: (schedule: ScheduleWorkflow) => void;
 }
 
 const TableData: React.FC<TableDataProps> = ({
   data,
   deleteRow,
-  handleDisableSchedule,
+  handleToggleSchedule,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -396,7 +396,7 @@ const TableData: React.FC<TableDataProps> = ({
               <MenuItem
                 value="Disable"
                 onClick={() => {
-                  handleDisableSchedule(data);
+                  handleToggleSchedule(data);
                 }}
               >
                 <div className={classes.expDiv}>
@@ -410,6 +410,30 @@ const TableData: React.FC<TableDataProps> = ({
                     className={classes.downloadText}
                   >
                     {t('chaosWorkflows.browseSchedules.disableSchedule')}
+                  </Typography>
+                </div>
+              </MenuItem>
+            )}
+
+          {projectRole !== 'Viewer' &&
+            YAML.parse(data.workflow_manifest).spec.suspend === true && (
+              <MenuItem
+                value="Enable"
+                onClick={() => {
+                  handleToggleSchedule(data);
+                }}
+              >
+                <div className={classes.expDiv}>
+                  <img
+                    src="/icons/disableSchedule.svg"
+                    alt="Enable Schedule"
+                    className={classes.btnImg}
+                  />
+                  <Typography
+                    data-cy="enableSchedule"
+                    className={classes.downloadText}
+                  >
+                    {t('chaosWorkflows.browseSchedules.enableSchedule')}
                   </Typography>
                 </div>
               </MenuItem>

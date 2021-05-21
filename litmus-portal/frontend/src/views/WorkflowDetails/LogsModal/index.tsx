@@ -75,9 +75,6 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
     >
       <div className={classes.root}>
         <div className={classes.header}>
-          <span className={classes.icon}>
-            <img src="/icons/workflow_icon.svg" alt="Workflow Icon" />
-          </span>
           <Typography className={classes.title}>
             {t('workflowDetailsView.headerDesc')} {workflow_name}
           </Typography>

@@ -113,7 +113,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             <MenuItem value="All">All</MenuItem>
             <MenuItem value="Failed">Failed</MenuItem>
             <MenuItem value="Running">Running</MenuItem>
-            <MenuItem value="Succeeded">Succeeded</MenuItem>
+            <MenuItem value="Succeeded">Completed</MenuItem>
           </Select>
         </FormControl>
 

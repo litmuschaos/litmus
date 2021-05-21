@@ -402,6 +402,7 @@ chaosWorkflows:
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
+    enableSchedule: Enable Schedule
     saveTemplate: Save Template
     updateEngine: 'Note: Make sure to update the chaos engine names'
     saveChanges: Save Changes
@@ -900,7 +901,7 @@ createWorkflow:
         continuous: Continuous
   verifyCommit:
     header: Confirmation of Results
-    info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
+    info: Before committing the workflow changes to your agent, verify and if needed go back to a corresponding section of the wizard to modify.
     error: Invalid Workflow CRD found ! Please correct the errors.
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
@@ -1038,14 +1039,16 @@ myhub:
   edit: Edit Hub
   refresh: Refresh Hub
   disconnect: Disconnect Hub
+  lastSync: 'Last synced at:'
   mainPage:
-    header: MyHubs
+    header: ChaosHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
     devGuideHeader: You have no hubs currently connected. Start connecting your first hub.
     devGuideDescription: You should have your litmus chaos hub forked and made ready before connecting to it.
     connectNewHub: Connect a new chaos hub
+    connect: Connect New Hub
     noGithubCredentials: You have not given your Github credential
     submitBtn: Submit Now
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
@@ -1079,6 +1082,7 @@ myhub:
     sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
     updateHub: Update the MyHub with correct details from the MyHubs section
+    cancel: Cancel
   videoCarousel:
     video: Video Tips
   installChaos:
