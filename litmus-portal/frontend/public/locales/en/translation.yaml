@@ -653,6 +653,7 @@ settings:
     noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your chaos workflows.
 
 workflowDetailsView:
+  logs: Logs
   headerDesc: Workflow dashboard of
   headerMiniDesc: Description of the workflow
   argoWorkflow:

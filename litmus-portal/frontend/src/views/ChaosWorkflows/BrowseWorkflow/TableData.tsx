@@ -18,7 +18,6 @@ import {
   WorkflowRun,
 } from '../../../models/graphql/workflowData';
 import { history } from '../../../redux/configureStore';
-import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
@@ -30,6 +29,7 @@ import {
   WorkflowListDataVars,
 } from '../../../models/graphql/workflowListData';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
+import TimePopOver from '../../../components/TimePopOver';
 
 interface TableDataProps {
   data: WorkflowRun;
@@ -52,6 +52,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   // Function to capitalize the first letter of the word
   // eg: internal to Internal
   const nameCapitalized = (clusterType: string) => {
@@ -208,7 +209,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         </div>
       </TableCell>
       <TableCell>
-        <Typography>{timeDifferenceForDate(data.last_updated)}</Typography>
+        <TimePopOver unixTime={data.last_updated} />
       </TableCell>
       <TableCell>
         <IconButton

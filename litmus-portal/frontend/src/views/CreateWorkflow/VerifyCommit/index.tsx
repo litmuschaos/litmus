@@ -92,8 +92,8 @@ const VerifyCommit = forwardRef(
 
     const { clusterid, cronSyntax, clustername } = workflowData;
 
-    const manifest = useSelector(
-      (state: RootState) => state.workflowManifest.manifest
+    const { manifest, isCustomWorkflow } = useSelector(
+      (state: RootState) => state.workflowManifest
     );
 
     useEffect(() => {
@@ -276,7 +276,7 @@ const VerifyCommit = forwardRef(
           cronSyntax,
           workflow_name: fetchWorkflowNameFromManifest(manifest),
           workflow_description: workflow.description,
-          isCustomWorkflow: false,
+          isCustomWorkflow,
           weightages: weightData,
           project_id: getProjectID(),
           cluster_id: clusterid,
