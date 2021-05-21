@@ -43,7 +43,7 @@ const DashboardConfigurePage = lazy(
   () => import('../../pages/SelectAndConfigureDashboards/Configure')
 );
 const DashboardPage = lazy(() => import('../../pages/ApplicationDashboard'));
-const MyHub = lazy(() => import('../../pages/MyHub'));
+const MyHub = lazy(() => import('../../pages/ChaosHub'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));

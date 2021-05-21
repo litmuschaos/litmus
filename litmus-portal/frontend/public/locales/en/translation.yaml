@@ -1064,6 +1064,7 @@ myhub:
     syncingRepo: Loading Charts, Please Wait...!
   connectHubPage:
     connectHub: Connect a new chaos hub
+    editHub: Edit hub configuration
     enterInfo: Enter information in the required fields
     connectBtn: Then click on the connect button
     submitBtn: Submit Now
