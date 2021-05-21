@@ -4,14 +4,14 @@ import Tabs from '@material-ui/core/Tabs/Tabs';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
 import {
   SCHEDULE_DETAILS,
-  WORKFLOW_DETAILS,
+  WORKFLOW_DETAILS_WITH_EXEC_DATA,
   WORKFLOW_EVENTS,
 } from '../../graphql';
 import {
@@ -36,6 +36,10 @@ import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
 import useStyles from './styles';
+
+interface URLParams {
+  workflowRunId: string;
+}
 
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
@@ -62,13 +66,11 @@ const WorkflowDetails: React.FC = () => {
 
   const { pod_name } = useSelector((state: RootState) => state.selectedNode);
 
-  // Getting the workflow nome from the pathname
-  const { pathname } = useLocation();
-  const workflowRunId = pathname.split('/')[2];
+  const { workflowRunId }: URLParams = useParams();
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
+    WORKFLOW_DETAILS_WITH_EXEC_DATA,
     {
       variables: {
         workflowRunsInput: {

@@ -31,7 +31,7 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
 
   const nodeSelection = useActions(NodeSelectionActions);
 
-  function getPhaseVariant(variant: string): string {
+  function getPhaseVariant(variant: string | undefined): string {
     switch (variant) {
       case SUCCEEDED:
         return classes.succeeded;
@@ -56,8 +56,6 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
     return classes.highScore;
   }
 
-  const executionData = JSON.parse(data?.execution_data ?? '');
-
   return (
     <Link
       underline="none"
@@ -80,7 +78,7 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
           <div>
             <div className={classes.statusDiv}>
               <svg viewBox="0 0 10 10">
-                <circle className={getPhaseVariant(executionData.phase)} />
+                <circle className={getPhaseVariant(data.phase)} />
               </svg>
               <div>
                 <Typography
@@ -102,13 +100,11 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
               )}
             </Typography>
             <Typography
-              className={getResiliencyScoreVariant(
-                executionData.resiliency_score
-              )}
+              className={getResiliencyScoreVariant(data.resiliency_score ?? 0)}
             >
-              {executionData.resiliency_score
-                ? `${executionData.resiliency_score}%`
-                : '--'}
+              {data.resiliency_score && data.resiliency_score !== -1
+                ? `${data.resiliency_score}%`
+                : 'NA'}
             </Typography>
           </div>
 

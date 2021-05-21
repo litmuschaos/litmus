@@ -148,16 +148,36 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 			return nil, err
 		}
 		for _, wfRun := range workflow.WorkflowRuns {
+			// Parse and store execution data
+			var executionData dbSchemaWorkflow.ExecutionData
+			err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData)
+			if err != nil {
+				log.Println("Can not parse Execution Data of workflow run with id: ", wfRun.WorkflowRunID)
+				return nil, err
+			}
+
+			// Check if the workflow has finished running, if not send resiliencyScore as -1
+			var resiliencyScore float64
+			if wfRun.Completed {
+				resiliencyScore = executionData.ResiliencyScore
+			} else {
+				resiliencyScore = -1.0
+			}
+
 			newWorkflowRun := model.WorkflowRun{
-				WorkflowName:  workflow.WorkflowName,
-				WorkflowID:    workflow.WorkflowID,
-				WorkflowRunID: wfRun.WorkflowRunID,
-				LastUpdated:   wfRun.LastUpdated,
-				ProjectID:     workflow.ProjectID,
-				ClusterID:     workflow.ClusterID,
-				ExecutionData: wfRun.ExecutionData,
-				ClusterName:   cluster.ClusterName,
-				ClusterType:   &cluster.ClusterType,
+				WorkflowName:      workflow.WorkflowName,
+				WorkflowID:        workflow.WorkflowID,
+				WorkflowRunID:     wfRun.WorkflowRunID,
+				LastUpdated:       wfRun.LastUpdated,
+				ProjectID:         workflow.ProjectID,
+				ClusterID:         workflow.ClusterID,
+				Phase:             executionData.Phase,
+				ResiliencyScore:   &resiliencyScore,
+				ExperimentsPassed: executionData.ExperimentsPassed,
+				TotalExperiments:  executionData.TotalExperiments,
+				ExecutionData:     wfRun.ExecutionData,
+				ClusterName:       cluster.ClusterName,
+				ClusterType:       &cluster.ClusterType,
 			}
 			result = append(result, &newWorkflowRun)
 		}
@@ -200,6 +220,17 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 			var filteredResult []*model.WorkflowRun
 			for _, wfRun := range result {
 				if wfRun.ClusterName == *input.Filter.ClusterName {
+					filteredResult = append(filteredResult, wfRun)
+				}
+			}
+			result = filteredResult
+		}
+
+		// Filtering based on phase
+		if input.Filter.WorkflowStatus != nil && *input.Filter.WorkflowStatus != "All" {
+			var filteredResult []*model.WorkflowRun
+			for _, wfRun := range result {
+				if wfRun.Phase == string(*input.Filter.WorkflowStatus) {
 					filteredResult = append(filteredResult, wfRun)
 				}
 			}
@@ -363,16 +394,23 @@ func QueryListWorkflow(project_id string, workflowIds []*string) ([]*model.Workf
 func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string, error) {
 	cluster, err := cluster.VerifyCluster(*input.ClusterID)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Println("ERROR", err)
+		return "", err
+	}
+
+	// Parse and store execution data
+	var executionData dbSchemaWorkflow.ExecutionData
+	err = json.Unmarshal([]byte(input.ExecutionData), &executionData)
+	if err != nil {
+		log.Println("Can not parse Execution Data of workflow run with id: ", input.WorkflowRunID)
 		return "", err
 	}
 
 	// Resiliency Score will be calculated only if workflow execution is completed
 	if input.Completed {
-		input.ExecutionData = ops.ResiliencyScoreCalculator(input.ExecutionData, input.WorkflowID)
+		executionData = ops.ResiliencyScoreCalculator(executionData, input.WorkflowID)
 	}
 
-	// err = dbOperationsWorkflow.UpdateWorkflowRun(dbOperationsWorkflow.WorkflowRun(newWorkflowRun))
 	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
@@ -388,15 +426,27 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "Workflow Run Discarded[Duplicate Event]", nil
 	}
 
+	// Check if the workflow has finished running, if not send resiliencyScore as -1
+	var resiliencyScore float64
+	if input.Completed {
+		resiliencyScore = executionData.ResiliencyScore
+	} else {
+		resiliencyScore = -1.0
+	}
+
 	ops.SendWorkflowEvent(model.WorkflowRun{
-		ClusterID:     cluster.ClusterID,
-		ClusterName:   cluster.ClusterName,
-		ProjectID:     cluster.ProjectID,
-		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
-		WorkflowRunID: input.WorkflowRunID,
-		WorkflowName:  input.WorkflowName,
-		ExecutionData: input.ExecutionData,
-		WorkflowID:    input.WorkflowID,
+		ClusterID:         cluster.ClusterID,
+		ClusterName:       cluster.ClusterName,
+		ProjectID:         cluster.ProjectID,
+		LastUpdated:       strconv.FormatInt(time.Now().Unix(), 10),
+		WorkflowRunID:     input.WorkflowRunID,
+		WorkflowName:      input.WorkflowName,
+		Phase:             executionData.Phase,
+		ResiliencyScore:   &resiliencyScore,
+		ExperimentsPassed: executionData.ExperimentsPassed,
+		TotalExperiments:  executionData.TotalExperiments,
+		ExecutionData:     input.ExecutionData,
+		WorkflowID:        input.WorkflowID,
 	}, &r)
 
 	return "Workflow Run Accepted", nil

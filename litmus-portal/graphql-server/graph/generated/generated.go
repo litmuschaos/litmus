@@ -431,15 +431,19 @@ type ComplexityRoot struct {
 	}
 
 	WorkflowRun struct {
-		ClusterID     func(childComplexity int) int
-		ClusterName   func(childComplexity int) int
-		ClusterType   func(childComplexity int) int
-		ExecutionData func(childComplexity int) int
-		LastUpdated   func(childComplexity int) int
-		ProjectID     func(childComplexity int) int
-		WorkflowID    func(childComplexity int) int
-		WorkflowName  func(childComplexity int) int
-		WorkflowRunID func(childComplexity int) int
+		ClusterID         func(childComplexity int) int
+		ClusterName       func(childComplexity int) int
+		ClusterType       func(childComplexity int) int
+		ExecutionData     func(childComplexity int) int
+		ExperimentsPassed func(childComplexity int) int
+		LastUpdated       func(childComplexity int) int
+		Phase             func(childComplexity int) int
+		ProjectID         func(childComplexity int) int
+		ResiliencyScore   func(childComplexity int) int
+		TotalExperiments  func(childComplexity int) int
+		WorkflowID        func(childComplexity int) int
+		WorkflowName      func(childComplexity int) int
+		WorkflowRunID     func(childComplexity int) int
 	}
 
 	WorkflowRuns struct {
@@ -2993,6 +2997,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRun.ExecutionData(childComplexity), true
 
+	case "WorkflowRun.experiments_passed":
+		if e.complexity.WorkflowRun.ExperimentsPassed == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.ExperimentsPassed(childComplexity), true
+
 	case "WorkflowRun.last_updated":
 		if e.complexity.WorkflowRun.LastUpdated == nil {
 			break
@@ -3000,12 +3011,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRun.LastUpdated(childComplexity), true
 
+	case "WorkflowRun.phase":
+		if e.complexity.WorkflowRun.Phase == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.Phase(childComplexity), true
+
 	case "WorkflowRun.project_id":
 		if e.complexity.WorkflowRun.ProjectID == nil {
 			break
 		}
 
 		return e.complexity.WorkflowRun.ProjectID(childComplexity), true
+
+	case "WorkflowRun.resiliency_score":
+		if e.complexity.WorkflowRun.ResiliencyScore == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.ResiliencyScore(childComplexity), true
+
+	case "WorkflowRun.total_experiments":
+		if e.complexity.WorkflowRun.TotalExperiments == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.TotalExperiments(childComplexity), true
 
 	case "WorkflowRun.workflow_id":
 		if e.complexity.WorkflowRun.WorkflowID == nil {
@@ -4576,6 +4608,10 @@ type WorkflowRun {
   cluster_id: ID!
   workflow_name: String!
   cluster_type: String
+  phase: String!
+  resiliency_score: Float
+  experiments_passed: Int!
+  total_experiments: Int!
   execution_data: String!
 }
 
@@ -17175,6 +17211,139 @@ func (ec *executionContext) _WorkflowRun_cluster_type(ctx context.Context, field
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkflowRun_phase(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Phase, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_resiliency_score(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResiliencyScore, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_experiments_passed(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsPassed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_total_experiments(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalExperiments, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkflowRun_execution_data(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -24431,6 +24600,23 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			}
 		case "cluster_type":
 			out.Values[i] = ec._WorkflowRun_cluster_type(ctx, field, obj)
+		case "phase":
+			out.Values[i] = ec._WorkflowRun_phase(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "resiliency_score":
+			out.Values[i] = ec._WorkflowRun_resiliency_score(ctx, field, obj)
+		case "experiments_passed":
+			out.Values[i] = ec._WorkflowRun_experiments_passed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "total_experiments":
+			out.Values[i] = ec._WorkflowRun_total_experiments(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "execution_data":
 			out.Values[i] = ec._WorkflowRun_execution_data(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

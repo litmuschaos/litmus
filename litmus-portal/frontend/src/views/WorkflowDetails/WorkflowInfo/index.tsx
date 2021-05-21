@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ButtonOutlined } from 'litmus-ui';
 import { ExecutionData } from '../../../models/graphql/workflowData';
 import timeDifference from '../../../utils/datesModifier';
 import useStyles from './styles';
@@ -56,7 +56,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           </Typography>
           {/* Static data, will be changed with API response */}
           <Typography className={classes.resilliencyScore}>
-            {data.resiliency_score === undefined
+            {!data.resiliency_score || data.resiliency_score === -1
               ? 'NA'
               : `${data.resiliency_score}%`}
           </Typography>

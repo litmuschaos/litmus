@@ -523,15 +523,19 @@ type Workflow struct {
 }
 
 type WorkflowRun struct {
-	WorkflowRunID string  `json:"workflow_run_id"`
-	WorkflowID    string  `json:"workflow_id"`
-	ClusterName   string  `json:"cluster_name"`
-	LastUpdated   string  `json:"last_updated"`
-	ProjectID     string  `json:"project_id"`
-	ClusterID     string  `json:"cluster_id"`
-	WorkflowName  string  `json:"workflow_name"`
-	ClusterType   *string `json:"cluster_type"`
-	ExecutionData string  `json:"execution_data"`
+	WorkflowRunID     string   `json:"workflow_run_id"`
+	WorkflowID        string   `json:"workflow_id"`
+	ClusterName       string   `json:"cluster_name"`
+	LastUpdated       string   `json:"last_updated"`
+	ProjectID         string   `json:"project_id"`
+	ClusterID         string   `json:"cluster_id"`
+	WorkflowName      string   `json:"workflow_name"`
+	ClusterType       *string  `json:"cluster_type"`
+	Phase             string   `json:"phase"`
+	ResiliencyScore   *float64 `json:"resiliency_score"`
+	ExperimentsPassed int      `json:"experiments_passed"`
+	TotalExperiments  int      `json:"total_experiments"`
+	ExecutionData     string   `json:"execution_data"`
 }
 
 type WorkflowRunFilterInput struct {

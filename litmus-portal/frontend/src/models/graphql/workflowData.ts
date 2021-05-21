@@ -53,6 +53,10 @@ export interface WorkflowRun {
   workflow_run_id: string;
   cluster_type: string;
   cluster_id: string;
+  phase: string;
+  resiliency_score: number;
+  experiments_passed: number;
+  total_experiments: number;
 }
 
 interface GetWorkflowRunsOutput {

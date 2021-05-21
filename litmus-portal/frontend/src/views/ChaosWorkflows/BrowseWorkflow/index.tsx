@@ -27,7 +27,6 @@ import {
   SortInput,
   Workflow,
   WorkflowDataVars,
-  WorkflowRun,
   WorkflowRunFilterInput,
   WorkflowStatus,
   WorkflowSubscription,
@@ -217,22 +216,6 @@ const BrowseWorkflow: React.FC = () => {
     );
   };
 
-  // Function to validate execution_data JSON
-  const dataPerRow = (dataRow: WorkflowRun) => {
-    let exe_data;
-    try {
-      exe_data = JSON.parse(dataRow.execution_data);
-    } catch (error) {
-      console.error(error);
-      return <></>;
-    }
-    return (
-      <TableRow data-cy="WorkflowRunsTableRow" key={dataRow.workflow_run_id}>
-        <TableData data={dataRow} exeData={exe_data} />
-      </TableRow>
-    );
-  };
-
   return (
     <div data-cy="WorkflowRunsTable">
       <section className="Heading section">
@@ -372,7 +355,14 @@ const BrowseWorkflow: React.FC = () => {
                   </TableCell>
                 </TableRow>
               ) : workflowRuns && workflowRuns.length ? (
-                workflowRuns.map((dataRow) => dataPerRow(dataRow))
+                workflowRuns.map((dataRow) => (
+                  <TableRow
+                    data-cy="WorkflowRunsTableRow"
+                    key={dataRow.workflow_run_id}
+                  >
+                    <TableData data={dataRow} />
+                  </TableRow>
+                ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={7}>

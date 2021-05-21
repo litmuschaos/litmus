@@ -5,13 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import { StyledTab, TabPanel } from '../../../components/Tabs';
-import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
+import {
+  WORKFLOW_DETAILS_WITH_EXEC_DATA,
+  WORKFLOW_LOGS,
+} from '../../../graphql';
 import {
   PodLog,
   PodLogRequest,
   PodLogVars,
 } from '../../../models/graphql/podLog';
 import {
+  ExecutionData,
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
@@ -46,7 +50,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   const projectID = getProjectID();
 
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
+    WORKFLOW_DETAILS_WITH_EXEC_DATA,
     {
       variables: {
         workflowRunsInput: {
@@ -67,7 +71,8 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
 
   useEffect(() => {
     if (workflow !== undefined) {
-      const nodeData = JSON.parse(workflow.execution_data).nodes[pod_name];
+      const nodeData = (JSON.parse(workflow.execution_data) as ExecutionData)
+        .nodes[pod_name];
       if (nodeData && nodeData.chaosData)
         setChaosData({
           exp_pod: nodeData.chaosData.experimentPod,
@@ -86,7 +91,8 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   const [chaosResult, setChaosResult] = useState('');
   useEffect(() => {
     if (workflow !== undefined) {
-      const nodeData = JSON.parse(workflow.execution_data).nodes[pod_name];
+      const nodeData = (JSON.parse(workflow.execution_data) as ExecutionData)
+        .nodes[pod_name];
       if (nodeData?.chaosData?.chaosResult) {
         setChaosResult(YAML.stringify(nodeData.chaosData?.chaosResult));
       } else {
@@ -121,8 +127,8 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     }
     if (
       workflow !== undefined &&
-      JSON.parse(workflow?.execution_data).nodes[pod_name].type ===
-        'ChaosEngine'
+      (JSON.parse(workflow.execution_data) as ExecutionData).nodes[pod_name]
+        .type === 'ChaosEngine'
     ) {
       return t('workflowDetailsView.nodeLogs.chaosLogs');
     }

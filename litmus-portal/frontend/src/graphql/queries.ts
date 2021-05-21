@@ -1,5 +1,22 @@
 import { gql } from '@apollo/client';
 
+export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_id
+        workflow_name
+        workflow_run_id
+        cluster_name
+        last_updated
+        cluster_id
+        execution_data
+      }
+    }
+  }
+`;
+
 export const WORKFLOW_DETAILS = gql`
   query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
     getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
@@ -8,28 +25,12 @@ export const WORKFLOW_DETAILS = gql`
         workflow_id
         workflow_name
         workflow_run_id
-        project_id
         cluster_name
         last_updated
-        cluster_type
-        cluster_id
-        execution_data
-      }
-    }
-  }
-`;
-
-export const WORKFLOW_DETAILS_MIN = gql`
-  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
-    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
-      total_no_of_workflow_runs
-      workflow_runs {
-        workflow_id
-        workflow_name
-        workflow_run_id
-        cluster_name
-        last_updated
-        execution_data
+        phase
+        resiliency_score
+        experiments_passed
+        total_experiments
       }
     }
   }

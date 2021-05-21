@@ -124,4 +124,3 @@ func UpdateChaosWorkflow(query bson.D, update bson.D) error {
 
 	return nil
 }
-
