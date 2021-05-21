@@ -580,7 +580,11 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                 </div>
               </div>
               <div className={classes.btnDiv}>
-                <ButtonOutlined data-cy="cancel" className={classes.cancelBtn}>
+                <ButtonOutlined
+                  data-cy="cancel"
+                  onClick={() => handleDrawerClose()}
+                  className={classes.cancelBtn}
+                >
                   {t('myhub.connectHubPage.cancel')}
                 </ButtonOutlined>
                 <ButtonFilled
