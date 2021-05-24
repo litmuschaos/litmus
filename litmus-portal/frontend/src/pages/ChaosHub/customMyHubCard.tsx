@@ -25,6 +25,7 @@ interface customMyHubCardProp {
   handleDelete: (hubId: string) => void;
   handleRefresh: (hubId: string) => void;
   refreshLoader: boolean;
+  handleEditHub: (hubName: string) => void;
 }
 
 const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
@@ -33,6 +34,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
   refreshLoader,
   handleDelete,
   handleRefresh,
+  handleEditHub,
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
@@ -125,10 +127,8 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                     data-cy="myHubEdit"
                     value="View"
                     onClick={() => {
-                      history.push({
-                        pathname: `/myhub/edit/${hub.HubName}`,
-                        search: `?projectID=${projectID}&projectRole=${userRole}`,
-                      });
+                      handleEditHub(hub.HubName);
+                      handleClose();
                     }}
                   >
                     <div className={classes.cardMenu}>
