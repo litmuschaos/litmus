@@ -283,6 +283,7 @@ export const LIST_MANIFEST_TEMPLATE = gql`
       project_name
       template_description
       template_name
+      isCustomWorkflow
     }
   }
 `;

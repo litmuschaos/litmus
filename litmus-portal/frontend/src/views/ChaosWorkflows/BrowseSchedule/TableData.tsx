@@ -178,7 +178,10 @@ const TableData: React.FC<TableDataProps> = ({
           </ButtonOutlined>
         }
       >
-        <SaveTemplateModal closeTemplate={handleCloseTemplate} />
+        <SaveTemplateModal
+          closeTemplate={handleCloseTemplate}
+          isCustomWorkflow={(data.isCustomWorkflow as unknown) as boolean}
+        />
       </Modal>
       <TableCell className={classes.workflowNameData}>
         <Typography>

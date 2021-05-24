@@ -285,6 +285,7 @@ type ManifestTemplate struct {
 	ProjectName         string `json:"project_name"`
 	CreatedAt           string `json:"created_at"`
 	IsRemoved           bool   `json:"is_removed"`
+	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
 type Member struct {
@@ -433,6 +434,7 @@ type TemplateInput struct {
 	TemplateName        string `json:"template_name"`
 	TemplateDescription string `json:"template_description"`
 	ProjectID           string `json:"project_id"`
+	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
 type UpdateMyHub struct {
