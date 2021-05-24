@@ -480,7 +480,9 @@ const TableData: React.FC<TableDataProps> = ({
                   data-cy="deleteSchedule"
                   className={classes.btnText}
                 >
-                  {t('chaosWorkflows.browseSchedules.deleteSchedule')}
+                  {data.cronSyntax !== ''
+                    ? t('chaosWorkflows.browseSchedules.deleteSchedule')
+                    : t('chaosWorkflows.browseSchedules.deleteWorkflow')}
                 </Typography>
               </div>
             </MenuItem>

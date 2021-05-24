@@ -399,6 +399,7 @@ chaosWorkflows:
     reRunSchedule: Rerun Schedule
     downloadManifest: Download Manifest
     deleteSchedule: Delete Schedule
+    deleteWorkflow: Delete Workflow
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
@@ -653,6 +654,7 @@ settings:
     noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your chaos workflows.
 
 workflowDetailsView:
+  logs: Logs
   headerDesc: Workflow dashboard of
   headerMiniDesc: Description of the workflow
   argoWorkflow:

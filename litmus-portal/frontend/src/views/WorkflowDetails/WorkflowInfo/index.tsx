@@ -3,8 +3,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ButtonOutlined } from 'litmus-ui';
 import { ExecutionData } from '../../../models/graphql/workflowData';
-import timeDifference from '../../../utils/datesModifier';
 import useStyles from './styles';
+import TimePopOver from '../../../components/TimePopOver';
 
 interface WorkflowInfoProps {
   setIsInfoToggled?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -72,16 +72,18 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
               <Typography className={classes.subCategorySectionTitle}>
                 {t('workflowDetailsView.workflowInfo.runTime.startTime')}
               </Typography>
-              <Typography>{timeDifference(data.startedAt)}</Typography>
+              <TimePopOver unixTime={data.startedAt} />
             </div>
             <div className={classes.subCategorySection}>
               <Typography className={classes.subCategorySectionTitle}>
                 {t('workflowDetailsView.workflowInfo.runTime.endTime')}
               </Typography>
               <Typography>
-                {data.finishedAt !== ''
-                  ? timeDifference(data.finishedAt)
-                  : 'Not yet finished'}
+                {data.finishedAt !== '' ? (
+                  <TimePopOver unixTime={data.finishedAt} />
+                ) : (
+                  'Not yet finished'
+                )}
               </Typography>
             </div>
           </div>
