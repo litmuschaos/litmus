@@ -170,6 +170,17 @@ const useStyles = makeStyles((theme) => ({
   buttonTransform: {
     textTransform: 'none',
   },
+  paper: {
+    padding: theme.spacing(1),
+  },
+  LastUpdatedPopover: {
+    pointerEvents: 'none',
+  },
+  lastUpdatedText: {
+    '&:hover': {
+      pointer: 'cursor',
+    },
+  },
 }));
 
 export default useStyles;
