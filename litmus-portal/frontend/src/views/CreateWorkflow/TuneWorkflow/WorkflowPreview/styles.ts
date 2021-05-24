@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         cursor: 'pointer',
         fill: 'none',
         '& circle': {
-          fill: theme.palette.status.pending.text,
+          fill: theme.palette.status.completed.text,
         },
         '& g.label g': {
           transform: (props: StyleProps) =>
@@ -31,20 +31,20 @@ const useStyles = makeStyles((theme: Theme) => ({
           fill: theme.palette.text.primary,
         },
       },
-      '& path.pendingIcon': {
+      '& path.succeededIcon': {
         transform: (props: StyleProps) =>
-          `scale(1.8) translate(-5px, ${props.horizontal ? -3.6 : -2.5}px)`,
+          `scale(1.8) translate(-5px, ${props.horizontal ? -3.6 : -1}px)`,
       },
-      '& g.StepGroup.Pending': {
-        fill: theme.palette.status.pending.text,
+      '& g.StepGroup.Succeeded': {
+        fill: theme.palette.status.completed.text,
       },
     },
 
     // Styles for edges
     '& g g.edgePaths': {
-      '& g.pending': {
-        fill: theme.palette.status.pending.text,
-        stroke: theme.palette.status.pending.text,
+      '& g.succeeded': {
+        fill: theme.palette.status.completed.text,
+        stroke: theme.palette.status.completed.text,
       },
     },
   },

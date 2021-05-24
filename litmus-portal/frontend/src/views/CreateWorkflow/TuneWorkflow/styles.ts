@@ -151,6 +151,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(8, 5, 5, 5),
   },
 
+  // Editor
+  editor: {
+    height: '100%',
+  },
+
   // Confirmation Modal
   confirmDiv: {
     margin: 'auto',
