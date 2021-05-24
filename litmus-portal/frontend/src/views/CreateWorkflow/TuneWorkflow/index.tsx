@@ -447,7 +447,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       if (ChaosEngine.spec.jobCleanUpPolicy) {
         ChaosEngine.spec.jobCleanUpPolicy = 'retain';
       }
-
+      ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
       const templateToBePushed = {
         name: ExpName,
         inputs: {
@@ -469,7 +469,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
           image: 'litmuschaos/litmus-checker:latest',
         },
       };
-      ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
       if (generatedYAML.kind === 'Workflow')
         generatedYAML.spec.templates.push(templateToBePushed);
       else generatedYAML.spec.workflowSpec.templates.push(templateToBePushed);
@@ -506,6 +505,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
     if (
       manifest.length &&
+      selectedRadio === 'C' &&
       parsedManifest.kind === 'Workflow' &&
       parsedManifest.spec.templates[0].steps[
         parsedManifest.spec.templates[0].steps.length - 1
@@ -518,6 +518,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
     if (
       manifest.length &&
+      selectedRadio === 'C' &&
       parsedManifest.kind === 'CronWorkflow' &&
       parsedManifest.spec.workflowSpec.templates[0].steps[
         parsedManifest.spec.workflowSpec.templates[0].steps.length - 1
@@ -679,7 +680,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
         </Typography>
         <Row className={classes.descriptionWrapper}>
           <Typography className={classes.description}>
-            {t('createWorkflow.tuneWorkflow.selectedWorkflowInfo')}{' '}
+            {selectedRadio === 'A'
+              ? t('createWorkflow.tuneWorkflow.selectedPreDefinedWorkflowInfo')
+              : selectedRadio === 'B'
+              ? t('createWorkflow.tuneWorkflow.selectedTemplateInfo')
+              : selectedRadio === 'C'
+              ? t('createWorkflow.tuneWorkflow.selectedCustomWorkflowInfo')
+              : t('createWorkflow.tuneWorkflow.selectedUploadYAML')}{' '}
             <i>
               <strong>
                 {workflow.name.split('-').map((text) => `${capitalize(text)} `)}

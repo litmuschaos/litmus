@@ -254,23 +254,21 @@ const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
               <TableBody>
                 {experiments.length > 0 ? (
                   experiments.map((experiment: ChaosCRDTable, index) => (
-                    <TableRow key={experiment.Name}>
+                    <TableRow
+                      key={experiment.Name}
+                      onClick={() => {
+                        setDisplayStepper(true);
+                        setEngineIndex(experiment.StepIndex);
+                        workflow.setWorkflowManifest({
+                          engineYAML: experiment.ChaosEngine,
+                        });
+                      }}
+                      className={classes.selection}
+                    >
                       <TableCell component="th" scope="row">
                         {index + 1}
                       </TableCell>
-                      <TableCell
-                        onClick={() => {
-                          setDisplayStepper(true);
-                          setEngineIndex(experiment.StepIndex);
-                          workflow.setWorkflowManifest({
-                            engineYAML: experiment.ChaosEngine,
-                          });
-                        }}
-                        align="left"
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {experiment.Name}
-                      </TableCell>
+                      <TableCell align="left">{experiment.Name}</TableCell>
                       <TableCell align="left">{experiment.Namespace}</TableCell>
                       <TableCell align="left">
                         {experiment.Application}
