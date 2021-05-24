@@ -91,6 +91,13 @@ const useStyles = makeStyles((theme) => ({
   key: {
     margin: theme.spacing(1, 2),
   },
+  selection: {
+    cursor: 'pointer',
+
+    '&:hover': {
+      background: theme.palette.background.default,
+    },
+  },
 
   // Styles for Add Experiment Modal
   addExpModal: {

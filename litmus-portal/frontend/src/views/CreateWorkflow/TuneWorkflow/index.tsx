@@ -680,7 +680,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
         </Typography>
         <Row className={classes.descriptionWrapper}>
           <Typography className={classes.description}>
-            {t('createWorkflow.tuneWorkflow.selectedWorkflowInfo')}{' '}
+            {selectedRadio === 'A'
+              ? t('createWorkflow.tuneWorkflow.selectedPreDefinedWorkflowInfo')
+              : selectedRadio === 'B'
+              ? t('createWorkflow.tuneWorkflow.selectedTemplateInfo')
+              : selectedRadio === 'C'
+              ? t('createWorkflow.tuneWorkflow.selectedCustomWorkflowInfo')
+              : t('createWorkflow.tuneWorkflow.selectedUploadYAML')}{' '}
             <i>
               <strong>
                 {workflow.name.split('-').map((text) => `${capitalize(text)} `)}

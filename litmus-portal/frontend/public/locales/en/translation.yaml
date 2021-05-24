@@ -798,7 +798,10 @@ createWorkflow:
     fail: Fail
   tuneWorkflow:
     header: Tune the selected workflow
-    selectedWorkflowInfo: You have selected a pre-defined workflow
+    selectedPreDefinedWorkflowInfo: You have selected a pre-defined workflow
+    selectedTemplateInfo: You have selected a template
+    selectedCustomWorkflowInfo: You have selected a custom workflow
+    selectedUploadYAML: You have imported a workflow YAML
     description: Fine tune the application  names and other variables to suit your needs
     view: View YAML
     edit: Edit YAML
