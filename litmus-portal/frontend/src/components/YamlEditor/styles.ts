@@ -52,14 +52,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between',
   },
 
-  editorContainer: {
-    marginTop: theme.spacing(4),
-  },
+  editor: {
+    overflowY: 'auto',
+    margin: theme.spacing(2, 0),
+    height: '40vh',
 
-  editorGrid: {
-    overflow: 'auto',
-    height: '50vh',
-    width: '100%',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -69,28 +66,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: theme.palette.primary.main,
     },
-    [theme.breakpoints.down('xl')]: {
-      height: '84vh',
-    },
-    [theme.breakpoints.down('lg')]: {
-      height: '56vh',
-    },
-    [theme.breakpoints.down('md')]: {
-      height: '49vh',
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      height: '40vh',
-    },
-    [theme.breakpoints.down('xs')]: {
-      height: '30vh',
-    },
-  },
-
-  extraSpace: {
-    backgroundColor: theme.palette.common.black,
-    height: '2rem',
-    width: '100%',
   },
 
   editorButtons: {
@@ -257,6 +232,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   fullWidth: {
     width: '100%',
+    height: '100%',
   },
 
   fullScreenIcon: {

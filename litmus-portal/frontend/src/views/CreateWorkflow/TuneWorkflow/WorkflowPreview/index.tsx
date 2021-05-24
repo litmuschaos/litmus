@@ -100,11 +100,11 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
           for (let j = 0; j < updatedSteps[i].length; j++) {
             data.nodes.push({
               id: k.toString(),
-              class: `${'pending'} ${'steps'}`,
+              class: `${'succeeded'} ${'steps'}`,
               label: createLabel({
                 label: updatedSteps[i][j].name,
                 tooltip: updatedSteps[i][j].name,
-                phase: 'pending',
+                phase: 'succeeded',
                 horizontal,
               }),
               labelType:
@@ -120,7 +120,7 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
             label: createLabel({
               label: updatedSteps[i][0].name,
               tooltip: updatedSteps[i][0].name,
-              phase: 'pending',
+              phase: 'succeeded',
               horizontal,
             }),
             labelType:
@@ -148,7 +148,7 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
             data.links.push({
               source: nodeID.toString(),
               target: (nodeID + j + 1).toString(),
-              class: 'pending',
+              class: 'succeeded',
               config: {
                 arrowhead:
                   updatedSteps[i][0].name !== 'StepGroup'
@@ -170,7 +170,7 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
             data.links.push({
               source: (nodeID + j + 1).toString(),
               target: (nodeID + updatedSteps[i].length + 1).toString(),
-              class: 'pending',
+              class: 'succeeded',
               config: {
                 arrowhead:
                   updatedSteps[i][0].name !== 'StepGroup'
@@ -191,7 +191,7 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
           data.links.push({
             source: nodeID.toString(),
             target: (nodeID + 1).toString(),
-            class: 'pending',
+            class: 'succeeded',
             config: {
               arrowhead:
                 updatedSteps[i][0].name !== 'StepGroup' ? 'undirected' : 'vee',
