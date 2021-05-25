@@ -65,13 +65,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   experimentWrapperDiv: {
     display: 'grid',
-    margin: '2rem',
-    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+    margin: theme.spacing(2, 0),
+    gridTemplateColumns: 'repeat(auto-fit, minmax(15rem, 1fr))',
     gridGap: '1.5rem',
   },
   tests: {
     width: '17rem',
-    marginRight: theme.spacing(1),
+    margin: theme.spacing(0, 2, 2, 0),
   },
 }));
 export default useStyles;
