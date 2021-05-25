@@ -369,7 +369,6 @@ homeViews:
       schedule: Schedule workflow
     agentInfoContainer:
       agent: Agent
-      agents: Agents
       description: Cloud native chaos engineering can be setup on this cluster using Litmus Chaos
       deploy: Deploy a new Agent
 

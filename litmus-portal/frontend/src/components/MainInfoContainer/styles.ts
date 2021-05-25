@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
+    marginTop: theme.spacing(3.125),
     padding: theme.spacing(6.5, 11.875),
     display: 'flex',
 

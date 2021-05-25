@@ -1,21 +1,21 @@
 import { Link, Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { WorkflowRun } from '../../../../../models/graphql/workflowData';
-import useActions from '../../../../../redux/actions';
-import * as NodeSelectionActions from '../../../../../redux/actions/nodeSelection';
-import { history } from '../../../../../redux/configureStore';
-import timeDifferenceForDate from '../../../../../utils/datesModifier';
+import { WorkflowRun } from '../../../../models/graphql/workflowData';
+import useActions from '../../../../redux/actions';
+import * as NodeSelectionActions from '../../../../redux/actions/nodeSelection';
+import { history } from '../../../../redux/configureStore';
+import timeDifferenceForDate from '../../../../utils/datesModifier';
 import {
   getProjectID,
   getProjectRole,
-} from '../../../../../utils/getSearchParams';
+} from '../../../../utils/getSearchParams';
 import {
   FAILED,
   PENDING,
   RUNNING,
   SUCCEEDED,
-} from '../../../../WorkflowDetails/workflowConstants';
+} from '../../../WorkflowDetails/workflowConstants';
 import useStyles from './styles';
 
 interface WorkflowRunCardProps {

@@ -50,9 +50,6 @@ const useStyles = makeStyles((theme) => ({
   lastRunTime: {
     width: '4.8125rem',
   },
-  moreHorizIconsIsSelected: {
-    color: theme.palette.highlight,
-  },
   listContainer: {
     '& img': {
       width: '1rem',

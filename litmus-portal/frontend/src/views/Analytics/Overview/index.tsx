@@ -1,154 +1,192 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-return-assign */
-
-import { useQuery } from '@apollo/client';
+import { Link, Typography } from '@material-ui/core';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
-import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
-import {
-  LIST_DASHBOARD,
-  LIST_DATASOURCE,
-  WORKFLOW_LIST_DETAILS,
-} from '../../../graphql/queries';
-import {
-  DashboardList,
-  ListDashboardResponse,
-  ListDashboardVars,
-} from '../../../models/graphql/dashboardsDetails';
-import {
-  DataSourceList,
-  ListDataSourceResponse,
-  ListDataSourceVars,
-} from '../../../models/graphql/dataSourceDetails';
-import {
-  Workflow,
-  WorkflowList,
-  WorkflowListDataVars,
-} from '../../../models/graphql/workflowListData';
-import { getProjectID } from '../../../utils/getSearchParams';
-import { sortNumAsc } from '../../../utils/sort';
-import { OverviewConfigureBanner } from './OverviewConfigureBanner';
-import { OverviewGlowCard } from './OverviewGlowActionCard';
-import { AnalyticsScheduleWorkflowCard } from './OverviewScheduleBanner';
+import { useTranslation } from 'react-i18next';
+import { MainInfoContainer } from '../../../components/MainInfoContainer';
+import { OverviewContainer } from '../../../components/OverviewContainer';
+import { RecentOverviewContainer } from '../../../components/RecentOverviewContainer';
+import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
+import { history } from '../../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
+import { OverviewCard } from './OverviewCard';
 import useStyles from './styles';
-import { TableDashboardData } from './Tables/dashboardData';
-import { TableDataSource } from './Tables/dataSource';
-import { TableScheduleWorkflow } from './Tables/worflowData';
 
 const Overview: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
+  const projectRole = getProjectRole();
+  const { t } = useTranslation();
 
-  // Apollo query to get the scheduled workflow data
-  const { data: schedulesData } = useQuery<WorkflowList, WorkflowListDataVars>(
-    WORKFLOW_LIST_DETAILS,
-    {
-      variables: {
-        projectID,
-        workflowIDs: [],
-      },
-      fetchPolicy: 'cache-and-network',
-      pollInterval: 10000,
-    }
-  );
+  const tabs = useActions(TabActions);
 
-  const filteredScheduleData = schedulesData?.ListWorkflow.slice().sort(
-    (a: Workflow, b: Workflow) => {
-      const x = parseInt(a.updated_at, 10);
-      const y = parseInt(b.updated_at, 10);
-      return sortNumAsc(y, x);
-    }
-  );
+  // TODO: Temp consts
+  const dataSource = true;
+  const dashBoard = true;
+  const workflowCount = 1;
 
-  // Apollo query to get the dashboard data
-  const { data: dashboardsList } = useQuery<DashboardList, ListDashboardVars>(
-    LIST_DASHBOARD,
-    {
-      variables: {
-        projectID,
-      },
-      fetchPolicy: 'cache-and-network',
-      pollInterval: 10000,
-    }
-  );
+  // const { data: dashboardList } = useQuery<DashboardList, ListDashboardVars>(
+  //   LIST_DASHBOARD_OVERVIEW,
+  //   {
+  //     variables: { projectID },
+  //     fetchPolicy: 'cache-and-network',
+  //   }
+  // );
 
-  const filteredDashboardData = dashboardsList?.ListDashboard
-    ? dashboardsList?.ListDashboard.slice().sort(
-        (a: ListDashboardResponse, b: ListDashboardResponse) => {
-          const x = parseInt(a.updated_at, 10);
-          const y = parseInt(b.updated_at, 10);
-          return sortNumAsc(y, x);
-        }
-      )
-    : [];
-  // Query for dataSource
-  const { data } = useQuery<DataSourceList, ListDataSourceVars>(
-    LIST_DATASOURCE,
-    {
-      variables: { projectID },
-      fetchPolicy: 'cache-and-network',
-      pollInterval: 10000,
-    }
-  );
-  // Filter data source data
-  const filteredDataSourceData: ListDataSourceResponse[] = data
-    ? data.ListDataSource.sort(
-        (a: ListDataSourceResponse, b: ListDataSourceResponse) => {
-          const x = parseInt(a.updated_at, 10);
-          const y = parseInt(b.updated_at, 10);
-          return sortNumAsc(y, x);
-        }
-      )
-    : [];
+  // const filteredData = dashboardList?.ListDashboard.slice(-3).reverse();
 
   return (
-    <div className={classes.root}>
-      <div className={classes.overviewGraphs}>
-        <div className={classes.leftBannerTable}>
-          {(filteredDashboardData &&
-            filteredDashboardData.length === 0 &&
-            filteredDataSourceData.length === 0 && (
-              <OverviewConfigureBanner variant="0" />
-            )) ||
-            (filteredDashboardData &&
-              filteredDataSourceData.length > 0 &&
-              filteredDashboardData.length === 0 && (
-                <OverviewConfigureBanner variant="1" />
-              ))}
-          <TableDataSource dataSourceList={filteredDataSourceData} />
-          <TableDashboardData dashboardDataList={filteredDashboardData} />
-          <TableScheduleWorkflow scheduleWorkflowList={filteredScheduleData} />
-
-          {((filteredScheduleData && filteredScheduleData.length === 0) ||
-            !filteredScheduleData) && (
-            <div className={classes.analyticsScheduleWorkflowCard}>
-              <AnalyticsScheduleWorkflowCard />
-            </div>
-          )}
-        </div>
-        <div className={classes.rightGlowCardQuickAction}>
-          {(filteredDataSourceData.length === 0 ||
-            !filteredDashboardData ||
-            (filteredDashboardData && filteredDashboardData.length === 0)) && (
-            <div className={classes.parentWrapper}>
-              <div className={classes.overviewGlowCard}>
-                {filteredDataSourceData.length === 0 && (
-                  <OverviewGlowCard variant="dataSource" />
-                )}
-                {filteredDataSourceData.length > 0 &&
-                  filteredDashboardData.length === 0 && (
-                    <OverviewGlowCard variant="dashboard" />
-                  )}
-              </div>
-            </div>
-          )}
-          <div className={classes.parentWrapper}>
-            <div className={classes.analyticsQuickActionCard}>
-              <LocalQuickActionCard variant="analytics" />
-            </div>
-          </div>
-        </div>
-      </div>
+    <div>
+      {dashBoard ? (
+        <RecentOverviewContainer
+          heading="Recent Dashboards"
+          link={
+            <Link
+              underline="none"
+              color="primary"
+              onClick={() => {
+                tabs.changeAnalyticsDashboardTabs(2);
+              }}
+            >
+              <Typography className={classes.linkPointer}>
+                View all kubernetes dashboard
+              </Typography>
+            </Link>
+          }
+          buttonLink="/analytics/dashboard/select"
+          buttonImgSrc="./icons/cloudWhite.svg"
+          buttonImgAlt="Add kubernetes dashboard"
+          buttonText="Add kubernetes dashbaord"
+        >
+          {/* {filteredData.forEach((workflow) => {
+            return <OverviewCard key={workflow.name} data={workflow} />;
+          })} */}
+          <OverviewCard />
+        </RecentOverviewContainer>
+      ) : dataSource ? (
+        <MainInfoContainer
+          src="./icons/dashboardCloud.svg"
+          alt="Schedule a workflow"
+          heading="Configure a chaos interleaved dashboard"
+          description="Data sources has been found to be connected in this project. Select “Add dashboard” to configure a chaos interleaved dashboard"
+          button={
+            <ButtonFilled
+              onClick={() => {
+                history.push({
+                  pathname: '/analytics/dashboard/select',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
+              }}
+            >
+              <Typography>Add dashboard</Typography>
+            </ButtonFilled>
+          }
+        />
+      ) : (
+        <MainInfoContainer
+          src="./icons/cloud.svg"
+          alt="Schedule a workflow"
+          heading="Connect data source"
+          description="To configure your first Kubernetes dashboard you need to connect a data source. Select “Add data source” to connect."
+          button={
+            <ButtonFilled
+              onClick={() => {
+                history.push({
+                  pathname: '/analytics/datasource/select',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
+              }}
+            >
+              <Typography>Add data source</Typography>
+            </ButtonFilled>
+          }
+          link={
+            <Link
+              underline="none"
+              color="primary"
+              href="https://prometheus.io/docs/introduction/overview/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Typography>Read prometheus doc</Typography>
+            </Link>
+          }
+        />
+      )}
+      {workflowCount > 0 ? (
+        <RecentOverviewContainer
+          heading="Recent Workflow Dashboards"
+          link={
+            <Link
+              underline="none"
+              color="primary"
+              onClick={() => {
+                tabs.changeAnalyticsDashboardTabs(1);
+              }}
+            >
+              <Typography className={classes.linkPointer}>
+                {t('homeViews.agentConfiguredHome.recentWorkflowRuns.viewAll')}
+              </Typography>
+            </Link>
+          }
+          buttonLink="/create-workflow"
+          buttonImgSrc="./icons/calendarBlank.svg"
+          buttonImgAlt="Schedule workflow"
+          buttonText="Schedule workflow"
+        >
+          {/* {filteredData.forEach((workflow) => {
+           return <OverviewCard key={workflow.name} data={workflow} />;
+         })} */}
+          <OverviewCard />
+        </RecentOverviewContainer>
+      ) : (
+        <OverviewContainer
+          count={0}
+          countUnit="workflows"
+          description="Create complex chaos workflows, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability work flows and compliance reports"
+          maxWidth="38.5625rem"
+          button={
+            <>
+              <ButtonOutlined
+                onClick={() => {
+                  history.push({
+                    pathname: '/create-workflow',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
+                }}
+                className={classes.infoContainerButton}
+              >
+                <Typography>
+                  <img src="./icons/calendarBlankDark.svg" alt="calendar" />
+                  {t('homeViews.agentConfiguredHome.agentInfoContainer.deploy')}
+                </Typography>
+              </ButtonOutlined>
+            </>
+          }
+        />
+      )}
+      {dataSource && (
+        <OverviewContainer
+          count={1}
+          countUnit="Data source"
+          description="Data sources are needed to configure interleaving dashboards"
+          maxWidth="38.5625rem"
+          button={
+            <>
+              <ButtonOutlined
+                onClick={() => {
+                  history.push({
+                    pathname: '/analytics/datasource/select',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  });
+                }}
+              >
+                <Typography>Add data source</Typography>
+              </ButtonOutlined>
+            </>
+          }
+        />
+      )}
     </div>
   );
 };

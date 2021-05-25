@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
   agentInfoData: {
     display: 'flex',
     padding: theme.spacing(1),
-    maxWidth: '25.5625rem',
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -22,22 +21,21 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       alignItems: 'baseline',
 
-      '& #agentCount': {
-        color: theme.palette.primary.light,
-        fontSize: '3.875rem',
-      },
-
-      '& #agentDesc': {
-        color: theme.palette.text.hint,
-        marginLeft: theme.spacing(10.625),
-      },
-
       '& p:nth-child(2)': {
         fontSize: '1.125rem',
         fontWeight: 500,
         marginLeft: theme.spacing(1),
+        minWidth: 'fit-content',
       },
     },
+  },
+  count: {
+    color: theme.palette.primary.light,
+    fontSize: '3.875rem',
+  },
+  desicription: {
+    color: theme.palette.text.hint,
+    marginLeft: theme.spacing(10.625),
   },
   infoContainerButton: {
     '& svg': {
