@@ -17,6 +17,8 @@ type ChaosWorkFlowInput struct {
 	CreatedAt           string              `bson:"created_at"`
 	ProjectID           string              `bson:"project_id"`
 	ClusterID           string              `bson:"cluster_id"`
+	ClusterName         string              `bson:"cluster_name"`
+	ClusterType         string              `bson:"cluster_type"`
 	WorkflowRuns        []*ChaosWorkflowRun `bson:"workflow_runs"`
 	IsRemoved           bool                `bson:"isRemoved"`
 }
@@ -29,10 +31,14 @@ type WeightagesInput struct {
 
 // ChaosWorkflowRun contains the required fields to be stored in the database for a workflow run
 type ChaosWorkflowRun struct {
-	WorkflowRunID string `bson:"workflow_run_id"`
-	LastUpdated   string `bson:"last_updated"`
-	ExecutionData string `bson:"execution_data"`
-	Completed     bool   `bson:"completed"`
+	WorkflowRunID     string  `bson:"workflow_run_id"`
+	LastUpdated       string  `bson:"last_updated"`
+	Phase             string  `bson:"phase"`
+	ResiliencyScore   *float64 `bson:"resiliency_score,string,omitempty"`
+	ExperimentsPassed *int     `bson:"experiments_passed,string,omitempty"`
+	TotalExperiments  *int     `bson:"total_experiments,string,omitempty"`
+	ExecutionData     string  `bson:"execution_data"`
+	Completed         bool    `bson:"completed"`
 }
 
 type ExecutionData struct {
@@ -78,4 +84,22 @@ type ChaosData struct {
 	ProbeSuccessPercentage string                  `json:"probeSuccessPercentage"`
 	FailStep               string                  `json:"failStep"`
 	ChaosResult            *chaosTypes.ChaosResult `json:"chaosResult"`
+}
+
+type FlattenedWorkflowRuns struct {
+	WorkflowID          string             `bson:"workflow_id"`
+	WorkflowManifest    string             `bson:"workflow_manifest"`
+	CronSyntax          string             `bson:"cronSyntax"`
+	WorkflowName        string             `bson:"workflow_name"`
+	WorkflowDescription string             `bson:"workflow_description"`
+	Weightages          []*WeightagesInput `bson:"weightages"`
+	IsCustomWorkflow    bool               `bson:"isCustomWorkflow"`
+	UpdatedAt           string             `bson:"updated_at"`
+	CreatedAt           string             `bson:"created_at"`
+	ProjectID           string             `bson:"project_id"`
+	ClusterID           string             `bson:"cluster_id"`
+	ClusterName         string             `bson:"cluster_name"`
+	ClusterType         string             `bson:"cluster_type"`
+	WorkflowRuns        ChaosWorkflowRun   `bson:"workflow_runs"`
+	IsRemoved           bool               `bson:"isRemoved"`
 }

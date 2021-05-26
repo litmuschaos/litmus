@@ -257,6 +257,12 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 		copier.Copy(&Weightages, &input.Weightages)
 	}
 
+	// Get cluster information
+	cluster, err := dbOperationsCluster.GetCluster(input.ClusterID)
+	if err != nil {
+		return err
+	}
+
 	newChaosWorkflow := dbSchemaWorkflow.ChaosWorkFlowInput{
 		WorkflowID:          *input.WorkflowID,
 		WorkflowManifest:    input.WorkflowManifest,
@@ -266,6 +272,8 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 		ProjectID:           input.ProjectID,
 		ClusterID:           input.ClusterID,
+		ClusterName:         cluster.ClusterName,
+		ClusterType:         cluster.ClusterType,
 		Weightages:          Weightages,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
@@ -273,7 +281,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 		IsRemoved:           false,
 	}
 
-	err := dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
+	err = dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
 	if err != nil {
 		return err
 	}

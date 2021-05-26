@@ -626,6 +626,7 @@ github.com/litmuschaos/litmus v0.0.0-20210517073244-e7283195eaa2 h1:M8Bx07yjtmQn
 github.com/litmuschaos/litmus v0.0.0-20210518055238-5abf1cfc2b96 h1:jGzxGLdBwyb/kDJFfIseE+b3Ho+9zMe6u9O8kGeW3fs=
 github.com/litmuschaos/litmus v0.0.0-20210519063944-942441eb285e h1:cyzprm+gE8cS+hKHSNJZTvZOTFQS9uNRFnv1PjG3eOc=
 github.com/litmuschaos/litmus v0.0.0-20210520120948-be94b251bc86 h1:bCGQxYkrVglBiDbsXqiFuOaJB7lMWJHQlsP7jgR+zsI=
+github.com/litmuschaos/litmus v0.0.0-20210525080308-ddcc7c75893c h1:scyZwtqx4FciHOwU3uT1C0YAESnKCUkZWEIXDai3lwg=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=
 github.com/lucas-clemente/aes12 v0.0.0-20171027163421-cd47fb39b79f/go.mod h1:JpH9J1c9oX6otFSgdUHwUBUizmKlrMjxWnIAjff4m04=

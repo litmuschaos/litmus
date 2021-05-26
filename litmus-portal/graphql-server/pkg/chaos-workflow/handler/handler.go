@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"go.mongodb.org/mongo-driver/mongo"
 	"log"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -118,180 +119,246 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 
 // QueryWorkflowRuns sends all the workflow runs for a project from the DB
 func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
-	var query bson.D
-	if len(input.WorkflowRunIds) != 0 {
-		query = bson.D{
+	// Match with projectID
+	matchStage := bson.D{
+		{"$match", bson.D{
 			{"project_id", input.ProjectID},
-			{"workflow_runs", bson.D{
-				{"$elemMatch", bson.D{
-					{"workflow_run_id", bson.D{
-						{"$in", input.WorkflowRunIds},
+		}},
+	}
+	pipeline := mongo.Pipeline{matchStage}
+
+	// Match the workflowRunsIds from the input array
+	if len(input.WorkflowRunIds) != 0 {
+		matchWfRunIdStage := bson.D{
+			{"$project", bson.D{
+				{"workflow_id", 1},
+				{"workflow_name", 1},
+				{"workflow_manifest", 1},
+				{"cronSyntax", 1},
+				{"workflow_description", 1},
+				{"weightages", 1},
+				{"isCustomWorkflow", 1},
+				{"updated_at", 1},
+				{"created_at", 1},
+				{"project_id", 1},
+				{"cluster_id", 1},
+				{"cluster_name", 1},
+				{"cluster_type", 1},
+				{"isRemoved", 1},
+				{"workflow_runs", bson.D{
+					{"$filter", bson.D{
+						{"input", "$workflow_runs"},
+						{"as", "wfRun"},
+						{"cond", bson.D{
+							{"$in", bson.A{"$$wfRun.workflow_run_id", input.WorkflowRunIds}},
+						}},
 					}},
 				}},
 			}},
 		}
-	} else {
-		query = bson.D{
-			{"project_id", input.ProjectID},
-		}
-	}
-	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(query)
 
-	if err != nil {
-		return nil, err
-	}
-	var result []*model.WorkflowRun
-
-	for _, workflow := range chaosWorkflows {
-		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
-		if err != nil {
-			return nil, err
-		}
-		for _, wfRun := range workflow.WorkflowRuns {
-			// Parse and store execution data
-			var executionData dbSchemaWorkflow.ExecutionData
-			err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData)
-			if err != nil {
-				log.Println("Can not parse Execution Data of workflow run with id: ", wfRun.WorkflowRunID)
-				return nil, err
-			}
-
-			// Check if the workflow has finished running, if not send resiliencyScore as -1
-			var resiliencyScore *float64
-			if wfRun.Completed {
-				resiliencyScore = new(float64)
-				*resiliencyScore = executionData.ResiliencyScore
-			} else {
-				resiliencyScore = nil
-			}
-
-			newWorkflowRun := model.WorkflowRun{
-				WorkflowName:      workflow.WorkflowName,
-				WorkflowID:        workflow.WorkflowID,
-				WorkflowRunID:     wfRun.WorkflowRunID,
-				LastUpdated:       wfRun.LastUpdated,
-				ProjectID:         workflow.ProjectID,
-				ClusterID:         workflow.ClusterID,
-				Phase:             executionData.Phase,
-				ResiliencyScore:   resiliencyScore,
-				ExperimentsPassed: executionData.ExperimentsPassed,
-				TotalExperiments:  executionData.TotalExperiments,
-				ExecutionData:     wfRun.ExecutionData,
-				ClusterName:       cluster.ClusterName,
-				ClusterType:       &cluster.ClusterType,
-			}
-			result = append(result, &newWorkflowRun)
-		}
-	}
-
-	// Filtering based on workflow run ID
-	if input.WorkflowRunIds != nil {
-		var filteredResult []*model.WorkflowRun
-		m := make(map[string]bool)
-
-		for _, wfID := range input.WorkflowRunIds {
-			m[*wfID] = true
-		}
-
-		for _, wfRun := range result {
-			if m[wfRun.WorkflowRunID] {
-				filteredResult = append(filteredResult, wfRun)
-			}
-		}
-
-		result = filteredResult
+		pipeline = append(pipeline, matchWfRunIdStage)
 	}
 
 	// Filtering based on multiple parameters
 	if input.Filter != nil {
 
 		// Filtering based on workflow name
-		if input.Filter.WorkflowName != nil {
-			var filteredResult []*model.WorkflowRun
-			for _, wfRun := range result {
-				if strings.Contains(wfRun.WorkflowName, *input.Filter.WorkflowName) {
-					filteredResult = append(filteredResult, wfRun)
-				}
+		if input.Filter.WorkflowName != nil && *input.Filter.WorkflowName != "" {
+			matchWfNameStage := bson.D{
+				{"$match", bson.D{
+					{"workflow_name", bson.D{
+						{"$regex", input.Filter.WorkflowName},
+					}},
+				}},
 			}
-			result = filteredResult
+			pipeline = append(pipeline, matchWfNameStage)
 		}
 
 		// Filtering based on cluster name
-		if input.Filter.ClusterName != nil && *input.Filter.ClusterName != "All" {
-			var filteredResult []*model.WorkflowRun
-			for _, wfRun := range result {
-				if wfRun.ClusterName == *input.Filter.ClusterName {
-					filteredResult = append(filteredResult, wfRun)
-				}
+		if input.Filter.ClusterName != nil && *input.Filter.ClusterName != "All" && *input.Filter.ClusterName != "" {
+			matchClusterStage := bson.D{
+				{"$match", bson.D{
+					{"cluster_name", input.Filter.ClusterName},
+				}},
 			}
-			result = filteredResult
+			pipeline = append(pipeline, matchClusterStage)
 		}
 
 		// Filtering based on phase
-		if input.Filter.WorkflowStatus != nil && *input.Filter.WorkflowStatus != "All" {
-			var filteredResult []*model.WorkflowRun
-			for _, wfRun := range result {
-				if wfRun.Phase == string(*input.Filter.WorkflowStatus) {
-					filteredResult = append(filteredResult, wfRun)
-				}
+		if input.Filter.WorkflowStatus != nil && *input.Filter.WorkflowStatus != "All" && *input.Filter.WorkflowStatus != "" {
+			filterWfRunPhaseStage := bson.D{
+				{"$project", bson.D{
+					{"workflow_id", 1},
+					{"workflow_name", 1},
+					{"workflow_manifest", 1},
+					{"cronSyntax", 1},
+					{"workflow_description", 1},
+					{"weightages", 1},
+					{"isCustomWorkflow", 1},
+					{"updated_at", 1},
+					{"created_at", 1},
+					{"project_id", 1},
+					{"cluster_id", 1},
+					{"cluster_name", 1},
+					{"cluster_type", 1},
+					{"isRemoved", 1},
+					{"workflow_runs", bson.D{
+						{"$filter", bson.D{
+							{"input", "$workflow_runs"},
+							{"as", "wfRun"},
+							{"cond", bson.D{
+								{"$eq", bson.A{"$$wfRun.phase", string(*input.Filter.WorkflowStatus)}},
+							}},
+						}},
+					}},
+				}},
 			}
-			result = filteredResult
+
+			pipeline = append(pipeline, filterWfRunPhaseStage)
 		}
 
 		// Filtering based on date range
 		if input.Filter.DateRange != nil {
-			var filteredResult []*model.WorkflowRun
-			for _, wfRun := range result {
-				if wfRun.LastUpdated >= input.Filter.DateRange.StartDate &&
-					wfRun.LastUpdated <= input.Filter.DateRange.EndDate {
-					filteredResult = append(filteredResult, wfRun)
-				}
+			filterWfRunDateStage := bson.D{
+				{"$project", bson.D{
+					{"workflow_id", 1},
+					{"workflow_name", 1},
+					{"workflow_manifest", 1},
+					{"cronSyntax", 1},
+					{"workflow_description", 1},
+					{"weightages", 1},
+					{"isCustomWorkflow", 1},
+					{"updated_at", 1},
+					{"created_at", 1},
+					{"project_id", 1},
+					{"cluster_id", 1},
+					{"cluster_name", 1},
+					{"cluster_type", 1},
+					{"isRemoved", 1},
+					{"workflow_runs", bson.D{
+						{"$filter", bson.D{
+							{"input", "$workflow_runs"},
+							{"as", "wfRun"},
+							{"cond", bson.D{
+								{"$and", bson.A{
+									bson.D{{"$lte", bson.A{"$$wfRun.last_updated", input.Filter.DateRange.EndDate}}},
+									bson.D{{"$gte", bson.A{"$$wfRun.last_updated", input.Filter.DateRange.StartDate}}},
+								}},
+							}},
+						}},
+					}},
+				}},
 			}
-			result = filteredResult
+
+			pipeline = append(pipeline, filterWfRunDateStage)
 		}
 	}
+
+	// Flatten out the workflow runs
+	unwindStage := bson.D{
+		{"$unwind", bson.D{
+			{"path", "$workflow_runs"},
+		}},
+	}
+	pipeline = append(pipeline, unwindStage)
 
 	switch {
 	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldTime:
 		// Sorting based on LastUpdated time
 		if input.Sort.Descending != nil && *input.Sort.Descending {
-			sort.SliceStable(result, func(i, j int) bool {
-				return result[i].LastUpdated > result[j].LastUpdated
-			})
+			sortDescTimeStage := bson.D{
+				{"$sort", bson.D{
+					{"workflow_runs.last_updated", -1},
+				}},
+			}
+
+			pipeline = append(pipeline, sortDescTimeStage)
 		} else {
-			sort.SliceStable(result, func(i, j int) bool {
-				return result[i].LastUpdated < result[j].LastUpdated
-			})
+			sortAscTimeStage := bson.D{
+				{"$sort", bson.D{
+					{"workflow_runs.last_updated", 1},
+				}},
+			}
+
+			pipeline = append(pipeline, sortAscTimeStage)
 		}
 	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldName:
 		// Sorting based on WorkflowName time
 		if input.Sort.Descending != nil && *input.Sort.Descending {
-			sort.SliceStable(result, func(i, j int) bool {
-				return result[i].WorkflowName > result[j].WorkflowName
-			})
+			sortDescNameStage := bson.D{
+				{"$sort", bson.D{
+					{"workflow_name", -1},
+				}},
+			}
+
+			pipeline = append(pipeline, sortDescNameStage)
 		} else {
-			sort.SliceStable(result, func(i, j int) bool {
-				return result[i].WorkflowName < result[j].WorkflowName
-			})
+			sortAscNameStage := bson.D{
+				{"$sort", bson.D{
+					{"workflow_name", 1},
+				}},
+			}
+
+			pipeline = append(pipeline, sortAscNameStage)
 		}
 	default:
 		// Default sorting: sorts it by LastUpdated time in descending order
-		sort.SliceStable(result, func(i, j int) bool {
-			return result[i].LastUpdated > result[j].LastUpdated
-		})
+		sortDescTimeStage := bson.D{
+			{"$sort", bson.D{
+				{"workflow_runs.last_updated", -1},
+			}},
+		}
+
+		pipeline = append(pipeline, sortDescTimeStage)
+	}
+
+	// Pagination
+	if input.Pagination != nil {
+		paginationStage := bson.D{
+			{"$limit", (input.Pagination.Page + 1) * input.Pagination.Limit},
+			//{"$skip", input.Pagination.Page * input.Pagination.Limit},
+		}
+
+		pipeline = append(pipeline, paginationStage)
+	}
+
+	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+	fmt.Println(workflowsCursor.ID())
+
+	var workflows []dbSchemaWorkflow.FlattenedWorkflowRuns
+	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
+		fmt.Println(err)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	var result []*model.WorkflowRun
+
+	for _, workflow := range workflows {
+		workflowRun := workflow.WorkflowRuns
+
+		newWorkflowRun := model.WorkflowRun{
+			WorkflowName:      workflow.WorkflowName,
+			WorkflowID:        workflow.WorkflowID,
+			WorkflowRunID:     workflowRun.WorkflowRunID,
+			LastUpdated:       workflowRun.LastUpdated,
+			ProjectID:         workflow.ProjectID,
+			ClusterID:         workflow.ClusterID,
+			Phase:             workflowRun.Phase,
+			ResiliencyScore:   workflowRun.ResiliencyScore,
+			ExperimentsPassed: workflowRun.ExperimentsPassed,
+			TotalExperiments:  workflowRun.TotalExperiments,
+			ExecutionData:     workflowRun.ExecutionData,
+			ClusterName:       workflow.ClusterName,
+			ClusterType:       &workflow.ClusterType,
+		}
+		result = append(result, &newWorkflowRun)
 	}
 
 	// Calculate length of result after filtering
 	totalNoOfRuns := len(result)
-
-	if input.Pagination != nil {
-		startIndex := input.Pagination.Page * input.Pagination.Limit
-		endIndex := (input.Pagination.Page + 1) * input.Pagination.Limit
-		if endIndex > len(result) {
-			endIndex = len(result)
-		}
-		result = result[startIndex:endIndex]
-	}
 
 	output := model.GetWorkflowsOutput{
 		TotalNoOfWorkflowRuns: totalNoOfRuns,
@@ -413,10 +480,14 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 	}
 
 	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
-		WorkflowRunID: input.WorkflowRunID,
-		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
-		ExecutionData: input.ExecutionData,
-		Completed:     input.Completed,
+		WorkflowRunID:     input.WorkflowRunID,
+		LastUpdated:       strconv.FormatInt(time.Now().Unix(), 10),
+		Phase:             executionData.Phase,
+		ResiliencyScore:   &executionData.ResiliencyScore,
+		ExperimentsPassed: &executionData.ExperimentsPassed,
+		TotalExperiments:  &executionData.TotalExperiments,
+		ExecutionData:     input.ExecutionData,
+		Completed:         input.Completed,
 	})
 	if err != nil {
 		log.Print("ERROR", err)
@@ -427,15 +498,6 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "Workflow Run Discarded[Duplicate Event]", nil
 	}
 
-	// Check if the workflow has finished running, if not send resiliencyScore as -1
-	var resiliencyScore *float64
-	if input.Completed {
-		resiliencyScore = new(float64)
-		*resiliencyScore = executionData.ResiliencyScore
-	} else {
-		resiliencyScore = nil
-	}
-
 	ops.SendWorkflowEvent(model.WorkflowRun{
 		ClusterID:         cluster.ClusterID,
 		ClusterName:       cluster.ClusterName,
@@ -444,9 +506,9 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		WorkflowRunID:     input.WorkflowRunID,
 		WorkflowName:      input.WorkflowName,
 		Phase:             executionData.Phase,
-		ResiliencyScore:   resiliencyScore,
-		ExperimentsPassed: executionData.ExperimentsPassed,
-		TotalExperiments:  executionData.TotalExperiments,
+		ResiliencyScore:   &executionData.ResiliencyScore,
+		ExperimentsPassed: &executionData.ExperimentsPassed,
+		TotalExperiments:  &executionData.TotalExperiments,
 		ExecutionData:     input.ExecutionData,
 		WorkflowID:        input.WorkflowID,
 	}, &r)

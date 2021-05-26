@@ -51,8 +51,8 @@ type WorkflowRun {
   cluster_type: String
   phase: String!
   resiliency_score: Float
-  experiments_passed: Int!
-  total_experiments: Int!
+  experiments_passed: Int
+  total_experiments: Int
   execution_data: String!
 }
 

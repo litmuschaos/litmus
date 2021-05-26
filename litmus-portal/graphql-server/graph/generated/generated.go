@@ -4610,8 +4610,8 @@ type WorkflowRun {
   cluster_type: String
   phase: String!
   resiliency_score: Float
-  experiments_passed: Int!
-  total_experiments: Int!
+  experiments_passed: Int
+  total_experiments: Int
   execution_data: String!
 }
 
@@ -17300,14 +17300,11 @@ func (ec *executionContext) _WorkflowRun_experiments_passed(ctx context.Context,
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRun_total_experiments(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
@@ -17334,14 +17331,11 @@ func (ec *executionContext) _WorkflowRun_total_experiments(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRun_execution_data(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
@@ -24609,14 +24603,8 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._WorkflowRun_resiliency_score(ctx, field, obj)
 		case "experiments_passed":
 			out.Values[i] = ec._WorkflowRun_experiments_passed(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "total_experiments":
 			out.Values[i] = ec._WorkflowRun_total_experiments(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "execution_data":
 			out.Values[i] = ec._WorkflowRun_execution_data(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

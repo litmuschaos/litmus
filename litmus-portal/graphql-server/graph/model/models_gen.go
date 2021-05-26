@@ -533,8 +533,8 @@ type WorkflowRun struct {
 	ClusterType       *string  `json:"cluster_type"`
 	Phase             string   `json:"phase"`
 	ResiliencyScore   *float64 `json:"resiliency_score"`
-	ExperimentsPassed int      `json:"experiments_passed"`
-	TotalExperiments  int      `json:"total_experiments"`
+	ExperimentsPassed *int     `json:"experiments_passed"`
+	TotalExperiments  *int     `json:"total_experiments"`
 	ExecutionData     string   `json:"execution_data"`
 }
 

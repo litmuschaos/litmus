@@ -136,7 +136,9 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <span>
             {t('chaosWorkflows.browseWorkflows.tableData.experimentsPassed')}
           </span>
-          {!data.resiliency_score ? (
+          {!data.experiments_passed ||
+          !data.total_experiments ||
+          !data.resiliency_score ? (
             <span className={classes.less}>
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>
