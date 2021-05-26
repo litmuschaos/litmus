@@ -7,7 +7,7 @@ import useStyles from './styles';
 
 interface RecentOverviewContainerProps {
   heading: string;
-  link: React.ReactNode;
+  link?: React.ReactNode;
   buttonLink: string;
   buttonImgSrc: string;
   buttonImgAlt: string;

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { MainInfoContainer } from '../../../components/MainInfoContainer';
 import { OverviewContainer } from '../../../components/OverviewContainer';
 import { RecentOverviewContainer } from '../../../components/RecentOverviewContainer';
+import { UnconfiguredAgent } from '../../../components/UnconfiguredAgent';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
@@ -22,8 +23,10 @@ const Overview: React.FC = () => {
 
   // TODO: Temp consts
   const dataSource = true;
-  const dashBoard = true;
-  const workflowCount = 1;
+  const chaosInterleavedDashBoard = true;
+  const workflowDashboardCount = 1;
+  const applicationDashboardCount = 1;
+  const isAgentPresent = true;
 
   // const { data: dashboardList } = useQuery<DashboardList, ListDashboardVars>(
   //   LIST_DASHBOARD_OVERVIEW,
@@ -35,54 +38,55 @@ const Overview: React.FC = () => {
 
   // const filteredData = dashboardList?.ListDashboard.slice(-3).reverse();
 
+  if (!isAgentPresent) {
+    return <UnconfiguredAgent />;
+  }
+
+  if (!workflowDashboardCount) {
+    return (
+      <MainInfoContainer
+        src="./icons/workflowScheduleHome.svg"
+        alt="Schedule a workflow"
+        heading={t('homeViews.agentConfiguredHome.noWorkflow.heading')}
+        description={t('homeViews.agentConfiguredHome.noWorkflow.description')}
+        button={
+          <ButtonFilled
+            onClick={() => {
+              history.push({
+                pathname: '/create-workflow',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
+          >
+            <Typography>
+              {t('homeViews.agentConfiguredHome.noWorkflow.schedule')}
+            </Typography>
+          </ButtonFilled>
+        }
+        link={
+          <Link
+            underline="none"
+            color="primary"
+            onClick={() => {
+              tabs.changeWorkflowsTabs(2);
+              history.push({
+                pathname: '/workflows',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
+          >
+            <Typography>
+              {t('homeViews.agentConfiguredHome.noWorkflow.explore')}
+            </Typography>
+          </Link>
+        }
+      />
+    );
+  }
+
   return (
     <div>
-      {dashBoard ? (
-        <RecentOverviewContainer
-          heading="Recent Dashboards"
-          link={
-            <Link
-              underline="none"
-              color="primary"
-              onClick={() => {
-                tabs.changeAnalyticsDashboardTabs(2);
-              }}
-            >
-              <Typography className={classes.linkPointer}>
-                View all kubernetes dashboard
-              </Typography>
-            </Link>
-          }
-          buttonLink="/analytics/dashboard/select"
-          buttonImgSrc="./icons/cloudWhite.svg"
-          buttonImgAlt="Add kubernetes dashboard"
-          buttonText="Add kubernetes dashbaord"
-        >
-          {/* {filteredData.forEach((workflow) => {
-            return <OverviewCard key={workflow.name} data={workflow} />;
-          })} */}
-          <OverviewCard />
-        </RecentOverviewContainer>
-      ) : dataSource ? (
-        <MainInfoContainer
-          src="./icons/dashboardCloud.svg"
-          alt="Schedule a workflow"
-          heading="Configure a chaos interleaved dashboard"
-          description="Data sources has been found to be connected in this project. Select “Add dashboard” to configure a chaos interleaved dashboard"
-          button={
-            <ButtonFilled
-              onClick={() => {
-                history.push({
-                  pathname: '/analytics/dashboard/select',
-                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                });
-              }}
-            >
-              <Typography>Add dashboard</Typography>
-            </ButtonFilled>
-          }
-        />
-      ) : (
+      {!dataSource && (
         <MainInfoContainer
           src="./icons/cloud.svg"
           alt="Schedule a workflow"
@@ -113,30 +117,37 @@ const Overview: React.FC = () => {
           }
         />
       )}
-      {workflowCount > 0 ? (
-        <RecentOverviewContainer
-          heading="Recent Workflow Dashboards"
-          link={
-            <Link
-              underline="none"
-              color="primary"
+      {dataSource && !chaosInterleavedDashBoard && (
+        <MainInfoContainer
+          src="./icons/dashboardCloud.svg"
+          alt="Schedule a workflow"
+          heading="Configure a chaos interleaved dashboard"
+          description="Data sources has been found to be connected in this project. Select “Add dashboard” to configure a chaos interleaved dashboard"
+          button={
+            <ButtonFilled
               onClick={() => {
-                tabs.changeAnalyticsDashboardTabs(1);
+                history.push({
+                  pathname: '/analytics/dashboard/select',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
               }}
             >
-              <Typography className={classes.linkPointer}>
-                {t('homeViews.agentConfiguredHome.recentWorkflowRuns.viewAll')}
-              </Typography>
-            </Link>
+              <Typography>Add dashboard</Typography>
+            </ButtonFilled>
           }
+        />
+      )}{' '}
+      {workflowDashboardCount > 0 ? (
+        <RecentOverviewContainer
+          heading="Recent Workflow Dashboards"
           buttonLink="/create-workflow"
           buttonImgSrc="./icons/calendarBlank.svg"
           buttonImgAlt="Schedule workflow"
           buttonText="Schedule workflow"
         >
           {/* {filteredData.forEach((workflow) => {
-           return <OverviewCard key={workflow.name} data={workflow} />;
-         })} */}
+             return <OverviewCard key={workflow.name} data={workflow} />;
+           })} */}
           <OverviewCard />
         </RecentOverviewContainer>
       ) : (
@@ -165,6 +176,20 @@ const Overview: React.FC = () => {
           }
         />
       )}
+      {applicationDashboardCount > 0 && (
+        <RecentOverviewContainer
+          heading="Recent Application Dashboards"
+          buttonLink="/analytics/dashboard/select"
+          buttonImgSrc="./icons/cloudWhite.svg"
+          buttonImgAlt="Add kubernetes dashboard"
+          buttonText="Add kubernetes dashbaord"
+        >
+          {/* {filteredData.forEach((workflow) => {
+            return <OverviewCard key={workflow.name} data={workflow} />;
+          })} */}
+          <OverviewCard />
+        </RecentOverviewContainer>
+      )}
       {dataSource && (
         <OverviewContainer
           count={1}
@@ -174,6 +199,7 @@ const Overview: React.FC = () => {
           button={
             <>
               <ButtonOutlined
+                className={classes.infoContainerButton}
                 onClick={() => {
                   history.push({
                     pathname: '/analytics/datasource/select',
@@ -181,6 +207,7 @@ const Overview: React.FC = () => {
                   });
                 }}
               >
+                <img src="./icons/dataSource.svg" alt="DataSource" />
                 <Typography>Add data source</Typography>
               </ButtonOutlined>
             </>

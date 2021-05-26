@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2.5),
     willChange: `transform`,
     transition: `transform 250ms`,
-    cursor: 'pointer',
+    // cursor: 'pointer',
 
     '&:hover': {
       transform: `translateY(-10px)`,
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '75%',
+    // width: '75%',
   },
 
   statusDiv: {
@@ -40,6 +40,20 @@ const useStyles = makeStyles((theme) => ({
   hint: {
     fontSize: '1rem',
     color: theme.palette.text.hint,
+  },
+  cardActionsSection: {
+    display: 'flex',
+  },
+  cardActions: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginLeft: theme.spacing(3),
+    '& p': {
+      fontSize: '0.75rem',
+    },
+    '& svg': {
+      color: theme.palette.text.hint,
+    },
   },
   noWrapProvider: {
     whiteSpace: 'nowrap',
