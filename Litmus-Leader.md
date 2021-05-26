@@ -1,6 +1,6 @@
 # Litmus Leader Program
 The Litmus Leader Program aims to identify community contributors & leaders in the Litmus community and reward them for their valuable contribution to Cloud-Native world by contributing to the LitmusChaos project.
-This program is the a Rewards and Recognitions campaign for the LitmusChaos project to award our most prominent contributors in various fields like development, advocacy, writing, content creation, etc. and be an example for others.
+This program is a rewards and recognition campaign for the LitmusChaos project to award our most prominent contributors in various fields like development, advocacy, writing, content creation, etc.,
 
 ----------------------
 
@@ -25,5 +25,4 @@ This program is the a Rewards and Recognitions campaign for the LitmusChaos proj
 | [Divya Mohan](https://twitter.com/Divya_Mohan02)| HSBC | 17th May 2021 | |
 | [Akram Riahi](https://twitter.com/AkramRiahi4) | WeScale | 17th May 2021 | |
 | [Saiyam Pathak](https://twitter.com/SaiyamPathak) | Civo Cloud | 17th May 2021 | |
-
 
