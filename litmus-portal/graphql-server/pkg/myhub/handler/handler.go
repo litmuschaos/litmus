@@ -189,7 +189,7 @@ func ReadExperimentYAMLFile(path string) (string, error) {
 }
 
 // GetPredefinedExperimentFileList reads the workflow directory for all the predefined experiments
-func GetPredefinedExperimentFileList(hubname string, projectID string) ([]string, error) {
+func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, error) {
 	ExperimentsPath := defaultPath + projectID + "/" + hubname + "/workflows"
 	var expNames []string
 	files, err := ioutil.ReadDir(ExperimentsPath)

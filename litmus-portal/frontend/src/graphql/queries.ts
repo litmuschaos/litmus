@@ -459,9 +459,9 @@ export const GET_TEMPLATE_BY_ID = gql`
   }
 `;
 
-export const GET_PREDEFINED_EXPERIMENT_LIST = gql`
-  query GetPredefinedExperimentList($hubname: String!, $projectid: String!) {
-    GetPredefinedExperimentList(HubName: $hubname, projectID: $projectid)
+export const GET_PREDEFINED_WORKFLOW_LIST = gql`
+  query GetPredefinedWorkflowList($hubname: String!, $projectid: String!) {
+    GetPredefinedWorkflowList(HubName: $hubname, projectID: $projectid)
   }
 `;
 

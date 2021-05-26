@@ -17,7 +17,7 @@ import Scaffold from '../../../containers/layouts/Scaffold';
 import {
   GET_CHARTS_DATA,
   GET_HUB_STATUS,
-  GET_PREDEFINED_EXPERIMENT_LIST,
+  GET_PREDEFINED_WORKFLOW_LIST,
 } from '../../../graphql';
 import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
@@ -64,7 +64,7 @@ const MyHub: React.FC = () => {
   });
 
   const { data: predefinedData, loading: predefinedLoading } = useQuery(
-    GET_PREDEFINED_EXPERIMENT_LIST,
+    GET_PREDEFINED_WORKFLOW_LIST,
     {
       variables: {
         hubname: paramData.hubname,
@@ -175,8 +175,8 @@ const MyHub: React.FC = () => {
               changeSearch={handlePreDefinedSearch}
             />
             <div className={classes.chartsGroup}>
-              {predefinedData?.GetPredefinedExperimentList.length > 0 ? (
-                predefinedData?.GetPredefinedExperimentList.filter(
+              {predefinedData?.GetPredefinedWorkflowList.length > 0 ? (
+                predefinedData?.GetPredefinedWorkflowList.filter(
                   (data: string) =>
                     data.toLowerCase().includes(searchPredefined.trim())
                 ).map((expName: string) => {

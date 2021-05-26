@@ -452,8 +452,8 @@ func RecurringHubSync() {
 	}
 }
 
-func GetPredefinedExperiementList(hubname string, projectID string) ([]string, error) {
-	expList, err := handler.GetPredefinedExperimentFileList(hubname, projectID)
+func GetPredefinedWorkflowList(hubname string, projectID string) ([]string, error) {
+	expList, err := handler.GetPredefinedWorkflowFileList(hubname, projectID)
 	if err != nil {
 		return nil, err
 	}
