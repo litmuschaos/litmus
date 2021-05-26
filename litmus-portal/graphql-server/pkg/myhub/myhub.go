@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -231,13 +232,16 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 
 // GetExperiment is used for getting details of a given experiment using chartserviceversion.yaml.
 func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
-
-	ExperimentPath := handler.GetExperimentChartsVersionYamlPath(ctx, experimentInput)
+	var ExperimentPath string
+	if strings.ToLower(experimentInput.ChartName) == "predefined" {
+		ExperimentPath = handler.GetPreDefinedWorkflowCSVPath(ctx, experimentInput)
+	} else {
+		ExperimentPath = handler.GetExperimentChartsVersionYamlPath(ctx, experimentInput)
+	}
 	ExperimentData, err := handler.GetExperimentData(ExperimentPath)
 	if err != nil {
 		return nil, err
 	}
-
 	return ExperimentData, nil
 }
 
@@ -394,11 +398,23 @@ func DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
 // GetIconHandler ...
 var GetIconHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	img, err := os.Open("/tmp/version/" + vars["ProjectID"] + "/" + vars["HubName"] + "/charts/" + vars["ChartName"] + "/icons/" + vars["IconName"])
-	responseStatusCode := 200
-	if err != nil {
-		responseStatusCode = 500
-		fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
+	var img *os.File
+	var err error
+	var responseStatusCode int
+	if strings.ToLower(vars["ChartName"]) == "predefined" {
+		img, err = os.Open("/tmp/version/" + vars["ProjectID"] + "/" + vars["HubName"] + "/workflows/icons/" + vars["IconName"])
+		responseStatusCode = 200
+		if err != nil {
+			responseStatusCode = 500
+			fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
+		}
+	} else {
+		img, err = os.Open("/tmp/version/" + vars["ProjectID"] + "/" + vars["HubName"] + "/charts/" + vars["ChartName"] + "/icons/" + vars["IconName"])
+		responseStatusCode = 200
+		if err != nil {
+			responseStatusCode = 500
+			fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
+		}
 	}
 	defer img.Close()
 	w.Header().Set("Access-Control-Allow-Origin", "*")
