@@ -235,6 +235,10 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 
 		log.Println("Resource successfully retrieved")
 		return response, nil
+	} else if requestType == "workflow_delete" {
+
+	} else if requestType == "workflow_sync" {
+		workflow, err :=
 	}
 
 	return nil, fmt.Errorf("err: %v\n", "Invalid Request")
