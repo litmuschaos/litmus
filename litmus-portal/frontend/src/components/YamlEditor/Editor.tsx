@@ -13,7 +13,11 @@ import SelectAllTwoToneIcon from '@material-ui/icons/SelectAllTwoTone';
 import UndoTwoToneIcon from '@material-ui/icons/UndoTwoTone';
 import UnfoldLessTwoToneIcon from '@material-ui/icons/UnfoldLessTwoTone';
 import UnfoldMoreTwoToneIcon from '@material-ui/icons/UnfoldMoreTwoTone';
+import React, { useEffect, useState } from 'react';
 import AceEditor from 'react-ace';
+import { useTranslation } from 'react-i18next';
+import useStyles from './styles';
+import { AceValidations, parseYamlValidations } from './Validations';
 import 'ace-builds/src-min-noconflict/ext-beautify';
 import 'ace-builds/src-min-noconflict/ext-code_lens';
 import 'ace-builds/src-min-noconflict/ext-elastic_tabstops_lite';
@@ -36,10 +40,6 @@ import 'ace-builds/src-min-noconflict/ext-themelist';
 import 'ace-builds/src-min-noconflict/ext-whitespace';
 import 'brace/mode/yaml';
 import 'brace/theme/cobalt';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import useStyles from './styles';
-import { AceValidations, parseYamlValidations } from './Validations';
 
 interface YamlEditorProps {
   content: string;
@@ -47,6 +47,7 @@ interface YamlEditorProps {
   readOnly: boolean;
   setButtonState?: (btnState: boolean) => void;
   saveWorkflowChange?: (updatedManifest: string) => void;
+  className?: Object;
 }
 
 const YamlEditor: React.FC<YamlEditorProps> = ({
@@ -55,6 +56,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   readOnly,
   setButtonState,
   saveWorkflowChange,
+  className,
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
@@ -232,7 +234,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
 
   return (
     <div
-      className={classes.editorBackgroundFull}
+      className={`${classes.editorBackgroundFull} ${className}`}
       id="editor"
       data-cy="WorkflowEditor"
     >
@@ -439,121 +441,111 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
           </div>
         )}
       </div>
-      <div className={classes.fullWidth}>
-        <Box display="flex" p={1} className={classes.editorContainer}>
-          <Box
-            p={1}
-            flexGrow={1}
-            className={classes.editorGrid}
-            id="resize-editor"
+      <div className={classes.editor}>
+        <AceEditor
+          mode="yaml"
+          theme="cobalt"
+          name="code"
+          width="100%"
+          height="100%"
+          maxLines={12000}
+          minLines={1}
+          highlightActiveLine={false}
+          readOnly={readOnly}
+          tabSize={2}
+          wrapEnabled
+          ref={YamlAce}
+          showGutter
+          onChange={onEditorChange}
+          showPrintMargin={false}
+          enableBasicAutocompletion
+          enableSnippets
+          enableLiveAutocompletion
+          value={editorState.content}
+          editorProps={{
+            $blockScrolling: Infinity,
+            $useWorker: true,
+          }}
+          onLoad={(editor) => {
+            editor.setReadOnly(readOnly);
+            editor.setOptions({
+              fontFamily: 'monospace',
+              highlightGutterLine: false,
+              autoScrollEditorIntoView: true,
+              tooltipFollowsMouse: true,
+              displayIndentGuides: false,
+            });
+            editor.focus();
+            editor.setHighlightSelectedWord(true);
+            editor.session.setFoldStyle('markbeginend');
+            editor.setShowFoldWidgets(true);
+            editor.setAnimatedScroll(true);
+            editor.setShowInvisibles(false);
+            editor.setFontSize('0.98rem');
+            editor.container.style.background = palette.common.black;
+            editor.container.style.lineHeight = '160%';
+            const nodeStyle = (document.getElementsByClassName(
+              'ace_gutter'
+            )[0] as any).style;
+            nodeStyle.color = palette.secondary.contrastText;
+            nodeStyle.borderRight = 0;
+            nodeStyle.background = palette.common.black;
+          }}
+          onCursorChange={(selection) => {
+            (YamlAce.current!.editor as any).setOptions({
+              autoScrollEditorIntoView: true,
+              tooltipFollowsMouse: true,
+            });
+
+            const nodeStyleActiveList = document.getElementsByClassName(
+              'ace_gutter-cell'
+            );
+            for (let i = 0; i < nodeStyleActiveList.length; i += 1) {
+              (nodeStyleActiveList[i] as any).style.backgroundColor =
+                palette.common.black;
+              (nodeStyleActiveList[i] as any).style.color =
+                palette.secondary.contrastText;
+            }
+
+            if (
+              document.getElementsByClassName('ace_gutter-cell')[
+                selection.cursor.row
+              ] as any
+            ) {
+              const nodeStyleActive = (document.getElementsByClassName(
+                'ace_gutter-cell'
+              )[selection.cursor.row] as any).style;
+              nodeStyleActive.backgroundColor = palette.primary.main;
+              nodeStyleActive.color = palette.secondary.contrastText;
+            }
+          }}
+          annotations={editorState.annotations}
+          markers={editorState.markers}
+        />
+        <Box p={1} flexGrow={0} className={classes.fullScreenGrid}>
+          <Tooltip
+            title="Full Screen (Press Escape to End)"
+            placement="bottom"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
           >
-            <AceEditor
-              mode="yaml"
-              theme="cobalt"
-              name="code"
-              width="100%"
-              height="100%"
-              maxLines={12000}
-              minLines={1}
-              highlightActiveLine={false}
-              readOnly={readOnly}
-              tabSize={2}
-              wrapEnabled
-              ref={YamlAce}
-              showGutter
-              onChange={onEditorChange}
-              showPrintMargin={false}
-              enableBasicAutocompletion
-              enableSnippets
-              enableLiveAutocompletion
-              value={editorState.content}
-              editorProps={{
-                $blockScrolling: Infinity,
-                $useWorker: true,
-              }}
-              onLoad={(editor) => {
-                editor.setReadOnly(readOnly);
-                editor.setOptions({
-                  fontFamily: 'monospace',
-                  highlightGutterLine: false,
-                  autoScrollEditorIntoView: true,
-                  tooltipFollowsMouse: true,
-                  displayIndentGuides: false,
-                });
-                editor.focus();
-                editor.setHighlightSelectedWord(true);
-                editor.session.setFoldStyle('markbeginend');
-                editor.setShowFoldWidgets(true);
-                editor.setAnimatedScroll(true);
-                editor.setShowInvisibles(false);
-                editor.setFontSize('0.98rem');
-                editor.container.style.background = palette.common.black;
-                editor.container.style.lineHeight = '160%';
-                const nodeStyle = (document.getElementsByClassName(
-                  'ace_gutter'
-                )[0] as any).style;
-                nodeStyle.color = palette.secondary.contrastText;
-                nodeStyle.borderRight = 0;
-                nodeStyle.background = palette.common.black;
-              }}
-              onCursorChange={(selection) => {
-                (YamlAce.current!.editor as any).setOptions({
-                  autoScrollEditorIntoView: true,
-                  tooltipFollowsMouse: true,
-                });
-
-                const nodeStyleActiveList = document.getElementsByClassName(
-                  'ace_gutter-cell'
-                );
-                for (let i = 0; i < nodeStyleActiveList.length; i += 1) {
-                  (nodeStyleActiveList[i] as any).style.backgroundColor =
-                    palette.common.black;
-                  (nodeStyleActiveList[i] as any).style.color =
-                    palette.secondary.contrastText;
-                }
-
-                if (
-                  document.getElementsByClassName('ace_gutter-cell')[
-                    selection.cursor.row
-                  ] as any
-                ) {
-                  const nodeStyleActive = (document.getElementsByClassName(
-                    'ace_gutter-cell'
-                  )[selection.cursor.row] as any).style;
-                  nodeStyleActive.backgroundColor = palette.primary.main;
-                  nodeStyleActive.color = palette.secondary.contrastText;
-                }
-              }}
-              annotations={editorState.annotations}
-              markers={editorState.markers}
+            <Button
+              variant="outlined"
+              className={classes.editorButtonFullScreen}
+              onClick={fullscreentrigger}
+              startIcon={
+                <img
+                  src="/icons/fullscreen.svg"
+                  alt="Full Screen"
+                  color={palette.secondary.contrastText}
+                  className={classes.fullScreenIcon}
+                />
+              }
             />
-          </Box>
-          <Box p={1} flexGrow={0} className={classes.fullScreenGrid}>
-            <Tooltip
-              title="Full Screen (Press Escape to End)"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={classes.editorButtonFullScreen}
-                onClick={fullscreentrigger}
-                startIcon={
-                  <img
-                    src="/icons/fullscreen.svg"
-                    alt="Full Screen"
-                    color={palette.secondary.contrastText}
-                    className={classes.fullScreenIcon}
-                  />
-                }
-              />
-            </Tooltip>
-          </Box>
+          </Tooltip>
         </Box>
       </div>
-      <div className={classes.extraSpace} />
     </div>
   );
 };

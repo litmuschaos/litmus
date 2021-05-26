@@ -188,6 +188,7 @@ type ComplexityRoot struct {
 
 	ManifestTemplate struct {
 		CreatedAt           func(childComplexity int) int
+		IsCustomWorkflow    func(childComplexity int) int
 		IsRemoved           func(childComplexity int) int
 		Manifest            func(childComplexity int) int
 		ProjectID           func(childComplexity int) int
@@ -1296,6 +1297,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ManifestTemplate.CreatedAt(childComplexity), true
+
+	case "ManifestTemplate.isCustomWorkflow":
+		if e.complexity.ManifestTemplate.IsCustomWorkflow == nil {
+			break
+		}
+
+		return e.complexity.ManifestTemplate.IsCustomWorkflow(childComplexity), true
 
 	case "ManifestTemplate.is_removed":
 		if e.complexity.ManifestTemplate.IsRemoved == nil {
@@ -3566,7 +3574,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3785,7 +3793,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -3812,7 +3820,7 @@ type ImageRegistryResponse {
     is_removed: Boolean
 }
 `, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3986,7 +3994,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -4018,7 +4026,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -4265,6 +4273,7 @@ type ManifestTemplate {
   project_name: String!
   created_at: String!
   is_removed: Boolean!
+  isCustomWorkflow: Boolean!
 }
 
 input TemplateInput {
@@ -4272,6 +4281,7 @@ input TemplateInput {
   template_name: String!
   template_description: String!
   project_id: String!
+  isCustomWorkflow: Boolean!
 }
 
 type KubeObjectResponse {
@@ -4470,7 +4480,7 @@ type Subscription {
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -8870,6 +8880,40 @@ func (ec *executionContext) _ManifestTemplate_is_removed(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ManifestTemplate_isCustomWorkflow(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ManifestTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsCustomWorkflow, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21166,6 +21210,12 @@ func (ec *executionContext) unmarshalInputTemplateInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "isCustomWorkflow":
+			var err error
+			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -22641,6 +22691,11 @@ func (ec *executionContext) _ManifestTemplate(ctx context.Context, sel ast.Selec
 			}
 		case "is_removed":
 			out.Values[i] = ec._ManifestTemplate_is_removed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isCustomWorkflow":
+			out.Values[i] = ec._ManifestTemplate_isCustomWorkflow(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

@@ -593,7 +593,8 @@ const TuneWorkflow = forwardRef((_, ref) => {
         onClose={() => {
           setYAMLModal(false);
         }}
-        width="60%"
+        width="90%"
+        height="90%"
         modalActions={
           <ButtonOutlined
             onClick={() => {
@@ -643,6 +644,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
               <YamlEditor
                 content={manifest}
                 filename={workflow.name}
+                className={classes.editor}
                 readOnly={false}
                 setButtonState={(btnState: boolean) => {
                   setYamlValid(btnState);
