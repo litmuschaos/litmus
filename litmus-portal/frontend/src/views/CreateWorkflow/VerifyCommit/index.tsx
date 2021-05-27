@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client';
-import { Divider, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { Divider, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import InfoIcon from '@material-ui/icons/Info';
 import cronstrue from 'cronstrue';
@@ -92,8 +92,8 @@ const VerifyCommit = forwardRef(
 
     const { clusterid, cronSyntax, clustername } = workflowData;
 
-    const manifest = useSelector(
-      (state: RootState) => state.workflowManifest.manifest
+    const { manifest, isCustomWorkflow } = useSelector(
+      (state: RootState) => state.workflowManifest
     );
 
     useEffect(() => {
@@ -276,7 +276,7 @@ const VerifyCommit = forwardRef(
           cronSyntax,
           workflow_name: fetchWorkflowNameFromManifest(manifest),
           workflow_description: workflow.description,
-          isCustomWorkflow: false,
+          isCustomWorkflow,
           weightages: weightData,
           project_id: getProjectID(),
           cluster_id: clusterid,
@@ -434,9 +434,7 @@ const VerifyCommit = forwardRef(
                       </Typography>
                     }
                   >
-                    <IconButton aria-label="info">
-                      <InfoIcon />
-                    </IconButton>
+                    <InfoIcon className={classes.info} />
                   </Tooltip>
                 </div>
 

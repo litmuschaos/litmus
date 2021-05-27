@@ -91,6 +91,13 @@ const useStyles = makeStyles((theme) => ({
   key: {
     margin: theme.spacing(1, 2),
   },
+  selection: {
+    cursor: 'pointer',
+
+    '&:hover': {
+      background: theme.palette.background.default,
+    },
+  },
 
   // Styles for Add Experiment Modal
   addExpModal: {
@@ -142,6 +149,11 @@ const useStyles = makeStyles((theme) => ({
   },
   saveTemplateRoot: {
     margin: theme.spacing(8, 5, 5, 5),
+  },
+
+  // Editor
+  editor: {
+    height: '100%',
   },
 
   // Confirmation Modal

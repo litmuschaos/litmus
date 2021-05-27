@@ -9,20 +9,20 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
   GET_IMAGE_REGISTRY,
   LIST_IMAGE_REGISTRY,
 } from '../../../graphql';
+import { ImageRegistryInfo } from '../../../models/redux/image_registry';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
-import * as WorkflowActions from '../../../redux/actions/workflow';
 import * as ImageRegistryActions from '../../../redux/actions/image_registry';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
-import { ImageRegistryInfo } from '../../../models/redux/image_registry';
-import { constants } from '../../../constants';
 
 interface Cluster {
   cluster_name: string;

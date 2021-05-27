@@ -3,6 +3,8 @@ package objects
 import (
 	"encoding/json"
 	"errors"
+	"os"
+	"strings"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
@@ -10,6 +12,11 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
+)
+
+var (
+	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
+	AgentScope     = os.Getenv("AGENT_SCOPE")
 )
 
 //GetKubernetesObjects is used to get the Kubernetes Object details according to the request type
@@ -33,33 +40,47 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 		return nil, err
 	}
 	var ObjData []*types.KubeObject
-	namespace, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
-	if err != nil {
-		return nil, err
-	}
 
-	if len(namespace.Items) > 0 {
-		for _, namespace := range namespace.Items {
-			podList, err := GetObjectDataByNamespace(namespace.GetName(), dynamicClient, resourceType)
-			if err != nil {
-				return nil, err
-			}
-			KubeObj := &types.KubeObject{
-				Namespace: namespace.GetName(),
-				Data:      podList,
-			}
-			ObjData = append(ObjData, KubeObj)
-		}
-		kubeData, _ := json.Marshal(ObjData)
-		var kubeObjects []*types.KubeObject
-		err := json.Unmarshal(kubeData, &kubeObjects)
+	if strings.ToLower(AgentScope) == "namespace" {
+		dataList, err := GetObjectDataByNamespace(AgentNamespace, dynamicClient, resourceType)
 		if err != nil {
 			return nil, err
 		}
-		return kubeObjects, nil
+		KubeObj := &types.KubeObject{
+			Namespace: AgentNamespace,
+			Data:      dataList,
+		}
+		ObjData = append(ObjData, KubeObj)
 	} else {
-		return nil, errors.New("No namespace available")
+		namespace, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
+		if err != nil {
+			return nil, err
+		}
+
+		if len(namespace.Items) > 0 {
+			for _, namespace := range namespace.Items {
+				podList, err := GetObjectDataByNamespace(namespace.GetName(), dynamicClient, resourceType)
+				if err != nil {
+					return nil, err
+				}
+				KubeObj := &types.KubeObject{
+					Namespace: namespace.GetName(),
+					Data:      podList,
+				}
+				ObjData = append(ObjData, KubeObj)
+			}
+		} else {
+			return nil, errors.New("No namespace available")
+		}
+
 	}
+	kubeData, _ := json.Marshal(ObjData)
+	var kubeObjects []*types.KubeObject
+	err = json.Unmarshal(kubeData, &kubeObjects)
+	if err != nil {
+		return nil, err
+	}
+	return kubeObjects, nil
 }
 
 //GetObjectDataByNamespace uses dynamic client to fetch Kubernetes Objects data.

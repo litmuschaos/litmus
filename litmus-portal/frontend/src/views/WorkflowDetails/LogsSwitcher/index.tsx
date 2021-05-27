@@ -1,5 +1,6 @@
 import { useQuery, useSubscription } from '@apollo/client';
 import { Tabs, Typography, useTheme } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -89,6 +90,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   }, [workflow_data]);
 
   const [chaosResult, setChaosResult] = useState('');
+
   useEffect(() => {
     if (workflow !== undefined) {
       const nodeData = (JSON.parse(workflow.execution_data) as ExecutionData)
@@ -135,12 +137,47 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     return '';
   };
 
+  // Function to download the logs
+  const downloadLogs = (logs: any, podName: string) => {
+    const element = document.createElement('a');
+    let chaos_logs = '';
+    try {
+      chaos_logs = chaosLogs(logs.chaos_logs);
+    } catch {
+      chaos_logs = 'Chaos Logs unavailable';
+    }
+    const file = new Blob([logs?.main_logs, chaos_logs], {
+      type: 'text/txt',
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `${podName}.txt`;
+    document.body.appendChild(element);
+    element.click();
+  };
+
   const parseLogs = (logs: string) => {
     try {
       const podLogs = JSON.parse(logs);
       return (
         <div>
           <div>
+            {workflow !== undefined &&
+            JSON.parse(workflow?.execution_data).nodes[pod_name].type ===
+              'ChaosEngine' ? (
+              <ButtonFilled
+                onClick={() => {
+                  downloadLogs(podLogs, pod_name);
+                }}
+                className={classes.downloadLogsBtn}
+              >
+                <Typography>
+                  <img src="/icons/download-logs.svg" alt="download logs" />{' '}
+                  {t('workflowDetailsView.logs')}
+                </Typography>
+              </ButtonFilled>
+            ) : (
+              <></>
+            )}
             {podLogs?.main_logs !== null && podLogs?.main_logs !== '' ? (
               <div style={{ whiteSpace: 'pre-wrap' }}>
                 <Typography className={classes.text}>

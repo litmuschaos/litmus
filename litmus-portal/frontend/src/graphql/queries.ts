@@ -311,6 +311,7 @@ export const LIST_MANIFEST_TEMPLATE = gql`
       project_name
       template_description
       template_name
+      isCustomWorkflow
     }
   }
 `;
@@ -483,6 +484,12 @@ export const GET_TEMPLATE_BY_ID = gql`
       template_id
       manifest
     }
+  }
+`;
+
+export const GET_PREDEFINED_WORKFLOW_LIST = gql`
+  query GetPredefinedWorkflowList($hubname: String!, $projectid: String!) {
+    GetPredefinedWorkflowList(HubName: $hubname, projectID: $projectid)
   }
 `;
 

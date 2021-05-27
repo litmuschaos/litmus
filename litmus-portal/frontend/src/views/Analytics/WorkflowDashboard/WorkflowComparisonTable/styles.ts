@@ -110,6 +110,7 @@ const useStyles = makeStyles((theme) => ({
 
   tableBody: {
     backgroundColor: theme.palette.background.paper,
+    overflowY: 'auto',
   },
   tableMainShowAll: {
     marginTop: theme.spacing(4.25),

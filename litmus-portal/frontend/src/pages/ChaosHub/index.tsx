@@ -46,12 +46,28 @@ const MyHub: React.FC = () => {
 
   const [drawerState, setDrawerState] = useState(false);
 
+  /**
+   * State Variables for Edit MyHub
+   */
+  const [hubName, setHubName] = useState(''); // To distinguish between create or edit MyHub
+
+  const openHubDrawer = (myHubName: string) => {
+    setHubName(myHubName);
+    setDrawerState(true);
+  };
+
   const handleDrawerClose = () => {
+    if (hubName.length) {
+      setHubName('');
+    }
     setDrawerState(false);
   };
 
   const handleDrawerCloseWithRefetch = () => {
     setDrawerState(false);
+    if (hubName.length) {
+      setHubName('');
+    }
     refetch();
   };
 
@@ -165,6 +181,7 @@ const MyHub: React.FC = () => {
                         handleDelete={handleDelete}
                         handleRefresh={handleRefresh}
                         refreshLoader={refreshLoading}
+                        handleEditHub={openHubDrawer}
                       />
                     ))}
                 </div>
@@ -203,14 +220,16 @@ const MyHub: React.FC = () => {
         </>
       )}
 
-      {/* Add MyHub Drawer */}
+      {/* Add/Edit MyHub Drawer */}
       <MyHubConnectDrawer
+        hubName={hubName}
         drawerState={drawerState}
         handleDrawerClose={handleDrawerClose}
         refetchQuery={handleDrawerCloseWithRefetch}
         setAlertState={(alert) => setDisplayResult(alert)}
         setAlertResult={(alertResult) => setCloneResult(alertResult)}
       />
+      {/* SnackBar to display success/failure alerts */}
       <Snackbar
         open={displayResult}
         autoHideDuration={6000}

@@ -79,6 +79,25 @@ const AddProbe: React.FC<AddProbeProps> = ({
     setProbeType(newProbe);
   };
 
+  // Reset all input data on clicking close button or cancel button
+  const clearData = () => {
+    setProbeData({
+      name: '',
+      type: 'httpProbe',
+      mode: 'Continuous',
+      runProperties: {},
+      'httpProbe/inputs': {},
+    });
+    setRunProperties({
+      probeTimeout: '',
+      retry: '',
+      interval: '',
+      probePollingInterval: '',
+      initialDelaySeconds: '',
+    });
+    setProbeType('httpProbe/inputs');
+  };
+
   const handleAddProbe = () => {
     const properties = runProperties;
     if (Number.isNaN(parseInt(properties.initialDelaySeconds as string, 10))) {
@@ -100,13 +119,22 @@ const AddProbe: React.FC<AddProbeProps> = ({
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        clearData();
+        handleClose();
+      }}
       width="60%"
       className={classes.modal}
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
       modalActions={
-        <ButtonOutlined className={classes.closeButton} onClick={handleClose}>
+        <ButtonOutlined
+          className={classes.closeButton}
+          onClick={() => {
+            clearData();
+            handleClose();
+          }}
+        >
           &#x2715;
         </ButtonOutlined>
       }
@@ -292,7 +320,12 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <ProbeDetails setProbeData={setProbeData} probeData={probeData} />
 
           <div className={classes.buttonDiv}>
-            <ButtonOutlined onClick={handleClose}>
+            <ButtonOutlined
+              onClick={() => {
+                clearData();
+                handleClose();
+              }}
+            >
               {t('createWorkflow.tuneWorkflow.addProbe.button.cancel')}
             </ButtonOutlined>
             <ButtonFilled type="submit">

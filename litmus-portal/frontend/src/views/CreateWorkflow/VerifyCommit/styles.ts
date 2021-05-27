@@ -101,6 +101,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   subjectDesc: {
     fontSize: '0.75rem',
   },
+  info: {
+    margin: theme.spacing(0.5, 1),
+  },
   editIcon: {
     cursor: 'pointer',
     color: theme.palette.text.hint,

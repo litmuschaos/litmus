@@ -593,7 +593,8 @@ const TuneWorkflow = forwardRef((_, ref) => {
         onClose={() => {
           setYAMLModal(false);
         }}
-        width="60%"
+        width="90%"
+        height="90%"
         modalActions={
           <ButtonOutlined
             onClick={() => {
@@ -643,6 +644,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
               <YamlEditor
                 content={manifest}
                 filename={workflow.name}
+                className={classes.editor}
                 readOnly={false}
                 setButtonState={(btnState: boolean) => {
                   setYamlValid(btnState);
@@ -680,7 +682,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
         </Typography>
         <Row className={classes.descriptionWrapper}>
           <Typography className={classes.description}>
-            {t('createWorkflow.tuneWorkflow.selectedWorkflowInfo')}{' '}
+            {selectedRadio === 'A'
+              ? t('createWorkflow.tuneWorkflow.selectedPreDefinedWorkflowInfo')
+              : selectedRadio === 'B'
+              ? t('createWorkflow.tuneWorkflow.selectedTemplateInfo')
+              : selectedRadio === 'C'
+              ? t('createWorkflow.tuneWorkflow.selectedCustomWorkflowInfo')
+              : t('createWorkflow.tuneWorkflow.selectedUploadYAML')}{' '}
             <i>
               <strong>
                 {workflow.name.split('-').map((text) => `${capitalize(text)} `)}

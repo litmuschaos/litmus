@@ -13,6 +13,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import TimePopOver from '../../../components/TimePopOver';
 import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
 import { WorkflowRun } from '../../../models/graphql/workflowData';
 import {
@@ -22,7 +23,6 @@ import {
 import useActions from '../../../redux/actions';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import { history } from '../../../redux/configureStore';
-import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
 import CustomStatus from '../CustomStatus/Status';
@@ -48,6 +48,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   // Function to capitalize the first letter of the word
   // eg: internal to Internal
   const nameCapitalized = (clusterType: string) => {
@@ -204,7 +205,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         </div>
       </TableCell>
       <TableCell>
-        <Typography>{timeDifferenceForDate(data.last_updated)}</Typography>
+        <TimePopOver unixTime={data.last_updated ?? ''} />
       </TableCell>
       <TableCell>
         <IconButton
