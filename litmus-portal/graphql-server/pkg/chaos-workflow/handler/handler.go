@@ -240,63 +240,51 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 	pipeline = append(pipeline, unwindStage)
 
+	var sortStage bson.D
+
 	switch {
 	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldTime:
 		// Sorting based on LastUpdated time
 		if input.Sort.Descending != nil && *input.Sort.Descending {
-			sortDescTimeStage := bson.D{
+			sortStage = bson.D{
 				{"$sort", bson.D{
 					{"workflow_runs.last_updated", -1},
 				}},
 			}
-
-			pipeline = append(pipeline, sortDescTimeStage)
 		} else {
-			sortAscTimeStage := bson.D{
+			sortStage = bson.D{
 				{"$sort", bson.D{
 					{"workflow_runs.last_updated", 1},
 				}},
 			}
-
-			pipeline = append(pipeline, sortAscTimeStage)
 		}
 	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldName:
 		// Sorting based on WorkflowName time
 		if input.Sort.Descending != nil && *input.Sort.Descending {
-			sortDescNameStage := bson.D{
+			sortStage = bson.D{
 				{"$sort", bson.D{
 					{"workflow_name", -1},
 				}},
 			}
-
-			pipeline = append(pipeline, sortDescNameStage)
 		} else {
-			sortAscNameStage := bson.D{
+			sortStage = bson.D{
 				{"$sort", bson.D{
 					{"workflow_name", 1},
 				}},
 			}
-
-			pipeline = append(pipeline, sortAscNameStage)
 		}
 	default:
 		// Default sorting: sorts it by LastUpdated time in descending order
-		sortDescTimeStage := bson.D{
+		sortStage = bson.D{
 			{"$sort", bson.D{
 				{"workflow_runs.last_updated", -1},
 			}},
 		}
-
-		pipeline = append(pipeline, sortDescTimeStage)
 	}
 
 	// Pagination
 	paginatedWorkflows := bson.A{
-		bson.D{
-			{"$match", bson.D{
-				{"project_id", input.ProjectID},
-			}},
-		},
+		sortStage,
 	}
 
 	if input.Pagination != nil {
