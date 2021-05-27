@@ -399,7 +399,9 @@ const VerifyCommit = forwardRef(
                   {t('createWorkflow.verifyCommit.summary.clustername')}:
                 </Typography>
 
-                <Typography className={classes.right}>{clustername}</Typography>
+                <Typography className={classes.right} data-cy="AgentName">
+                  {clustername}
+                </Typography>
               </div>
               <div className={classes.itemWrapper}>
                 <Typography className={classes.left}>
@@ -408,7 +410,10 @@ const VerifyCommit = forwardRef(
 
                 <div className={classes.right}>
                   {workflow.description !== '' ? (
-                    <div style={{ width: '100%' }}>
+                    <div
+                      style={{ width: '100%' }}
+                      data-cy="WorkflowDescription"
+                    >
                       <EditableText
                         defaultValue={workflow.description}
                         id="desc"
@@ -469,14 +474,11 @@ const VerifyCommit = forwardRef(
 
                 <div className={classes.right}>
                   <div className={classes.spaceBetween}>
-                    {cronSyntax === '' ? (
-                      <Typography>
-                        {t('createWorkflow.verifyCommit.summary.schedulingNow')}
-                      </Typography>
-                    ) : (
-                      <Typography>{cronstrue.toString(cronSyntax)}</Typography>
-                    )}
-
+                    <Typography data-cy="schedule">
+                      {cronSyntax === ''
+                        ? t('createWorkflow.verifyCommit.summary.schedulingNow')
+                        : cronstrue.toString(cronSyntax)}
+                    </Typography>
                     <EditIcon
                       onClick={() => handleGoToStep(5)}
                       className={classes.editIcon}

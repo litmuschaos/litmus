@@ -203,6 +203,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
           <div className={classes.inputDiv}>
             <div aria-details="spacer" className={classes.mainDiv}>
               <InputField
+                data-cy="WorkflowName"
                 title="workflowName"
                 label={t('createWorkflow.chooseWorkflow.label.workflowName')}
                 fullWidth
@@ -216,6 +217,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
                 value={name}
               />
               <InputField
+                data-cy="WorkflowNamespace"
                 InputProps={{
                   readOnly: true,
                 }}
@@ -226,6 +228,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
             </div>
             <div aria-details="spacer" className={classes.descDiv} />
             <InputField
+              data-cy="WorkflowDescription"
               id="filled-workflowdescription-input"
               label={t('createWorkflow.chooseWorkflow.label.desc')}
               fullWidth

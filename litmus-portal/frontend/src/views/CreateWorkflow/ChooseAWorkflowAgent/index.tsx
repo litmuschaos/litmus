@@ -230,6 +230,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
               }
             >
               <RadioButton
+                data-cy="AgentRadioButtons"
                 value={cluster.cluster_id}
                 className={classes.agentRadioButton}
                 onChange={(e) => handleChange(e)}

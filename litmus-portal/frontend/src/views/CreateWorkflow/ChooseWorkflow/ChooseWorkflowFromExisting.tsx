@@ -113,7 +113,11 @@ const ChooseWorkflowFromExisting = () => {
         <br />
 
         <div className={classes.predefinedWorkflowDiv}>
-          <RadioGroup value={selected} onChange={handleChange}>
+          <RadioGroup
+            data-cy="templateWorkflowsRadioGroup"
+            value={selected}
+            onChange={handleChange}
+          >
             {filteredExistingWorkflows && filteredExistingWorkflows.length ? (
               filteredExistingWorkflows.map(
                 (templateData: ListManifestTemplateArray) => (
