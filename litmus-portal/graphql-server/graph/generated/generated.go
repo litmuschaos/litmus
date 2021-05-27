@@ -4077,7 +4077,7 @@ directive @authorized on FIELD_DEFINITION
 
 type Cluster {
   cluster_id: ID!
-  project_id: String!
+  project_id: ID!
   cluster_name: String!
   description: String
   platform_name: String!
@@ -4103,7 +4103,7 @@ input ClusterInput {
   cluster_name: String!
   description: String
   platform_name: String!
-  project_id: String!
+  project_id: ID!
   cluster_type: String!
   agent_namespace: String
   serviceaccount: String
@@ -4128,7 +4128,7 @@ type ActionPayload {
 }
 
 type ClusterAction {
-  project_id: String!
+  project_id: ID!
   action: ActionPayload!
 }
 
@@ -4173,7 +4173,7 @@ input ChaosWorkFlowInput {
   workflow_description: String!
   weightages: [WeightagesInput!]!
   isCustomWorkflow: Boolean!
-  project_id: String!
+  project_id: ID!
   cluster_id: ID!
 }
 
@@ -4232,7 +4232,7 @@ type ScheduledWorkflows {
   isCustomWorkflow: Boolean!
   updated_at: String!
   created_at: String!
-  project_id: String!
+  project_id: ID!
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
@@ -4249,7 +4249,7 @@ type Workflow {
   isCustomWorkflow: Boolean!
   updated_at: String!
   created_at: String!
-  project_id: String!
+  project_id: ID!
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
@@ -4592,7 +4592,7 @@ input SortInput {
 }
 
 input GetWorkflowRunsInput {
-  project_id: String!
+  project_id: ID!
   workflow_run_ids: [ID]
   pagination: Pagination
   sort: SortInput
@@ -4604,7 +4604,7 @@ type WorkflowRun {
   workflow_id: ID!
   cluster_name: String!
   last_updated: String!
-  project_id: String!
+  project_id: ID!
   cluster_id: ID!
   workflow_name: String!
   cluster_type: String
@@ -6517,7 +6517,7 @@ func (ec *executionContext) _Cluster_project_id(ctx context.Context, field graph
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Cluster_cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
@@ -7176,7 +7176,7 @@ func (ec *executionContext) _ClusterAction_project_id(ctx context.Context, field
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClusterAction_action(ctx context.Context, field graphql.CollectedField, obj *model.ClusterAction) (ret graphql.Marshaler) {
@@ -15200,7 +15200,7 @@ func (ec *executionContext) _ScheduledWorkflows_project_id(ctx context.Context, 
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ScheduledWorkflows_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
@@ -16806,7 +16806,7 @@ func (ec *executionContext) _Workflow_project_id(ctx context.Context, field grap
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Workflow_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
@@ -17109,7 +17109,7 @@ func (ec *executionContext) _WorkflowRun_project_id(ctx context.Context, field g
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRun_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
@@ -20672,7 +20672,7 @@ func (ec *executionContext) unmarshalInputChaosWorkFlowInput(ctx context.Context
 			}
 		case "project_id":
 			var err error
-			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
+			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20870,7 +20870,7 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 			}
 		case "project_id":
 			var err error
-			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
+			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21194,7 +21194,7 @@ func (ec *executionContext) unmarshalInputGetWorkflowRunsInput(ctx context.Conte
 		switch k {
 		case "project_id":
 			var err error
-			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
+			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

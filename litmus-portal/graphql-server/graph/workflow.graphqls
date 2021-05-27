@@ -33,7 +33,7 @@ input SortInput {
 }
 
 input GetWorkflowRunsInput {
-  project_id: String!
+  project_id: ID!
   workflow_run_ids: [ID]
   pagination: Pagination
   sort: SortInput
@@ -45,7 +45,7 @@ type WorkflowRun {
   workflow_id: ID!
   cluster_name: String!
   last_updated: String!
-  project_id: String!
+  project_id: ID!
   cluster_id: ID!
   workflow_name: String!
   cluster_type: String

@@ -6,7 +6,7 @@ directive @authorized on FIELD_DEFINITION
 
 type Cluster {
   cluster_id: ID!
-  project_id: String!
+  project_id: ID!
   cluster_name: String!
   description: String
   platform_name: String!
@@ -32,7 +32,7 @@ input ClusterInput {
   cluster_name: String!
   description: String
   platform_name: String!
-  project_id: String!
+  project_id: ID!
   cluster_type: String!
   agent_namespace: String
   serviceaccount: String
@@ -57,7 +57,7 @@ type ActionPayload {
 }
 
 type ClusterAction {
-  project_id: String!
+  project_id: ID!
   action: ActionPayload!
 }
 
@@ -102,7 +102,7 @@ input ChaosWorkFlowInput {
   workflow_description: String!
   weightages: [WeightagesInput!]!
   isCustomWorkflow: Boolean!
-  project_id: String!
+  project_id: ID!
   cluster_id: ID!
 }
 
@@ -161,7 +161,7 @@ type ScheduledWorkflows {
   isCustomWorkflow: Boolean!
   updated_at: String!
   created_at: String!
-  project_id: String!
+  project_id: ID!
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
@@ -178,7 +178,7 @@ type Workflow {
   isCustomWorkflow: Boolean!
   updated_at: String!
   created_at: String!
-  project_id: String!
+  project_id: ID!
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
