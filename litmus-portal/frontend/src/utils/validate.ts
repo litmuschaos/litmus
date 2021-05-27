@@ -41,6 +41,18 @@ export const validateWorkflowName = (value: string) => {
   return false;
 };
 
+export const validateProbeName = (allProbe: any, probeName: string) => {
+  if (allProbe.length) {
+    const filteredProbes = allProbe.filter(
+      (probe: any) => probe.name.toLowerCase() === probeName
+    );
+    if (filteredProbes.length) {
+      return true;
+    }
+  }
+  return false;
+};
+
 export const validatePassword = (value: string) => {
   const passValid = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
   if (value.length > 0) {
