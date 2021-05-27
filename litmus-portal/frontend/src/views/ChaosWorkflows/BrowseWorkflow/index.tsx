@@ -44,7 +44,7 @@ const BrowseWorkflow: React.FC = () => {
   // State for pagination
   const [paginationData, setPaginationData] = useState<Pagination>({
     page: 0,
-    limit: 5,
+    limit: 10,
   });
 
   // States for filters
@@ -378,7 +378,7 @@ const BrowseWorkflow: React.FC = () => {
 
         {/* Pagination */}
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
           count={data?.getWorkflowRuns.total_no_of_workflow_runs ?? 0}
           rowsPerPage={paginationData.limit}

@@ -129,6 +129,18 @@ func (m *MongoClient) initAllCollection() {
 			},
 			Options: options.Index().SetUnique(true),
 		},
+		{
+			Keys: bson.M{
+				"workflow_runs.workflow_run_id": 1,
+			},
+			Options: options.Index().SetUnique(false),
+		},
+		{
+			Keys: bson.M{
+				"workflow_runs.last_updated": -1,
+			},
+			Options: options.Index().SetUnique(false),
+		},
 	})
 	if err != nil {
 		log.Fatal("Error Creating Index for Workflow Collection: ", err)

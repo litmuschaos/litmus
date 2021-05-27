@@ -119,33 +119,38 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 
 // QueryWorkflowRuns sends all the workflow runs for a project from the DB
 func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
+	var pipeline mongo.Pipeline
+
 	// Match with projectID
 	matchStage := bson.D{
 		{"$match", bson.D{
 			{"project_id", input.ProjectID},
 		}},
 	}
-	pipeline := mongo.Pipeline{matchStage}
+	pipeline = append(pipeline, matchStage)
 
-	// Match the workflowRunsIds from the input array
+	includeAllFromWorkflow := bson.D{
+		{"workflow_id", 1},
+		{"workflow_name", 1},
+		{"workflow_manifest", 1},
+		{"cronSyntax", 1},
+		{"workflow_description", 1},
+		{"weightages", 1},
+		{"isCustomWorkflow", 1},
+		{"updated_at", 1},
+		{"created_at", 1},
+		{"project_id", 1},
+		{"cluster_id", 1},
+		{"cluster_name", 1},
+		{"cluster_type", 1},
+		{"isRemoved", 1},
+	}
+
+	// Match the pipelineIds from the input array
 	if len(input.WorkflowRunIds) != 0 {
 		matchWfRunIdStage := bson.D{
-			{"$project", bson.D{
-				{"workflow_id", 1},
-				{"workflow_name", 1},
-				{"workflow_manifest", 1},
-				{"cronSyntax", 1},
-				{"workflow_description", 1},
-				{"weightages", 1},
-				{"isCustomWorkflow", 1},
-				{"updated_at", 1},
-				{"created_at", 1},
-				{"project_id", 1},
-				{"cluster_id", 1},
-				{"cluster_name", 1},
-				{"cluster_type", 1},
-				{"isRemoved", 1},
-				{"workflow_runs", bson.D{
+			{"$project", append(includeAllFromWorkflow,
+				bson.E{Key: "workflow_runs", Value: bson.D{
 					{"$filter", bson.D{
 						{"input", "$workflow_runs"},
 						{"as", "wfRun"},
@@ -154,7 +159,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 						}},
 					}},
 				}},
-			}},
+			)},
 		}
 
 		pipeline = append(pipeline, matchWfRunIdStage)
@@ -188,22 +193,8 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		// Filtering based on phase
 		if input.Filter.WorkflowStatus != nil && *input.Filter.WorkflowStatus != "All" && *input.Filter.WorkflowStatus != "" {
 			filterWfRunPhaseStage := bson.D{
-				{"$project", bson.D{
-					{"workflow_id", 1},
-					{"workflow_name", 1},
-					{"workflow_manifest", 1},
-					{"cronSyntax", 1},
-					{"workflow_description", 1},
-					{"weightages", 1},
-					{"isCustomWorkflow", 1},
-					{"updated_at", 1},
-					{"created_at", 1},
-					{"project_id", 1},
-					{"cluster_id", 1},
-					{"cluster_name", 1},
-					{"cluster_type", 1},
-					{"isRemoved", 1},
-					{"workflow_runs", bson.D{
+				{"$project", append(includeAllFromWorkflow,
+					bson.E{Key: "workflow_runs", Value: bson.D{
 						{"$filter", bson.D{
 							{"input", "$workflow_runs"},
 							{"as", "wfRun"},
@@ -212,7 +203,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 							}},
 						}},
 					}},
-				}},
+				)},
 			}
 
 			pipeline = append(pipeline, filterWfRunPhaseStage)
@@ -221,22 +212,8 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		// Filtering based on date range
 		if input.Filter.DateRange != nil {
 			filterWfRunDateStage := bson.D{
-				{"$project", bson.D{
-					{"workflow_id", 1},
-					{"workflow_name", 1},
-					{"workflow_manifest", 1},
-					{"cronSyntax", 1},
-					{"workflow_description", 1},
-					{"weightages", 1},
-					{"isCustomWorkflow", 1},
-					{"updated_at", 1},
-					{"created_at", 1},
-					{"project_id", 1},
-					{"cluster_id", 1},
-					{"cluster_name", 1},
-					{"cluster_type", 1},
-					{"isRemoved", 1},
-					{"workflow_runs", bson.D{
+				{"$project", append(includeAllFromWorkflow,
+					bson.E{Key: "workflow_runs", Value: bson.D{
 						{"$filter", bson.D{
 							{"input", "$workflow_runs"},
 							{"as", "wfRun"},
@@ -248,7 +225,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 							}},
 						}},
 					}},
-				}},
+				)},
 			}
 
 			pipeline = append(pipeline, filterWfRunDateStage)
@@ -314,19 +291,40 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 
 	// Pagination
-	if input.Pagination != nil {
-		paginationStage := bson.D{
-			{"$limit", (input.Pagination.Page + 1) * input.Pagination.Limit},
-			//{"$skip", input.Pagination.Page * input.Pagination.Limit},
-		}
-
-		pipeline = append(pipeline, paginationStage)
+	paginatedWorkflows := bson.A{
+		bson.D{
+			{"$match", bson.D{
+				{"project_id", input.ProjectID},
+			}},
+		},
 	}
 
-	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
-	fmt.Println(workflowsCursor.ID())
+	if input.Pagination != nil {
+		paginationSkipStage := bson.D{
+			{"$skip", input.Pagination.Page * input.Pagination.Limit},
+		}
+		paginationLimitStage := bson.D{
+			{"$limit", input.Pagination.Limit},
+		}
 
-	var workflows []dbSchemaWorkflow.FlattenedWorkflowRuns
+		paginatedWorkflows = append(paginatedWorkflows, paginationSkipStage, paginationLimitStage)
+	}
+
+	// Add two stages where we first count the number of filtered workflow and then paginate the results
+	facetStage := bson.D{
+		{"$facet", bson.D{
+			{"total_filtered_workflow_runs", bson.A{
+				bson.D{{"$count", "count"}},
+			}},
+			{"flattened_workflow_runs", paginatedWorkflows},
+		}},
+	}
+	pipeline = append(pipeline, facetStage)
+
+	// Call aggregation on pipeline
+	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+
+	var workflows []dbSchemaWorkflow.AggregatedWorkflowRuns
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
 		fmt.Println(err)
 	}
@@ -336,7 +334,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 
 	var result []*model.WorkflowRun
 
-	for _, workflow := range workflows {
+	for _, workflow := range workflows[0].FlattenedWorkflowRuns {
 		workflowRun := workflow.WorkflowRuns
 
 		newWorkflowRun := model.WorkflowRun{
@@ -357,11 +355,8 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		result = append(result, &newWorkflowRun)
 	}
 
-	// Calculate length of result after filtering
-	totalNoOfRuns := len(result)
-
 	output := model.GetWorkflowsOutput{
-		TotalNoOfWorkflowRuns: totalNoOfRuns,
+		TotalNoOfWorkflowRuns: workflows[0].TotalFilteredWorkflowRuns[0].Count,
 		WorkflowRuns:          result,
 	}
 	return &output, nil

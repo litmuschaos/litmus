@@ -31,14 +31,14 @@ type WeightagesInput struct {
 
 // ChaosWorkflowRun contains the required fields to be stored in the database for a workflow run
 type ChaosWorkflowRun struct {
-	WorkflowRunID     string  `bson:"workflow_run_id"`
-	LastUpdated       string  `bson:"last_updated"`
-	Phase             string  `bson:"phase"`
+	WorkflowRunID     string   `bson:"workflow_run_id"`
+	LastUpdated       string   `bson:"last_updated"`
+	Phase             string   `bson:"phase"`
 	ResiliencyScore   *float64 `bson:"resiliency_score,string,omitempty"`
 	ExperimentsPassed *int     `bson:"experiments_passed,string,omitempty"`
 	TotalExperiments  *int     `bson:"total_experiments,string,omitempty"`
-	ExecutionData     string  `bson:"execution_data"`
-	Completed         bool    `bson:"completed"`
+	ExecutionData     string   `bson:"execution_data"`
+	Completed         bool     `bson:"completed"`
 }
 
 type ExecutionData struct {
@@ -86,7 +86,16 @@ type ChaosData struct {
 	ChaosResult            *chaosTypes.ChaosResult `json:"chaosResult"`
 }
 
-type FlattenedWorkflowRuns struct {
+type AggregatedWorkflowRuns struct {
+	TotalFilteredWorkflowRuns []TotalFilteredWorkflowRuns `bson:"total_filtered_workflow_runs"`
+	FlattenedWorkflowRuns     []FlattenedWorkflowRun      `bson:"flattened_workflow_runs"`
+}
+
+type TotalFilteredWorkflowRuns struct {
+	Count int `bson:"count"`
+}
+
+type FlattenedWorkflowRun struct {
 	WorkflowID          string             `bson:"workflow_id"`
 	WorkflowManifest    string             `bson:"workflow_manifest"`
 	CronSyntax          string             `bson:"cronSyntax"`

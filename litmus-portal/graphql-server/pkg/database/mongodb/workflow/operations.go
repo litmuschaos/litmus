@@ -54,9 +54,9 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 			{"$set", bson.D{
 				{"workflow_runs.$.last_updated", wfRun.LastUpdated},
 				{"workflow_runs.$.phase", wfRun.Phase},
-				//{"workflow_runs.$.resiliency_score", wfRun.ResiliencyScore},
-				//{"workflow_runs.$.experiments_passed", wfRun.ExperimentsPassed},
-				//{"workflow_runs.$.total_experiments", wfRun.TotalExperiments},
+				{"workflow_runs.$.resiliency_score", wfRun.ResiliencyScore},
+				{"workflow_runs.$.experiments_passed", wfRun.ExperimentsPassed},
+				{"workflow_runs.$.total_experiments", wfRun.TotalExperiments},
 				{"workflow_runs.$.execution_data", wfRun.ExecutionData},
 				{"workflow_runs.$.completed", wfRun.Completed},
 			}}}
