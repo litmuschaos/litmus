@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	"gopkg.in/yaml.v2"
 
@@ -104,6 +105,15 @@ func GetExperimentChartsVersionYamlPath(ctx context.Context, experimentInput mod
 	return ExperimentPath
 }
 
+// GetPredefinedWorkflowCSVPath is used to construct path for given chartsversion.yaml for pre-defined workflow.
+func GetPreDefinedWorkflowCSVPath(ctx context.Context, experimentInput model.ExperimentInput) string {
+	ProjectID := experimentInput.ProjectID
+	HubName := experimentInput.HubName
+	experimentName := experimentInput.ExperimentName
+	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/workflows/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
+	return ExperimentPath
+}
+
 // GetExperimentYAMLPath is used to construct path for given experiment/engine.
 func GetExperimentYAMLPath(ctx context.Context, experimentInput model.ExperimentInput) string {
 	ProjectID := experimentInput.ProjectID
@@ -179,7 +189,7 @@ func ReadExperimentYAMLFile(path string) (string, error) {
 }
 
 // GetPredefinedExperimentFileList reads the workflow directory for all the predefined experiments
-func GetPredefinedExperimentFileList(hubname string, projectID string) ([]string, error) {
+func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, error) {
 	ExperimentsPath := defaultPath + projectID + "/" + hubname + "/workflows"
 	var expNames []string
 	files, err := ioutil.ReadDir(ExperimentsPath)
@@ -187,7 +197,20 @@ func GetPredefinedExperimentFileList(hubname string, projectID string) ([]string
 		return nil, err
 	}
 	for _, file := range files {
-		expNames = append(expNames, file.Name())
+		isExist, _ := IsFileExisting(ExperimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+		if isExist {
+			expNames = append(expNames, file.Name())
+		}
 	}
 	return expNames, nil
+}
+
+func IsFileExisting(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+	}
+	return true, nil
 }

@@ -85,13 +85,15 @@ const MyHub = () => {
             </div>
           </div>
           {/* Developer Guide Component */}
-          <div className={classes.developerDiv}>
-            <DeveloperGuide
-              expAvailable
-              header={t('myhub.experimentPage.congrats')}
-              description=""
-            />
-          </div>
+          {paramData.chart.toLowerCase() !== 'predefined' && (
+            <div className={classes.developerDiv}>
+              <DeveloperGuide
+                expAvailable
+                header={t('myhub.experimentPage.congrats')}
+                description=""
+              />
+            </div>
+          )}
           {/* Experiment Info */}
           <div className={classes.detailDiv}>
             <div className={classes.expInfo}>
@@ -128,23 +130,34 @@ const MyHub = () => {
               </div>
             </div>
             {/* Install Chaos Section */}
-            <div className={classes.installLinks}>
-              <InstallChaos
-                title={t('myhub.experimentPage.installExp')}
-                description={t('myhub.experimentPage.installExpDesc')}
-                yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
-              />
-              <InstallChaos
-                title={t('myhub.experimentPage.installRBAC')}
-                description={t('myhub.experimentPage.installRBACDesc')}
-                yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
-              />
-              <InstallChaos
-                title={t('myhub.experimentPage.installEngine')}
-                description={t('myhub.experimentPage.installEngineDesc')}
-                yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
-              />
-            </div>
+            {paramData.chart.toLowerCase() !== 'predefined' ? (
+              <div className={classes.installLinks}>
+                <InstallChaos
+                  title={t('myhub.experimentPage.installExp')}
+                  description={t('myhub.experimentPage.installExpDesc')}
+                  yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
+                />
+                <InstallChaos
+                  title={t('myhub.experimentPage.installRBAC')}
+                  description={t('myhub.experimentPage.installRBACDesc')}
+                  yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
+                />
+                <InstallChaos
+                  title={t('myhub.experimentPage.installEngine')}
+                  description={t('myhub.experimentPage.installEngineDesc')}
+                  yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
+                />
+              </div>
+            ) : (
+              <>
+                <InstallChaos
+                  title={t('myhub.experimentPage.checkPreDefined')}
+                  description={t('myhub.experimentPage.checkPreDefinedDesc')}
+                  yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/workflows/${paramData.experiment}`}
+                  isPredefined
+                />
+              </>
+            )}
           </div>
         </div>
       )}
