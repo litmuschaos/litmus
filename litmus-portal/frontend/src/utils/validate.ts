@@ -89,7 +89,7 @@ export const isValidWebUrl = (value: string) => {
   const regExLocal = /^http:\/\/localhost:([0-9]){1,4}$/g;
   const regExIpv4 = /^http:\/\/(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]):([0-9]){1,4}$/g;
   const regExIpv6 = /^http:\/\/((([0-9a-fA-F]){1,4})\\:){7}([0-9a-fA-F]){1,4}:([0-9]){1,4}$/g;
-  const sshRegEx = /^([A-Za-z0-9]+@|http(|s)\:\/\/)([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git)?$/i;
+  const sshRegEx = /^([A-Za-z0-9]+@|http(|s)\:\/\/)([-a-zA-Z0-9@:%._\+~#=]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git)?$/i;
   if (
     value.match(regEx) ||
     value.match(regExLocal) ||
