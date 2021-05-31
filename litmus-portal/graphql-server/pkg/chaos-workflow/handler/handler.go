@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -119,6 +120,24 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 
 // QueryWorkflowRuns sends all the workflow runs for a project from the DB
 func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
+
+	count, err := dbOperationsWorkflow.CountWorkflows(bson.D{
+		{"project_id", input.ProjectID},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if count == 0 {
+		var result []*model.WorkflowRun
+
+		return &model.GetWorkflowsOutput{
+			TotalNoOfWorkflowRuns: 0,
+			WorkflowRuns:          result,
+		}, nil
+	}
+
 	var pipeline mongo.Pipeline
 
 	// Match with projectID
