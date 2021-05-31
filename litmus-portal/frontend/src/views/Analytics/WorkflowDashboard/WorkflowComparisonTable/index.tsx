@@ -38,6 +38,7 @@ import {
   sortNumDesc,
 } from '../../../../utils/sort';
 import ResilienceScoreComparisonPlot from '../WorkflowComparisonPlot/index';
+import WorkflowGraphs from '../WorkflowGraphs';
 import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
@@ -628,6 +629,7 @@ const WorkflowComparisonTable = () => {
 
   return (
     <div className={classes.root} id="analytics">
+      <WorkflowGraphs data={data} />
       <div className={classes.analyticsDiv}>
         <Typography className={classes.heading}>
           <strong>
