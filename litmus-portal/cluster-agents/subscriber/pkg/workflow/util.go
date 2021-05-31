@@ -1,12 +1,12 @@
-package events
+package workflow
 
 import (
 	"errors"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/logs"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
@@ -68,7 +68,7 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosCli
 		if nodeStatus.Phase != "Pending" {
 			name := obj.GetName()
 			if obj.GetGenerateName() != "" {
-				log, err := logs.GetLogs(nodeStatus.ID, workflowNS, "main")
+				log, err := k8s.GetLogs(nodeStatus.ID, workflowNS, "main")
 				if err != nil {
 					return nodeType, nil, err
 				}

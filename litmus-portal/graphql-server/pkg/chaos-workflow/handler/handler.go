@@ -58,7 +58,11 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 	}, nil
 }
 
-func DeleteWorkflow(ctx context.Context, workflow_id string, r *store.StateData) (bool, error) {
+func DeleteWorkflow(ctx context.Context, workflow_id *string, uid *string, r *store.StateData) (bool, error) {
+	if *uid != "" {
+
+	}
+
 	query := bson.D{{Key: "workflow_id", Value: workflow_id}}
 	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if len(workflows) == 0 {
@@ -128,6 +132,7 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		for _, wfrun := range workflow.WorkflowRuns {
 			newWorkflowRun := model.WorkflowRun{
 				WorkflowName:  workflow.WorkflowName,
@@ -139,6 +144,7 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 				ExecutionData: wfrun.ExecutionData,
 				ClusterName:   cluster.ClusterName,
 				ClusterType:   &cluster.ClusterType,
+				IsRemoved: cluster.IsRemoved,
 			}
 			result = append(result, &newWorkflowRun)
 		}
@@ -461,6 +467,7 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 		ProjectName:         projectData.Name,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		IsRemoved:           false,
+		IsCustomWorkflow:    templateInput.IsCustomWorkflow,
 	}
 
 	err = dbOperationsWorkflowTemplate.CreateWorkflowTemplate(ctx, template)

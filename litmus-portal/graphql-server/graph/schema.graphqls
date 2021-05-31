@@ -124,6 +124,7 @@ type WorkflowRun {
   workflow_name: String!
   cluster_type: String
   execution_data: String!
+  isRemoved: Boolean!
 }
 
 input WorkflowRunInput {
@@ -201,6 +202,7 @@ type WorkflowRuns {
   execution_data: String!
   workflow_run_id: ID!
   last_updated: String!
+  isRemoved: Boolean!
 }
 
 type clusterRegResponse {
@@ -245,6 +247,7 @@ type ManifestTemplate {
   project_name: String!
   created_at: String!
   is_removed: Boolean!
+  isCustomWorkflow: Boolean!
 }
 
 input TemplateInput {
@@ -252,6 +255,7 @@ input TemplateInput {
   template_name: String!
   template_description: String!
   project_id: String!
+  isCustomWorkflow: Boolean!
 }
 
 type KubeObjectResponse {
@@ -351,7 +355,9 @@ type Mutation {
 
   updateUser(user: UpdateUserInput!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+  deleteChaosWorkflow(workflowid: String, uid: String): Boolean! @authorized
+
+  syncWorkflow(uid: String!): Boolean! @authorized
 
   #Used for sending invitation
   sendInvitation(member: MemberInput!): Member @authorized

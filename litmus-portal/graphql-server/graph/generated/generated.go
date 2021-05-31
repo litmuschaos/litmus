@@ -188,6 +188,7 @@ type ComplexityRoot struct {
 
 	ManifestTemplate struct {
 		CreatedAt           func(childComplexity int) int
+		IsCustomWorkflow    func(childComplexity int) int
 		IsRemoved           func(childComplexity int) int
 		Manifest            func(childComplexity int) int
 		ProjectID           func(childComplexity int) int
@@ -226,7 +227,7 @@ type ComplexityRoot struct {
 		CreateProject          func(childComplexity int, projectName string) int
 		CreateUser             func(childComplexity int, user model.CreateUserInput) int
 		DeclineInvitation      func(childComplexity int, member model.MemberInput) int
-		DeleteChaosWorkflow    func(childComplexity int, workflowid string) int
+		DeleteChaosWorkflow    func(childComplexity int, workflowid *string, uid *string) int
 		DeleteClusterReg       func(childComplexity int, clusterID string) int
 		DeleteDashboard        func(childComplexity int, dbID *string) int
 		DeleteDataSource       func(childComplexity int, input model.DeleteDSInput) int
@@ -246,6 +247,7 @@ type ComplexityRoot struct {
 		SaveMyHub              func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		SendInvitation         func(childComplexity int, member model.MemberInput) int
 		SyncHub                func(childComplexity int, id string) int
+		SyncWorkflow           func(childComplexity int, uid string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
 		UpdateDashboard        func(childComplexity int, dashboard *model.UpdataDBInput) int
 		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
@@ -430,6 +432,7 @@ type ComplexityRoot struct {
 		ClusterName   func(childComplexity int) int
 		ClusterType   func(childComplexity int) int
 		ExecutionData func(childComplexity int) int
+		IsRemoved     func(childComplexity int) int
 		LastUpdated   func(childComplexity int) int
 		ProjectID     func(childComplexity int) int
 		WorkflowID    func(childComplexity int) int
@@ -439,6 +442,7 @@ type ComplexityRoot struct {
 
 	WorkflowRuns struct {
 		ExecutionData func(childComplexity int) int
+		IsRemoved     func(childComplexity int) int
 		LastUpdated   func(childComplexity int) int
 		WorkflowRunID func(childComplexity int) int
 	}
@@ -567,7 +571,8 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
 	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
-	DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error)
+	DeleteChaosWorkflow(ctx context.Context, workflowid *string, uid *string) (bool, error)
+	SyncWorkflow(ctx context.Context, uid string) (bool, error)
 	SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error)
 	AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error)
@@ -1297,6 +1302,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ManifestTemplate.CreatedAt(childComplexity), true
 
+	case "ManifestTemplate.isCustomWorkflow":
+		if e.complexity.ManifestTemplate.IsCustomWorkflow == nil {
+			break
+		}
+
+		return e.complexity.ManifestTemplate.IsCustomWorkflow(childComplexity), true
+
 	case "ManifestTemplate.is_removed":
 		if e.complexity.ManifestTemplate.IsRemoved == nil {
 			break
@@ -1570,7 +1582,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteChaosWorkflow(childComplexity, args["workflowid"].(string)), true
+		return e.complexity.Mutation.DeleteChaosWorkflow(childComplexity, args["workflowid"].(*string), args["uid"].(*string)), true
 
 	case "Mutation.deleteClusterReg":
 		if e.complexity.Mutation.DeleteClusterReg == nil {
@@ -1794,6 +1806,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.SyncHub(childComplexity, args["id"].(string)), true
+
+	case "Mutation.syncWorkflow":
+		if e.complexity.Mutation.SyncWorkflow == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_syncWorkflow_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SyncWorkflow(childComplexity, args["uid"].(string)), true
 
 	case "Mutation.updateChaosWorkflow":
 		if e.complexity.Mutation.UpdateChaosWorkflow == nil {
@@ -2974,6 +2998,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRun.ExecutionData(childComplexity), true
 
+	case "WorkflowRun.isRemoved":
+		if e.complexity.WorkflowRun.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.IsRemoved(childComplexity), true
+
 	case "WorkflowRun.last_updated":
 		if e.complexity.WorkflowRun.LastUpdated == nil {
 			break
@@ -3015,6 +3046,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkflowRuns.ExecutionData(childComplexity), true
+
+	case "WorkflowRuns.isRemoved":
+		if e.complexity.WorkflowRuns.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRuns.IsRemoved(childComplexity), true
 
 	case "WorkflowRuns.last_updated":
 		if e.complexity.WorkflowRuns.LastUpdated == nil {
@@ -3566,7 +3604,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3785,7 +3823,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -3812,7 +3850,7 @@ type ImageRegistryResponse {
     is_removed: Boolean
 }
 `, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3986,7 +4024,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -4018,7 +4056,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -4144,6 +4182,7 @@ type WorkflowRun {
   workflow_name: String!
   cluster_type: String
   execution_data: String!
+  isRemoved: Boolean!
 }
 
 input WorkflowRunInput {
@@ -4221,6 +4260,7 @@ type WorkflowRuns {
   execution_data: String!
   workflow_run_id: ID!
   last_updated: String!
+  isRemoved: Boolean!
 }
 
 type clusterRegResponse {
@@ -4265,6 +4305,7 @@ type ManifestTemplate {
   project_name: String!
   created_at: String!
   is_removed: Boolean!
+  isCustomWorkflow: Boolean!
 }
 
 input TemplateInput {
@@ -4272,6 +4313,7 @@ input TemplateInput {
   template_name: String!
   template_description: String!
   project_id: String!
+  isCustomWorkflow: Boolean!
 }
 
 type KubeObjectResponse {
@@ -4371,7 +4413,9 @@ type Mutation {
 
   updateUser(user: UpdateUserInput!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+  deleteChaosWorkflow(workflowid: String, uid: String): Boolean! @authorized
+
+  syncWorkflow(uid: String!): Boolean! @authorized
 
   #Used for sending invitation
   sendInvitation(member: MemberInput!): Member @authorized
@@ -4470,7 +4514,7 @@ type Subscription {
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -4695,14 +4739,22 @@ func (ec *executionContext) field_Mutation_declineInvitation_args(ctx context.Co
 func (ec *executionContext) field_Mutation_deleteChaosWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 *string
 	if tmp, ok := rawArgs["workflowid"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["workflowid"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["uid"]; ok {
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["uid"] = arg1
 	return args, nil
 }
 
@@ -4979,6 +5031,20 @@ func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, raw
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_syncWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["uid"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["uid"] = arg0
 	return args, nil
 }
 
@@ -8886,6 +8952,40 @@ func (ec *executionContext) _ManifestTemplate_is_removed(ctx context.Context, fi
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ManifestTemplate_isCustomWorkflow(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ManifestTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsCustomWorkflow, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Member_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -9617,7 +9717,68 @@ func (ec *executionContext) _Mutation_deleteChaosWorkflow(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteChaosWorkflow(rctx, args["workflowid"].(string))
+			return ec.resolvers.Mutation().DeleteChaosWorkflow(rctx, args["workflowid"].(*string), args["uid"].(*string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_syncWorkflow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_syncWorkflow_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SyncWorkflow(rctx, args["uid"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -17058,6 +17219,40 @@ func (ec *executionContext) _WorkflowRun_execution_data(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkflowRun_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkflowRuns_execution_data(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRuns) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17158,6 +17353,40 @@ func (ec *executionContext) _WorkflowRuns_last_updated(ctx context.Context, fiel
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRuns_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRuns) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRuns",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -21166,6 +21395,12 @@ func (ec *executionContext) unmarshalInputTemplateInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "isCustomWorkflow":
+			var err error
+			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -22644,6 +22879,11 @@ func (ec *executionContext) _ManifestTemplate(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "isCustomWorkflow":
+			out.Values[i] = ec._ManifestTemplate_isCustomWorkflow(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22796,6 +23036,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteChaosWorkflow":
 			out.Values[i] = ec._Mutation_deleteChaosWorkflow(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "syncWorkflow":
+			out.Values[i] = ec._Mutation_syncWorkflow(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -24103,6 +24348,11 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "isRemoved":
+			out.Values[i] = ec._WorkflowRun_isRemoved(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24137,6 +24387,11 @@ func (ec *executionContext) _WorkflowRuns(ctx context.Context, sel ast.Selection
 			}
 		case "last_updated":
 			out.Values[i] = ec._WorkflowRuns_last_updated(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isRemoved":
+			out.Values[i] = ec._WorkflowRuns_isRemoved(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

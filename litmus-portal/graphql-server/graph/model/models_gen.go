@@ -285,6 +285,7 @@ type ManifestTemplate struct {
 	ProjectName         string `json:"project_name"`
 	CreatedAt           string `json:"created_at"`
 	IsRemoved           bool   `json:"is_removed"`
+	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
 type Member struct {
@@ -433,6 +434,7 @@ type TemplateInput struct {
 	TemplateName        string `json:"template_name"`
 	TemplateDescription string `json:"template_description"`
 	ProjectID           string `json:"project_id"`
+	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
 type UpdateMyHub struct {
@@ -504,6 +506,7 @@ type WorkflowRun struct {
 	WorkflowName  string  `json:"workflow_name"`
 	ClusterType   *string `json:"cluster_type"`
 	ExecutionData string  `json:"execution_data"`
+	IsRemoved     bool    `json:"isRemoved"`
 }
 
 type WorkflowRunInput struct {
@@ -519,6 +522,7 @@ type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
 	LastUpdated   string `json:"last_updated"`
+	IsRemoved     bool   `json:"isRemoved" default:false`
 }
 
 type AnnotationsPromResponse struct {

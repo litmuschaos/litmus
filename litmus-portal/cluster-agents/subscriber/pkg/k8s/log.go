@@ -1,17 +1,15 @@
-package logs
+package k8s
 
 import (
 	"bytes"
 	"io"
-
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
 func GetLogs(podName, namespace, container string) (string, error) {
-	conf, err := k8s.GetKubeConfig()
+	conf, err := GetKubeConfig()
 	podLogOpts := v1.PodLogOptions{}
 	if container != "" {
 		podLogOpts.Container = container

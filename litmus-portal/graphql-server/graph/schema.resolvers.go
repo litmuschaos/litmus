@@ -6,11 +6,12 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -64,8 +65,12 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 	return usermanagement.UpdateUser(ctx, user)
 }
 
-func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
-	return wfHandler.DeleteWorkflow(ctx, workflowid, data_store.Store)
+func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid *string, uid *string) (bool, error) {
+	return wfHandler.DeleteWorkflow(ctx, workflowid, uid, data_store.Store)
+}
+
+func (r *mutationResolver) SyncWorkflow(ctx context.Context, uid string) (bool, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
