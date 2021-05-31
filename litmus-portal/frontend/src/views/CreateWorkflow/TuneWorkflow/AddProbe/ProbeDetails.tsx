@@ -37,12 +37,21 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
       | { name?: string | undefined; value: unknown }
     >
   ) => {
-    if (e.target.name === 'url' || e.target.name === 'responseTimeout') {
+    if (e.target.name === 'url') {
       setProbeData({
         ...probeData,
         'httpProbe/inputs': {
           ...probeData['httpProbe/inputs'],
           [e.target.name]: e.target.value,
+        },
+      });
+    }
+    if (e.target.name === 'responseTimeout') {
+      setProbeData({
+        ...probeData,
+        'httpProbe/inputs': {
+          ...probeData['httpProbe/inputs'],
+          [e.target.name]: parseInt(e.target.value as string, 10),
         },
       });
     }
@@ -185,7 +194,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               width="50%"
               id="responseTimeout"
               name="responseTimeout"
-              type="text"
+              type="number"
               value={probeData['httpProbe/inputs']?.responseTimeout}
               onChange={handleHttp}
             />

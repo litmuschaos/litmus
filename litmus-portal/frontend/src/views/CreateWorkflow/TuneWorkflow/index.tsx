@@ -788,7 +788,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
           </Width>
           {/* Workflow Table */}
           <Width width="70%">
-            <WorkflowTable ref={childRef} isCustom={isCustomWorkflow} />
+            <WorkflowTable
+              ref={childRef}
+              isCustom={isCustomWorkflow}
+              namespace={namespace}
+            />
           </Width>
         </Row>
       </div>
