@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"sync"
 	"time"
@@ -40,7 +39,7 @@ var (
 	Ctx             = context.Background()
 	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	dr              dynamic.ResourceInterface
-	AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
+	//AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
 )
 
 func CheckComponentStatus(componentEnv string) error {
@@ -235,10 +234,6 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 
 		log.Println("Resource successfully retrieved")
 		return response, nil
-	} else if requestType == "workflow_delete" {
-
-	} else if requestType == "workflow_sync" {
-		workflow, err :=
 	}
 
 	return nil, fmt.Errorf("err: %v\n", "Invalid Request")

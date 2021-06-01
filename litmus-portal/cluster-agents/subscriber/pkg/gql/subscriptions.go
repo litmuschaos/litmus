@@ -2,6 +2,7 @@ package gql
 
 import (
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workflow"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 
@@ -76,7 +77,7 @@ func ClusterConnect(clusterData map[string]string) {
 			KubeObjRequest := types.KubeObjRequest{
 				RequestID: r.Payload.Data.ClusterConnect.ProjectID,
 			}
-			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData.(string)), &KubeObjRequest)
+			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData), &KubeObjRequest)
 			err = SendKubeObjects(clusterData, KubeObjRequest)
 			if err != nil {
 				logrus.WithError(err).Println("error getting kubernetes object data")
@@ -87,13 +88,13 @@ func ClusterConnect(clusterData map[string]string) {
 			podRequest := types.PodLogRequest{
 				RequestID: r.Payload.Data.ClusterConnect.ProjectID,
 			}
-			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData.(string)), &podRequest)
+			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData), &podRequest)
 			if err != nil {
 				logrus.WithError(err).Print("error reading cluster-action request [external-data]")
 				continue
 			}
 			// send pod logs
-			logrus.Print("LOG REQUEST ", r.Payload.Data.ClusterConnect.Action.ExternalData.(string))
+			logrus.Print("LOG REQUEST ", r.Payload.Data.ClusterConnect.Action.ExternalData)
 			SendPodLogs(clusterData, podRequest)
 		} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
 			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
@@ -101,6 +102,11 @@ func ClusterConnect(clusterData map[string]string) {
 			if err != nil {
 				logrus.WithError(err).Print("error performing cluster operation")
 				continue
+			}
+		}  else if strings.Index("workflow_delete workflow_sync", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
+			err := workflow.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData)
+			if err != nil {
+				logrus.WithError(err).Print("error performing workflow operation")
 			}
 		}
 	}

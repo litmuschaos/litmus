@@ -2,11 +2,10 @@ package gql
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/objects"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"strconv"
 	"strings"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/logs"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
 )
@@ -44,7 +43,7 @@ func GenerateWorkflowPayload(cid, accessKey, completed string, wfEvent types.Wor
 // create pod log for normal pods and chaos-engine pods
 func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	logDetails := types.PodLog{}
-	mainLog, err := logs.GetLogs(podLog.PodName, podLog.PodNamespace, "main")
+	mainLog, err := k8s.GetLogs(podLog.PodName, podLog.PodNamespace, "main")
 	// try getting argo pod logs
 	if err != nil {
 		logrus.Errorf("failed to get argo pod %v logs, err: %v", podLog.PodName, err)
@@ -57,7 +56,7 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	if strings.ToLower(podLog.PodType) == "chaosengine" && podLog.ChaosNamespace != nil {
 		chaosLog := make(map[string]string)
 		if podLog.ExpPod != nil {
-			expLog, err := logs.GetLogs(*podLog.ExpPod, *podLog.ChaosNamespace, "")
+			expLog, err := k8s.GetLogs(*podLog.ExpPod, *podLog.ChaosNamespace, "")
 			if err == nil {
 				chaosLog[*podLog.ExpPod] = strconv.Quote(strings.Replace(expLog, `"`, `'`, -1))
 				chaosLog[*podLog.ExpPod] = chaosLog[*podLog.ExpPod][1 : len(chaosLog[*podLog.ExpPod])-1]
@@ -66,7 +65,7 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 			}
 		}
 		if podLog.RunnerPod != nil {
-			runnerLog, err := logs.GetLogs(*podLog.RunnerPod, *podLog.ChaosNamespace, "")
+			runnerLog, err := k8s.GetLogs(*podLog.RunnerPod, *podLog.ChaosNamespace, "")
 			if err == nil {
 				chaosLog[*podLog.RunnerPod] = strconv.Quote(strings.Replace(runnerLog, `"`, `'`, -1))
 				chaosLog[*podLog.RunnerPod] = chaosLog[*podLog.RunnerPod][1 : len(chaosLog[*podLog.RunnerPod])-1]
@@ -103,7 +102,7 @@ func GenerateLogPayload(cid, accessKey string, podLog types.PodLogRequest) ([]by
 
 func GenerateKubeObject(cid string, accessKey string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
 	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
-	kubeObj, err := objects.GetKubernetesObjects(kubeobjectrequest)
+	kubeObj, err := k8s.GetKubernetesObjects(kubeobjectrequest)
 	if err != nil {
 		return nil, err
 	}

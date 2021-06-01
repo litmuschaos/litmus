@@ -522,7 +522,7 @@ type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
 	LastUpdated   string `json:"last_updated"`
-	IsRemoved     bool   `json:"isRemoved" default:false`
+	IsRemoved     bool   `json:"isRemoved"`
 }
 
 type AnnotationsPromResponse struct {

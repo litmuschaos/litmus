@@ -2,16 +2,21 @@ package workflow
 
 import (
 	"errors"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/gql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
+	"github.com/sirupsen/logrus"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
+	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
+	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
@@ -107,4 +112,71 @@ func StrConvTime(time int64) string {
 	} else {
 		return strconv.FormatInt(time, 10)
 	}
+}
+
+func WorkflowRequest(clusterData map[string]string, requestType string, uid string) error {
+	if requestType == "workflow_delete" {
+		wfOb, err := GetWorkflowObj(uid)
+		if err != nil {
+			return err
+		}
+
+		err = DeleteWorflow(wfOb.Name)
+		if err != nil {
+			return err
+		}
+
+	} else if requestType == "workflow_sync" {
+		wfOb, err := GetWorkflowObj(uid)
+		if err != nil {
+			return err
+		}
+
+		startTime := time.Now().Unix()
+
+		events, err := WorkflowEventHandler(wfOb, "UPDATE", startTime)
+		if err != nil {
+			return err
+		}
+
+		response, err := gql.SendWorkflowUpdates(clusterData, events)
+		if err != nil {
+			return err
+		}
+		logrus.Print(response)
+	}
+	return nil
+}
+
+func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error){
+	conf, err := k8s.GetKubeConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	// create the workflow client
+	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows("default")
+	listWf, err := wfClient.List(metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, wf := range listWf.Items {
+		if string(wf.UID) == uid {
+			return &wf, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func DeleteWorflow(wfname string) error {
+	conf, err := k8s.GetKubeConfig()
+	if err != nil {
+		return err
+	}
+
+	// create the workflow client
+	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows("default")
+	return wfClient.Delete(wfname, &metav1.DeleteOptions{})
 }

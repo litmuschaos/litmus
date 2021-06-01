@@ -58,36 +58,56 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 	}, nil
 }
 
-func DeleteWorkflow(ctx context.Context, workflow_id *string, uid *string, r *store.StateData) (bool, error) {
-	if *uid != "" {
+func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *string, r *store.StateData) (bool, error) {
 
+	query := bson.D{{"workflow_id", workflow_id}}
+	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	if err != nil{
+		return false, err
 	}
 
-	query := bson.D{{Key: "workflow_id", Value: workflow_id}}
-	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
-	if len(workflows) == 0 {
+	if &workflow == nil {
 		return false, errors.New("no such workflow found")
 	}
 
-	wf := model.ChaosWorkFlowInput{
-		ProjectID:    workflows[0].ProjectID,
-		WorkflowID:   &workflows[0].WorkflowID,
-		WorkflowName: workflows[0].WorkflowName,
+	if *workflow_id != "" && *workflowRunID != "" {
+		for _, workflow_run := range workflow.WorkflowRuns {
+			if workflow_run.WorkflowRunID == *workflowRunID {
+				workflow_run.IsRemoved = true
+			}
+		}
+
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, r)
+		if err != nil {
+			return false, err
+		}
+
+		return true, nil
+
+	} else if *workflow_id != "" && *workflowRunID == "" {
+		wf := model.ChaosWorkFlowInput{
+			ProjectID:    workflow.ProjectID,
+			WorkflowID:   &workflow.WorkflowID,
+			WorkflowName: workflow.WorkflowName,
+		}
+
+		// gitOps delete
+		err = gitOpsHandler.DeleteWorkflowFromGit(ctx, &wf)
+		if err != nil {
+			log.Print("Error performing git push: ", err)
+			return false, err
+		}
+
+		err = ops.ProcessWorkflowDelete(query, workflow, r)
+		if err != nil {
+			return false, err
+		}
+
+		return true, nil
+
 	}
 
-	// gitOps delete
-	err = gitOpsHandler.DeleteWorkflowFromGit(ctx, &wf)
-	if err != nil {
-		log.Print("Error performing git push: ", err)
-		return false, err
-	}
-
-	err = ops.ProcessWorkflowDelete(query, r)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return false, err
 }
 
 func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
@@ -393,7 +413,7 @@ func ReRunWorkflow(workflowID string) (string, error) {
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
-	}, "create", store.Store)
+	}, nil,"create", store.Store)
 
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
 }
@@ -524,4 +544,30 @@ func IsTemplateAvailable(ctx context.Context, templateName string, projectID str
 		}
 	}
 	return false, nil
+}
+
+func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID string, r *store.StateData) (bool, error) {
+
+	query := bson.D{{"workflow_id", workflow_id}}
+	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	if err != nil{
+		return false, err
+	}
+
+	if &workflow == nil {
+		return false, errors.New("no such workflow found")
+	}
+
+	for _, workflow_run := range workflow.WorkflowRuns {
+		if workflow_run.WorkflowRunID == workflowRunID && workflow.IsRemoved == false {
+			err = ops.ProcessWorkflowRunSync(&workflowRunID, workflow, r)
+			if err != nil {
+				return false, err
+			}
+
+		}
+	}
+
+	return false, nil
+
 }

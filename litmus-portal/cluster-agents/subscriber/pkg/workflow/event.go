@@ -56,7 +56,8 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 	startTime := time.Now().Unix()
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			workflow, err := workflowEventHandler(obj, "ADD", stream, startTime)
+			workflowObj := obj.(*v1alpha1.Workflow)
+			workflow, err := WorkflowEventHandler(workflowObj, "ADD", startTime)
 			if err != nil {
 				logrus.Error(err)
 			}
@@ -66,7 +67,8 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 
 		},
 		UpdateFunc: func(oldObj, obj interface{}) {
-			workflow, err := workflowEventHandler(obj, "UPDATE", stream, startTime)
+			workflowObj := obj.(*v1alpha1.Workflow)
+			workflow, err := WorkflowEventHandler(workflowObj, "UPDATE", startTime)
 			if err != nil {
 				logrus.Error(err)
 			}
@@ -80,30 +82,38 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 }
 
 // responsible for extracting the required data from the event and streaming
-func workflowEventHandler(obj interface{}, eventType string, startTime int64) (types.WorkflowEvent, error) {
-	workflowObj := obj.(*v1alpha1.Workflow)
+func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
 	if val, ok := workflowObj.Labels["workflows.argoproj.io/controller-instanceid"]; !ok || val != ClusterID {
 		logrus.WithField("uid", string(workflowObj.ObjectMeta.UID)).Printf("WORKFLOW RUN IGNORED [NO MATCHING INSTANCE-ID]")
 		return types.WorkflowEvent{}, nil
 	}
+
 	experimentFail := 0
 	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
 		return types.WorkflowEvent{},  nil
 	}
+
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get config")
 	}
+
 	chaosClient, err := litmusV1alpha1.NewForConfig(cfg)
 	if err != nil {
 		//logrus.WithError(err).Fatal("could not get Chaos ClientSet")
 		return types.WorkflowEvent{},  err
 	}
+
 	nodes := make(map[string]types.Node)
 	logrus.Print("WORKFLOW EVENT ", workflowObj.UID, " ", eventType)
+
 	for _, nodeStatus := range workflowObj.Status.Nodes {
-		nodeType := string(nodeStatus.Type)
-		var cd *types.ChaosData = nil
+
+		var (
+			nodeType = string(nodeStatus.Type)
+			cd *types.ChaosData = nil
+		)
+
 		// considering chaos workflow has only 1 artifact with manifest as raw data
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 {
 			//extracts chaos data
@@ -112,6 +122,7 @@ func workflowEventHandler(obj interface{}, eventType string, startTime int64) (t
 				logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
 			}
 		}
+
 		details := types.Node{
 			Name:       nodeStatus.DisplayName,
 			Phase:      string(nodeStatus.Phase),
@@ -122,6 +133,7 @@ func workflowEventHandler(obj interface{}, eventType string, startTime int64) (t
 			ChaosExp:   cd,
 			Message:    nodeStatus.Message,
 		}
+
 		if cd != nil && (strings.ToLower(cd.ExperimentVerdict) == "fail" || strings.ToLower(cd.ExperimentVerdict) == "stopped") {
 			experimentFail = 1
 			details.Phase = "Failed"
@@ -130,6 +142,7 @@ func workflowEventHandler(obj interface{}, eventType string, startTime int64) (t
 		}
 		nodes[nodeStatus.ID] = details
 	}
+
 	workflow := types.WorkflowEvent{
 		WorkflowID:        workflowObj.Labels["workflow_id"],
 		EventType:         eventType,
@@ -143,6 +156,7 @@ func workflowEventHandler(obj interface{}, eventType string, startTime int64) (t
 		FinishedAt:        StrConvTime(workflowObj.Status.FinishedAt.Unix()),
 		Nodes:             nodes,
 	}
+
 	if experimentFail == 1 {
 		workflow.Phase = "Failed"
 		workflow.Message = "Chaos Experiment Failed"

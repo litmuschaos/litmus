@@ -20,6 +20,8 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	workflowDBOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
@@ -321,7 +323,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(input, "create", r)
+		SendWorkflowToSubscriber(input, nil,"create", r)
 	}
 
 	return nil
@@ -343,39 +345,59 @@ func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, r *store.StateDat
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(workflow, "update", r)
+		SendWorkflowToSubscriber(workflow, nil,"update", r)
 	}
 	return nil
 }
 
 // ProcessWorkflowDelete deletes the workflow entry and sends delete resource request to required agent
-func ProcessWorkflowDelete(query bson.D, r *store.StateData) error {
-	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
-	if err != nil {
-		return err
-	}
+func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowInput , r *store.StateData) error {
 
 	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
 
-	err = dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
-
+	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return err
 	}
 
 	if r != nil {
-		for _, workflow := range workflows {
-			SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
-				ProjectID:        workflow.ProjectID,
-				ClusterID:        workflow.ClusterID,
-				WorkflowManifest: workflow.WorkflowManifest,
-			}, "delete", r)
-		}
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID:        workflow.ProjectID,
+			ClusterID:        workflow.ClusterID,
+			WorkflowManifest: workflow.WorkflowManifest,
+		}, nil,  "delete", r)
 	}
 	return nil
 }
 
-func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, reqType string, r *store.StateData) {
+func ProcessWorkflowRunDelete(query bson.D,  workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
+	update := bson.D{{"$set", bson.D{{"workflow_runs", workflow.WorkflowRuns}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
+	if err != nil {
+		return err
+	}
+
+	if r != nil {
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID:        workflow.ProjectID,
+			ClusterID:        workflow.ClusterID,
+		},workflowRunID,"workflow_delete", r)
+	}
+	return nil
+}
+
+func ProcessWorkflowRunSync(workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
+	if r != nil {
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID:        workflow.ProjectID,
+			ClusterID:        workflow.ClusterID,
+		},workflowRunID,"workflow_sync", r)
+	}
+	return nil
+}
+
+func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, externalData *string, reqType string, r *store.StateData) {
 	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
 
 	if workflowNamespace == "" {
@@ -387,6 +409,7 @@ func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, reqType string
 		ProjectID:   workflow.ProjectID,
 		ClusterID:   workflow.ClusterID,
 		Namespace:   workflowNamespace,
+		ExternalData: externalData,
 	}, *r)
 }
 

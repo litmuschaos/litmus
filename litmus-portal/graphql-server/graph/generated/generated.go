@@ -227,7 +227,7 @@ type ComplexityRoot struct {
 		CreateProject          func(childComplexity int, projectName string) int
 		CreateUser             func(childComplexity int, user model.CreateUserInput) int
 		DeclineInvitation      func(childComplexity int, member model.MemberInput) int
-		DeleteChaosWorkflow    func(childComplexity int, workflowid *string, uid *string) int
+		DeleteChaosWorkflow    func(childComplexity int, workflowid *string, workflowRunID *string) int
 		DeleteClusterReg       func(childComplexity int, clusterID string) int
 		DeleteDashboard        func(childComplexity int, dbID *string) int
 		DeleteDataSource       func(childComplexity int, input model.DeleteDSInput) int
@@ -247,7 +247,7 @@ type ComplexityRoot struct {
 		SaveMyHub              func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		SendInvitation         func(childComplexity int, member model.MemberInput) int
 		SyncHub                func(childComplexity int, id string) int
-		SyncWorkflow           func(childComplexity int, uid string) int
+		SyncWorkflow           func(childComplexity int, workflowid string, workflowRunID string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
 		UpdateDashboard        func(childComplexity int, dashboard *model.UpdataDBInput) int
 		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
@@ -571,8 +571,8 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
 	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
-	DeleteChaosWorkflow(ctx context.Context, workflowid *string, uid *string) (bool, error)
-	SyncWorkflow(ctx context.Context, uid string) (bool, error)
+	DeleteChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error)
+	SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error)
 	SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error)
 	AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error)
@@ -1582,7 +1582,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteChaosWorkflow(childComplexity, args["workflowid"].(*string), args["uid"].(*string)), true
+		return e.complexity.Mutation.DeleteChaosWorkflow(childComplexity, args["workflowid"].(*string), args["workflow_run_id"].(*string)), true
 
 	case "Mutation.deleteClusterReg":
 		if e.complexity.Mutation.DeleteClusterReg == nil {
@@ -1817,7 +1817,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SyncWorkflow(childComplexity, args["uid"].(string)), true
+		return e.complexity.Mutation.SyncWorkflow(childComplexity, args["workflowid"].(string), args["workflow_run_id"].(string)), true
 
 	case "Mutation.updateChaosWorkflow":
 		if e.complexity.Mutation.UpdateChaosWorkflow == nil {
@@ -4413,9 +4413,9 @@ type Mutation {
 
   updateUser(user: UpdateUserInput!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String, uid: String): Boolean! @authorized
+  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
 
-  syncWorkflow(uid: String!): Boolean! @authorized
+  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean! @authorized
 
   #Used for sending invitation
   sendInvitation(member: MemberInput!): Member @authorized
@@ -4748,13 +4748,13 @@ func (ec *executionContext) field_Mutation_deleteChaosWorkflow_args(ctx context.
 	}
 	args["workflowid"] = arg0
 	var arg1 *string
-	if tmp, ok := rawArgs["uid"]; ok {
+	if tmp, ok := rawArgs["workflow_run_id"]; ok {
 		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["uid"] = arg1
+	args["workflow_run_id"] = arg1
 	return args, nil
 }
 
@@ -5038,13 +5038,21 @@ func (ec *executionContext) field_Mutation_syncWorkflow_args(ctx context.Context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["uid"]; ok {
+	if tmp, ok := rawArgs["workflowid"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["uid"] = arg0
+	args["workflowid"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["workflow_run_id"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflow_run_id"] = arg1
 	return args, nil
 }
 
@@ -9717,7 +9725,7 @@ func (ec *executionContext) _Mutation_deleteChaosWorkflow(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteChaosWorkflow(rctx, args["workflowid"].(*string), args["uid"].(*string))
+			return ec.resolvers.Mutation().DeleteChaosWorkflow(rctx, args["workflowid"].(*string), args["workflow_run_id"].(*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -9778,7 +9786,7 @@ func (ec *executionContext) _Mutation_syncWorkflow(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncWorkflow(rctx, args["uid"].(string))
+			return ec.resolvers.Mutation().SyncWorkflow(rctx, args["workflowid"].(string), args["workflow_run_id"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {

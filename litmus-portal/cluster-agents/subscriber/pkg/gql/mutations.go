@@ -2,6 +2,7 @@ package gql
 
 import (
 	"bytes"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 
@@ -44,45 +45,55 @@ func ClusterConfirm(clusterData map[string]string) ([]byte, error) {
 	return []byte(resp), nil
 }
 
-//SendWorkflowUpdates generates gql mutation to send workflow updates to gql server
-func SendWorkflowUpdates(clusterData map[string]string, event chan types.WorkflowEvent) {
+func WorkflowUpdates(clusterData map[string]string, event chan types.WorkflowEvent) {
 	// listen on the channel for streaming event updates
 	for eventData := range event {
-		if wfEvent, ok := eventMap[eventData.UID]; ok {
-			for key, node := range wfEvent.Nodes {
-				if node.Type == "ChaosEngine" && node.ChaosExp != nil && eventData.Nodes[key].ChaosExp == nil {
-					nodeData := eventData.Nodes[key]
-					nodeData.ChaosExp = node.ChaosExp
-					nodeData.Phase = node.Phase
-					nodeData.Message = node.Message
-					if node.Phase == "Failed" {
-						eventData.Phase = "Failed"
-						eventData.Message = "Chaos Experiment Failed"
-					}
-					eventData.Nodes[key] = nodeData
-				}
-			}
-		}
-		eventMap[eventData.UID] = eventData
-
-		// generate gql payload
-		payload, err := GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "false", eventData)
-
-		if eventData.FinishedAt != "" {
-			payload, err = GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "true", eventData)
-			delete(eventMap, eventData.UID)
-		}
-
-		if err != nil {
-			logrus.WithError(err).Print("ERROR PARSING WORKFLOW EVENT")
-		}
-
-		body, err := sendMutation(clusterData["SERVER_ADDR"], payload)
+		response, err := SendWorkflowUpdates(clusterData, eventData)
 		if err != nil {
 			logrus.Print(err.Error())
 		}
-		logrus.Print("RESPONSE ", body)
+
+		logrus.Print("RESPONSE ", response)
 	}
+}
+
+//SendWorkflowUpdates generates gql mutation to send workflow updates to gql server
+func SendWorkflowUpdates(clusterData map[string]string, event types.WorkflowEvent) (string, error) {
+	if wfEvent, ok := eventMap[event.UID]; ok {
+		for key, node := range wfEvent.Nodes {
+			if node.Type == "ChaosEngine" && node.ChaosExp != nil && event.Nodes[key].ChaosExp == nil {
+				nodeData := event.Nodes[key]
+				nodeData.ChaosExp = node.ChaosExp
+				nodeData.Phase = node.Phase
+				nodeData.Message = node.Message
+				if node.Phase == "Failed" {
+					event.Phase = "Failed"
+					event.Message = "Chaos Experiment Failed"
+				}
+				event.Nodes[key] = nodeData
+			}
+		}
+	}
+	eventMap[event.UID] = event
+
+	// generate gql payload
+	payload, err := GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "false", event)
+
+	if event.FinishedAt != "" {
+		payload, err = GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "true", event)
+		delete(eventMap, event.UID)
+	}
+
+	if err != nil {
+		return "", errors.New(err.Error() + ": ERROR PARSING WORKFLOW EVENT")
+	}
+
+	body, err := sendMutation(clusterData["SERVER_ADDR"], payload)
+	if err != nil {
+		return "", err
+	}
+
+	return body, nil
 }
 
 //SendPodLogs generates gql mutation to send workflow updates to gql server

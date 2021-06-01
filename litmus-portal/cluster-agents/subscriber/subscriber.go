@@ -3,12 +3,12 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workflow"
 	"log"
 	"os"
 	"os/signal"
 	"runtime"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/gql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
@@ -82,10 +82,10 @@ func main() {
 	stream := make(chan types.WorkflowEvent, 10)
 
 	//start workflow event watcher
-	events.WorkflowEventWatcher(stopCh, stream)
+	workflow.WorkflowEventWatcher(stopCh, stream)
 
 	//streams the event data to gql server
-	go gql.SendWorkflowUpdates(clusterData, stream)
+	go gql.WorkflowUpdates(clusterData, stream)
 
 	// listen for cluster actions
 	go gql.ClusterConnect(clusterData)

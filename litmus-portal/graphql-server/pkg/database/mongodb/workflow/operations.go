@@ -84,6 +84,25 @@ func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
 	return workflows, nil
 }
 
+// GetWorkflow takes a query parameter to retrieve the workflow details from the database
+func GetWorkflow(query bson.D) (ChaosWorkFlowInput, error) {
+
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+
+	var workflow ChaosWorkFlowInput
+	results, err := mongodb.Operator.Get(ctx, mongodb.WorkflowCollection, query)
+	if err != nil {
+		return ChaosWorkFlowInput{}, err
+	}
+
+	err = results.Decode(&workflow)
+	if err != nil {
+		return ChaosWorkFlowInput{}, err
+	}
+
+	return workflow, nil
+}
+
 // GetWorkflowsByClusterID takes a clusterID parameter to retrieve the workflow details from the database
 func GetWorkflowsByClusterID(clusterID string) ([]ChaosWorkFlowInput, error) {
 	query := bson.D{{"cluster_id", clusterID}}

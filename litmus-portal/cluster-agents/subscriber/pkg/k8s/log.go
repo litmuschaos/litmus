@@ -10,23 +10,27 @@ import (
 
 func GetLogs(podName, namespace, container string) (string, error) {
 	conf, err := GetKubeConfig()
+	if err != nil {
+		return "", err
+	}
+
 	podLogOpts := v1.PodLogOptions{}
 	if container != "" {
 		podLogOpts.Container = container
 	}
-	if err != nil {
-		return "", err
-	}
+
 	// creates the clientset
 	clientset, err := kubernetes.NewForConfig(conf)
 	if err != nil {
 		return "", err
 	}
+
 	req := clientset.CoreV1().Pods(namespace).GetLogs(podName, &podLogOpts)
 	podLogs, err := req.Stream()
 	if err != nil {
 		return "", err
 	}
+
 	defer podLogs.Close()
 
 	buf := new(bytes.Buffer)
@@ -34,6 +38,7 @@ func GetLogs(podName, namespace, container string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	str := buf.String()
 
 	return str, nil
