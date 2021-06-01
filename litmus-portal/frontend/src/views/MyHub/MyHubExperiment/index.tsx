@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import DeveloperGuide from '../../../components/DeveloperGuide';
-import ExperimentHeader from '../../../components/ExperimentHeader';
+import ExperimentHeader from '../ExperimentHeader';
 import ExperimentInfo from '../../../components/ExperimentInfo';
 import InstallChaos from '../../../components/InstallChaos';
 import Loader from '../../../components/Loader';

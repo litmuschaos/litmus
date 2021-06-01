@@ -30,6 +30,7 @@ import useStyles from './styles';
 
 interface WorkflowTableProps {
   isCustom: boolean | undefined;
+  namespace: string;
 }
 
 interface ChaosCRDTable {
@@ -41,311 +42,322 @@ interface ChaosCRDTable {
   ChaosEngine: string;
 }
 
-const WorkflowTable = forwardRef(({ isCustom }: WorkflowTableProps, ref) => {
-  const classes = useStyles();
-  const { t } = useTranslation();
+const WorkflowTable = forwardRef(
+  ({ isCustom, namespace }: WorkflowTableProps, ref) => {
+    const classes = useStyles();
+    const { t } = useTranslation();
 
-  const theme = useTheme();
-  const workflow = useActions(WorkflowActions);
-  const [experiments, setExperiments] = useState<ChaosCRDTable[]>([]);
-  const [revertChaos, setRevertChaos] = useState<boolean>(true);
-  const [displayStepper, setDisplayStepper] = useState<boolean>(false);
-  const [engineIndex, setEngineIndex] = useState<number>(0);
-  const [selected, setSelected] = useState<string>('');
-  const manifest = useSelector(
-    (state: RootState) => state.workflowManifest.manifest
-  );
-  const imageRegistryData = useSelector(
-    (state: RootState) => state.selectedImageRegistry
-  );
-  const addWeights = (manifest: string) => {
-    const arr: experimentMap[] = [];
-    const hashMap = new Map();
-    const tests = parsed(manifest);
-    tests.forEach((test) => {
-      let value = 10;
-      if (hashMap.has(test)) {
-        value = hashMap.get(test);
-      }
-      arr.push({ experimentName: test, weight: value });
-    });
-    localforage.setItem('weights', arr);
-  };
-
-  const parsing = (yamlText: string) => {
-    const parsedYaml = YAML.parse(yamlText);
-    const expData: ChaosCRDTable[] = [];
-    addWeights(manifest);
-
-    const extractInfo = (template: any, index: number) => {
-      if (template.inputs && template.inputs.artifacts) {
-        template.inputs.artifacts.forEach((artifact: any) => {
-          const chaosEngine = YAML.parse(artifact.raw.data);
-          if (chaosEngine.kind === 'ChaosEngine') {
-            expData.push({
-              StepIndex: index,
-              Name: chaosEngine.metadata.generateName,
-              Namespace: chaosEngine.spec.appinfo?.appns ?? '',
-              Application: chaosEngine.spec.appinfo?.applabel ?? '',
-              Probes: chaosEngine.spec.experiments[0].spec.probe?.length ?? 0,
-              ChaosEngine: artifact.raw.data,
-            });
-          }
-        });
-      }
+    const theme = useTheme();
+    const workflow = useActions(WorkflowActions);
+    const [experiments, setExperiments] = useState<ChaosCRDTable[]>([]);
+    const [revertChaos, setRevertChaos] = useState<boolean>(true);
+    const [displayStepper, setDisplayStepper] = useState<boolean>(false);
+    const [engineIndex, setEngineIndex] = useState<number>(0);
+    const [selected, setSelected] = useState<string>('');
+    const manifest = useSelector(
+      (state: RootState) => state.workflowManifest.manifest
+    );
+    const imageRegistryData = useSelector(
+      (state: RootState) => state.selectedImageRegistry
+    );
+    const addWeights = (manifest: string) => {
+      const arr: experimentMap[] = [];
+      const hashMap = new Map();
+      const tests = parsed(manifest);
+      tests.forEach((test) => {
+        let value = 10;
+        if (hashMap.has(test)) {
+          value = hashMap.get(test);
+        }
+        arr.push({ experimentName: test, weight: value });
+      });
+      localforage.setItem('weights', arr);
     };
 
-    if (parsedYaml.kind === 'Workflow') {
-      parsedYaml.spec.templates.forEach((template: any, index: number) => {
-        extractInfo(template, index);
-      });
-    } else if (parsedYaml.kind === 'CronWorkflow') {
-      parsedYaml.spec.workflowSpec.templates.forEach(
-        (template: any, index: number) => {
-          extractInfo(template, index);
+    const parsing = (yamlText: string) => {
+      const parsedYaml = YAML.parse(yamlText);
+      const expData: ChaosCRDTable[] = [];
+      addWeights(manifest);
+
+      const extractInfo = (template: any, index: number) => {
+        if (template.inputs && template.inputs.artifacts) {
+          template.inputs.artifacts.forEach((artifact: any) => {
+            const chaosEngine = YAML.parse(artifact.raw.data);
+            if (chaosEngine.kind === 'ChaosEngine') {
+              expData.push({
+                StepIndex: index,
+                Name: chaosEngine.metadata.generateName,
+                Namespace:
+                  chaosEngine.spec.appinfo?.appns ===
+                  '{{workflow.parameters.adminModeNamespace}}'
+                    ? namespace
+                    : chaosEngine.spec.appinfo?.appns ?? '',
+                Application: chaosEngine.spec.appinfo?.applabel ?? '',
+                Probes: chaosEngine.spec.experiments[0].spec.probe?.length ?? 0,
+                ChaosEngine: artifact.raw.data,
+              });
+            }
+          });
         }
+      };
+
+      if (parsedYaml.kind === 'Workflow') {
+        parsedYaml.spec.templates.forEach((template: any, index: number) => {
+          extractInfo(template, index);
+        });
+      } else if (parsedYaml.kind === 'CronWorkflow') {
+        parsedYaml.spec.workflowSpec.templates.forEach(
+          (template: any, index: number) => {
+            extractInfo(template, index);
+          }
+        );
+      }
+      setExperiments(expData);
+    };
+
+    // Revert Chaos
+    const toggleRevertChaos = (manifest: string) => {
+      const parsedYAML = YAML.parse(manifest);
+      let deleteEngines: string = '';
+
+      // Else if Revert Chaos is set to true and it is not already set in the manifest
+      // For Workflows
+      if (revertChaos && parsedYAML.kind === 'Workflow') {
+        parsedYAML.spec.templates[0].steps.push([
+          {
+            name: 'revert-chaos',
+            template: 'revert-chaos',
+          },
+        ]);
+
+        parsed(manifest).forEach((_, i) => {
+          deleteEngines += `${
+            YAML.parse(
+              parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
+            ).metadata.labels['instance_id']
+          }, `;
+        });
+
+        parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
+          name: 'revert-chaos',
+          container: {
+            image: 'litmuschaos/k8s:latest',
+            command: ['sh', '-c'],
+            args: [
+              `kubectl delete chaosengine -l 'instance_id in (${deleteEngines})' -n {{workflow.parameters.adminModeNamespace}} `,
+            ],
+          },
+        };
+      }
+
+      // Else if Revert Chaos is set to True and it is not already set in the manifest
+      // For Cron Workflow
+      else if (revertChaos && parsedYAML.kind === 'CronWorkflow') {
+        parsedYAML.spec.workflowSpec.templates[0].steps.push([
+          {
+            name: 'revert-chaos',
+            template: 'revert-chaos',
+          },
+        ]);
+
+        parsed(manifest).forEach((_, i) => {
+          deleteEngines = `${
+            deleteEngines +
+            YAML.parse(
+              parsedYAML.spec.workflowSpec.templates[2 + i].inputs.artifacts[0]
+                .raw.data
+            ).metadata.name
+          } `;
+        });
+
+        deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';
+
+        parsedYAML.spec.workflowSpec.templates[
+          parsedYAML.spec.workflowSpec.templates.length
+        ] = {
+          name: 'revert-chaos',
+          container: {
+            image: 'litmuschaos/k8s:latest',
+            command: ['sh', '-c'],
+            args: [deleteEngines],
+          },
+        };
+      }
+
+      const updatedManifest = updateManifestImage(
+        parsedYAML,
+        imageRegistryData
       );
-    }
-    setExperiments(expData);
-  };
-
-  // Revert Chaos
-  const toggleRevertChaos = (manifest: string) => {
-    const parsedYAML = YAML.parse(manifest);
-    let deleteEngines: string = '';
-
-    // Else if Revert Chaos is set to true and it is not already set in the manifest
-    // For Workflows
-    if (revertChaos && parsedYAML.kind === 'Workflow') {
-      parsedYAML.spec.templates[0].steps.push([
-        {
-          name: 'revert-chaos',
-          template: 'revert-chaos',
-        },
-      ]);
-
-      parsed(manifest).forEach((_, i) => {
-        deleteEngines += `${
-          YAML.parse(
-            parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
-          ).metadata.labels['instance_id']
-        }, `;
+      workflow.setWorkflowManifest({
+        manifest: updatedManifest,
       });
+    };
 
-      parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
-        name: 'revert-chaos',
-        container: {
-          image: 'litmuschaos/k8s:latest',
-          command: ['sh', '-c'],
-          args: [
-            `kubectl delete chaosengine -l 'instance_id in (${deleteEngines})' -n {{workflow.parameters.adminModeNamespace}} `,
-          ],
-        },
-      };
-    }
-
-    // Else if Revert Chaos is set to True and it is not already set in the manifest
-    // For Cron Workflow
-    else if (revertChaos && parsedYAML.kind === 'CronWorkflow') {
-      parsedYAML.spec.workflowSpec.templates[0].steps.push([
-        {
-          name: 'revert-chaos',
-          template: 'revert-chaos',
-        },
-      ]);
-
-      parsed(manifest).forEach((_, i) => {
-        deleteEngines = `${
-          deleteEngines +
-          YAML.parse(
-            parsedYAML.spec.workflowSpec.templates[2 + i].inputs.artifacts[0]
-              .raw.data
-          ).metadata.name
-        } `;
+    const closeConfigurationStepper = () => {
+      workflow.setWorkflowManifest({
+        engineYAML: '',
       });
+      setDisplayStepper(false);
+    };
 
-      deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';
+    const handleChange = (
+      event: React.MouseEvent<HTMLElement>,
+      newValue: boolean
+    ) => {
+      setRevertChaos(newValue);
+    };
 
-      parsedYAML.spec.workflowSpec.templates[
-        parsedYAML.spec.workflowSpec.templates.length
-      ] = {
-        name: 'revert-chaos',
-        container: {
-          image: 'litmuschaos/k8s:latest',
-          command: ['sh', '-c'],
-          args: [deleteEngines],
-        },
-      };
+    useEffect(() => {
+      if (manifest.length) {
+        parsing(manifest);
+      }
+      localforage.getItem('selectedScheduleOption').then((value) => {
+        if (value) {
+          setSelected((value as ChooseWorkflowRadio).selected);
+        } else setSelected('');
+      });
+    }, [manifest]);
+
+    function onNext() {
+      if (experiments.length === 0) {
+        return false; // Should show alert
+      }
+      if (!isCustom) {
+        return true;
+      }
+      if (selected === 'C') {
+        toggleRevertChaos(manifest);
+      }
+      return true; // Should not show any alert
     }
 
-    const updatedManifest = updateManifestImage(parsedYAML, imageRegistryData);
-    workflow.setWorkflowManifest({
-      manifest: updatedManifest,
-    });
-  };
+    useImperativeHandle(ref, () => ({
+      onNext,
+    }));
 
-  const closeConfigurationStepper = () => {
-    workflow.setWorkflowManifest({
-      engineYAML: '',
-    });
-    setDisplayStepper(false);
-  };
-
-  const handleChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newValue: boolean
-  ) => {
-    setRevertChaos(newValue);
-  };
-
-  useEffect(() => {
-    if (manifest.length) {
-      parsing(manifest);
-    }
-    localforage.getItem('selectedScheduleOption').then((value) => {
-      if (value) {
-        setSelected((value as ChooseWorkflowRadio).selected);
-      } else setSelected('');
-    });
-  }, [manifest]);
-
-  function onNext() {
-    if (experiments.length === 0) {
-      return false; // Should show alert
-    }
-    if (!isCustom) {
-      return true;
-    }
-    if (selected === 'C') {
-      toggleRevertChaos(manifest);
-    }
-    return true; // Should not show any alert
-  }
-
-  useImperativeHandle(ref, () => ({
-    onNext,
-  }));
-
-  return (
-    <div>
-      {!displayStepper ? (
-        <>
-          <TableContainer className={classes.table} component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    {t('createWorkflow.chooseWorkflow.table.head1')}
-                  </TableCell>
-                  <TableCell align="left">
-                    {t('createWorkflow.chooseWorkflow.table.head2')}
-                  </TableCell>
-                  <TableCell align="left">
-                    {t('createWorkflow.chooseWorkflow.table.head3')}
-                  </TableCell>
-                  <TableCell align="left">
-                    {t('createWorkflow.chooseWorkflow.table.head4')}
-                  </TableCell>
-                  <TableCell align="left">
-                    {t('createWorkflow.chooseWorkflow.table.head5')}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {experiments.length > 0 ? (
-                  experiments.map((experiment: ChaosCRDTable, index) => (
-                    <TableRow
-                      key={experiment.Name}
-                      onClick={() => {
-                        setDisplayStepper(true);
-                        setEngineIndex(experiment.StepIndex);
-                        workflow.setWorkflowManifest({
-                          engineYAML: experiment.ChaosEngine,
-                        });
-                      }}
-                      className={classes.selection}
-                    >
-                      <TableCell component="th" scope="row">
-                        {index + 1}
-                      </TableCell>
-                      <TableCell align="left">{experiment.Name}</TableCell>
-                      <TableCell align="left">{experiment.Namespace}</TableCell>
-                      <TableCell align="left">
-                        {experiment.Application}
-                      </TableCell>
-                      <TableCell align="left">{experiment.Probes}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
+    return (
+      <div>
+        {!displayStepper ? (
+          <>
+            <TableContainer className={classes.table} component={Paper}>
+              <Table aria-label="simple table">
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={5}>
-                      <Typography align="center">
-                        {t('createWorkflow.chooseWorkflow.pleaseAddExp')}
-                      </Typography>
+                    <TableCell>
+                      {t('createWorkflow.chooseWorkflow.table.head1')}
+                    </TableCell>
+                    <TableCell align="left">
+                      {t('createWorkflow.chooseWorkflow.table.head2')}
+                    </TableCell>
+                    <TableCell align="left">
+                      {t('createWorkflow.chooseWorkflow.table.head3')}
+                    </TableCell>
+                    <TableCell align="left">
+                      {t('createWorkflow.chooseWorkflow.table.head4')}
+                    </TableCell>
+                    <TableCell align="left">
+                      {t('createWorkflow.chooseWorkflow.table.head5')}
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {selected === 'C' && (
-            <TableContainer className={classes.revertChaos} component={Paper}>
-              <Row className={classes.wrapper}>
-                <div className={classes.key}>
-                  <Typography>
-                    {t('createWorkflow.chooseWorkflow.revertSchedule')}
-                  </Typography>
-                </div>
-                <div>
-                  <ToggleButtonGroup
-                    value={revertChaos}
-                    exclusive
-                    onChange={handleChange}
-                    aria-label="text alignment"
-                  >
-                    <ToggleButton
-                      value
-                      style={{
-                        backgroundColor: revertChaos
-                          ? theme.palette.success.main
-                          : theme.palette.disabledBackground,
-                        color: revertChaos
-                          ? theme.palette.common.white
-                          : theme.palette.text.disabled,
-                      }}
-                      aria-label="centered"
-                    >
-                      {t('createWorkflow.chooseWorkflow.trueValue')}
-                    </ToggleButton>
-                    <ToggleButton
-                      value={false}
-                      style={{
-                        backgroundColor: !revertChaos
-                          ? theme.palette.error.main
-                          : theme.palette.disabledBackground,
-                        color: !revertChaos
-                          ? theme.palette.common.white
-                          : theme.palette.text.disabled,
-                      }}
-                      aria-label="centered"
-                    >
-                      {t('createWorkflow.chooseWorkflow.falseValue')}
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                </div>
-              </Row>
+                </TableHead>
+                <TableBody>
+                  {experiments.length > 0 ? (
+                    experiments.map((experiment: ChaosCRDTable, index) => (
+                      <TableRow
+                        key={experiment.Name}
+                        onClick={() => {
+                          setDisplayStepper(true);
+                          setEngineIndex(experiment.StepIndex);
+                          workflow.setWorkflowManifest({
+                            engineYAML: experiment.ChaosEngine,
+                          });
+                        }}
+                        className={classes.selection}
+                      >
+                        <TableCell component="th" scope="row">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell align="left">{experiment.Name}</TableCell>
+                        <TableCell align="left">
+                          {experiment.Namespace}
+                        </TableCell>
+                        <TableCell align="left">
+                          {experiment.Application}
+                        </TableCell>
+                        <TableCell align="left">{experiment.Probes}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5}>
+                        <Typography align="center">
+                          {t('createWorkflow.chooseWorkflow.pleaseAddExp')}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </TableContainer>
-          )}
-        </>
-      ) : (
-        <ConfigurationStepper
-          experimentIndex={engineIndex}
-          closeStepper={closeConfigurationStepper}
-          isCustom={isCustom}
-        />
-      )}
-    </div>
-  );
-});
+            {selected === 'C' && (
+              <TableContainer className={classes.revertChaos} component={Paper}>
+                <Row className={classes.wrapper}>
+                  <div className={classes.key}>
+                    <Typography>
+                      {t('createWorkflow.chooseWorkflow.revertSchedule')}
+                    </Typography>
+                  </div>
+                  <div>
+                    <ToggleButtonGroup
+                      value={revertChaos}
+                      exclusive
+                      onChange={handleChange}
+                      aria-label="text alignment"
+                    >
+                      <ToggleButton
+                        value
+                        style={{
+                          backgroundColor: revertChaos
+                            ? theme.palette.success.main
+                            : theme.palette.disabledBackground,
+                          color: revertChaos
+                            ? theme.palette.common.white
+                            : theme.palette.text.disabled,
+                        }}
+                        aria-label="centered"
+                      >
+                        {t('createWorkflow.chooseWorkflow.trueValue')}
+                      </ToggleButton>
+                      <ToggleButton
+                        value={false}
+                        style={{
+                          backgroundColor: !revertChaos
+                            ? theme.palette.error.main
+                            : theme.palette.disabledBackground,
+                          color: !revertChaos
+                            ? theme.palette.common.white
+                            : theme.palette.text.disabled,
+                        }}
+                        aria-label="centered"
+                      >
+                        {t('createWorkflow.chooseWorkflow.falseValue')}
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </div>
+                </Row>
+              </TableContainer>
+            )}
+          </>
+        ) : (
+          <ConfigurationStepper
+            experimentIndex={engineIndex}
+            closeStepper={closeConfigurationStepper}
+            isCustom={isCustom}
+          />
+        )}
+      </div>
+    );
+  }
+);
 
 export default WorkflowTable;
