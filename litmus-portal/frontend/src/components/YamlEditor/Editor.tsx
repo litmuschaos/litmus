@@ -355,7 +355,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
           onLoad={(editor) => {
             editor.setReadOnly(readOnly);
             editor.setOptions({
-              fontFamily: 'inter',
+              fontFamily: 'monospace',
               highlightGutterLine: false,
               autoScrollEditorIntoView: true,
               tooltipFollowsMouse: true,
