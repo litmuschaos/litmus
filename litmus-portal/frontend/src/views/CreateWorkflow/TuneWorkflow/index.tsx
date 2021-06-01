@@ -509,8 +509,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
       parsedManifest.kind === 'Workflow' &&
       parsedManifest.spec.templates[0].steps[
         parsedManifest.spec.templates[0].steps.length - 1
-      ][0].name === 'revert-chaos'
+      ][0].name === 'revert-chaos' &&
+      parsedManifest.spec.podGC
     ) {
+      delete parsedManifest.spec.podGC;
+
       parsedManifest.spec.templates[0].steps.pop(); // Remove the last step -> Revert Chaos
 
       parsedManifest.spec.templates.pop(); // Remove the last template -> Revert Chaos Template
@@ -522,8 +525,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
       parsedManifest.kind === 'CronWorkflow' &&
       parsedManifest.spec.workflowSpec.templates[0].steps[
         parsedManifest.spec.workflowSpec.templates[0].steps.length - 1
-      ][0].name === 'revert-chaos'
+      ][0].name === 'revert-chaos' &&
+      parsedManifest.spec.workflowSpec.podGC
     ) {
+      delete parsedManifest.workflowSpec.spec.podGC;
       parsedManifest.spec.workflowSpec.templates[0].steps.pop(); // Remove the last step -> Revert Chaos
 
       parsedManifest.spec.workflowSpec.templates.pop(); // Remove the last template -> Revert Chaos Template
