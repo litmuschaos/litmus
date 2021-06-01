@@ -3,8 +3,15 @@ FROM golang:1.14 AS builder
 
 LABEL maintainer="LitmusChaos"
 
+ARG TARGETOS=linux
+ARG TARGETARCH
+
 ADD . /gql-server
 WORKDIR /gql-server
+
+ENV GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH}
+
 RUN CGO_ENABLED=0 go build -o /output/server -v
 
 ## DEPLOY STAGE
