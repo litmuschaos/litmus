@@ -329,8 +329,8 @@ type ComplexityRoot struct {
 		GetHubExperiment            func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetHubStatus                func(childComplexity int, projectID string) int
 		GetImageRegistry            func(childComplexity int, imageRegistryID string, projectID string) int
-		GetPredefinedExperimentList func(childComplexity int, hubName string, projectID string) int
 		GetPredefinedExperimentYaml func(childComplexity int, experimentInput model.ExperimentInput) int
+		GetPredefinedWorkflowList   func(childComplexity int, hubName string, projectID string) int
 		GetProject                  func(childComplexity int, projectID string) int
 		GetPromLabelNamesAndValues  func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery                func(childComplexity int, query *model.PromInput) int
@@ -622,7 +622,7 @@ type QueryResolver interface {
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
 	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
-	GetPredefinedExperimentList(ctx context.Context, hubName string, projectID string) ([]string, error)
+	GetPredefinedWorkflowList(ctx context.Context, hubName string, projectID string) ([]string, error)
 	GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 	ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error)
 	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
@@ -2319,18 +2319,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetImageRegistry(childComplexity, args["image_registry_id"].(string), args["project_id"].(string)), true
 
-	case "Query.GetPredefinedExperimentList":
-		if e.complexity.Query.GetPredefinedExperimentList == nil {
-			break
-		}
-
-		args, err := ec.field_Query_GetPredefinedExperimentList_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetPredefinedExperimentList(childComplexity, args["HubName"].(string), args["projectID"].(string)), true
-
 	case "Query.GetPredefinedExperimentYAML":
 		if e.complexity.Query.GetPredefinedExperimentYaml == nil {
 			break
@@ -2342,6 +2330,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetPredefinedExperimentYaml(childComplexity, args["experimentInput"].(model.ExperimentInput)), true
+
+	case "Query.GetPredefinedWorkflowList":
+		if e.complexity.Query.GetPredefinedWorkflowList == nil {
+			break
+		}
+
+		args, err := ec.field_Query_GetPredefinedWorkflowList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPredefinedWorkflowList(childComplexity, args["HubName"].(string), args["projectID"].(string)), true
 
 	case "Query.getProject":
 		if e.complexity.Query.GetProject == nil {
@@ -4368,7 +4368,7 @@ type Query {
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 
-  GetPredefinedExperimentList(HubName: String!, projectID: String!): [String!]!
+  GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
 
   GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
 
@@ -5250,7 +5250,21 @@ func (ec *executionContext) field_Query_GetImageRegistry_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_GetPredefinedExperimentList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_GetPredefinedExperimentYAML_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ExperimentInput
+	if tmp, ok := rawArgs["experimentInput"]; ok {
+		arg0, err = ec.unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentInput"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetPredefinedWorkflowList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -5269,20 +5283,6 @@ func (ec *executionContext) field_Query_GetPredefinedExperimentList_args(ctx con
 		}
 	}
 	args["projectID"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_GetPredefinedExperimentYAML_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.ExperimentInput
-	if tmp, ok := rawArgs["experimentInput"]; ok {
-		arg0, err = ec.unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["experimentInput"] = arg0
 	return args, nil
 }
 
@@ -13988,7 +13988,7 @@ func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_GetPredefinedExperimentList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_GetPredefinedWorkflowList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -14004,7 +14004,7 @@ func (ec *executionContext) _Query_GetPredefinedExperimentList(ctx context.Conte
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_GetPredefinedExperimentList_args(ctx, rawArgs)
+	args, err := ec.field_Query_GetPredefinedWorkflowList_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -14012,7 +14012,7 @@ func (ec *executionContext) _Query_GetPredefinedExperimentList(ctx context.Conte
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPredefinedExperimentList(rctx, args["HubName"].(string), args["projectID"].(string))
+		return ec.resolvers.Query().GetPredefinedWorkflowList(rctx, args["HubName"].(string), args["projectID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23737,7 +23737,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "GetPredefinedExperimentList":
+		case "GetPredefinedWorkflowList":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -23745,7 +23745,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_GetPredefinedExperimentList(ctx, field)
+				res = ec._Query_GetPredefinedWorkflowList(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

@@ -310,7 +310,7 @@ type Query {
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 
-  GetPredefinedExperimentList(HubName: String!, projectID: String!): [String!]!
+  GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
 
   GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
 

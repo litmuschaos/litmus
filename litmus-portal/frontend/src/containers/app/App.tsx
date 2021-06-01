@@ -46,7 +46,6 @@ const DashboardPage = lazy(() => import('../../pages/ApplicationDashboard'));
 const MyHub = lazy(() => import('../../pages/ChaosHub'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
-const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));
 
 const Routes: React.FC = () => {
   const baseRoute = window.location.pathname.split('/')[1];
@@ -217,7 +216,6 @@ const Routes: React.FC = () => {
           <Route exact path="/targets" component={Targets} />
           <Route exact path="/target-connect" component={ConnectTargets} />
           <Route exact path="/myhub" component={MyHub} />
-          <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
           <Route exact path="/myhub/:hubname" component={ChaosChart} />
           <Route
             exact
