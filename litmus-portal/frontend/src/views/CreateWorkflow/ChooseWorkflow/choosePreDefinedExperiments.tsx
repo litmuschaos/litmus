@@ -72,7 +72,11 @@ const ChoosePreDefinedExperiments = () => {
 
         {/* List of Pre-defined workflows */}
         <div className={classes.predefinedWorkflowDiv}>
-          <RadioGroup value={selected} onChange={handleChange}>
+          <RadioGroup
+            value={selected}
+            data-cy="PredefinedWorkflowsRadioGroup"
+            onChange={handleChange}
+          >
             {filteredPreDefinedWorkflows.map((workflowData) => (
               <LitmusCard
                 width="100%"
