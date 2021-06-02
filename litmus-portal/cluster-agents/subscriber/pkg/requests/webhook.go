@@ -90,7 +90,6 @@ func ClusterConnect(clusterData map[string]string) {
 }
 
 func RequestProcessor(clusterData map[string]string, r types.RawData) error {
-	logrus.Info(r.Payload.Data.ClusterConnect.Action.RequestType)
 	if strings.Index("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
 		KubeObjRequest := types.KubeObjRequest{
 			RequestID: r.Payload.Data.ClusterConnect.ProjectID,
