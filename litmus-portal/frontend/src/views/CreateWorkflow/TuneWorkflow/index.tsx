@@ -1,5 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
-import { Typography } from '@material-ui/core';
+import { Snackbar, Typography } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
@@ -96,6 +97,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [addExpModal, setAddExpModal] = useState(false);
   const [editManifest, setEditManifest] = useState('');
   const [confirmEdit, setConfirmEdit] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [yamlValid, setYamlValid] = useState(true);
   const [editSequence, setEditSequence] = useState(false);
   const [steps, setSteps] = useState<StepType>({});
@@ -375,6 +377,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
     setAddExpModal(false);
   };
 
+  const AlertBox: React.FC = () => (
+    <Snackbar
+      open={isAlertOpen}
+      autoHideDuration={6000}
+      onClose={() => setIsAlertOpen(false)}
+    >
+      <Alert onClose={() => setIsAlertOpen(false)} severity="error">
+        The YAML contains errors, resolve them first to proceed
+      </Alert>
+    </Snackbar>
+  );
+
   /**
    * UpdateCRD is used to updated the manifest while adding experiments from MyHub
    */
@@ -498,9 +512,14 @@ const TuneWorkflow = forwardRef((_, ref) => {
   }, [experiment]);
 
   const saveManifestChanges = () => {
-    workflowAction.setWorkflowManifest({
-      manifest: editManifest,
-    });
+    if (yamlValid) {
+      workflowAction.setWorkflowManifest({
+        manifest: editManifest,
+      });
+      setYAMLModal(false);
+    } else {
+      setIsAlertOpen(true);
+    }
   };
 
   useEffect(() => {
@@ -598,6 +617,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   return (
     <>
+      <AlertBox />
       {YAMLModal ? (
         <>
           <Modal open={confirmEdit} onClose={() => {}} width="50%" height="30%">
@@ -642,7 +662,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
                 <ButtonOutlined
                   onClick={() => {
                     saveManifestChanges();
-                    setYAMLModal(false);
                   }}
                   className={classes.editorTopBtn}
                 >
@@ -650,7 +669,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
                 </ButtonOutlined>
                 <hr style={{ margin: '0 1rem', height: '2.5rem' }} />
                 <ButtonOutlined
-                  onClick={() => setConfirmEdit(true)}
+                  onClick={() =>
+                    yamlValid ? setConfirmEdit(true) : setIsAlertOpen(true)
+                  }
                   className={classes.editorCloseBtn}
                 >
                   x
