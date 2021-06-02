@@ -123,7 +123,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 	}
 	nodes[workflowObj.Name+"-engine"] = details
 	workflow := types.WorkflowEvent{
-		WorkflowType:      "chosengine",
+		WorkflowType:      "chaosengine",
 		WorkflowID:        workflowObj.Labels["workflow_id"],
 		EventType:         eventType,
 		UID:               string(workflowObj.ObjectMeta.UID),
@@ -144,10 +144,8 @@ func mapStatus(status chaosTypes.EngineStatus) string {
 	switch status {
 	case chaosTypes.EngineStatusInitialized:
 		return "Running"
-	// EngineStatusCompleted is used for reconcile calls to start reconcile for completion
 	case chaosTypes.EngineStatusCompleted:
 		return "Succeeded"
-	// EngineStatusStopped is used for reconcile calls to start reconcile for delete
 	case chaosTypes.EngineStatusStopped:
 		return "Skipped"
 	default:
