@@ -272,6 +272,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  editor: {
+    width: '100%',
+  },
   errorYamlText: {
     fontSize: '1rem',
     color: theme.palette.border.error,
