@@ -718,7 +718,7 @@ const WorkflowComparisonTable = () => {
                     : classes.tableMainCompare
                 }
               >
-                <Table aria-label="simple table">
+                <Table stickyHeader aria-label="simple table">
                   <TableHeader
                     onSelectAllClick={handleSelectAllClick}
                     numSelected={selected.length}
@@ -794,7 +794,7 @@ const WorkflowComparisonTable = () => {
                       </TableRow>
                     )}
                     {emptyRows > 0 && (
-                      <TableRow style={{ height: 75 * emptyRows }}>
+                      <TableRow style={{ height: '20rem' }}>
                         <TableCell colSpan={6} />
                       </TableRow>
                     )}

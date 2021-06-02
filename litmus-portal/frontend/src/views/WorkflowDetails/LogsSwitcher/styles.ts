@@ -18,6 +18,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   tabBar: {
     borderBottom: `1px solid ${theme.palette.border.main}`,
   },
+  downloadLogsBtn: {
+    backgroundColor: `${theme.palette.common.white} !important`,
+    float: 'right',
+    color: theme.palette.highlight,
+    margin: theme.spacing(2.5),
+  },
 }));
 
 export default useStyles;

@@ -178,7 +178,10 @@ const TableData: React.FC<TableDataProps> = ({
           </ButtonOutlined>
         }
       >
-        <SaveTemplateModal closeTemplate={handleCloseTemplate} />
+        <SaveTemplateModal
+          closeTemplate={handleCloseTemplate}
+          isCustomWorkflow={(data.isCustomWorkflow as unknown) as boolean}
+        />
       </Modal>
       <TableCell className={classes.workflowNameData}>
         <Typography>
@@ -480,7 +483,9 @@ const TableData: React.FC<TableDataProps> = ({
                   data-cy="deleteSchedule"
                   className={classes.btnText}
                 >
-                  {t('chaosWorkflows.browseSchedules.deleteSchedule')}
+                  {data.cronSyntax !== ''
+                    ? t('chaosWorkflows.browseSchedules.deleteSchedule')
+                    : t('chaosWorkflows.browseSchedules.deleteWorkflow')}
                 </Typography>
               </div>
             </MenuItem>

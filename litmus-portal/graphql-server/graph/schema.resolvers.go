@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -381,8 +381,8 @@ func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.E
 	return myhub.GetYAMLData(ctx, experimentInput)
 }
 
-func (r *queryResolver) GetPredefinedExperimentList(ctx context.Context, hubName string, projectID string) ([]string, error) {
-	return myhub.GetPredefinedExperiementList(hubName, projectID)
+func (r *queryResolver) GetPredefinedWorkflowList(ctx context.Context, hubName string, projectID string) ([]string, error) {
+	return myhub.GetPredefinedWorkflowList(hubName, projectID)
 }
 
 func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {

@@ -153,7 +153,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		"IS_CLUSTER_CONFIRMED": clusterData["IS_CLUSTER_CONFIRMED"],
 		"CLUSTER_ID":           clusterData["CLUSTER_ID"],
 		"SERVER_ADDR":          clusterData["SERVER_ADDR"],
-		"AGENT_SCOPE":          clusterData["SERVER_ADDR"],
+		"AGENT_SCOPE":          clusterData["AGENT_SCOPE"],
 		"COMPONENTS":           clusterData["COMPONENTS"],
 	}
 
