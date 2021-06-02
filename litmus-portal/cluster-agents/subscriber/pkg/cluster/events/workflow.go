@@ -1,7 +1,8 @@
 package events
 
 import (
-	"os"
+	"fmt"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strings"
 	"time"
 
@@ -15,18 +16,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-// 0 means no resync
-const (
-	resyncPeriod time.Duration = 0
-)
-
-var (
-	AgentScope     = os.Getenv("AGENT_SCOPE")
-	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
-	ClusterID      = os.Getenv("CLUSTER_ID")
-)
-
-// initializes the Argo Workflow event watcher
+// WorkflowEventWatcher initializes the Argo Workflow event watcher
 func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent) {
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
@@ -39,20 +29,26 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent)
 	}
 	// Create a factory object to watch workflows depending on default scope
 	if AgentScope == "namespace" {
-		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(AgentNamespace))
+		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(AgentNamespace),
+			externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+				list.LabelSelector = fmt.Sprintf("cluster_id=%s,workflows.argoproj.io/controller-instanceid=%s", ClusterID, ClusterID)
+			}))
 		informer := f.Argoproj().V1alpha1().Workflows().Informer()
 		// Start Event Watch
-		go startWatch(stopCh, informer, stream)
+		go startWatchWorkflow(stopCh, informer, stream)
 	} else {
-		f := externalversions.NewSharedInformerFactory(clientSet, resyncPeriod)
+		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod,
+			externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+				list.LabelSelector = fmt.Sprintf("cluster_id=%s,workflows.argoproj.io/controller-instanceid=%s", ClusterID, ClusterID)
+			}))
 		informer := f.Argoproj().V1alpha1().Workflows().Informer()
 		// Start Event Watch
-		go startWatch(stopCh, informer, stream)
+		go startWatchWorkflow(stopCh, informer, stream)
 	}
 }
 
 // handles the different workflow events - add, update and delete
-func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent) {
+func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent) {
 	startTime := time.Now().Unix()
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
@@ -69,8 +65,12 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 // responsible for extracting the required data from the event and streaming
 func workflowEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*v1alpha1.Workflow)
-	if val, ok := workflowObj.Labels["workflows.argoproj.io/controller-instanceid"]; !ok || val != ClusterID {
-		logrus.WithField("uid", string(workflowObj.ObjectMeta.UID)).Printf("WORKFLOW RUN IGNORED [NO MATCHING INSTANCE-ID]")
+	if workflowObj.Labels["workflow_id"] == "" {
+		logrus.WithFields(map[string]interface{}{
+			"uid":         string(workflowObj.ObjectMeta.UID),
+			"wf_id":       workflowObj.Labels["workflow_id"],
+			"instance_id": workflowObj.Labels["workflows.argoproj.io/controller-instanceid"],
+		}).Printf("WORKFLOW RUN IGNORED [INVALID METADATA]")
 		return
 	}
 	experimentFail := 0
@@ -108,15 +108,15 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 			ChaosExp:   cd,
 			Message:    nodeStatus.Message,
 		}
-		if cd != nil && (strings.ToLower(cd.ExperimentVerdict) == "fail" || strings.ToLower(cd.ExperimentVerdict) == "stopped") {
+		if cd != nil && strings.ToLower(cd.ExperimentVerdict) != "fail" {
 			experimentFail = 1
 			details.Phase = "Failed"
 			details.Message = "Chaos Experiment Failed"
-			cd.ExperimentVerdict = "Fail"
 		}
 		nodes[nodeStatus.ID] = details
 	}
 	workflow := types.WorkflowEvent{
+		WorkflowType:      "workflow",
 		WorkflowID:        workflowObj.Labels["workflow_id"],
 		EventType:         eventType,
 		UID:               string(workflowObj.ObjectMeta.UID),

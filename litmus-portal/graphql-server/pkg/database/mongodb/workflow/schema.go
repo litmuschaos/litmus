@@ -1,5 +1,12 @@
 package workflow
 
+type ChaosWorkflowType string
+
+const (
+	Workflow    ChaosWorkflowType = "workflow"
+	ChaosEngine ChaosWorkflowType = "chaosengine"
+)
+
 // ChaosWorkFlowInput contains the required fields to be stored in the database for a chaos workflow input
 type ChaosWorkFlowInput struct {
 	WorkflowID          string              `bson:"workflow_id"`
@@ -8,6 +15,7 @@ type ChaosWorkFlowInput struct {
 	WorkflowName        string              `bson:"workflow_name"`
 	WorkflowDescription string              `bson:"workflow_description"`
 	Weightages          []*WeightagesInput  `bson:"weightages"`
+	Type                ChaosWorkflowType   `bson:"type"`
 	IsCustomWorkflow    bool                `bson:"isCustomWorkflow"`
 	UpdatedAt           string              `bson:"updated_at"`
 	CreatedAt           string              `bson:"created_at"`

@@ -1,0 +1,158 @@
+package events
+
+import (
+	"fmt"
+	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
+	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned"
+	"github.com/litmuschaos/chaos-operator/pkg/client/informers/externalversions"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
+	"time"
+
+	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/tools/cache"
+)
+
+// ChaosEventWatcher initializes the Litmus ChaosEngine event watcher
+func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent) {
+	cfg, err := k8s.GetKubeConfig()
+	if err != nil {
+		logrus.WithError(err).Fatal("could not get config")
+	}
+	// ClientSet to create Informer
+	clientSet, err := versioned.NewForConfig(cfg)
+	if err != nil {
+		logrus.WithError(err).Fatal("could not generate dynamic client for config")
+	}
+	// Create a factory object to watch workflows depending on default scope
+	if AgentScope == "namespace" {
+		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(AgentNamespace),
+			externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+				list.LabelSelector = fmt.Sprintf("cluster_id=%s,type=standalone_workflow", ClusterID)
+			}))
+		informer := f.Litmuschaos().V1alpha1().ChaosEngines().Informer()
+		// Start Event Watch
+		go startWatchEngine(stopCh, informer, stream)
+	} else {
+		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod,
+			externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+				list.LabelSelector = fmt.Sprintf("cluster_id=%s,type=standalone_workflow", ClusterID)
+			}))
+		informer := f.Litmuschaos().V1alpha1().ChaosEngines().Informer()
+		// Start Event Watch
+		go startWatchEngine(stopCh, informer, stream)
+	}
+}
+
+// handles the different workflow events - add, update and delete
+func startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent) {
+	startTime := time.Now().Unix()
+	handlers := cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+			chaosEventHandler(obj, "ADD", stream, startTime)
+		},
+		UpdateFunc: func(oldObj, obj interface{}) {
+			chaosEventHandler(obj, "UPDATE", stream, startTime)
+		},
+	}
+	s.AddEventHandler(handlers)
+	s.Run(stopCh)
+}
+
+// responsible for extracting the required data from the event and streaming
+func chaosEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
+	workflowObj := obj.(*chaosTypes.ChaosEngine)
+	if workflowObj.Labels["workflow_id"] == "" {
+		logrus.WithFields(map[string]interface{}{
+			"uid":        string(workflowObj.ObjectMeta.UID),
+			"wf_id":      workflowObj.Labels["workflow_id"],
+			"cluster_id": workflowObj.Labels["cluster_id"],
+		}).Printf("CHAOSENGINE RUN IGNORED [INVALID METADATA]")
+		return
+	}
+	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
+		return
+	}
+	cfg, err := k8s.GetKubeConfig()
+	if err != nil {
+		logrus.WithError(err).Fatal("could not get config")
+	}
+	chaosClient, err := litmusV1alpha1.NewForConfig(cfg)
+	if err != nil {
+		logrus.WithError(err).Fatal("could not get Chaos ClientSet")
+	}
+	nodes := make(map[string]types.Node)
+	logrus.Print("STANDALONE CHAOSENGINE EVENT ", workflowObj.UID, " ", eventType)
+	var cd *types.ChaosData = nil
+	// considering chaos workflow has only 1 artifact with manifest as raw data
+	finTime := int64(-1)
+	if workflowObj.Status.EngineStatus == chaosTypes.EngineStatusCompleted || workflowObj.Status.EngineStatus == chaosTypes.EngineStatusStopped {
+		//extracts chaos data
+		cd, err = GetChaosData(v1alpha1.NodeStatus{StartedAt: workflowObj.ObjectMeta.CreationTimestamp}, workflowObj.Name, workflowObj.Namespace, chaosClient)
+		if err != nil {
+			logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
+		}
+		if len(workflowObj.Status.Experiments) > 0 {
+			finTime = workflowObj.Status.Experiments[0].LastUpdateTime.Unix()
+		}
+	}
+
+	nodes[workflowObj.Name] = types.Node{
+		Name:       workflowObj.Name,
+		Phase:      "Succeeded",
+		StartedAt:  StrConvTime(workflowObj.CreationTimestamp.Unix()),
+		FinishedAt: StrConvTime(finTime),
+		Children:   []string{workflowObj.Name + "-engine"},
+		Type:       "Steps",
+	}
+	details := types.Node{
+		Name:       workflowObj.Name,
+		Phase:      mapStatus(workflowObj.Status.EngineStatus),
+		Type:       "ChaosEngine",
+		StartedAt:  StrConvTime(workflowObj.CreationTimestamp.Unix()),
+		FinishedAt: StrConvTime(finTime),
+		Children:   []string{},
+		ChaosExp:   cd,
+		Message:    string(workflowObj.Status.EngineStatus),
+	}
+	if cd != nil && strings.ToLower(cd.ExperimentVerdict) != "fail" {
+		details.Phase = "Failed"
+		details.Message = "Chaos Experiment Failed"
+	}
+	nodes[workflowObj.Name+"-engine"] = details
+	workflow := types.WorkflowEvent{
+		WorkflowType:      "chosengine",
+		WorkflowID:        workflowObj.Labels["workflow_id"],
+		EventType:         eventType,
+		UID:               string(workflowObj.ObjectMeta.UID),
+		Namespace:         workflowObj.ObjectMeta.Namespace,
+		Name:              workflowObj.ObjectMeta.Name,
+		CreationTimestamp: StrConvTime(workflowObj.ObjectMeta.CreationTimestamp.Unix()),
+		Phase:             details.Phase,
+		Message:           details.Message,
+		StartedAt:         details.StartedAt,
+		FinishedAt:        details.FinishedAt,
+		Nodes:             nodes,
+	}
+	//stream
+	stream <- workflow
+}
+
+func mapStatus(status chaosTypes.EngineStatus) string {
+	switch status {
+	case chaosTypes.EngineStatusInitialized:
+		return "Running"
+	// EngineStatusCompleted is used for reconcile calls to start reconcile for completion
+	case chaosTypes.EngineStatusCompleted:
+		return "Succeeded"
+	// EngineStatusStopped is used for reconcile calls to start reconcile for delete
+	case chaosTypes.EngineStatusStopped:
+		return "Skipped"
+	default:
+		return "Running"
+	}
+}

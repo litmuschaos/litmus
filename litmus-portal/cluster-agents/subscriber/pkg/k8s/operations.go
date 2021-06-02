@@ -155,6 +155,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		"SERVER_ADDR":          clusterData["SERVER_ADDR"],
 		"AGENT_SCOPE":          clusterData["SERVER_ADDR"],
 		"COMPONENTS":           clusterData["COMPONENTS"],
+		"START_TIME":			clusterData["START_TIME"],
 	}
 
 	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(&corev1.ConfigMap{
