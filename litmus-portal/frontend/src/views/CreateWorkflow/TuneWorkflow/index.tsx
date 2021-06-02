@@ -782,6 +782,8 @@ const TuneWorkflow = forwardRef((_, ref) => {
               </div>
             </Modal>
             {/* Details Section -> Graph on the Left and Table on the Right */}
+
+            {/* Details Section -> Graph on the Left and Table on the Right */}
             <Row>
               {/* Argo Workflow Graph */}
               <Width width="30%">
@@ -789,7 +791,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
               </Width>
               {/* Workflow Table */}
               <Width width="70%">
-                <WorkflowTable ref={childRef} isCustom={isCustomWorkflow} />
+                <WorkflowTable
+                  ref={childRef}
+                  isCustom={isCustomWorkflow}
+                  namespace={namespace}
+                />
               </Width>
             </Row>
           </div>

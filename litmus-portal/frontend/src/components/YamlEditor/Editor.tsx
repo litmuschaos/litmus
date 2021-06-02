@@ -14,6 +14,7 @@ import SelectAllTwoToneIcon from '@material-ui/icons/SelectAllTwoTone';
 import UndoTwoToneIcon from '@material-ui/icons/UndoTwoTone';
 import UnfoldLessTwoToneIcon from '@material-ui/icons/UnfoldLessTwoTone';
 import UnfoldMoreTwoToneIcon from '@material-ui/icons/UnfoldMoreTwoTone';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import React, { useEffect, useState } from 'react';
 import AceEditor from 'react-ace';
 import useStyles from './styles';
@@ -158,22 +159,22 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     (YamlAce.current!.editor as any).execCommand('goToNextError');
   };
 
-  // const fullscreentrigger = () => {
-  //   const i: any = document.getElementById('resize-editor');
-  //   (YamlAce.current!.editor as any).setOption(
-  //     'maxLines',
-  //     document.body.clientHeight
-  //   );
-  //   if (i.requestFullscreen) {
-  //     i.requestFullscreen();
-  //   } else if (i.webkitRequestFullscreen) {
-  //     i.webkitRequestFullscreen();
-  //   } else if (i.mozRequestFullScreen) {
-  //     i.mozRequestFullScreen();
-  //   } else if (i.msRequestFullscreen) {
-  //     i.msRequestFullscreen();
-  //   }
-  // };
+  const fullScreenTrigger = () => {
+    const i: any = document.getElementById('yaml-editor');
+    (YamlAce.current!.editor as any).setOption(
+      'maxLines',
+      document.body.clientHeight
+    );
+    if (i.requestFullscreen) {
+      i.requestFullscreen();
+    } else if (i.webkitRequestFullscreen) {
+      i.webkitRequestFullscreen();
+    } else if (i.mozRequestFullScreen) {
+      i.mozRequestFullScreen();
+    } else if (i.msRequestFullscreen) {
+      i.msRequestFullscreen();
+    }
+  };
 
   useEffect(() => {
     const editorValidations: AceValidations = parseYamlValidations(
@@ -323,114 +324,106 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                 <SelectAllTwoToneIcon />
               </div>
             </Tooltip>
+
+            <Tooltip
+              title="Full Screen (Press Escape to End)"
+              placement="bottom"
+              TransitionComponent={Fade}
+              TransitionProps={{ timeout: 500 }}
+              arrow
+            >
+              <div
+                className={classes.editorButtons}
+                onClick={fullScreenTrigger}
+              >
+                <FullscreenIcon />
+              </div>
+            </Tooltip>
           </div>
         )}
       </>
       <br />
       <div className={classes.editor}>
-        <AceEditor
-          mode="yaml"
-          theme="solarized_dark"
-          name="code"
-          width="100%"
-          height="100%"
-          maxLines={12000}
-          minLines={1}
-          highlightActiveLine={false}
-          readOnly={readOnly}
-          tabSize={2}
-          wrapEnabled
-          ref={YamlAce}
-          showGutter
-          onChange={onEditorChange}
-          showPrintMargin={false}
-          enableBasicAutocompletion
-          enableSnippets
-          enableLiveAutocompletion
-          value={editorState.content}
-          editorProps={{
-            $blockScrolling: Infinity,
-            $useWorker: true,
-          }}
-          onLoad={(editor) => {
-            editor.setReadOnly(readOnly);
-            editor.setOptions({
-              fontFamily: 'monospace',
-              highlightGutterLine: false,
-              autoScrollEditorIntoView: true,
-              tooltipFollowsMouse: true,
-              displayIndentGuides: false,
-            });
-            editor.focus();
-            editor.setHighlightSelectedWord(true);
-            editor.session.setFoldStyle('markbeginend');
-            editor.setShowFoldWidgets(true);
-            editor.setAnimatedScroll(true);
-            editor.setShowInvisibles(false);
-            editor.setFontSize('0.98rem');
-            // editor.container.style.background = palette.common.black;
-            editor.container.style.lineHeight = '160%';
-            const nodeStyle = (document.getElementsByClassName(
-              'ace_gutter'
-            )[0] as any).style;
-            nodeStyle.color = palette.secondary.contrastText;
-            nodeStyle.borderRight = 0;
-            // nodeStyle.background = palette.common.black;
-          }}
-          onCursorChange={(selection) => {
-            (YamlAce.current!.editor as any).setOptions({
-              autoScrollEditorIntoView: true,
-              tooltipFollowsMouse: true,
-            });
+        <pre id="yaml-editor">
+          <AceEditor
+            mode="yaml"
+            theme="solarized_dark"
+            name="code"
+            width="100%"
+            height="100%"
+            maxLines={12000}
+            minLines={1}
+            highlightActiveLine={false}
+            readOnly={readOnly}
+            tabSize={2}
+            wrapEnabled
+            ref={YamlAce}
+            showGutter
+            onChange={onEditorChange}
+            showPrintMargin={false}
+            enableBasicAutocompletion
+            enableSnippets
+            enableLiveAutocompletion
+            value={editorState.content}
+            editorProps={{
+              $blockScrolling: Infinity,
+              $useWorker: true,
+            }}
+            onLoad={(editor) => {
+              editor.setReadOnly(readOnly);
+              editor.setOptions({
+                fontFamily: 'monospace',
+                highlightGutterLine: false,
+                autoScrollEditorIntoView: true,
+                tooltipFollowsMouse: true,
+                displayIndentGuides: false,
+              });
+              editor.focus();
+              editor.setHighlightSelectedWord(true);
+              editor.session.setFoldStyle('markbeginend');
+              editor.setShowFoldWidgets(true);
+              editor.setAnimatedScroll(true);
+              editor.setShowInvisibles(false);
+              editor.setFontSize('0.98rem');
+              editor.container.style.lineHeight = '160%';
+              const nodeStyle = (document.getElementsByClassName(
+                'ace_gutter'
+              )[0] as any).style;
+              nodeStyle.color = palette.secondary.contrastText;
+              nodeStyle.borderRight = 0;
+            }}
+            onCursorChange={(selection) => {
+              (YamlAce.current!.editor as any).setOptions({
+                autoScrollEditorIntoView: true,
+                tooltipFollowsMouse: true,
+              });
 
-            const nodeStyleActiveList = document.getElementsByClassName(
-              'ace_gutter-cell'
-            );
-            for (let i = 0; i < nodeStyleActiveList.length; i += 1) {
-              (nodeStyleActiveList[i] as any).style.backgroundColor =
-                palette.common.black;
-              (nodeStyleActiveList[i] as any).style.color =
-                palette.secondary.contrastText;
-            }
-
-            if (
-              document.getElementsByClassName('ace_gutter-cell')[
-                selection.cursor.row
-              ] as any
-            ) {
-              const nodeStyleActive = (document.getElementsByClassName(
+              const nodeStyleActiveList = document.getElementsByClassName(
                 'ace_gutter-cell'
-              )[selection.cursor.row] as any).style;
-              nodeStyleActive.backgroundColor = palette.primary.main;
-              nodeStyleActive.color = palette.secondary.contrastText;
-            }
-          }}
-          annotations={editorState.annotations}
-          markers={editorState.markers}
-        />
-        {/* <Box p={1} flexGrow={0} className={classes.fullScreenGrid}>
-          <Tooltip
-            title="Full Screen (Press Escape to End)"
-            placement="bottom"
-            TransitionComponent={Fade}
-            TransitionProps={{ timeout: 500 }}
-            arrow
-          >
-            <Button
-              variant="outlined"
-              className={classes.editorButtonFullScreen}
-              onClick={fullscreentrigger}
-              startIcon={
-                <img
-                  src="/icons/fullscreen.svg"
-                  alt="Full Screen"
-                  color={palette.secondary.contrastText}
-                  className={classes.fullScreenIcon}
-                />
+              );
+              for (let i = 0; i < nodeStyleActiveList.length; i += 1) {
+                (nodeStyleActiveList[i] as any).style.backgroundColor =
+                  '#01313F';
+                (nodeStyleActiveList[i] as any).style.color =
+                  palette.secondary.contrastText;
               }
-            />
-          </Tooltip>
-        </Box> */}
+
+              if (
+                document.getElementsByClassName('ace_gutter-cell')[
+                  selection.cursor.row
+                ] as any
+              ) {
+                const nodeStyleActive = (document.getElementsByClassName(
+                  'ace_gutter-cell'
+                )[selection.cursor.row] as any).style;
+                nodeStyleActive.backgroundColor = palette.primary.main;
+                nodeStyleActive.color = palette.secondary.contrastText;
+              }
+            }}
+            annotations={editorState.annotations}
+            markers={editorState.markers}
+          />
+        </pre>
       </div>
     </div>
   );
