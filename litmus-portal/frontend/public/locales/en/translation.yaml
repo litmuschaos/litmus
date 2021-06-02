@@ -399,9 +399,11 @@ chaosWorkflows:
     reRunSchedule: Rerun Schedule
     downloadManifest: Download Manifest
     deleteSchedule: Delete Schedule
+    deleteWorkflow: Delete Workflow
     editSchedule: Edit Schedule
     scheduleIsDisabled: This Schedule is disabled now
     disableSchedule: Disable Schedule
+    enableSchedule: Enable Schedule
     saveTemplate: Save Template
     updateEngine: 'Note: Make sure to update the chaos engine names'
     saveChanges: Save Changes
@@ -423,7 +425,7 @@ chaosWorkflows:
       experimentsPassed: 'Experiments Passed : '
       showExperiments: Show Experiments
       showTheWorkflow: Show the workflow
-      showTheAnalytics: show the analytics
+      showTheAnalytics: Show the analytics
       na: NA
 
 analyticsDashboardViews:
@@ -652,6 +654,7 @@ settings:
     noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your chaos workflows.
 
 workflowDetailsView:
+  logs: Logs
   headerDesc: Workflow dashboard of
   headerMiniDesc: Description of the workflow
   argoWorkflow:
@@ -751,7 +754,7 @@ createWorkflow:
     header: Adjust the weights of the experiments in the workflow
     info: You have selected
     infoNext: tests in the “Kubernetes conformance test” workflow. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weightage against.
-    infoNextStrong: The weights are relative to each other.
+    infoNextStrong: These weights are used to calculate the resiliency score at the end of test.
     testHeading: Kubernetes conformance test
     testInfo: Compare the importance of the items above and launch a demo version of Kubernetes conformance test to see how it works.
     button:
@@ -797,7 +800,10 @@ createWorkflow:
     fail: Fail
   tuneWorkflow:
     header: Tune the selected workflow
-    selectedWorkflowInfo: You have selected a pre-defined workflow
+    selectedPreDefinedWorkflowInfo: You have selected a pre-defined workflow
+    selectedTemplateInfo: You have selected a template
+    selectedCustomWorkflowInfo: You have selected a custom workflow
+    selectedUploadYAML: You have imported a workflow YAML
     description: Fine tune the application  names and other variables to suit your needs
     view: View YAML
     edit: Edit YAML
@@ -849,6 +855,7 @@ createWorkflow:
     addProbe:
       heading: Add
       headingStrong: Probe
+      validate: Probe name already exists
       labels:
         probeName: Probe Name
         probeType: Probe Type
@@ -900,7 +907,7 @@ createWorkflow:
         continuous: Continuous
   verifyCommit:
     header: Confirmation of Results
-    info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
+    info: Before committing the workflow changes to your agent, verify and if needed go back to a corresponding section of the wizard to modify.
     error: Invalid Workflow CRD found ! Please correct the errors.
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
@@ -1038,14 +1045,16 @@ myhub:
   edit: Edit Hub
   refresh: Refresh Hub
   disconnect: Disconnect Hub
+  lastSync: 'Last synced at:'
   mainPage:
-    header: MyHubs
+    header: ChaosHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
     devGuideHeader: You have no hubs currently connected. Start connecting your first hub.
     devGuideDescription: You should have your litmus chaos hub forked and made ready before connecting to it.
     connectNewHub: Connect a new chaos hub
+    connect: Connect New Hub
     noGithubCredentials: You have not given your Github credential
     submitBtn: Submit Now
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
@@ -1060,8 +1069,14 @@ myhub:
     header: MyHub
     github: github.com/
     syncingRepo: Loading Charts, Please Wait...!
+    preDefined: Pre-defined workflows
+    chaosCharts: Chaos-charts
+    noExp: No predefined workflows available with information in this Hub
+    lastSynced: 'Last synced at: '
+    repoLink: 'Repository Link: '
   connectHubPage:
     connectHub: Connect a new chaos hub
+    editHub: Edit hub configuration
     enterInfo: Enter information in the required fields
     connectBtn: Then click on the connect button
     submitBtn: Submit Now
@@ -1079,6 +1094,7 @@ myhub:
     sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
     updateHub: Update the MyHub with correct details from the MyHubs section
+    cancel: Cancel
   videoCarousel:
     video: Video Tips
   installChaos:
@@ -1094,6 +1110,8 @@ myhub:
     installRBACDesc: Create a service account using the following command
     installEngine: Sample Chaos Engine
     installEngineDesc: Copy and edit this sample Chaos Engine yaml according to your application needs
+    checkPreDefined: Check the pre-defined workflow
+    checkPreDefinedDesc: You can view the workflow details here
   editPage:
     edit: Edit the Hub
     click: Then click on the update button

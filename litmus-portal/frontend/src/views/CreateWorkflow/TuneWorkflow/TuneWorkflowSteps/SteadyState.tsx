@@ -13,15 +13,15 @@ import {
 } from '@material-ui/core';
 import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import { useTranslation } from 'react-i18next';
+import { WorkflowManifest } from '../../../../models/redux/workflow';
+import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { RootState } from '../../../../redux/reducers';
 import AddProbe from '../AddProbe';
 import useStyles from './styles';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
-import { WorkflowManifest } from '../../../../models/redux/workflow';
-import { RootState } from '../../../../redux/reducers';
-import useActions from '../../../../redux/actions';
 
 interface SteadyStateProps {
   engineIndex: number;

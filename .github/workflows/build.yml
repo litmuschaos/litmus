@@ -4,7 +4,6 @@ on:
     branches:
       - master
       - v*
-      - litmus-v2
 
 jobs:
   changes:
@@ -17,21 +16,21 @@ jobs:
       event-tracker: ${{ steps.filter.outputs.event-tracker }}
       subscriber: ${{ steps.filter.outputs.subscriber }}
     steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          frontend:
-            - 'litmus-portal/frontend/**'
-          graphql-server:
-            - 'litmus-portal/graphql-server/**'
-          authentication:
-            - 'litmus-portal/authentication/**'
-          event-tracker:
-            - 'litmus-portal/cluster-agents/event-tracker/**'
-          subscriber:
-            - 'litmus-portal/cluster-agents/subscriber/**'
+      # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'litmus-portal/frontend/**'
+            graphql-server:
+              - 'litmus-portal/graphql-server/**'
+            authentication:
+              - 'litmus-portal/authentication/**'
+            event-tracker:
+              - 'litmus-portal/cluster-agents/event-tracker/**'
+            subscriber:
+              - 'litmus-portal/cluster-agents/subscriber/**'
 
   backend-checks:
     runs-on: ubuntu-latest

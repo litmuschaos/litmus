@@ -464,6 +464,7 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 		ProjectName:         projectData.Name,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		IsRemoved:           false,
+		IsCustomWorkflow:    templateInput.IsCustomWorkflow,
 	}
 
 	err = dbOperationsWorkflowTemplate.CreateWorkflowTemplate(ctx, template)

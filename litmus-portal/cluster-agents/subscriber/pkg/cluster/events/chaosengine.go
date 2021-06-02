@@ -5,20 +5,23 @@ import (
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned"
-	"github.com/litmuschaos/chaos-operator/pkg/client/informers/externalversions"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
-	"time"
-
 	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/chaos-operator/pkg/client/informers/externalversions"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/cache"
+	"strconv"
+	"strings"
 )
 
 // ChaosEventWatcher initializes the Litmus ChaosEngine event watcher
-func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent) {
+func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, clusterData map[string]string) {
+	startTime, err := strconv.Atoi(clusterData["START_TIME"])
+	if err != nil {
+		logrus.WithError(err).Fatal("failed to parse startTime")
+	}
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get config")
@@ -29,28 +32,23 @@ func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent) {
 		logrus.WithError(err).Fatal("could not generate dynamic client for config")
 	}
 	// Create a factory object to watch workflows depending on default scope
+	f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod,
+		externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+			list.LabelSelector = fmt.Sprintf("cluster_id=%s,type=standalone_workflow", ClusterID)
+		}))
+	informer := f.Litmuschaos().V1alpha1().ChaosEngines().Informer()
 	if AgentScope == "namespace" {
-		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(AgentNamespace),
+		f = externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(AgentNamespace),
 			externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
 				list.LabelSelector = fmt.Sprintf("cluster_id=%s,type=standalone_workflow", ClusterID)
 			}))
-		informer := f.Litmuschaos().V1alpha1().ChaosEngines().Informer()
-		// Start Event Watch
-		go startWatchEngine(stopCh, informer, stream)
-	} else {
-		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod,
-			externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
-				list.LabelSelector = fmt.Sprintf("cluster_id=%s,type=standalone_workflow", ClusterID)
-			}))
-		informer := f.Litmuschaos().V1alpha1().ChaosEngines().Informer()
-		// Start Event Watch
-		go startWatchEngine(stopCh, informer, stream)
+		informer = f.Litmuschaos().V1alpha1().ChaosEngines().Informer()
 	}
+	go startWatchEngine(stopCh, informer, stream, int64(startTime))
 }
 
 // handles the different workflow events - add, update and delete
-func startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent) {
-	startTime := time.Now().Unix()
+func startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			chaosEventHandler(obj, "ADD", stream, startTime)
@@ -88,14 +86,14 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 	nodes := make(map[string]types.Node)
 	logrus.Print("STANDALONE CHAOSENGINE EVENT ", workflowObj.UID, " ", eventType)
 	var cd *types.ChaosData = nil
+	//extracts chaos data
+	cd, err = GetChaosData(v1alpha1.NodeStatus{StartedAt: workflowObj.ObjectMeta.CreationTimestamp}, workflowObj.Name, workflowObj.Namespace, chaosClient)
+	if err != nil {
+		logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
+	}
 	// considering chaos workflow has only 1 artifact with manifest as raw data
 	finTime := int64(-1)
 	if workflowObj.Status.EngineStatus == chaosTypes.EngineStatusCompleted || workflowObj.Status.EngineStatus == chaosTypes.EngineStatusStopped {
-		//extracts chaos data
-		cd, err = GetChaosData(v1alpha1.NodeStatus{StartedAt: workflowObj.ObjectMeta.CreationTimestamp}, workflowObj.Name, workflowObj.Namespace, chaosClient)
-		if err != nil {
-			logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
-		}
 		if len(workflowObj.Status.Experiments) > 0 {
 			finTime = workflowObj.Status.Experiments[0].LastUpdateTime.Unix()
 		}
@@ -119,7 +117,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 		ChaosExp:   cd,
 		Message:    string(workflowObj.Status.EngineStatus),
 	}
-	if cd != nil && strings.ToLower(cd.ExperimentVerdict) != "fail" {
+	if cd != nil && strings.ToLower(cd.ExperimentVerdict) == "fail" {
 		details.Phase = "Failed"
 		details.Message = "Chaos Experiment Failed"
 	}

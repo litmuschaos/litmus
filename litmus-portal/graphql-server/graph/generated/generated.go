@@ -188,6 +188,7 @@ type ComplexityRoot struct {
 
 	ManifestTemplate struct {
 		CreatedAt           func(childComplexity int) int
+		IsCustomWorkflow    func(childComplexity int) int
 		IsRemoved           func(childComplexity int) int
 		Manifest            func(childComplexity int) int
 		ProjectID           func(childComplexity int) int
@@ -327,8 +328,8 @@ type ComplexityRoot struct {
 		GetHubExperiment            func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetHubStatus                func(childComplexity int, projectID string) int
 		GetImageRegistry            func(childComplexity int, imageRegistryID string, projectID string) int
-		GetPredefinedExperimentList func(childComplexity int, hubName string, projectID string) int
 		GetPredefinedExperimentYaml func(childComplexity int, experimentInput model.ExperimentInput) int
+		GetPredefinedWorkflowList   func(childComplexity int, hubName string, projectID string) int
 		GetProject                  func(childComplexity int, projectID string) int
 		GetPromLabelNamesAndValues  func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery                func(childComplexity int, query *model.PromInput) int
@@ -619,7 +620,7 @@ type QueryResolver interface {
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
 	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
-	GetPredefinedExperimentList(ctx context.Context, hubName string, projectID string) ([]string, error)
+	GetPredefinedWorkflowList(ctx context.Context, hubName string, projectID string) ([]string, error)
 	GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 	ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error)
 	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
@@ -1298,6 +1299,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ManifestTemplate.CreatedAt(childComplexity), true
+
+	case "ManifestTemplate.isCustomWorkflow":
+		if e.complexity.ManifestTemplate.IsCustomWorkflow == nil {
+			break
+		}
+
+		return e.complexity.ManifestTemplate.IsCustomWorkflow(childComplexity), true
 
 	case "ManifestTemplate.is_removed":
 		if e.complexity.ManifestTemplate.IsRemoved == nil {
@@ -2297,18 +2305,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetImageRegistry(childComplexity, args["image_registry_id"].(string), args["project_id"].(string)), true
 
-	case "Query.GetPredefinedExperimentList":
-		if e.complexity.Query.GetPredefinedExperimentList == nil {
-			break
-		}
-
-		args, err := ec.field_Query_GetPredefinedExperimentList_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetPredefinedExperimentList(childComplexity, args["HubName"].(string), args["projectID"].(string)), true
-
 	case "Query.GetPredefinedExperimentYAML":
 		if e.complexity.Query.GetPredefinedExperimentYaml == nil {
 			break
@@ -2320,6 +2316,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetPredefinedExperimentYaml(childComplexity, args["experimentInput"].(model.ExperimentInput)), true
+
+	case "Query.GetPredefinedWorkflowList":
+		if e.complexity.Query.GetPredefinedWorkflowList == nil {
+			break
+		}
+
+		args, err := ec.field_Query_GetPredefinedWorkflowList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPredefinedWorkflowList(childComplexity, args["HubName"].(string), args["projectID"].(string)), true
 
 	case "Query.getProject":
 		if e.complexity.Query.GetProject == nil {
@@ -4283,6 +4291,7 @@ type ManifestTemplate {
   project_name: String!
   created_at: String!
   is_removed: Boolean!
+  isCustomWorkflow: Boolean!
 }
 
 input TemplateInput {
@@ -4290,6 +4299,7 @@ input TemplateInput {
   template_name: String!
   template_description: String!
   project_id: String!
+  isCustomWorkflow: Boolean!
 }
 
 type KubeObjectResponse {
@@ -4344,7 +4354,7 @@ type Query {
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 
-  GetPredefinedExperimentList(HubName: String!, projectID: String!): [String!]!
+  GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
 
   GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
 
@@ -5194,7 +5204,21 @@ func (ec *executionContext) field_Query_GetImageRegistry_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_GetPredefinedExperimentList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_GetPredefinedExperimentYAML_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ExperimentInput
+	if tmp, ok := rawArgs["experimentInput"]; ok {
+		arg0, err = ec.unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentInput"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetPredefinedWorkflowList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -5213,20 +5237,6 @@ func (ec *executionContext) field_Query_GetPredefinedExperimentList_args(ctx con
 		}
 	}
 	args["projectID"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_GetPredefinedExperimentYAML_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.ExperimentInput
-	if tmp, ok := rawArgs["experimentInput"]; ok {
-		arg0, err = ec.unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["experimentInput"] = arg0
 	return args, nil
 }
 
@@ -8888,6 +8898,40 @@ func (ec *executionContext) _ManifestTemplate_is_removed(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ManifestTemplate_isCustomWorkflow(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ManifestTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsCustomWorkflow, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13837,7 +13881,7 @@ func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_GetPredefinedExperimentList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_GetPredefinedWorkflowList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13853,7 +13897,7 @@ func (ec *executionContext) _Query_GetPredefinedExperimentList(ctx context.Conte
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_GetPredefinedExperimentList_args(ctx, rawArgs)
+	args, err := ec.field_Query_GetPredefinedWorkflowList_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13861,7 +13905,7 @@ func (ec *executionContext) _Query_GetPredefinedExperimentList(ctx context.Conte
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPredefinedExperimentList(rctx, args["HubName"].(string), args["projectID"].(string))
+		return ec.resolvers.Query().GetPredefinedWorkflowList(rctx, args["HubName"].(string), args["projectID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21252,6 +21296,12 @@ func (ec *executionContext) unmarshalInputTemplateInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "isCustomWorkflow":
+			var err error
+			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -22730,6 +22780,11 @@ func (ec *executionContext) _ManifestTemplate(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "isCustomWorkflow":
+			out.Values[i] = ec._ManifestTemplate_isCustomWorkflow(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -23570,7 +23625,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "GetPredefinedExperimentList":
+		case "GetPredefinedWorkflowList":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -23578,7 +23633,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_GetPredefinedExperimentList(ctx, field)
+				res = ec._Query_GetPredefinedWorkflowList(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

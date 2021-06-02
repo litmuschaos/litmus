@@ -247,6 +247,7 @@ type ManifestTemplate {
   project_name: String!
   created_at: String!
   is_removed: Boolean!
+  isCustomWorkflow: Boolean!
 }
 
 input TemplateInput {
@@ -254,6 +255,7 @@ input TemplateInput {
   template_name: String!
   template_description: String!
   project_id: String!
+  isCustomWorkflow: Boolean!
 }
 
 type KubeObjectResponse {
@@ -308,7 +310,7 @@ type Query {
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 
-  GetPredefinedExperimentList(HubName: String!, projectID: String!): [String!]!
+  GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
 
   GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
 

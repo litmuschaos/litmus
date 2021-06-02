@@ -45,17 +45,17 @@ func GetChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	cd.ProbeSuccessPercentage = "0"
 	cd.FailStep = ""
 	cd.EngineUID = string(crd.ObjectMeta.UID)
-	if len(crd.Status.Experiments)==0{
+	if len(crd.Status.Experiments) == 0 {
 		return cd, nil
 	}
+	// considering chaosengine will only have 1 experiment
 	cd.ExperimentPod = crd.Status.Experiments[0].ExpPod
 	cd.RunnerPod = crd.Status.Experiments[0].Runner
 	cd.ExperimentStatus = string(crd.Status.Experiments[0].Status)
 	cd.ExperimentName = crd.Status.Experiments[0].Name
 	cd.LastUpdatedAt = strconv.FormatInt(crd.Status.Experiments[0].LastUpdateTime.Unix(), 10)
 	cd.ExperimentVerdict = crd.Status.Experiments[0].Verdict
-	// considering chaos engine has only 1 experiment
-	if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped" || (strings.ToLower(string(crd.Status.EngineStatus)) == "completed" && cd.ExperimentVerdict != "pass") {
+	if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped" || (strings.ToLower(string(crd.Status.EngineStatus)) == "completed" && strings.ToLower(cd.ExperimentVerdict) != "pass") {
 		cd.ExperimentVerdict = "Fail"
 		cd.ExperimentStatus = "Stopped"
 	}
@@ -64,6 +64,8 @@ func GetChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 		if err != nil {
 			return cd, err
 		}
+		// annotations sometimes cause failure in gql message escaping
+		expRes.Annotations = nil
 		cd.ChaosResult = expRes
 		cd.ProbeSuccessPercentage = expRes.Status.ExperimentStatus.ProbeSuccessPercentage
 		cd.FailStep = expRes.Status.ExperimentStatus.FailStep

@@ -35,6 +35,9 @@ const WorkflowSettings = forwardRef((_, ref) => {
   // Actions
   const workflowAction = useActions(WorkflowActions);
   const workflowData = useSelector((state: RootState) => state.workflowData);
+  const { manifest } = useSelector(
+    (state: RootState) => state.workflowManifest
+  );
 
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
@@ -95,7 +98,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
       }
       if ((value as ChooseWorkflowRadio).selected === 'C') {
         setName('custom-chaos-workflow');
-        workflowAction.setWorkflowManifest({ manifest: '' });
+        workflowAction.setWorkflowManifest({ manifest: manifest ?? '' });
         setDescription('Custom Chaos Workflow');
         setIcon('./avatars/litmus.svg');
       }
@@ -203,6 +206,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
           <div className={classes.inputDiv}>
             <div aria-details="spacer" className={classes.mainDiv}>
               <InputField
+                title="workflowName"
                 label={t('createWorkflow.chooseWorkflow.label.workflowName')}
                 fullWidth
                 helperText={
