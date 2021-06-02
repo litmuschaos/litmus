@@ -12,6 +12,7 @@ WORKDIR /event-tracker
 ENV GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH}
 
+RUN go env
 RUN CGO_ENABLED=0 go build -o /output/event-tracker -v
 
 # DEPLOY STAGE

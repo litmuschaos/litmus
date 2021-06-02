@@ -11,7 +11,8 @@ WORKDIR /gql-server
 
 ENV GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH}
-
+    
+RUN go env
 RUN CGO_ENABLED=0 go build -o /output/server -v
 
 ## DEPLOY STAGE
