@@ -62,7 +62,7 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 
 	query := bson.D{{"workflow_id", workflow_id}}
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
-	if err != nil{
+	if err != nil {
 		return false, err
 	}
 
@@ -164,7 +164,7 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 				ExecutionData: wfrun.ExecutionData,
 				ClusterName:   cluster.ClusterName,
 				ClusterType:   &cluster.ClusterType,
-				IsRemoved: cluster.IsRemoved,
+				IsRemoved:     cluster.IsRemoved,
 			}
 			result = append(result, &newWorkflowRun)
 		}
@@ -298,7 +298,6 @@ func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
 func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string, error) {
 	cluster, err := cluster.VerifyCluster(*input.ClusterID)
 	if err != nil {
-		log.Print("ERROR", err)
 		return "", err
 	}
 
@@ -307,7 +306,6 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		input.ExecutionData = ops.ResiliencyScoreCalculator(input.ExecutionData, input.WorkflowID)
 	}
 
-	// err = dbOperationsWorkflow.UpdateWorkflowRun(dbOperationsWorkflow.WorkflowRun(newWorkflowRun))
 	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
@@ -315,7 +313,6 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		Completed:     input.Completed,
 	})
 	if err != nil {
-		log.Print("ERROR", err)
 		return "", err
 	}
 
@@ -413,7 +410,7 @@ func ReRunWorkflow(workflowID string) (string, error) {
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
-	}, nil,"create", store.Store)
+	}, nil, "create", store.Store)
 
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
 }
@@ -550,7 +547,7 @@ func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID stri
 
 	query := bson.D{{"workflow_id", workflow_id}}
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
-	if err != nil{
+	if err != nil {
 		return false, err
 	}
 
@@ -559,15 +556,19 @@ func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID stri
 	}
 
 	for _, workflow_run := range workflow.WorkflowRuns {
+		if workflow.IsRemoved == true {
+			return false, errors.New("workflow has been removed")
+		}
+
 		if workflow_run.WorkflowRunID == workflowRunID && workflow.IsRemoved == false {
 			err = ops.ProcessWorkflowRunSync(&workflowRunID, workflow, r)
 			if err != nil {
 				return false, err
 			}
-
 		}
+
 	}
 
-	return false, nil
+	return true, nil
 
 }

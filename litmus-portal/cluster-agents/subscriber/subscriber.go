@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/requests"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workflow"
 	"log"
 	"os"
 	"os/signal"
 	"runtime"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/gql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
@@ -29,8 +29,8 @@ var (
 )
 
 func init() {
-	log.Printf("Go Version: %s", runtime.Version())
-	log.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	logrus.Info("Go Version: ", runtime.Version())
+	logrus.Info("Go OS/Arch: ", runtime.GOOS, "/", runtime.GOARCH)
 
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()
@@ -44,21 +44,21 @@ func init() {
 
 	isConfirmed, newKey, err := k8s.IsClusterConfirmed()
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	if isConfirmed == true {
 		clusterData["ACCESS_KEY"] = newKey
 	} else if isConfirmed == false {
-		clusterConfirmByte, err := gql.ClusterConfirm(clusterData)
+		clusterConfirmByte, err := k8s.ClusterConfirm(clusterData)
 		if err != nil {
-			log.Fatal(err)
+			logrus.Fatal(err)
 		}
 
 		var clusterConfirmInterface types.Payload
 		err = json.Unmarshal(clusterConfirmByte, &clusterConfirmInterface)
 		if err != nil {
-			log.Fatal(err)
+			logrus.Fatal(err)
 		}
 
 		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
@@ -66,11 +66,11 @@ func init() {
 			clusterData["IS_CLUSTER_CONFIRMED"] = "true"
 			_, err = k8s.ClusterRegister(clusterData)
 			if err != nil {
-				log.Fatal(err)
+				logrus.Fatal(err)
 			}
-			log.Println(clusterData["CLUSTER_ID"] + " has been confirmed")
+			logrus.Info(clusterData["CLUSTER_ID"] + " has been confirmed")
 		} else {
-			log.Fatal(clusterData["CLUSTER_ID"] + " hasn't been confirmed")
+			logrus.Info(clusterData["CLUSTER_ID"] + " hasn't been confirmed")
 		}
 	}
 
@@ -84,11 +84,11 @@ func main() {
 	//start workflow event watcher
 	workflow.WorkflowEventWatcher(stopCh, stream)
 
-	//streams the event data to gql server
-	go gql.WorkflowUpdates(clusterData, stream)
+	//streams the event data to graphql server
+	go workflow.WorkflowUpdates(clusterData, stream)
 
 	// listen for cluster actions
-	go gql.ClusterConnect(clusterData)
+	go requests.ClusterConnect(clusterData)
 
 	signal.Notify(sigCh, os.Kill, os.Interrupt)
 	<-sigCh

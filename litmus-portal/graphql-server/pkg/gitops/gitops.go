@@ -675,5 +675,11 @@ func deleteWorkflow(file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 
-	return ops.ProcessWorkflowDelete(bson.D{{"workflow_name", fileName}, {"project_id", config.ProjectID}}, store.Store)
+	query := bson.D{{"workflow_name", fileName}, {"project_id", config.ProjectID}}
+	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	if err != nil {
+		return err
+	}
+
+	return ops.ProcessWorkflowDelete(query, workflow, store.Store)
 }

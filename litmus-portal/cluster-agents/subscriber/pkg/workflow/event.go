@@ -1,6 +1,8 @@
 package workflow
 
 import (
+	"errors"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 	"os"
 	"strings"
 	"time"
@@ -19,6 +21,12 @@ import (
 const (
 	resyncPeriod time.Duration = 0
 )
+
+var eventMap map[string]types.WorkflowEvent
+
+func init() {
+	eventMap = make(map[string]types.WorkflowEvent)
+}
 
 var (
 	AgentScope     = os.Getenv("AGENT_SCOPE")
@@ -89,9 +97,10 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 	}
 
 	experimentFail := 0
-	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
-		return types.WorkflowEvent{},  nil
-	}
+	//if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
+	//
+	//	return types.WorkflowEvent{}, nil
+	//}
 
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
@@ -100,8 +109,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 
 	chaosClient, err := litmusV1alpha1.NewForConfig(cfg)
 	if err != nil {
-		//logrus.WithError(err).Fatal("could not get Chaos ClientSet")
-		return types.WorkflowEvent{},  err
+		return types.WorkflowEvent{}, errors.New("could not get Chaos ClientSet: " + err.Error())
 	}
 
 	nodes := make(map[string]types.Node)
@@ -110,8 +118,8 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 	for _, nodeStatus := range workflowObj.Status.Nodes {
 
 		var (
-			nodeType = string(nodeStatus.Type)
-			cd *types.ChaosData = nil
+			nodeType                  = string(nodeStatus.Type)
+			cd       *types.ChaosData = nil
 		)
 
 		// considering chaos workflow has only 1 artifact with manifest as raw data
@@ -163,4 +171,55 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 	}
 
 	return workflow, nil
+}
+
+//SendWorkflowUpdates generates graphql mutation to send workflow updates to graphql server
+func SendWorkflowUpdates(clusterData map[string]string, event types.WorkflowEvent) (string, error) {
+	if wfEvent, ok := eventMap[event.UID]; ok {
+		for key, node := range wfEvent.Nodes {
+			if node.Type == "ChaosEngine" && node.ChaosExp != nil && event.Nodes[key].ChaosExp == nil {
+				nodeData := event.Nodes[key]
+				nodeData.ChaosExp = node.ChaosExp
+				nodeData.Phase = node.Phase
+				nodeData.Message = node.Message
+				if node.Phase == "Failed" {
+					event.Phase = "Failed"
+					event.Message = "Chaos Experiment Failed"
+				}
+				event.Nodes[key] = nodeData
+			}
+		}
+	}
+	eventMap[event.UID] = event
+
+	// generate graphql payload
+	payload, err := GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "false", event)
+
+	if event.FinishedAt != "" {
+		payload, err = GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "true", event)
+		delete(eventMap, event.UID)
+	}
+
+	if err != nil {
+		return "", errors.New(err.Error() + ": ERROR PARSING WORKFLOW EVENT")
+	}
+
+	body, err := graphql.SendRequest(clusterData["SERVER_ADDR"], payload)
+	if err != nil {
+		return "", err
+	}
+
+	return body, nil
+}
+
+func WorkflowUpdates(clusterData map[string]string, event chan types.WorkflowEvent) {
+	// listen on the channel for streaming event updates
+	for eventData := range event {
+		response, err := SendWorkflowUpdates(clusterData, eventData)
+		if err != nil {
+			logrus.Print(err.Error())
+		}
+
+		logrus.Print("RESPONSE ", response)
+	}
 }

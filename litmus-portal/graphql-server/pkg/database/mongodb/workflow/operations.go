@@ -60,6 +60,7 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 		if err != nil {
 			return 0, err
 		}
+
 		updateCount = int(result.MatchedCount)
 	}
 

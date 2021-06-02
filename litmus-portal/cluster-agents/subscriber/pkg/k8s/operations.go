@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 	"log"
 	"strings"
 	"sync"
@@ -175,7 +176,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		response, err := dr.Create(obj, metav1.CreateOptions{})
 		if k8s_errors.IsAlreadyExists(err) {
 			// This doesnt ever happen even if it does already exist
-			log.Printf("Already exists")
+			logrus.Info("Already exists")
 			return nil, nil
 		}
 
@@ -183,13 +184,13 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			return nil, err
 		}
 
-		log.Println("Resource successfully created")
+		logrus.Info("successfully created for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "update" {
 		getObj, err := dr.Get(obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
-			log.Printf("%v not found", obj.GetName())
+			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
 
@@ -204,13 +205,13 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			return nil, err
 		}
 
-		log.Println("Resource successfully updated")
+		logrus.Info("successfully updated for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "delete" {
 		err := dr.Delete(obj.GetName(), &metav1.DeleteOptions{})
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
-			log.Printf("%v not found", obj.GetName())
+			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
 
@@ -218,13 +219,13 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			return nil, err
 		}
 
-		log.Println("Resource successfully deleted")
+		logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 		return &unstructured.Unstructured{}, nil
 	} else if requestType == "get" {
 		response, err := dr.Get(obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
-			log.Printf("%v not found", obj.GetName())
+			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
 
@@ -232,7 +233,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			return nil, err
 		}
 
-		log.Println("Resource successfully retrieved")
+		logrus.Info("successfully retrieved for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	}
 
@@ -280,4 +281,13 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 	}
 
 	return applyRequest(requestType, obj)
+}
+
+func ClusterConfirm(clusterData map[string]string) ([]byte, error) {
+	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey cluster_id}}"}`
+	resp, err := graphql.SendRequest(clusterData["SERVER_ADDR"], []byte(payload))
+	if err != nil {
+		return nil, err
+	}
+	return []byte(resp), nil
 }
