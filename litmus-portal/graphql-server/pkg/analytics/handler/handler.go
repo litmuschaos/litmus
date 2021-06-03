@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -561,7 +562,7 @@ func GetScheduledWorkflowStats(filter string, project_id string) ([]*model.Sched
 	start:=  strconv.FormatInt(time.Now().Unix(), 10)
 	m := make(map[int]model.ScheduledWorkflowStats)
 	dateMap := make(map[int]map[int]model.ScheduledWorkflowStats)
-	// fmt.Println(m)
+	
 	switch filter{
 	case "Monthly":
 		sixMonthsAgo:= time.Now().AddDate(0,-6, 0)
@@ -589,13 +590,20 @@ func GetScheduledWorkflowStats(filter string, project_id string) ([]*model.Sched
 		var t model.ScheduledWorkflowStats
 		var key int
 		switch filter{
-		case "Monthly":
+		case "Monthly"://createdAtInTime.Day()+1
 			t = m[int(createdAtInTime.Month())]
 			key=int(createdAtInTime.Month())
+			t.Value+=1
+			createdAtInTime=time.Date(createdAtInTime.Year(), createdAtInTime.Month(), 1, 0, 0, 0, 0, time.Local)
+			t.Time=float64(createdAtInTime.Unix())*1000
+			m[key]=t
 		case "Weekly":
 			_, week := createdAtInTime.ISOWeek()
 			t= m[week]
 			key=week
+			t.Value+=1
+			t.Time=float64(createdAtInTime.Unix())*1000
+			m[key]=t
 		case "Hourly":
 			if dateMap[createdAtInTime.Day()] == nil {
 			dateMap[createdAtInTime.Day()] = make(map[int]model.ScheduledWorkflowStats)
@@ -609,9 +617,8 @@ func GetScheduledWorkflowStats(filter string, project_id string) ([]*model.Sched
 		default:
 		return nil, errors.New("No Matching Filter Found")
 		}
-		t.Value+=1
-		t.Time=float64(createdAtInTime.Unix())*1000
-		m[key]=t
+	
+	
 	}
 	result := make([]*model.ScheduledWorkflowStats,0)
 	if(filter=="Hourly"){
@@ -626,6 +633,18 @@ func GetScheduledWorkflowStats(filter string, project_id string) ([]*model.Sched
 	for _, v := range m { 
 		val:= model.ScheduledWorkflowStats{v.Time,v.Value}
 		result=append(result,&val )
+	}
+
+	sort.SliceStable(result, func(i, j int) bool { return result[i].Time < result[j].Time })
+	switch filter{
+	case "Monthly":
+		len:=len(result)
+		
+		for i:=0; i<6-len;i+=1{
+		x:= time.Unix(int64(result[0].Time)/1000, 0).AddDate(0,-1, 0)
+		val:= []*model.ScheduledWorkflowStats{{float64(x.Unix())*1000,0}}
+		result=append(val,result...)
+		}
 	}
 
 return result,nil
