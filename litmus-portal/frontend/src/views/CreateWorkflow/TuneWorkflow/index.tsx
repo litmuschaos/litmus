@@ -196,8 +196,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       .then(
         (value) =>
           value !== null &&
-          (value as ChooseWorkflowRadio).selected === 'C' &&
-          setSelectedRadio('C')
+          setSelectedRadio((value as ChooseWorkflowRadio).selected)
       );
   }, []);
 
@@ -620,7 +619,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
       <AlertBox />
       {YAMLModal ? (
         <>
-          <Modal open={confirmEdit} onClose={() => {}} width="50%" height="30%">
+          <Modal
+            open={confirmEdit}
+            onClose={() => {}}
+            width="30rem"
+            height="25rem"
+          >
             <div className={classes.confirmDiv}>
               <Typography className={classes.confirmText}>
                 {t('createWorkflow.tuneWorkflow.confirmText')}
