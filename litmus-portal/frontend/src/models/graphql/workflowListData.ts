@@ -84,6 +84,7 @@ export interface ListManifestTemplateArray {
   project_name: string;
   template_description: string;
   template_name: string;
+  isCustomWorkflow: boolean;
 }
 
 export interface ListManifestTemplate {

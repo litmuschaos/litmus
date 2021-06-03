@@ -52,6 +52,7 @@ const SelectMyHub = () => {
             {t('createWorkflow.chooseWorkflow.selectMyHub')}
           </InputLabel>
           <Select
+            data-cy="myHubDropDown"
             value={selectedHub}
             onChange={(e) => {
               handleMyHubChange(e);
@@ -60,7 +61,11 @@ const SelectMyHub = () => {
             MenuProps={MenuProps}
           >
             {availableHubs.map((hubs) => (
-              <MenuItem key={hubs.HubName} value={hubs.HubName}>
+              <MenuItem
+                key={hubs.HubName}
+                data-cy="hubOption"
+                value={hubs.HubName}
+              >
                 {hubs.HubName}
               </MenuItem>
             ))}

@@ -6,6 +6,17 @@ import { v4 as uuidv4 } from 'uuid';
 import { constants } from '../constants';
 import { ImageRegistryInfo } from '../models/redux/image_registry';
 
+const validateNamespace = (chaosEngine: any) => {
+  // Condition to check the namespace
+  if (typeof chaosEngine.metadata.namespace === 'object') {
+    // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
+    const namespace = Object.keys(chaosEngine.metadata.namespace)[0].replace(
+      /\s/g,
+      ''
+    );
+    chaosEngine.metadata.namespace = `{${namespace}}`;
+  }
+};
 const nameextractor = (val: any) => {
   const embeddedworkflowyamlstring = val;
   const parsedEmbeddedYaml = YAML.parse(embeddedworkflowyamlstring as string);
@@ -32,6 +43,7 @@ export const updateEngineName = (parsedYaml: any) => {
         if (template.inputs && template.inputs.artifacts) {
           template.inputs.artifacts.forEach((artifact: any) => {
             const chaosEngine = YAML.parse(artifact.raw.data);
+            validateNamespace(chaosEngine);
             // Condition to check for the kind as ChaosEngine
             if (chaosEngine.kind === 'ChaosEngine') {
               if (chaosEngine.metadata.generateName === undefined) {
@@ -42,14 +54,7 @@ export const updateEngineName = (parsedYaml: any) => {
               chaosEngine.metadata['labels'] = {
                 instance_id: uuidv4(),
               };
-              // Condition to check the namespace
-              if (typeof chaosEngine.metadata.namespace === 'object') {
-                // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
-                const namespace = Object.keys(
-                  chaosEngine.metadata.namespace
-                )[0].replace(/\s/g, '');
-                chaosEngine.metadata.namespace = `{${namespace}}`;
-              }
+              validateNamespace(chaosEngine);
 
               // Edge Case: Condition to check the appns
               // Required because while parsing the chaos engine
@@ -97,6 +102,7 @@ export const updateWorkflowNameLabel = (
         if (template.inputs && template.inputs.artifacts) {
           template.inputs.artifacts.forEach((artifact: any) => {
             const chaosEngine = YAML.parse(artifact.raw.data);
+            validateNamespace(chaosEngine);
             // Condition to check for the kind as ChaosEngine
             if (chaosEngine.kind === 'ChaosEngine') {
               if (chaosEngine.metadata.labels !== undefined) {
@@ -106,14 +112,8 @@ export const updateWorkflowNameLabel = (
                   workflow_name: workflowName,
                 };
               }
-              // Condition to check the namespace
-              if (typeof chaosEngine.metadata.namespace === 'object') {
-                // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
-                const namespace = Object.keys(
-                  chaosEngine.metadata.namespace
-                )[0].replace(/\s/g, '');
-                chaosEngine.metadata.namespace = `{${namespace}}`;
-              }
+
+              validateNamespace(chaosEngine);
 
               // Edge Case: Condition to check the appns
               // Required because while parsing the chaos engine
