@@ -15,7 +15,7 @@ type ChaosWorkFlowInput struct {
 	WorkflowName        string              `bson:"workflow_name"`
 	WorkflowDescription string              `bson:"workflow_description"`
 	Weightages          []*WeightagesInput  `bson:"weightages"`
-	Type                ChaosWorkflowType   `bson:"type"`
+	WorkflowType        ChaosWorkflowType   `bson:"type"`
 	IsCustomWorkflow    bool                `bson:"isCustomWorkflow"`
 	UpdatedAt           string              `bson:"updated_at"`
 	CreatedAt           string              `bson:"created_at"`

@@ -163,7 +163,7 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 			copier.Copy(&Weightages, &workflow.Weightages)
 
 			newChaosWorkflows := model.ScheduledWorkflows{
-				WorkflowType:        string(workflow.Type),
+				WorkflowType:        string(workflow.WorkflowType),
 				WorkflowID:          workflow.WorkflowID,
 				WorkflowManifest:    workflow.WorkflowManifest,
 				WorkflowName:        workflow.WorkflowName,
@@ -206,7 +206,7 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
 
 		newChaosWorkflows := model.Workflow{
-			WorkflowType:        string(workflow.Type),
+			WorkflowType:        string(workflow.WorkflowType),
 			WorkflowID:          workflow.WorkflowID,
 			WorkflowManifest:    workflow.WorkflowManifest,
 			WorkflowName:        workflow.WorkflowName,
@@ -249,7 +249,7 @@ func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
 		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
 
 		newChaosWorkflows := model.Workflow{
-			WorkflowType:        string(workflow.Type),
+			WorkflowType:        string(workflow.WorkflowType),
 			WorkflowID:          workflow.WorkflowID,
 			WorkflowManifest:    workflow.WorkflowManifest,
 			WorkflowName:        workflow.WorkflowName,

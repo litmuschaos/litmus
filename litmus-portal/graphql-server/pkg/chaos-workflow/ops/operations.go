@@ -152,7 +152,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, wfType *dbSchemaWo
 		CronSyntax:          input.CronSyntax,
 		WorkflowName:        input.WorkflowName,
 		WorkflowDescription: input.WorkflowDescription,
-		Type:                *wfType,
+		WorkflowType:        *wfType,
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 		ProjectID:           input.ProjectID,
 		ClusterID:           input.ClusterID,
