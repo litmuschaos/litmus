@@ -94,7 +94,6 @@ jobs:
           PLATFORMS: ${{ secrets.PLATFORMS }}
           REPONAME: ${{ secrets.REPONAME }}
           DIRECTORY: "graphql-server"
-          DOCKERFILE_PATH: "build/Dockerfile"
         run: |
             source env-vars
             make push-portal-component
@@ -171,7 +170,6 @@ jobs:
           PLATFORMS: ${{ secrets.PLATFORMS }}
           REPONAME: ${{ secrets.REPONAME }}         
           DIRECTORY: "cluster-agents/subscriber/"
-          DOCKERFILE_PATH: "build/Dockerfile"
         run: |
           source env-vars
           make push-portal-component            

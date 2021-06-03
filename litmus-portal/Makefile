@@ -120,7 +120,6 @@ buildx.push.frontend:
 		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x";\
     fi
 
-
 .PHONY: push-portal-component-amd64
 push-portal-component-amd64: docker-build-portal-amd64 docker-push-portal-amd64
 

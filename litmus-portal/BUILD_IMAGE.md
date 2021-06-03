@@ -20,7 +20,6 @@ cd litmus/litmus-portal
 - The litmus portal component also supports the multiarch builds that are the builds on different `OS` and `ARCH`. Currently, the images are tested to be working
   for `linux/amd64` and `linux/arm64`builds.
 
-
 #### Docker Image Build Tunables
 
 <table>
