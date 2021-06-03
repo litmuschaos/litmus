@@ -2,6 +2,11 @@ package workflow
 
 import (
 	"errors"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
@@ -12,10 +17,6 @@ import (
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"

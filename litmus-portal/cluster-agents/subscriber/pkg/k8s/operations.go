@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 	"log"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"

@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/requests"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workflow"
 	"log"
 	"os"
 	"os/signal"
 	"runtime"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/requests"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workflow"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"

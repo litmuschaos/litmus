@@ -3,13 +3,14 @@ package ops
 import (
 	"encoding/json"
 	"errors"
-	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
-	"github.com/tidwall/gjson"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
+	"github.com/tidwall/gjson"
 
 	"github.com/ghodss/yaml"
 

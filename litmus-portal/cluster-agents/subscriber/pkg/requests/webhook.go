@@ -3,15 +3,16 @@ package requests
 import (
 	"encoding/json"
 	"errors"
+	"log"
+	"net/url"
+	"strings"
+	"time"
+
 	"github.com/gorilla/websocket"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workflow"
 	"github.com/sirupsen/logrus"
-	"log"
-	"net/url"
-	"strings"
-	"time"
 )
 
 func ClusterConnect(clusterData map[string]string) {

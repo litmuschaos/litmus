@@ -3,10 +3,11 @@ package k8s
 import (
 	"encoding/json"
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
-	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
+	"github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
