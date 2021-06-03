@@ -72,16 +72,6 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 	return updateCount, nil
 }
 
-func CountWorkflows(query bson.D) (int64, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-
-	count, err := mongodb.Operator.CountDocuments(ctx, mongodb.WorkflowCollection, query)
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
-}
-
 // GetWorkflows takes a query parameter to retrieve the workflow details from the database
 func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
