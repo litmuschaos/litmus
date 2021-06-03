@@ -133,7 +133,6 @@ jobs:
           PLATFORMS: ${{ secrets.PLATFORMS }}
           REPONAME: ${{ secrets.REPONAME }}         
           DIRECTORY: "authentication"
-          DOCKERFILE_PATH: "Dockerfile"
         run: |
           source env-vars
           make push-portal-component
@@ -210,11 +209,10 @@ jobs:
           IMG_TAG: ${IMG_TAG}
           PLATFORMS: ${{ secrets.PLATFORMS }}
           REPONAME: ${{ secrets.REPONAME }}         
-          DIRECTORY: "cluster-agents/event-tracker/"
-          DOCKERFILE_PATH: "Dockerfile"      
+          DIRECTORY: "cluster-agents/event-tracker/"      
         run: |
           source env-vars
-          make push-portal-component
+          make 
 
   ## TODO: the build time for multiarch frontend image is higher so it is used in release 
   ## builds only need to optimize the build duration and also add it with ci tag
