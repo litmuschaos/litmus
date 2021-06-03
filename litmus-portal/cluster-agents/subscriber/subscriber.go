@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"strconv"
+	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/gql"
@@ -23,9 +25,8 @@ var (
 		"IS_CLUSTER_CONFIRMED": os.Getenv("IS_CLUSTER_CONFIRMED"),
 		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
 		"COMPONENTS":           os.Getenv("COMPONENTS"),
+		"START_TIME":           os.Getenv("START_TIME"),
 	}
-
-	err error
 )
 
 func init() {
@@ -64,6 +65,7 @@ func init() {
 		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
 			clusterData["ACCESS_KEY"] = clusterConfirmInterface.Data.ClusterConfirm.NewAccessKey
 			clusterData["IS_CLUSTER_CONFIRMED"] = "true"
+			clusterData["START_TIME"] = strconv.FormatInt(time.Now().Unix(), 10)
 			_, err = k8s.ClusterRegister(clusterData)
 			if err != nil {
 				log.Fatal(err)
@@ -82,7 +84,10 @@ func main() {
 	stream := make(chan types.WorkflowEvent, 10)
 
 	//start workflow event watcher
-	events.WorkflowEventWatcher(stopCh, stream)
+	events.WorkflowEventWatcher(stopCh, stream, clusterData)
+
+	//start workflow event watcher
+	events.ChaosEventWatcher(stopCh, stream, clusterData)
 
 	//streams the event data to gql server
 	go gql.SendWorkflowUpdates(clusterData, stream)

@@ -22,7 +22,12 @@ rules:
       - chaosengines
       - chaosresults
     verbs:
+      - create
       - get
+      - list
+      - watch
+      - delete
+      - update
   - apiGroups:
       - argoproj.io
     resources:

@@ -2,9 +2,11 @@ package events
 
 import (
 	"errors"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/logs"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -17,8 +19,19 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 )
 
-// util function, extracts the chaos data using the litmus go-client
-func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
+// 0 means no resync
+const (
+	resyncPeriod time.Duration = 0
+)
+
+var (
+	AgentScope     = os.Getenv("AGENT_SCOPE")
+	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
+	ClusterID      = os.Getenv("CLUSTER_ID")
+)
+
+// GetChaosData is a util function, extracts the chaos data using the litmus go-client
+func GetChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
 	cd := &types.ChaosData{}
 	cd.EngineName = engineName
 	cd.Namespace = engineNS
@@ -26,35 +39,41 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	if err != nil {
 		return nil, err
 	}
-	// considering chaos engine has only 1 experiment
+	if nodeStatus.StartedAt.Unix() > crd.ObjectMeta.CreationTimestamp.Unix() {
+		return nil, errors.New("chaosenginge resource older than current workflow node")
+	}
+	cd.ProbeSuccessPercentage = "0"
+	cd.FailStep = ""
+	cd.EngineUID = string(crd.ObjectMeta.UID)
+	if len(crd.Status.Experiments) == 0 {
+		return cd, nil
+	}
+	// considering chaosengine will only have 1 experiment
+	cd.ExperimentPod = crd.Status.Experiments[0].ExpPod
+	cd.RunnerPod = crd.Status.Experiments[0].Runner
+	cd.ExperimentStatus = string(crd.Status.Experiments[0].Status)
+	cd.ExperimentName = crd.Status.Experiments[0].Name
+	cd.LastUpdatedAt = strconv.FormatInt(crd.Status.Experiments[0].LastUpdateTime.Unix(), 10)
+	cd.ExperimentVerdict = crd.Status.Experiments[0].Verdict
+	if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped" || (strings.ToLower(string(crd.Status.EngineStatus)) == "completed" && strings.ToLower(cd.ExperimentVerdict) != "pass") {
+		cd.ExperimentVerdict = "Fail"
+		cd.ExperimentStatus = string(crd.Status.EngineStatus)
+	}
 	if len(crd.Status.Experiments) == 1 {
-		if nodeStatus.StartedAt.Unix() > crd.ObjectMeta.CreationTimestamp.Unix() {
-			return nil, errors.New("chaosenginge resource older than current workflow node")
-		}
 		expRes, err := chaosClient.ChaosResults(cd.Namespace).Get(crd.Name+"-"+crd.Status.Experiments[0].Name, v1.GetOptions{})
 		if err != nil {
-			return nil, err
+			return cd, err
 		}
+		// annotations sometimes cause failure in gql message escaping
+		expRes.Annotations = nil
 		cd.ChaosResult = expRes
 		cd.ProbeSuccessPercentage = expRes.Status.ExperimentStatus.ProbeSuccessPercentage
 		cd.FailStep = expRes.Status.ExperimentStatus.FailStep
-		cd.ExperimentPod = crd.Status.Experiments[0].ExpPod
-		cd.RunnerPod = crd.Status.Experiments[0].Runner
-		cd.EngineUID = string(crd.ObjectMeta.UID)
-		cd.ExperimentStatus = string(crd.Status.Experiments[0].Status)
-		cd.ExperimentName = crd.Status.Experiments[0].Name
-		cd.LastUpdatedAt = strconv.FormatInt(crd.Status.Experiments[0].LastUpdateTime.Unix(), 10)
-		cd.ExperimentVerdict = crd.Status.Experiments[0].Verdict
-	} else if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped" {
-		cd.ExperimentVerdict = "Stopped"
-		cd.ExperimentStatus = "Stopped"
-	} else {
-		cd = nil
 	}
 	return cd, nil
 }
 
-// util function, checks if event is a chaos-exp event, if so -  extract the chaos data
+// CheckChaosData is a util function, checks if event is a chaos-exp event, if so -  extract the chaos data
 func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
 	var cd *types.ChaosData = nil
@@ -77,11 +96,8 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosCli
 					return nodeType, nil, errors.New("Chaos-Engine Generated Name couldn't be retrieved")
 				}
 			}
-			cd, err = getChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
-			if err != nil {
-				return nodeType, nil, err
-			}
-			return nodeType, cd, nil
+			cd, err = GetChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
+			return nodeType, cd, err
 		}
 	}
 	return nodeType, nil, nil

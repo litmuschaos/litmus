@@ -368,6 +368,7 @@ type ComplexityRoot struct {
 		WorkflowID          func(childComplexity int) int
 		WorkflowManifest    func(childComplexity int) int
 		WorkflowName        func(childComplexity int) int
+		WorkflowType        func(childComplexity int) int
 	}
 
 	Spec struct {
@@ -424,6 +425,7 @@ type ComplexityRoot struct {
 		WorkflowManifest    func(childComplexity int) int
 		WorkflowName        func(childComplexity int) int
 		WorkflowRuns        func(childComplexity int) int
+		WorkflowType        func(childComplexity int) int
 	}
 
 	WorkflowRun struct {
@@ -2621,6 +2623,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ScheduledWorkflows.WorkflowName(childComplexity), true
 
+	case "ScheduledWorkflows.workflow_type":
+		if e.complexity.ScheduledWorkflows.WorkflowType == nil {
+			break
+		}
+
+		return e.complexity.ScheduledWorkflows.WorkflowType(childComplexity), true
+
 	case "Spec.CategoryDescription":
 		if e.complexity.Spec.CategoryDescription == nil {
 			break
@@ -2953,6 +2962,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Workflow.WorkflowRuns(childComplexity), true
+
+	case "Workflow.workflow_type":
+		if e.complexity.Workflow.WorkflowType == nil {
+			break
+		}
+
+		return e.complexity.Workflow.WorkflowType(childComplexity), true
 
 	case "WorkflowRun.cluster_id":
 		if e.complexity.WorkflowRun.ClusterID == nil {
@@ -4191,6 +4207,7 @@ input PodLogRequest {
 }
 
 type ScheduledWorkflows {
+  workflow_type:String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -4208,6 +4225,7 @@ type ScheduledWorkflows {
 }
 
 type Workflow {
+  workflow_type:String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -14686,6 +14704,40 @@ func (ec *executionContext) _SSHKey_privateKey(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ScheduledWorkflows_workflow_type(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ScheduledWorkflows",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ScheduledWorkflows_workflow_id(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16276,6 +16328,40 @@ func (ec *executionContext) _User_removed_at(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.RemovedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Workflow_workflow_type(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Workflow",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23759,6 +23845,11 @@ func (ec *executionContext) _ScheduledWorkflows(ctx context.Context, sel ast.Sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ScheduledWorkflows")
+		case "workflow_type":
+			out.Values[i] = ec._ScheduledWorkflows_workflow_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "workflow_id":
 			out.Values[i] = ec._ScheduledWorkflows_workflow_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -24022,6 +24113,11 @@ func (ec *executionContext) _Workflow(ctx context.Context, sel ast.SelectionSet,
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Workflow")
+		case "workflow_type":
+			out.Values[i] = ec._Workflow_workflow_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "workflow_id":
 			out.Values[i] = ec._Workflow_workflow_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
