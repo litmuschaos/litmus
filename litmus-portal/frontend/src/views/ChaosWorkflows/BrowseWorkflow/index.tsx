@@ -30,6 +30,7 @@ import {
   WorkflowRunFilterInput,
   WorkflowStatus,
   WorkflowSubscription,
+  WorkflowSubscriptionInput,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import HeaderSection from './HeaderSection';
@@ -100,15 +101,13 @@ const BrowseWorkflow: React.FC = () => {
 
   // Using subscription to get realtime data
   useEffect(() => {
-    subscribeToMore<WorkflowSubscription>({
+    subscribeToMore<WorkflowSubscription, WorkflowSubscriptionInput>({
       document: WORKFLOW_EVENTS,
-      variables: {
-        workflowRunsInput: {
-          project_id: projectID,
-        },
-      },
+      variables: { projectID },
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
+        if (!subscriptionData.data || !prev || !prev.getWorkflowRuns)
+          return prev;
+
         const modifiedWorkflows = prev.getWorkflowRuns.workflow_runs.slice();
         const newWorkflow = subscriptionData.data.workflowEventListener;
 

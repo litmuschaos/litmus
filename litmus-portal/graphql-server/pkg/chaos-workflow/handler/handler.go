@@ -120,24 +120,6 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 
 // QueryWorkflowRuns sends all the workflow runs for a project from the DB
 func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
-
-	count, err := dbOperationsWorkflow.CountWorkflows(bson.D{
-		{"project_id", input.ProjectID},
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	if count == 0 {
-		var result []*model.WorkflowRun
-
-		return &model.GetWorkflowsOutput{
-			TotalNoOfWorkflowRuns: 0,
-			WorkflowRuns:          result,
-		}, nil
-	}
-
 	var pipeline mongo.Pipeline
 
 	// Match with projectID
@@ -331,15 +313,17 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	// Call aggregation on pipeline
 	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
 
+	var result []*model.WorkflowRun
+
 	var workflows []dbSchemaWorkflow.AggregatedWorkflowRuns
+
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
 		fmt.Println(err)
+		return &model.GetWorkflowsOutput{
+			TotalNoOfWorkflowRuns: 0,
+			WorkflowRuns:          result,
+		}, nil
 	}
-	if err != nil {
-		return nil, err
-	}
-
-	var result []*model.WorkflowRun
 
 	for _, workflow := range workflows[0].FlattenedWorkflowRuns {
 		workflowRun := workflow.WorkflowRuns
@@ -362,8 +346,13 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		result = append(result, &newWorkflowRun)
 	}
 
+	totalFilteredWorkflowRuns := 0
+	if len(workflows) > 0 && len(workflows[0].TotalFilteredWorkflowRuns) > 0 {
+		totalFilteredWorkflowRuns = workflows[0].TotalFilteredWorkflowRuns[0].Count
+	}
+
 	output := model.GetWorkflowsOutput{
-		TotalNoOfWorkflowRuns: workflows[0].TotalFilteredWorkflowRuns[0].Count,
+		TotalNoOfWorkflowRuns: totalFilteredWorkflowRuns,
 		WorkflowRuns:          result,
 	}
 	return &output, nil
@@ -481,7 +470,8 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		executionData = ops.ResiliencyScoreCalculator(executionData, input.WorkflowID)
 	}
 
-	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
+	count := 0
+	count, err = dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
 		WorkflowRunID:     input.WorkflowRunID,
 		LastUpdated:       strconv.FormatInt(time.Now().Unix(), 10),
 		Phase:             executionData.Phase,

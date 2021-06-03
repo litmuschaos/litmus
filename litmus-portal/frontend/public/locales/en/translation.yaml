@@ -855,6 +855,7 @@ createWorkflow:
     addProbe:
       heading: Add
       headingStrong: Probe
+      validate: Probe name already exists
       labels:
         probeName: Probe Name
         probeType: Probe Type

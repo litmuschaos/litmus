@@ -1,16 +1,31 @@
 import { gql } from '@apollo/client';
 
+export const WORKFLOW_EVENTS_WITH_EXEC_DATA = gql`
+  subscription workflowEvents($projectID: String!) {
+    workflowEventListener(project_id: $projectID) {
+      workflow_id
+      workflow_name
+      workflow_run_id
+      cluster_name
+      last_updated
+      cluster_id
+      execution_data
+    }
+  }
+`;
+
 export const WORKFLOW_EVENTS = gql`
   subscription workflowEvents($projectID: String!) {
     workflowEventListener(project_id: $projectID) {
       workflow_id
       workflow_name
       workflow_run_id
-      execution_data
-      project_id
       cluster_name
       last_updated
-      cluster_id
+      phase
+      resiliency_score
+      experiments_passed
+      total_experiments
     }
   }
 `;

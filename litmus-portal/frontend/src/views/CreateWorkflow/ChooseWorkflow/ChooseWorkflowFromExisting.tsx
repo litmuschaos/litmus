@@ -19,7 +19,9 @@ import {
   ListManifestTemplateArray,
 } from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import useStyles from './styles';
+import useActions from '../../../redux/actions';
 
 interface ChooseWorkflowRadio {
   selected: string;
@@ -33,7 +35,7 @@ const ChooseWorkflowFromExisting = () => {
   // Local States
   const [search, setSearch] = useState<string | null>(null);
   const [selected, setSelected] = useState<string>('');
-
+  const workflowAction = useActions(WorkflowActions);
   const { data: templateData } = useQuery<ListManifestTemplate>(
     LIST_MANIFEST_TEMPLATE,
     {
@@ -74,7 +76,9 @@ const ChooseWorkflowFromExisting = () => {
     const templateData = filteredExistingWorkflows.filter((workflow) => {
       return workflow.template_id === event.target.value;
     })[0];
-
+    workflowAction.setWorkflowManifest({
+      isCustomWorkflow: templateData.isCustomWorkflow,
+    });
     localforage.setItem('selectedScheduleOption', selection);
     localforage.setItem('workflow', {
       name: templateData.template_name.toLowerCase(),

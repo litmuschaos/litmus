@@ -72,6 +72,10 @@ export interface WorkflowSubscription {
   workflowEventListener: WorkflowRun;
 }
 
+export interface WorkflowSubscriptionInput {
+  projectID: string;
+}
+
 // Pagination
 export interface Pagination {
   page: number;
@@ -103,6 +107,7 @@ export interface WorkflowRunFilterInput {
   workflow_status?: WorkflowStatus;
   date_range?: DateRange;
 }
+
 export interface WorkflowDataVars {
   workflowRunsInput: {
     project_id: string;
