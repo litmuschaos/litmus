@@ -57,7 +57,7 @@ func GetChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	cd.ExperimentVerdict = crd.Status.Experiments[0].Verdict
 	if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped" || (strings.ToLower(string(crd.Status.EngineStatus)) == "completed" && strings.ToLower(cd.ExperimentVerdict) != "pass") {
 		cd.ExperimentVerdict = "Fail"
-		cd.ExperimentStatus = "Stopped"
+		cd.ExperimentStatus = string(crd.Status.EngineStatus)
 	}
 	if len(crd.Status.Experiments) == 1 {
 		expRes, err := chaosClient.ChaosResults(cd.Namespace).Get(crd.Name+"-"+crd.Status.Experiments[0].Name, v1.GetOptions{})
