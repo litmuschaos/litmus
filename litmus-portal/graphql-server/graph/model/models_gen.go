@@ -397,6 +397,11 @@ type SSHKey struct {
 	PrivateKey string `json:"privateKey"`
 }
 
+type ScheduledWorkflowStats struct {
+	Time  float64 `json:"time"`
+	Value int     `json:"value"`
+}
+
 type ScheduledWorkflows struct {
 	WorkflowID          string        `json:"workflow_id"`
 	WorkflowManifest    string        `json:"workflow_manifest"`

@@ -341,6 +341,10 @@ func (r *queryResolver) GetScheduledWorkflows(ctx context.Context, projectID str
 	return wfHandler.QueryWorkflows(projectID)
 }
 
+func (r *queryResolver) GetScheduledWorkflowStats(ctx context.Context, filter string, projectID string) ([]*model.ScheduledWorkflowStats, error) {
+	return analyticsHandler.GetScheduledWorkflowStats(filter, projectID)
+}
+
 func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error) {
 	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
 	if err != nil {

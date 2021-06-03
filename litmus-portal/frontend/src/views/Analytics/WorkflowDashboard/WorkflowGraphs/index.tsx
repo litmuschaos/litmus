@@ -5,6 +5,7 @@ import {
   ExecutionData,
   WorkflowList,
 } from '../../../../models/graphql/workflowListData';
+import ScheduleAndRunStats from './ScheduleAndRunStats';
 import useStyles from './styles';
 
 interface WorkflowGraphsProps {
@@ -50,14 +51,14 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
   return (
     <div>
       <Paper className={classes.root}>
-        <Paper className={classes.radialChartContainer}>
-          <RadialChart
-            className={classes.radialChart}
-            radialData={graphData}
-            heading="Workflows"
-            showCenterHeading
-          />
-        </Paper>
+        <ScheduleAndRunStats />
+      </Paper>
+      <Paper className={classes.radialChartContainer}>
+        <RadialChart
+          radialData={graphData}
+          heading="Workflows"
+          showCenterHeading
+        />
       </Paper>
     </div>
   );

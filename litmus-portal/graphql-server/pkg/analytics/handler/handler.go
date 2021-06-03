@@ -19,6 +19,7 @@ import (
 	dbOperationsAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbSchemaAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
@@ -552,4 +553,80 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 	}
 
 	return newListDashboard, nil
+}
+
+func GetScheduledWorkflowStats(filter string, project_id string) ([]*model.ScheduledWorkflowStats, error) {
+
+	var query bson.D
+	start:=  strconv.FormatInt(time.Now().Unix(), 10)
+	m := make(map[int]model.ScheduledWorkflowStats)
+	dateMap := make(map[int]map[int]model.ScheduledWorkflowStats)
+	// fmt.Println(m)
+	switch filter{
+	case "Monthly":
+		sixMonthsAgo:= time.Now().AddDate(0,-6, 0)
+		query = bson.D{{"created_at", bson.D{{"$gte",  strconv.FormatInt(sixMonthsAgo.Unix(), 10)},{"$lte", start}}}}
+	case "Weekly":
+		fourWeeksAgo:= time.Now().AddDate(0, 0, -28)
+		query = bson.D{{"created_at", bson.D{{"$gte", strconv.FormatInt(fourWeeksAgo.Unix(), 10)},{"$lte", start}}}}
+	case "Hourly":
+		fortyEightHoursAgo:= time.Now().Add(time.Hour * -48)
+		query = bson.D{{"created_at", bson.D{{"$gte", strconv.FormatInt(fortyEightHoursAgo.Unix(), 10)},{"$lte", start}}}}
+	default:
+		return nil, errors.New("No Matching Filter Found")
+	}
+
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(query)
+	if err != nil {
+		return nil, err
+	}
+	for _, workflow := range chaosWorkflows {
+		i, err := strconv.ParseInt(workflow.CreatedAt, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		createdAtInTime := time.Unix(i, 0)
+		var t model.ScheduledWorkflowStats
+		var key int
+		switch filter{
+		case "Monthly":
+			t = m[int(createdAtInTime.Month())]
+			key=int(createdAtInTime.Month())
+		case "Weekly":
+			_, week := createdAtInTime.ISOWeek()
+			t= m[week]
+			key=week
+		case "Hourly":
+			if dateMap[createdAtInTime.Day()] == nil {
+			dateMap[createdAtInTime.Day()] = make(map[int]model.ScheduledWorkflowStats)
+			}
+			day:=dateMap[createdAtInTime.Day()]
+			hr:=day[createdAtInTime.Hour()]
+			hr.Value+=1
+			hr.Time=float64(createdAtInTime.Unix())*1000
+			day[createdAtInTime.Hour()]=hr
+			dateMap[createdAtInTime.Day()]=day
+		default:
+		return nil, errors.New("No Matching Filter Found")
+		}
+		t.Value+=1
+		t.Time=float64(createdAtInTime.Unix())*1000
+		m[key]=t
+	}
+	result := make([]*model.ScheduledWorkflowStats,0)
+	if(filter=="Hourly"){
+		for k := range dateMap { 
+			for _,value := range dateMap[k]{
+				val:= model.ScheduledWorkflowStats{value.Time,value.Value}
+				result=append(result,&val)
+			}
+		}
+	return result,nil
+	}
+	for _, v := range m { 
+		val:= model.ScheduledWorkflowStats{v.Time,v.Value}
+		result=append(result,&val )
+	}
+
+return result,nil
 }

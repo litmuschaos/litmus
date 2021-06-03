@@ -208,7 +208,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 		return nil, nil
 
 	default:
-		return nil, errors.New("No Mathcing Auth Type Found")
+		return nil, errors.New("No Matching Auth Type Found")
 	}
 }
 

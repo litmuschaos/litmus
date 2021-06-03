@@ -179,6 +179,11 @@ type ScheduledWorkflows {
   isRemoved: Boolean!
 }
 
+type ScheduledWorkflowStats {
+  time: Float!
+  value: Int!
+}
+
 type Workflow {
   workflow_id: String!
   workflow_manifest: String!
@@ -298,6 +303,11 @@ type Query {
   # [Deprecated soon]
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
+  getScheduledWorkflowStats(
+    filter: String!
+    project_id: String!
+  ): [ScheduledWorkflowStats]! @authorized
+
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
   getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
@@ -316,7 +326,8 @@ type Query {
 
   GetPromQuery(query: promInput): promResponse! @authorized
 
-  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
+  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse!
+    @authorized
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
@@ -333,7 +344,10 @@ type Query {
   #Image Registry Queries
   ListImageRegistry(project_id: String!): [ImageRegistryResponse!] @authorized
 
-  GetImageRegistry(image_registry_id: String!, project_id: String!): ImageRegistryResponse! @authorized
+  GetImageRegistry(
+    image_registry_id: String!
+    project_id: String!
+  ): ImageRegistryResponse! @authorized
 }
 
 type Mutation {
@@ -371,7 +385,8 @@ type Mutation {
   leaveProject(member: MemberInput!): String! @authorized
 
   #Used to update project name
-  updateProjectName(projectID: String!, projectName: String!): String! @authorized
+  updateProjectName(projectID: String!, projectName: String!): String!
+    @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -391,7 +406,8 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
 
@@ -426,16 +442,25 @@ type Mutation {
   deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 
   # Manifest Template
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate! @authorized
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
+    @authorized
 
   deleteManifestTemplate(template_id: String!): Boolean! @authorized
 
   #Image Registry Mutations
-  createImageRegistry(project_id: String!, imageRegistryInfo: imageRegistryInput!): ImageRegistryResponse! @authorized
+  createImageRegistry(
+    project_id: String!
+    imageRegistryInfo: imageRegistryInput!
+  ): ImageRegistryResponse! @authorized
 
-  updateImageRegistry(image_registry_id: String!, project_id: String!, imageRegistryInfo: imageRegistryInput!): ImageRegistryResponse! @authorized
+  updateImageRegistry(
+    image_registry_id: String!
+    project_id: String!
+    imageRegistryInfo: imageRegistryInput!
+  ): ImageRegistryResponse! @authorized
 
-  deleteImageRegistry(image_registry_id: String!, project_id: String!): String! @authorized
+  deleteImageRegistry(image_registry_id: String!, project_id: String!): String!
+    @authorized
 }
 
 type Subscription {
@@ -449,5 +474,6 @@ type Subscription {
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
-  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
+  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
+    @authorized
 }

@@ -80,3 +80,15 @@ const (
 	//ExitedProject is the state when the user has exited the project
 	ExitedProject Invitation = "Exited"
 )
+
+// Filter: different types of filter for graphs
+type Filter string
+
+const (
+	Monthly Filter = "Monthly"
+
+	Weekly Filter = "Weekly"
+
+	Hourly Filter = "Hourly"
+
+)
