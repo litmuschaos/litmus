@@ -66,14 +66,6 @@ const ReliablityScore = forwardRef((_, ref) => {
               </strong>
             </Typography>
           </div>
-          <hr className={classes.horizontalLine} />
-          <div className={classes.divRow}>
-            <Typography className={classes.testHeading}>
-              <strong>
-                {t('createWorkflow.reliabilityScore.testHeading')}
-              </strong>
-            </Typography>
-          </div>
           {weights.map((Data: experimentMap, index: number) => (
             <WeightSlider
               key={Data.experimentName + index.toString()}
