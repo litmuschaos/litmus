@@ -3,22 +3,16 @@ package ops
 import (
 	"encoding/json"
 	"errors"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/ghodss/yaml"
-
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
+	"github.com/ghodss/yaml"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
-	"github.com/tidwall/gjson"
-	"go.mongodb.org/mongo-driver/bson"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
@@ -26,6 +20,10 @@ import (
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	"github.com/tidwall/gjson"
+	"go.mongodb.org/mongo-driver/bson"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 type WorkflowEvent struct {

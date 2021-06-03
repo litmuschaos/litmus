@@ -2,6 +2,9 @@ package events
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned"
@@ -12,8 +15,6 @@ import (
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/cache"
-	"strconv"
-	"strings"
 )
 
 // ChaosEventWatcher initializes the Litmus ChaosEngine event watcher
