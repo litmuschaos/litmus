@@ -13,6 +13,7 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
         cluster_id
         phase
         execution_data
+        resiliency_score
       }
     }
   }

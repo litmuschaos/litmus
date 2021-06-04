@@ -14,6 +14,7 @@ import (
 	"github.com/jinzhu/copier"
 	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	types "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
@@ -216,7 +217,7 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 }
 
 // ResiliencyScoreCalculator calculates the Resiliency Score and returns the updated ExecutionData
-func ResiliencyScoreCalculator(execData dbSchemaWorkflow.ExecutionData, wfid string) dbSchemaWorkflow.ExecutionData {
+func ResiliencyScoreCalculator(execData types.ExecutionData, wfid string) types.ExecutionData {
 	var resiliencyScore float64 = 0.0
 	var weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0
 

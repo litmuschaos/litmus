@@ -119,7 +119,8 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <TableCell className={classes.reliabiltyData}>
         <Typography>
           <span>{t('chaosWorkflows.browseWorkflows.tableData.overallRR')}</span>
-          {!data.resiliency_score ? (
+          {data.resiliency_score === undefined ||
+          data.resiliency_score === null ? (
             <span className={classes.less}>
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>
@@ -137,9 +138,12 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <span>
             {t('chaosWorkflows.browseWorkflows.tableData.experimentsPassed')}
           </span>
-          {!data.experiments_passed ||
-          !data.total_experiments ||
-          !data.resiliency_score ? (
+          {data.experiments_passed === undefined ||
+          data.experiments_passed === null ||
+          data.total_experiments === undefined ||
+          data.total_experiments === null ||
+          data.resiliency_score === undefined ||
+          data.resiliency_score === null ? (
             <span className={classes.less}>
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>

@@ -240,6 +240,7 @@ const WorkflowDetails: React.FC = () => {
                         data={
                           JSON.parse(workflow.execution_data) as ExecutionData
                         }
+                        resiliency_score={workflow.resiliency_score}
                       />
                     )}
                   </div>
@@ -252,6 +253,7 @@ const WorkflowDetails: React.FC = () => {
                 tab={2}
                 cluster_name={workflow.cluster_name}
                 data={JSON.parse(workflow.execution_data) as ExecutionData}
+                resiliency_score={workflow.resiliency_score}
               />
               {/* Table for all Node details */}
               <NodeTable

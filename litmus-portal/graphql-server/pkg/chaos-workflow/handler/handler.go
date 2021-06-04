@@ -20,6 +20,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	types "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
@@ -464,7 +465,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 	}
 
 	// Parse and store execution data
-	var executionData dbSchemaWorkflow.ExecutionData
+	var executionData types.ExecutionData
 	err = json.Unmarshal([]byte(input.ExecutionData), &executionData)
 	if err != nil {
 		log.Println("Can not parse Execution Data of workflow run with id: ", input.WorkflowRunID)
