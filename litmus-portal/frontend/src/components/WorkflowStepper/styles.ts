@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   backButton: {
     marginRight: theme.spacing(1),
   },
+  btn: {
+    fontSize: '0.8rem',
+  },
   buttonGroup: {
     display: 'flex',
     flexDirection: 'row',

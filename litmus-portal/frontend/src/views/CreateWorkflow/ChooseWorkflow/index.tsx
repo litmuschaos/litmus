@@ -101,12 +101,17 @@ const ChooseWorkflow = forwardRef((_, ref) => {
 
         <RadioGroup
           data-testid="workflowRadioButtons"
+          data-cy="WorkflowsRadioGroup"
           value={selected}
           onChange={handleChange}
         >
           <Accordion expanded={selected === 'A'} className={classes.accordion}>
             <AccordionSummary>
-              <RadioButton value="A" onChange={(e) => handleChange(e)}>
+              <RadioButton
+                value="A"
+                data-cy="PredefinedWorkflowsRadioButton"
+                onChange={(e) => handleChange(e)}
+              >
                 <span data-testid="option">
                   {t('createWorkflow.chooseWorkflow.optionA')}
                 </span>
@@ -123,7 +128,11 @@ const ChooseWorkflow = forwardRef((_, ref) => {
             className={classes.accordion}
           >
             <AccordionSummary>
-              <RadioButton value="B" onChange={(e) => handleChange(e)}>
+              <RadioButton
+                value="B"
+                data-cy="templateWorkflowsRadioButton"
+                onChange={(e) => handleChange(e)}
+              >
                 <span data-testid="option">
                   {t('createWorkflow.chooseWorkflow.optionB')}
                 </span>
@@ -140,7 +149,11 @@ const ChooseWorkflow = forwardRef((_, ref) => {
             className={classes.accordion}
           >
             <AccordionSummary>
-              <RadioButton value="C" onChange={(e) => handleChange(e)}>
+              <RadioButton
+                value="C"
+                data-cy="myHubsRadioButton"
+                onChange={(e) => handleChange(e)}
+              >
                 <span data-testid="option">
                   {t('createWorkflow.chooseWorkflow.optionC')}
                 </span>{' '}
@@ -160,7 +173,11 @@ const ChooseWorkflow = forwardRef((_, ref) => {
             className={classes.accordion}
           >
             <AccordionSummary>
-              <RadioButton value="D" onChange={(e) => handleChange(e)}>
+              <RadioButton
+                value="D"
+                data-cy="uploadYAMLRadioButton"
+                onChange={(e) => handleChange(e)}
+              >
                 <span data-testid="option">
                   {t('createWorkflow.chooseWorkflow.optionD')}
                 </span>

@@ -89,7 +89,7 @@ const UploadYAML = () => {
         className={classes.uploadYAMLDiv}
       >
         {uploadedYAML === '' ? (
-          <div className={classes.uploadYAMLText}>
+          <div className={classes.uploadYAMLText} data-cy="uploadYAMLInput">
             <img
               src="./icons/upload-yaml.svg"
               alt="upload yaml"

@@ -151,6 +151,7 @@ input PodLogRequest {
 }
 
 type ScheduledWorkflows {
+  workflow_type:String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -168,6 +169,7 @@ type ScheduledWorkflows {
 }
 
 type Workflow {
+  workflow_type:String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!

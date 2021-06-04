@@ -421,6 +421,7 @@ type SSHKey struct {
 }
 
 type ScheduledWorkflows struct {
+	WorkflowType        string        `json:"workflow_type"`
 	WorkflowID          string        `json:"workflow_id"`
 	WorkflowManifest    string        `json:"workflow_manifest"`
 	CronSyntax          string        `json:"cronSyntax"`
@@ -507,6 +508,7 @@ type WeightagesInput struct {
 }
 
 type Workflow struct {
+	WorkflowType        string          `json:"workflow_type"`
 	WorkflowID          string          `json:"workflow_id"`
 	WorkflowManifest    string          `json:"workflow_manifest"`
 	CronSyntax          string          `json:"cronSyntax"`

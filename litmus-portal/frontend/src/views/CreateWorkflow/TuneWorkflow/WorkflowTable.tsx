@@ -87,11 +87,11 @@ const WorkflowTable = forwardRef(
               expData.push({
                 StepIndex: index,
                 Name: chaosEngine.metadata.generateName,
-                Namespace:
-                  chaosEngine.spec.appinfo?.appns ===
-                  '{{workflow.parameters.adminModeNamespace}}'
-                    ? namespace
-                    : chaosEngine.spec.appinfo?.appns ?? '',
+                Namespace: chaosEngine.spec.appinfo?.appns
+                  .toLowerCase()
+                  .includes('namespace')
+                  ? namespace
+                  : chaosEngine.spec.appinfo?.appns ?? '',
                 Application: chaosEngine.spec.appinfo?.applabel ?? '',
                 Probes: chaosEngine.spec.experiments[0].spec.probe?.length ?? 0,
                 ChaosEngine: artifact.raw.data,
@@ -123,6 +123,9 @@ const WorkflowTable = forwardRef(
       // Else if Revert Chaos is set to true and it is not already set in the manifest
       // For Workflows
       if (revertChaos && parsedYAML.kind === 'Workflow') {
+        parsedYAML.spec.podGC = {
+          strategy: 'OnWorkflowCompletion',
+        };
         parsedYAML.spec.templates[0].steps.push([
           {
             name: 'revert-chaos',
@@ -153,6 +156,9 @@ const WorkflowTable = forwardRef(
       // Else if Revert Chaos is set to True and it is not already set in the manifest
       // For Cron Workflow
       else if (revertChaos && parsedYAML.kind === 'CronWorkflow') {
+        parsedYAML.spec.workflowSpec.podGC = {
+          strategy: 'OnWorkflowCompletion',
+        };
         parsedYAML.spec.workflowSpec.templates[0].steps.push([
           {
             name: 'revert-chaos',

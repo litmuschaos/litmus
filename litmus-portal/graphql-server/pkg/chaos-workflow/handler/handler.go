@@ -33,7 +33,7 @@ import (
 )
 
 func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	input, err := ops.ProcessWorkflow(input)
+	input, wfType, err := ops.ProcessWorkflow(input)
 	if err != nil {
 		log.Print("Error processing workflow: ", err)
 		return nil, err
@@ -46,7 +46,7 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowCreation(input, r)
+	err = ops.ProcessWorkflowCreation(input, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow: ", err)
 		return nil, err
@@ -90,7 +90,7 @@ func DeleteWorkflow(ctx context.Context, workflow_id string, r *store.StateData)
 }
 
 func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	input, err := ops.ProcessWorkflow(input)
+	input, wfType, err := ops.ProcessWorkflow(input)
 	if err != nil {
 		log.Print("Error processing workflow update: ", err)
 		return nil, err
@@ -103,7 +103,7 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowUpdate(input, r)
+	err = ops.ProcessWorkflowUpdate(input, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow update: ", err)
 		return nil, err
@@ -380,6 +380,7 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 			copier.Copy(&Weightages, &workflow.Weightages)
 
 			newChaosWorkflows := model.ScheduledWorkflows{
+				WorkflowType:        string(workflow.WorkflowType),
 				WorkflowID:          workflow.WorkflowID,
 				WorkflowManifest:    workflow.WorkflowManifest,
 				WorkflowName:        workflow.WorkflowName,
@@ -432,6 +433,7 @@ func QueryListWorkflow(project_id string, workflowIds []*string) ([]*model.Workf
 		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
 
 		newChaosWorkflows := model.Workflow{
+			WorkflowType:        string(workflow.WorkflowType),
 			WorkflowID:          workflow.WorkflowID,
 			WorkflowManifest:    workflow.WorkflowManifest,
 			WorkflowName:        workflow.WorkflowName,
