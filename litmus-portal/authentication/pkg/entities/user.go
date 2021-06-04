@@ -1,20 +1,25 @@
 package entities
 
-import "time"
+import (
+	"fmt"
+	"github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"os"
+	"time"
+)
 
 //User contains the user information
 type User struct {
-	ID        string     `bson:"_id,omitempty"`
-	UserName  string     `bson:"username,omitempty"`
-	Password  string     `bson:"password,omitempty"`
-	Email     string     `bson:"email,omitempty"`
-	Name      string     `bson:"name,omitempty"`
-	Role      Role       `bson:"role"`
-	LoggedIn  bool       `bson:"logged_in,omitempty"`
-	CreatedAt *time.Time `bson:"created_at,omitempty"`
-	UpdatedAt *time.Time `bson:"updated_at,omitempty"`
-	RemovedAt *time.Time `bson:"removed_at,omitempty"`
-	State     State      `bson:"state,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	UserName  string             `bson:"username,omitempty"`
+	Password  string             `bson:"password,omitempty"`
+	Email     string             `bson:"email,omitempty"`
+	Name      string             `bson:"name,omitempty"`
+	Role      Role               `bson:"role"`
+	LoggedIn  bool               `bson:"logged_in,omitempty"`
+	CreatedAt *time.Time         `bson:"created_at,omitempty"`
+	UpdatedAt *time.Time         `bson:"updated_at,omitempty"`
+	RemovedAt *time.Time         `bson:"removed_at,omitempty"`
 }
 
 //Role states the role of the user in the portal
@@ -28,23 +33,25 @@ const (
 	RoleUser Role = "user"
 )
 
-//State is the current state of the database entry of the user
-type State string
-
-const (
-	//StateCreating means this entry is being created
-	StateCreating State = "creating"
-	//StateActive means this entry is active
-	StateActive State = "active"
-	//StateRemoving means this entry is being removed
-	StateRemoving State = "removing"
-	//StateRemoved means this entry has been removed
-	StateRemoved State = "removed"
-)
-
 func (user *User) sanitizedUser() *User {
 	user.Password = ""
 	return user
 }
 
+func (user *User) GetSignedJWT() (string, error) {
 
+	token := jwt.New(jwt.SigningMethodHS512)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["uid"] = user.ID.Hex()
+	claims["role"] = user.Role
+	claims["username"] = user.Name
+	claims["exp"] = time.Now().Add(time.Minute * 300).Unix()
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	return tokenString, nil
+}
