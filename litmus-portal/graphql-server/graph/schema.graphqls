@@ -180,7 +180,7 @@ type ScheduledWorkflows {
 }
 
 type ScheduledWorkflowStats {
-  time: Float!
+  date: Float!
   value: Int!
 }
 
@@ -304,8 +304,9 @@ type Query {
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
   getScheduledWorkflowStats(
-    filter: String!
+    filter: Filter!
     project_id: String!
+    start_time: String!
   ): [ScheduledWorkflowStats]! @authorized
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized

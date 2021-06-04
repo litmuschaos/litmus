@@ -334,7 +334,7 @@ type ComplexityRoot struct {
 		GetPromLabelNamesAndValues  func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery                func(childComplexity int, query *model.PromInput) int
 		GetPromSeriesList           func(childComplexity int, dsDetails *model.DsDetails) int
-		GetScheduledWorkflowStats   func(childComplexity int, filter string, projectID string) int
+		GetScheduledWorkflowStats   func(childComplexity int, filter model.Filter, projectID string, startTime string) int
 		GetScheduledWorkflows       func(childComplexity int, projectID string) int
 		GetTemplateManifestByID     func(childComplexity int, templateID string) int
 		GetUser                     func(childComplexity int, username string) int
@@ -355,7 +355,7 @@ type ComplexityRoot struct {
 	}
 
 	ScheduledWorkflowStats struct {
-		Time  func(childComplexity int) int
+		Date  func(childComplexity int) int
 		Value func(childComplexity int) int
 	}
 
@@ -619,7 +619,7 @@ type QueryResolver interface {
 	ListProjects(ctx context.Context) ([]*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
 	GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error)
-	GetScheduledWorkflowStats(ctx context.Context, filter string, projectID string) ([]*model.ScheduledWorkflowStats, error)
+	GetScheduledWorkflowStats(ctx context.Context, filter model.Filter, projectID string, startTime string) ([]*model.ScheduledWorkflowStats, error)
 	ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error)
 	GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
@@ -2392,7 +2392,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetScheduledWorkflowStats(childComplexity, args["filter"].(string), args["project_id"].(string)), true
+		return e.complexity.Query.GetScheduledWorkflowStats(childComplexity, args["filter"].(model.Filter), args["project_id"].(string), args["start_time"].(string)), true
 
 	case "Query.getScheduledWorkflows":
 		if e.complexity.Query.GetScheduledWorkflows == nil {
@@ -2542,12 +2542,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SSHKey.PublicKey(childComplexity), true
 
-	case "ScheduledWorkflowStats.time":
-		if e.complexity.ScheduledWorkflowStats.Time == nil {
+	case "ScheduledWorkflowStats.date":
+		if e.complexity.ScheduledWorkflowStats.Date == nil {
 			break
 		}
 
-		return e.complexity.ScheduledWorkflowStats.Time(childComplexity), true
+		return e.complexity.ScheduledWorkflowStats.Date(childComplexity), true
 
 	case "ScheduledWorkflowStats.value":
 		if e.complexity.ScheduledWorkflowStats.Value == nil {
@@ -3608,224 +3608,231 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
-    ds_id: String
-    ds_name: String!
-    ds_type: String!
-    ds_url: String!
-    access_type: String!
-    auth_type: String!
-    basic_auth_username: String
-    basic_auth_password: String
-    scrape_interval: Int!
-    query_timeout: Int!
-    http_method: String!
-    project_id: String
+  ds_id: String
+  ds_name: String!
+  ds_type: String!
+  ds_url: String!
+  access_type: String!
+  auth_type: String!
+  basic_auth_username: String
+  basic_auth_password: String
+  scrape_interval: Int!
+  query_timeout: Int!
+  http_method: String!
+  project_id: String
 }
 
 type DSResponse {
-    ds_id: String
-    ds_name: String
-    ds_type: String
-    ds_url: String
-    access_type: String
-    auth_type: String
-    basic_auth_username: String
-    basic_auth_password: String
-    scrape_interval: Int
-    query_timeout: Int
-    http_method: String
-    project_id: ID!
-    health_status: String!
-    created_at: String
-    updated_at: String
+  ds_id: String
+  ds_name: String
+  ds_type: String
+  ds_url: String
+  access_type: String
+  auth_type: String
+  basic_auth_username: String
+  basic_auth_password: String
+  scrape_interval: Int
+  query_timeout: Int
+  http_method: String
+  project_id: ID!
+  health_status: String!
+  created_at: String
+  updated_at: String
 }
 
 input createDBInput {
-    ds_id: String!
-    db_name: String!
-    db_type: String!
-    panel_groups: [panelGroup]!
-    end_time: String!
-    start_time: String!
-    project_id: ID!
-    cluster_id: ID!
-    refresh_rate: String!
+  ds_id: String!
+  db_name: String!
+  db_type: String!
+  panel_groups: [panelGroup]!
+  end_time: String!
+  start_time: String!
+  project_id: ID!
+  cluster_id: ID!
+  refresh_rate: String!
 }
 
 input updataDBInput {
-    db_id: String!
-    ds_id: String!
-    db_name: String!
-    db_type: String!
-    end_time: String!
-    start_time: String!
-    refresh_rate: String!
-    panel_groups: [updatePanelGroupInput]!
+  db_id: String!
+  ds_id: String!
+  db_name: String!
+  db_type: String!
+  end_time: String!
+  start_time: String!
+  refresh_rate: String!
+  panel_groups: [updatePanelGroupInput]!
 }
 
 input updatePanelGroupInput {
-    panel_group_name: String!
-    panel_group_id: String!
+  panel_group_name: String!
+  panel_group_id: String!
 }
 
 input panelGroup {
-    panels: [panel]
-    panel_group_name: String!
+  panels: [panel]
+  panel_group_name: String!
 }
 
 input panel {
-    panel_id: String
-    db_id: String
-    y_axis_left: String
-    y_axis_right: String
-    x_axis_down: String
-    unit: String
-    panel_group_id: String
-    prom_queries: [promQuery]
-    panel_options: panelOption
-    panel_name: String!
+  panel_id: String
+  db_id: String
+  y_axis_left: String
+  y_axis_right: String
+  x_axis_down: String
+  unit: String
+  panel_group_id: String
+  prom_queries: [promQuery]
+  panel_options: panelOption
+  panel_name: String!
 }
 
 input panelOption {
-    points: Boolean
-    grids: Boolean
-    left_axis: Boolean
+  points: Boolean
+  grids: Boolean
+  left_axis: Boolean
 }
 
 input promQuery {
-    queryid: String!
-    prom_query_name: String,
-    legend: String,
-    resolution: String,
-    minstep: String,
-    line: Boolean
-    close_area: Boolean
+  queryid: String!
+  prom_query_name: String
+  legend: String
+  resolution: String
+  minstep: String
+  line: Boolean
+  close_area: Boolean
 }
 
 input promInput {
-    queries: [promQueryInput]
-    ds_details: dsDetails!
+  queries: [promQueryInput]
+  ds_details: dsDetails!
 }
 
 input promSeriesInput {
-    series: String!
-    ds_details: dsDetails!
+  series: String!
+  ds_details: dsDetails!
 }
 
 input dsDetails {
-    url: String!
-    start: String!
-    end: String!
+  url: String!
+  start: String!
+  end: String!
 }
 
 input promQueryInput {
-    queryid: String!
-    query: String!
-    legend: String
-    resolution: String
-    minstep: Int!
+  queryid: String!
+  query: String!
+  legend: String
+  resolution: String
+  minstep: Int!
 }
 
 type metricsPromResponse {
-    queryid: String!
-    legends: [String]
-    tsvs: [[metricsTimeStampValue]]
+  queryid: String!
+  legends: [String]
+  tsvs: [[metricsTimeStampValue]]
 }
 
-type metricsTimeStampValue{
-    date: Float
-    value:  Float
+type metricsTimeStampValue {
+  date: Float
+  value: Float
 }
 
 type annotationsPromResponse {
-    queryid: String!
-    legends: [String]
-    tsvs: [[annotationsTimeStampValue]]
+  queryid: String!
+  legends: [String]
+  tsvs: [[annotationsTimeStampValue]]
 }
 
-type annotationsTimeStampValue{
-    date: Float
-    value:  Int
+type annotationsTimeStampValue {
+  date: Float
+  value: Int
 }
 
 type promResponse {
-    metricsResponse: [metricsPromResponse]
-    annotationsResponse: [annotationsPromResponse]
+  metricsResponse: [metricsPromResponse]
+  annotationsResponse: [annotationsPromResponse]
 }
 
 type promSeriesResponse {
-    series: String!
-    labelValues: [labelValue]
+  series: String!
+  labelValues: [labelValue]
 }
 
 type promSeriesListResponse {
-    seriesList: [String]
+  seriesList: [String]
 }
 
 type labelValue {
-    label: String!
-    values: [option]
+  label: String!
+  values: [option]
 }
 
 type option {
-    name: String!
+  name: String!
 }
 
 type listDashboardReponse {
-    ds_id: String!
-    db_id: String!
-    db_name: String!
-    db_type: String!
-    cluster_name: String
-    ds_name: String
-    ds_type: String
-    panel_groups: [panelGroupResponse]!
-    end_time: String!
-    start_time: String!
-    refresh_rate: String!
-    project_id: ID!
-    cluster_id: ID!
-    created_at: String
-    updated_at: String
+  ds_id: String!
+  db_id: String!
+  db_name: String!
+  db_type: String!
+  cluster_name: String
+  ds_name: String
+  ds_type: String
+  panel_groups: [panelGroupResponse]!
+  end_time: String!
+  start_time: String!
+  refresh_rate: String!
+  project_id: ID!
+  cluster_id: ID!
+  created_at: String
+  updated_at: String
 }
 
 type panelGroupResponse {
-    panels: [panelResponse]
-    panel_group_name: String!
-    panel_group_id: String
+  panels: [panelResponse]
+  panel_group_name: String!
+  panel_group_id: String
 }
 
 type panelResponse {
-    panel_id: String!
-    y_axis_left: String
-    y_axis_right: String
-    x_axis_down: String
-    unit: String
-    prom_queries: [promQueryResponse]
-    panel_options: panelOptionResponse
-    panel_name: String
+  panel_id: String!
+  y_axis_left: String
+  y_axis_right: String
+  x_axis_down: String
+  unit: String
+  prom_queries: [promQueryResponse]
+  panel_options: panelOptionResponse
+  panel_name: String
 }
 
 type panelOptionResponse {
-    points: Boolean
-    grids: Boolean
-    left_axis: Boolean
+  points: Boolean
+  grids: Boolean
+  left_axis: Boolean
 }
 
 type promQueryResponse {
-    queryid: String!
-    prom_query_name: String
-    legend: String
-    resolution: String
-    minstep: String
-    line: Boolean
-    close_area: Boolean
+  queryid: String!
+  prom_query_name: String
+  legend: String
+  resolution: String
+  minstep: String
+  line: Boolean
+  close_area: Boolean
 }
 
 input deleteDSInput {
-    force_delete: Boolean!
-    ds_id: String!
-}`, BuiltIn: false},
+  force_delete: Boolean!
+  ds_id: String!
+}
+
+enum Filter {
+  Monthly
+  Weekly
+  Hourly
+}
+`, BuiltIn: false},
 	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
@@ -4241,7 +4248,7 @@ type ScheduledWorkflows {
 }
 
 type ScheduledWorkflowStats {
-  time: Float!
+  date: Float!
   value: Int!
 }
 
@@ -4365,8 +4372,9 @@ type Query {
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
   getScheduledWorkflowStats(
-    filter: String!
+    filter: Filter!
     project_id: String!
+    start_time: String!
   ): [ScheduledWorkflowStats]! @authorized
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
@@ -5532,9 +5540,9 @@ func (ec *executionContext) field_Query_getProject_args(ctx context.Context, raw
 func (ec *executionContext) field_Query_getScheduledWorkflowStats_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 model.Filter
 	if tmp, ok := rawArgs["filter"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		arg0, err = ec.unmarshalNFilter2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -5548,6 +5556,14 @@ func (ec *executionContext) field_Query_getScheduledWorkflowStats_args(ctx conte
 		}
 	}
 	args["project_id"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["start_time"]; ok {
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["start_time"] = arg2
 	return args, nil
 }
 
@@ -13684,7 +13700,7 @@ func (ec *executionContext) _Query_getScheduledWorkflowStats(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetScheduledWorkflowStats(rctx, args["filter"].(string), args["project_id"].(string))
+			return ec.resolvers.Query().GetScheduledWorkflowStats(rctx, args["filter"].(model.Filter), args["project_id"].(string), args["start_time"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -14828,7 +14844,7 @@ func (ec *executionContext) _SSHKey_privateKey(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ScheduledWorkflowStats_time(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflowStats) (ret graphql.Marshaler) {
+func (ec *executionContext) _ScheduledWorkflowStats_date(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflowStats) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -14845,7 +14861,7 @@ func (ec *executionContext) _ScheduledWorkflowStats_time(ctx context.Context, fi
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Time, nil
+		return obj.Date, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23983,8 +23999,8 @@ func (ec *executionContext) _ScheduledWorkflowStats(ctx context.Context, sel ast
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ScheduledWorkflowStats")
-		case "time":
-			out.Values[i] = ec._ScheduledWorkflowStats_time(ctx, field, obj)
+		case "date":
+			out.Values[i] = ec._ScheduledWorkflowStats_date(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -25638,6 +25654,15 @@ func (ec *executionContext) marshalNExperiments2ᚖgithubᚗcomᚋlitmuschaosᚋ
 		return graphql.Null
 	}
 	return ec._Experiments(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNFilter2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFilter(ctx context.Context, v interface{}) (model.Filter, error) {
+	var res model.Filter
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNFilter2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFilter(ctx context.Context, sel ast.SelectionSet, v model.Filter) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {

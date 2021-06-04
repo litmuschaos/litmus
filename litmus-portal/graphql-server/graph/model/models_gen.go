@@ -398,7 +398,7 @@ type SSHKey struct {
 }
 
 type ScheduledWorkflowStats struct {
-	Time  float64 `json:"time"`
+	Date  float64 `json:"date"`
 	Value int     `json:"value"`
 }
 
@@ -786,6 +786,49 @@ func (e *AuthType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AuthType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Filter string
+
+const (
+	FilterMonthly Filter = "Monthly"
+	FilterWeekly  Filter = "Weekly"
+	FilterHourly  Filter = "Hourly"
+)
+
+var AllFilter = []Filter{
+	FilterMonthly,
+	FilterWeekly,
+	FilterHourly,
+}
+
+func (e Filter) IsValid() bool {
+	switch e {
+	case FilterMonthly, FilterWeekly, FilterHourly:
+		return true
+	}
+	return false
+}
+
+func (e Filter) String() string {
+	return string(e)
+}
+
+func (e *Filter) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Filter(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Filter", str)
+	}
+	return nil
+}
+
+func (e Filter) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
