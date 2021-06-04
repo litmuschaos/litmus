@@ -33,7 +33,7 @@ const (
 	RoleUser Role = "user"
 )
 
-func (user *User) sanitizedUser() *User {
+func (user *User) SanitizedUser() *User {
 	user.Password = ""
 	return user
 }
