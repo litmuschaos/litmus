@@ -47,4 +47,3 @@ type ChaosData struct {
 	FailStep               string                  `json:"failStep"`
 	ChaosResult            *chaosTypes.ChaosResult `json:"chaosResult"`
 }
-
