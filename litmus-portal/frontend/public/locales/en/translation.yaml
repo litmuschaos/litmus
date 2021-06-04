@@ -416,6 +416,7 @@ chaosWorkflows:
   browseWorkflows:
     status: Status
     name: Name
+    dateFilterHelperText: Select a period
     targetAgent: Target Agent
     reliabilityDetails: Reliability Details
     experiments: Experiments

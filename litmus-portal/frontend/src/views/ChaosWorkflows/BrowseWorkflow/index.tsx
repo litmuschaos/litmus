@@ -61,7 +61,7 @@ const BrowseWorkflow: React.FC = () => {
 
   // State for date to be displayed
   const [displayDate, setDisplayDate] = React.useState<string>(
-    'Select a period'
+    t('chaosWorkflows.browseWorkflows.dateFilterHelperText')
   );
 
   // State for sorting
