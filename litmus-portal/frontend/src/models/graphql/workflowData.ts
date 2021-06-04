@@ -91,7 +91,7 @@ export interface SortInput {
 // Filter
 interface DateRange {
   start_date: string;
-  end_date: string;
+  end_date?: string;
 }
 
 export type WorkflowStatus =

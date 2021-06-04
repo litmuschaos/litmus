@@ -212,6 +212,10 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 
 		// Filtering based on date range
 		if input.Filter.DateRange != nil {
+			endDate := string(time.Now().Unix())
+			if input.Filter.DateRange.EndDate != nil {
+				endDate = *input.Filter.DateRange.EndDate
+			}
 			filterWfRunDateStage := bson.D{
 				{"$project", append(includeAllFromWorkflow,
 					bson.E{Key: "workflow_runs", Value: bson.D{
@@ -220,7 +224,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 							{"as", "wfRun"},
 							{"cond", bson.D{
 								{"$and", bson.A{
-									bson.D{{"$lte", bson.A{"$$wfRun.last_updated", input.Filter.DateRange.EndDate}}},
+									bson.D{{"$lte", bson.A{"$$wfRun.last_updated", endDate}}},
 									bson.D{{"$gte", bson.A{"$$wfRun.last_updated", input.Filter.DateRange.StartDate}}},
 								}},
 							}},

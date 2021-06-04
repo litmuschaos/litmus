@@ -11,6 +11,7 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
         cluster_name
         last_updated
         cluster_id
+        phase
         execution_data
       }
     }

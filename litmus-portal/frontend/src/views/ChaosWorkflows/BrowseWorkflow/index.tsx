@@ -27,6 +27,7 @@ import {
   SortInput,
   Workflow,
   WorkflowDataVars,
+  WorkflowRun,
   WorkflowRunFilterInput,
   WorkflowStatus,
   WorkflowSubscription,
@@ -55,7 +56,6 @@ const BrowseWorkflow: React.FC = () => {
     workflow_status: 'All',
     date_range: {
       start_date: new Date(0).valueOf().toString(),
-      end_date: new Date().valueOf().toString(),
     },
   });
 
@@ -69,6 +69,35 @@ const BrowseWorkflow: React.FC = () => {
     field: 'Time',
     descending: true,
   });
+
+  // Checks if the workflow event from subscription exists in the table
+  function isFiltered(newWorkflow: WorkflowRun) {
+    const nameExists =
+      filters.workflow_name &&
+      newWorkflow.workflow_name
+        .toLowerCase()
+        .includes(filters.workflow_name.toLowerCase());
+
+    const clusterExists =
+      filters.cluster_name === 'All' ||
+      filters.cluster_name === newWorkflow.cluster_name;
+
+    const phaseExists =
+      filters.workflow_status === 'All' ||
+      filters.workflow_status === newWorkflow.phase;
+
+    const dateExists =
+      filters.date_range &&
+      newWorkflow.last_updated >= filters.date_range.start_date &&
+      (filters.date_range.end_date
+        ? newWorkflow.last_updated < filters.date_range.end_date
+        : true);
+
+    const shouldAddNewWorkflow =
+      nameExists && clusterExists && phaseExists && dateExists;
+
+    return shouldAddNewWorkflow;
+  }
 
   // Query to get list of Clusters
   const { data: clusterList } = useQuery<Partial<Clusters>, ClusterVars>(
@@ -123,13 +152,12 @@ const BrowseWorkflow: React.FC = () => {
             break;
           }
         }
-        if (i === modifiedWorkflows.length) {
+        if (i === modifiedWorkflows.length && isFiltered(newWorkflow)) {
           totalNoOfWorkflows++;
           modifiedWorkflows.unshift(newWorkflow);
         }
 
         return {
-          ...prev,
           getWorkflowRuns: {
             total_no_of_workflow_runs: totalNoOfWorkflows,
             workflow_runs: modifiedWorkflows,

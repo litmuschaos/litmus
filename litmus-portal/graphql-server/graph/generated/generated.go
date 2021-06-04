@@ -4576,7 +4576,7 @@ input UpdateUserInput {
 
 input DateRange {
   start_date: String!
-  end_date: String!
+  end_date: String
 }
 
 input WorkflowRunFilterInput {
@@ -21178,7 +21178,7 @@ func (ec *executionContext) unmarshalInputDateRange(ctx context.Context, obj int
 			}
 		case "end_date":
 			var err error
-			it.EndDate, err = ec.unmarshalNString2string(ctx, v)
+			it.EndDate, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}

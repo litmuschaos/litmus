@@ -101,7 +101,9 @@ const WorkflowDetails: React.FC = () => {
         document: WORKFLOW_EVENTS_WITH_EXEC_DATA,
         variables: { projectID },
         updateQuery: (prev, { subscriptionData }) => {
-          if (!subscriptionData.data) return prev;
+          if (!subscriptionData.data || !prev || !prev.getWorkflowRuns)
+            return prev;
+
           const modifiedWorkflows = prev.getWorkflowRuns.workflow_runs.slice();
           const newWorkflow = subscriptionData.data.workflowEventListener;
 
@@ -115,7 +117,6 @@ const WorkflowDetails: React.FC = () => {
             prev.getWorkflowRuns.total_no_of_workflow_runs;
 
           return {
-            ...prev,
             getWorkflowRuns: {
               total_no_of_workflow_runs: totalNoOfWorkflows,
               workflow_runs: modifiedWorkflows,

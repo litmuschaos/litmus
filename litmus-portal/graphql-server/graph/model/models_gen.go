@@ -198,8 +198,8 @@ type DSResponse struct {
 }
 
 type DateRange struct {
-	StartDate string `json:"start_date"`
-	EndDate   string `json:"end_date"`
+	StartDate string  `json:"start_date"`
+	EndDate   *string `json:"end_date"`
 }
 
 type ExperimentInput struct {

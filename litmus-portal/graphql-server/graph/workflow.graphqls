@@ -7,7 +7,7 @@ enum WorkflowRunStatus {
 
 input DateRange {
   start_date: String!
-  end_date: String!
+  end_date: String
 }
 
 input WorkflowRunFilterInput {
