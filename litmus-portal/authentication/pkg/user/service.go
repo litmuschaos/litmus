@@ -3,11 +3,11 @@ package user
 import "litmus/litmus-portal/authentication/pkg/entities"
 
 type Service interface {
-	LoginUser(user *entities.User) (*entities.User, error)
-	UpdatePassword(username string, currentPassword string, oldPassword string) error
-	ResetPassword(username string, password string) error
+	FindUser(user *entities.User) (*entities.User, error)
+	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.User) (*entities.User, error)
+	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
 }
 
@@ -15,16 +15,12 @@ type service struct {
 	repository Repository
 }
 
-func (s service) LoginUser(user *entities.User) (*entities.User, error) {
-	return s.repository.LoginUser(user)
+func (s service) FindUser(user *entities.User) (*entities.User, error) {
+	return s.repository.FindUser(user)
 }
 
-func (s service) UpdatePassword(username string, currentPassword string, oldPassword string) error {
-	return s.repository.UpdatePassword(username, currentPassword, oldPassword)
-}
-
-func (s service) ResetPassword(username string, password string) error {
-	return s.repository.ResetPassword(username, password)
+func (s service) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
+	return s.repository.UpdatePassword(userPassword, isAdminBeingReset)
 }
 
 func (s service) CreateUser(user *entities.User) (*entities.User, error) {
@@ -37,6 +33,10 @@ func (s service) UpdateUser(user *entities.User) (*entities.User, error) {
 
 func (s service) GetUsers() (*[]entities.User, error) {
 	return s.repository.GetUsers()
+}
+
+func (s service) IsAdministrator(user *entities.User) error {
+	return s.repository.IsAdministrator(user)
 }
 
 func NewService(r Repository) Service {

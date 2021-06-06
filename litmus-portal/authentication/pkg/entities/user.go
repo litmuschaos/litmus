@@ -10,16 +10,22 @@ import (
 
 //User contains the user information
 type User struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	UserName  string             `bson:"username,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	UserName  string             `bson:"username,omitempty" json:"username,omitempty"`
 	Password  string             `bson:"password,omitempty" json:"password,omitempty"`
-	Email     string             `bson:"email,omitempty"`
-	Name      string             `bson:"name,omitempty"`
-	Role      Role               `bson:"role"`
-	LoggedIn  bool               `bson:"logged_in,omitempty"`
-	CreatedAt *time.Time         `bson:"created_at,omitempty"`
-	UpdatedAt *time.Time         `bson:"updated_at,omitempty"`
-	RemovedAt *time.Time         `bson:"removed_at,omitempty"`
+	Email     string             `bson:"email,omitempty" json:"email,omitempty"`
+	Name      string             `bson:"name,omitempty" json:"name,omitempty"`
+	Role      Role               `bson:"role,omitempty" json:"role,omitempty"`
+	LoggedIn  bool               `bson:"logged_in,omitempty" json:"logged_in,omitempty"`
+	CreatedAt *time.Time         `bson:"created_at,omitempty" json:"created_at,omitempty"`
+	UpdatedAt *time.Time         `bson:"updated_at,omitempty" json:"updated_at,omitempty"`
+	RemovedAt *time.Time         `bson:"removed_at,omitempty" json:"removed_at,omitempty"`
+}
+
+type UserPassword struct {
+	Username    string `json:"username,omitempty"`
+	OldPassword string `json:"old_password,omitempty"`
+	NewPassword string `json:"new_password,omitempty"`
 }
 
 //Role states the role of the user in the portal
