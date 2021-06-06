@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"litmus/litmus-portal/authentication/api/middleware"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/user"
+	"net/http"
 )
 
 func UserRouter(router *gin.Engine, service user.Service) {
 	router.POST("/login", loginUser(service))
+	router.Use(middleware.JwtMiddleware())
 	router.POST("/update/password", updatePassword(service))
 	router.POST("/reset/password", resetPassword(service))
 	router.POST("/users", createUser(service))
@@ -19,6 +22,11 @@ func UserRouter(router *gin.Engine, service user.Service) {
 
 func createUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		userRole := c.MustGet("role").(string)
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
 		var userRequest entities.User
 		err := c.BindJSON(&userRequest)
 		if err != nil {
@@ -68,7 +76,14 @@ func loginUser(service user.Service) gin.HandlerFunc {
 			})
 			return
 		}
-		c.JSON(200, authenticatedUser)
+		token, err := authenticatedUser.GetSignedJWT()
+		if err != nil {
+			c.JSON(404, gin.H{
+				"message": "invalid user",
+			})
+			return
+		}
+		c.JSON(200, token)
 	}
 }
 
@@ -97,12 +112,14 @@ func updatePassword(service user.Service) gin.HandlerFunc {
 
 func resetPassword(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		username := c.MustGet("username").(string)
+		uid := c.MustGet("uid").(string)
 		var adminUser entities.User
-		adminUser.UserName = "admin"
+		adminUser.UserName = username
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
-		userPasswordRequest.Username = "admin"
-		adminUser.ID, _ = primitive.ObjectIDFromHex("60bceb8cc06369ba0886a902")
+		userPasswordRequest.Username = username
+		adminUser.ID, _ = primitive.ObjectIDFromHex(uid)
 		if err != nil {
 			fmt.Println(err)
 		}
