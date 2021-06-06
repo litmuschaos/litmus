@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"litmus/litmus-portal/authentication/pkg/utils"
 	"net/http"
-	"os"
 )
 
 func JwtMiddleware() gin.HandlerFunc {
@@ -36,7 +36,7 @@ func validateToken(encodedToken string) (*jwt.Token, error) {
 		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
 			return nil, fmt.Errorf("invalid token %s", token.Header["alg"])
 		}
-		return []byte(os.Getenv("JWT_SECRET")), nil
+		return []byte(utils.JwtSecret), nil
 	})
 
 }

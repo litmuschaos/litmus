@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"os"
+	"litmus/litmus-portal/authentication/pkg/utils"
 	"time"
 )
 
@@ -53,7 +53,7 @@ func (user *User) GetSignedJWT() (string, error) {
 	claims["username"] = user.Name
 	claims["exp"] = time.Now().Add(time.Minute * 300).Unix()
 
-	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
 	if err != nil {
 		fmt.Println(err)
 		return "", err

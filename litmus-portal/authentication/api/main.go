@@ -4,30 +4,25 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"litmus/litmus-portal/authentication/api/routes"
+	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/user"
+	"litmus/litmus-portal/authentication/pkg/utils"
 	"log"
-	"os"
 	"time"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 	db, err := DatabaseConnection()
 	if err != nil {
 		log.Fatal("Database Connection Error $s", err)
 	}
-	fmt.Println("Database connection success!")
-
 	userCollection := db.Collection("users")
 	userRepo := user.NewRepo(userCollection)
 	userService := user.NewService(userRepo)
+	validatedAdminSetup(userService)
 	r := gin.Default()
 	routes.UserRouter(r, userService)
 	r.GET("/", func(c *gin.Context) {
@@ -35,15 +30,34 @@ func main() {
 			"message": "litmus-portal authentication server is running",
 		})
 	})
-	r.Run()
+	_ = r.Run()
 }
 
 func DatabaseConnection() (*mongo.Database, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+	mongoURI := fmt.Sprintf("mongodb://%s:%s@%s:27017", utils.DBUser, utils.DBPassword, utils.DBUrl)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		return nil, err
 	}
-	db := client.Database(os.Getenv("DB_NAME"))
+	db := client.Database(utils.DBName)
 	return db, nil
+}
+
+func validatedAdminSetup(service user.Service) {
+	configs := map[string]string{"ADMIN_PASSWORD": utils.AdminPassword, "ADMIN_USERNAME": utils.AdminName, "DB_USER": utils.DBUser, "DB_SERVER": utils.DBUrl, "DB_NAME": utils.DBName, "DB_PASSWORD": utils.DBPassword, "JW_SECRET": utils.JwtSecret}
+	for configName, configValue := range configs {
+		if configValue == "" {
+			log.Fatalf("Config %s has not been set", configName)
+		}
+	}
+	adminUser := &entities.User{
+		UserName: utils.AdminName,
+		Password: utils.AdminPassword,
+		Role: entities.RoleAdmin,
+	}
+	_, err := service.CreateUser(adminUser)
+	if err != nil {
+		log.Panicf("Unable to create admin, error: %s", err)
+	}
 }

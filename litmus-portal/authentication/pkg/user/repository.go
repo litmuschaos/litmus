@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"litmus/litmus-portal/authentication/pkg/entities"
-	"os"
+	"litmus/litmus-portal/authentication/pkg/utils"
 )
 
 type Repository interface {
@@ -108,8 +108,8 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	if findOneErr != nil {
 		return findOneErr
 	}
-	if result.UserName == os.Getenv("ADMIN_USERNAME") {
-		err := bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(os.Getenv("ADMIN_PASSWORD")))
+	if result.UserName == utils.AdminName {
+		err := bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(utils.AdminPassword))
 		if err != nil {
 			return err
 		}
