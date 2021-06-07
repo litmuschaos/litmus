@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -23,14 +24,19 @@ func main() {
 	userRepo := user.NewRepo(userCollection)
 	userService := user.NewService(userRepo)
 	validatedAdminSetup(userService)
-	r := gin.Default()
-	routes.UserRouter(r, userService)
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "litmus-portal authentication server is running",
-		})
-	})
-	_ = r.Run()
+
+	gin.SetMode(gin.ReleaseMode)
+	gin.EnableJsonDecoderDisallowUnknownFields()
+	app := gin.Default()
+	config := cors.DefaultConfig()
+	config.AddAllowHeaders("Access-Control-Allow-Origin")
+	config.AllowAllOrigins = true
+	app.Use(cors.New(config))
+	routes.UserRouter(app, userService)
+	err = app.Run()
+	if err != nil {
+		log.Fatalf("Failure to start litmus-portal authentication server due to %s", err)
+	}
 }
 
 func DatabaseConnection() (*mongo.Database, error) {
@@ -54,7 +60,7 @@ func validatedAdminSetup(service user.Service) {
 	adminUser := &entities.User{
 		UserName: utils.AdminName,
 		Password: utils.AdminPassword,
-		Role: entities.RoleAdmin,
+		Role:     entities.RoleAdmin,
 	}
 	_, err := service.CreateUser(adminUser)
 	if err != nil {
