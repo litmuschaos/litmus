@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/utils"
-	"net/http"
 )
 
 func JwtMiddleware() gin.HandlerFunc {
@@ -13,7 +13,8 @@ func JwtMiddleware() gin.HandlerFunc {
 		const BearerSchema = "Bearer "
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			return
 		}
 		tokenString := authHeader[len(BearerSchema):]
 		token, err := validateToken(tokenString)
@@ -26,7 +27,8 @@ func JwtMiddleware() gin.HandlerFunc {
 			c.Next()
 		} else {
 			fmt.Println(err)
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			return
 		}
 	}
 }
