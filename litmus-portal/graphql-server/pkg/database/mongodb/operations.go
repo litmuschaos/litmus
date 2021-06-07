@@ -20,27 +20,8 @@ type MongoOperator interface {
 	Replace(ctx context.Context, collectionType int, query bson.D, replacement interface{}) (*mongo.UpdateResult, error)
 	Delete(ctx context.Context, collectionType int, query bson.D, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
 	CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error)
+	Aggregate(ctx context.Context, collectionType int, pipeline interface{}, opts ...*options.AggregateOptions) (*mongo.Cursor, error)
 	GetCollection(collectionType int) (*mongo.Collection, error)
-}
-
-type CollectionInterface interface {
-	InsertOne(ctx context.Context, document interface{},
-		opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error)
-	InsertMany(ctx context.Context, document interface{},
-		opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error)
-	FindOne(ctx context.Context, filter interface{},
-		opts ...*options.FindOneOptions) *mongo.SingleResult
-	Find(ctx context.Context, filter interface{},
-		opts ...*options.FindOptions) (*mongo.Cursor, error)
-	UpdateOne(ctx context.Context, filter interface{}, update interface{},
-		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
-	UpdateMany(ctx context.Context, filter interface{}, update interface{},
-		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
-	ReplaceOne(ctx context.Context, filter interface{},
-		replacement interface{}, opts ...*options.ReplaceOptions) (*mongo.UpdateResult, error)
-	DeleteOne(ctx context.Context, filter interface{},
-		opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
-	CountDocuments(ctx context.Context, filter interface{}, opts ...*options.CountOptions) (int64, error)
 }
 
 type MongoOperations struct{}
@@ -167,6 +148,18 @@ func (m *MongoOperations) CountDocuments(ctx context.Context, collectionType int
 	result, err = collection.CountDocuments(ctx, query, opts...)
 	if err != nil {
 		return result, err
+	}
+	return result, nil
+}
+
+func (m *MongoOperations) Aggregate(ctx context.Context, collectionType int, pipeline interface{}, opts ...*options.AggregateOptions) (*mongo.Cursor, error) {
+	collection, err := m.GetCollection(collectionType)
+	if err != nil {
+		return nil, err
+	}
+	result, err := collection.Aggregate(ctx, pipeline, opts...)
+	if err != nil {
+		return nil, err
 	}
 	return result, nil
 }

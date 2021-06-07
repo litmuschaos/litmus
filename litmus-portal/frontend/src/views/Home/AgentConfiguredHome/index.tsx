@@ -35,12 +35,20 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
     {
-      variables: { projectID },
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+          pagination: {
+            page: 0,
+            limit: 3,
+          },
+        },
+      },
       fetchPolicy: 'cache-and-network',
     }
   );
 
-  let workflowRunCount = 0;
+  const workflowRunCount = data?.getWorkflowRuns.total_no_of_workflow_runs ?? 0;
 
   if (error) {
     console.error('Error fetching Workflow Data');
@@ -51,24 +59,14 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
     );
   }
 
-  if (data) {
-    workflowRunCount = data.getWorkFlowRuns.length;
-  } else {
-    return (
-      <Center>
-        <Loader />
-      </Center>
-    );
-  }
-
   return (
     <div>
       {loading ? (
         <Center>
           <Loader />
         </Center>
-      ) : workflowRunCount > 0 ? (
-        <RecentWorkflowRuns data={data} />
+      ) : data && workflowRunCount > 0 ? (
+        <RecentWorkflowRuns data={data.getWorkflowRuns.workflow_runs} />
       ) : (
         <MainInfoContainer
           src="./icons/workflowScheduleHome.svg"

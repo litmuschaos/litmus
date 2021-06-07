@@ -14,6 +14,7 @@ import (
 	"github.com/jinzhu/copier"
 	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	types "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
@@ -25,48 +26,6 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
-
-type WorkflowEvent struct {
-	WorkflowID        string          `json:"-"`
-	EventType         string          `json:"event_type"`
-	UID               string          `json:"-"`
-	Namespace         string          `json:"namespace"`
-	Name              string          `json:"name"`
-	CreationTimestamp string          `json:"creationTimestamp"`
-	Phase             string          `json:"phase"`
-	Message           string          `json:"message"`
-	StartedAt         string          `json:"startedAt"`
-	FinishedAt        string          `json:"finishedAt"`
-	Nodes             map[string]Node `json:"nodes"`
-}
-
-// each node/step data
-type Node struct {
-	Name       string     `json:"name"`
-	Phase      string     `json:"phase"`
-	Message    string     `json:"message"`
-	StartedAt  string     `json:"startedAt"`
-	FinishedAt string     `json:"finishedAt"`
-	Children   []string   `json:"children"`
-	Type       string     `json:"type"`
-	ChaosExp   *ChaosData `json:"chaosData,omitempty"`
-}
-
-// chaos data
-type ChaosData struct {
-	EngineUID              string                  `json:"engineUID"`
-	EngineName             string                  `json:"engineName"`
-	Namespace              string                  `json:"namespace"`
-	ExperimentName         string                  `json:"experimentName"`
-	ExperimentStatus       string                  `json:"experimentStatus"`
-	LastUpdatedAt          string                  `json:"lastUpdatedAt"`
-	ExperimentVerdict      string                  `json:"experimentVerdict"`
-	ExperimentPod          string                  `json:"experimentPod"`
-	RunnerPod              string                  `json:"runnerPod"`
-	ProbeSuccessPercentage string                  `json:"probeSuccessPercentage"`
-	FailStep               string                  `json:"failStep"`
-	ChaosResult            *chaosTypes.ChaosResult `json:"chaosResult"`
-}
 
 // ProcessWorkflow takes the workflow and processes it as required
 func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowInput, *dbSchemaWorkflow.ChaosWorkflowType, error) {
@@ -146,6 +105,12 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, wfType *dbSchemaWo
 		copier.Copy(&Weightages, &input.Weightages)
 	}
 
+	// Get cluster information
+	cluster, err := dbOperationsCluster.GetCluster(input.ClusterID)
+	if err != nil {
+		return err
+	}
+
 	newChaosWorkflow := dbSchemaWorkflow.ChaosWorkFlowInput{
 		WorkflowID:          *input.WorkflowID,
 		WorkflowManifest:    input.WorkflowManifest,
@@ -156,6 +121,8 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, wfType *dbSchemaWo
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 		ProjectID:           input.ProjectID,
 		ClusterID:           input.ClusterID,
+		ClusterName:         cluster.ClusterName,
+		ClusterType:         cluster.ClusterType,
 		Weightages:          Weightages,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
@@ -163,7 +130,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, wfType *dbSchemaWo
 		IsRemoved:           false,
 	}
 
-	err := dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
+	err = dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
 	if err != nil {
 		return err
 	}
@@ -249,18 +216,20 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 	r.Mutex.Unlock()
 }
 
-// ResiliencyScoreCalculator calculates the Rscore and returns the execdata string
-func ResiliencyScoreCalculator(execData string, wfid string) string {
-	var resiliency_score, weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0, 0
-	var jsonData WorkflowEvent
-	json.Unmarshal([]byte(execData), &jsonData)
+// ResiliencyScoreCalculator calculates the Resiliency Score and returns the updated ExecutionData
+func ResiliencyScoreCalculator(execData types.ExecutionData, wfid string) types.ExecutionData {
+	var resiliencyScore float64 = 0.0
+	var weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0
+
 	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": []string{wfid}}}})
+
 	totalExperiments = len(chaosWorkflows[0].Weightages)
 	weightMap := map[string]int{}
 	for _, weightEnty := range chaosWorkflows[0].Weightages {
 		weightMap[weightEnty.ExperimentName] = weightEnty.Weightage
 	}
-	for _, value := range jsonData.Nodes {
+
+	for _, value := range execData.Nodes {
 		if value.Type == "ChaosEngine" {
 			if value.ChaosExp == nil {
 				continue
@@ -276,12 +245,14 @@ func ResiliencyScoreCalculator(execData string, wfid string) string {
 			}
 		}
 	}
-	if weightSum == 0 {
-		resiliency_score = 0
-	} else {
-		resiliency_score = (totalTestResult / weightSum)
+	if weightSum != 0 {
+		resiliencyScore = float64(totalTestResult) / float64(weightSum)
 	}
-	execData = "{" + `"resiliency_score":` + `"` + strconv.Itoa(resiliency_score) + `",` + `"experiments_passed":` + `"` + strconv.Itoa(totalExperimentsPassed) + `",` + `"total_experiments":` + `"` + strconv.Itoa(totalExperiments) + `",` + execData[1:]
+
+	execData.ResiliencyScore = resiliencyScore
+	execData.ExperimentsPassed = totalExperimentsPassed
+	execData.TotalExperiments = totalExperiments
+
 	return execData
 }
 
