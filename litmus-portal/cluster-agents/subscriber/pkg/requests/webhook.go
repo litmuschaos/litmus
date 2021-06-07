@@ -3,11 +3,12 @@ package requests
 import (
 	"encoding/json"
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/utils"
 	"log"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/utils"
 
 	"github.com/gorilla/websocket"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"

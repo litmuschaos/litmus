@@ -1,12 +1,13 @@
 package utils
 
 import (
+	"strconv"
+
 	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/events"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strconv"
 )
 
 func WorkflowRequest(clusterData map[string]string, requestType string, uid string) error {
