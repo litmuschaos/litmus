@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+	scheduleTypes "github.com/litmuschaos/chaos-scheduler/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	types "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -85,6 +86,14 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 		{
 			wfType = dbSchemaWorkflow.ChaosEngine
 			err = processChaosengineManifest(workflow, weights)
+			if err != nil {
+				return nil, nil, err
+			}
+		}
+	case "chaosschedule":
+		{
+			wfType = dbSchemaWorkflow.ChaosEngine
+			err = processChaosScheduleManifest(workflow, weights)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -299,7 +308,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 					if len(meta.Spec.Experiments) > 0 {
 						exprname = meta.Spec.Experiments[0].Name
 						if len(exprname) == 0 {
-							return errors.New("empty chaos engine name")
+							return errors.New("empty chaos experiment name")
 						}
 					} else {
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
@@ -410,7 +419,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 					if len(meta.Spec.Experiments) > 0 {
 						exprname = meta.Spec.Experiments[0].Name
 						if len(exprname) == 0 {
-							return errors.New("empty chaos engine name")
+							return errors.New("empty chaos experiment name")
 						}
 					} else {
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
@@ -477,7 +486,63 @@ func processChaosengineManifest(workflow *model.ChaosWorkFlowInput, weights map[
 	}
 	exprname := workflowManifest.Spec.Experiments[0].Name
 	if len(exprname) == 0 {
-		return errors.New("empty chaos engine name")
+		return errors.New("empty chaos experiment name")
+	}
+	if val, ok := weights[exprname]; ok {
+		workflowManifest.Labels["weight"] = strconv.Itoa(val)
+	} else if val, ok := workflowManifest.Labels["weight"]; ok {
+		intVal, err := strconv.Atoi(val)
+		if err != nil {
+			return errors.New("failed to convert")
+		}
+		newWeights = append(newWeights, &model.WeightagesInput{
+			ExperimentName: exprname,
+			Weightage:      intVal,
+		})
+	} else {
+		newWeights = append(newWeights, &model.WeightagesInput{
+			ExperimentName: exprname,
+			Weightage:      10,
+		})
+		workflowManifest.Labels["weight"] = "10"
+	}
+	workflow.Weightages = append(workflow.Weightages, newWeights...)
+	out, err := json.Marshal(workflowManifest)
+	if err != nil {
+		return err
+	}
+
+	workflow.WorkflowManifest = string(out)
+	return nil
+}
+
+func processChaosScheduleManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {
+	var (
+		newWeights       []*model.WeightagesInput
+		workflowManifest scheduleTypes.ChaosSchedule
+	)
+	err := json.Unmarshal([]byte(workflow.WorkflowManifest), &workflowManifest)
+	if err != nil {
+		return errors.New("failed to unmarshal workflow manifest")
+	}
+
+	if workflowManifest.Labels == nil {
+		workflowManifest.Labels = map[string]string{
+			"workflow_id": *workflow.WorkflowID,
+			"cluster_id":  workflow.ClusterID,
+			"type":        "standalone_workflow",
+		}
+	} else {
+		workflowManifest.Labels["workflow_id"] = *workflow.WorkflowID
+		workflowManifest.Labels["cluster_id"] = workflow.ClusterID
+		workflowManifest.Labels["type"] = "standalone_workflow"
+	}
+	if len(workflowManifest.Spec.EngineTemplateSpec.Experiments) == 0 {
+		return errors.New("no experiments specified in chaosengine - " + workflowManifest.Name)
+	}
+	exprname := workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Name
+	if len(exprname) == 0 {
+		return errors.New("empty chaos experiment name")
 	}
 	if val, ok := weights[exprname]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
