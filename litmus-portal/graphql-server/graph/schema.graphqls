@@ -114,18 +114,6 @@ type ChaosWorkFlowResponse {
   isCustomWorkflow: Boolean!
 }
 
-type WorkflowRun {
-  workflow_run_id: ID!
-  workflow_id: ID!
-  cluster_name: String!
-  last_updated: String!
-  project_id: ID!
-  cluster_id: ID!
-  workflow_name: String!
-  cluster_type: String
-  execution_data: String!
-}
-
 input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
@@ -163,6 +151,7 @@ input PodLogRequest {
 }
 
 type ScheduledWorkflows {
+  workflow_type:String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -180,6 +169,7 @@ type ScheduledWorkflows {
 }
 
 type Workflow {
+  workflow_type:String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -280,8 +270,9 @@ input KubeGVRRequest {
 }
 
 type Query {
-  # [Deprecated soon]
-  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
+  getWorkflowRuns(
+    workflowRunsInput: GetWorkflowRunsInput!
+  ): GetWorkflowsOutput! @authorized
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
@@ -333,7 +324,10 @@ type Query {
   #Image Registry Queries
   ListImageRegistry(project_id: String!): [ImageRegistryResponse!] @authorized
 
-  GetImageRegistry(image_registry_id: String!, project_id: String!): ImageRegistryResponse! @authorized
+  GetImageRegistry(
+    image_registry_id: String!
+    project_id: String!
+  ): ImageRegistryResponse! @authorized
 }
 
 type Mutation {
@@ -341,8 +335,7 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
@@ -431,9 +424,16 @@ type Mutation {
   deleteManifestTemplate(template_id: String!): Boolean! @authorized
 
   #Image Registry Mutations
-  createImageRegistry(project_id: String!, imageRegistryInfo: imageRegistryInput!): ImageRegistryResponse! @authorized
+  createImageRegistry(
+    project_id: String!
+    imageRegistryInfo: imageRegistryInput!
+  ): ImageRegistryResponse! @authorized
 
-  updateImageRegistry(image_registry_id: String!, project_id: String!, imageRegistryInfo: imageRegistryInput!): ImageRegistryResponse! @authorized
+  updateImageRegistry(
+    image_registry_id: String!
+    project_id: String!
+    imageRegistryInfo: imageRegistryInput!
+  ): ImageRegistryResponse! @authorized
 
   deleteImageRegistry(image_registry_id: String!, project_id: String!): String! @authorized
 }

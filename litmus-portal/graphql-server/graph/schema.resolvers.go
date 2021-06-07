@@ -295,12 +295,12 @@ func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistr
 	return diRegistry, err
 }
 
-func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
-	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
+func (r *queryResolver) GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
+	err := validate.ValidateRole(ctx, workflowRunsInput.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.QueryWorkflowRuns(projectID)
+	return wfHandler.QueryWorkflowRuns(workflowRunsInput)
 }
 
 func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
@@ -346,11 +346,7 @@ func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, work
 	if err != nil {
 		return nil, err
 	}
-	if len(workflowIds) == 0 {
-		return wfHandler.QueryListWorkflow(projectID)
-	} else {
-		return wfHandler.QueryListWorkflowByIDs(workflowIds)
-	}
+	return wfHandler.QueryListWorkflow(projectID, workflowIds)
 }
 
 func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {

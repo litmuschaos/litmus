@@ -127,21 +127,36 @@ const WorkflowStepper = () => {
     return (
       <div data-cy="ControlButtons">
         {activeStep === 0 ? ( // Only show Next button at Top for Step 0
-          <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
+          <ButtonFilled className={classes.btn} onClick={() => handleNext()}>
+            Next
+          </ButtonFilled>
         ) : activeStep === steps.length - 1 ? ( // Show Finish button at Bottom for Last Step
           loading ? (
-            <ButtonFilled disabled onClick={() => handleNext()}>
+            <ButtonFilled
+              className={classes.btn}
+              disabled
+              onClick={() => handleNext()}
+            >
               Finish <span style={{ marginLeft: '0.5rem' }} />{' '}
               <Loader size={20} />
             </ButtonFilled>
           ) : (
-            <ButtonFilled onClick={() => handleNext()}>Finish</ButtonFilled>
+            <ButtonFilled className={classes.btn} onClick={() => handleNext()}>
+              Finish
+            </ButtonFilled>
           )
         ) : (
           // Apply headerButtonWrapper style for top button's div
           <div className={classes.headerButtonWrapper} aria-label="buttons">
-            <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
-            <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
+            <ButtonOutlined
+              className={classes.btn}
+              onClick={() => handleBack()}
+            >
+              Back
+            </ButtonOutlined>
+            <ButtonFilled className={classes.btn} onClick={() => handleNext()}>
+              Next
+            </ButtonFilled>
           </div>
         )}
       </div>

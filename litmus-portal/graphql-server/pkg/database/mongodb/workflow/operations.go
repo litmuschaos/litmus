@@ -5,6 +5,8 @@ import (
 	"errors"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -52,6 +54,10 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 		update := bson.D{
 			{"$set", bson.D{
 				{"workflow_runs.$.last_updated", wfRun.LastUpdated},
+				{"workflow_runs.$.phase", wfRun.Phase},
+				{"workflow_runs.$.resiliency_score", wfRun.ResiliencyScore},
+				{"workflow_runs.$.experiments_passed", wfRun.ExperimentsPassed},
+				{"workflow_runs.$.total_experiments", wfRun.TotalExperiments},
 				{"workflow_runs.$.execution_data", wfRun.ExecutionData},
 				{"workflow_runs.$.completed", wfRun.Completed},
 			}}}
@@ -82,6 +88,18 @@ func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
 	}
 
 	return workflows, nil
+}
+
+// GetAggregateWorkflows takes a mongo pipeline to retrieve the workflow details from the database
+func GetAggregateWorkflows(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+
+	results, err := mongodb.Operator.Aggregate(ctx, mongodb.WorkflowCollection, pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
 // GetWorkflowsByClusterID takes a clusterID parameter to retrieve the workflow details from the database

@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editor: {
+    width: '100%',
     height: '50vh',
 
     '&::-webkit-scrollbar': {

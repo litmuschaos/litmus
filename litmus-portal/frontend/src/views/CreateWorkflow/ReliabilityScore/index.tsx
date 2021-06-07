@@ -66,6 +66,7 @@ const ReliablityScore = forwardRef((_, ref) => {
               </strong>
             </Typography>
           </div>
+          <hr className={classes.horizontalLine} />
           {weights.map((Data: experimentMap, index: number) => (
             <WeightSlider
               key={Data.experimentName + index.toString()}

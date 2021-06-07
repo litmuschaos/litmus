@@ -183,10 +183,13 @@ const useStyles = makeStyles((theme) => ({
 
   // Confirmation Modal
   confirmDiv: {
-    margin: '2rem auto',
+    margin: 0,
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
   },
   confirmText: {
-    fontSize: '2.25rem',
+    fontSize: '2rem',
   },
   backBtn: {
     margin: theme.spacing(2.5, 5, 0, 0),
