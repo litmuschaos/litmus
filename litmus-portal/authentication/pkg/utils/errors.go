@@ -9,6 +9,7 @@ var (
 	ErrServerError        AppError = errors.New("server_error")
 	ErrInvalidRequest     AppError = errors.New("invalid_request")
 	ErrUnauthorised       AppError = errors.New("unauthorised")
+	ErrUserExists         AppError = errors.New("user_exists")
 )
 
 var ErrorStatusCodes = map[AppError]int{
@@ -16,6 +17,7 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrInvalidCredentials: 401,
 	ErrServerError:        500,
 	ErrUnauthorised:       401,
+	ErrUserExists:         401,
 }
 
 var ErrorDescriptions = map[AppError]string{
@@ -23,4 +25,5 @@ var ErrorDescriptions = map[AppError]string{
 	ErrInvalidCredentials: "Invalid Credentials",
 	ErrInvalidRequest:     "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed",
 	ErrUnauthorised:       "The user does not have requested authorisation to access this resource",
+	ErrUserExists:         "This username is already assigned to another user",
 }

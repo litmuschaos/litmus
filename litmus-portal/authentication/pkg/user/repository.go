@@ -65,6 +65,13 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 }
 
 func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
+	var result = entities.User{}
+	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
+		"username": user.UserName,
+	}).Decode(&result)
+	if findOneErr == nil || result.UserName != "" {
+		return nil, utils.ErrUserExists
+	}
 	user.ID = primitive.NewObjectID()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)
@@ -108,11 +115,8 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	if findOneErr != nil {
 		return findOneErr
 	}
-	if result.UserName == utils.AdminName {
-		err := bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(utils.AdminPassword))
-		if err != nil {
-			return err
-		}
+	if result.UserName != utils.AdminName || result.Role != entities.RoleAdmin {
+		return utils.ErrInvalidCredentials
 	}
 	return nil
 }

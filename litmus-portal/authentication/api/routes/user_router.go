@@ -40,6 +40,14 @@ func createUser(service user.Service) gin.HandlerFunc {
 			return
 		}
 		userRec, err := service.CreateUser(&userRequest)
+		if err == utils.ErrUserExists {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserExists], presenter.CreateErrorResponse(utils.ErrUserExists))
+			return
+		}
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 		c.JSON(200, userRec)
 	}
 }
@@ -122,15 +130,10 @@ func updatePassword(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		err = service.IsAdministrator(&adminUser)
-		if err != nil {
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
-			fmt.Println(err)
-			return
-		}
 		err = service.UpdatePassword(&userPasswordRequest, true)
 		if err != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			fmt.Println(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
 		c.JSON(200, gin.H{
@@ -141,8 +144,10 @@ func updatePassword(service user.Service) gin.HandlerFunc {
 
 func resetPassword(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		uid := c.MustGet("uid").(string)
 		var adminUser entities.User
 		adminUser.UserName = c.MustGet("username").(string)
+		adminUser.ID, _ = primitive.ObjectIDFromHex(uid)
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
 		if err != nil {

@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-var(
+var (
 	PORT = ":3000"
 )
 
@@ -77,7 +77,10 @@ func validatedAdminSetup(service user.Service) {
 		Role:     entities.RoleAdmin,
 	}
 	_, err := service.CreateUser(adminUser)
-	if err != nil {
+	if err == utils.ErrUserExists {
+		log.Println("Admin already exists in the database, not creating a new admin")
+	}
+	if err != nil && err != utils.ErrUserExists {
 		log.Panicf("Unable to create admin, error: %s", err)
 	}
 }

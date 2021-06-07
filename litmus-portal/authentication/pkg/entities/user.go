@@ -50,7 +50,7 @@ func (user *User) GetSignedJWT() (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = user.ID.Hex()
 	claims["role"] = user.Role
-	claims["username"] = user.Name
+	claims["username"] = user.UserName
 	claims["exp"] = time.Now().Add(time.Minute * 300).Unix()
 
 	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
