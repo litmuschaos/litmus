@@ -308,7 +308,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 					if len(meta.Spec.Experiments) > 0 {
 						exprname = meta.Spec.Experiments[0].Name
 						if len(exprname) == 0 {
-							return errors.New("empty chaos engine name")
+							return errors.New("empty chaos experiment name")
 						}
 					} else {
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
@@ -419,7 +419,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 					if len(meta.Spec.Experiments) > 0 {
 						exprname = meta.Spec.Experiments[0].Name
 						if len(exprname) == 0 {
-							return errors.New("empty chaos engine name")
+							return errors.New("empty chaos experiment name")
 						}
 					} else {
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
@@ -486,7 +486,7 @@ func processChaosengineManifest(workflow *model.ChaosWorkFlowInput, weights map[
 	}
 	exprname := workflowManifest.Spec.Experiments[0].Name
 	if len(exprname) == 0 {
-		return errors.New("empty chaos engine name")
+		return errors.New("empty chaos experiment name")
 	}
 	if val, ok := weights[exprname]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
@@ -542,7 +542,7 @@ func processChaosScheduleManifest(workflow *model.ChaosWorkFlowInput, weights ma
 	}
 	exprname := workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Name
 	if len(exprname) == 0 {
-		return errors.New("empty chaos engine name")
+		return errors.New("empty chaos experiment name")
 	}
 	if val, ok := weights[exprname]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
