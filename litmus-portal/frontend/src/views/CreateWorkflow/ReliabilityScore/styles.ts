@@ -195,10 +195,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     marginTop: theme.spacing(5),
   },
-  divRow: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
   toolTipDiv: {
     marginLeft: theme.spacing(1.25),
   },
