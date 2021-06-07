@@ -1,9 +1,9 @@
 # BUILD STAGE
-FROM golang:1.14 AS builder
+FROM golang:1.16 AS builder
 
 ADD . /auth-server
 WORKDIR /auth-server
-RUN CGO_ENABLED=0 go build -o /output/server -v ./src/
+RUN CGO_ENABLED=0 go build -o /output/server -v ./api/
 
 
 # DEPLOY STAGE

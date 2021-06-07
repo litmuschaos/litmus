@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -12,10 +13,23 @@ import (
 	"litmus/litmus-portal/authentication/pkg/user"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"log"
+	"runtime"
 	"time"
 )
 
+var(
+	PORT = ":3000"
+)
+
 func main() {
+	// send logs to stderr so we can use 'kubectl logs'
+	_ = flag.Set("logtostderr", "true")
+	_ = flag.Set("v", "3")
+
+	flag.Parse()
+	// Version Info
+	printVersion()
+
 	db, err := DatabaseConnection()
 	if err != nil {
 		log.Fatal("Database Connection Error $s", err)
@@ -33,7 +47,7 @@ func main() {
 	config.AllowAllOrigins = true
 	app.Use(cors.New(config))
 	routes.UserRouter(app, userService)
-	err = app.Run()
+	err = app.Run(PORT)
 	if err != nil {
 		log.Fatalf("Failure to start litmus-portal authentication server due to %s", err)
 	}
@@ -66,4 +80,9 @@ func validatedAdminSetup(service user.Service) {
 	if err != nil {
 		log.Panicf("Unable to create admin, error: %s", err)
 	}
+}
+
+func printVersion() {
+	log.Println(fmt.Sprintf("Go Version: %s", runtime.Version()))
+	log.Println(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
 }
