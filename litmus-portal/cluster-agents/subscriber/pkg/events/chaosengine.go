@@ -1,4 +1,4 @@
-package workflow
+package events
 
 import (
 	"fmt"
@@ -53,7 +53,7 @@ func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, cl
 	go startWatchEngine(stopCh, informer, stream, int64(startTime))
 }
 
-// handles the different workflow events - add, update and delete
+// handles the different events events - add, update and delete
 func startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
@@ -104,7 +104,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 		logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
 	}
 
-	// considering chaos workflow has only 1 artifact with manifest as raw data
+	// considering chaos events has only 1 artifact with manifest as raw data
 	finTime := int64(-1)
 	if workflowObj.Status.EngineStatus == chaosTypes.EngineStatusCompleted || workflowObj.Status.EngineStatus == chaosTypes.EngineStatusStopped {
 		if len(workflowObj.Status.Experiments) > 0 {

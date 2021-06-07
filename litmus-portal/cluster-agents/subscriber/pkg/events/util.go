@@ -1,4 +1,4 @@
-package workflow
+package events
 
 import (
 	"errors"
@@ -32,7 +32,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 		return nil, err
 	}
 	if nodeStatus.StartedAt.Unix() > crd.ObjectMeta.CreationTimestamp.Unix() {
-		return nil, errors.New("chaosenginge resource older than current workflow node")
+		return nil, errors.New("chaosenginge resource older than current events node")
 	}
 	cd.ProbeSuccessPercentage = "0"
 	cd.FailStep = ""
@@ -69,7 +69,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
 	var cd *types.ChaosData = nil
-	// considering chaos workflow has only 1 artifact with manifest as raw data
+	// considering chaos events has only 1 artifact with manifest as raw data
 	data := nodeStatus.Inputs.Artifacts[0].Raw.Data
 	obj := &unstructured.Unstructured{}
 	decUnstructured := yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
@@ -129,16 +129,19 @@ func WorkflowRequest(clusterData map[string]string, requestType string, uid stri
 			return err
 		}
 
-		logrus.Info("workflow delete name: ", wfOb.Name, "namespace: ", wfOb.Namespace)
+		logrus.Info("events delete name: ", wfOb.Name, "namespace: ", wfOb.Namespace)
 	} else if requestType == "workflow_sync" {
 		wfOb, err := GetWorkflowObj(uid)
 		if err != nil {
 			return err
 		}
 
-		startTime := time.Now().Unix()
+		starttime, err := time.Parse(time.RFC3339, clusterData["START_TIME"])
+		if err != nil {
+			return err
+		}
 
-		events, err := WorkflowEventHandler(wfOb, "UPDATE", startTime)
+		events, err := WorkflowEventHandler(wfOb, "UPDATE", starttime.Unix())
 		if err != nil {
 			logrus.Info(err)
 			return err
@@ -159,7 +162,7 @@ func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 		return nil, err
 	}
 
-	// create the workflow client
+	// create the events client
 	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(AgentNamespace)
 	listWf, err := wfClient.List(metav1.ListOptions{})
 	if err != nil {
@@ -181,12 +184,12 @@ func DeleteWorflow(wfname string) error {
 		return err
 	}
 
-	// create the workflow client
+	// create the events client
 	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(AgentNamespace)
 	return wfClient.Delete(wfname, &metav1.DeleteOptions{})
 }
 
-// generate graphql mutation payload for workflow event
+// generate graphql mutation payload for events event
 func GenerateWorkflowPayload(cid, accessKey, completed string, wfEvent types.WorkflowEvent) ([]byte, error) {
 	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
 

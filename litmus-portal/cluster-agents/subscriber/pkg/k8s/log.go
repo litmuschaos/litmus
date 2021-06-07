@@ -92,7 +92,7 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	return logDetails, nil
 }
 
-//SendPodLogs generates graphql mutation to send workflow updates to graphql server
+//SendPodLogs generates graphql mutation to send events updates to graphql server
 func SendPodLogs(clusterData map[string]string, podLog types.PodLogRequest) {
 	// generate graphql payload
 	payload, err := GenerateLogPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], podLog)

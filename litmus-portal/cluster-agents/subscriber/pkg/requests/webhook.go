@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/events"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workflow"
 	"github.com/sirupsen/logrus"
 )
 
@@ -125,9 +125,9 @@ func RequestProcessor(clusterData map[string]string, r types.RawData) error {
 			return errors.New("error performing cluster operation: " + err.Error())
 		}
 	} else if strings.Index("workflow_delete workflow_sync", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
-		err := workflow.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData)
+		err := events.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData)
 		if err != nil {
-			return errors.New("error performing workflow operation: " + err.Error())
+			return errors.New("error performing events operation: " + err.Error())
 		}
 	}
 

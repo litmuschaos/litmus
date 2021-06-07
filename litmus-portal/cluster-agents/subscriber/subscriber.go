@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/events"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/requests"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workflow"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
@@ -86,13 +86,13 @@ func main() {
 	sigCh := make(chan os.Signal)
 	stream := make(chan types.WorkflowEvent, 10)
 
-	//start workflow event watcher
-	workflow.WorkflowEventWatcher(stopCh, stream, clusterData)
+	//start events event watcher
+	events.WorkflowEventWatcher(stopCh, stream, clusterData)
 
-	//start workflow event watcher
-	workflow.ChaosEventWatcher(stopCh, stream, clusterData)
+	//start events event watcher
+	events.ChaosEventWatcher(stopCh, stream, clusterData)
 	//streams the event data to graphql server
-	go workflow.WorkflowUpdates(clusterData, stream)
+	go events.WorkflowUpdates(clusterData, stream)
 
 	// listen for cluster actions
 	go requests.ClusterConnect(clusterData)

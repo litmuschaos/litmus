@@ -1,4 +1,4 @@
-package workflow
+package events
 
 import (
 	"errors"
@@ -70,7 +70,7 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent,
 	go startWatchWorkflow(stopCh, informer, stream, int64(startTime))
 }
 
-// handles the different workflow events - add, update and delete
+// handles the different events events - add, update and delete
 func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
@@ -112,7 +112,6 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 
 	experimentFail := 0
 	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
-
 		return types.WorkflowEvent{}, nil
 	}
 
@@ -136,7 +135,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 			cd       *types.ChaosData = nil
 		)
 
-		// considering chaos workflow has only 1 artifact with manifest as raw data
+		// considering chaos events has only 1 artifact with manifest as raw data
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 {
 			//extracts chaos data
 			nodeType, cd, err = CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
@@ -165,7 +164,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 	}
 
 	workflow := types.WorkflowEvent{
-		WorkflowType:      "workflow",
+		WorkflowType:      "events",
 		WorkflowID:        workflowObj.Labels["workflow_id"],
 		EventType:         eventType,
 		UID:               string(workflowObj.ObjectMeta.UID),
@@ -187,7 +186,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 	return workflow, nil
 }
 
-//SendWorkflowUpdates generates graphql mutation to send workflow updates to graphql server
+//SendWorkflowUpdates generates graphql mutation to send events updates to graphql server
 func SendWorkflowUpdates(clusterData map[string]string, event types.WorkflowEvent) (string, error) {
 	if wfEvent, ok := eventMap[event.UID]; ok {
 		for key, node := range wfEvent.Nodes {
