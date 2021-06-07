@@ -16,7 +16,7 @@ func UserRouter(router *gin.Engine, service user.Service) {
 	router.Use(middleware.JwtMiddleware())
 	router.POST("/update/password", updatePassword(service))
 	router.POST("/reset/password", resetPassword(service))
-	router.POST("/users", createUser(service))
+	router.POST("/create", createUser(service))
 	router.POST("/update/details", updateUser(service))
 	router.GET("/users", fetchUsers(service))
 }
@@ -105,37 +105,6 @@ func loginUser(service user.Service) gin.HandlerFunc {
 
 func updatePassword(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var adminUser entities.User
-		adminUser.UserName = c.MustGet("username").(string)
-		var userPasswordRequest entities.UserPassword
-		err := c.BindJSON(&userPasswordRequest)
-		if err != nil {
-			fmt.Println(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
-			return
-		}
-		if userPasswordRequest.Username == "" || userPasswordRequest.NewPassword == "" {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
-			return
-		}
-		err = service.IsAdministrator(&adminUser)
-		if err != nil {
-			fmt.Println(err)
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
-			return
-		}
-		err = service.UpdatePassword(&userPasswordRequest, false)
-		if err != nil {
-			fmt.Println(err)
-		}
-		c.JSON(200, gin.H{
-			"message": "password has been reset successfully",
-		})
-	}
-}
-
-func resetPassword(service user.Service) gin.HandlerFunc {
-	return func(c *gin.Context) {
 		username := c.MustGet("username").(string)
 		uid := c.MustGet("uid").(string)
 		var adminUser entities.User
@@ -166,6 +135,37 @@ func resetPassword(service user.Service) gin.HandlerFunc {
 		}
 		c.JSON(200, gin.H{
 			"message": "password has been reset",
+		})
+	}
+}
+
+func resetPassword(service user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var adminUser entities.User
+		adminUser.UserName = c.MustGet("username").(string)
+		var userPasswordRequest entities.UserPassword
+		err := c.BindJSON(&userPasswordRequest)
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		if userPasswordRequest.Username == "" || userPasswordRequest.NewPassword == "" {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		err = service.IsAdministrator(&adminUser)
+		if err != nil {
+			fmt.Println(err)
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			return
+		}
+		err = service.UpdatePassword(&userPasswordRequest, false)
+		if err != nil {
+			fmt.Println(err)
+		}
+		c.JSON(200, gin.H{
+			"message": "password has been reset successfully",
 		})
 	}
 }
