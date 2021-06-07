@@ -2,11 +2,6 @@ package events
 
 import (
 	"errors"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
@@ -14,9 +9,11 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
-	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"regexp"
+	"strconv"
+	"strings"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
@@ -117,45 +114,6 @@ func StrConvTime(time int64) string {
 	}
 }
 
-func WorkflowRequest(clusterData map[string]string, requestType string, uid string) error {
-	if requestType == "workflow_delete" {
-		wfOb, err := GetWorkflowObj(uid)
-		if err != nil {
-			return err
-		}
-
-		err = DeleteWorflow(wfOb.Name)
-		if err != nil {
-			return err
-		}
-
-		logrus.Info("events delete name: ", wfOb.Name, "namespace: ", wfOb.Namespace)
-	} else if requestType == "workflow_sync" {
-		wfOb, err := GetWorkflowObj(uid)
-		if err != nil {
-			return err
-		}
-
-		starttime, err := time.Parse(time.RFC3339, clusterData["START_TIME"])
-		if err != nil {
-			return err
-		}
-
-		events, err := WorkflowEventHandler(wfOb, "UPDATE", starttime.Unix())
-		if err != nil {
-			logrus.Info(err)
-			return err
-		}
-
-		response, err := SendWorkflowUpdates(clusterData, events)
-		if err != nil {
-			return err
-		}
-		logrus.Print(response)
-	}
-	return nil
-}
-
 func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 	conf, err := k8s.GetKubeConfig()
 	if err != nil {
@@ -176,17 +134,6 @@ func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 	}
 
 	return nil, nil
-}
-
-func DeleteWorflow(wfname string) error {
-	conf, err := k8s.GetKubeConfig()
-	if err != nil {
-		return err
-	}
-
-	// create the events client
-	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(AgentNamespace)
-	return wfClient.Delete(wfname, &metav1.DeleteOptions{})
 }
 
 // generate graphql mutation payload for events event
