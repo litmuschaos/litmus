@@ -1,20 +1,16 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"litmus/litmus-portal/authentication/api/routes"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/user"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"log"
 	"runtime"
-	"time"
 )
 
 var (
@@ -30,10 +26,11 @@ func main() {
 	// Version Info
 	printVersion()
 
-	db, err := DatabaseConnection()
+	db, err := utils.DatabaseConnection()
 	if err != nil {
 		log.Fatal("Database Connection Error $s", err)
 	}
+	err = utils.CreateIndex("users", "username" , db)
 	userCollection := db.Collection("users")
 	userRepo := user.NewRepo(userCollection)
 	userService := user.NewService(userRepo)
@@ -53,16 +50,7 @@ func main() {
 	}
 }
 
-func DatabaseConnection() (*mongo.Database, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	mongoURI := fmt.Sprintf("mongodb://%s:%s@%s:27017", utils.DBUser, utils.DBPassword, utils.DBUrl)
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
-	if err != nil {
-		return nil, err
-	}
-	db := client.Database(utils.DBName)
-	return db, nil
-}
+
 
 func validatedAdminSetup(service user.Service) {
 	configs := map[string]string{"ADMIN_PASSWORD": utils.AdminPassword, "ADMIN_USERNAME": utils.AdminName, "DB_USER": utils.DBUser, "DB_SERVER": utils.DBUrl, "DB_NAME": utils.DBName, "DB_PASSWORD": utils.DBPassword, "JW_SECRET": utils.JwtSecret}

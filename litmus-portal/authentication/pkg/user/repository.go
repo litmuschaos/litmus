@@ -65,18 +65,14 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 }
 
 func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
-	var result = entities.User{}
-	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
-		"username": user.UserName,
-	}).Decode(&result)
-	if findOneErr == nil || result.UserName != "" {
-		return nil, utils.ErrUserExists
-	}
 	user.ID = primitive.NewObjectID()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)
 	_, err = r.Collection.InsertOne(context.Background(), user)
 	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, utils.ErrUserExists
+		}
 		return nil, err
 	}
 	return user.SanitizedUser(), nil
