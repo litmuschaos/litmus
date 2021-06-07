@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -82,7 +81,6 @@ func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
 	data, _ := toDoc(user)
 	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return user.SanitizedUser(), nil

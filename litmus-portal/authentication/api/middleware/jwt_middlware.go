@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/utils"
 )
@@ -20,13 +21,12 @@ func JwtMiddleware() gin.HandlerFunc {
 		token, err := validateToken(tokenString)
 		if token.Valid {
 			claims := token.Claims.(jwt.MapClaims)
-			fmt.Println(claims)
 			c.Set("username", claims["username"])
 			c.Set("uid", claims["uid"])
 			c.Set("role", claims["role"])
 			c.Next()
 		} else {
-			fmt.Println(err)
+			logrus.Info(err)
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
 			return
 		}

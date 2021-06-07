@@ -1,8 +1,8 @@
 package entities
 
 import (
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"time"
@@ -55,7 +55,7 @@ func (user *User) GetSignedJWT() (string, error) {
 
 	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
 	if err != nil {
-		fmt.Println(err)
+		logrus.Info(err)
 		return "", err
 	}
 

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"context"
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -34,7 +34,7 @@ func CreateIndex(collectionName string, field string, db *mongo.Database) error 
 	collection := db.Collection(collectionName)
 	_, err := collection.Indexes().CreateOne(ctx, mod)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Error(err)
 		return err
 	}
 	return nil

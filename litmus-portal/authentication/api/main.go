@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"litmus/litmus-portal/authentication/api/routes"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/user"
 	"litmus/litmus-portal/authentication/pkg/utils"
-	"log"
 	"runtime"
 )
 
@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Database Connection Error $s", err)
 	}
-	err = utils.CreateIndex("users", "username" , db)
+	err = utils.CreateIndex("users", "username", db)
 	userCollection := db.Collection("users")
 	userRepo := user.NewRepo(userCollection)
 	userService := user.NewService(userRepo)
@@ -49,8 +49,6 @@ func main() {
 		log.Fatalf("Failure to start litmus-portal authentication server due to %s", err)
 	}
 }
-
-
 
 func validatedAdminSetup(service user.Service) {
 	configs := map[string]string{"ADMIN_PASSWORD": utils.AdminPassword, "ADMIN_USERNAME": utils.AdminName, "DB_USER": utils.DBUser, "DB_SERVER": utils.DBUrl, "DB_NAME": utils.DBName, "DB_PASSWORD": utils.DBPassword, "JW_SECRET": utils.JwtSecret}
@@ -74,6 +72,6 @@ func validatedAdminSetup(service user.Service) {
 }
 
 func printVersion() {
-	log.Println(fmt.Sprintf("Go Version: %s", runtime.Version()))
-	log.Println(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
+	log.Info(fmt.Sprintf("Go Version: %s", runtime.Version()))
+	log.Info(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
 }

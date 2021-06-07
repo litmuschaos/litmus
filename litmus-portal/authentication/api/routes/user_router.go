@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"litmus/litmus-portal/authentication/api/middleware"
 	"litmus/litmus-portal/authentication/api/presenter"
@@ -31,8 +31,8 @@ func createUser(service user.Service) gin.HandlerFunc {
 		var userRequest entities.User
 		err := c.BindJSON(&userRequest)
 		if err != nil {
+			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
-			fmt.Println(err)
 			return
 		}
 		if userRequest.Role == "" || userRequest.UserName == "" || userRequest.Password == "" || userRequest.Email == "" {
@@ -41,10 +41,12 @@ func createUser(service user.Service) gin.HandlerFunc {
 		}
 		userRec, err := service.CreateUser(&userRequest)
 		if err == utils.ErrUserExists {
+			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserExists], presenter.CreateErrorResponse(utils.ErrUserExists))
 			return
 		}
 		if err != nil {
+			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
@@ -56,7 +58,7 @@ func updateUser(service user.Service) gin.HandlerFunc {
 		var userRequest entities.User
 		err := c.BindJSON(&userRequest)
 		if err != nil {
-			fmt.Println(err)
+			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
@@ -71,7 +73,7 @@ func fetchUsers(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		users, err := service.GetUsers()
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
@@ -84,7 +86,7 @@ func loginUser(service user.Service) gin.HandlerFunc {
 		var userRequest entities.User
 		err := c.BindJSON(&userRequest)
 		if err != nil {
-			fmt.Println(err)
+			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
@@ -94,12 +96,13 @@ func loginUser(service user.Service) gin.HandlerFunc {
 		}
 		authenticatedUser, err := service.FindUser(&userRequest)
 		if err != nil {
-			fmt.Println(err)
+			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
 		token, err := authenticatedUser.GetSignedJWT()
 		if err != nil {
+			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
@@ -122,7 +125,7 @@ func updatePassword(service user.Service) gin.HandlerFunc {
 		userPasswordRequest.Username = username
 		adminUser.ID, _ = primitive.ObjectIDFromHex(uid)
 		if err != nil {
-			fmt.Println(err)
+			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
@@ -132,7 +135,7 @@ func updatePassword(service user.Service) gin.HandlerFunc {
 		}
 		err = service.UpdatePassword(&userPasswordRequest, true)
 		if err != nil {
-			fmt.Println(err)
+			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
@@ -151,23 +154,26 @@ func resetPassword(service user.Service) gin.HandlerFunc {
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
 		if err != nil {
-			fmt.Println(err)
+			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
 		if userPasswordRequest.Username == "" || userPasswordRequest.NewPassword == "" {
+			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
 		err = service.IsAdministrator(&adminUser)
 		if err != nil {
-			fmt.Println(err)
+			log.Info(err)
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
 			return
 		}
 		err = service.UpdatePassword(&userPasswordRequest, false)
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
 		}
 		c.JSON(200, gin.H{
 			"message": "password has been reset successfully",
