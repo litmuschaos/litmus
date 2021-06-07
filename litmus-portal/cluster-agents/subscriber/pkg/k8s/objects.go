@@ -1,4 +1,4 @@
-package objects
+package k8s
 
 import (
 	"encoding/json"
@@ -6,7 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
+	"github.com/sirupsen/logrus"
+
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -21,7 +23,7 @@ var (
 
 //GetKubernetesObjects is used to get the Kubernetes Object details according to the request type
 func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error) {
-	conf, err := k8s.GetKubeConfig()
+	conf, err := GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +37,7 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 		Version:  request.KubeGVRRequest.Version,
 		Resource: request.KubeGVRRequest.Resource,
 	}
-	_, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
+	_, dynamicClient, err := GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, err
 	}
@@ -103,4 +105,39 @@ func GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface,
 		kubeObjects = append(kubeObjects, listInfo)
 	}
 	return kubeObjects, nil
+}
+
+func GenerateKubeObject(cid string, accessKey string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
+	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
+	kubeObj, err := GetKubernetesObjects(kubeobjectrequest)
+	if err != nil {
+		return nil, err
+	}
+	processed, err := graphql.MarshalGQLData(kubeObj)
+	if err != nil {
+		return nil, err
+	}
+	mutation := `{ cluster_id: ` + clusterID + `, request_id:\"` + kubeobjectrequest.RequestID + `\", kube_obj:\"` + processed[1:len(processed)-1] + `\"}`
+
+	var payload = []byte(`{"query":"mutation { kubeObj(kubeData:` + mutation + ` )}"}`)
+	return payload, nil
+}
+
+//SendKubeObjects generates graphql mutation to send kubernetes objects data to graphql server
+func SendKubeObjects(clusterData map[string]string, kubeobjectrequest types.KubeObjRequest) error {
+	// generate graphql payload
+	payload, err := GenerateKubeObject(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], kubeobjectrequest)
+	if err != nil {
+		logrus.WithError(err).Print("Error while getting KubeObject Data")
+		return err
+	}
+
+	body, err := graphql.SendRequest(clusterData["SERVER_ADDR"], payload)
+	if err != nil {
+		logrus.Print(err.Error())
+		return err
+	}
+
+	logrus.Println("Response", body)
+	return nil
 }

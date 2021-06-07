@@ -1,9 +1,14 @@
-package events
+package workflow
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/argoproj/argo/pkg/client/clientset/versioned"
@@ -16,7 +21,24 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-// WorkflowEventWatcher initializes the Argo Workflow event watcher
+// 0 means no resync
+const (
+	resyncPeriod time.Duration = 0
+)
+
+var eventMap map[string]types.WorkflowEvent
+
+func init() {
+	eventMap = make(map[string]types.WorkflowEvent)
+}
+
+var (
+	AgentScope     = os.Getenv("AGENT_SCOPE")
+	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
+	ClusterID      = os.Getenv("CLUSTER_ID")
+)
+
+// initializes the Argo Workflow event watcher
 func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, clusterData map[string]string) {
 	startTime, err := strconv.Atoi(clusterData["START_TIME"])
 	if err != nil {
@@ -52,10 +74,25 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent,
 func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			workflowEventHandler(obj, "ADD", stream, startTime)
+			workflowObj := obj.(*v1alpha1.Workflow)
+			workflow, err := WorkflowEventHandler(workflowObj, "ADD", startTime)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			//stream
+			stream <- workflow
+
 		},
 		UpdateFunc: func(oldObj, obj interface{}) {
-			workflowEventHandler(obj, "UPDATE", stream, startTime)
+			workflowObj := obj.(*v1alpha1.Workflow)
+			workflow, err := WorkflowEventHandler(workflowObj, "UPDATE", startTime)
+			if err != nil {
+				logrus.Error(err)
+			}
+			//stream
+			stream <- workflow
+
 		},
 	}
 	s.AddEventHandler(handlers)
@@ -63,33 +100,42 @@ func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, str
 }
 
 // responsible for extracting the required data from the event and streaming
-func workflowEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
-	workflowObj := obj.(*v1alpha1.Workflow)
+func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
 	if workflowObj.Labels["workflow_id"] == "" {
 		logrus.WithFields(map[string]interface{}{
 			"uid":         string(workflowObj.ObjectMeta.UID),
 			"wf_id":       workflowObj.Labels["workflow_id"],
 			"instance_id": workflowObj.Labels["workflows.argoproj.io/controller-instanceid"],
 		}).Printf("WORKFLOW RUN IGNORED [INVALID METADATA]")
-		return
+		return types.WorkflowEvent{}, nil
 	}
+
 	experimentFail := 0
 	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
-		return
+
+		return types.WorkflowEvent{}, nil
 	}
+
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get config")
 	}
+
 	chaosClient, err := litmusV1alpha1.NewForConfig(cfg)
 	if err != nil {
-		logrus.WithError(err).Fatal("could not get Chaos ClientSet")
+		return types.WorkflowEvent{}, errors.New("could not get Chaos ClientSet: " + err.Error())
 	}
+
 	nodes := make(map[string]types.Node)
 	logrus.Print("WORKFLOW EVENT ", workflowObj.UID, " ", eventType)
+
 	for _, nodeStatus := range workflowObj.Status.Nodes {
-		nodeType := string(nodeStatus.Type)
-		var cd *types.ChaosData = nil
+
+		var (
+			nodeType                  = string(nodeStatus.Type)
+			cd       *types.ChaosData = nil
+		)
+
 		// considering chaos workflow has only 1 artifact with manifest as raw data
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 {
 			//extracts chaos data
@@ -98,6 +144,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 				logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
 			}
 		}
+
 		details := types.Node{
 			Name:       nodeStatus.DisplayName,
 			Phase:      string(nodeStatus.Phase),
@@ -112,9 +159,11 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 			experimentFail = 1
 			details.Phase = "Failed"
 			details.Message = "Chaos Experiment Failed"
+			cd.ExperimentVerdict = "Fail"
 		}
 		nodes[nodeStatus.ID] = details
 	}
+
 	workflow := types.WorkflowEvent{
 		WorkflowType:      "workflow",
 		WorkflowID:        workflowObj.Labels["workflow_id"],
@@ -129,10 +178,62 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		FinishedAt:        StrConvTime(workflowObj.Status.FinishedAt.Unix()),
 		Nodes:             nodes,
 	}
+
 	if experimentFail == 1 {
 		workflow.Phase = "Failed"
 		workflow.Message = "Chaos Experiment Failed"
 	}
-	//stream
-	stream <- workflow
+
+	return workflow, nil
+}
+
+//SendWorkflowUpdates generates graphql mutation to send workflow updates to graphql server
+func SendWorkflowUpdates(clusterData map[string]string, event types.WorkflowEvent) (string, error) {
+	if wfEvent, ok := eventMap[event.UID]; ok {
+		for key, node := range wfEvent.Nodes {
+			if node.Type == "ChaosEngine" && node.ChaosExp != nil && event.Nodes[key].ChaosExp == nil {
+				nodeData := event.Nodes[key]
+				nodeData.ChaosExp = node.ChaosExp
+				nodeData.Phase = node.Phase
+				nodeData.Message = node.Message
+				if node.Phase == "Failed" {
+					event.Phase = "Failed"
+					event.Message = "Chaos Experiment Failed"
+				}
+				event.Nodes[key] = nodeData
+			}
+		}
+	}
+	eventMap[event.UID] = event
+
+	// generate graphql payload
+	payload, err := GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "false", event)
+
+	if event.FinishedAt != "" {
+		payload, err = GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "true", event)
+		delete(eventMap, event.UID)
+	}
+
+	if err != nil {
+		return "", errors.New(err.Error() + ": ERROR PARSING WORKFLOW EVENT")
+	}
+
+	body, err := graphql.SendRequest(clusterData["SERVER_ADDR"], payload)
+	if err != nil {
+		return "", err
+	}
+
+	return body, nil
+}
+
+func WorkflowUpdates(clusterData map[string]string, event chan types.WorkflowEvent) {
+	// listen on the channel for streaming event updates
+	for eventData := range event {
+		response, err := SendWorkflowUpdates(clusterData, eventData)
+		if err != nil {
+			logrus.Print(err.Error())
+		}
+
+		logrus.Print("RESPONSE ", response)
+	}
 }

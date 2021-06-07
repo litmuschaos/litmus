@@ -1,37 +1,29 @@
-package events
+package workflow
 
 import (
 	"errors"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/logs"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
+	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
+	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	"github.com/sirupsen/logrus"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 )
 
-// 0 means no resync
-const (
-	resyncPeriod time.Duration = 0
-)
-
-var (
-	AgentScope     = os.Getenv("AGENT_SCOPE")
-	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
-	ClusterID      = os.Getenv("CLUSTER_ID")
-)
-
-// GetChaosData is a util function, extracts the chaos data using the litmus go-client
-func GetChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
+// util function, extracts the chaos data using the litmus go-client
+func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
 	cd := &types.ChaosData{}
 	cd.EngineName = engineName
 	cd.Namespace = engineNS
@@ -73,7 +65,7 @@ func GetChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	return cd, nil
 }
 
-// CheckChaosData is a util function, checks if event is a chaos-exp event, if so -  extract the chaos data
+// util function, checks if event is a chaos-exp event, if so -  extract the chaos data
 func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
 	var cd *types.ChaosData = nil
@@ -87,7 +79,7 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosCli
 		if nodeStatus.Phase != "Pending" {
 			name := obj.GetName()
 			if obj.GetGenerateName() != "" {
-				log, err := logs.GetLogs(nodeStatus.ID, workflowNS, "main")
+				log, err := k8s.GetLogs(nodeStatus.ID, workflowNS, "main")
 				if err != nil {
 					return nodeType, nil, err
 				}
@@ -96,7 +88,7 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosCli
 					return nodeType, nil, errors.New("Chaos-Engine Generated Name couldn't be retrieved")
 				}
 			}
-			cd, err = GetChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
+			cd, err = getChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
 			return nodeType, cd, err
 		}
 	}
@@ -123,4 +115,91 @@ func StrConvTime(time int64) string {
 	} else {
 		return strconv.FormatInt(time, 10)
 	}
+}
+
+func WorkflowRequest(clusterData map[string]string, requestType string, uid string) error {
+	if requestType == "workflow_delete" {
+		wfOb, err := GetWorkflowObj(uid)
+		if err != nil {
+			return err
+		}
+
+		err = DeleteWorflow(wfOb.Name)
+		if err != nil {
+			return err
+		}
+
+		logrus.Info("workflow delete name: ", wfOb.Name, "namespace: ", wfOb.Namespace)
+	} else if requestType == "workflow_sync" {
+		wfOb, err := GetWorkflowObj(uid)
+		if err != nil {
+			return err
+		}
+
+		startTime := time.Now().Unix()
+
+		events, err := WorkflowEventHandler(wfOb, "UPDATE", startTime)
+		if err != nil {
+			logrus.Info(err)
+			return err
+		}
+
+		response, err := SendWorkflowUpdates(clusterData, events)
+		if err != nil {
+			return err
+		}
+		logrus.Print(response)
+	}
+	return nil
+}
+
+func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
+	conf, err := k8s.GetKubeConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	// create the workflow client
+	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(AgentNamespace)
+	listWf, err := wfClient.List(metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, wf := range listWf.Items {
+		if string(wf.UID) == uid {
+			return &wf, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func DeleteWorflow(wfname string) error {
+	conf, err := k8s.GetKubeConfig()
+	if err != nil {
+		return err
+	}
+
+	// create the workflow client
+	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(AgentNamespace)
+	return wfClient.Delete(wfname, &metav1.DeleteOptions{})
+}
+
+// generate graphql mutation payload for workflow event
+func GenerateWorkflowPayload(cid, accessKey, completed string, wfEvent types.WorkflowEvent) ([]byte, error) {
+	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
+
+	for id, event := range wfEvent.Nodes {
+		event.Message = strings.Replace(event.Message, `"`, ``, -1)
+		wfEvent.Nodes[id] = event
+	}
+
+	processed, err := graphql.MarshalGQLData(wfEvent)
+	if err != nil {
+		return nil, err
+	}
+	mutation := `{ workflow_id: \"` + wfEvent.WorkflowID + `\", workflow_run_id: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflow_name:\"` + wfEvent.Name + `\", cluster_id: ` + clusterID + `, execution_data:\"` + processed[1:len(processed)-1] + `\"}`
+	var payload = []byte(`{"query":"mutation { chaosWorkflowRun(workflowData:` + mutation + ` )}"}`)
+	return payload, nil
 }
