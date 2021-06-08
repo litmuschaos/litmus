@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"log"
 	"os"
 	"os/signal"
 	"runtime"
@@ -43,7 +42,7 @@ func init() {
 	// check agent component status
 	err := k8s.CheckComponentStatus(clusterData["COMPONENTS"])
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 	logrus.Info("all components live...starting up subscriber")
 

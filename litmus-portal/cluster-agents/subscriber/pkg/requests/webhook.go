@@ -3,7 +3,6 @@ package requests
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/url"
 	"strings"
 	"time"
@@ -29,7 +28,7 @@ func ClusterConnect(clusterData map[string]string) {
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		log.Fatal("dial:", err)
+		logrus.Fatal("dial:", err)
 	}
 	defer c.Close()
 
