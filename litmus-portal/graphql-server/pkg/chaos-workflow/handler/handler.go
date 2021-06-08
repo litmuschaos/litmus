@@ -537,7 +537,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		TotalExperiments:  &executionData.TotalExperiments,
 		ExecutionData:     input.ExecutionData,
 		WorkflowID:        input.WorkflowID,
-		IsRemoved: input.IsRemoved,
+		IsRemoved:         input.IsRemoved,
 	}, &r)
 
 	return "Workflow Run Accepted", nil
