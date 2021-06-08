@@ -105,6 +105,10 @@ kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/li
 kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
 
+### Build custom images
+
+- To build custom docker images for portal component refer the [build image guide](./BUILD_IMAGE.md).
+
 ### **Tech Stack**
 
 -   Frontend
