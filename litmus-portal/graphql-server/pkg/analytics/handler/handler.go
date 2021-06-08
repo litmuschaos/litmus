@@ -579,7 +579,7 @@ func firstDayOfISOWeek(year int, week int, timezone *time.Location) time.Time {
 func GetScheduledWorkflowStats(filter model.Filter, project_id string, start string) ([]*model.ScheduledWorkflowStats, error) {
 
 	var query bson.D
-
+	startTime:= strconv.FormatInt(time.Now().Unix(), 10)
 	//map to store schedule count monthly(last 6months) and weekly(last 4weeks)
 	m := make(map[int]model.ScheduledWorkflowStats)
 
@@ -592,17 +592,17 @@ func GetScheduledWorkflowStats(filter model.Filter, project_id string, start str
 		//subtracting 6 months from the start time
 		sixMonthsAgo:= time.Now().AddDate(0,-6, 0)
 		//to fetch data only for last 6 months
-		query = bson.D{{"created_at", bson.D{{"$gte",  strconv.FormatInt(sixMonthsAgo.Unix(), 10)},{"$lte", start}}}}
+		query = bson.D{{"created_at", bson.D{{"$gte",  strconv.FormatInt(sixMonthsAgo.Unix(), 10)},{"$lte", startTime}}}}
 	case "Weekly":
 		//subtracting 28days(4weeks) from the start time
 		fourWeeksAgo:= time.Now().AddDate(0, 0, -28)
 		//to fetch data only for last 4weeks
-		query = bson.D{{"created_at", bson.D{{"$gte", strconv.FormatInt(fourWeeksAgo.Unix(), 10)},{"$lte", start}}}}
+		query = bson.D{{"created_at", bson.D{{"$gte", strconv.FormatInt(fourWeeksAgo.Unix(), 10)},{"$lte", startTime}}}}
 	case "Hourly":
 		//subtracting 48hrs from the start time
 		fortyEightHoursAgo:= time.Now().Add(time.Hour * -48)
 		//to fetch data only for last 48hrs
-		query = bson.D{{"created_at", bson.D{{"$gte", strconv.FormatInt(fortyEightHoursAgo.Unix(), 10)},{"$lte", start}}}}
+		query = bson.D{{"created_at", bson.D{{"$gte", strconv.FormatInt(fortyEightHoursAgo.Unix(), 10)},{"$lte", startTime}}}}
 	default:
 		//returns error if no matching filter found
 		return nil, errors.New("No Matching Filter Found")
@@ -635,7 +635,7 @@ func GetScheduledWorkflowStats(filter model.Filter, project_id string, start str
 			//incrementing the value for each month
 			t.Value+=1 
 			//storing the timestamp of first day of the month
-			t.Date=float64(time.Date(createdAtInTime.Year(), createdAtInTime.Month(), 1, 0, 0, 0, 0, time.UTC).Unix())*1000
+			t.Date=float64(time.Date(createdAtInTime.Year(), createdAtInTime.Month(), 1, 0, 0, 0, 0, time.Local).Unix())*1000
 			m[key]=t //updating the map
 		case "Weekly":
 			_, week := createdAtInTime.ISOWeek()
@@ -644,7 +644,7 @@ func GetScheduledWorkflowStats(filter model.Filter, project_id string, start str
 			//incrementing the value for each ISO week
 			t.Value+=1
 			//storing the timestamp of first day of the ISO week
-			t.Date=float64(firstDayOfISOWeek(createdAtInTime.Year(),week,time.UTC).Unix())*1000
+			t.Date=float64(firstDayOfISOWeek(createdAtInTime.Year(),week,time.Local).Unix())*1000
 			m[key]=t //updating the map
 		case "Hourly":
 			//initializing the inner(nested) map
@@ -656,7 +656,7 @@ func GetScheduledWorkflowStats(filter model.Filter, project_id string, start str
 			//incrementing the value for each each hour
 			hr.Value+=1
 			//storing the timestamp of the starting of an hr
-			hr.Date=float64(time.Date(createdAtInTime.Year(), createdAtInTime.Month(), createdAtInTime.Day(), createdAtInTime.Hour(), 0, 0, 0, time.UTC).Unix())*1000
+			hr.Date=float64(time.Date(createdAtInTime.Year(), createdAtInTime.Month(), createdAtInTime.Day(), createdAtInTime.Hour(), 0, 0, 0, time.Local).Unix())*1000
 			day[createdAtInTime.Hour()]=hr
 			dateMap[createdAtInTime.Day()]=day //updating the dateMap
 		default:

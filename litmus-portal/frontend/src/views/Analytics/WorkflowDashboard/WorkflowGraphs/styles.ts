@@ -1,15 +1,34 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
   root: {
     width: '100%',
-    height: '24.875rem',
     padding: theme.spacing(4.375),
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
   },
   radialChartContainer: {
-    width: '20rem',
-    height: '15rem',
+    width: '22rem',
     borderRadius: '0.1875rem',
+    marginBottom: theme.spacing(3.125),
+  },
+  selectText: {
+    height: '2.5rem',
+    padding: theme.spacing(0.5),
+  },
+  formControl: {
+    margin: theme.spacing(0, 3, 0, 2),
+    minWidth: '9rem',
+    '& fieldset': {
+      height: '3.1875rem',
+    },
   },
 }));
 

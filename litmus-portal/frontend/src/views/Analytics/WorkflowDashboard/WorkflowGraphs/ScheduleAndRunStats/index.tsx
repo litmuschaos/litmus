@@ -33,7 +33,13 @@ export interface GraphMetric {
   baseColor?: string;
 }
 
-const ScheduleAndRunStats: React.FC = () => {
+interface ScheduleAndRunStatsProps {
+  filter: Filter;
+}
+
+const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
+  filter,
+}) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const theme = useTheme();
@@ -61,7 +67,7 @@ const ScheduleAndRunStats: React.FC = () => {
     ScheduledWorkflowStatsVars
   >(SCHEDULED_WORKFLOW_STATS, {
     variables: {
-      filter: Filter.monthly,
+      filter: filter,
       project_id: projectID,
       start_time: presentTime,
     },
@@ -79,13 +85,23 @@ const ScheduleAndRunStats: React.FC = () => {
 
   const closedSeriesData: Array<GraphMetric> = [
     {
-      metricName: 'orange',
+      metricName: 'schedules',
       data: graphDataState,
-      baseColor: 'orange',
+      baseColor: '#5B44BA',
     },
   ];
 
-  console.log('Closed Series data: ', closedSeriesData[0].data);
+  function xAxisTimeFormat(filter: Filter) {
+    switch (filter) {
+      case Filter.monthly:
+        return 'MMM';
+      case Filter.weekly:
+        return '[W] W';
+      case Filter.hourly:
+        return 'HH[hrs]';
+    }
+  }
+
   return (
     <div>
       <Paper elevation={0}>
@@ -111,17 +127,23 @@ const ScheduleAndRunStats: React.FC = () => {
             />
           </Tabs>
           <TabPanel value={activeTab} index={0}>
-            <div style={{ width: '550px', height: '240px' }}>
+            <div
+              className={classes.graphContainer}
+              // style={{
+              //   width: '900px',
+              //   height: '320px',
+              //   marginLeft: '-70px',
+              //   marginBottom: '25px',
+              // }}
+            >
               <LineAreaGraph
                 closedSeries={closedSeriesData}
                 showLegendTable={false}
                 showPoints={true}
                 showTips={true}
-                // unit="%"
-                // yLabel="Number of runs"
+                showMultiToolTip
                 yLabelOffset={35}
-                widthPercentageEventTable={40}
-                xAxistimeFormat="DD MMM, HH[hrs]"
+                xAxistimeFormat={xAxisTimeFormat(filter)}
               />
             </div>
           </TabPanel>
