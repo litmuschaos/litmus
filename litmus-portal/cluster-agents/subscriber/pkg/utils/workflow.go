@@ -2,8 +2,9 @@ package utils
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"strconv"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
 	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/events"
@@ -41,13 +42,13 @@ func WorkflowRequest(clusterData map[string]string, requestType string, external
 		// If Workflow is delete/not present in the cluster
 		if wfOb == nil {
 			logrus.Info("workflow not available for workflowid:" + extData.WorkflowID + ", workflow_run_id:" + extData.WorkflowRunID)
-			var evt =  types.WorkflowEvent {
-				Namespace: clusterData["AGENT_NAMESPACE"],
+			var evt = types.WorkflowEvent{
+				Namespace:    clusterData["AGENT_NAMESPACE"],
 				WorkflowType: "events",
-				WorkflowID: extData.WorkflowID,
-				EventType: "DELETE",
-				UID: extData.WorkflowRunID,
-				Phase: "NotAvailable",
+				WorkflowID:   extData.WorkflowID,
+				EventType:    "DELETE",
+				UID:          extData.WorkflowRunID,
+				Phase:        "NotAvailable",
 			}
 
 			response, err := events.SendWorkflowUpdates(clusterData, evt)

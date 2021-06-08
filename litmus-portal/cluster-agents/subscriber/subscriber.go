@@ -27,7 +27,7 @@ var (
 		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
 		"COMPONENTS":           os.Getenv("COMPONENTS"),
 		"START_TIME":           os.Getenv("START_TIME"),
-		"AGENT_NAMESPACE": os.Getenv("AGENT_NAMESPACE"),
+		"AGENT_NAMESPACE":      os.Getenv("AGENT_NAMESPACE"),
 	}
 
 	err error
