@@ -215,17 +215,17 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
         />
 
         {/* Cluster Data */}
-        <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
-          {filteredCluster.map((cluster) => (
-            <RadioGroup
-              name="Agent Selection"
-              value={currentlySelectedAgent}
-              onChange={(e) => handleChange(e)}
-            >
+        <RadioGroup
+          name="Agent Selection"
+          value={currentlySelectedAgent}
+          onChange={(e) => handleChange(e)}
+        >
+          <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
+            {filteredCluster.map((cluster) => (
               <LitmusCard
                 key={cluster.cluster_id}
                 glow={currentlySelectedAgent === cluster.cluster_id}
-                width="100%"
+                width="40%"
                 height="4rem"
                 className={classes.litmusCard}
                 borderColor={
@@ -244,9 +244,9 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
                   </div>
                 </RadioButton>
               </LitmusCard>
-            </RadioGroup>
-          ))}
-        </div>
+            ))}
+          </div>
+        </RadioGroup>
       </div>
     </div>
   );
