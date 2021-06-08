@@ -22,6 +22,8 @@ import (
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	workflowDBOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	chaos_workflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -145,7 +147,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, wfType *dbSchemaWo
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(input, "create", r)
+		SendWorkflowToSubscriber(input, nil, "create", r)
 	}
 
 	return nil
@@ -167,50 +169,81 @@ func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, wfType *dbSchemaW
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(workflow, "update", r)
+		SendWorkflowToSubscriber(workflow, nil, "update", r)
 	}
 	return nil
 }
 
 // ProcessWorkflowDelete deletes the workflow entry and sends delete resource request to required agent
-func ProcessWorkflowDelete(query bson.D, r *store.StateData) error {
-	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
-	if err != nil {
-		return err
-	}
+func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
 
 	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
-
-	err = dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
-
+	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return err
 	}
 
 	if r != nil {
-		for _, workflow := range workflows {
-			SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
-				ProjectID:        workflow.ProjectID,
-				ClusterID:        workflow.ClusterID,
-				WorkflowManifest: workflow.WorkflowManifest,
-			}, "delete", r)
-		}
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID:        workflow.ProjectID,
+			ClusterID:        workflow.ClusterID,
+			WorkflowManifest: workflow.WorkflowManifest,
+		}, nil, "delete", r)
 	}
 	return nil
 }
 
-func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, reqType string, r *store.StateData) {
+func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
+	update := bson.D{{"$set", bson.D{{"workflow_runs", workflow.WorkflowRuns}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
+	if err != nil {
+		return err
+	}
+
+	if r != nil {
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID: workflow.ProjectID,
+			ClusterID: workflow.ClusterID,
+		}, workflowRunID, "workflow_delete", r)
+	}
+	return nil
+}
+
+func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
+	//ExternalData := `{"workflow_id": `+ workflowID +`,"workflow_run_id": ` + *workflowRunID +`}`
+	var extData chaos_workflow.WorkflowSyncExternalData
+	extData.WorkflowID = workflowID
+	extData.WorkflowRunID = *workflowRunID
+
+	strB, err := json.Marshal(extData)
+	if err != nil {
+		return err
+	}
+
+	str := string(strB)
+	if r != nil {
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID: workflow.ProjectID,
+			ClusterID: workflow.ClusterID,
+		}, &str, "workflow_sync", r)
+	}
+	return nil
+}
+
+func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, externalData *string, reqType string, r *store.StateData) {
 	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
 
 	if workflowNamespace == "" {
 		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
 	}
 	clusterHandler.SendRequestToSubscriber(clusterOps.SubscriberRequests{
-		K8sManifest: workflow.WorkflowManifest,
-		RequestType: reqType,
-		ProjectID:   workflow.ProjectID,
-		ClusterID:   workflow.ClusterID,
-		Namespace:   workflowNamespace,
+		K8sManifest:  workflow.WorkflowManifest,
+		RequestType:  reqType,
+		ProjectID:    workflow.ProjectID,
+		ClusterID:    workflow.ClusterID,
+		Namespace:    workflowNamespace,
+		ExternalData: externalData,
 	}, *r)
 }
 

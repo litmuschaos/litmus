@@ -43,6 +43,7 @@ type ChaosWorkflowRun struct {
 	TotalExperiments  *int     `bson:"total_experiments,string,omitempty"`
 	ExecutionData     string   `bson:"execution_data"`
 	Completed         bool     `bson:"completed"`
+	IsRemoved         *bool     `bson:"isRemoved"`
 }
 
 type AggregatedWorkflowRuns struct {

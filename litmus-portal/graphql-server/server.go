@@ -77,6 +77,6 @@ func main() {
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
 	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddleware(myhub.GetIconHandler)).Methods("GET")
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":" + port, router))
 
 }

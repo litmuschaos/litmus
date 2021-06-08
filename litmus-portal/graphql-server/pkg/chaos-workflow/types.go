@@ -47,3 +47,8 @@ type ChaosData struct {
 	FailStep               string                  `json:"failStep"`
 	ChaosResult            *chaosTypes.ChaosResult `json:"chaosResult"`
 }
+
+type WorkflowSyncExternalData struct {
+	WorkflowID    string `json:"workflow_id"`
+	WorkflowRunID string `json:"workflow_run_id"`
+}

@@ -121,6 +121,7 @@ input WorkflowRunInput {
   execution_data: String!
   cluster_id: ClusterIdentity!
   completed: Boolean!
+  isRemoved: Boolean
 }
 
 type PodLogResponse {
@@ -334,11 +335,6 @@ type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-  #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
-
-  reRunChaosWorkFlow(workflowID: String!): String! @authorized
-
   createUser(user: CreateUserInput!): User! @authorized
 
   #It is used to create a project
@@ -346,7 +342,15 @@ type Mutation {
 
   updateUser(user: UpdateUserInput!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+  ## Workflow APIs
+  # It is used to create chaosworkflow
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+
+  reRunChaosWorkFlow(workflowID: String!): String! @authorized
+
+  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
+
+  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean! @authorized
 
   #Used for sending invitation
   sendInvitation(member: MemberInput!): Member @authorized

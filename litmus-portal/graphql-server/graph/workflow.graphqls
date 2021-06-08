@@ -54,6 +54,7 @@ type WorkflowRun {
   experiments_passed: Int
   total_experiments: Int
   execution_data: String!
+  isRemoved: Boolean
 }
 
 type GetWorkflowsOutput {

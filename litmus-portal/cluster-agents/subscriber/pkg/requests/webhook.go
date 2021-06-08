@@ -25,7 +25,7 @@ func ClusterConnect(clusterData map[string]string) {
 	}
 
 	u := url.URL{Scheme: scheme, Host: serverURL.Host, Path: serverURL.Path}
-	log.Printf("connecting to %s", u.String())
+	logrus.Info("connecting to " + u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
