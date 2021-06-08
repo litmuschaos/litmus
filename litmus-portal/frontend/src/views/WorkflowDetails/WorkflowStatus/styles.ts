@@ -3,19 +3,19 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   // Status Text Colors
   running: {
-    color: theme.palette.status.running.text,
+    color: theme.palette.status.running,
   },
 
   failed: {
-    color: theme.palette.status.failed.text,
+    color: theme.palette.status.failed,
   },
 
   succeeded: {
-    color: theme.palette.status.completed.text,
+    color: theme.palette.status.completed,
   },
 
   pending: {
-    color: theme.palette.status.completed.text,
+    color: theme.palette.status.completed,
   },
 
   error: {

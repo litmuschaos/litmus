@@ -40,6 +40,23 @@ export const SCHEDULE_DETAILS = gql`
   }
 `;
 
+export const SCHEDULED_WORKFLOW_STATS = gql`
+  query getScheduledWorkflowStats(
+    $filter: Filter!
+    $project_id: String!
+    $start_time: String!
+  ) {
+    getScheduledWorkflowStats(
+      filter: $filter
+      project_id: $project_id
+      start_time: $start_time
+    ) {
+      date
+      value
+    }
+  }
+`;
+
 export const WORKFLOW_LIST_DETAILS = gql`
   query workflowListDetails($projectID: String!, $workflowIDs: [ID]) {
     ListWorkflow(project_id: $projectID, workflow_ids: $workflowIDs) {
