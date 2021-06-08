@@ -211,7 +211,6 @@ func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow work
 }
 
 func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
-	//ExternalData := `{"workflow_id": `+ workflowID +`,"workflow_run_id": ` + *workflowRunID +`}`
 	var extData chaos_workflow.WorkflowSyncExternalData
 	extData.WorkflowID = workflowID
 	extData.WorkflowRunID = *workflowRunID
