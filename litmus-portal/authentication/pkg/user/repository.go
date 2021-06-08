@@ -2,14 +2,16 @@ package user
 
 import (
 	"context"
+	"litmus/litmus-portal/authentication/pkg/entities"
+	"litmus/litmus-portal/authentication/pkg/utils"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/utils"
 )
 
+//Repository holds the mongo database implementation of the Service
 type Repository interface {
 	FindUser(user *entities.User) (*entities.User, error)
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
@@ -23,6 +25,7 @@ type repository struct {
 	Collection *mongo.Collection
 }
 
+//FindUser helps to authenticate the user
 func (r repository) FindUser(user *entities.User) (*entities.User, error) {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
@@ -38,6 +41,7 @@ func (r repository) FindUser(user *entities.User) (*entities.User, error) {
 	return result.SanitizedUser(), nil
 }
 
+//UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to true
 func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
 	var result = entities.User{}
 	result.UserName = userPassword.Username
@@ -63,6 +67,7 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 	return nil
 }
 
+//CreateUser creates a new user in the database
 func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 	user.ID = primitive.NewObjectID()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -77,6 +82,7 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 	return user.SanitizedUser(), nil
 }
 
+//UpdateUser updates user details in the database
 func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
 	data, _ := toDoc(user)
 	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
@@ -86,6 +92,7 @@ func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
 	return user.SanitizedUser(), nil
 }
 
+//GetUsers fetches all the users from the database
 func (r repository) GetUsers() (*[]entities.User, error) {
 	var Users []entities.User
 	cursor, err := r.Collection.Find(context.Background(), bson.M{})
@@ -100,6 +107,7 @@ func (r repository) GetUsers() (*[]entities.User, error) {
 	return &Users, nil
 }
 
+//IsAdministrator verifies if the passed user is an administrator
 func (r repository) IsAdministrator(user *entities.User) error {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
@@ -115,6 +123,7 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	return nil
 }
 
+//NewRepo creates a new instance of this repository
 func NewRepo(collection *mongo.Collection) Repository {
 	return &repository{
 		Collection: collection,

@@ -1,11 +1,12 @@
 package entities
 
 import (
+	"litmus/litmus-portal/authentication/pkg/utils"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"litmus/litmus-portal/authentication/pkg/utils"
-	"time"
 )
 
 //User contains the user information
@@ -22,6 +23,7 @@ type User struct {
 	RemovedAt *time.Time         `bson:"removed_at,omitempty" json:"removed_at,omitempty"`
 }
 
+//UserPassword defines structure for password related requests
 type UserPassword struct {
 	Username    string `json:"username,omitempty"`
 	OldPassword string `json:"old_password,omitempty"`
@@ -39,11 +41,13 @@ const (
 	RoleUser Role = "user"
 )
 
+//SanitizedUser returns the user object without sensitive information
 func (user *User) SanitizedUser() *User {
 	user.Password = ""
 	return user
 }
 
+//GetSignedJWT generates the JWT Token for the user object
 func (user *User) GetSignedJWT() (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS512)

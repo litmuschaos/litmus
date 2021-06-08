@@ -1,16 +1,18 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"litmus/litmus-portal/authentication/api/middleware"
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/user"
 	"litmus/litmus-portal/authentication/pkg/utils"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+//UserRouter creates all the required routes for user authentications purposes.
 func UserRouter(router *gin.Engine, service user.Service) {
 	router.POST("/login", loginUser(service))
 	router.Use(middleware.JwtMiddleware())

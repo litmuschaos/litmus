@@ -2,6 +2,7 @@ package utils
 
 import "errors"
 
+//AppError defines general error's throughout the system
 type AppError error
 
 var (
@@ -12,6 +13,7 @@ var (
 	ErrUserExists         AppError = errors.New("user_exists")
 )
 
+//ErrorStatusCodes holds the http status codes for every AppError
 var ErrorStatusCodes = map[AppError]int{
 	ErrInvalidRequest:     400,
 	ErrInvalidCredentials: 401,
@@ -20,6 +22,7 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrUserExists:         401,
 }
 
+//ErrorDescriptions holds detailed error description for every AppError
 var ErrorDescriptions = map[AppError]string{
 	ErrServerError:        "The authorization server encountered an unexpected condition that prevented it from fulfilling the request",
 	ErrInvalidCredentials: "Invalid Credentials",
