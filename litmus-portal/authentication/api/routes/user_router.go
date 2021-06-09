@@ -37,7 +37,7 @@ func createUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		if userRequest.Role == "" || userRequest.UserName == "" || userRequest.Password == "" || userRequest.Email == "" {
+		if userRequest.Role == "" || userRequest.UserName == "" || userRequest.Password == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
