@@ -15,7 +15,6 @@ input WorkflowRunFilterInput {
   cluster_name: String
   workflow_status: WorkflowRunStatus
   date_range: DateRange
-  isRemoved: Boolean
 }
 
 input Pagination {

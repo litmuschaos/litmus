@@ -168,6 +168,22 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		{"isRemoved", 1},
 	}
 
+	// Filter the available workflows where isRemoved is false
+	matchWfRemovedStage := bson.D{
+		{"$project", append(includeAllFromWorkflow,
+			bson.E{Key: "workflow_runs", Value: bson.D{
+				{"$filter", bson.D{
+					{"input", "$workflow_runs"},
+					{"as", "wfRun"},
+					{"cond", bson.D{
+						{"$eq", bson.A{"$$wfRun.isRemoved", false}},
+					}},
+				}},
+			}},
+		)},
+	}
+	pipeline = append(pipeline, matchWfRemovedStage)
+
 	// Match the pipelineIds from the input array
 	if len(input.WorkflowRunIds) != 0 {
 		matchWfRunIdStage := bson.D{
@@ -255,25 +271,6 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 			}
 
 			pipeline = append(pipeline, filterWfRunDateStage)
-		}
-
-		// Filtering based on isRemoved
-		if input.Filter.IsRemoved != nil {
-			filterWfRunIsRemoved := bson.D{
-				{"$project", append(includeAllFromWorkflow,
-					bson.E{Key: "workflow_runs", Value: bson.D{
-						{"$filter", bson.D{
-							{"input", "$workflow_runs"},
-							{"as", "wfRun"},
-							{"cond", bson.D{
-								{"$eq", bson.A{"$$wfRun.isRemoved", *input.Filter.IsRemoved}},
-							}},
-						}},
-					}},
-				)},
-			}
-
-			pipeline = append(pipeline, filterWfRunIsRemoved)
 		}
 	}
 
@@ -518,6 +515,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 	}
 
 	count := 0
+	isRemoved := false
 	count, err = dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
 		WorkflowRunID:     input.WorkflowRunID,
 		LastUpdated:       strconv.FormatInt(time.Now().Unix(), 10),
@@ -527,7 +525,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		TotalExperiments:  &executionData.TotalExperiments,
 		ExecutionData:     input.ExecutionData,
 		Completed:         input.Completed,
-		IsRemoved:         input.IsRemoved,
+		IsRemoved:         &isRemoved,
 	})
 
 	if err != nil {
@@ -552,7 +550,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		TotalExperiments:  &executionData.TotalExperiments,
 		ExecutionData:     input.ExecutionData,
 		WorkflowID:        input.WorkflowID,
-		IsRemoved:         input.IsRemoved,
+		IsRemoved:         &isRemoved,
 	}, &r)
 
 	return "Workflow Run Accepted", nil

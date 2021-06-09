@@ -60,6 +60,7 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 				{"workflow_runs.$.total_experiments", wfRun.TotalExperiments},
 				{"workflow_runs.$.execution_data", wfRun.ExecutionData},
 				{"workflow_runs.$.completed", wfRun.Completed},
+				{"workflow_runs.$.isRemoved", wfRun.IsRemoved},
 			}}}
 
 		result, err := mongodb.Operator.Update(ctx, mongodb.WorkflowCollection, query, update)
