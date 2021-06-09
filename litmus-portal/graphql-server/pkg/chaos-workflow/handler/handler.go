@@ -68,7 +68,7 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 	if err != nil {
 		return false, err
 	}
-	
+
 	if *workflow_id != "" && *workflowRunID != "" {
 		for _, workflow_run := range workflow.WorkflowRuns {
 			if workflow_run.WorkflowRunID == *workflowRunID {
