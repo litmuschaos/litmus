@@ -4621,6 +4621,7 @@ input WorkflowRunFilterInput {
   cluster_name: String
   workflow_status: WorkflowRunStatus
   date_range: DateRange
+  isRemoved: Boolean
 }
 
 input Pagination {
@@ -22043,6 +22044,12 @@ func (ec *executionContext) unmarshalInputWorkflowRunFilterInput(ctx context.Con
 		case "date_range":
 			var err error
 			it.DateRange, err = ec.unmarshalODateRange2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDateRange(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isRemoved":
+			var err error
+			it.IsRemoved, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}

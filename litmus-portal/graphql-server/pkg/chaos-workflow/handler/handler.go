@@ -260,6 +260,25 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 
 			pipeline = append(pipeline, filterWfRunDateStage)
 		}
+
+		// Filtering based on isRemoved
+		if input.Filter.IsRemoved != nil {
+			filterWfRunIsRemoved := bson.D{
+				{"$project", append(includeAllFromWorkflow,
+					bson.E{Key: "workflow_runs", Value: bson.D{
+						{"$filter", bson.D{
+							{"input", "$workflow_runs"},
+							{"as", "wfRun"},
+							{"cond", bson.D{
+								{"$eq", bson.A{"$$wfRun.isRemoved", *input.Filter.IsRemoved}},
+							}},
+						}},
+					}},
+				)},
+			}
+
+			pipeline = append(pipeline, filterWfRunIsRemoved)
+		}
 	}
 
 	// Flatten out the workflow runs

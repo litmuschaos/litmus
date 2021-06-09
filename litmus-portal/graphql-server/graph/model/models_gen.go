@@ -548,6 +548,7 @@ type WorkflowRunFilterInput struct {
 	ClusterName    *string            `json:"cluster_name"`
 	WorkflowStatus *WorkflowRunStatus `json:"workflow_status"`
 	DateRange      *DateRange         `json:"date_range"`
+	IsRemoved      *bool              `json:"isRemoved"`
 }
 
 type WorkflowRunInput struct {
