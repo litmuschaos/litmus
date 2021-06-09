@@ -101,11 +101,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       display: 'flex',
       marginLeft: theme.spacing(2),
     },
-
-    '& #right-div': {
-      width: '20rem',
-      display: 'flex',
-    },
   },
   existingWorkflowCard: {
     alignItems: 'center',
