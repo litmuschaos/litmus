@@ -1,7 +1,10 @@
 package utils
 
 import (
+	"encoding/json"
 	"strconv"
+
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
 	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/events"
@@ -10,9 +13,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func WorkflowRequest(clusterData map[string]string, requestType string, uid string) error {
+func WorkflowRequest(clusterData map[string]string, requestType string, externalData string) error {
 	if requestType == "workflow_delete" {
-		wfOb, err := events.GetWorkflowObj(uid)
+		wfOb, err := events.GetWorkflowObj(externalData)
 		if err != nil {
 			return err
 		}
@@ -24,9 +27,38 @@ func WorkflowRequest(clusterData map[string]string, requestType string, uid stri
 
 		logrus.Info("events delete name: ", wfOb.Name, "namespace: ", wfOb.Namespace)
 	} else if requestType == "workflow_sync" {
-		wfOb, err := events.GetWorkflowObj(uid)
+
+		var extData types.WorkflowSyncExternalData
+		err := json.Unmarshal([]byte(externalData), &extData)
 		if err != nil {
 			return err
+		}
+
+		wfOb, err := events.GetWorkflowObj(extData.WorkflowRunID)
+		if err != nil {
+			return err
+		}
+
+		// If Workflow is delete/not present in the cluster
+		if wfOb == nil {
+			logrus.Info("workflow not available for workflowid:" + extData.WorkflowID + ", workflow_run_id:" + extData.WorkflowRunID)
+			var evt = types.WorkflowEvent{
+				Namespace:    clusterData["AGENT_NAMESPACE"],
+				WorkflowType: "events",
+				WorkflowID:   extData.WorkflowID,
+				EventType:    "DELETE",
+				UID:          extData.WorkflowRunID,
+				Phase:        "NotAvailable",
+			}
+
+			response, err := events.SendWorkflowUpdates(clusterData, evt)
+			if err != nil {
+				return err
+			}
+
+			logrus.Print("response from sync workflow:", response)
+
+			return nil
 		}
 
 		startTime, err := strconv.Atoi(clusterData["START_TIME"])

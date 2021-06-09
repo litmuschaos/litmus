@@ -53,3 +53,8 @@ type Action struct {
 	RequestType  string `json:"request_type"`
 	Namespace    string `json:"namespace"`
 }
+
+type WorkflowSyncExternalData struct {
+	WorkflowID    string `json:"workflow_id"`
+	WorkflowRunID string `json:"workflow_run_id"`
+}

@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"log"
 	"os"
 	"os/signal"
 	"runtime"
@@ -27,6 +26,7 @@ var (
 		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
 		"COMPONENTS":           os.Getenv("COMPONENTS"),
 		"START_TIME":           os.Getenv("START_TIME"),
+		"AGENT_NAMESPACE":      os.Getenv("AGENT_NAMESPACE"),
 	}
 
 	err error
@@ -42,7 +42,7 @@ func init() {
 	// check agent component status
 	err := k8s.CheckComponentStatus(clusterData["COMPONENTS"])
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 	logrus.Info("all components live...starting up subscriber")
 
