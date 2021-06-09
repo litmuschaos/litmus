@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 
+  searchDiv: {
+    margin: theme.spacing(2, 0, 0, 2.25),
+  },
   // Divider
   divider: {
     border: 'none',
@@ -72,8 +75,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Accordion Expanded Body [Content]
   predefinedWorkflowDiv: {
-    height: '15rem',
+    maxHeight: '15rem',
     overflowY: 'scroll',
+    padding: theme.spacing(3, 0, 3, 0),
   },
   MuiAccordionroot: {
     '&.MuiAccordion-root:before': {
@@ -96,11 +100,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       width: '15rem',
       display: 'flex',
       marginLeft: theme.spacing(2),
-    },
-
-    '& #right-div': {
-      width: '20rem',
-      display: 'flex',
     },
   },
   existingWorkflowCard: {
@@ -149,7 +148,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '3rem',
   },
   predefinedWorkflowName: {
-    marginLeft: theme.spacing(2),
+    marginLeft: theme.spacing(4),
     marginTop: theme.spacing(1.5),
   },
   blur: {
@@ -158,7 +157,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'absolute',
     bottom: 0,
     background: theme.palette.background.paper,
-    opacity: '0.8',
+    opacity: '0.5',
     filter: 'blur(1rem)',
   },
 
@@ -231,6 +230,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     margin: theme.spacing(2.5),
+    alignItems: 'center',
+  },
+  inputMyHubDiv: {
+    display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
   },
   formControl: {
