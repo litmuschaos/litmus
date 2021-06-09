@@ -16,11 +16,11 @@ import (
 
 const (
 	//PORT defines the port the server should listen to
-	PORT           = ":3000"
+	PORT = ":3000"
 	//CollectionName defines the name of the collection that stores user's data
 	CollectionName = "users"
 	//UsernameField defines the field that needs to be indexed
-	UsernameField  = "username"
+	UsernameField = "username"
 )
 
 func main() {
