@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   litmusCard: {
     background: theme.palette.cards.background,
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 0),
   },
   agentRadioButton: {
     marginTop: theme.spacing(1),
