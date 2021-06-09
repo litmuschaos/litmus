@@ -210,7 +210,7 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
-	}, "create", store.Store)
+	}, nil, "create", store.Store)
 
 	return "Request Acknowledged for workflowID: " + workflowID, nil
 }

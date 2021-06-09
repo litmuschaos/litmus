@@ -36,18 +36,6 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 	return clusterHandler.ClusterRegister(clusterInput)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	err := validate.ValidateRole(ctx, input.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
-	if err != nil {
-		return nil, err
-	}
-	return wfHandler.CreateChaosWorkflow(ctx, &input, data_store.Store)
-}
-
-func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error) {
-	return wfHandler.ReRunWorkflow(workflowID)
-}
-
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 	return usermanagement.CreateUser(ctx, user)
 }
@@ -64,8 +52,24 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 	return usermanagement.UpdateUser(ctx, user)
 }
 
-func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
-	return wfHandler.DeleteWorkflow(ctx, workflowid, data_store.Store)
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	err := validate.ValidateRole(ctx, input.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return wfHandler.CreateChaosWorkflow(ctx, &input, data_store.Store)
+}
+
+func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error) {
+	return wfHandler.ReRunWorkflow(workflowID)
+}
+
+func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error) {
+	return wfHandler.DeleteWorkflow(ctx, workflowid, workflowRunID, data_store.Store)
+}
+
+func (r *mutationResolver) SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error) {
+	return wfHandler.SyncWorkflowRun(ctx, workflowid, workflowRunID, data_store.Store)
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {

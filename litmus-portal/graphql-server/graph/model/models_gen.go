@@ -540,6 +540,7 @@ type WorkflowRun struct {
 	ExperimentsPassed *int     `json:"experiments_passed"`
 	TotalExperiments  *int     `json:"total_experiments"`
 	ExecutionData     string   `json:"execution_data"`
+	IsRemoved         *bool    `json:"isRemoved"`
 }
 
 type WorkflowRunFilterInput struct {
@@ -547,6 +548,7 @@ type WorkflowRunFilterInput struct {
 	ClusterName    *string            `json:"cluster_name"`
 	WorkflowStatus *WorkflowRunStatus `json:"workflow_status"`
 	DateRange      *DateRange         `json:"date_range"`
+	IsRemoved      *bool              `json:"isRemoved"`
 }
 
 type WorkflowRunInput struct {
@@ -556,6 +558,7 @@ type WorkflowRunInput struct {
 	ExecutionData string           `json:"execution_data"`
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
 	Completed     bool             `json:"completed"`
+	IsRemoved     *bool            `json:"isRemoved"`
 }
 
 type WorkflowRuns struct {

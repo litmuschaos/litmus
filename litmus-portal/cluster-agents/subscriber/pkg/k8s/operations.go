@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 	"sync"
 	"time"
@@ -169,7 +168,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		return false, err
 	}
 
-	log.Println(ExternAgentConfigName + " has been updated")
+	logrus.Info(ExternAgentConfigName + " has been updated")
 	return true, nil
 }
 
