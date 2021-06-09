@@ -115,7 +115,7 @@ const ChoosePreDefinedExperiments = () => {
    */
   useEffect(() => {
     if (data?.getHubStatus !== undefined) {
-      if (data?.getHubStatus.length) {
+      if (data.getHubStatus.length) {
         setAvailableHubs([...data.getHubStatus]);
       }
       data.getHubStatus.forEach((hubData) => {
