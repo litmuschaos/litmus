@@ -4,7 +4,9 @@ import { Alert } from '@material-ui/lab';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
+  Dispatch,
   forwardRef,
+  SetStateAction,
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
@@ -82,6 +84,12 @@ interface WorkflowExperiment {
   Experiment: string;
 }
 
+interface AlertBoxProps {
+  message: string;
+  isOpen: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
 const TuneWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
   const childRef = useRef<ChildRef>();
@@ -98,6 +106,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [editManifest, setEditManifest] = useState('');
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isEditorSaveAlertOpen, setIsEditorSaveAlertOpen] = useState(false);
   const [yamlValid, setYamlValid] = useState(true);
   const [editSequence, setEditSequence] = useState(false);
   const [steps, setSteps] = useState<StepType>({});
@@ -376,14 +385,14 @@ const TuneWorkflow = forwardRef((_, ref) => {
     setAddExpModal(false);
   };
 
-  const AlertBox: React.FC = () => (
+  const AlertBox: React.FC<AlertBoxProps> = ({ message, isOpen, setOpen }) => (
     <Snackbar
-      open={isAlertOpen}
+      open={isOpen}
       autoHideDuration={6000}
-      onClose={() => setIsAlertOpen(false)}
+      onClose={() => setOpen(false)}
     >
-      <Alert onClose={() => setIsAlertOpen(false)} severity="error">
-        The YAML contains errors, resolve them first to proceed
+      <Alert onClose={() => setOpen(false)} severity="error">
+        {message}
       </Alert>
     </Snackbar>
   );
@@ -589,6 +598,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
   }, [engineDataLoading, experimentDataLoading]);
 
   function onNext() {
+    if (YAMLModal) {
+      setIsEditorSaveAlertOpen(true);
+      return false;
+    }
     if (childRef.current) {
       if ((childRef.current.onNext() as unknown) === false) {
         alert.changeAlertState(true); // Custom Workflow has no experiments
@@ -621,7 +634,16 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   return (
     <>
-      <AlertBox />
+      <AlertBox
+        isOpen={isEditorSaveAlertOpen}
+        setOpen={setIsEditorSaveAlertOpen}
+        message="Please Save the changes in the editor to proceed forward"
+      />
+      <AlertBox
+        isOpen={isAlertOpen}
+        setOpen={setIsAlertOpen}
+        message="The YAML contains errors, resolve them first to proceed"
+      />
       {YAMLModal ? (
         <>
           <Modal

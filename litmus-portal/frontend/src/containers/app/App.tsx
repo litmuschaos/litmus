@@ -10,7 +10,6 @@ import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import Center from '../layouts/Center';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -267,9 +266,9 @@ function App() {
     <LitmusThemeProvider>
       <Suspense
         fallback={
-          <Center>
+          <div style={{ height: '100vh' }}>
             <Loader />
-          </Center>
+          </div>
         }
       >
         <Router history={history}>

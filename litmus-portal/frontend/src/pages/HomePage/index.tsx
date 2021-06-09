@@ -3,7 +3,6 @@ import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
-import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { GET_CLUSTER_LENGTH } from '../../graphql';
 import { Clusters, ClusterVars } from '../../models/graphql/clusterData';
@@ -37,9 +36,9 @@ const HomePage: React.FC = () => {
         {t('home.heading')} {getUsername()}
       </Typography>
       {loading ? (
-        <Center>
+        <div style={{ height: '100vh' }}>
           <Loader />
-        </Center>
+        </div>
       ) : agentList && agentCount > 0 ? (
         <AgentConfiguredHome agentCount={agentCount} />
       ) : (
