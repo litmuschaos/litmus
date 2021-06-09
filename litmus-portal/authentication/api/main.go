@@ -14,9 +14,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var (
+const (
 	//PORT defines the port the server should listen to
-	PORT = ":3000"
+	PORT           = ":3000"
+	//CollectionName defines the name of the collection that stores user's data
+	CollectionName = "users"
+	//UsernameField defines the field that needs to be indexed
+	UsernameField  = "username"
 )
 
 func main() {
@@ -32,8 +36,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Database Connection Error $s", err)
 	}
-	err = utils.CreateIndex("users", "username", db)
-	userCollection := db.Collection("users")
+	err = utils.CreateIndex(CollectionName, UsernameField, db)
+	userCollection := db.Collection(CollectionName)
 	userRepo := user.NewRepo(userCollection)
 	userService := user.NewService(userRepo)
 	validatedAdminSetup(userService)

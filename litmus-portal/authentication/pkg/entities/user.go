@@ -11,12 +11,12 @@ import (
 
 //User contains the user information
 type User struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	UserName  string             `bson:"username,omitempty" json:"username,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
+	UserName  string             `bson:"username,omitempty" json:"username"`
 	Password  string             `bson:"password,omitempty" json:"password,omitempty"`
 	Email     string             `bson:"email,omitempty" json:"email,omitempty"`
 	Name      string             `bson:"name,omitempty" json:"name,omitempty"`
-	Role      Role               `bson:"role,omitempty" json:"role,omitempty"`
+	Role      Role               `bson:"role,omitempty" json:"role"`
 	LoggedIn  bool               `bson:"logged_in,omitempty" json:"logged_in,omitempty"`
 	CreatedAt *time.Time         `bson:"created_at,omitempty" json:"created_at,omitempty"`
 	UpdatedAt *time.Time         `bson:"updated_at,omitempty" json:"updated_at,omitempty"`
@@ -55,7 +55,7 @@ func (user *User) GetSignedJWT() (string, error) {
 	claims["uid"] = user.ID.Hex()
 	claims["role"] = user.Role
 	claims["username"] = user.UserName
-	claims["exp"] = time.Now().Add(time.Minute * 300).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
 
 	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
 	if err != nil {
