@@ -1,5 +1,5 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
-import { Typography, useTheme } from '@material-ui/core';
+import { RadioGroup, Typography, useTheme } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
 import React, {
   forwardRef,
@@ -215,32 +215,38 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
         />
 
         {/* Cluster Data */}
-        <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
-          {filteredCluster.map((cluster) => (
-            <LitmusCard
-              key={cluster.cluster_id}
-              glow={currentlySelectedAgent === cluster.cluster_id}
-              width="100%"
-              height="4rem"
-              className={classes.litmusCard}
-              borderColor={
-                currentlySelectedAgent === cluster.cluster_id
-                  ? palette.primary.main
-                  : palette.border.main
-              }
-            >
-              <RadioButton
-                data-cy="AgentRadioButtons"
-                value={cluster.cluster_id}
-                className={classes.agentRadioButton}
-                onChange={(e) => handleChange(e)}
+        <RadioGroup
+          name="Agent Selection"
+          value={currentlySelectedAgent}
+          onChange={(e) => handleChange(e)}
+        >
+          <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
+            {filteredCluster.map((cluster) => (
+              <LitmusCard
+                key={cluster.cluster_id}
+                glow={currentlySelectedAgent === cluster.cluster_id}
+                width="40%"
+                height="4rem"
+                className={classes.litmusCard}
+                borderColor={
+                  currentlySelectedAgent === cluster.cluster_id
+                    ? palette.primary.main
+                    : palette.border.main
+                }
               >
-                {cluster.cluster_name} <br />
-                {cluster.cluster_id}
-              </RadioButton>
-            </LitmusCard>
-          ))}
-        </div>
+                <RadioButton
+                  value={cluster.cluster_id}
+                  className={classes.agentRadioButton}
+                >
+                  <div>
+                    <Typography>{cluster.cluster_name}</Typography>
+                    <Typography>{cluster.cluster_id}</Typography>
+                  </div>
+                </RadioButton>
+              </LitmusCard>
+            ))}
+          </div>
+        </RadioGroup>
       </div>
     </div>
   );
