@@ -68,11 +68,7 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 	if err != nil {
 		return false, err
 	}
-
-	if &workflow == nil {
-		return false, errors.New("no such workflow found")
-	}
-
+	
 	if *workflow_id != "" && *workflowRunID != "" {
 		for _, workflow_run := range workflow.WorkflowRuns {
 			if workflow_run.WorkflowRunID == *workflowRunID {
@@ -777,10 +773,6 @@ func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID stri
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
 	if err != nil {
 		return false, err
-	}
-
-	if &workflow == nil {
-		return false, errors.New("no such workflow found")
 	}
 
 	for _, workflow_run := range workflow.WorkflowRuns {
