@@ -780,7 +780,7 @@ func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID stri
 			return false, errors.New("workflow has been removed")
 		}
 
-		if workflow_run.WorkflowRunID == workflowRunID && workflow.IsRemoved == false {
+		if workflow_run.WorkflowRunID == workflowRunID && !workflow_run.Completed && workflow.IsRemoved == false {
 			err = ops.ProcessWorkflowRunSync(workflow_id, &workflowRunID, workflow, r)
 			if err != nil {
 				return false, err
