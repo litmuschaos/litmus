@@ -101,12 +101,10 @@ const MyHub: React.FC = () => {
 
   const [expanded, setExpanded] = React.useState<string | false>('panel2');
 
-  const handleChange = (panel: string) => (
-    event: React.ChangeEvent<{}>,
-    newExpanded: boolean
-  ) => {
-    setExpanded(newExpanded ? panel : false);
-  };
+  const handleChange =
+    (panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
 
   useEffect(() => {
     if (data !== undefined) {
