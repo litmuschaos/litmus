@@ -14,6 +14,9 @@ var (
 	DBPassword        = os.Getenv("DB_PASSWORD")
 	JWTExpiryDuration = getEnvAsInt("JWT_EXPIRY_MINS", 1440)
 	DBName            = "auth"
+	Port              = ":3000"
+	CollectionName    = "users"
+	UsernameField     = "username"
 )
 
 func getEnvAsInt(name string, defaultVal int) int {

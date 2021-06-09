@@ -14,15 +14,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	//PORT defines the port the server should listen to
-	PORT = ":3000"
-	//CollectionName defines the name of the collection that stores user's data
-	CollectionName = "users"
-	//UsernameField defines the field that needs to be indexed
-	UsernameField = "username"
-)
-
 func main() {
 	// send logs to stderr so we can use 'kubectl logs'
 	_ = flag.Set("logtostderr", "true")
@@ -36,8 +27,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Database Connection Error $s", err)
 	}
-	err = utils.CreateIndex(CollectionName, UsernameField, db)
-	userCollection := db.Collection(CollectionName)
+	err = utils.CreateIndex(utils.CollectionName, utils.UsernameField, db)
+	userCollection := db.Collection(utils.CollectionName)
 	userRepo := user.NewRepo(userCollection)
 	userService := user.NewService(userRepo)
 	validatedAdminSetup(userService)
@@ -50,7 +41,7 @@ func main() {
 	config.AllowAllOrigins = true
 	app.Use(cors.New(config))
 	routes.UserRouter(app, userService)
-	err = app.Run(PORT)
+	err = app.Run(utils.Port)
 	if err != nil {
 		log.Fatalf("Failure to start litmus-portal authentication server due to %s", err)
 	}
