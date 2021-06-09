@@ -13,7 +13,8 @@ require (
 	github.com/gorilla/websocket v1.4.1
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
-	github.com/litmuschaos/chaos-operator v0.0.0-20210126054859-85bb0ad85bfa
+	github.com/litmuschaos/chaos-operator v0.0.0-20210224131102-ca6a465ed348
+	github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.10.0

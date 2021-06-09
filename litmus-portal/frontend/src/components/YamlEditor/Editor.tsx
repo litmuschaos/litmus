@@ -8,13 +8,13 @@ import ErrorTwoToneIcon from '@material-ui/icons/ErrorTwoTone';
 import FileCopyTwoToneIcon from '@material-ui/icons/FileCopyTwoTone';
 import FindInPageTwoToneIcon from '@material-ui/icons/FindInPageTwoTone';
 import FindReplaceTwoToneIcon from '@material-ui/icons/FindReplaceTwoTone';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import GetAppTwoToneIcon from '@material-ui/icons/GetAppTwoTone';
 import RedoTwoToneIcon from '@material-ui/icons/RedoTwoTone';
 import SelectAllTwoToneIcon from '@material-ui/icons/SelectAllTwoTone';
 import UndoTwoToneIcon from '@material-ui/icons/UndoTwoTone';
 import UnfoldLessTwoToneIcon from '@material-ui/icons/UnfoldLessTwoTone';
 import UnfoldMoreTwoToneIcon from '@material-ui/icons/UnfoldMoreTwoTone';
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import React, { useEffect, useState } from 'react';
 import AceEditor from 'react-ace';
 import useStyles from './styles';
@@ -105,6 +105,10 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     setEditorState(stateObject as any);
     if (saveWorkflowChange) saveWorkflowChange(value);
   };
+
+  useEffect(() => {
+    if (saveWorkflowChange) saveWorkflowChange(modifiedYaml);
+  }, []);
 
   const downloadYamlFile = () => {
     const element = document.createElement('a');

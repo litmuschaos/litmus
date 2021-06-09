@@ -1,15 +1,16 @@
 import { Typography } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ButtonOutlined } from 'litmus-ui';
+import TimePopOver from '../../../components/TimePopOver';
 import { ExecutionData } from '../../../models/graphql/workflowData';
 import useStyles from './styles';
-import TimePopOver from '../../../components/TimePopOver';
 
 interface WorkflowInfoProps {
   setIsInfoToggled?: React.Dispatch<React.SetStateAction<boolean>>;
   tab: number;
   data: ExecutionData;
+  resiliency_score?: number;
   cluster_name: string;
 }
 
@@ -17,6 +18,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
   setIsInfoToggled,
   tab,
   data,
+  resiliency_score,
   cluster_name,
 }) => {
   const classes = useStyles();
@@ -55,10 +57,10 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
             {t('workflowDetailsView.workflowInfo.resilienceScore')}
           </Typography>
           {/* Static data, will be changed with API response */}
-          <Typography className={classes.resilliencyScore}>
-            {data.resiliency_score === undefined
+          <Typography className={classes.resiliencyScore}>
+            {resiliency_score === undefined || resiliency_score === null
               ? 'NA'
-              : `${data.resiliency_score}%`}
+              : `${resiliency_score}%`}
           </Typography>
         </div>
 

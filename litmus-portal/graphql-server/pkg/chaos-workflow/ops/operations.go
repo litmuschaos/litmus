@@ -13,60 +13,22 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+	scheduleTypes "github.com/litmuschaos/chaos-scheduler/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	chaos_workflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
+	types "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	workflowDBOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
-
-type WorkflowEvent struct {
-	WorkflowID        string          `json:"-"`
-	EventType         string          `json:"event_type"`
-	UID               string          `json:"-"`
-	Namespace         string          `json:"namespace"`
-	Name              string          `json:"name"`
-	CreationTimestamp string          `json:"creationTimestamp"`
-	Phase             string          `json:"phase"`
-	Message           string          `json:"message"`
-	StartedAt         string          `json:"startedAt"`
-	FinishedAt        string          `json:"finishedAt"`
-	Nodes             map[string]Node `json:"nodes"`
-}
-
-// each node/step data
-type Node struct {
-	Name       string     `json:"name"`
-	Phase      string     `json:"phase"`
-	Message    string     `json:"message"`
-	StartedAt  string     `json:"startedAt"`
-	FinishedAt string     `json:"finishedAt"`
-	Children   []string   `json:"children"`
-	Type       string     `json:"type"`
-	ChaosExp   *ChaosData `json:"chaosData,omitempty"`
-}
-
-// chaos data
-type ChaosData struct {
-	EngineUID              string                  `json:"engineUID"`
-	EngineName             string                  `json:"engineName"`
-	Namespace              string                  `json:"namespace"`
-	ExperimentName         string                  `json:"experimentName"`
-	ExperimentStatus       string                  `json:"experimentStatus"`
-	LastUpdatedAt          string                  `json:"lastUpdatedAt"`
-	ExperimentVerdict      string                  `json:"experimentVerdict"`
-	ExperimentPod          string                  `json:"experimentPod"`
-	RunnerPod              string                  `json:"runnerPod"`
-	ProbeSuccessPercentage string                  `json:"probeSuccessPercentage"`
-	FailStep               string                  `json:"failStep"`
-	ChaosResult            *chaosTypes.ChaosResult `json:"chaosResult"`
-}
 
 // ProcessWorkflow takes the workflow and processes it as required
 func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowInput, *dbSchemaWorkflow.ChaosWorkflowType, error) {
@@ -130,6 +92,14 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 				return nil, nil, err
 			}
 		}
+	case "chaosschedule":
+		{
+			wfType = dbSchemaWorkflow.ChaosEngine
+			err = processChaosScheduleManifest(workflow, weights)
+			if err != nil {
+				return nil, nil, err
+			}
+		}
 	default:
 		{
 			return nil, nil, errors.New("not a valid object, only workflows/cronworkflows/chaosengines supported")
@@ -146,6 +116,12 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, wfType *dbSchemaWo
 		copier.Copy(&Weightages, &input.Weightages)
 	}
 
+	// Get cluster information
+	cluster, err := dbOperationsCluster.GetCluster(input.ClusterID)
+	if err != nil {
+		return err
+	}
+
 	newChaosWorkflow := dbSchemaWorkflow.ChaosWorkFlowInput{
 		WorkflowID:          *input.WorkflowID,
 		WorkflowManifest:    input.WorkflowManifest,
@@ -156,6 +132,8 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, wfType *dbSchemaWo
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 		ProjectID:           input.ProjectID,
 		ClusterID:           input.ClusterID,
+		ClusterName:         cluster.ClusterName,
+		ClusterType:         cluster.ClusterType,
 		Weightages:          Weightages,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
@@ -163,13 +141,13 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, wfType *dbSchemaWo
 		IsRemoved:           false,
 	}
 
-	err := dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
+	err = dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
 	if err != nil {
 		return err
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(input, "create", r)
+		SendWorkflowToSubscriber(input, nil, "create", r)
 	}
 
 	return nil
@@ -191,50 +169,80 @@ func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, wfType *dbSchemaW
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(workflow, "update", r)
+		SendWorkflowToSubscriber(workflow, nil, "update", r)
 	}
 	return nil
 }
 
 // ProcessWorkflowDelete deletes the workflow entry and sends delete resource request to required agent
-func ProcessWorkflowDelete(query bson.D, r *store.StateData) error {
-	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
-	if err != nil {
-		return err
-	}
+func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
 
 	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
-
-	err = dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
-
+	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return err
 	}
 
 	if r != nil {
-		for _, workflow := range workflows {
-			SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
-				ProjectID:        workflow.ProjectID,
-				ClusterID:        workflow.ClusterID,
-				WorkflowManifest: workflow.WorkflowManifest,
-			}, "delete", r)
-		}
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID:        workflow.ProjectID,
+			ClusterID:        workflow.ClusterID,
+			WorkflowManifest: workflow.WorkflowManifest,
+		}, nil, "delete", r)
 	}
 	return nil
 }
 
-func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, reqType string, r *store.StateData) {
+func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
+	update := bson.D{{"$set", bson.D{{"workflow_runs", workflow.WorkflowRuns}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
+	if err != nil {
+		return err
+	}
+
+	if r != nil {
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID: workflow.ProjectID,
+			ClusterID: workflow.ClusterID,
+		}, workflowRunID, "workflow_delete", r)
+	}
+	return nil
+}
+
+func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
+	var extData chaos_workflow.WorkflowSyncExternalData
+	extData.WorkflowID = workflowID
+	extData.WorkflowRunID = *workflowRunID
+
+	strB, err := json.Marshal(extData)
+	if err != nil {
+		return err
+	}
+
+	str := string(strB)
+	if r != nil {
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+			ProjectID: workflow.ProjectID,
+			ClusterID: workflow.ClusterID,
+		}, &str, "workflow_sync", r)
+	}
+	return nil
+}
+
+func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, externalData *string, reqType string, r *store.StateData) {
 	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
 
 	if workflowNamespace == "" {
 		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
 	}
 	clusterHandler.SendRequestToSubscriber(clusterOps.SubscriberRequests{
-		K8sManifest: workflow.WorkflowManifest,
-		RequestType: reqType,
-		ProjectID:   workflow.ProjectID,
-		ClusterID:   workflow.ClusterID,
-		Namespace:   workflowNamespace,
+		K8sManifest:  workflow.WorkflowManifest,
+		RequestType:  reqType,
+		ProjectID:    workflow.ProjectID,
+		ClusterID:    workflow.ClusterID,
+		Namespace:    workflowNamespace,
+		ExternalData: externalData,
 	}, *r)
 }
 
@@ -249,18 +257,20 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 	r.Mutex.Unlock()
 }
 
-// ResiliencyScoreCalculator calculates the Rscore and returns the execdata string
-func ResiliencyScoreCalculator(execData string, wfid string) string {
-	var resiliency_score, weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0, 0
-	var jsonData WorkflowEvent
-	json.Unmarshal([]byte(execData), &jsonData)
+// ResiliencyScoreCalculator calculates the Resiliency Score and returns the updated ExecutionData
+func ResiliencyScoreCalculator(execData types.ExecutionData, wfid string) types.ExecutionData {
+	var resiliencyScore float64 = 0.0
+	var weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0
+
 	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": []string{wfid}}}})
+
 	totalExperiments = len(chaosWorkflows[0].Weightages)
 	weightMap := map[string]int{}
 	for _, weightEnty := range chaosWorkflows[0].Weightages {
 		weightMap[weightEnty.ExperimentName] = weightEnty.Weightage
 	}
-	for _, value := range jsonData.Nodes {
+
+	for _, value := range execData.Nodes {
 		if value.Type == "ChaosEngine" {
 			if value.ChaosExp == nil {
 				continue
@@ -276,12 +286,14 @@ func ResiliencyScoreCalculator(execData string, wfid string) string {
 			}
 		}
 	}
-	if weightSum == 0 {
-		resiliency_score = 0
-	} else {
-		resiliency_score = (totalTestResult / weightSum)
+	if weightSum != 0 {
+		resiliencyScore = float64(totalTestResult) / float64(weightSum)
 	}
-	execData = "{" + `"resiliency_score":` + `"` + strconv.Itoa(resiliency_score) + `",` + `"experiments_passed":` + `"` + strconv.Itoa(totalExperimentsPassed) + `",` + `"total_experiments":` + `"` + strconv.Itoa(totalExperiments) + `",` + execData[1:]
+
+	execData.ResiliencyScore = resiliencyScore
+	execData.ExperimentsPassed = totalExperimentsPassed
+	execData.TotalExperiments = totalExperiments
+
 	return execData
 }
 
@@ -328,7 +340,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 					if len(meta.Spec.Experiments) > 0 {
 						exprname = meta.Spec.Experiments[0].Name
 						if len(exprname) == 0 {
-							return errors.New("empty chaos engine name")
+							return errors.New("empty chaos experiment name")
 						}
 					} else {
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
@@ -439,7 +451,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 					if len(meta.Spec.Experiments) > 0 {
 						exprname = meta.Spec.Experiments[0].Name
 						if len(exprname) == 0 {
-							return errors.New("empty chaos engine name")
+							return errors.New("empty chaos experiment name")
 						}
 					} else {
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
@@ -506,7 +518,63 @@ func processChaosengineManifest(workflow *model.ChaosWorkFlowInput, weights map[
 	}
 	exprname := workflowManifest.Spec.Experiments[0].Name
 	if len(exprname) == 0 {
-		return errors.New("empty chaos engine name")
+		return errors.New("empty chaos experiment name")
+	}
+	if val, ok := weights[exprname]; ok {
+		workflowManifest.Labels["weight"] = strconv.Itoa(val)
+	} else if val, ok := workflowManifest.Labels["weight"]; ok {
+		intVal, err := strconv.Atoi(val)
+		if err != nil {
+			return errors.New("failed to convert")
+		}
+		newWeights = append(newWeights, &model.WeightagesInput{
+			ExperimentName: exprname,
+			Weightage:      intVal,
+		})
+	} else {
+		newWeights = append(newWeights, &model.WeightagesInput{
+			ExperimentName: exprname,
+			Weightage:      10,
+		})
+		workflowManifest.Labels["weight"] = "10"
+	}
+	workflow.Weightages = append(workflow.Weightages, newWeights...)
+	out, err := json.Marshal(workflowManifest)
+	if err != nil {
+		return err
+	}
+
+	workflow.WorkflowManifest = string(out)
+	return nil
+}
+
+func processChaosScheduleManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {
+	var (
+		newWeights       []*model.WeightagesInput
+		workflowManifest scheduleTypes.ChaosSchedule
+	)
+	err := json.Unmarshal([]byte(workflow.WorkflowManifest), &workflowManifest)
+	if err != nil {
+		return errors.New("failed to unmarshal workflow manifest")
+	}
+
+	if workflowManifest.Labels == nil {
+		workflowManifest.Labels = map[string]string{
+			"workflow_id": *workflow.WorkflowID,
+			"cluster_id":  workflow.ClusterID,
+			"type":        "standalone_workflow",
+		}
+	} else {
+		workflowManifest.Labels["workflow_id"] = *workflow.WorkflowID
+		workflowManifest.Labels["cluster_id"] = workflow.ClusterID
+		workflowManifest.Labels["type"] = "standalone_workflow"
+	}
+	if len(workflowManifest.Spec.EngineTemplateSpec.Experiments) == 0 {
+		return errors.New("no experiments specified in chaosengine - " + workflowManifest.Name)
+	}
+	exprname := workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Name
+	if len(exprname) == 0 {
+		return errors.New("empty chaos experiment name")
 	}
 	if val, ok := weights[exprname]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)

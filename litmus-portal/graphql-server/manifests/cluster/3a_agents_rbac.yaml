@@ -121,6 +121,7 @@ rules:
       - litmuschaos.io
     resources:
       - chaosengines
+      - chaosschedules
       - chaosresults
     verbs:
       - create

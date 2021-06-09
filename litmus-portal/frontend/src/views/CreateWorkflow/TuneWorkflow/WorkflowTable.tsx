@@ -1,5 +1,5 @@
 /* eslint-disable no-const-assign */
-import { Typography, useTheme } from '@material-ui/core';
+import { IconButton, Typography, useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -224,6 +224,75 @@ const WorkflowTable = forwardRef(
       });
     }, [manifest]);
 
+    const deleteExperiment = (experimentIndex: number) => {
+      /**
+       * Workflow manifest saved in redux state
+       */
+      const wfManifest = YAML.parse(manifest);
+
+      /**
+       * Get template name according to the experiment index
+       */
+      const templateName = wfManifest.spec.templates[experimentIndex].name;
+
+      /**
+       * Get instance_id of Chaos Engines
+       */
+      const selectedEngine =
+        wfManifest.spec.templates[experimentIndex].inputs.artifacts[0];
+      const { instance_id } = YAML.parse(
+        selectedEngine.raw.data
+      ).metadata.labels;
+
+      /**
+       * if the template is a revert-chaos template
+       * the engine name is removed from the
+       * revert-chaos template args
+       */
+      if (
+        wfManifest.spec.templates[
+          wfManifest.spec.templates.length - 1
+        ].name.includes('revert-')
+      ) {
+        const argument = wfManifest.spec.templates[
+          wfManifest.spec.templates.length - 1
+        ].container.args[0].replace(`${instance_id}, `, '');
+        wfManifest.spec.templates[
+          wfManifest.spec.templates.length - 1
+        ].container.args[0] = argument;
+      }
+
+      /**
+       * Remove the experiment name from steps
+       */
+      wfManifest.spec.templates[0].steps.forEach(
+        (data: any, stepIndex: number) => {
+          data.forEach((step: any, index: number) => {
+            if (step.name === templateName) {
+              data.splice(index, 1);
+            }
+          });
+          if (data.length === 0) {
+            wfManifest.spec.templates[0].steps.splice(stepIndex, 1);
+          }
+        }
+      );
+
+      /**
+       * Remove the chaos engine from the overall manifest
+       * according to the experiment index
+       */
+      wfManifest.spec.templates.splice(experimentIndex, 1);
+
+      /**
+       * Set the updated manifest to redux state
+       */
+      workflow.setWorkflowManifest({
+        manifest: YAML.stringify(wfManifest),
+        engineYAML: '',
+      });
+    };
+
     function onNext() {
       if (experiments.length === 0) {
         return false; // Should show alert
@@ -264,26 +333,29 @@ const WorkflowTable = forwardRef(
                     <TableCell align="left">
                       {t('createWorkflow.chooseWorkflow.table.head5')}
                     </TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {experiments.length > 0 ? (
                     experiments.map((experiment: ChaosCRDTable, index) => (
-                      <TableRow
-                        key={experiment.Name}
-                        onClick={() => {
-                          setDisplayStepper(true);
-                          setEngineIndex(experiment.StepIndex);
-                          workflow.setWorkflowManifest({
-                            engineYAML: experiment.ChaosEngine,
-                          });
-                        }}
-                        className={classes.selection}
-                      >
+                      <TableRow key={experiment.Name}>
                         <TableCell component="th" scope="row">
                           {index + 1}
                         </TableCell>
-                        <TableCell align="left">{experiment.Name}</TableCell>
+                        <TableCell
+                          className={classes.selection}
+                          align="left"
+                          onClick={() => {
+                            setDisplayStepper(true);
+                            setEngineIndex(experiment.StepIndex);
+                            workflow.setWorkflowManifest({
+                              engineYAML: experiment.ChaosEngine,
+                            });
+                          }}
+                        >
+                          {experiment.Name}
+                        </TableCell>
                         <TableCell align="left">
                           {experiment.Namespace}
                         </TableCell>
@@ -291,6 +363,18 @@ const WorkflowTable = forwardRef(
                           {experiment.Application}
                         </TableCell>
                         <TableCell align="left">{experiment.Probes}</TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() =>
+                              deleteExperiment(experiment.StepIndex)
+                            }
+                          >
+                            <img
+                              src="./icons/bin-red.svg"
+                              alt="delete experiment"
+                            />
+                          </IconButton>
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (

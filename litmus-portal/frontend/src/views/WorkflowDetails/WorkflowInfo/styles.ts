@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
   },
 
-  resilliencyScore: {
+  resiliencyScore: {
     color: theme.palette.highlight,
     fontSize: '1.5rem',
   },

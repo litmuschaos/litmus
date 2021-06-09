@@ -1,0 +1,64 @@
+enum WorkflowRunStatus {
+  All
+  Failed
+  Running
+  Succeeded
+}
+
+input DateRange {
+  start_date: String!
+  end_date: String
+}
+
+input WorkflowRunFilterInput {
+  workflow_name: String
+  cluster_name: String
+  workflow_status: WorkflowRunStatus
+  date_range: DateRange
+  isRemoved: Boolean
+}
+
+input Pagination {
+  page: Int!
+  limit: Int!
+}
+
+enum WorkflowRunSortingField {
+  Name
+  Time
+}
+
+input SortInput {
+  field: WorkflowRunSortingField!
+  descending: Boolean
+}
+
+input GetWorkflowRunsInput {
+  project_id: ID!
+  workflow_run_ids: [ID]
+  pagination: Pagination
+  sort: SortInput
+  filter: WorkflowRunFilterInput
+}
+
+type WorkflowRun {
+  workflow_run_id: ID!
+  workflow_id: ID!
+  cluster_name: String!
+  last_updated: String!
+  project_id: ID!
+  cluster_id: ID!
+  workflow_name: String!
+  cluster_type: String
+  phase: String!
+  resiliency_score: Float
+  experiments_passed: Int
+  total_experiments: Int
+  execution_data: String!
+  isRemoved: Boolean
+}
+
+type GetWorkflowsOutput {
+  total_no_of_workflow_runs: Int!
+  workflow_runs: [WorkflowRun]!
+}
