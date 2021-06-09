@@ -227,10 +227,6 @@ const ChoosePreDefinedExperiments = () => {
                           {wfData}
                         </Typography>
                       </div>
-                      {/* Right Div => Description of Workflow */}
-                      {/* <div id="right-div">
-                      <Typography>{workflowData.description}</Typography>
-                    </div> */}
                     </div>
                   </RadioButton>
                 </LitmusCard>
