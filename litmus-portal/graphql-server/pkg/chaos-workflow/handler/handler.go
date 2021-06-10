@@ -168,7 +168,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 
 	// Filter the available workflows where isRemoved is false
-	matchWfRemovedStage := bson.D{
+	matchWfRunIsRemovedStage := bson.D{
 		{"$project", append(includeAllFromWorkflow,
 			bson.E{Key: "workflow_runs", Value: bson.D{
 				{"$filter", bson.D{
@@ -181,7 +181,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 			}},
 		)},
 	}
-	pipeline = append(pipeline, matchWfRemovedStage)
+	pipeline = append(pipeline, matchWfRunIsRemovedStage)
 
 	// Match the pipelineIds from the input array
 	if len(input.WorkflowRunIds) != 0 {
@@ -424,6 +424,16 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 		pipeline = append(pipeline, matchWfIdStage)
 	}
 
+	// Filtering out the workflows that are deleted/removed
+	matchWfIsRemovedStage := bson.D{
+		{"$match", bson.D{
+			{"isRemoved", bson.D{
+				{"$eq", false},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, matchWfIsRemovedStage)
+
 	// Filtering based on multiple parameters
 	if workflowInput.Filter != nil {
 
@@ -528,31 +538,29 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 			return nil, err
 		}
 
-		if workflow.IsRemoved == false {
-			var Weightages []*model.Weightages
-			copier.Copy(&Weightages, &workflow.Weightages)
-			var WorkflowRuns []*model.WorkflowRuns
-			copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
+		var Weightages []*model.Weightages
+		copier.Copy(&Weightages, &workflow.Weightages)
+		var WorkflowRuns []*model.WorkflowRuns
+		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
 
-			newChaosWorkflows := model.Workflow{
-				WorkflowID:          workflow.WorkflowID,
-				WorkflowManifest:    workflow.WorkflowManifest,
-				WorkflowName:        workflow.WorkflowName,
-				CronSyntax:          workflow.CronSyntax,
-				WorkflowDescription: workflow.WorkflowDescription,
-				Weightages:          Weightages,
-				IsCustomWorkflow:    workflow.IsCustomWorkflow,
-				UpdatedAt:           workflow.UpdatedAt,
-				CreatedAt:           workflow.CreatedAt,
-				ProjectID:           workflow.ProjectID,
-				IsRemoved:           workflow.IsRemoved,
-				ClusterName:         cluster.ClusterName,
-				ClusterID:           cluster.ClusterID,
-				ClusterType:         cluster.ClusterType,
-				WorkflowRuns:        WorkflowRuns,
-			}
-			result = append(result, &newChaosWorkflows)
+		newChaosWorkflows := model.Workflow{
+			WorkflowID:          workflow.WorkflowID,
+			WorkflowManifest:    workflow.WorkflowManifest,
+			WorkflowName:        workflow.WorkflowName,
+			CronSyntax:          workflow.CronSyntax,
+			WorkflowDescription: workflow.WorkflowDescription,
+			Weightages:          Weightages,
+			IsCustomWorkflow:    workflow.IsCustomWorkflow,
+			UpdatedAt:           workflow.UpdatedAt,
+			CreatedAt:           workflow.CreatedAt,
+			ProjectID:           workflow.ProjectID,
+			IsRemoved:           workflow.IsRemoved,
+			ClusterName:         cluster.ClusterName,
+			ClusterID:           cluster.ClusterID,
+			ClusterType:         cluster.ClusterType,
+			WorkflowRuns:        WorkflowRuns,
 		}
+		result = append(result, &newChaosWorkflows)
 	}
 
 	totalFilteredWorkflows := 0
