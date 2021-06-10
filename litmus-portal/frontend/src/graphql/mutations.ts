@@ -323,3 +323,18 @@ export const UPDATE_IMAGE_REGISTRY = gql`
     }
   }
 `;
+
+export const SYNC_WORKFLOW = gql`
+  mutation syncWorkflow($workflowid: String!, $workflow_run_id: String!) {
+    syncWorkflow(workflowid: $workflowid, workflow_run_id: $workflow_run_id)
+  }
+`;
+
+export const DELETE_WORKFLOW = gql`
+  mutation deleteWorkflow($workflowid: String!, $workflow_run_id: String!) {
+    deleteChaosWorkflow(
+      workflowid: $workflowid
+      workflow_run_id: $workflow_run_id
+    )
+  }
+`;

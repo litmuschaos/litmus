@@ -110,23 +110,23 @@ const BrowseWorkflow: React.FC = () => {
   );
 
   // Query to get workflows
-  const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
-    {
-      variables: {
-        workflowRunsInput: {
-          project_id: projectID,
-          pagination: {
-            page: paginationData.page,
-            limit: paginationData.limit,
-          },
-          sort: sortData,
-          filter: filters,
+  const { subscribeToMore, data, error, refetch } = useQuery<
+    Workflow,
+    WorkflowDataVars
+  >(WORKFLOW_DETAILS, {
+    variables: {
+      workflowRunsInput: {
+        project_id: projectID,
+        pagination: {
+          page: paginationData.page,
+          limit: paginationData.limit,
         },
+        sort: sortData,
+        filter: filters,
       },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+    },
+    fetchPolicy: 'cache-and-network',
+  });
 
   // Using subscription to get realtime data
   useEffect(() => {
@@ -272,6 +272,7 @@ const BrowseWorkflow: React.FC = () => {
           <Table stickyHeader aria-label="simple table">
             <TableHead className={classes.tableHead}>
               <TableRow>
+                <TableCell />
                 {/* Status */}
                 <TableCell className={classes.headerStatus}>
                   {t('chaosWorkflows.browseWorkflows.status')}
@@ -387,7 +388,7 @@ const BrowseWorkflow: React.FC = () => {
                     data-cy="WorkflowRunsTableRow"
                     key={dataRow.workflow_run_id}
                   >
-                    <TableData data={dataRow} />
+                    <TableData data={dataRow} refetchQuery={refetch} />
                   </TableRow>
                 ))
               ) : (

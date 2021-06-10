@@ -1,4 +1,5 @@
 import { AccordionDetails, Button, Paper, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import localforage from 'localforage';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +20,7 @@ const UploadYAML = () => {
   const { t } = useTranslation();
   const [uploadedYAML, setUploadedYAML] = useState('');
   const [fileName, setFileName] = useState<string | null>('');
+  const [uploadError, setUploadError] = useState(false);
   const workflowAction = useActions(WorkflowActions);
   const { namespace } = useSelector((state: RootState) => state.workflowData);
 
@@ -42,11 +44,19 @@ const UploadYAML = () => {
         const readFile = await file.text();
         setUploadedYAML(readFile);
         setFileName(file.name);
-        const wfmanifest = updateEngineName(YAML.parse(readFile));
-        const updatedManifest = updateNamespace(wfmanifest, namespace);
-        workflowAction.setWorkflowManifest({
-          manifest: YAML.stringify(updatedManifest),
-        });
+        try {
+          setUploadError(false);
+          const wfmanifest = updateEngineName(YAML.parse(readFile));
+          const updatedManifest = updateNamespace(wfmanifest, namespace);
+          workflowAction.setWorkflowManifest({
+            manifest: YAML.stringify(updatedManifest),
+          });
+        } catch {
+          setUploadError(true);
+          workflowAction.setWorkflowManifest({
+            manifest: '',
+          });
+        }
       });
     saveToLocalForage();
   };
@@ -61,15 +71,19 @@ const UploadYAML = () => {
     if ((extension === 'yaml' || extension === 'yml') && readFile) {
       readFile.text().then((response) => {
         setUploadedYAML(response);
-        const wfmanifest = updateEngineName(YAML.parse(response));
-        const updatedManifest = updateNamespace(wfmanifest, namespace);
-        workflowAction.setWorkflowManifest({
-          manifest: YAML.stringify(updatedManifest),
-        });
-      });
-    } else {
-      workflowAction.setWorkflowManifest({
-        manifest: '',
+        try {
+          setUploadError(false);
+          const wfmanifest = updateEngineName(YAML.parse(response));
+          const updatedManifest = updateNamespace(wfmanifest, namespace);
+          workflowAction.setWorkflowManifest({
+            manifest: YAML.stringify(updatedManifest),
+          });
+        } catch {
+          setUploadError(true);
+          workflowAction.setWorkflowManifest({
+            manifest: '',
+          });
+        }
       });
     }
     saveToLocalForage();
@@ -88,7 +102,31 @@ const UploadYAML = () => {
         }}
         className={classes.uploadYAMLDiv}
       >
-        {uploadedYAML === '' ? (
+        {uploadError ? (
+          <div className={classes.uploadSuccessDiv}>
+            <img
+              src="./icons/error-upload.svg"
+              alt="upload error"
+              width="20"
+              height="20"
+            />
+            <Typography className={classes.errorText}>
+              {t('customWorkflow.createWorkflow.errorUpload')}
+            </Typography>
+            <ButtonFilled
+              className={classes.errorBtn}
+              onClick={() => {
+                setUploadedYAML('');
+                setUploadError(false);
+              }}
+            >
+              <img src="./icons/retry.svg" alt="Retry" />
+              <Typography className={classes.retryText}>
+                {t('customWorkflow.createWorkflow.retryUpload')}
+              </Typography>
+            </ButtonFilled>
+          </div>
+        ) : uploadedYAML === '' ? (
           <div className={classes.uploadYAMLText} data-cy="uploadYAMLInput">
             <img
               src="./icons/upload-yaml.svg"
