@@ -421,6 +421,11 @@ chaosWorkflows:
     reliabilityDetails: Reliability Details
     experiments: Experiments
     lastRun: Last Run
+    wfIssue: Seems like there has been some issue in workflow.
+    runningFrom: Running from last
+    min: mins.
+    sync: Sync Workflow
+    terminate: Terminate Workflow
     tableData:
       overallRR: 'Overall RR : '
       experimentsPassed: 'Experiments Passed : '
@@ -1075,9 +1080,11 @@ myhub:
     syncingRepo: Loading Charts, Please Wait...!
     preDefined: Pre-defined workflows
     chaosCharts: Chaos-charts
-    noExp: No predefined workflows available with information in this Hub
+    noPredefinedExp: No predefined workflows available with information in this Hub
+    noExp: No experiments found
     lastSynced: 'Last synced at: '
     repoLink: 'Repository Link: '
+    repoBranch: 'Repository Branch: '
   connectHubPage:
     connectHub: Connect a new chaos hub
     editHub: Edit hub configuration
@@ -1145,6 +1152,8 @@ customWorkflow:
     upload: Upload your
     yaml: YAML
     uploadFile: Select YAML file from your device
+    errorUpload: Error while uploading YAML
+    retryUpload: Retry Upload
     uploadSuccess: Successfully uploaded
     drag: Drag & Drop YAML file to upload
     chooseExp: Choose the experiment

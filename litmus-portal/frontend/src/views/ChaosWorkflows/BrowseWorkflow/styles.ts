@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   headerStatus: {
-    paddingLeft: theme.spacing(10),
+    paddingLeft: theme.spacing(4),
   },
 
   workflowName: {
@@ -94,9 +94,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(5),
   },
 
-  tableDataStatus: {
-    paddingLeft: theme.spacing(8.5),
-  },
   sortDiv: {
     display: 'flex',
     flexDirection: 'column',
@@ -180,6 +177,53 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       pointer: 'cursor',
     },
+  },
+  runningSmallIcon: {
+    animation: 'runningNodeSpinAnimationSmall 2s ease-in-out infinite',
+  },
+  '@global': {
+    '@keyframes runningNodeSpinAnimationSmall': {
+      from: {
+        transform: `rotate(0deg)`,
+      },
+      to: {
+        transform: `rotate(360deg)`,
+      },
+    },
+  },
+  popoverWarning: {
+    padding: theme.spacing(3.125, 2.6),
+    width: 'fit-content',
+  },
+  runningText: {
+    color: theme.palette.text.hint,
+    marginLeft: theme.spacing(1),
+  },
+
+  // Warning pop-over styles
+  warningTableCell: {
+    maxWidth: '2.5rem',
+  },
+  imageRunning: {
+    display: 'flex',
+    marginTop: theme.spacing(1),
+  },
+  warningBtnDiv: {
+    marginTop: theme.spacing(5),
+    marginLeft: theme.spacing(2.5),
+  },
+  syncBtn: {
+    backgroundColor: 'transparent !important',
+    color: theme.palette.primary.main,
+    marginRight: theme.spacing(1.25),
+  },
+  waitingBtnText: {
+    fontSize: '0.75rem',
+    marginLeft: theme.spacing(0.625),
+  },
+  terminateText: {
+    backgroundColor: 'transparent !important',
+    color: theme.palette.primary.main,
   },
 }));
 
