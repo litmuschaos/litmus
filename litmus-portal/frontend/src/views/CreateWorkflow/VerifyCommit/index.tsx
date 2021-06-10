@@ -399,7 +399,7 @@ const VerifyCommit = forwardRef(
                         fullWidth
                         multiline
                         error={checkNameValidation()}
-                        onSave={(value) =>
+                        onSave={(value: any) =>
                           handleNameChange({ changedName: value })
                         }
                         helperText={
@@ -438,7 +438,7 @@ const VerifyCommit = forwardRef(
                           id="desc"
                           fullWidth
                           multiline
-                          onSave={(value) =>
+                          onSave={(value: any) =>
                             handleDescChange({ changedDesc: value })
                           }
                         />
@@ -471,7 +471,7 @@ const VerifyCommit = forwardRef(
                           fullWidth
                           multiline
                           error={checkSubjectValidation()}
-                          onSave={(value) =>
+                          onSave={(value: any) =>
                             handleSubjectChange({ changedSubject: value })
                           }
                           helperText={

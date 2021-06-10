@@ -12,9 +12,9 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_LIST_DETAILS } from '../../graphql';
 import { ChaosData, ExecutionData } from '../../models/graphql/workflowData';
 import {
+  ListWorkflowsInput,
+  ScheduledWorkflows,
   WeightageMap,
-  WorkflowList,
-  WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
 import { getProjectID } from '../../utils/getSearchParams';
 import PopOver from '../../views/Analytics/WorkflowDashboard/PopOver';
@@ -88,11 +88,13 @@ const AnalyticsPage: React.FC = () => {
   const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
-  const { data, error } = useQuery<WorkflowList, WorkflowListDataVars>(
+  const { data, error } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID, workflowIDs: [] },
-      pollInterval: 100,
+      variables: {
+        workflowInput: { project_id: projectID, workflow_ids: [workflowId] },
+      },
+      pollInterval: 5000,
     }
   );
 
@@ -110,9 +112,7 @@ const AnalyticsPage: React.FC = () => {
     const chaosDataArray: ChaosData[] = [];
     const validWorkflowRunsData: WorkflowRunData[] = [];
     try {
-      const selectedWorkflowSchedule = data?.ListWorkflow.filter(
-        (w) => w.workflow_id === workflowId
-      );
+      const selectedWorkflowSchedule = data?.ListWorkflow.workflows;
       const selectedWorkflows = selectedWorkflowSchedule
         ? selectedWorkflowSchedule[0]?.workflow_runs
         : [];
@@ -240,13 +240,11 @@ const AnalyticsPage: React.FC = () => {
   useEffect(() => {
     const workflowTestsArray: WorkFlowTests[] = [];
     try {
-      const selectedWorkflowSchedule = data?.ListWorkflow.filter(
-        (w) => w.workflow_id === workflowId
-      );
+      const selectedWorkflowSchedule = data?.ListWorkflow.workflows;
       const workflowRuns = selectedWorkflowSchedule
         ? selectedWorkflowSchedule[0]?.workflow_runs
         : [];
-      const selectedWorkflows = workflowRuns.filter(
+      const selectedWorkflows = workflowRuns?.filter(
         (w) => w.workflow_run_id === selectedWorkflowRunID
       );
       selectedWorkflows?.forEach((data) => {
@@ -293,9 +291,7 @@ const AnalyticsPage: React.FC = () => {
   }, [selectedWorkflowRunID, data]);
 
   // Number of Workflow Runs for the selected Schedule
-  const selectedWorkflowSchedule = data?.ListWorkflow.filter(
-    (w) => w.workflow_id === workflowId
-  );
+  const selectedWorkflowSchedule = data?.ListWorkflow.workflows;
   const workflowRuns = selectedWorkflowSchedule
     ? selectedWorkflowSchedule[0]?.workflow_runs
     : [];
@@ -320,7 +316,7 @@ const AnalyticsPage: React.FC = () => {
                 </div>
                 <div className={classes.analyticsDiv}>
                   <WorkflowRunsBarChart
-                    numberOfWorkflowRuns={workflowRuns.length}
+                    numberOfWorkflowRuns={workflowRuns?.length ?? 0}
                     workflowRunData={workflowRunDataForPlot}
                     callBackToShowPopOver={setPopOverDisplay}
                     callBackToSelectWorkflowRun={(
