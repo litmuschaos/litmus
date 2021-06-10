@@ -10,6 +10,10 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
   },
 
+  editorWrapper: {
+    marginBottom: theme.spacing(-4),
+  },
+
   // Header
   headerWrapper: {
     padding: theme.spacing(0, 7),
@@ -27,10 +31,10 @@ const useStyles = makeStyles((theme) => ({
   headerBtn: {
     display: 'flex',
     justifyContent: 'space-between',
-    width: '40%',
-    [theme.breakpoints.up('lg')]: {
-      width: '25%',
-    },
+    width: '23rem',
+    // [theme.breakpoints.up('lg')]: {
+    //   width: '30rem',
+    // },
   },
 
   descriptionWrapper: {
@@ -152,29 +156,46 @@ const useStyles = makeStyles((theme) => ({
   },
 
   // Editor
-  editor: {
-    height: '100%',
+  flex: {
+    display: 'flex',
+  },
+  additional: {
+    width: '95%',
+    margin: '0rem auto',
+    justifyContent: 'space-between',
+  },
+  name: {
+    margin: theme.spacing(1, 0, 2, 2),
+    fontWeight: 'bold',
+  },
+  editorTopBtn: {
+    padding: '0.4rem',
+    fontSize: '0.8rem',
+  },
+  editorCloseBtn: {
+    width: '0.5rem',
+    borderColor: theme.palette.disabledBackground,
+    color: theme.palette.text.disabled,
+    minWidth: '2rem',
+    padding: '0.2rem',
+    fontSize: '1rem',
   },
 
   // Confirmation Modal
   confirmDiv: {
-    margin: 'auto',
-    marginTop: theme.spacing(31.25),
-    width: '30rem',
+    margin: 0,
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
   },
   confirmText: {
-    fontSize: '2.25rem',
+    fontSize: '2rem',
   },
   backBtn: {
     margin: theme.spacing(2.5, 5, 0, 0),
   },
   continueBtn: {
     marginTop: theme.spacing(2.5),
-  },
-  updateText: {
-    fontSize: '1.6rem',
-    marginBottom: theme.spacing(3.75),
-    textAlign: 'left',
   },
 
   // Sequence Modal

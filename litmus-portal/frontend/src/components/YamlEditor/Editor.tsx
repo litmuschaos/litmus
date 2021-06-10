@@ -1,12 +1,14 @@
 /* eslint-disable no-param-reassign */
-import { Box, Button, Typography, useTheme } from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import { useTheme } from '@material-ui/core';
 import Fade from '@material-ui/core/Fade';
 import Tooltip from '@material-ui/core/Tooltip';
 import ErrorTwoToneIcon from '@material-ui/icons/ErrorTwoTone';
 import FileCopyTwoToneIcon from '@material-ui/icons/FileCopyTwoTone';
 import FindInPageTwoToneIcon from '@material-ui/icons/FindInPageTwoTone';
 import FindReplaceTwoToneIcon from '@material-ui/icons/FindReplaceTwoTone';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import GetAppTwoToneIcon from '@material-ui/icons/GetAppTwoTone';
 import RedoTwoToneIcon from '@material-ui/icons/RedoTwoTone';
 import SelectAllTwoToneIcon from '@material-ui/icons/SelectAllTwoTone';
@@ -15,7 +17,6 @@ import UnfoldLessTwoToneIcon from '@material-ui/icons/UnfoldLessTwoTone';
 import UnfoldMoreTwoToneIcon from '@material-ui/icons/UnfoldMoreTwoTone';
 import React, { useEffect, useState } from 'react';
 import AceEditor from 'react-ace';
-import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 import { AceValidations, parseYamlValidations } from './Validations';
 import 'ace-builds/src-min-noconflict/ext-beautify';
@@ -39,7 +40,7 @@ import 'ace-builds/src-min-noconflict/ext-textarea';
 import 'ace-builds/src-min-noconflict/ext-themelist';
 import 'ace-builds/src-min-noconflict/ext-whitespace';
 import 'brace/mode/yaml';
-import 'brace/theme/cobalt';
+import 'brace/theme/solarized_dark';
 
 interface YamlEditorProps {
   content: string;
@@ -47,7 +48,6 @@ interface YamlEditorProps {
   readOnly: boolean;
   setButtonState?: (btnState: boolean) => void;
   saveWorkflowChange?: (updatedManifest: string) => void;
-  className?: Object;
 }
 
 const YamlEditor: React.FC<YamlEditorProps> = ({
@@ -56,23 +56,13 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   readOnly,
   setButtonState,
   saveWorkflowChange,
-  className,
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
 
-  const { t } = useTranslation();
-
   const [isValid, setIsValid] = useState(true);
 
-  const [errors, setErrors] = useState({
-    errorLine: ' ',
-    errorPosition: ' ',
-    errorType: ' ',
-    errorInfo: ' ',
-  });
-
-  const [editorState, setEditorState] = React.useState({
+  const [editorState, setEditorState] = useState({
     markers: [],
     annotations: [],
     content,
@@ -94,28 +84,17 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     };
     if (stateObject.annotations.length > 0) {
       setIsValid(false);
-      setErrors({
-        errorLine: (stateObject.annotations[0].row as unknown) as string,
-        errorPosition: (stateObject.annotations[0].column as unknown) as string,
-        errorType: stateObject.annotations[0].type as string,
-        errorInfo: stateObject.annotations[0].text as string,
-      });
-      const nodeStyleError = (document.getElementsByClassName(
-        'ace_gutter-cell'
-      )[stateObject.annotations[0].row - 1] as any).style;
+      const nodeStyleError = (
+        document.getElementsByClassName('ace_gutter-cell')[
+          stateObject.annotations[0].row - 1
+        ] as any
+      ).style;
       nodeStyleError.background = 'red';
       nodeStyleError.color = palette.secondary.contrastText;
     } else {
       setIsValid(true);
-      setErrors({
-        errorLine: ' ',
-        errorPosition: ' ',
-        errorType: ' ',
-        errorInfo: ' ',
-      });
-      const nodeStyleErrorList = document.getElementsByClassName(
-        'ace_gutter-cell'
-      );
+      const nodeStyleErrorList =
+        document.getElementsByClassName('ace_gutter-cell');
       for (let i = 0; i < nodeStyleErrorList.length; i += 1) {
         (nodeStyleErrorList[i] as any).style.backgroundColor =
           palette.common.black;
@@ -127,6 +106,10 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     setEditorState(stateObject as any);
     if (saveWorkflowChange) saveWorkflowChange(value);
   };
+
+  useEffect(() => {
+    if (saveWorkflowChange) saveWorkflowChange(modifiedYaml);
+  }, []);
 
   const downloadYamlFile = () => {
     const element = document.createElement('a');
@@ -181,8 +164,8 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     (YamlAce.current!.editor as any).execCommand('goToNextError');
   };
 
-  const fullscreentrigger = () => {
-    const i: any = document.getElementById('resize-editor');
+  const fullScreenTrigger = () => {
+    const i: any = document.getElementById('yaml-editor');
     (YamlAce.current!.editor as any).setOption(
       'maxLines',
       document.body.clientHeight
@@ -199,31 +182,18 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   };
 
   useEffect(() => {
-    let editorValidations: AceValidations = {
-      markers: [],
-      annotations: [],
-    };
-    editorValidations = parseYamlValidations(content, classes);
+    const editorValidations: AceValidations = parseYamlValidations(
+      content,
+      classes
+    );
     const stateObject = {
       markers: editorValidations.markers,
       annotations: editorValidations.annotations,
     };
     if (stateObject.annotations.length > 0) {
       setIsValid(false);
-      setErrors({
-        errorLine: (stateObject.annotations[0].row as unknown) as string,
-        errorPosition: (stateObject.annotations[0].column as unknown) as string,
-        errorType: stateObject.annotations[0].type as string,
-        errorInfo: stateObject.annotations[0].text as string,
-      });
     } else {
       setIsValid(true);
-      setErrors({
-        errorLine: ' ',
-        errorPosition: ' ',
-        errorType: ' ',
-        errorInfo: ' ',
-      });
     }
     setEditorState(stateObject as any);
   }, []);
@@ -233,296 +203,129 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   }, [isValid]);
 
   return (
-    <div
-      className={`${classes.editorBackgroundFull} ${className}`}
-      id="editor"
-      data-cy="WorkflowEditor"
-    >
-      <Typography
-        className={
-          readOnly
-            ? classes.statusHeadingInModal
-            : classes.statusHeadingOutModal
-        }
-      >
-        {t('editor.status')}
-        <Typography className={classes.saved} display="inline">
-          &nbsp; &nbsp;
-          <strong>
-            <span>
-              <Typography
-                className={
-                  isValid ? classes.markStyleCorrect : classes.markStyleWrong
-                }
-                display="inline"
-              >
-                {isValid ? '\u2713' : '\u274C'}
-              </Typography>
-            </span>
-            <Typography
-              id="YamlStatus"
-              className={
-                isValid ? classes.markStyleCorrect : classes.markStyleWrong
-              }
-              display="inline"
-            >
-              &nbsp;
-              <strong>{isValid ? 'Correct' : 'Incorrect'}</strong>
-            </Typography>
-          </strong>
-        </Typography>
-      </Typography>
-      <Typography className={classes.statusDescription}>
-        {isValid
-          ? ' '
-          : `Pay attention to Line ${errors.errorLine}'s ` +
-            ` character ${errors.errorPosition}. Type: ${errors.errorType} -> ${errors.errorInfo}.`}
-        &nbsp;
-        {isValid
-          ? 'Your code is fine. You can move on!'
-          : 'Correct this error and keep moving forward!'}
-      </Typography>
-      <div className={classes.widthManager}>
-        <Divider
-          variant="middle"
-          classes={{ root: classes.horizontalLineWhite }}
-        />
-        {!readOnly && (
-          <div className={classes.editorButtonGrid}>
-            <Tooltip
-              title="Undo"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonUndo}`}
-                onClick={startundo}
-                startIcon={<UndoTwoToneIcon />}
-              />
-            </Tooltip>
+    <div id="editor" data-cy="WorkflowEditor">
+      {!readOnly && (
+        <div className={classes.editorButtonGrid}>
+          <Tooltip
+            title="Undo"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={startundo}>
+              <UndoTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Redo"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={classes.editorButtons}
-                onClick={startredo}
-                startIcon={<RedoTwoToneIcon />}
-              />
-            </Tooltip>
+          <Tooltip
+            title="Redo"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={startredo}>
+              <RedoTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Download"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonDownload}`}
-                onClick={downloadYamlFile}
-                startIcon={<GetAppTwoToneIcon />}
-              />
-            </Tooltip>
+          <Tooltip
+            title="Download"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={downloadYamlFile}>
+              <GetAppTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Copy"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonGotoCopyUnfold}`}
-                onClick={copycontent}
-                startIcon={<FileCopyTwoToneIcon />}
-              />
-            </Tooltip>
+          <Tooltip
+            title="Copy"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={copycontent}>
+              <FileCopyTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Goto Error"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonGotoCopyUnfold}`}
-                onClick={startgotonexterror}
-                startIcon={<ErrorTwoToneIcon />}
-              />
-            </Tooltip>
+          <Tooltip
+            title="Goto Error"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={startgotonexterror}>
+              <ErrorTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Find"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonFind}`}
-                onClick={startfinder}
-                startIcon={<FindInPageTwoToneIcon />}
-              />
-            </Tooltip>
+          <Tooltip
+            title="Find"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={startfinder}>
+              <FindInPageTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Replace"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonReplace}`}
-                onClick={startreplace}
-                startIcon={<FindReplaceTwoToneIcon />}
-              />
-            </Tooltip>
+          <Tooltip
+            title="Replace"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={startreplace}>
+              <FindReplaceTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Unfold All"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonGotoCopyUnfold}`}
-                onClick={startunfoldall}
-                startIcon={<UnfoldMoreTwoToneIcon />}
-              />
-            </Tooltip>
+          <Tooltip
+            title="Unfold All"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={startunfoldall}>
+              <UnfoldMoreTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Fold All"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonFold}`}
-                onClick={startfoldall}
-                startIcon={<UnfoldLessTwoToneIcon />}
-              />
-            </Tooltip>
+          <Tooltip
+            title="Fold All"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={startfoldall}>
+              <UnfoldLessTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            <Tooltip
-              title="Select"
-              placement="bottom"
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                className={`${classes.editorButtons} ${classes.editorButtonSelectAll}`}
-                onClick={startselectall}
-                startIcon={<SelectAllTwoToneIcon />}
-              />
-            </Tooltip>
-          </div>
-        )}
-      </div>
-      <div className={classes.editor}>
-        <AceEditor
-          mode="yaml"
-          theme="cobalt"
-          name="code"
-          width="100%"
-          height="100%"
-          maxLines={12000}
-          minLines={1}
-          highlightActiveLine={false}
-          readOnly={readOnly}
-          tabSize={2}
-          wrapEnabled
-          ref={YamlAce}
-          showGutter
-          onChange={onEditorChange}
-          showPrintMargin={false}
-          enableBasicAutocompletion
-          enableSnippets
-          enableLiveAutocompletion
-          value={editorState.content}
-          editorProps={{
-            $blockScrolling: Infinity,
-            $useWorker: true,
-          }}
-          onLoad={(editor) => {
-            editor.setReadOnly(readOnly);
-            editor.setOptions({
-              fontFamily: 'monospace',
-              highlightGutterLine: false,
-              autoScrollEditorIntoView: true,
-              tooltipFollowsMouse: true,
-              displayIndentGuides: false,
-            });
-            editor.focus();
-            editor.setHighlightSelectedWord(true);
-            editor.session.setFoldStyle('markbeginend');
-            editor.setShowFoldWidgets(true);
-            editor.setAnimatedScroll(true);
-            editor.setShowInvisibles(false);
-            editor.setFontSize('0.98rem');
-            editor.container.style.background = palette.common.black;
-            editor.container.style.lineHeight = '160%';
-            const nodeStyle = (document.getElementsByClassName(
-              'ace_gutter'
-            )[0] as any).style;
-            nodeStyle.color = palette.secondary.contrastText;
-            nodeStyle.borderRight = 0;
-            nodeStyle.background = palette.common.black;
-          }}
-          onCursorChange={(selection) => {
-            (YamlAce.current!.editor as any).setOptions({
-              autoScrollEditorIntoView: true,
-              tooltipFollowsMouse: true,
-            });
+          <Tooltip
+            title="Select"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={startselectall}>
+              <SelectAllTwoToneIcon />
+            </div>
+          </Tooltip>
 
-            const nodeStyleActiveList = document.getElementsByClassName(
-              'ace_gutter-cell'
-            );
-            for (let i = 0; i < nodeStyleActiveList.length; i += 1) {
-              (nodeStyleActiveList[i] as any).style.backgroundColor =
-                palette.common.black;
-              (nodeStyleActiveList[i] as any).style.color =
-                palette.secondary.contrastText;
-            }
-
-            if (
-              document.getElementsByClassName('ace_gutter-cell')[
-                selection.cursor.row
-              ] as any
-            ) {
-              const nodeStyleActive = (document.getElementsByClassName(
-                'ace_gutter-cell'
-              )[selection.cursor.row] as any).style;
-              nodeStyleActive.backgroundColor = palette.primary.main;
-              nodeStyleActive.color = palette.secondary.contrastText;
-            }
-          }}
-          annotations={editorState.annotations}
-          markers={editorState.markers}
-        />
-        <Box p={1} flexGrow={0} className={classes.fullScreenGrid}>
           <Tooltip
             title="Full Screen (Press Escape to End)"
             placement="bottom"
@@ -530,21 +333,95 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             TransitionProps={{ timeout: 500 }}
             arrow
           >
-            <Button
-              variant="outlined"
-              className={classes.editorButtonFullScreen}
-              onClick={fullscreentrigger}
-              startIcon={
-                <img
-                  src="/icons/fullscreen.svg"
-                  alt="Full Screen"
-                  color={palette.secondary.contrastText}
-                  className={classes.fullScreenIcon}
-                />
-              }
-            />
+            <div className={classes.editorButtons} onClick={fullScreenTrigger}>
+              <FullscreenIcon />
+            </div>
           </Tooltip>
-        </Box>
+        </div>
+      )}
+      <br />
+      <div className={classes.editor}>
+        <pre id="yaml-editor">
+          <AceEditor
+            mode="yaml"
+            theme="solarized_dark"
+            name="code"
+            width="100%"
+            height="100%"
+            maxLines={12000}
+            minLines={1}
+            highlightActiveLine={false}
+            readOnly={readOnly}
+            tabSize={2}
+            wrapEnabled
+            ref={YamlAce}
+            showGutter
+            onChange={onEditorChange}
+            showPrintMargin={false}
+            enableBasicAutocompletion
+            enableSnippets
+            enableLiveAutocompletion
+            value={editorState.content}
+            editorProps={{
+              $blockScrolling: Infinity,
+              $useWorker: true,
+            }}
+            onLoad={(editor) => {
+              editor.setReadOnly(readOnly);
+              editor.setOptions({
+                fontFamily: 'monospace',
+                highlightGutterLine: false,
+                autoScrollEditorIntoView: true,
+                tooltipFollowsMouse: true,
+                displayIndentGuides: false,
+              });
+              editor.focus();
+              editor.setHighlightSelectedWord(true);
+              editor.session.setFoldStyle('markbeginend');
+              editor.setShowFoldWidgets(true);
+              editor.setAnimatedScroll(true);
+              editor.setShowInvisibles(false);
+              editor.setFontSize('0.98rem');
+              editor.container.style.lineHeight = '160%';
+              const nodeStyle = (
+                document.getElementsByClassName('ace_gutter')[0] as any
+              ).style;
+              nodeStyle.color = palette.secondary.contrastText;
+              nodeStyle.borderRight = 0;
+            }}
+            onCursorChange={(selection) => {
+              (YamlAce.current!.editor as any).setOptions({
+                autoScrollEditorIntoView: true,
+                tooltipFollowsMouse: true,
+              });
+
+              const nodeStyleActiveList =
+                document.getElementsByClassName('ace_gutter-cell');
+              for (let i = 0; i < nodeStyleActiveList.length; i += 1) {
+                (nodeStyleActiveList[i] as any).style.backgroundColor =
+                  '#01313F';
+                (nodeStyleActiveList[i] as any).style.color =
+                  palette.secondary.contrastText;
+              }
+
+              if (
+                document.getElementsByClassName('ace_gutter-cell')[
+                  selection.cursor.row
+                ] as any
+              ) {
+                const nodeStyleActive = (
+                  document.getElementsByClassName('ace_gutter-cell')[
+                    selection.cursor.row
+                  ] as any
+                ).style;
+                nodeStyleActive.backgroundColor = palette.primary.main;
+                nodeStyleActive.color = palette.secondary.contrastText;
+              }
+            }}
+            annotations={editorState.annotations}
+            markers={editorState.markers}
+          />
+        </pre>
       </div>
     </div>
   );

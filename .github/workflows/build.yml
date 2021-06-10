@@ -4,7 +4,6 @@ on:
     branches:
       - master
       - v*
-      - litmus-v2
 
 jobs:
   changes:
@@ -17,21 +16,21 @@ jobs:
       event-tracker: ${{ steps.filter.outputs.event-tracker }}
       subscriber: ${{ steps.filter.outputs.subscriber }}
     steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          frontend:
-            - 'litmus-portal/frontend/**'
-          graphql-server:
-            - 'litmus-portal/graphql-server/**'
-          authentication:
-            - 'litmus-portal/authentication/**'
-          event-tracker:
-            - 'litmus-portal/cluster-agents/event-tracker/**'
-          subscriber:
-            - 'litmus-portal/cluster-agents/subscriber/**'
+      # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'litmus-portal/frontend/**'
+            graphql-server:
+              - 'litmus-portal/graphql-server/**'
+            authentication:
+              - 'litmus-portal/authentication/**'
+            event-tracker:
+              - 'litmus-portal/cluster-agents/event-tracker/**'
+            subscriber:
+              - 'litmus-portal/cluster-agents/subscriber/**'
 
   backend-checks:
     runs-on: ubuntu-latest
@@ -75,7 +74,7 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/graphql-server
-          docker build . -f build/Dockerfile
+          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
 
   docker-build-authentication-server:
     runs-on: ubuntu-latest
@@ -90,7 +89,7 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/authentication
-          docker images && docker build . -f Dockerfile
+          docker images && docker build . -f Dockerfile --build-arg TARGETARCH=amd64
 
   docker-build-subscriber:
     runs-on: ubuntu-latest
@@ -105,7 +104,7 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/cluster-agents/subscriber
-          docker build . -f build/Dockerfile
+          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
 
   docker-build-event-tracker:
     runs-on: ubuntu-latest
@@ -120,7 +119,7 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/cluster-agents/event-tracker
-          docker build . -f Dockerfile
+          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
 
   docker-build-frontend:
     runs-on: ubuntu-latest
@@ -135,4 +134,4 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/frontend
-          docker build . -f Dockerfile
+          docker build . -f Dockerfile --build-arg TARGETARCH=amd64

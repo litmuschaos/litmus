@@ -15,9 +15,8 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const [isInfoToggled, setIsInfoToggled] = React.useState<Boolean>(
-    isInfoToggledState
-  );
+  const [isInfoToggled, setIsInfoToggled] =
+    React.useState<Boolean>(isInfoToggledState);
 
   return (
     <div className={classes.button}>

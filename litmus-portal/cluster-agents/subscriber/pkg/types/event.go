@@ -2,8 +2,9 @@ package types
 
 import "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 
-// workflow data
+// events data
 type WorkflowEvent struct {
+	WorkflowType      string          `json:"workflow_type"`
 	WorkflowID        string          `json:"-"`
 	EventType         string          `json:"event_type"`
 	UID               string          `json:"-"`

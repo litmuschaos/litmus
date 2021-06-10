@@ -4,15 +4,15 @@ import Tabs from '@material-ui/core/Tabs/Tabs';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
 import {
   SCHEDULE_DETAILS,
-  WORKFLOW_DETAILS,
-  WORKFLOW_EVENTS,
+  WORKFLOW_DETAILS_WITH_EXEC_DATA,
+  WORKFLOW_EVENTS_WITH_EXEC_DATA,
 } from '../../graphql';
 import {
   ScheduleDataVars,
@@ -24,6 +24,7 @@ import {
   Workflow,
   WorkflowDataVars,
   WorkflowSubscription,
+  WorkflowSubscriptionInput,
 } from '../../models/graphql/workflowData';
 import useActions from '../../redux/actions';
 import * as NodeSelectionActions from '../../redux/actions/nodeSelection';
@@ -37,6 +38,10 @@ import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
 import useStyles from './styles';
 
+interface URLParams {
+  workflowRunId: string;
+}
+
 const WorkflowDetails: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -45,10 +50,8 @@ const WorkflowDetails: React.FC = () => {
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(false);
   // State for Checking if workflow failed
   const [isWorkflowFailed, setWorkflowFailed] = useState<boolean>(false);
-  const [
-    workflowSchedulesDetails,
-    setworkflowSchedulesDetails,
-  ] = useState<ScheduleWorkflow>();
+  const [workflowSchedulesDetails, setworkflowSchedulesDetails] =
+    useState<ScheduleWorkflow>();
 
   const tabs = useActions(TabActions);
   const nodeSelection = useActions(NodeSelectionActions);
@@ -62,19 +65,23 @@ const WorkflowDetails: React.FC = () => {
 
   const { pod_name } = useSelector((state: RootState) => state.selectedNode);
 
-  // Getting the workflow nome from the pathname
-  const { pathname } = useLocation();
-  const workflowRunId = pathname.split('/')[2];
+  const { workflowRunId }: URLParams = useParams();
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
-    { variables: { projectID } }
+    WORKFLOW_DETAILS_WITH_EXEC_DATA,
+    {
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+          workflow_run_ids: [workflowRunId],
+        },
+      },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
-  const workflow = data?.getWorkFlowRuns.filter(
-    (w) => w.workflow_run_id === workflowRunId
-  )[0];
+  const workflow = data?.getWorkflowRuns.workflow_runs[0];
 
   // Apollo query to get the scheduled data
   const { data: SchedulesData, loading } = useQuery<
@@ -87,34 +94,32 @@ const WorkflowDetails: React.FC = () => {
 
   // Using subscription to get realtime data
   useEffect(() => {
-    if (
-      workflow?.execution_data &&
-      (JSON.parse(workflow?.execution_data) as ExecutionData).phase ===
-        'Running'
-    ) {
-      subscribeToMore<WorkflowSubscription>({
-        document: WORKFLOW_EVENTS,
+    if (workflow?.phase && workflow.phase === 'Running') {
+      subscribeToMore<WorkflowSubscription, WorkflowSubscriptionInput>({
+        document: WORKFLOW_EVENTS_WITH_EXEC_DATA,
         variables: { projectID },
         updateQuery: (prev, { subscriptionData }) => {
-          if (!subscriptionData.data) return prev;
-          const modifiedWorkflows = prev.getWorkFlowRuns.slice();
+          if (!subscriptionData.data || !prev || !prev.getWorkflowRuns)
+            return prev;
+
+          const modifiedWorkflows = prev.getWorkflowRuns.workflow_runs.slice();
           const newWorkflow = subscriptionData.data.workflowEventListener;
 
-          // Updating the query data
-          let i = 0;
-          for (; i < modifiedWorkflows.length; i++) {
-            if (
-              modifiedWorkflows[i].workflow_run_id ===
-              newWorkflow.workflow_run_id
-            ) {
-              modifiedWorkflows[i] = newWorkflow;
-              break;
-            }
-          }
-          if (i === modifiedWorkflows.length)
-            modifiedWorkflows.unshift(newWorkflow);
+          // Update only the required workflowRun
+          if (
+            modifiedWorkflows[0].workflow_run_id === newWorkflow.workflow_run_id
+          )
+            modifiedWorkflows[0] = newWorkflow;
 
-          return { ...prev, getWorkFlowRuns: modifiedWorkflows };
+          const totalNoOfWorkflows =
+            prev.getWorkflowRuns.total_no_of_workflow_runs;
+
+          return {
+            getWorkflowRuns: {
+              total_no_of_workflow_runs: totalNoOfWorkflows,
+              workflow_runs: modifiedWorkflows,
+            },
+          };
         },
       });
     }
@@ -233,6 +238,7 @@ const WorkflowDetails: React.FC = () => {
                         data={
                           JSON.parse(workflow.execution_data) as ExecutionData
                         }
+                        resiliency_score={workflow.resiliency_score}
                       />
                     )}
                   </div>
@@ -245,6 +251,7 @@ const WorkflowDetails: React.FC = () => {
                 tab={2}
                 cluster_name={workflow.cluster_name}
                 data={JSON.parse(workflow.execution_data) as ExecutionData}
+                resiliency_score={workflow.resiliency_score}
               />
               {/* Table for all Node details */}
               <NodeTable

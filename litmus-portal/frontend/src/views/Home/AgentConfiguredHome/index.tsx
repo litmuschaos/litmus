@@ -14,7 +14,7 @@ import { WORKFLOW_DETAILS } from '../../../graphql';
 import { Role } from '../../../models/graphql/user';
 import {
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataVars
 } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
@@ -50,12 +50,20 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
     {
-      variables: { projectID },
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+          pagination: {
+            page: 0,
+            limit: 3,
+          },
+        },
+      },
       fetchPolicy: 'cache-and-network',
     }
   );
 
-  let workflowRunCount = 0;
+  const workflowRunCount = data?.getWorkflowRuns.total_no_of_workflow_runs ?? 0;
 
   if (error) {
     console.error('Error fetching Workflow Data');
@@ -65,18 +73,6 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
       </Center>
     );
   }
-
-  if (data) {
-    workflowRunCount = data.getWorkFlowRuns.length;
-  } else {
-    return (
-      <Center>
-        <Loader />
-      </Center>
-    );
-  }
-
-  const filteredData = data.getWorkFlowRuns.slice(-3).reverse();
 
   return (
     <div>
@@ -119,6 +115,8 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             );
           })}
         </RecentOverviewContainer>
+      ) : data && workflowRunCount > 0 ? (
+        <RecentWorkflowRuns data={data.getWorkflowRuns.workflow_runs} />
       ) : (
         <MainInfoContainer
           src="./icons/workflowScheduleHome.svg"

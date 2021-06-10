@@ -104,7 +104,7 @@ const WeightSlider: React.FC<CustomSliderProps> = ({
   const classes = useStyles();
   const theme = useTheme();
   return (
-    <div className="App" data-cy="ExperimentWeightSlider">
+    <div className="App">
       <div className={classes.mainDiv}>
         <Typography className={classes.testType}>{testName}</Typography>
         <Typography>-</Typography>

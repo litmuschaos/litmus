@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client';
 import {
   Button,
   IconButton,
@@ -7,36 +8,31 @@ import {
   TableCell,
   Typography,
 } from '@material-ui/core';
-import { useQuery } from '@apollo/client';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { useTranslation } from 'react-i18next';
-import {
-  ExecutionData,
-  WorkflowRun,
-} from '../../../models/graphql/workflowData';
-import { history } from '../../../redux/configureStore';
-import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
-import CustomStatus from '../CustomStatus/Status';
-import useStyles from './styles';
-import useActions from '../../../redux/actions';
-import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
+import TimePopOver from '../../../components/TimePopOver';
 import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
+import { WorkflowRun } from '../../../models/graphql/workflowData';
 import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../models/graphql/workflowListData';
+import useActions from '../../../redux/actions';
+import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
+import { history } from '../../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
-import TimePopOver from '../../../components/TimePopOver';
+import CustomStatus from '../CustomStatus/Status';
+import useStyles from './styles';
 
 interface TableDataProps {
-  data: WorkflowRun;
-  exeData: ExecutionData;
+  data: Partial<WorkflowRun>;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
+const TableData: React.FC<TableDataProps> = ({ data }) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
@@ -96,9 +92,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
-        <CustomStatus
-          status={exeData.finishedAt.length === 0 ? 'Running' : exeData.phase}
-        />
+        <CustomStatus status={data.phase ?? ''} />
       </TableCell>
       <TableCell
         className={classes.workflowNameData}
@@ -119,23 +113,24 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterName}>
-          {nameCapitalized(data.cluster_name)}
+          {nameCapitalized(data.cluster_name ?? '')}
         </Typography>
       </TableCell>
       <TableCell className={classes.reliabiltyData}>
         <Typography>
           <span>{t('chaosWorkflows.browseWorkflows.tableData.overallRR')}</span>
-          {!exeData.resiliency_score ? (
+          {data.resiliency_score === undefined ||
+          data.resiliency_score === null ? (
             <span className={classes.less}>
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>
           ) : (
             <span
               className={`${classes.boldText} ${getResiliencyScoreColor(
-                exeData.resiliency_score
+                data.resiliency_score
               )}`}
             >
-              {exeData.resiliency_score}%
+              {data.resiliency_score}%
             </span>
           )}
         </Typography>
@@ -143,17 +138,22 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <span>
             {t('chaosWorkflows.browseWorkflows.tableData.experimentsPassed')}
           </span>
-          {!exeData.resiliency_score ? (
+          {data.experiments_passed === undefined ||
+          data.experiments_passed === null ||
+          data.total_experiments === undefined ||
+          data.total_experiments === null ||
+          data.resiliency_score === undefined ||
+          data.resiliency_score === null ? (
             <span className={classes.less}>
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>
           ) : (
             <span
               className={`${classes.boldText} ${getResiliencyScoreColor(
-                exeData.resiliency_score
+                data.resiliency_score
               )}`}
             >
-              {exeData.experiments_passed}/{exeData.total_experiments}
+              {data.experiments_passed}/{data.total_experiments}
             </span>
           )}
         </Typography>
@@ -209,7 +209,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         </div>
       </TableCell>
       <TableCell>
-        <TimePopOver unixTime={data.last_updated} />
+        <TimePopOver unixTime={data.last_updated ?? ''} />
       </TableCell>
       <TableCell>
         <IconButton

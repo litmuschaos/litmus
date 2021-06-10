@@ -1,17 +1,39 @@
 import { gql } from '@apollo/client';
 
+export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_id
+        workflow_name
+        workflow_run_id
+        cluster_name
+        last_updated
+        cluster_id
+        phase
+        execution_data
+        resiliency_score
+      }
+    }
+  }
+`;
+
 export const WORKFLOW_DETAILS = gql`
-  query workflowDetails($projectID: String!) {
-    getWorkFlowRuns(project_id: $projectID) {
-      workflow_id
-      workflow_name
-      workflow_run_id
-      execution_data
-      project_id
-      cluster_name
-      last_updated
-      cluster_type
-      cluster_id
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_id
+        workflow_name
+        workflow_run_id
+        cluster_name
+        last_updated
+        phase
+        resiliency_score
+        experiments_passed
+        total_experiments
+      }
     }
   }
 `;
@@ -146,6 +168,14 @@ export const GET_CLUSTER_LENGTH = gql`
   query getClusters($project_id: String!) {
     getCluster(project_id: $project_id) {
       cluster_id
+    }
+  }
+`;
+
+export const GET_CLUSTER_NAMES = gql`
+  query getClusters($project_id: String!) {
+    getCluster(project_id: $project_id) {
+      cluster_name
     }
   }
 `;
@@ -456,6 +486,12 @@ export const GET_TEMPLATE_BY_ID = gql`
       template_id
       manifest
     }
+  }
+`;
+
+export const GET_PREDEFINED_WORKFLOW_LIST = gql`
+  query GetPredefinedWorkflowList($hubname: String!, $projectid: String!) {
+    GetPredefinedWorkflowList(HubName: $hubname, projectID: $projectid)
   }
 `;
 

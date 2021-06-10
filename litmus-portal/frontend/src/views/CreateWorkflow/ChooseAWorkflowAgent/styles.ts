@@ -43,12 +43,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Agent Div
   agentWrapperDiv: {
     marginTop: theme.spacing(5),
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gridGap: '1.5rem',
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   litmusCard: {
     background: theme.palette.cards.background,
+    margin: theme.spacing(2, 2, 2, 0),
   },
   agentRadioButton: {
     marginTop: theme.spacing(1),

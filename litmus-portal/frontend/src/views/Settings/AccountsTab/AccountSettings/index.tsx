@@ -41,34 +41,31 @@ const AccountSettings: React.FC = () => {
   });
 
   // handleCurrPassword handles password for first password field
-  const handleCurrPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPassword({
-      ...password,
-      [prop]: event.target.value,
-    });
-  };
+  const handleCurrPassword =
+    (prop: keyof Password) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword({
+        ...password,
+        [prop]: event.target.value,
+      });
+    };
 
   // handleNewPassword handles password for second password field
-  const handleNewPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPassword({
-      ...password,
-      [prop]: event.target.value,
-    });
-  };
+  const handleNewPassword =
+    (prop: keyof Password) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword({
+        ...password,
+        [prop]: event.target.value,
+      });
+    };
 
   // handleConfPassword handles password for third password field
-  const handleConfPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPassword({
-      ...password,
-      [prop]: event.target.value,
-    });
-  };
+  const handleConfPassword =
+    (prop: keyof Password) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword({
+        ...password,
+        [prop]: event.target.value,
+      });
+    };
 
   if (
     password.confNewPassword.length > 0 &&

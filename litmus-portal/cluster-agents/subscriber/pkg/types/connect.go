@@ -48,8 +48,13 @@ type KubeGVRRequest struct {
 }
 
 type Action struct {
-	K8SManifest  string      `json:"k8s_manifest"`
-	ExternalData interface{} `json:"external_data"`
-	RequestType  string      `json:"request_type"`
-	Namespace    string      `json:"namespace"`
+	K8SManifest  string `json:"k8s_manifest"`
+	ExternalData string `json:"external_data"`
+	RequestType  string `json:"request_type"`
+	Namespace    string `json:"namespace"`
+}
+
+type WorkflowSyncExternalData struct {
+	WorkflowID    string `json:"workflow_id"`
+	WorkflowRunID string `json:"workflow_run_id"`
 }

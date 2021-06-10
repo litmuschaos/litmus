@@ -103,17 +103,19 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
         className={classes.InputFieldTemplate}
       />
       <br />
-      <YamlEditor
-        content={editManifest}
-        filename="Workflow Template"
-        readOnly={false}
-        setButtonState={(btnState: boolean) => {
-          setYamlValid(btnState);
-        }}
-        saveWorkflowChange={(updatedManifest: string) => {
-          setEditManifest(updatedManifest);
-        }}
-      />
+      <div className={classes.editor}>
+        <YamlEditor
+          content={editManifest}
+          filename="Workflow Template"
+          readOnly={false}
+          setButtonState={(btnState: boolean) => {
+            setYamlValid(btnState);
+          }}
+          saveWorkflowChange={(updatedManifest: string) => {
+            setEditManifest(updatedManifest);
+          }}
+        />
+      </div>
       <div className={classes.footerTemplateDiv}>
         <div className={classes.templateButtonsDiv}>
           <IconButton onClick={closeTemplate} className={classes.cancelIcon}>

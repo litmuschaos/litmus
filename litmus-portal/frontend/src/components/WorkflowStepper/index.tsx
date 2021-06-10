@@ -123,39 +123,43 @@ const WorkflowStepper = () => {
     All steps in the middle will have next and back buttons
   * */
 
-  const ControlButton: React.FC<ControlButtonProps> = ({ position }) => {
+  const ControlButton: React.FC = () => {
     return (
-      <>
-        {activeStep === 0 && position === 'top' ? ( // Only show Next button at Top for Step 0
-          <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
-        ) : activeStep === 0 && position !== 'top' ? ( // Don't show Next button at Bottom for Step 0
-          <></>
-        ) : activeStep === 1 &&
-          window.screen.height < 1080 &&
-          position !== 'top' ? (
-          <></>
+      <div data-cy="ControlButtons">
+        {activeStep === 0 ? ( // Only show Next button at Top for Step 0
+          <ButtonFilled className={classes.btn} onClick={() => handleNext()}>
+            Next
+          </ButtonFilled>
         ) : activeStep === steps.length - 1 ? ( // Show Finish button at Bottom for Last Step
           loading ? (
-            <ButtonFilled disabled onClick={() => handleNext()}>
+            <ButtonFilled
+              className={classes.btn}
+              disabled
+              onClick={() => handleNext()}
+            >
               Finish <span style={{ marginLeft: '0.5rem' }} />{' '}
               <Loader size={20} />
             </ButtonFilled>
           ) : (
-            <ButtonFilled onClick={() => handleNext()}>Finish</ButtonFilled>
+            <ButtonFilled className={classes.btn} onClick={() => handleNext()}>
+              Finish
+            </ButtonFilled>
           )
-        ) : position === 'top' ? ( // Apply headerButtonWrapper style for top button's div
-          <div className={classes.headerButtonWrapper} aria-label="buttons">
-            <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
-            <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
-          </div>
         ) : (
-          // Apply bottomButtonWrapper style for top button's div
-          <div className={classes.bottomButtonWrapper} aria-label="buttons">
-            <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
-            <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
+          // Apply headerButtonWrapper style for top button's div
+          <div className={classes.headerButtonWrapper} aria-label="buttons">
+            <ButtonOutlined
+              className={classes.btn}
+              onClick={() => handleBack()}
+            >
+              Back
+            </ButtonOutlined>
+            <ButtonFilled className={classes.btn} onClick={() => handleNext()}>
+              Next
+            </ButtonFilled>
           </div>
         )}
-      </>
+      </div>
     );
   };
 
@@ -220,7 +224,7 @@ const WorkflowStepper = () => {
           <Typography className={classes.header}>
             {t(`workflowStepper.scheduleNewChaosWorkflow`)}
           </Typography>
-          <ControlButton position="top" />
+          <ControlButton />
         </Row>
       </div>
       <br />
