@@ -121,6 +121,7 @@ const ChoosePreDefinedExperiments = () => {
       data.getHubStatus.forEach((hubData) => {
         if (hubData.HubName.toLowerCase() === 'chaos hub') {
           setSelectedHub('Chaos Hub');
+          localforage.setItem('selectedHub', 'Chaos Hub');
           getPredefinedWorkflow({
             variables: {
               hubname: 'Chaos Hub',
