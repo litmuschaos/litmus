@@ -59,9 +59,8 @@ const TableData: React.FC<TableDataProps> = ({
     null
   );
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
-  const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState<boolean>(
-    false
-  );
+  const [isTemplateModalOpen, setIsTemplateModalOpen] =
+    React.useState<boolean>(false);
 
   const tabs = useActions(TabActions);
   const open = Boolean(anchorEl);
@@ -85,10 +84,8 @@ const TableData: React.FC<TableDataProps> = ({
   };
 
   // States for PopOver to display schedule details
-  const [
-    popAnchorElSchedule,
-    setPopAnchorElSchedule,
-  ] = React.useState<null | HTMLElement>(null);
+  const [popAnchorElSchedule, setPopAnchorElSchedule] =
+    React.useState<null | HTMLElement>(null);
   const isOpenSchedule = Boolean(popAnchorElSchedule);
   const idSchedule = isOpenSchedule ? 'simple-popover' : undefined;
   const handlePopOverCloseForSchedule = () => {
@@ -180,7 +177,7 @@ const TableData: React.FC<TableDataProps> = ({
       >
         <SaveTemplateModal
           closeTemplate={handleCloseTemplate}
-          isCustomWorkflow={(data.isCustomWorkflow as unknown) as boolean}
+          isCustomWorkflow={data.isCustomWorkflow as unknown as boolean}
         />
       </Modal>
       <TableCell className={classes.workflowNameData}>

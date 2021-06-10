@@ -59,9 +59,8 @@ const SteadyState: React.FC<SteadyStateProps> = ({
   // with the changes in individual Chaos Engines
   const handleMainYAMLChange = () => {
     const mainManifest = YAML.parse(manifest.manifest);
-    mainManifest.spec.templates[
-      engineIndex
-    ].inputs.artifacts[0].raw.data = YAML.stringify(chaosEngine);
+    mainManifest.spec.templates[engineIndex].inputs.artifacts[0].raw.data =
+      YAML.stringify(chaosEngine);
     workflow.setWorkflowManifest({
       manifest: YAML.stringify(mainManifest),
       engineYAML: YAML.stringify(chaosEngine),
@@ -76,10 +75,8 @@ const SteadyState: React.FC<SteadyStateProps> = ({
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
     null
   );
-  const [
-    propertyAnchorEl,
-    setPropertyPopAnchorEl,
-  ] = React.useState<null | HTMLElement>(null);
+  const [propertyAnchorEl, setPropertyPopAnchorEl] =
+    React.useState<null | HTMLElement>(null);
   const isOpen = Boolean(popAnchorEl);
   const isPropertyOpen = Boolean(propertyAnchorEl);
   const id = isOpen ? 'simple-popover' : undefined;
