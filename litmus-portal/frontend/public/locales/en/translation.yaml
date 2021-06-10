@@ -1080,9 +1080,11 @@ myhub:
     syncingRepo: Loading Charts, Please Wait...!
     preDefined: Pre-defined workflows
     chaosCharts: Chaos-charts
-    noExp: No predefined workflows available with information in this Hub
+    noPredefinedExp: No predefined workflows available with information in this Hub
+    noExp: No experiments found
     lastSynced: 'Last synced at: '
     repoLink: 'Repository Link: '
+    repoBranch: 'Repository Branch: '
   connectHubPage:
     connectHub: Connect a new chaos hub
     editHub: Edit hub configuration

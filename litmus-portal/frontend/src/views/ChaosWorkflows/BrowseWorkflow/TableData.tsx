@@ -222,7 +222,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           </div>
         </Popover>
       </TableCell>
-      <TableCell className={classes.tableDataStatus}>
+      <TableCell>
         <CustomStatus status={data.phase ?? ''} />
       </TableCell>
       <TableCell
@@ -232,10 +232,11 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           nodeSelection.selectNode({
             pod_name: '',
           });
-          history.push({
-            pathname: `/workflows/${data.workflow_run_id}`,
-            search: `?projectID=${projectID}&projectRole=${projectRole}`,
-          });
+          if (data.phase?.toLowerCase() !== 'notavailable')
+            history.push({
+              pathname: `/workflows/${data.workflow_run_id}`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
         }}
       >
         <Typography className={classes.boldText} data-cy="workflowName">
@@ -366,10 +367,11 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               nodeSelection.selectNode({
                 pod_name: '',
               });
-              history.push({
-                pathname: `/workflows/${data.workflow_run_id}`,
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              });
+              if (data.phase?.toLowerCase() !== 'notavailable')
+                history.push({
+                  pathname: `/workflows/${data.workflow_run_id}`,
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
@@ -386,10 +388,11 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           <MenuItem
             value="Analysis"
             onClick={() => {
-              history.push({
-                pathname: `/workflows/analytics/${data.workflow_id}`,
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              });
+              if (data.phase?.toLowerCase() !== 'notavailable')
+                history.push({
+                  pathname: `/workflows/analytics/${data.workflow_id}`,
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowAnalytics">

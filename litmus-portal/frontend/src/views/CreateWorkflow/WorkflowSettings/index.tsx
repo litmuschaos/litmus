@@ -251,6 +251,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
                 InputProps={{
                   readOnly: true,
                 }}
+                disabled
                 className={classes.nsInput}
                 label={t('createWorkflow.chooseWorkflow.label.namespace')}
                 value={workflowData.namespace}
