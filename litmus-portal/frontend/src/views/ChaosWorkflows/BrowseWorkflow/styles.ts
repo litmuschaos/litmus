@@ -94,9 +94,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(5),
   },
 
-  tableDataStatus: {
-    // paddingLeft: theme.spacing(8.5),
-  },
   sortDiv: {
     display: 'flex',
     flexDirection: 'column',
