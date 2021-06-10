@@ -89,12 +89,6 @@ export const DECLINE_INVITE = gql`
   }
 `;
 
-export const DELETE_SCHEDULE = gql`
-  mutation deleteWorkflow($workflow_id: String!) {
-    deleteChaosWorkflow(workflowid: $workflow_id)
-  }
-`;
-
 export const UPDATE_SCHEDULE = gql`
   mutation updateChaos($ChaosWorkFlowInput: ChaosWorkFlowInput!) {
     updateChaosWorkflow(input: $ChaosWorkFlowInput) {
