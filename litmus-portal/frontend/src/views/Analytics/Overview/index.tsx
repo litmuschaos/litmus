@@ -1,17 +1,40 @@
+import { useQuery } from '@apollo/client';
 import { Link, Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import Loader from '../../../components/Loader';
 import { MainInfoContainer } from '../../../components/MainInfoContainer';
 import { OverviewContainer } from '../../../components/OverviewContainer';
 import { RecentOverviewContainer } from '../../../components/RecentOverviewContainer';
 import { UnconfiguredAgent } from '../../../components/UnconfiguredAgent';
+import Center from '../../../containers/layouts/Center';
+import {
+  GET_CLUSTER_LENGTH,
+  LIST_DASHBOARD_OVERVIEW,
+  LIST_DATASOURCE_OVERVIEW,
+  WORKFLOW_DETAILS,
+} from '../../../graphql';
+import { Clusters, ClusterVars } from '../../../models/graphql/clusterData';
+import {
+  DashboardList,
+  ListDashboardVars,
+} from '../../../models/graphql/dashboardsDetails';
+import {
+  DataSourceList,
+  ListDataSourceVars,
+} from '../../../models/graphql/dataSourceDetails';
+import {
+  Workflow,
+  WorkflowDataVars,
+} from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
-import { OverviewCard } from './OverviewCard';
+import { ApplicationDashboardCard } from './ApplicationDashboardCard';
 import useStyles from './styles';
+import { WorkflowDashboardCard } from './WorkflowDashboardCard';
 
 const Overview: React.FC = () => {
   const classes = useStyles();
@@ -21,27 +44,95 @@ const Overview: React.FC = () => {
 
   const tabs = useActions(TabActions);
 
-  // TODO: Temp consts
-  const dataSource = true;
-  const chaosInterleavedDashBoard = true;
-  const workflowDashboardCount = 1;
-  const applicationDashboardCount = 1;
-  const isAgentPresent = true;
+  let dataSource = false;
+  let workflowDashboardCount = 0;
+  let applicationDashboardCount = 0;
+  let isAgentPresent = false;
 
-  // const { data: dashboardList } = useQuery<DashboardList, ListDashboardVars>(
-  //   LIST_DASHBOARD_OVERVIEW,
-  //   {
-  //     variables: { projectID },
-  //     fetchPolicy: 'cache-and-network',
-  //   }
-  // );
+  // Query to check if agent is present or not
+  const { data: agentList, loading: agentListLoading } = useQuery<
+    Clusters,
+    ClusterVars
+  >(GET_CLUSTER_LENGTH, {
+    variables: { project_id: getProjectID() },
+    fetchPolicy: 'network-only',
+  });
 
-  // const filteredData = dashboardList?.ListDashboard.slice(-3).reverse();
+  // Set boolean to conditionally render agent setup banner
+  if (agentList) {
+    isAgentPresent = agentList.getCluster.length > 0;
+  }
 
+  // Check for data source being present or not
+  const {
+    data: dataSourceListData,
+    loading: dataSourceListLoading,
+    error: dataSourceListError,
+  } = useQuery<DataSourceList, ListDataSourceVars>(LIST_DATASOURCE_OVERVIEW, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  // Set boolean to conditionally render the banner
+  if (dataSourceListData) {
+    dataSource = dataSourceListData?.ListDataSource.length > 0;
+  }
+
+  // Fetch data to display for the workflow dashboard cards
+  const {
+    data: workflowData,
+    loading: workflowLoading,
+    error: workflowError,
+  } = useQuery<Workflow, WorkflowDataVars>(WORKFLOW_DETAILS, {
+    variables: {
+      workflowRunsInput: {
+        project_id: projectID,
+        pagination: {
+          page: 0,
+          limit: 3,
+        },
+      },
+    },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  // Get count for workflowData length to render conditionally
+  if (workflowData) {
+    workflowDashboardCount = workflowData?.getWorkflowRuns.workflow_runs.length;
+  }
+
+  // Fetch data to display for the application dashboard cards
+  const {
+    data: dashboardListData,
+    loading: dashboardListLoading,
+    error: dashboardListError,
+  } = useQuery<DashboardList, ListDashboardVars>(LIST_DASHBOARD_OVERVIEW, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  // Get count for dashboardListData length to render conditionally
+  if (dashboardListData) {
+    applicationDashboardCount = dashboardListData?.ListDashboard?.length;
+  }
+
+  // Loader for confirmation of agent presence
+  if (agentListLoading) {
+    return (
+      <div style={{ height: '50vh' }}>
+        <Center>
+          <Loader message="Looking for an agent.." />
+        </Center>
+      </div>
+    );
+  }
+
+  // Prompt user to setup an agent before continuing
   if (!isAgentPresent) {
     return <UnconfiguredAgent />;
   }
 
+  // Prompt user to create a workflow to view analytics on
   if (!workflowDashboardCount) {
     return (
       <MainInfoContainer
@@ -84,6 +175,30 @@ const Overview: React.FC = () => {
     );
   }
 
+  // Loader for Data source fetching duration
+  if (dataSourceListLoading) {
+    return (
+      <div style={{ height: '50vh' }}>
+        <Center>
+          <Loader message="Loading available data sources" />
+        </Center>
+      </div>
+    );
+  }
+
+  // Select the latest 3 dashboards
+  const fillteredDashboardListData = dashboardListData?.ListDashboard.slice(-3);
+
+  // Generic Apollo error:
+  if (dataSourceListError || workflowError || dashboardListError) {
+    console.error('Error fetching the data!');
+    return (
+      <Center>
+        <Typography>Error fetching the data!</Typography>
+      </Center>
+    );
+  }
+
   return (
     <div>
       {!dataSource && (
@@ -117,7 +232,7 @@ const Overview: React.FC = () => {
           }
         />
       )}
-      {dataSource && !chaosInterleavedDashBoard && (
+      {dataSource && !applicationDashboardCount && (
         <MainInfoContainer
           src="./icons/dashboardCloud.svg"
           alt="Schedule a workflow"
@@ -145,10 +260,20 @@ const Overview: React.FC = () => {
           buttonImgAlt="Schedule workflow"
           buttonText="Schedule workflow"
         >
-          {/* {filteredData.forEach((workflow) => {
-             return <OverviewCard key={workflow.name} data={workflow} />;
-           })} */}
-          <OverviewCard />
+          {workflowLoading ? (
+            <Center>
+              <Loader />
+            </Center>
+          ) : (
+            workflowData?.getWorkflowRuns.workflow_runs.map((workflow) => {
+              return (
+                <WorkflowDashboardCard
+                  key={workflow.workflow_id}
+                  data={workflow}
+                />
+              );
+            })
+          )}
         </RecentOverviewContainer>
       ) : (
         <OverviewContainer
@@ -184,10 +309,20 @@ const Overview: React.FC = () => {
           buttonImgAlt="Add kubernetes dashboard"
           buttonText="Add kubernetes dashbaord"
         >
-          {/* {filteredData.forEach((workflow) => {
-            return <OverviewCard key={workflow.name} data={workflow} />;
-          })} */}
-          <OverviewCard />
+          {dashboardListLoading ? (
+            <Center>
+              <Loader />
+            </Center>
+          ) : (
+            fillteredDashboardListData?.map((dashboard) => {
+              return (
+                <ApplicationDashboardCard
+                  key={dashboard.db_id}
+                  data={dashboard}
+                />
+              );
+            })
+          )}
         </RecentOverviewContainer>
       )}
       {dataSource && (

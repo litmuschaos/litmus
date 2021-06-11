@@ -1,9 +1,15 @@
-import { CircularProgress, makeStyles, Theme } from '@material-ui/core';
+import {
+  CircularProgress,
+  makeStyles,
+  Theme,
+  Typography,
+} from '@material-ui/core';
 import React from 'react';
 import Center from '../../containers/layouts/Center';
 
 interface LoaderProps {
   size?: number;
+  message?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -12,16 +18,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Loader: React.FC<LoaderProps> = ({ size }) => {
+const Loader: React.FC<LoaderProps> = ({ size, message }) => {
   const classes = useStyles();
   const defaultSize = 40;
   return (
-    <Center>
-      <CircularProgress
-        className={classes.spinner}
-        size={size || defaultSize}
-      />
-    </Center>
+    <div>
+      <Center>
+        <CircularProgress
+          className={classes.spinner}
+          size={size || defaultSize}
+        />
+      </Center>
+      <Typography>{message}</Typography>
+    </div>
   );
 };
 

@@ -115,9 +115,6 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             );
           })}
         </RecentOverviewContainer>
-      ) : data && workflowRunCount > 0 ? (
-        // <RecentWorkflowRuns data={data.getWorkflowRuns.workflow_runs} />
-        <div>Hello world</div>
       ) : (
         <MainInfoContainer
           src="./icons/workflowScheduleHome.svg"

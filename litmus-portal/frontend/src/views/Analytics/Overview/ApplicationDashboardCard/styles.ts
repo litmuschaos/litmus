@@ -6,7 +6,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2.5),
     willChange: `transform`,
     transition: `transform 250ms`,
-    // cursor: 'pointer',
 
     '&:hover': {
       transform: `translateY(-10px)`,
@@ -18,7 +17,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // width: '75%',
   },
 
   statusDiv: {
