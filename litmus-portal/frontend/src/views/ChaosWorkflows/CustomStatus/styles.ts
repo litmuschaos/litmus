@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.warning.light,
   },
   failed: {
-    color: theme.palette.status.failed,
-    backgroundColor: theme.palette.status.failed,
+    color: theme.palette.status.workflow.failed,
+    backgroundColor: theme.palette.status.workflow.failed,
   },
   statusFont: {
     fontSize: '0.725rem',

@@ -7,6 +7,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '0 auto',
     padding: theme.spacing(2),
   },
+  back: {
+    width: '90%',
+    margin: '0 auto',
+    padding: theme.spacing(1, 0),
+  },
   contentWrapper: {
     background: theme.palette.cards.background,
     padding: theme.spacing(1),
@@ -60,13 +65,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   experimentWrapperDiv: {
     display: 'grid',
-    margin: '2rem',
-    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+    margin: theme.spacing(2, 0),
+    gridTemplateColumns: 'repeat(auto-fit, minmax(15rem, 1fr))',
     gridGap: '1.5rem',
   },
   tests: {
     width: '17rem',
-    marginRight: theme.spacing(1),
+    margin: theme.spacing(0, 2, 2, 0),
   },
 }));
 export default useStyles;

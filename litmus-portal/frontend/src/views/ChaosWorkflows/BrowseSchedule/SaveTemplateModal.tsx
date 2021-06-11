@@ -17,6 +17,7 @@ import { constants } from '../../../constants';
 
 interface SaveTemplateModalProps {
   closeTemplate: () => void;
+  isCustomWorkflow: boolean;
 }
 
 interface CloneTemplateResult {
@@ -26,6 +27,7 @@ interface CloneTemplateResult {
 
 const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   closeTemplate,
+  isCustomWorkflow,
 }) => {
   const { t } = useTranslation();
   const classes = useStyles();
@@ -50,6 +52,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
           template_name: templateName,
           template_description: templateDesc,
           project_id: getProjectID(),
+          isCustomWorkflow,
         },
       },
       onError: (data) => {
@@ -100,17 +103,19 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
         className={classes.InputFieldTemplate}
       />
       <br />
-      <YamlEditor
-        content={editManifest}
-        filename="Workflow Template"
-        readOnly={false}
-        setButtonState={(btnState: boolean) => {
-          setYamlValid(btnState);
-        }}
-        saveWorkflowChange={(updatedManifest: string) => {
-          setEditManifest(updatedManifest);
-        }}
-      />
+      <div className={classes.editor}>
+        <YamlEditor
+          content={editManifest}
+          filename="Workflow Template"
+          readOnly={false}
+          setButtonState={(btnState: boolean) => {
+            setYamlValid(btnState);
+          }}
+          saveWorkflowChange={(updatedManifest: string) => {
+            setEditManifest(updatedManifest);
+          }}
+        />
+      </div>
       <div className={classes.footerTemplateDiv}>
         <div className={classes.templateButtonsDiv}>
           <IconButton onClick={closeTemplate} className={classes.cancelIcon}>

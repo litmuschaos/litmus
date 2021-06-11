@@ -20,9 +20,15 @@ rules:
       - litmuschaos.io
     resources:
       - chaosengines
+      - chaosschedules
       - chaosresults
     verbs:
+      - create
       - get
+      - list
+      - watch
+      - delete
+      - update
   - apiGroups:
       - argoproj.io
     resources:

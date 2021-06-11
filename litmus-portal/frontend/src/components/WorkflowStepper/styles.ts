@@ -22,11 +22,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   headerButtonWrapper: {
     display: 'flex',
-    width: '15%',
+    width: '13rem',
     justifyContent: 'space-between',
-    [theme.breakpoints.up('lg')]: {
-      width: '11%',
-    },
   },
   bottomButtonWrapper: {
     display: 'flex',
@@ -42,6 +39,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   backButton: {
     marginRight: theme.spacing(1),
+  },
+  btn: {
+    fontSize: '0.8rem',
   },
   buttonGroup: {
     display: 'flex',

@@ -88,3 +88,53 @@ backend-services-checks:
 		&& exit 1; \
 	fi
 
+.PHONY: docker.buildx
+docker.buildx:
+	@echo "------------------------------"
+	@echo "--> Setting up Builder        " 
+	@echo "------------------------------"
+	@if ! docker buildx ls | grep -q multibuilder; then\
+		docker buildx create --name multibuilder;\
+		docker buildx inspect multibuilder --bootstrap;\
+		docker buildx use multibuilder;\
+		docker run --rm --privileged multiarch/qemu-user-static --reset -p yes;\
+	fi
+
+.PHONY: push-portal-component
+push-portal-component: docker.buildx buildx.push.image
+
+.PHONY: push-frontend
+push-frontend: docker.buildx buildx.push.frontend
+
+buildx.push.image:
+	@cd $(DIRECTORY) && \
+	docker buildx build -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) .
+
+buildx.push.frontend:
+	@cd frontend && \
+	if [ "${IMG_TAG}" = "ci" ]; then \
+        docker build . -f Dockerfile -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x" --build-arg TARGETARCH=amd64;\
+        docker push $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG);\
+	else \
+	    docker buildx build . -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) \
+		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x";\
+    fi
+
+.PHONY: push-portal-component-amd64
+push-portal-component-amd64: docker-build-portal-amd64 docker-push-portal-amd64
+
+docker-build-portal-amd64:
+	@cd $(DIRECTORY) && \
+    docker build . -f Dockerfile -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) --build-arg TARGETARCH=amd64
+docker-push-portal-amd64:
+	@docker push $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG)
+
+.PHONY: push-frontend-amd64
+push-frontend-amd64: docker-build-frontend-amd64 docker-push-frontend-amd64
+
+docker-build-frontend-amd64:
+	@cd frontend && \
+    docker build . -f Dockerfile -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) --build-arg TARGETARCH=amd64 --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) \
+		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x
+docker-push-frontend-amd64:
+	@docker push $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG)

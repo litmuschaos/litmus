@@ -1,17 +1,22 @@
 import { useQuery, useSubscription } from '@apollo/client';
 import { Tabs, Typography, useTheme } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import { StyledTab, TabPanel } from '../../../components/Tabs';
-import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
+import {
+  WORKFLOW_DETAILS_WITH_EXEC_DATA,
+  WORKFLOW_LOGS,
+} from '../../../graphql';
 import {
   PodLog,
   PodLogRequest,
   PodLogVars,
 } from '../../../models/graphql/podLog';
 import {
+  ExecutionData,
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
@@ -46,13 +51,18 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   const projectID = getProjectID();
 
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
-    { variables: { projectID } }
+    WORKFLOW_DETAILS_WITH_EXEC_DATA,
+    {
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+          workflow_run_ids: [workflow_run_id],
+        },
+      },
+    }
   );
 
-  const workflow = workflow_data?.getWorkFlowRuns.filter(
-    (w) => w.workflow_run_id === workflow_run_id
-  )[0];
+  const workflow = workflow_data?.getWorkflowRuns.workflow_runs[0];
 
   const [chaosData, setChaosData] = useState<ChaosDataVar>({
     exp_pod: '',
@@ -62,7 +72,8 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
 
   useEffect(() => {
     if (workflow !== undefined) {
-      const nodeData = JSON.parse(workflow.execution_data).nodes[pod_name];
+      const nodeData = (JSON.parse(workflow.execution_data) as ExecutionData)
+        .nodes[pod_name];
       if (nodeData && nodeData.chaosData)
         setChaosData({
           exp_pod: nodeData.chaosData.experimentPod,
@@ -79,9 +90,11 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   }, [workflow_data]);
 
   const [chaosResult, setChaosResult] = useState('');
+
   useEffect(() => {
     if (workflow !== undefined) {
-      const nodeData = JSON.parse(workflow.execution_data).nodes[pod_name];
+      const nodeData = (JSON.parse(workflow.execution_data) as ExecutionData)
+        .nodes[pod_name];
       if (nodeData?.chaosData?.chaosResult) {
         setChaosResult(YAML.stringify(nodeData.chaosData?.chaosResult));
       } else {
@@ -116,12 +129,30 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     }
     if (
       workflow !== undefined &&
-      JSON.parse(workflow?.execution_data).nodes[pod_name].type ===
-        'ChaosEngine'
+      (JSON.parse(workflow.execution_data) as ExecutionData).nodes[pod_name]
+        .type === 'ChaosEngine'
     ) {
       return t('workflowDetailsView.nodeLogs.chaosLogs');
     }
     return '';
+  };
+
+  // Function to download the logs
+  const downloadLogs = (logs: any, podName: string) => {
+    const element = document.createElement('a');
+    let chaos_logs = '';
+    try {
+      chaos_logs = chaosLogs(logs.chaos_logs);
+    } catch {
+      chaos_logs = 'Chaos Logs unavailable';
+    }
+    const file = new Blob([logs?.main_logs, chaos_logs], {
+      type: 'text/txt',
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `${podName}.txt`;
+    document.body.appendChild(element);
+    element.click();
   };
 
   const parseLogs = (logs: string) => {
@@ -130,6 +161,23 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
       return (
         <div>
           <div>
+            {workflow !== undefined &&
+            JSON.parse(workflow?.execution_data).nodes[pod_name].type ===
+              'ChaosEngine' ? (
+              <ButtonFilled
+                onClick={() => {
+                  downloadLogs(podLogs, pod_name);
+                }}
+                className={classes.downloadLogsBtn}
+              >
+                <Typography>
+                  <img src="/icons/download-logs.svg" alt="download logs" />{' '}
+                  {t('workflowDetailsView.logs')}
+                </Typography>
+              </ButtonFilled>
+            ) : (
+              <></>
+            )}
             {podLogs?.main_logs !== null && podLogs?.main_logs !== '' ? (
               <div style={{ whiteSpace: 'pre-wrap' }}>
                 <Typography className={classes.text}>

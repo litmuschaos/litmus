@@ -41,10 +41,8 @@ const ToolBar: React.FC = () => {
   );
 
   const dateRangeSelectorRef = React.useRef<HTMLDivElement>(null);
-  const [
-    isDateRangeSelectorPopoverOpen,
-    setDateRangeSelectorPopoverOpen,
-  ] = React.useState(false);
+  const [isDateRangeSelectorPopoverOpen, setDateRangeSelectorPopoverOpen] =
+    React.useState(false);
   const [refreshRate, setRefreshRate] = React.useState<number>(
     selectedDashboard.refreshRate ? selectedDashboard.refreshRate : 0
   );

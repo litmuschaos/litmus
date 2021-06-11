@@ -46,9 +46,8 @@ const PrometheusQueryEditor: React.FC<PrometheusQueryEditorProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [modifiedPrometheusQuery, setModifiedPrometheusQuery] = useState(
-    content
-  );
+  const [modifiedPrometheusQuery, setModifiedPrometheusQuery] =
+    useState(content);
   const [autoCompleteOptions, setAutoCompleteOptions] = useState([
     ...seriesListCompletionOptions,
     ...labelListCompletionOptions,

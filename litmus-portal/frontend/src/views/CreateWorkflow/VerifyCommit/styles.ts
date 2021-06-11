@@ -77,8 +77,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   rightColumn: {
     width: '75%',
   },
-  iconBtn: {
-    padding: theme.spacing(0, 1),
+  spaceBetween: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   sumText: {
     width: '100%',
@@ -99,9 +101,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   subjectDesc: {
     fontSize: '0.75rem',
   },
+  info: {
+    margin: theme.spacing(0.5, 1),
+  },
   editIcon: {
-    color: theme.palette.text.primary,
-    height: '0.8rem',
+    cursor: 'pointer',
+    color: theme.palette.text.hint,
   },
   spacingHorizontal: {
     margin: theme.spacing(0, 1),
@@ -160,6 +165,35 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   bold: {
     fontWeight: 700,
+  },
+
+  // Editor
+  editorWrapper: {
+    marginBottom: theme.spacing(-4),
+  },
+  flex: {
+    display: 'flex',
+  },
+  additional: {
+    width: '95%',
+    margin: '0rem auto',
+    justifyContent: 'space-between',
+  },
+  name: {
+    margin: theme.spacing(1, 0, 2, 2),
+    fontWeight: 'bold',
+  },
+  editorTopBtn: {
+    padding: '0.4rem',
+    fontSize: '0.8rem',
+  },
+  editorCloseBtn: {
+    width: '0.5rem',
+    borderColor: theme.palette.disabledBackground,
+    color: theme.palette.text.disabled,
+    minWidth: '2rem',
+    padding: '0.2rem',
+    fontSize: '1rem',
   },
 }));
 export default useStyles;

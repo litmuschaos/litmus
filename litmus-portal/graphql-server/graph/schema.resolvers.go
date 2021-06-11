@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -36,18 +36,6 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 	return clusterHandler.ClusterRegister(clusterInput)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	err := validate.ValidateRole(ctx, input.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
-	if err != nil {
-		return nil, err
-	}
-	return wfHandler.CreateChaosWorkflow(ctx, &input, data_store.Store)
-}
-
-func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error) {
-	return wfHandler.ReRunWorkflow(workflowID)
-}
-
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 	return usermanagement.CreateUser(ctx, user)
 }
@@ -64,8 +52,24 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 	return usermanagement.UpdateUser(ctx, user)
 }
 
-func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
-	return wfHandler.DeleteWorkflow(ctx, workflowid, data_store.Store)
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	err := validate.ValidateRole(ctx, input.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return wfHandler.CreateChaosWorkflow(ctx, &input, data_store.Store)
+}
+
+func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error) {
+	return wfHandler.ReRunWorkflow(workflowID)
+}
+
+func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error) {
+	return wfHandler.DeleteWorkflow(ctx, workflowid, workflowRunID, data_store.Store)
+}
+
+func (r *mutationResolver) SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error) {
+	return wfHandler.SyncWorkflowRun(ctx, workflowid, workflowRunID, data_store.Store)
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
@@ -295,12 +299,12 @@ func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistr
 	return diRegistry, err
 }
 
-func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
-	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
+func (r *queryResolver) GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
+	err := validate.ValidateRole(ctx, workflowRunsInput.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.QueryWorkflowRuns(projectID)
+	return wfHandler.QueryWorkflowRuns(workflowRunsInput)
 }
 
 func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
@@ -333,24 +337,12 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return usermanagement.GetUsers(ctx)
 }
 
-func (r *queryResolver) GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error) {
-	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
+func (r *queryResolver) ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {
+	err := validate.ValidateRole(ctx, workflowInput.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.QueryWorkflows(projectID)
-}
-
-func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error) {
-	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
-	if err != nil {
-		return nil, err
-	}
-	if len(workflowIds) == 0 {
-		return wfHandler.QueryListWorkflow(projectID)
-	} else {
-		return wfHandler.QueryListWorkflowByIDs(workflowIds)
-	}
+	return wfHandler.QueryListWorkflow(workflowInput)
 }
 
 func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
@@ -381,8 +373,8 @@ func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.E
 	return myhub.GetYAMLData(ctx, experimentInput)
 }
 
-func (r *queryResolver) GetPredefinedExperimentList(ctx context.Context, hubName string, projectID string) ([]string, error) {
-	return myhub.GetPredefinedExperiementList(hubName, projectID)
+func (r *queryResolver) GetPredefinedWorkflowList(ctx context.Context, hubName string, projectID string) ([]string, error) {
+	return myhub.GetPredefinedWorkflowList(hubName, projectID)
 }
 
 func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {

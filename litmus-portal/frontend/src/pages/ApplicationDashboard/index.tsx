@@ -49,30 +49,27 @@ const DashboardPage: React.FC = () => {
     (state: RootState) => state.selectDataSource
   );
 
-  const [
-    selectedDashboardInformation,
-    setSelectedDashboardInformation,
-  ] = React.useState<SelectedDashboardInformation>({
-    id: selectedDashboard.selectedDashboardID ?? '',
-    name: '',
-    typeName: '',
-    typeID: '',
-    agentID: '',
-    agentName: '',
-    urlToIcon: '',
-    information: '',
-    chaosEventQueryTemplate: '',
-    chaosVerdictQueryTemplate: '',
-    applicationMetadataMap: [],
-    dashboardListForAgent: [],
-    metaData: [],
-    dashboardKey: 'Default',
-    panelNameAndIDList: [],
-  });
+  const [selectedDashboardInformation, setSelectedDashboardInformation] =
+    React.useState<SelectedDashboardInformation>({
+      id: selectedDashboard.selectedDashboardID ?? '',
+      name: '',
+      typeName: '',
+      typeID: '',
+      agentID: '',
+      agentName: '',
+      urlToIcon: '',
+      information: '',
+      chaosEventQueryTemplate: '',
+      chaosVerdictQueryTemplate: '',
+      applicationMetadataMap: [],
+      dashboardListForAgent: [],
+      metaData: [],
+      dashboardKey: 'Default',
+      panelNameAndIDList: [],
+    });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [dataSourceStatus, setDataSourceStatus] = React.useState<string>(
-    'ACTIVE'
-  );
+  const [dataSourceStatus, setDataSourceStatus] =
+    React.useState<string>('ACTIVE');
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -80,7 +77,6 @@ const DashboardPage: React.FC = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const [isInfoOpen, setIsInfoOpen] = React.useState<Boolean>(false);
   const [selectedPanels, setSelectedPanels] = React.useState<string[]>([]);
 
@@ -108,11 +104,10 @@ const DashboardPage: React.FC = () => {
         selectedDashboardInformation.id !==
         selectedDashboardInformation.dashboardKey
       ) {
-        const selectedDashboard: ListDashboardResponse = dashboards.ListDashboard.filter(
-          (data) => {
+        const selectedDashboard: ListDashboardResponse =
+          dashboards.ListDashboard.filter((data) => {
             return data.db_id === selectedDashboardInformation.id;
-          }
-        )[0];
+          })[0];
         const selectedPanelNameAndIDList: PanelNameAndID[] = [];
         if (selectedDashboard) {
           (selectedDashboard.panel_groups ?? []).forEach(
@@ -170,13 +165,12 @@ const DashboardPage: React.FC = () => {
           selectedDashboardInformation.metaData[0] &&
           dataSources.ListDataSource
         ) {
-          const selectedDataSource: ListDataSourceResponse = dataSources.ListDataSource.filter(
-            (data) => {
+          const selectedDataSource: ListDataSourceResponse =
+            dataSources.ListDataSource.filter((data) => {
               return (
                 data.ds_id === selectedDashboardInformation.metaData[0].ds_id
               );
-            }
-          )[0];
+            })[0];
           if (selectedDataSource) {
             dataSource.selectDataSource({
               selectedDataSourceURL: selectedDataSource.ds_url,

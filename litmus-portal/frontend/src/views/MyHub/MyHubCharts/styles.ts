@@ -101,6 +101,17 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.875),
     fontSize: '0.875rem',
   },
+  MuiAccordionroot: {
+    '&.MuiAccordion-root:before': {
+      backgroundColor: theme.palette.common.white,
+    },
+  },
+  noExp: {
+    margin: theme.spacing(6),
+  },
+  chartAccordion: {
+    marginTop: theme.spacing(2.5),
+  },
 }));
 
 export default useStyles;

@@ -1,69 +1,72 @@
 import { gql } from '@apollo/client';
 
-export const WORKFLOW_DETAILS = gql`
-  query workflowDetails($projectID: String!) {
-    getWorkFlowRuns(project_id: $projectID) {
-      workflow_id
-      workflow_name
-      workflow_run_id
-      execution_data
-      project_id
-      cluster_name
-      last_updated
-      cluster_type
-      cluster_id
+export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_id
+        workflow_name
+        workflow_run_id
+        cluster_name
+        last_updated
+        cluster_id
+        phase
+        execution_data
+        resiliency_score
+        isRemoved
+      }
     }
   }
 `;
 
-export const SCHEDULE_DETAILS = gql`
-  query scheduleDetails($projectID: String!) {
-    getScheduledWorkflows(project_id: $projectID) {
-      workflow_id
-      workflow_manifest
-      cronSyntax
-      workflow_name
-      workflow_description
-      weightages {
-        experiment_name
-        weightage
+export const WORKFLOW_DETAILS = gql`
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_id
+        workflow_name
+        workflow_run_id
+        cluster_name
+        last_updated
+        phase
+        resiliency_score
+        experiments_passed
+        total_experiments
+        isRemoved
       }
-      isCustomWorkflow
-      updated_at
-      created_at
-      project_id
-      cluster_id
-      cluster_type
-      cluster_name
-      isRemoved
     }
   }
 `;
 
 export const WORKFLOW_LIST_DETAILS = gql`
-  query workflowListDetails($projectID: String!, $workflowIDs: [ID]) {
-    ListWorkflow(project_id: $projectID, workflow_ids: $workflowIDs) {
-      workflow_id
-      workflow_manifest
-      cronSyntax
-      cluster_name
-      workflow_name
-      workflow_description
-      weightages {
-        experiment_name
-        weightage
-      }
-      isCustomWorkflow
-      updated_at
-      created_at
-      project_id
-      cluster_id
-      cluster_type
-      isRemoved
-      workflow_runs {
-        execution_data
-        workflow_run_id
-        last_updated
+  query workflowListDetails($workflowInput: ListWorkflowsInput!) {
+    ListWorkflow(workflowInput: $workflowInput) {
+      total_no_of_workflows
+      workflows {
+        workflow_id
+        workflow_manifest
+        cronSyntax
+        cluster_name
+        workflow_name
+        workflow_description
+        weightages {
+          experiment_name
+          weightage
+        }
+        isCustomWorkflow
+        updated_at
+        created_at
+        project_id
+        cluster_id
+        cluster_type
+        isRemoved
+        workflow_runs {
+          execution_data
+          workflow_run_id
+          last_updated
+        }
       }
     }
   }
@@ -146,6 +149,14 @@ export const GET_CLUSTER_LENGTH = gql`
   query getClusters($project_id: String!) {
     getCluster(project_id: $project_id) {
       cluster_id
+    }
+  }
+`;
+
+export const GET_CLUSTER_NAMES = gql`
+  query getClusters($project_id: String!) {
+    getCluster(project_id: $project_id) {
+      cluster_name
     }
   }
 `;
@@ -283,6 +294,7 @@ export const LIST_MANIFEST_TEMPLATE = gql`
       project_name
       template_description
       template_name
+      isCustomWorkflow
     }
   }
 `;
@@ -467,6 +479,12 @@ export const GET_TEMPLATE_BY_ID = gql`
       template_id
       manifest
     }
+  }
+`;
+
+export const GET_PREDEFINED_WORKFLOW_LIST = gql`
+  query GetPredefinedWorkflowList($hubname: String!, $projectid: String!) {
+    GetPredefinedWorkflowList(HubName: $hubname, projectID: $projectid)
   }
 `;
 

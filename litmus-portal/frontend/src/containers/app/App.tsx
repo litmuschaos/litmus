@@ -10,7 +10,6 @@ import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import Center from '../layouts/Center';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -37,11 +36,9 @@ const ChooseAndConfigureDashboards = lazy(
   () => import('../../pages/ChooseAndConfigureDashboards')
 );
 const DashboardPage = lazy(() => import('../../pages/ApplicationDashboard'));
-const MyHub = lazy(() => import('../../pages/MyHub'));
-const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
+const MyHub = lazy(() => import('../../pages/ChaosHub'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
-const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));
 
 const Routes: React.FC = () => {
   const baseRoute = window.location.pathname.split('/')[1];
@@ -201,8 +198,6 @@ const Routes: React.FC = () => {
           <Route exact path="/targets" component={Targets} />
           <Route exact path="/target-connect" component={ConnectTargets} />
           <Route exact path="/myhub" component={MyHub} />
-          <Route exact path="/myhub/connect" component={MyHubConnect} />
-          <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
           <Route exact path="/myhub/:hubname" component={ChaosChart} />
           <Route
             exact
@@ -252,9 +247,9 @@ function App() {
     <LitmusThemeProvider>
       <Suspense
         fallback={
-          <Center>
+          <div style={{ height: '100vh' }}>
             <Loader />
-          </Center>
+          </div>
         }
       >
         <Router history={history}>

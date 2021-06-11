@@ -41,13 +41,14 @@ const useStyles = makeStyles((theme) => ({
   },
   expMain: {
     marginLeft: theme.spacing(1.25),
+    marginBottom: theme.spacing(2),
   },
   linkText: {
     fontSize: '1rem',
   },
   developerDiv: {
     marginLeft: theme.spacing(2.5),
-    marginTop: theme.spacing(6.25),
+    marginTop: theme.spacing(4.25),
   },
   detailDiv: {
     backgroundColor: theme.palette.common.white,

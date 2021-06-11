@@ -1,10 +1,18 @@
 # BUILD STAGE
 FROM golang:1.14 AS builder
 
+ARG TARGETOS=linux
+ARG TARGETARCH
+
 ADD . /auth-server
 WORKDIR /auth-server
-RUN CGO_ENABLED=0 go build -o /output/server -v ./src/
 
+ENV GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH}
+
+RUN go env
+
+RUN CGO_ENABLED=0 go build -o /output/server -v ./src/
 
 # DEPLOY STAGE
 FROM alpine:latest
@@ -19,4 +27,3 @@ USER 1001
 CMD ["./server"]
 
 EXPOSE 3000
-

@@ -65,10 +65,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
     startDate: ' ',
     endDate: ' ',
   });
-  const [
-    isDateRangeSelectorPopoverOpen,
-    setDateRangeSelectorPopoverOpen,
-  ] = useState(false);
+  const [isDateRangeSelectorPopoverOpen, setDateRangeSelectorPopoverOpen] =
+    useState(false);
 
   const handleTestChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setTest(event.target.value as String);

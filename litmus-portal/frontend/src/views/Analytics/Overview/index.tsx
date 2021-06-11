@@ -1,7 +1,3 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-return-assign */
-
 import { useQuery } from '@apollo/client';
 import React from 'react';
 import { LocalQuickActionCard } from '../../../components/LocalQuickActionCard';
@@ -12,7 +8,6 @@ import {
 } from '../../../graphql/queries';
 import {
   DashboardList,
-  ListDashboardResponse,
   ListDashboardVars,
 } from '../../../models/graphql/dashboardsDetails';
 import {
@@ -21,9 +16,8 @@ import {
   ListDataSourceVars,
 } from '../../../models/graphql/dataSourceDetails';
 import {
-  Workflow,
-  WorkflowList,
-  WorkflowListDataVars,
+  ListWorkflowsInput,
+  ScheduledWorkflows,
 } from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { sortNumAsc } from '../../../utils/sort';
@@ -40,25 +34,26 @@ const Overview: React.FC = () => {
   const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
-  const { data: schedulesData } = useQuery<WorkflowList, WorkflowListDataVars>(
-    WORKFLOW_LIST_DETAILS,
-    {
-      variables: {
-        projectID,
-        workflowIDs: [],
+  const { data: schedulesData } = useQuery<
+    ScheduledWorkflows,
+    ListWorkflowsInput
+  >(WORKFLOW_LIST_DETAILS, {
+    variables: {
+      workflowInput: {
+        project_id: projectID,
+        pagination: {
+          page: 0,
+          limit: 3,
+        },
       },
-      fetchPolicy: 'cache-and-network',
-      pollInterval: 10000,
-    }
-  );
+    },
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 10000,
+  });
 
-  const filteredScheduleData = schedulesData?.ListWorkflow.slice().sort(
-    (a: Workflow, b: Workflow) => {
-      const x = parseInt(a.updated_at, 10);
-      const y = parseInt(b.updated_at, 10);
-      return sortNumAsc(y, x);
-    }
-  );
+  const filteredScheduleData = schedulesData?.ListWorkflow.workflows;
+  const totalScheduledWorkflows =
+    schedulesData?.ListWorkflow.totalNoOfWorkflows;
 
   // Apollo query to get the dashboard data
   const { data: dashboardsList } = useQuery<DashboardList, ListDashboardVars>(
@@ -73,13 +68,11 @@ const Overview: React.FC = () => {
   );
 
   const filteredDashboardData = dashboardsList?.ListDashboard
-    ? dashboardsList?.ListDashboard.slice().sort(
-        (a: ListDashboardResponse, b: ListDashboardResponse) => {
-          const x = parseInt(a.updated_at, 10);
-          const y = parseInt(b.updated_at, 10);
-          return sortNumAsc(y, x);
-        }
-      )
+    ? dashboardsList?.ListDashboard.slice().sort((a, b) => {
+        const x = parseInt(a.updated_at, 10);
+        const y = parseInt(b.updated_at, 10);
+        return sortNumAsc(y, x);
+      })
     : [];
   // Query for dataSource
   const { data } = useQuery<DataSourceList, ListDataSourceVars>(
@@ -117,7 +110,10 @@ const Overview: React.FC = () => {
               ))}
           <TableDataSource dataSourceList={filteredDataSourceData} />
           <TableDashboardData dashboardDataList={filteredDashboardData} />
-          <TableScheduleWorkflow scheduleWorkflowList={filteredScheduleData} />
+          <TableScheduleWorkflow
+            scheduleWorkflowList={filteredScheduleData ?? []}
+            totalNoOfWorkflows={totalScheduledWorkflows ?? 0}
+          />
 
           {((filteredScheduleData && filteredScheduleData.length === 0) ||
             !filteredScheduleData) && (

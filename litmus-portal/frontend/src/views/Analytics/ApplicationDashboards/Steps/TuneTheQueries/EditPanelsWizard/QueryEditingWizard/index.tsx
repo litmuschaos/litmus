@@ -72,29 +72,27 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
     graph: false,
   });
   const [settings, setSettings] = useState<boolean>(true);
-  const [
-    prometheusQueryData,
-    setPrometheusQueryData,
-  ] = React.useState<promInput>({
-    ds_details: {
-      url: panelInfo.ds_url ?? '',
-      start: `${
-        new Date(
-          moment.unix(Math.round(new Date().getTime() / 1000) - 900).format()
-        ).getTime() / 1000
-      }`,
-      end: `${
-        new Date(
-          moment.unix(Math.round(new Date().getTime() / 1000)).format()
-        ).getTime() / 1000
-      }`,
-    },
-    queries: getPromQueryInput(
-      panelInfo.prom_queries.filter((query) => !query.hidden),
-      900,
-      false
-    ),
-  });
+  const [prometheusQueryData, setPrometheusQueryData] =
+    React.useState<promInput>({
+      ds_details: {
+        url: panelInfo.ds_url ?? '',
+        start: `${
+          new Date(
+            moment.unix(Math.round(new Date().getTime() / 1000) - 900).format()
+          ).getTime() / 1000
+        }`,
+        end: `${
+          new Date(
+            moment.unix(Math.round(new Date().getTime() / 1000)).format()
+          ).getTime() / 1000
+        }`,
+      },
+      queries: getPromQueryInput(
+        panelInfo.prom_queries.filter((query) => !query.hidden),
+        900,
+        false
+      ),
+    });
 
   useEffect(() => {
     if (update.triggerUpdate) {

@@ -1,3 +1,4 @@
+import { useMutation, useQuery } from '@apollo/client';
 import {
   Button,
   IconButton,
@@ -7,51 +8,50 @@ import {
   TableCell,
   Typography,
 } from '@material-ui/core';
-import { useQuery } from '@apollo/client';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import React from 'react';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { ButtonFilled, LightPills } from 'litmus-ui';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import TimePopOver from '../../../components/TimePopOver';
 import {
-  ExecutionData,
-  WorkflowRun,
-} from '../../../models/graphql/workflowData';
-import { history } from '../../../redux/configureStore';
-import timeDifferenceForDate from '../../../utils/datesModifier';
-import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
-import CustomStatus from '../CustomStatus/Status';
-import useStyles from './styles';
+  DELETE_WORKFLOW,
+  SYNC_WORKFLOW,
+  WORKFLOW_LIST_DETAILS,
+} from '../../../graphql';
+import { WorkflowRun } from '../../../models/graphql/workflowData';
+import {
+  ListWorkflowsInput,
+  ScheduledWorkflows,
+} from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
-import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
-import {
-  WorkflowList,
-  WorkflowListDataVars,
-} from '../../../models/graphql/workflowListData';
+import { history } from '../../../redux/configureStore';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
+import useStyles from './styles';
 
 interface TableDataProps {
-  data: WorkflowRun;
-  exeData: ExecutionData;
+  data: Partial<WorkflowRun>;
+  refetchQuery: any;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
+const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const { t } = useTranslation();
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const nodeSelection = useActions(NodeSelectionActions);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   // Function to capitalize the first letter of the word
   // eg: internal to Internal
   const nameCapitalized = (clusterType: string) => {
@@ -61,12 +61,14 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   };
 
   const { data: scheduledWorkflowData } = useQuery<
-    WorkflowList,
-    WorkflowListDataVars
+    ScheduledWorkflows,
+    ListWorkflowsInput
   >(WORKFLOW_LIST_DETAILS, {
     variables: {
-      projectID,
-      workflowIDs: [data.workflow_id as string],
+      workflowInput: {
+        project_id: projectID,
+        workflow_ids: [data.workflow_id ?? ''],
+      },
     },
   });
 
@@ -82,6 +84,44 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
     setPopAnchorEl(event.currentTarget);
   };
 
+  /**
+   * State variables for warning popover
+   */
+  const [popWarningAnchorEl, setWarningPopAnchorEl] =
+    React.useState<null | HTMLElement>(null);
+  const isWarningOpen = Boolean(popWarningAnchorEl);
+  const idWarning = isWarningOpen ? 'simple-popover' : undefined;
+  const handleWarningPopOverClose = () => {
+    setWarningPopAnchorEl(null);
+  };
+  const handleWarningPopOverClick = (event: React.MouseEvent<HTMLElement>) => {
+    setWarningPopAnchorEl(event.currentTarget);
+  };
+
+  /**
+   * Sync workflow to sync a chaos workflow
+   */
+  const [syncWorkflow] = useMutation(SYNC_WORKFLOW, {
+    onCompleted: (data) => {
+      if (data.syncWorkflow) {
+        handleWarningPopOverClose();
+        refetchQuery();
+      }
+    },
+  });
+
+  /**
+   * Delete workflow mutation to delete a chaos workflow
+   */
+  const [deleteWorkflow] = useMutation(DELETE_WORKFLOW, {
+    onCompleted: (data) => {
+      if (data.deleteChaosWorkflow) {
+        handleWarningPopOverClose();
+        refetchQuery();
+      }
+    },
+  });
+
   function getResiliencyScoreColor(score: number) {
     if (score < 39) {
       return classes.less;
@@ -92,11 +132,114 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
     return classes.high;
   }
 
+  // Function to find the time different in minutes
+  const timeDiff = (currentTime: number, lastUpdated: string) => {
+    const current = currentTime;
+    const last = parseInt(lastUpdated, 10) * 1000;
+    const timeDifference = (current - last) / (60 * 1000);
+    return timeDifference;
+  };
+
+  const getVariant = (variant: string | undefined) => {
+    switch (variant) {
+      case 'succeeded':
+        return 'success';
+      case 'failed':
+        return 'danger';
+      case 'running':
+        return 'warning';
+      default:
+        return undefined;
+    }
+  };
+
   return (
     <>
-      <TableCell className={classes.tableDataStatus}>
-        <CustomStatus
-          status={exeData.finishedAt.length === 0 ? 'Running' : exeData.phase}
+      {/* Table cell for warning (if the workflow is in running state from 20 mins) */}
+      <TableCell className={classes.warningTableCell}>
+        {timeDiff(new Date().getTime(), data.last_updated ?? '') >= 20 &&
+        data.phase?.toLowerCase() === 'running' ? (
+          <IconButton onClick={handleWarningPopOverClick}>
+            <img src="./icons/warning.svg" alt="warning" width="20" />
+          </IconButton>
+        ) : (
+          <></>
+        )}
+        {/* Warning PopOver */}
+        <Popover
+          id={idWarning}
+          open={isWarningOpen}
+          anchorEl={popWarningAnchorEl}
+          onClose={handleWarningPopOverClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+        >
+          <div className={classes.popoverWarning}>
+            <Typography>
+              {t('chaosWorkflows.browseWorkflows.wfIssue')}
+            </Typography>
+            <div className={classes.imageRunning}>
+              <img
+                src="/icons/running.svg"
+                alt="running"
+                className={classes.runningSmallIcon}
+              />{' '}
+              <Typography className={classes.runningText}>
+                {t('chaosWorkflows.browseWorkflows.runningFrom')}{' '}
+                {Math.round(
+                  timeDiff(new Date().getTime(), data.last_updated ?? '')
+                )}{' '}
+                {t('chaosWorkflows.browseWorkflows.min')}
+              </Typography>
+            </div>
+            {/* Buttons to sync and terminate the workflow */}
+            <div className={classes.warningBtnDiv}>
+              <ButtonFilled
+                className={classes.syncBtn}
+                onClick={() => {
+                  syncWorkflow({
+                    variables: {
+                      workflowid: data.workflow_id,
+                      workflow_run_id: data.workflow_run_id,
+                    },
+                  });
+                }}
+              >
+                <img src="./icons/sync-wf.svg" alt="sync" />
+                <Typography className={classes.waitingBtnText}>
+                  {t('chaosWorkflows.browseWorkflows.sync')}
+                </Typography>
+              </ButtonFilled>
+              <ButtonFilled
+                onClick={() => {
+                  deleteWorkflow({
+                    variables: {
+                      workflowid: data.workflow_id,
+                      workflow_run_id: data.workflow_run_id,
+                    },
+                  });
+                }}
+                className={classes.terminateText}
+              >
+                <img src="./icons/terminate-wf.svg" alt="terminate" />
+                <Typography className={classes.waitingBtnText}>
+                  {t('chaosWorkflows.browseWorkflows.terminate')}
+                </Typography>
+              </ButtonFilled>
+            </div>
+          </div>
+        </Popover>
+      </TableCell>
+      <TableCell>
+        <LightPills
+          variant={getVariant(data.phase?.toLowerCase())}
+          label={data.phase ?? ''}
         />
       </TableCell>
       <TableCell
@@ -106,10 +249,11 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           nodeSelection.selectNode({
             pod_name: '',
           });
-          history.push({
-            pathname: `/workflows/${data.workflow_run_id}`,
-            search: `?projectID=${projectID}&projectRole=${projectRole}`,
-          });
+          if (data.phase?.toLowerCase() !== 'notavailable')
+            history.push({
+              pathname: `/workflows/${data.workflow_run_id}`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
         }}
       >
         <Typography className={classes.boldText} data-cy="workflowName">
@@ -118,23 +262,24 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterName}>
-          {nameCapitalized(data.cluster_name)}
+          {nameCapitalized(data.cluster_name ?? '')}
         </Typography>
       </TableCell>
       <TableCell className={classes.reliabiltyData}>
         <Typography>
           <span>{t('chaosWorkflows.browseWorkflows.tableData.overallRR')}</span>
-          {!exeData.resiliency_score ? (
+          {data.resiliency_score === undefined ||
+          data.resiliency_score === null ? (
             <span className={classes.less}>
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>
           ) : (
             <span
               className={`${classes.boldText} ${getResiliencyScoreColor(
-                exeData.resiliency_score
+                data.resiliency_score
               )}`}
             >
-              {exeData.resiliency_score}%
+              {data.resiliency_score}%
             </span>
           )}
         </Typography>
@@ -142,17 +287,22 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <span>
             {t('chaosWorkflows.browseWorkflows.tableData.experimentsPassed')}
           </span>
-          {!exeData.resiliency_score ? (
+          {data.experiments_passed === undefined ||
+          data.experiments_passed === null ||
+          data.total_experiments === undefined ||
+          data.total_experiments === null ||
+          data.resiliency_score === undefined ||
+          data.resiliency_score === null ? (
             <span className={classes.less}>
               {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </span>
           ) : (
             <span
               className={`${classes.boldText} ${getResiliencyScoreColor(
-                exeData.resiliency_score
+                data.resiliency_score
               )}`}
             >
-              {exeData.experiments_passed}/{exeData.total_experiments}
+              {data.experiments_passed}/{data.total_experiments}
             </span>
           )}
         </Typography>
@@ -165,7 +315,11 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           >
             <Typography className={classes.boldText}>
               {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
-              {scheduledWorkflowData?.ListWorkflow[0].weightages.length})
+              {
+                scheduledWorkflowData?.ListWorkflow.workflows[0].weightages
+                  .length
+              }
+              )
             </Typography>
             <div className={classes.experimentDetails}>
               {isOpen ? (
@@ -190,7 +344,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
             }}
           >
             <div className={classes.popover}>
-              {scheduledWorkflowData?.ListWorkflow[0].weightages.map(
+              {scheduledWorkflowData?.ListWorkflow.workflows[0].weightages.map(
                 (weightEntry) => (
                   <div
                     key={weightEntry.experiment_name}
@@ -208,7 +362,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         </div>
       </TableCell>
       <TableCell>
-        <Typography>{timeDifferenceForDate(data.last_updated)}</Typography>
+        <TimePopOver unixTime={data.last_updated ?? ''} />
       </TableCell>
       <TableCell>
         <IconButton
@@ -234,10 +388,11 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
               nodeSelection.selectNode({
                 pod_name: '',
               });
-              history.push({
-                pathname: `/workflows/${data.workflow_run_id}`,
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              });
+              if (data.phase?.toLowerCase() !== 'notavailable')
+                history.push({
+                  pathname: `/workflows/${data.workflow_run_id}`,
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
@@ -254,10 +409,11 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Analysis"
             onClick={() => {
-              history.push({
-                pathname: `/workflows/analytics/${data.workflow_id}`,
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              });
+              if (data.phase?.toLowerCase() !== 'notavailable')
+                history.push({
+                  pathname: `/workflows/analytics/${data.workflow_id}`,
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowAnalytics">
