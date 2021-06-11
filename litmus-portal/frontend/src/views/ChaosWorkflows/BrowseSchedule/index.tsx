@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
 import Loader from '../../../components/Loader';
 import {
-  DELETE_SCHEDULE,
+  DELETE_WORKFLOW,
   SCHEDULE_DETAILS,
   UPDATE_SCHEDULE,
 } from '../../../graphql';
@@ -75,7 +75,7 @@ const BrowseSchedule: React.FC = () => {
   );
 
   // Apollo mutation to delete the selected schedule
-  const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_SCHEDULE, {
+  const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_WORKFLOW, {
     refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
   });
 
@@ -188,7 +188,7 @@ const BrowseSchedule: React.FC = () => {
 
   const deleteRow = (wfid: string) => {
     deleteSchedule({
-      variables: { workflow_id: wfid },
+      variables: { workflowid: wfid, workflow_run_id: '' },
     });
   };
   return (
