@@ -14,7 +14,7 @@ import { WORKFLOW_DETAILS } from '../../../graphql';
 import { Role } from '../../../models/graphql/user';
 import {
   Workflow,
-  WorkflowDataVars
+  WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
@@ -109,14 +109,15 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             'homeViews.agentConfiguredHome.recentWorkflowRuns.schedule'
           )}
         >
-          {filteredData.map((workflow) => {
+          {data?.getWorkflowRuns.workflow_runs.map((workflow) => {
             return (
               <WorkflowRunCard key={workflow.workflow_id} data={workflow} />
             );
           })}
         </RecentOverviewContainer>
       ) : data && workflowRunCount > 0 ? (
-        <RecentWorkflowRuns data={data.getWorkflowRuns.workflow_runs} />
+        // <RecentWorkflowRuns data={data.getWorkflowRuns.workflow_runs} />
+        <div>Hello world</div>
       ) : (
         <MainInfoContainer
           src="./icons/workflowScheduleHome.svg"
