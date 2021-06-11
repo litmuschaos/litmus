@@ -240,9 +240,8 @@ const WorkflowTable = forwardRef(
        */
       const selectedEngine =
         wfManifest.spec.templates[experimentIndex].inputs.artifacts[0];
-      const { instance_id } = YAML.parse(
-        selectedEngine.raw.data
-      ).metadata.labels;
+      const { instance_id } = YAML.parse(selectedEngine.raw.data).metadata
+        .labels;
 
       /**
        * if the template is a revert-chaos template

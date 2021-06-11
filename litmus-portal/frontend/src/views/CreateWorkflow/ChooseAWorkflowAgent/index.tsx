@@ -46,9 +46,8 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
 
   const [clusterData, setClusterData] = useState<Cluster[]>([]);
   const [search, setSearch] = useState<string | null>(null);
-  const [currentlySelectedAgent, setCurrentlySelectedAgent] = useState<string>(
-    ''
-  );
+  const [currentlySelectedAgent, setCurrentlySelectedAgent] =
+    useState<string>('');
 
   const [getRegistryData] = useLazyQuery(GET_IMAGE_REGISTRY, {
     fetchPolicy: 'network-only',

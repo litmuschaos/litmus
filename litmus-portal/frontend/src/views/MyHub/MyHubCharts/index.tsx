@@ -101,12 +101,10 @@ const MyHub: React.FC = () => {
 
   const [expanded, setExpanded] = React.useState<string | false>('panel2');
 
-  const handleChange = (panel: string) => (
-    event: React.ChangeEvent<{}>,
-    newExpanded: boolean
-  ) => {
-    setExpanded(newExpanded ? panel : false);
-  };
+  const handleChange =
+    (panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
 
   useEffect(() => {
     if (data !== undefined) {
@@ -122,6 +120,20 @@ const MyHub: React.FC = () => {
       setTotalExperiment(exp);
     }
   }, [data]);
+
+  const filteredWorkflow =
+    predefinedData?.GetPredefinedWorkflowList &&
+    predefinedData?.GetPredefinedWorkflowList.filter((data: string) =>
+      data.toLowerCase().includes(searchPredefined.trim())
+    );
+
+  const filteredExperiment =
+    totalExp &&
+    totalExp.filter(
+      (data) =>
+        data.ChaosName.toLowerCase().includes(search.trim()) ||
+        data.ExperimentName.toLowerCase().includes(search.trim())
+    );
 
   return loading || predefinedLoading ? (
     <Backdrop open className={classes.backdrop}>
@@ -139,11 +151,13 @@ const MyHub: React.FC = () => {
         <Typography variant="h3" gutterBottom>
           {UserHub?.HubName}
         </Typography>
-        <Typography variant="h5">
+        <Typography variant="h5" gutterBottom>
           {t('myhub.myhubChart.repoLink')}
-          <strong>
-            {UserHub?.RepoURL}/{UserHub?.RepoBranch}
-          </strong>
+          <strong>{UserHub?.RepoURL}</strong>
+        </Typography>
+        <Typography variant="h5">
+          {t('myhub.myhubChart.repoBranch')}
+          <strong>{UserHub?.RepoBranch}</strong>
         </Typography>
         <Typography className={classes.lastSyncText}>
           {t('myhub.myhubChart.lastSynced')}{' '}
@@ -175,11 +189,8 @@ const MyHub: React.FC = () => {
               changeSearch={handlePreDefinedSearch}
             />
             <div className={classes.chartsGroup}>
-              {predefinedData?.GetPredefinedWorkflowList.length > 0 ? (
-                predefinedData?.GetPredefinedWorkflowList.filter(
-                  (data: string) =>
-                    data.toLowerCase().includes(searchPredefined.trim())
-                ).map((expName: string) => {
+              {filteredWorkflow?.length > 0 ? (
+                filteredWorkflow.map((expName: string) => {
                   return (
                     <ChartCard
                       key={expName}
@@ -204,7 +215,7 @@ const MyHub: React.FC = () => {
                     height="80px"
                   />
                   <Typography variant="h5" className={classes.noExp}>
-                    {t('myhub.myhubChart.noExp')}
+                    {t('myhub.myhubChart.noPredefinedExp')}
                   </Typography>
                 </>
               )}
@@ -234,27 +245,33 @@ const MyHub: React.FC = () => {
           <div className={classes.mainDiv}>
             <HeaderSection searchValue={search} changeSearch={changeSearch} />
             <div className={classes.chartsGroup}>
-              {totalExp &&
-                totalExp.length > 0 &&
-                totalExp
-                  .filter(
-                    (data) =>
-                      data.ChaosName.toLowerCase().includes(search.trim()) ||
-                      data.ExperimentName.toLowerCase().includes(search.trim())
-                  )
-                  .map((expName: ChartName) => {
-                    return (
-                      <ChartCard
-                        key={`${expName.ChaosName}-${expName.ExperimentName}`}
-                        expName={expName}
-                        UserHub={UserHub}
-                        setSearch={setSearch}
-                        projectID={projectID}
-                        userRole={getProjectRole()}
-                        isPredefined={false}
-                      />
-                    );
-                  })}
+              {filteredExperiment?.length > 0 ? (
+                filteredExperiment.map((expName: ChartName) => {
+                  return (
+                    <ChartCard
+                      key={`${expName.ChaosName}-${expName.ExperimentName}`}
+                      expName={expName}
+                      UserHub={UserHub}
+                      setSearch={setSearch}
+                      projectID={projectID}
+                      userRole={getProjectRole()}
+                      isPredefined={false}
+                    />
+                  );
+                })
+              ) : (
+                <>
+                  <img
+                    src="/icons/no-experiment-found.svg"
+                    alt="no experiment"
+                    width="80px"
+                    height="80px"
+                  />
+                  <Typography variant="h5" className={classes.noExp}>
+                    {t('myhub.myhubChart.noExp')}
+                  </Typography>
+                </>
+              )}
             </div>
           </div>
         </AccordionDetails>

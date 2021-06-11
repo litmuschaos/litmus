@@ -19,6 +19,9 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
     if (status === 'Running' || status === 'Pending') {
       return setLabel(`${classes.status} ${classes.running}`);
     }
+    if (status === 'NotAvailable') {
+      return setLabel(`${classes.naStatus} ${classes.notAvailable}`);
+    }
     return setLabel(`${classes.status} ${classes.failed}`);
   }, [status]);
 

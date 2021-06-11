@@ -50,10 +50,8 @@ const WorkflowDetails: React.FC = () => {
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(false);
   // State for Checking if workflow failed
   const [isWorkflowFailed, setWorkflowFailed] = useState<boolean>(false);
-  const [
-    workflowSchedulesDetails,
-    setworkflowSchedulesDetails,
-  ] = useState<ScheduleWorkflow>();
+  const [workflowSchedulesDetails, setworkflowSchedulesDetails] =
+    useState<ScheduleWorkflow>();
 
   const tabs = useActions(TabActions);
   const nodeSelection = useActions(NodeSelectionActions);

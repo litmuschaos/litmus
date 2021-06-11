@@ -14,6 +14,7 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
         phase
         execution_data
         resiliency_score
+        isRemoved
       }
     }
   }
@@ -33,6 +34,7 @@ export const WORKFLOW_DETAILS = gql`
         resiliency_score
         experiments_passed
         total_experiments
+        isRemoved
       }
     }
   }

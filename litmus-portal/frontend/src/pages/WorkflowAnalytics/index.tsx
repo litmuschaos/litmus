@@ -53,36 +53,29 @@ interface WorkFlowTests {
 const AnalyticsPage: React.FC = () => {
   const classes = useStyles();
   const [popoverOpen, setPopoverOpen] = React.useState<boolean>(false);
-  const [workflowRunPresent, setWorkflowRunPresent] = React.useState<boolean>(
-    true
-  );
+  const [workflowRunPresent, setWorkflowRunPresent] =
+    React.useState<boolean>(true);
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
   const workflowId = pathname.split('/')[3];
   const { t } = useTranslation();
-  const [
-    selectedWorkflowRunID,
-    setSelectedWorkflowRunID,
-  ] = React.useState<string>('');
-  const [
-    selectedWorkflowRunDetails,
-    setSelectedWorkflowRunDetails,
-  ] = React.useState<WorkFlowTests[]>();
+  const [selectedWorkflowRunID, setSelectedWorkflowRunID] =
+    React.useState<string>('');
+  const [selectedWorkflowRunDetails, setSelectedWorkflowRunDetails] =
+    React.useState<WorkFlowTests[]>();
   const [workflowRunDataForPlot, setWorkflowRunDataForPlot] = React.useState<
     WorkflowRunData[]
   >([]);
-  const [
-    selectedWorkflowRunData,
-    setSelectedWorkflowRunData,
-  ] = React.useState<SelectedWorkflowRunData>({
-    testsPassed: 0,
-    testsFailed: 0,
-    resilienceScore: 0,
-    testDate: '',
-    xLoc: 0,
-    yLoc: 0,
-    workflowRunID: '',
-  });
+  const [selectedWorkflowRunData, setSelectedWorkflowRunData] =
+    React.useState<SelectedWorkflowRunData>({
+      testsPassed: 0,
+      testsFailed: 0,
+      resilienceScore: 0,
+      testDate: '',
+      xLoc: 0,
+      yLoc: 0,
+      workflowRunID: '',
+    });
 
   // get ProjectID
   const projectID = getProjectID();
