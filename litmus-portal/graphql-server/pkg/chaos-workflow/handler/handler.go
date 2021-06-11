@@ -357,7 +357,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 
 	var workflows []dbSchemaWorkflow.AggregatedWorkflowRuns
 
-	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
+	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
 		fmt.Println(err)
 		return &model.GetWorkflowsOutput{
 			TotalNoOfWorkflowRuns: 0,
@@ -387,13 +387,13 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		result = append(result, &newWorkflowRun)
 	}
 
-	totalFilteredWorkflowRuns := 0
+	totalFilteredWorkflowRunsCounter := 0
 	if len(workflows) > 0 && len(workflows[0].TotalFilteredWorkflowRuns) > 0 {
-		totalFilteredWorkflowRuns = workflows[0].TotalFilteredWorkflowRuns[0].Count
+		totalFilteredWorkflowRunsCounter = workflows[0].TotalFilteredWorkflowRuns[0].Count
 	}
 
 	output := model.GetWorkflowsOutput{
-		TotalNoOfWorkflowRuns: totalFilteredWorkflowRuns,
+		TotalNoOfWorkflowRuns: totalFilteredWorkflowRunsCounter,
 		WorkflowRuns:          result,
 	}
 	return &output, nil
@@ -525,7 +525,7 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 
 	var workflows []dbSchemaWorkflow.AggregatedWorkflows
 
-	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
+	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
 		return &model.ListWorkflowsOutput{
 			TotalNoOfWorkflows: 0,
 			Workflows:          result,
@@ -563,13 +563,13 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 		result = append(result, &newChaosWorkflows)
 	}
 
-	totalFilteredWorkflows := 0
+	totalFilteredWorkflowsCounter := 0
 	if len(workflows) > 0 && len(workflows[0].TotalFilteredWorkflows) > 0 {
-		totalFilteredWorkflows = workflows[0].TotalFilteredWorkflows[0].Count
+		totalFilteredWorkflowsCounter = workflows[0].TotalFilteredWorkflows[0].Count
 	}
 
 	output := model.ListWorkflowsOutput{
-		TotalNoOfWorkflows: totalFilteredWorkflows,
+		TotalNoOfWorkflows: totalFilteredWorkflowsCounter,
 		Workflows:          result,
 	}
 	return &output, nil
