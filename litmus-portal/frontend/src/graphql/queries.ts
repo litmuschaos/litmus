@@ -363,13 +363,25 @@ export const LIST_DASHBOARD = gql`
       db_id
       ds_id
       db_name
-      db_type
       cluster_name
       ds_name
       ds_type
+      db_type_id
+      db_type_name
+      db_information
+      chaos_event_query_template
+      chaos_verdict_query_template
+      application_metadata_map {
+        namespace
+        applications {
+          kind
+          names
+        }
+      }
       panel_groups {
         panels {
           panel_id
+          created_at
           prom_queries {
             queryid
             prom_query_name

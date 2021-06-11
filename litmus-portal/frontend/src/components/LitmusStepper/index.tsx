@@ -18,6 +18,7 @@ interface LitmusStepperProps {
   hideNext?: boolean;
   disableNext?: boolean;
   moreStepperActions?: React.ReactNode;
+  finishButtonText?: React.ReactNode;
 }
 
 const LitmusStepper: React.FC<LitmusStepperProps> = ({
@@ -30,6 +31,7 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
   disableNext,
   moreStepperActions,
   children,
+  finishButtonText,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -84,18 +86,23 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
         <div className={classes.endAction}>
           {activeStep !== steps.length - 1 ? (
             !hideNext && (
-              <ButtonFilled onClick={handleNext} disabled={disableNext}>
+              <ButtonFilled
+                onClick={handleNext}
+                disabled={disableNext ?? false}
+              >
                 <Typography>{t('workflowStepper.next')}</Typography>
               </ButtonFilled>
             )
           ) : loader ? (
             <ButtonFilled disabled onClick={handleNext}>
-              {t('workflowStepper.finish')}{' '}
+              {finishButtonText || t('workflowStepper.finish')}
               <span style={{ marginLeft: '0.5rem' }} /> <Loader size={20} />
             </ButtonFilled>
           ) : (
-            <ButtonFilled onClick={handleNext} disabled={disableNext}>
-              <Typography>{t('workflowStepper.finish')}</Typography>
+            <ButtonFilled onClick={handleNext} disabled={disableNext ?? false}>
+              {finishButtonText || (
+                <Typography>{t('workflowStepper.finish')}</Typography>
+              )}
             </ButtonFilled>
           )}
         </div>

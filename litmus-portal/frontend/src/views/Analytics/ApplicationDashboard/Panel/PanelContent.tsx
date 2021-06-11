@@ -28,11 +28,16 @@ import {
 } from '../../../../pages/ApplicationDashboard/constants';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
+import { history } from '../../../../redux/configureStore';
 import { RootState } from '../../../../redux/reducers';
 import { ReactComponent as ViewChaosMetric } from '../../../../svg/aligment.svg';
 import { ReactComponent as DisableViewChaosMetric } from '../../../../svg/alignmentStriked.svg';
 import { ReactComponent as Expand } from '../../../../svg/arrowsOut.svg';
 import { ReactComponent as Edit } from '../../../../svg/edit.svg';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import {
   DataParserForPrometheus,
   getPromQueryInput,
@@ -56,10 +61,13 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   const { palette } = useTheme();
   const classes = useStyles();
   const { t } = useTranslation();
+  // get ProjectID
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const dashboard = useActions(DashboardActions);
   const lineGraph: string[] = palette.graph.line;
   const areaGraph: string[] = palette.graph.area;
-  const [popout, setPopout] = useState(false);
+  const [popOut, setPopOut] = useState(false);
   const [viewEventMetric, setViewEventMetric] = useState(false);
   const [
     prometheusQueryData,
@@ -78,6 +86,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
 
   const [graphData, setGraphData] = React.useState<ParsedPrometheusData>({
     seriesData: [],
+    closedAreaData: [],
     chaosData: [],
   });
 
@@ -110,10 +119,16 @@ const PanelContent: React.FC<GraphPanelProps> = ({
         const parsedData: ParsedPrometheusData = DataParserForPrometheus(
           prometheusData,
           lineGraph,
-          areaGraph
+          areaGraph,
+          prom_queries
+            .filter((query) => query.close_area)
+            .map((query) => query.queryid)
         );
         setGraphData(parsedData);
       }
+      dashboard.selectDashboard({
+        forceUpdate: false,
+      });
     },
     onError: (error: ApolloError) => {
       if (error.message === PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED) {
@@ -298,9 +313,17 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             </ToolTip>
           )}
           <IconButton
-            disabled
             className={classes.panelIconButton}
-            onClick={() => {}}
+            onClick={() => {
+              dashboard.selectDashboard({
+                selectedDashboardID: selectedDashboard.selectedDashboardID,
+                activePanelID: panel_id,
+              });
+              history.push({
+                pathname: '/analytics/dashboard/configure',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
           >
             <Edit className={classes.panelIcon} />
           </IconButton>
@@ -308,7 +331,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             <IconButton
               className={classes.panelIconButton}
               onClick={() => {
-                setPopout(true);
+                setPopOut(true);
               }}
             >
               <Expand className={classes.panelIcon} />
@@ -318,12 +341,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
       </div>
       <div>
         <Modal
-          open={popout}
-          onClose={() => setPopout(false)}
+          open={popOut}
+          onClose={() => setPopOut(false)}
           disableBackdropClick
           disableEscapeKeyDown
           modalActions={
-            <ButtonOutlined onClick={() => setPopout(false)}>
+            <ButtonOutlined onClick={() => setPopOut(false)}>
               &#x2715;
             </ButtonOutlined>
           }
@@ -335,11 +358,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
             <LineAreaGraph
               legendTableHeight={120}
               openSeries={graphData.seriesData}
+              closedSeries={graphData.closedAreaData}
               eventSeries={graphData.chaosData}
               showPoints={false}
               showLegendTable
               showEventTable
-              showTips
+              showTips={false}
               showEventMarkers
               marginLeftEventTable={10}
               unit={unit}
@@ -354,11 +378,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
         <LineAreaGraph
           legendTableHeight={120}
           openSeries={graphData.seriesData}
+          closedSeries={graphData.closedAreaData}
           eventSeries={graphData.chaosData}
           showPoints={false}
           showEventTable={viewEventMetric}
           showLegendTable
-          showTips
+          showTips={false}
           showEventMarkers
           unit={unit}
           yLabel={y_axis_left}

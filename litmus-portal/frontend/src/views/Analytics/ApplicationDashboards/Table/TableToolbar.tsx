@@ -248,7 +248,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         <ButtonFilled
           onClick={() => {
             history.push({
-              pathname: '/analytics/dashboard/select',
+              pathname: '/analytics/dashboard/create',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}

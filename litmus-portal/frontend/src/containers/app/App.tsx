@@ -30,17 +30,11 @@ const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
 const AnalyticsPage = lazy(() => import('../../pages/WorkflowAnalytics'));
 const AnalyticsDashboard = lazy(() => import('../../pages/AnalyticsPage'));
-const DataSourceSelectPage = lazy(
-  () => import('../../pages/SelectAndConfigureDataSource/Select')
-);
 const DataSourceConfigurePage = lazy(
-  () => import('../../pages/SelectAndConfigureDataSource/Configure')
+  () => import('../../pages/ConfigureDataSources')
 );
-const DashboardSelectPage = lazy(
-  () => import('../../pages/SelectAndConfigureDashboards/Select')
-);
-const DashboardConfigurePage = lazy(
-  () => import('../../pages/SelectAndConfigureDashboards/Configure')
+const ChooseAndConfigureDashboards = lazy(
+  () => import('../../pages/ChooseAndConfigureDashboards')
 );
 const DashboardPage = lazy(() => import('../../pages/ApplicationDashboard'));
 const MyHub = lazy(() => import('../../pages/MyHub'));
@@ -154,11 +148,6 @@ const Routes: React.FC = () => {
           <Route exact path="/analytics" component={AnalyticsDashboard} />
           <Route
             exact
-            path="/analytics/datasource/select"
-            component={DataSourceSelectPage}
-          />
-          <Route
-            exact
             path="/analytics/datasource/create"
             component={() => <DataSourceConfigurePage configure={false} />}
           />
@@ -169,18 +158,13 @@ const Routes: React.FC = () => {
           />
           <Route
             exact
-            path="/analytics/dashboard/select"
-            component={DashboardSelectPage}
-          />
-          <Route
-            exact
             path="/analytics/dashboard/create"
-            component={() => <DashboardConfigurePage configure={false} />}
+            component={() => <ChooseAndConfigureDashboards configure={false} />}
           />
           <Route
             exact
             path="/analytics/dashboard/configure"
-            component={() => <DashboardConfigurePage configure />}
+            component={() => <ChooseAndConfigureDashboards configure />}
           />
           <Route
             exact
@@ -188,7 +172,6 @@ const Routes: React.FC = () => {
             component={() => <DashboardPage />}
           />
           <Route exact path="/create-workflow" component={CreateWorkflow} />
-
           <Route
             exact
             path="/workflows/:workflowRunId"
@@ -237,12 +220,10 @@ const Routes: React.FC = () => {
             />
           )}
           <Route exact path="/404" component={ErrorPage} />
-
           {/* Redirects */}
           <Redirect exact path="/getStarted" to="/home" />
           <Redirect exact path="/workflows/schedule" to="/workflows" />
           <Redirect exact path="/workflows/template" to="/workflows" />
-
           <Redirect exact path="/analytics/overview" to="/analytics" />
           <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
           <Redirect

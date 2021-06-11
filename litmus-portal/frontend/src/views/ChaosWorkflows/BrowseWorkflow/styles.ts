@@ -124,13 +124,13 @@ const useStyles = makeStyles((theme) => ({
 
   // Colors for Resilency score and Experiments passed
   less: {
-    color: theme.palette.status.failed.text,
+    color: theme.palette.status.failed,
   },
   medium: {
-    color: theme.palette.status.pending.text,
+    color: theme.palette.status.pending,
   },
   high: {
-    color: theme.palette.status.completed.text,
+    color: theme.palette.status.completed,
   },
 
   // Menu option with icon

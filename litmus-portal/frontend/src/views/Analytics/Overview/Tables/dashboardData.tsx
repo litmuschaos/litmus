@@ -9,7 +9,6 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import PreconfiguredDashboardsArray from '../../../../components/PreconfiguredDashboards/data';
 import { ListDashboardResponse } from '../../../../models/graphql/dashboardsDetails';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
@@ -42,10 +41,6 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
   const onDashboardLoadRoutine = async (data: ListDashboardResponse) => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
-      selectedDashboardName: data.db_name,
-      selectedDashboardTemplateName: data.db_type,
-      selectedAgentID: data.cluster_id,
-      selectedAgentName: data.cluster_name,
       refreshRate: 0,
     });
     dataSource.selectDataSource({
@@ -91,14 +86,7 @@ const TableDashboardData: React.FC<TableDashboardData> = ({
                   <TableCell scope="row" className={classes.tableRowHeader}>
                     <div className={classes.workTableIconText}>
                       <img
-                        src={
-                          PreconfiguredDashboardsArray.map((elem) => {
-                            if (elem.name === dashboard.db_type) {
-                              return elem.urlToIcon;
-                            }
-                            return undefined;
-                          }).filter((item) => item)[0]
-                        }
+                        src={`/icons/${dashboard.db_type_id}_dashboard.svg`}
                         alt="icon"
                       />
 

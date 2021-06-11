@@ -82,10 +82,6 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
-      selectedDashboardName: data.db_name,
-      selectedDashboardTemplateName: data.db_type,
-      selectedAgentID: data.cluster_id,
-      selectedAgentName: data.cluster_name,
       refreshRate: 0,
     });
     dataSource.selectDataSource({
@@ -128,7 +124,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
 
       <StyledTableCell className={classes.tableHeader}>
         <Typography variant="body2" align="center">
-          <strong>{data.db_type}</strong>
+          <strong>{data.db_type_name}</strong>
         </Typography>
       </StyledTableCell>
 
@@ -190,17 +186,9 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <MenuItem
             value="Configure"
             onClick={() => {
-              const dashboardType: string = data.db_type;
-              let dashboardTemplateID: number = -1;
-              if (dashboardType === 'Kubernetes Platform') {
-                dashboardTemplateID = 0;
-              } else if (dashboardType === 'Sock Shop') {
-                dashboardTemplateID = 1;
-              }
               dashboard.selectDashboard({
                 selectedDashboardID: data.db_id,
-                selectedDashboardName: data.db_name,
-                selectedDashboardTemplateID: dashboardTemplateID,
+                activePanelID: '',
               });
               history.push({
                 pathname: '/analytics/dashboard/configure',

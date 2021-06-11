@@ -264,13 +264,15 @@ export const DELETE_DATASOURCE = gql`
 
 export const CREATE_DASHBOARD = gql`
   mutation createDashBoard($createDBInput: createDBInput) {
-    createDashBoard(dashboard: $createDBInput)
+    createDashBoard(dashboard: $createDBInput) {
+      db_id
+    }
   }
 `;
 
 export const UPDATE_DASHBOARD = gql`
-  mutation updateDashboard($updataDBInput: updataDBInput) {
-    updateDashboard(dashboard: $updataDBInput)
+  mutation updateDashboard($updateDBInput: updateDBInput) {
+    updateDashboard(dashboard: $updateDBInput)
   }
 `;
 
