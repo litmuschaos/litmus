@@ -11,6 +11,7 @@ import {
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { LightPills } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import TimePopOver from '../../../components/TimePopOver';
@@ -25,7 +26,6 @@ import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
-import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -92,7 +92,18 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
-        <CustomStatus status={data.phase ?? ''} />
+        <LightPills
+          variant={
+            data?.phase?.toLowerCase() === 'succeeded'
+              ? 'success'
+              : data?.phase?.toLowerCase() === 'failed'
+              ? 'danger'
+              : data?.phase?.toLowerCase() === 'running'
+              ? 'warning'
+              : undefined
+          }
+          label={data.phase ?? ''}
+        />
       </TableCell>
       <TableCell
         className={classes.workflowNameData}

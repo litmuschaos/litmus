@@ -3,31 +3,31 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   // Status Text Colors
   running: {
-    color: theme.palette.status.running,
+    color: theme.palette.status.experiment.running,
   },
 
   failed: {
-    color: theme.palette.status.failed,
+    color: theme.palette.status.experiment.failed,
   },
 
   succeeded: {
-    color: theme.palette.status.completed,
+    color: theme.palette.status.experiment.completed,
   },
 
   pending: {
-    color: theme.palette.status.completed,
+    color: theme.palette.status.experiment.pending,
   },
 
   error: {
-    color: '#FFA600',
+    color: theme.palette.status.experiment.error,
   },
 
   skipped: {
-    color: '#0098DD',
+    color: theme.palette.status.experiment.skipped,
   },
 
   omitted: {
-    color: '#A93DDB',
+    color: theme.palette.status.experiment.omitted,
   },
 
   textBold: {

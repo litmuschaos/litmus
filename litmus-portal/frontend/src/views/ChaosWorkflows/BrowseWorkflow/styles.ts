@@ -124,13 +124,13 @@ const useStyles = makeStyles((theme) => ({
 
   // Colors for Resilency score and Experiments passed
   less: {
-    color: theme.palette.status.failed,
+    color: theme.palette.status.workflow.failed,
   },
   medium: {
-    color: theme.palette.status.pending,
+    color: theme.palette.status.workflow.pending,
   },
   high: {
-    color: theme.palette.status.completed,
+    color: theme.palette.status.workflow.completed,
   },
 
   // Menu option with icon
