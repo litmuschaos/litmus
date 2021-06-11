@@ -5,7 +5,7 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckBox } from '../../../../components/CheckBox';
-import { Workflow } from '../../../../models/graphql/workflowListData';
+import { ScheduledWorkflow } from '../../../../models/graphql/workflowListData';
 import { history } from '../../../../redux/configureStore';
 import {
   getProjectID,
@@ -14,7 +14,7 @@ import {
 import useStyles, { StyledTableCell } from './styles';
 
 interface TableDataProps {
-  data: Workflow;
+  data: ScheduledWorkflow;
   itemSelectionStatus: boolean;
   labelIdentifier: string;
   comparisonState: Boolean;

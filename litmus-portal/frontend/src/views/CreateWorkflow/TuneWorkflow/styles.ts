@@ -107,6 +107,7 @@ const useStyles = makeStyles((theme) => ({
   addExpModal: {
     textAlign: 'left',
     padding: theme.spacing(5),
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
 
@@ -126,9 +127,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   doneBtn: {
-    marginLeft: 'auto',
-    marginTop: theme.spacing(2.5),
-    marginRight: theme.spacing(2),
+    position: 'absolute',
+    bottom: '1rem',
+    right: '3rem',
   },
   inputDiv: {
     display: 'flex',
@@ -212,7 +213,7 @@ const useStyles = makeStyles((theme) => ({
   radioList: {
     width: '100%',
     alignItems: 'center',
-    height: '26rem',
+    height: '75%',
     overflowY: 'auto',
   },
   experimentCard: {

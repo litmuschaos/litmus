@@ -186,6 +186,11 @@ type ComplexityRoot struct {
 		URL  func(childComplexity int) int
 	}
 
+	ListWorkflowsOutput struct {
+		TotalNoOfWorkflows func(childComplexity int) int
+		Workflows          func(childComplexity int) int
+	}
+
 	Maintainer struct {
 		Email func(childComplexity int) int
 		Name  func(childComplexity int) int
@@ -340,7 +345,6 @@ type ComplexityRoot struct {
 		GetPromLabelNamesAndValues  func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery                func(childComplexity int, query *model.PromInput) int
 		GetPromSeriesList           func(childComplexity int, dsDetails *model.DsDetails) int
-		GetScheduledWorkflows       func(childComplexity int, projectID string) int
 		GetTemplateManifestByID     func(childComplexity int, templateID string) int
 		GetUser                     func(childComplexity int, username string) int
 		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
@@ -350,7 +354,7 @@ type ComplexityRoot struct {
 		ListImageRegistry           func(childComplexity int, projectID string) int
 		ListManifestTemplate        func(childComplexity int, projectID string) int
 		ListProjects                func(childComplexity int) int
-		ListWorkflow                func(childComplexity int, projectID string, workflowIds []*string) int
+		ListWorkflow                func(childComplexity int, workflowInput model.ListWorkflowsInput) int
 		Users                       func(childComplexity int) int
 	}
 
@@ -431,7 +435,6 @@ type ComplexityRoot struct {
 		WorkflowManifest    func(childComplexity int) int
 		WorkflowName        func(childComplexity int) int
 		WorkflowRuns        func(childComplexity int) int
-		WorkflowType        func(childComplexity int) int
 	}
 
 	WorkflowRun struct {
@@ -626,8 +629,7 @@ type QueryResolver interface {
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	ListProjects(ctx context.Context) ([]*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
-	GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error)
-	ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error)
+	ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error)
 	GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
@@ -1304,6 +1306,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Link.URL(childComplexity), true
+
+	case "ListWorkflowsOutput.total_no_of_workflows":
+		if e.complexity.ListWorkflowsOutput.TotalNoOfWorkflows == nil {
+			break
+		}
+
+		return e.complexity.ListWorkflowsOutput.TotalNoOfWorkflows(childComplexity), true
+
+	case "ListWorkflowsOutput.workflows":
+		if e.complexity.ListWorkflowsOutput.Workflows == nil {
+			break
+		}
+
+		return e.complexity.ListWorkflowsOutput.Workflows(childComplexity), true
 
 	case "Maintainer.Email":
 		if e.complexity.Maintainer.Email == nil {
@@ -2415,18 +2431,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPromSeriesList(childComplexity, args["ds_details"].(*model.DsDetails)), true
 
-	case "Query.getScheduledWorkflows":
-		if e.complexity.Query.GetScheduledWorkflows == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getScheduledWorkflows_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetScheduledWorkflows(childComplexity, args["project_id"].(string)), true
-
 	case "Query.GetTemplateManifestByID":
 		if e.complexity.Query.GetTemplateManifestByID == nil {
 			break
@@ -2540,7 +2544,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListWorkflow(childComplexity, args["project_id"].(string), args["workflow_ids"].([]*string)), true
+		return e.complexity.Query.ListWorkflow(childComplexity, args["workflowInput"].(model.ListWorkflowsInput)), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -3000,13 +3004,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Workflow.WorkflowRuns(childComplexity), true
-
-	case "Workflow.workflow_type":
-		if e.complexity.Workflow.WorkflowType == nil {
-			break
-		}
-
-		return e.complexity.Workflow.WorkflowType(childComplexity), true
 
 	case "WorkflowRun.cluster_id":
 		if e.complexity.WorkflowRun.ClusterID == nil {
@@ -4269,7 +4266,7 @@ input PodLogRequest {
 }
 
 type ScheduledWorkflows {
-  workflow_type:String!
+  workflow_type: String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -4284,25 +4281,6 @@ type ScheduledWorkflows {
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
-}
-
-type Workflow {
-  workflow_type:String!
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  isRemoved: Boolean!
-  workflow_runs: [WorkflowRuns]
 }
 
 type WorkflowRuns {
@@ -4404,10 +4382,8 @@ type Query {
 
   users: [User!]! @authorized
 
-  # [Deprecated soon]
-  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
-
-  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+  ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
+    @authorized
 
   getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
 
@@ -4425,7 +4401,8 @@ type Query {
 
   GetPromQuery(query: promInput): promResponse! @authorized
 
-  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse! @authorized
+  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse!
+    @authorized
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
@@ -4461,13 +4438,16 @@ type Mutation {
 
   ## Workflow APIs
   # It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
+  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
+    @authorized
 
-  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean! @authorized
+  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
+    @authorized
 
   #Used for sending invitation
   sendInvitation(member: MemberInput!): Member @authorized
@@ -4485,7 +4465,8 @@ type Mutation {
   leaveProject(member: MemberInput!): String! @authorized
 
   #Used to update project name
-  updateProjectName(projectID: String!, projectName: String!): String! @authorized
+  updateProjectName(projectID: String!, projectName: String!): String!
+    @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -4505,7 +4486,8 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
 
@@ -4540,7 +4522,8 @@ type Mutation {
   deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 
   # Manifest Template
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate! @authorized
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
+    @authorized
 
   deleteManifestTemplate(template_id: String!): Boolean! @authorized
 
@@ -4556,7 +4539,8 @@ type Mutation {
     imageRegistryInfo: imageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
-  deleteImageRegistry(image_registry_id: String!, project_id: String!): String! @authorized
+  deleteImageRegistry(image_registry_id: String!, project_id: String!): String!
+    @authorized
 }
 
 type Subscription {
@@ -4570,7 +4554,8 @@ type Subscription {
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
-  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse! @authorized
+  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
+    @authorized
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
@@ -4633,7 +4618,7 @@ enum WorkflowRunSortingField {
   Time
 }
 
-input SortInput {
+input WorkflowRunSortInput {
   field: WorkflowRunSortingField!
   descending: Boolean
 }
@@ -4642,7 +4627,7 @@ input GetWorkflowRunsInput {
   project_id: ID!
   workflow_run_ids: [ID]
   pagination: Pagination
-  sort: SortInput
+  sort: WorkflowRunSortInput
   filter: WorkflowRunFilterInput
 }
 
@@ -4666,6 +4651,51 @@ type WorkflowRun {
 type GetWorkflowsOutput {
   total_no_of_workflow_runs: Int!
   workflow_runs: [WorkflowRun]!
+}
+
+input WorkflowFilterInput {
+  workflow_name: String
+  cluster_name: String
+}
+
+input ListWorkflowsInput {
+  project_id: ID!
+  workflow_ids: [ID]
+  pagination: Pagination
+  sort: WorkflowSortInput
+  filter: WorkflowFilterInput
+}
+
+enum WorkflowSortingField {
+  Name
+}
+
+input WorkflowSortInput {
+  field: WorkflowSortingField!
+  descending: Boolean
+}
+
+type Workflow {
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
+  isRemoved: Boolean!
+  workflow_runs: [WorkflowRuns]
+}
+
+type ListWorkflowsOutput {
+  total_no_of_workflows: Int!
+  workflows: [Workflow]!
 }
 `, BuiltIn: false},
 }
@@ -5524,22 +5554,14 @@ func (ec *executionContext) field_Query_ListManifestTemplate_args(ctx context.Co
 func (ec *executionContext) field_Query_ListWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["project_id"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg0 model.ListWorkflowsInput
+	if tmp, ok := rawArgs["workflowInput"]; ok {
+		arg0, err = ec.unmarshalNListWorkflowsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListWorkflowsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["project_id"] = arg0
-	var arg1 []*string
-	if tmp, ok := rawArgs["workflow_ids"]; ok {
-		arg1, err = ec.unmarshalOID2ᚕᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["workflow_ids"] = arg1
+	args["workflowInput"] = arg0
 	return args, nil
 }
 
@@ -5654,20 +5676,6 @@ func (ec *executionContext) field_Query_getProject_args(ctx context.Context, raw
 		}
 	}
 	args["projectID"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getScheduledWorkflows_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["project_id"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["project_id"] = arg0
 	return args, nil
 }
 
@@ -8809,6 +8817,74 @@ func (ec *executionContext) _Link_Url(ctx context.Context, field graphql.Collect
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ListWorkflowsOutput_total_no_of_workflows(ctx context.Context, field graphql.CollectedField, obj *model.ListWorkflowsOutput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ListWorkflowsOutput",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalNoOfWorkflows, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ListWorkflowsOutput_workflows(ctx context.Context, field graphql.CollectedField, obj *model.ListWorkflowsOutput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ListWorkflowsOutput",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Workflows, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Workflow)
+	fc.Result = res
+	return ec.marshalNWorkflow2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflow(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Maintainer_Name(ctx context.Context, field graphql.CollectedField, obj *model.Maintainer) (ret graphql.Marshaler) {
@@ -13833,67 +13909,6 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getScheduledWorkflows(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getScheduledWorkflows_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetScheduledWorkflows(rctx, args["project_id"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*model.ScheduledWorkflows); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ScheduledWorkflows`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.ScheduledWorkflows)
-	fc.Result = res
-	return ec.marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Query_ListWorkflow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -13919,7 +13934,7 @@ func (ec *executionContext) _Query_ListWorkflow(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListWorkflow(rctx, args["project_id"].(string), args["workflow_ids"].([]*string))
+			return ec.resolvers.Query().ListWorkflow(rctx, args["workflowInput"].(model.ListWorkflowsInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13935,10 +13950,10 @@ func (ec *executionContext) _Query_ListWorkflow(ctx context.Context, field graph
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.Workflow); ok {
+		if data, ok := tmp.(*model.ListWorkflowsOutput); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Workflow`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ListWorkflowsOutput`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13950,9 +13965,9 @@ func (ec *executionContext) _Query_ListWorkflow(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Workflow)
+	res := resTmp.(*model.ListWorkflowsOutput)
 	fc.Result = res
-	return ec.marshalNWorkflow2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflow(ctx, field.Selections, res)
+	return ec.marshalNListWorkflowsOutput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListWorkflowsOutput(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getCharts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -16626,40 +16641,6 @@ func (ec *executionContext) _User_removed_at(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.RemovedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Workflow_workflow_type(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Workflow",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WorkflowType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21484,7 +21465,7 @@ func (ec *executionContext) unmarshalInputGetWorkflowRunsInput(ctx context.Conte
 			}
 		case "sort":
 			var err error
-			it.Sort, err = ec.unmarshalOSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx, v)
+			it.Sort, err = ec.unmarshalOWorkflowRunSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21650,6 +21631,48 @@ func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputListWorkflowsInput(ctx context.Context, obj interface{}) (model.ListWorkflowsInput, error) {
+	var it model.ListWorkflowsInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "project_id":
+			var err error
+			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workflow_ids":
+			var err error
+			it.WorkflowIds, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "pagination":
+			var err error
+			it.Pagination, err = ec.unmarshalOPagination2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPagination(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sort":
+			var err error
+			it.Sort, err = ec.unmarshalOWorkflowSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "filter":
+			var err error
+			it.Filter, err = ec.unmarshalOWorkflowFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowFilterInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputMemberInput(ctx context.Context, obj interface{}) (model.MemberInput, error) {
 	var it model.MemberInput
 	var asMap = obj.(map[string]interface{})
@@ -21803,30 +21826,6 @@ func (ec *executionContext) unmarshalInputPodLogRequest(ctx context.Context, obj
 		case "chaos_namespace":
 			var err error
 			it.ChaosNamespace, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputSortInput(ctx context.Context, obj interface{}) (model.SortInput, error) {
-	var it model.SortInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "field":
-			var err error
-			it.Field, err = ec.unmarshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "descending":
-			var err error
-			it.Descending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -22016,6 +22015,30 @@ func (ec *executionContext) unmarshalInputWeightagesInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputWorkflowFilterInput(ctx context.Context, obj interface{}) (model.WorkflowFilterInput, error) {
+	var it model.WorkflowFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "workflow_name":
+			var err error
+			it.WorkflowName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cluster_name":
+			var err error
+			it.ClusterName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputWorkflowRunFilterInput(ctx context.Context, obj interface{}) (model.WorkflowRunFilterInput, error) {
 	var it model.WorkflowRunFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -22097,6 +22120,54 @@ func (ec *executionContext) unmarshalInputWorkflowRunInput(ctx context.Context, 
 		case "isRemoved":
 			var err error
 			it.IsRemoved, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputWorkflowRunSortInput(ctx context.Context, obj interface{}) (model.WorkflowRunSortInput, error) {
+	var it model.WorkflowRunSortInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "field":
+			var err error
+			it.Field, err = ec.unmarshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "descending":
+			var err error
+			it.Descending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputWorkflowSortInput(ctx context.Context, obj interface{}) (model.WorkflowSortInput, error) {
+	var it model.WorkflowSortInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "field":
+			var err error
+			it.Field, err = ec.unmarshalNWorkflowSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortingField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "descending":
+			var err error
+			it.Descending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -23341,6 +23412,38 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var listWorkflowsOutputImplementors = []string{"ListWorkflowsOutput"}
+
+func (ec *executionContext) _ListWorkflowsOutput(ctx context.Context, sel ast.SelectionSet, obj *model.ListWorkflowsOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, listWorkflowsOutputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ListWorkflowsOutput")
+		case "total_no_of_workflows":
+			out.Values[i] = ec._ListWorkflowsOutput_total_no_of_workflows(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "workflows":
+			out.Values[i] = ec._ListWorkflowsOutput_workflows(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var maintainerImplementors = []string{"Maintainer"}
 
 func (ec *executionContext) _Maintainer(ctx context.Context, sel ast.SelectionSet, obj *model.Maintainer) graphql.Marshaler {
@@ -24190,20 +24293,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "getScheduledWorkflows":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getScheduledWorkflows(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "ListWorkflow":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -24762,11 +24851,6 @@ func (ec *executionContext) _Workflow(ctx context.Context, sel ast.SelectionSet,
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Workflow")
-		case "workflow_type":
-			out.Values[i] = ec._Workflow_workflow_type(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "workflow_id":
 			out.Values[i] = ec._Workflow_workflow_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -26305,6 +26389,24 @@ func (ec *executionContext) marshalNLink2ᚖgithubᚗcomᚋlitmuschaosᚋlitmus�
 	return ec._Link(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNListWorkflowsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListWorkflowsInput(ctx context.Context, v interface{}) (model.ListWorkflowsInput, error) {
+	return ec.unmarshalInputListWorkflowsInput(ctx, v)
+}
+
+func (ec *executionContext) marshalNListWorkflowsOutput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListWorkflowsOutput(ctx context.Context, sel ast.SelectionSet, v model.ListWorkflowsOutput) graphql.Marshaler {
+	return ec._ListWorkflowsOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNListWorkflowsOutput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListWorkflowsOutput(ctx context.Context, sel ast.SelectionSet, v *model.ListWorkflowsOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ListWorkflowsOutput(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNMaintainer2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMaintainer(ctx context.Context, sel ast.SelectionSet, v model.Maintainer) graphql.Marshaler {
 	return ec._Maintainer(ctx, sel, &v)
 }
@@ -26688,43 +26790,6 @@ func (ec *executionContext) marshalNSSHKey2ᚖgithubᚗcomᚋlitmuschaosᚋlitmu
 	return ec._SSHKey(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v []*model.ScheduledWorkflows) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOScheduledWorkflows2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
 func (ec *executionContext) marshalNSpec2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSpec(ctx context.Context, sel ast.SelectionSet, v model.Spec) graphql.Marshaler {
 	return ec._Spec(ctx, sel, &v)
 }
@@ -26971,6 +27036,15 @@ func (ec *executionContext) unmarshalNWorkflowRunSortingField2githubᚗcomᚋlit
 }
 
 func (ec *executionContext) marshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRunSortingField) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNWorkflowSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortingField(ctx context.Context, v interface{}) (model.WorkflowSortingField, error) {
+	var res model.WorkflowSortingField
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNWorkflowSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortingField(ctx context.Context, sel ast.SelectionSet, v model.WorkflowSortingField) graphql.Marshaler {
 	return v
 }
 
@@ -27708,29 +27782,6 @@ func (ec *executionContext) unmarshalOPagination2ᚖgithubᚗcomᚋlitmuschaos�
 	return &res, err
 }
 
-func (ec *executionContext) marshalOScheduledWorkflows2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v model.ScheduledWorkflows) graphql.Marshaler {
-	return ec._ScheduledWorkflows(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOScheduledWorkflows2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v *model.ScheduledWorkflows) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ScheduledWorkflows(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx context.Context, v interface{}) (model.SortInput, error) {
-	return ec.unmarshalInputSortInput(ctx, v)
-}
-
-func (ec *executionContext) unmarshalOSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx context.Context, v interface{}) (*model.SortInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSortInput(ctx, v)
-	return &res, err
-}
-
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalString(v)
 }
@@ -27809,6 +27860,18 @@ func (ec *executionContext) marshalOWorkflow2ᚖgithubᚗcomᚋlitmuschaosᚋlit
 	return ec._Workflow(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOWorkflowFilterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowFilterInput(ctx context.Context, v interface{}) (model.WorkflowFilterInput, error) {
+	return ec.unmarshalInputWorkflowFilterInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOWorkflowFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowFilterInput(ctx context.Context, v interface{}) (*model.WorkflowFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOWorkflowFilterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowFilterInput(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) marshalOWorkflowRun2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRun) graphql.Marshaler {
 	return ec._WorkflowRun(ctx, sel, &v)
 }
@@ -27829,6 +27892,18 @@ func (ec *executionContext) unmarshalOWorkflowRunFilterInput2ᚖgithubᚗcomᚋl
 		return nil, nil
 	}
 	res, err := ec.unmarshalOWorkflowRunFilterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunFilterInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOWorkflowRunSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortInput(ctx context.Context, v interface{}) (model.WorkflowRunSortInput, error) {
+	return ec.unmarshalInputWorkflowRunSortInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOWorkflowRunSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortInput(ctx context.Context, v interface{}) (*model.WorkflowRunSortInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOWorkflowRunSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortInput(ctx, v)
 	return &res, err
 }
 
@@ -27905,6 +27980,18 @@ func (ec *executionContext) marshalOWorkflowRuns2ᚖgithubᚗcomᚋlitmuschaos�
 		return graphql.Null
 	}
 	return ec._WorkflowRuns(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOWorkflowSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortInput(ctx context.Context, v interface{}) (model.WorkflowSortInput, error) {
+	return ec.unmarshalInputWorkflowSortInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOWorkflowSortInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortInput(ctx context.Context, v interface{}) (*model.WorkflowSortInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOWorkflowSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortInput(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

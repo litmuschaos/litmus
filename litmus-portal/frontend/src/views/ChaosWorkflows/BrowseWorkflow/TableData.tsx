@@ -11,7 +11,7 @@ import {
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, LightPills } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import TimePopOver from '../../../components/TimePopOver';
@@ -22,15 +22,14 @@ import {
 } from '../../../graphql';
 import { WorkflowRun } from '../../../models/graphql/workflowData';
 import {
-  WorkflowList,
-  WorkflowListDataVars,
+  ListWorkflowsInput,
+  ScheduledWorkflows,
 } from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
-import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -62,12 +61,14 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   };
 
   const { data: scheduledWorkflowData } = useQuery<
-    WorkflowList,
-    WorkflowListDataVars
+    ScheduledWorkflows,
+    ListWorkflowsInput
   >(WORKFLOW_LIST_DETAILS, {
     variables: {
-      projectID,
-      workflowIDs: [data.workflow_id as string],
+      workflowInput: {
+        project_id: projectID,
+        workflow_ids: [data.workflow_id ?? ''],
+      },
     },
   });
 
@@ -137,6 +138,19 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
     const last = parseInt(lastUpdated, 10) * 1000;
     const timeDifference = (current - last) / (60 * 1000);
     return timeDifference;
+  };
+
+  const getVariant = (variant: string | undefined) => {
+    switch (variant) {
+      case 'succeeded':
+        return 'success';
+      case 'failed':
+        return 'danger';
+      case 'running':
+        return 'warning';
+      default:
+        return undefined;
+    }
   };
 
   return (
@@ -223,7 +237,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         </Popover>
       </TableCell>
       <TableCell>
-        <CustomStatus status={data.phase ?? ''} />
+        <LightPills
+          variant={getVariant(data.phase?.toLowerCase())}
+          label={data.phase ?? ''}
+        />
       </TableCell>
       <TableCell
         className={classes.workflowNameData}
@@ -298,7 +315,11 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           >
             <Typography className={classes.boldText}>
               {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
-              {scheduledWorkflowData?.ListWorkflow[0].weightages.length})
+              {
+                scheduledWorkflowData?.ListWorkflow.workflows[0].weightages
+                  .length
+              }
+              )
             </Typography>
             <div className={classes.experimentDetails}>
               {isOpen ? (
@@ -323,7 +344,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             }}
           >
             <div className={classes.popover}>
-              {scheduledWorkflowData?.ListWorkflow[0].weightages.map(
+              {scheduledWorkflowData?.ListWorkflow.workflows[0].weightages.map(
                 (weightEntry) => (
                   <div
                     key={weightEntry.experiment_name}
