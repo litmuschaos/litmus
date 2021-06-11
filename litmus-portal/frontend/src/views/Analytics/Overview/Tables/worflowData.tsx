@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Workflow } from '../../../../models/graphql/workflowListData';
+import { ScheduledWorkflow } from '../../../../models/graphql/workflowListData';
 import useActions from '../../../../redux/actions';
 import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
@@ -22,11 +22,13 @@ import { GetTimeDiff } from '../../../../utils/timeDifferenceString';
 import useStyles from '../styles';
 
 interface TableScheduleWorkflow {
-  scheduleWorkflowList: Workflow[] | undefined;
+  scheduleWorkflowList: ScheduledWorkflow[];
+  totalNoOfWorkflows: number;
 }
 
 const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
   scheduleWorkflowList,
+  totalNoOfWorkflows,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -37,13 +39,13 @@ const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
 
   return (
     <div>
-      {scheduleWorkflowList && scheduleWorkflowList.length > 0 ? (
+      {scheduleWorkflowList.length > 0 ? (
         <Paper className={classes.dataTable}>
           <div className={classes.tableHeading}>
             <Typography variant="h4" className={classes.weightedHeading}>
               {t('analyticsDashboard.workflowScheduleTable.title')}
             </Typography>
-            {scheduleWorkflowList.length > 3 ? (
+            {totalNoOfWorkflows > 3 ? (
               <IconButton
                 className={classes.seeAllArrowBtn}
                 onClick={() => {
@@ -65,7 +67,7 @@ const TableScheduleWorkflow: React.FC<TableScheduleWorkflow> = ({
           </div>
           <Table className={classes.tableStyling}>
             <TableBody>
-              {scheduleWorkflowList.slice(0, 3).map((schedule) => (
+              {scheduleWorkflowList.map((schedule) => (
                 <TableRow
                   key={schedule.workflow_id}
                   className={classes.tableRow}

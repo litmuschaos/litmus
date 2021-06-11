@@ -337,20 +337,12 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return usermanagement.GetUsers(ctx)
 }
 
-func (r *queryResolver) GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error) {
-	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
+func (r *queryResolver) ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {
+	err := validate.ValidateRole(ctx, workflowInput.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.QueryWorkflows(projectID)
-}
-
-func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error) {
-	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
-	if err != nil {
-		return nil, err
-	}
-	return wfHandler.QueryListWorkflow(projectID, workflowIds)
+	return wfHandler.QueryListWorkflow(workflowInput)
 }
 
 func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {

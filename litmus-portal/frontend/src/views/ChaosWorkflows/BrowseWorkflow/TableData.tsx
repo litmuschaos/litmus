@@ -22,8 +22,8 @@ import {
 } from '../../../graphql';
 import { WorkflowRun } from '../../../models/graphql/workflowData';
 import {
-  WorkflowList,
-  WorkflowListDataVars,
+  ListWorkflowsInput,
+  ScheduledWorkflows,
 } from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
@@ -62,12 +62,14 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   };
 
   const { data: scheduledWorkflowData } = useQuery<
-    WorkflowList,
-    WorkflowListDataVars
+    ScheduledWorkflows,
+    ListWorkflowsInput
   >(WORKFLOW_LIST_DETAILS, {
     variables: {
-      projectID,
-      workflowIDs: [data.workflow_id as string],
+      workflowInput: {
+        project_id: projectID,
+        workflow_ids: [data.workflow_id ?? ''],
+      },
     },
   });
 
@@ -298,7 +300,11 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           >
             <Typography className={classes.boldText}>
               {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
-              {scheduledWorkflowData?.ListWorkflow[0].weightages.length})
+              {
+                scheduledWorkflowData?.ListWorkflow.workflows[0].weightages
+                  .length
+              }
+              )
             </Typography>
             <div className={classes.experimentDetails}>
               {isOpen ? (
@@ -323,7 +329,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             }}
           >
             <div className={classes.popover}>
-              {scheduledWorkflowData?.ListWorkflow[0].weightages.map(
+              {scheduledWorkflowData?.ListWorkflow.workflows[0].weightages.map(
                 (weightEntry) => (
                   <div
                     key={weightEntry.experiment_name}
