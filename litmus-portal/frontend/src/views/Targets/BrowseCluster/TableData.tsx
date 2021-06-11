@@ -1,5 +1,5 @@
 import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, LightPills, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,17 +42,20 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     <>
       <TableCell className={classes.tableDataStatus}>
         {data.is_cluster_confirmed === false ? (
-          <Typography className={`${classes.check} ${classes.pending}`}>
-            {t('workflowCluster.header.formControl.menu6')}
-          </Typography>
+          <LightPills
+            variant="warning"
+            label={t('workflowCluster.header.formControl.menu6')}
+          />
         ) : data.is_cluster_confirmed === true && data.is_active ? (
-          <Typography className={`${classes.check} ${classes.active}`}>
-            {t('workflowCluster.header.formControl.menu1')}
-          </Typography>
+          <LightPills
+            variant="success"
+            label={t('workflowCluster.header.formControl.menu1')}
+          />
         ) : (
-          <Typography className={`${classes.check} ${classes.notactive}`}>
-            {t('workflowCluster.header.formControl.menu2')}
-          </Typography>
+          <LightPills
+            variant="danger"
+            label={t('workflowCluster.header.formControl.menu2')}
+          />
         )}
       </TableCell>
       <TableCell className={classes.workflowNameData}>

@@ -107,11 +107,11 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Failed': {
         '& circle': {
-          fill: theme.palette.status.failed,
+          fill: theme.palette.status.experiment.failed,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: theme.palette.status.failed,
+          stroke: theme.palette.status.experiment.failed,
           fill: 'none',
           strokeWidth: '1.5',
         },
@@ -150,7 +150,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
       },
       '& g.StepGroup': {
-        fill: theme.palette.status.completed,
+        fill: theme.palette.status.experiment.completed,
         cursor: 'default',
         '& rect': {
           x: '-1.5px',
@@ -166,8 +166,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     // Styles for edges
     '& g g.edgePaths': {
       '& g.link': {
-        fill: theme.palette.status.completed,
-        stroke: theme.palette.status.completed,
+        fill: theme.palette.status.experiment.completed,
+        stroke: theme.palette.status.experiment.completed,
       },
     },
   },

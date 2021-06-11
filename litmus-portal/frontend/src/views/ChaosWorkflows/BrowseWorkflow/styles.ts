@@ -121,13 +121,13 @@ const useStyles = makeStyles((theme) => ({
 
   // Colors for Resilency score and Experiments passed
   less: {
-    color: theme.palette.status.failed,
+    color: theme.palette.status.workflow.failed,
   },
   medium: {
-    color: theme.palette.status.pending,
+    color: theme.palette.status.workflow.pending,
   },
   high: {
-    color: theme.palette.status.completed,
+    color: theme.palette.status.workflow.completed,
   },
 
   // Menu option with icon
@@ -136,11 +136,13 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     cursor: 'pointer',
   },
+
   btnImg: {
     width: '0.8125rem',
     height: '0.8125rem',
     marginTop: theme.spacing(0.375),
   },
+
   btnText: {
     paddingLeft: theme.spacing(1.625),
   },

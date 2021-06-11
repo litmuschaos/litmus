@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Accordion Expanded Body [Content]
   predefinedWorkflowDiv: {
     maxHeight: '15rem',
-    overflowY: 'scroll',
+    overflowY: 'auto',
     padding: theme.spacing(3, 0, 3, 0),
   },
   MuiAccordionroot: {
@@ -239,7 +239,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   formControl: {
     minWidth: '9rem',
-    marginLeft: theme.spacing(1),
   },
   label: {
     color: theme.palette.common.black,

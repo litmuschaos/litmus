@@ -22,7 +22,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
-import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
+import { ScheduledWorkflow } from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -35,9 +35,9 @@ import SaveTemplateModal from './SaveTemplateModal';
 import useStyles from './styles';
 
 interface TableDataProps {
-  data: ScheduleWorkflow;
+  data: ScheduledWorkflow;
   deleteRow: (wfid: string) => void;
-  handleToggleSchedule: (schedule: ScheduleWorkflow) => void;
+  handleToggleSchedule: (schedule: ScheduledWorkflow) => void;
 }
 
 const TableData: React.FC<TableDataProps> = ({

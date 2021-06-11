@@ -220,7 +220,7 @@ type GetWorkflowRunsInput struct {
 	ProjectID      string                  `json:"project_id"`
 	WorkflowRunIds []*string               `json:"workflow_run_ids"`
 	Pagination     *Pagination             `json:"pagination"`
-	Sort           *SortInput              `json:"sort"`
+	Sort           *WorkflowRunSortInput   `json:"sort"`
 	Filter         *WorkflowRunFilterInput `json:"filter"`
 }
 
@@ -287,6 +287,19 @@ type KubeObjectResponse struct {
 type Link struct {
 	Name string `json:"Name"`
 	URL  string `json:"Url"`
+}
+
+type ListWorkflowsInput struct {
+	ProjectID   string               `json:"project_id"`
+	WorkflowIds []*string            `json:"workflow_ids"`
+	Pagination  *Pagination          `json:"pagination"`
+	Sort        *WorkflowSortInput   `json:"sort"`
+	Filter      *WorkflowFilterInput `json:"filter"`
+}
+
+type ListWorkflowsOutput struct {
+	TotalNoOfWorkflows int         `json:"total_no_of_workflows"`
+	Workflows          []*Workflow `json:"workflows"`
 }
 
 type Maintainer struct {
@@ -438,11 +451,6 @@ type ScheduledWorkflows struct {
 	IsRemoved           bool          `json:"isRemoved"`
 }
 
-type SortInput struct {
-	Field      WorkflowRunSortingField `json:"field"`
-	Descending *bool                   `json:"descending"`
-}
-
 type Spec struct {
 	DisplayName         string        `json:"DisplayName"`
 	CategoryDescription string        `json:"CategoryDescription"`
@@ -508,7 +516,6 @@ type WeightagesInput struct {
 }
 
 type Workflow struct {
-	WorkflowType        string          `json:"workflow_type"`
 	WorkflowID          string          `json:"workflow_id"`
 	WorkflowManifest    string          `json:"workflow_manifest"`
 	CronSyntax          string          `json:"cronSyntax"`
@@ -524,6 +531,11 @@ type Workflow struct {
 	ClusterType         string          `json:"cluster_type"`
 	IsRemoved           bool            `json:"isRemoved"`
 	WorkflowRuns        []*WorkflowRuns `json:"workflow_runs"`
+}
+
+type WorkflowFilterInput struct {
+	WorkflowName *string `json:"workflow_name"`
+	ClusterName  *string `json:"cluster_name"`
 }
 
 type WorkflowRun struct {
@@ -560,10 +572,20 @@ type WorkflowRunInput struct {
 	IsRemoved     *bool            `json:"isRemoved"`
 }
 
+type WorkflowRunSortInput struct {
+	Field      WorkflowRunSortingField `json:"field"`
+	Descending *bool                   `json:"descending"`
+}
+
 type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
 	LastUpdated   string `json:"last_updated"`
+}
+
+type WorkflowSortInput struct {
+	Field      WorkflowSortingField `json:"field"`
+	Descending *bool                `json:"descending"`
 }
 
 type AnnotationsPromResponse struct {
@@ -992,5 +1014,44 @@ func (e *WorkflowRunStatus) UnmarshalGQL(v interface{}) error {
 }
 
 func (e WorkflowRunStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type WorkflowSortingField string
+
+const (
+	WorkflowSortingFieldName WorkflowSortingField = "Name"
+)
+
+var AllWorkflowSortingField = []WorkflowSortingField{
+	WorkflowSortingFieldName,
+}
+
+func (e WorkflowSortingField) IsValid() bool {
+	switch e {
+	case WorkflowSortingFieldName:
+		return true
+	}
+	return false
+}
+
+func (e WorkflowSortingField) String() string {
+	return string(e)
+}
+
+func (e *WorkflowSortingField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WorkflowSortingField(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WorkflowSortingField", str)
+	}
+	return nil
+}
+
+func (e WorkflowSortingField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
