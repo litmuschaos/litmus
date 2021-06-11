@@ -25,10 +25,11 @@ import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
 import Loader from '../../../components/Loader';
 import {
-  DELETE_SCHEDULE,
+  DELETE_WORKFLOW,
   SCHEDULE_DETAILS,
   UPDATE_SCHEDULE,
 } from '../../../graphql';
+import { WeightMap } from '../../../models/graphql/createWorkflowData';
 import {
   DeleteSchedule,
   ScheduleDataVars,
@@ -44,7 +45,6 @@ import {
 } from '../../../utils/sort';
 import useStyles from './styles';
 import TableData from './TableData';
-import { WeightMap } from '../../../models/graphql/createWorkflowData';
 
 interface FilterOption {
   search: string;
@@ -75,7 +75,7 @@ const BrowseSchedule: React.FC = () => {
   );
 
   // Apollo mutation to delete the selected schedule
-  const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_SCHEDULE, {
+  const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_WORKFLOW, {
     refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
   });
 
@@ -86,13 +86,18 @@ const BrowseSchedule: React.FC = () => {
     suspended: 'All',
   });
 
-  const [disableSchedule] = useMutation(UPDATE_SCHEDULE, {
+  const [updateSchedule] = useMutation(UPDATE_SCHEDULE, {
     refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
   });
 
-  const handleDisableSchedule = (schedule: ScheduleWorkflow) => {
+  // Disable and re-enable a schedule
+  const handleToggleSchedule = (schedule: ScheduleWorkflow) => {
     const yaml = YAML.parse(schedule.workflow_manifest);
-    yaml.spec.suspend = true;
+    if (yaml.spec.suspend === undefined || yaml.spec.suspend === false) {
+      yaml.spec.suspend = true;
+    } else {
+      yaml.spec.suspend = false;
+    }
 
     const weightData: WeightMap[] = [];
 
@@ -103,7 +108,7 @@ const BrowseSchedule: React.FC = () => {
       });
     });
 
-    disableSchedule({
+    updateSchedule({
       variables: {
         ChaosWorkFlowInput: {
           workflow_id: schedule.workflow_id,
@@ -183,7 +188,7 @@ const BrowseSchedule: React.FC = () => {
 
   const deleteRow = (wfid: string) => {
     deleteSchedule({
-      variables: { workflow_id: wfid },
+      variables: { workflowid: wfid, workflow_run_id: '' },
     });
   };
   return (
@@ -366,7 +371,7 @@ const BrowseSchedule: React.FC = () => {
                       <TableData
                         data={data}
                         deleteRow={deleteRow}
-                        handleDisableSchedule={handleDisableSchedule}
+                        handleToggleSchedule={handleToggleSchedule}
                       />
                     </TableRow>
                   ))

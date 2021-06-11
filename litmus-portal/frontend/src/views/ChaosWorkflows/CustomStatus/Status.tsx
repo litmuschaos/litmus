@@ -19,13 +19,16 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
     if (status === 'Running' || status === 'Pending') {
       return setLabel(`${classes.status} ${classes.running}`);
     }
+    if (status === 'NotAvailable') {
+      return setLabel(`${classes.naStatus} ${classes.notAvailable}`);
+    }
     return setLabel(`${classes.status} ${classes.failed}`);
   }, [status]);
 
   return (
     <>
       <div className={label}>
-        <Typography className={classes.statusFont}>
+        <Typography data-testid="status" className={classes.statusFont}>
           {status === SUCCEEDED
             ? `${t('workflowDetailsView.workflowInfo.Completed')}`
             : status}

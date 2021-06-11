@@ -1,5 +1,5 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
-import { Typography, useTheme } from '@material-ui/core';
+import { RadioGroup, Typography, useTheme } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
 import React, {
   forwardRef,
@@ -9,20 +9,20 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
   GET_IMAGE_REGISTRY,
   LIST_IMAGE_REGISTRY,
 } from '../../../graphql';
+import { ImageRegistryInfo } from '../../../models/redux/image_registry';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
-import * as WorkflowActions from '../../../redux/actions/workflow';
 import * as ImageRegistryActions from '../../../redux/actions/image_registry';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
-import { ImageRegistryInfo } from '../../../models/redux/image_registry';
-import { constants } from '../../../constants';
 
 interface Cluster {
   cluster_name: string;
@@ -46,9 +46,8 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
 
   const [clusterData, setClusterData] = useState<Cluster[]>([]);
   const [search, setSearch] = useState<string | null>(null);
-  const [currentlySelectedAgent, setCurrentlySelectedAgent] = useState<string>(
-    ''
-  );
+  const [currentlySelectedAgent, setCurrentlySelectedAgent] =
+    useState<string>('');
 
   const [getRegistryData] = useLazyQuery(GET_IMAGE_REGISTRY, {
     fetchPolicy: 'network-only',
@@ -215,31 +214,38 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
         />
 
         {/* Cluster Data */}
-        <div className={classes.agentWrapperDiv}>
-          {filteredCluster.map((cluster) => (
-            <LitmusCard
-              key={cluster.cluster_id}
-              glow={currentlySelectedAgent === cluster.cluster_id}
-              width="100%"
-              height="4rem"
-              className={classes.litmusCard}
-              borderColor={
-                currentlySelectedAgent === cluster.cluster_id
-                  ? palette.primary.main
-                  : palette.border.main
-              }
-            >
-              <RadioButton
-                value={cluster.cluster_id}
-                className={classes.agentRadioButton}
-                onChange={(e) => handleChange(e)}
+        <RadioGroup
+          name="Agent Selection"
+          value={currentlySelectedAgent}
+          onChange={(e) => handleChange(e)}
+        >
+          <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
+            {filteredCluster.map((cluster) => (
+              <LitmusCard
+                key={cluster.cluster_id}
+                glow={currentlySelectedAgent === cluster.cluster_id}
+                width="40%"
+                height="4rem"
+                className={classes.litmusCard}
+                borderColor={
+                  currentlySelectedAgent === cluster.cluster_id
+                    ? palette.primary.main
+                    : palette.border.main
+                }
               >
-                {cluster.cluster_name} <br />
-                {cluster.cluster_id}
-              </RadioButton>
-            </LitmusCard>
-          ))}
-        </div>
+                <RadioButton
+                  value={cluster.cluster_id}
+                  className={classes.agentRadioButton}
+                >
+                  <div>
+                    <Typography>{cluster.cluster_name}</Typography>
+                    <Typography>{cluster.cluster_id}</Typography>
+                  </div>
+                </RadioButton>
+              </LitmusCard>
+            ))}
+          </div>
+        </RadioGroup>
       </div>
     </div>
   );

@@ -13,15 +13,15 @@ import {
 } from '@material-ui/core';
 import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import { useTranslation } from 'react-i18next';
+import { WorkflowManifest } from '../../../../models/redux/workflow';
+import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { RootState } from '../../../../redux/reducers';
 import AddProbe from '../AddProbe';
 import useStyles from './styles';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
-import { WorkflowManifest } from '../../../../models/redux/workflow';
-import { RootState } from '../../../../redux/reducers';
-import useActions from '../../../../redux/actions';
 
 interface SteadyStateProps {
   engineIndex: number;
@@ -59,9 +59,8 @@ const SteadyState: React.FC<SteadyStateProps> = ({
   // with the changes in individual Chaos Engines
   const handleMainYAMLChange = () => {
     const mainManifest = YAML.parse(manifest.manifest);
-    mainManifest.spec.templates[
-      engineIndex
-    ].inputs.artifacts[0].raw.data = YAML.stringify(chaosEngine);
+    mainManifest.spec.templates[engineIndex].inputs.artifacts[0].raw.data =
+      YAML.stringify(chaosEngine);
     workflow.setWorkflowManifest({
       manifest: YAML.stringify(mainManifest),
       engineYAML: YAML.stringify(chaosEngine),
@@ -76,10 +75,8 @@ const SteadyState: React.FC<SteadyStateProps> = ({
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
     null
   );
-  const [
-    propertyAnchorEl,
-    setPropertyPopAnchorEl,
-  ] = React.useState<null | HTMLElement>(null);
+  const [propertyAnchorEl, setPropertyPopAnchorEl] =
+    React.useState<null | HTMLElement>(null);
   const isOpen = Boolean(popAnchorEl);
   const isPropertyOpen = Boolean(propertyAnchorEl);
   const id = isOpen ? 'simple-popover' : undefined;

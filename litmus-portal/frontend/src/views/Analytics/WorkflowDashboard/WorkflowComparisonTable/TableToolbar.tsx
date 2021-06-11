@@ -81,10 +81,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
     startDate: ' ',
     endDate: ' ',
   });
-  const [
-    isDateRangeSelectorPopoverOpen,
-    setDateRangeSelectorPopoverOpen,
-  ] = useState(false);
+  const [isDateRangeSelectorPopoverOpen, setDateRangeSelectorPopoverOpen] =
+    useState(false);
   const dateRangeSelectorRef = useRef<HTMLButtonElement>(null);
 
   const handleClusterChange = (

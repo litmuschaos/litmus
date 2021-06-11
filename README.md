@@ -4,7 +4,7 @@
 ### Cloud-Native Chaos Engineering
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
-[![CircleCI](https://circleci.com/gh/litmuschaos/litmus/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/litmuschaos/litmus)
+![GitHub Workflow](https://github.com/litmuschaos/litmus/actions/workflows/push.yml/badge.svg?branch=master)
 [![Docker Pulls](https://img.shields.io/docker/pulls/litmuschaos/chaos-operator.svg)](https://hub.docker.com/r/litmuschaos/chaos-operator)
 [![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)](https://github.com/litmuschaos/litmus/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)](https://github.com/litmuschaos/litmus/issues)
@@ -50,12 +50,6 @@ Check out the <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" ta
 
 Check out the <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing Guidelines for the Chaos Hub</a>
 
-## Adopters
-
-Check out the <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Adopters of LitmusChaos</a>
-
-(_Send a PR to the above page if you are using Litmus in your chaos engineering practice_)
-
 ## Things to Consider
 
 Some of the considerations that need to be made with Litmus (as a chaos framework), are broadly listed here. Many of these are already being worked on
@@ -69,6 +63,50 @@ as mentioned in the [ROADMAP](./ROADMAP.md). For details or limitations around s
   advised when allowing developers/devops admins/SREs access for running these experiments.
 - In (rare) cases where chaos experiments make use of privileged containers, the recommended security policies will be documented.
 
+
+## Community
+
+Community Resources:
+
+Feel free to reach out if you have any queries,concerns, or feature requests
+
+- Follow LitmusChaos on Twitter [@LitmusChaos](https://twitter.com/LitmusChaos).
+
+- Subscribe to the [LitmusChaos YouTube channel](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw) for regular updates & meeting recordings. 
+
+- To join our [Slack Community](https://slack.litmuschaos.io/) and meet our community members, put forward your questions & opinions, join the #litmus channel on the [Kubernetes Slack](https://slack.k8s.io/). 
+### Community Meetings
+The Litmus community meets on the third wednesday of every month at 10:00PM IST/6:30 PM CEST/9:30 AM PST.
+
+- [Sync Up Meeting Link](https://zoom.us/j/91358162694)
+- [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
+- [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
+
+### Blogs
+
+- CNCF: [Introduction to LitmusChaos](https://www.cncf.io/blog/2020/08/28/introduction-to-litmuschaos/)
+- Hackernoon: [Manage and Monitor Chaos via Litmus Custom Resources](https://hackernoon.com/solid-tips-on-how-to-manage-and-monitor-chaos-via-litmus-custom-resources-5g1s33m9)
+- [Observability Considerations in Chaos: The Metrics Story](https://dev.to/ksatchit/observability-considerations-in-chaos-the-metrics-story-6cb)
+
+Community Blogs:
+- LiveWyer: [LitmusChaos Showcase: Chaos Experiments in a Helm Chart Test Suite](https://livewyer.io/blog/2021/03/22/litmuschaos-showcase-chaos-experiments-in-a-helm-chart-test-suite/)
+- Jessica Cherry: [Test Kubernetes cluster failures and experiments in your terminal](https://opensource.com/article/21/6/kubernetes-litmus-chaos)
+- Yang Chuansheng(KubeSphere): [KubeSphere 部署 Litmus 至 Kubernetes 开启混沌实验](https://kubesphere.io/zh/blogs/litmus-kubesphere/)
+- Saiyam Pathak(Civo): [Chaos Experiments on Kubernetes using Litmus to ensure your cluster is production ready](https://www.civo.com/learn/chaos-engineering-kubernetes-litmus)
+- Andreas Krivas(Container Solutions):[Comparing Chaos Engineering Tools for Kubernetes Workloads](https://blog.container-solutions.com/comparing-chaos-engineering-tools)
+- Akram Riahi(WeScale):[Chaos Engineering : Litmus sous tous les angles](https://blog.wescale.fr/2021/03/11/chaos-engineering-litmus-sous-tous-les-angles/)
+- Prashanto Priyanshu(LensKart):[Lenskart’s approach to Chaos Engineering-Part 2](https://blog.lenskart.com/lenskarts-approach-to-chaos-engineering-part-2-6290e4f3a74e)
+- DevsDay.ru(Russian):[LitmusChaos at Kubecon EU '21](https://devsday.ru/blog/details/40746)
+- Ryan Pei(Armory): [LitmusChaos in your Spinnaker Pipeline](https://www.armory.io/blog/litmuschaos-in-your-spinnaker-pipeline/)
+- David Gildeh(Zebrium): [Using Autonomous Monitoring with Litmus Chaos Engine on Kubernetes](https://www.zebrium.com/blog/using-autonomous-monitoring-with-litmus-chaos-engine-on-kubernetes)
+
+
+## Adopters
+
+Check out the <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Adopters of LitmusChaos</a>
+
+(_Send a PR to the above page if you are using Litmus in your chaos engineering practice_)
+
 ## License
 
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
@@ -78,18 +116,6 @@ Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENS
 Litmus Chaos is part of the CNCF Projects.
 
 [![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
-
-## Community
-
-The Litmus community meets on the third wednesday of every month at 10:00PM IST/9.30 AM PST.
-
-Community Resources:
-
-- [Community Slack](https://slack.litmuschaos.io)
-- [Sync Up Meeting Link](https://zoom.us/j/91358162694)
-- [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
-- [Youtube Channel (demos, meeting recordings, virtual meetups)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
-- [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
 
 ## Important Links
 

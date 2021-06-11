@@ -11,6 +11,7 @@ type ManifestTemplate struct {
 	ProjectName         string `bson:"project_name"`
 	CreatedAt           string `bson:"created_at"`
 	IsRemoved           bool   `bson:"is_removed"`
+	IsCustomWorkflow    bool   `bson:"is_custom_workflow"`
 }
 
 func (template ManifestTemplate) GetManifestTemplateOutput() *model.ManifestTemplate {
@@ -23,5 +24,6 @@ func (template ManifestTemplate) GetManifestTemplateOutput() *model.ManifestTemp
 		ProjectID:           template.ProjectID,
 		CreatedAt:           template.CreatedAt,
 		IsRemoved:           template.IsRemoved,
+		IsCustomWorkflow:    template.IsCustomWorkflow,
 	}
 }

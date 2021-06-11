@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import React from 'react';
 import useStyles from './styles';
 import ProbeDetails from './ProbeDetails';
+import { validateProbeName } from '../../../../utils/validate';
 
 interface AddProbeProps {
   probesValue: any;
@@ -79,6 +80,25 @@ const AddProbe: React.FC<AddProbeProps> = ({
     setProbeType(newProbe);
   };
 
+  // Reset all input data on clicking close button or cancel button
+  const clearData = () => {
+    setProbeData({
+      name: '',
+      type: 'httpProbe',
+      mode: 'Continuous',
+      runProperties: {},
+      'httpProbe/inputs': {},
+    });
+    setRunProperties({
+      probeTimeout: '',
+      retry: '',
+      interval: '',
+      probePollingInterval: '',
+      initialDelaySeconds: '',
+    });
+    setProbeType('httpProbe/inputs');
+  };
+
   const handleAddProbe = () => {
     const properties = runProperties;
     if (Number.isNaN(parseInt(properties.initialDelaySeconds as string, 10))) {
@@ -100,13 +120,22 @@ const AddProbe: React.FC<AddProbeProps> = ({
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        clearData();
+        handleClose();
+      }}
       width="60%"
       className={classes.modal}
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
       modalActions={
-        <ButtonOutlined className={classes.closeButton} onClick={handleClose}>
+        <ButtonOutlined
+          className={classes.closeButton}
+          onClick={() => {
+            clearData();
+            handleClose();
+          }}
+        >
           &#x2715;
         </ButtonOutlined>
       }
@@ -125,12 +154,21 @@ const AddProbe: React.FC<AddProbeProps> = ({
               {t('createWorkflow.tuneWorkflow.addProbe.labels.probeName')}
             </InputLabel>
             <InputField
-              variant="primary"
               id="name"
               name="name"
               type="text"
               required
               value={probeData.name}
+              helperText={
+                validateProbeName(allProbes, probeData.name)
+                  ? t('createWorkflow.tuneWorkflow.addProbe.validate')
+                  : ''
+              }
+              variant={
+                validateProbeName(allProbes, probeData.name)
+                  ? 'error'
+                  : 'primary'
+              }
               onChange={(e) =>
                 setProbeData({ ...probeData, name: e.target.value })
               }
@@ -209,7 +247,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="timeout">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}(ms)
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}(sec)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -241,7 +279,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="interval">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.interval')}(ms)
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.interval')}(sec)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -256,7 +294,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
             </div>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="polling">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}(ms)
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}(sec)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -272,7 +310,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="initial-delay">
               {t('createWorkflow.tuneWorkflow.addProbe.labels.initialDelay')}
-              (ms)
+              (sec)
             </InputLabel>
             <InputField
               variant="primary"
@@ -292,10 +330,21 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <ProbeDetails setProbeData={setProbeData} probeData={probeData} />
 
           <div className={classes.buttonDiv}>
-            <ButtonOutlined onClick={handleClose}>
+            <ButtonOutlined
+              onClick={() => {
+                clearData();
+                handleClose();
+              }}
+            >
               {t('createWorkflow.tuneWorkflow.addProbe.button.cancel')}
             </ButtonOutlined>
-            <ButtonFilled type="submit">
+            <ButtonFilled
+              type="submit"
+              disabled={
+                validateProbeName(allProbes, probeData.name) ||
+                probeData.name.trim().length === 0
+              }
+            >
               {t('createWorkflow.tuneWorkflow.addProbe.button.addProbe')}
             </ButtonFilled>
           </div>
