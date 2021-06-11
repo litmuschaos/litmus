@@ -14,6 +14,7 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
         phase
         execution_data
         resiliency_score
+        isRemoved
       }
     }
   }
@@ -33,59 +34,39 @@ export const WORKFLOW_DETAILS = gql`
         resiliency_score
         experiments_passed
         total_experiments
+        isRemoved
       }
-    }
-  }
-`;
-
-export const SCHEDULE_DETAILS = gql`
-  query scheduleDetails($projectID: String!) {
-    getScheduledWorkflows(project_id: $projectID) {
-      workflow_id
-      workflow_manifest
-      cronSyntax
-      workflow_name
-      workflow_description
-      weightages {
-        experiment_name
-        weightage
-      }
-      isCustomWorkflow
-      updated_at
-      created_at
-      project_id
-      cluster_id
-      cluster_type
-      cluster_name
-      isRemoved
     }
   }
 `;
 
 export const WORKFLOW_LIST_DETAILS = gql`
-  query workflowListDetails($projectID: String!, $workflowIDs: [ID]) {
-    ListWorkflow(project_id: $projectID, workflow_ids: $workflowIDs) {
-      workflow_id
-      workflow_manifest
-      cronSyntax
-      cluster_name
-      workflow_name
-      workflow_description
-      weightages {
-        experiment_name
-        weightage
-      }
-      isCustomWorkflow
-      updated_at
-      created_at
-      project_id
-      cluster_id
-      cluster_type
-      isRemoved
-      workflow_runs {
-        execution_data
-        workflow_run_id
-        last_updated
+  query workflowListDetails($workflowInput: ListWorkflowsInput!) {
+    ListWorkflow(workflowInput: $workflowInput) {
+      total_no_of_workflows
+      workflows {
+        workflow_id
+        workflow_manifest
+        cronSyntax
+        cluster_name
+        workflow_name
+        workflow_description
+        weightages {
+          experiment_name
+          weightage
+        }
+        isCustomWorkflow
+        updated_at
+        created_at
+        project_id
+        cluster_id
+        cluster_type
+        isRemoved
+        workflow_runs {
+          execution_data
+          workflow_run_id
+          last_updated
+        }
       }
     }
   }

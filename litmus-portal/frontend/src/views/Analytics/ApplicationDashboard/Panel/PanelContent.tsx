@@ -60,7 +60,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   const lineGraph: string[] = palette.graph.line;
   const areaGraph: string[] = palette.graph.area;
   const [popout, setPopout] = useState(false);
-  const [viewGraphMetric, setViewGraphMetric] = useState(false);
+  const [viewEventMetric, setViewEventMetric] = useState(false);
   const [prometheusQueryData, setPrometheusQueryData] =
     React.useState<PrometheusQueryDataInterface>({
       promInput: {
@@ -262,20 +262,20 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   return (
     <div
       className={` ${classes.rootPanel} ${className} ${
-        viewGraphMetric ? classes.expand : ''
+        viewEventMetric ? classes.expand : ''
       }`}
     >
       <div className={classes.wrapperParentIconsTitle}>
         <Typography className={classes.title}>{panel_name}</Typography>
         <div className={classes.wrapperIcons}>
-          {viewGraphMetric ? (
+          {viewEventMetric ? (
             <ToolTip
               title={`${t('analyticsDashboard.toolTip.hideChaosMetric')}`}
             >
               <IconButton
                 className={classes.panelIconButton}
                 onClick={() => {
-                  setViewGraphMetric(false);
+                  setViewEventMetric(false);
                 }}
               >
                 <DisableViewChaosMetric className={classes.panelIcon} />
@@ -288,7 +288,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               <IconButton
                 className={classes.panelIconButton}
                 onClick={() => {
-                  setViewGraphMetric(true);
+                  setViewEventMetric(true);
                 }}
               >
                 <ViewChaosMetric className={classes.panelIcon} />
@@ -354,7 +354,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
           openSeries={graphData.seriesData}
           eventSeries={graphData.chaosData}
           showPoints={false}
-          showEventTable={viewGraphMetric}
+          showEventTable={viewEventMetric}
           showLegendTable
           showTips
           showEventMarkers

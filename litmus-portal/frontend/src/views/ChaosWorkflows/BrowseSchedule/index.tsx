@@ -25,39 +25,28 @@ import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
 import Loader from '../../../components/Loader';
 import {
-  DELETE_SCHEDULE,
-  SCHEDULE_DETAILS,
+  DELETE_WORKFLOW,
+  GET_CLUSTER_NAMES,
   UPDATE_SCHEDULE,
+  WORKFLOW_LIST_DETAILS,
 } from '../../../graphql';
+import { Clusters, ClusterVars } from '../../../models/graphql/clusterData';
 import { WeightMap } from '../../../models/graphql/createWorkflowData';
+import { DeleteSchedule } from '../../../models/graphql/scheduleData';
 import {
-  DeleteSchedule,
-  ScheduleDataVars,
-  Schedules,
-  ScheduleWorkflow,
-} from '../../../models/graphql/scheduleData';
+  ListWorkflowsInput,
+  Pagination,
+  ScheduledWorkflow,
+  ScheduledWorkflows,
+  SortInput,
+  WorkflowFilterInput,
+} from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
-import {
-  sortAlphaAsc,
-  sortAlphaDesc,
-  sortNumAsc,
-  sortNumDesc,
-} from '../../../utils/sort';
 import useStyles from './styles';
 import TableData from './TableData';
 
-interface FilterOption {
-  search: string;
-  cluster: string;
-  suspended: string;
-}
-interface PaginationData {
-  pageNo: number;
-  rowsPerPage: number;
-}
-interface SortData {
-  startDate: { sort: boolean; ascending: boolean };
-  name: { sort: boolean; ascending: boolean };
+interface FilterOption extends WorkflowFilterInput {
+  suspended?: string;
 }
 
 const BrowseSchedule: React.FC = () => {
@@ -65,33 +54,60 @@ const BrowseSchedule: React.FC = () => {
   const projectID = getProjectID();
   const { t } = useTranslation();
 
-  // Apollo query to get the scheduled data
-  const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
-    {
-      variables: { projectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
-
-  // Apollo mutation to delete the selected schedule
-  const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_SCHEDULE, {
-    refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
+  // State for pagination
+  const [paginationData, setPaginationData] = useState<Pagination>({
+    page: 0,
+    limit: 10,
   });
 
-  // State for search and filtering
-  const [filter, setFilter] = React.useState<FilterOption>({
-    search: '',
-    cluster: 'All',
+  // States for filters
+  const [filters, setFilters] = useState<FilterOption>({
+    workflow_name: '',
+    cluster_name: 'All',
     suspended: 'All',
   });
 
+  // State for sorting
+  const [sortData, setSortData] = useState<SortInput>({
+    field: 'Name',
+    descending: true,
+  });
+
+  // Apollo query to get the scheduled data
+  const { data, refetch, loading, error } = useQuery<
+    ScheduledWorkflows,
+    ListWorkflowsInput
+  >(WORKFLOW_LIST_DETAILS, {
+    variables: {
+      workflowInput: {
+        project_id: projectID,
+        pagination: {
+          page: paginationData.page,
+          limit: paginationData.limit,
+        },
+        sort: sortData,
+        filter: {
+          workflow_name: filters.workflow_name,
+          cluster_name: filters.cluster_name,
+        },
+      },
+    },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  // Apollo mutation to delete the selected schedule
+  const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_WORKFLOW, {
+    onCompleted: () => refetch(),
+  });
+
+  // State for search and filtering
+
   const [updateSchedule] = useMutation(UPDATE_SCHEDULE, {
-    refetchQueries: [{ query: SCHEDULE_DETAILS, variables: { projectID } }],
+    onCompleted: () => refetch(),
   });
 
   // Disable and re-enable a schedule
-  const handleToggleSchedule = (schedule: ScheduleWorkflow) => {
+  const handleToggleSchedule = (schedule: ScheduledWorkflow) => {
     const yaml = YAML.parse(schedule.workflow_manifest);
     if (yaml.spec.suspend === undefined || yaml.spec.suspend === false) {
       yaml.spec.suspend = true;
@@ -125,70 +141,29 @@ const BrowseSchedule: React.FC = () => {
     });
   };
 
-  // State for pagination
-  const [paginationData, setPaginationData] = useState<PaginationData>({
-    pageNo: 0,
-    rowsPerPage: 5,
-  });
+  // Query to get list of Clusters
+  const { data: clusterList } = useQuery<Partial<Clusters>, ClusterVars>(
+    GET_CLUSTER_NAMES,
+    {
+      variables: {
+        project_id: projectID,
+      },
+    }
+  );
 
-  // State for sorting
-  const [sortData, setSortData] = useState<SortData>({
-    name: { sort: false, ascending: true },
-    startDate: { sort: true, ascending: true },
-  });
-
-  const getClusters = (searchingData: ScheduleWorkflow[]) => {
-    const uniqueList: string[] = [];
-    searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.cluster_name)) {
-        uniqueList.push(data.cluster_name);
-      }
-    });
-    return uniqueList;
-  };
-
-  const filteredData = data?.getScheduledWorkflows
-    .filter((dataRow) =>
-      dataRow.workflow_name.toLowerCase().includes(filter.search.toLowerCase())
-    )
-    .filter((dataRow) =>
-      filter.cluster === 'All'
-        ? true
-        : dataRow.cluster_name
-            .toLowerCase()
-            .includes(filter.cluster.toLowerCase())
-    )
-    .filter((dataRow) =>
-      filter.suspended === 'All'
-        ? true
-        : filter.suspended === 'true'
-        ? YAML.parse(dataRow.workflow_manifest).spec.suspend === true
-        : filter.suspended === 'false'
-        ? YAML.parse(dataRow.workflow_manifest).spec.suspend === undefined
-        : false
-    )
-    .sort((a: ScheduleWorkflow, b: ScheduleWorkflow) => {
-      // Sorting based on unique fields
-      if (sortData.name.sort) {
-        const x = a.workflow_name;
-        const y = b.workflow_name;
-        return sortData.name.ascending
-          ? sortAlphaAsc(x, y)
-          : sortAlphaDesc(x, y);
-      }
-      if (sortData.startDate.sort) {
-        const x = parseInt(a.updated_at, 10);
-        const y = parseInt(b.updated_at, 10);
-        return sortData.startDate.ascending
-          ? sortNumAsc(y, x)
-          : sortNumDesc(y, x);
-      }
-      return 0;
-    });
+  const filteredWorkflows = data?.ListWorkflow.workflows.filter((dataRow) =>
+    filters.suspended === 'All'
+      ? true
+      : filters.suspended === 'true'
+      ? YAML.parse(dataRow.workflow_manifest).spec.suspend === true
+      : filters.suspended === 'false'
+      ? YAML.parse(dataRow.workflow_manifest).spec.suspend === undefined
+      : false
+  );
 
   const deleteRow = (wfid: string) => {
     deleteSchedule({
-      variables: { workflow_id: wfid },
+      variables: { workflowid: wfid, workflow_run_id: '' },
     });
   };
   return (
@@ -200,9 +175,12 @@ const BrowseSchedule: React.FC = () => {
             id="input-with-icon-adornment"
             placeholder="Search"
             className={classes.search}
-            value={filter.search}
+            value={filters.workflow_name}
             onChange={(event) =>
-              setFilter({ ...filter, search: event.target.value as string })
+              setFilters({
+                ...filters,
+                workflow_name: event.target.value as string,
+              })
             }
             startAdornment={
               <InputAdornment position="start">
@@ -218,10 +196,10 @@ const BrowseSchedule: React.FC = () => {
           >
             <InputLabel className={classes.selectText}>Name</InputLabel>
             <Select
-              value={filter.suspended}
+              value={filters.suspended}
               onChange={(event) =>
-                setFilter({
-                  ...filter,
+                setFilters({
+                  ...filters,
                   suspended: event.target.value as string,
                 })
               }
@@ -249,19 +227,25 @@ const BrowseSchedule: React.FC = () => {
           >
             <InputLabel className={classes.selectText}>Target Agent</InputLabel>
             <Select
-              value={filter.cluster}
+              value={filters.cluster_name}
               onChange={(event) =>
-                setFilter({ ...filter, cluster: event.target.value as string })
+                setFilters({
+                  ...filters,
+                  cluster_name: event.target.value as string,
+                })
               }
               label="Target Cluster"
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
-              {(data ? getClusters(data.getScheduledWorkflows) : []).map(
-                (cluster: any) => (
-                  <MenuItem value={cluster}>{cluster}</MenuItem>
-                )
-              )}
+              {clusterList?.getCluster?.map((cluster) => (
+                <MenuItem
+                  key={cluster.cluster_name}
+                  value={cluster.cluster_name}
+                >
+                  {cluster.cluster_name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </div>
@@ -287,9 +271,8 @@ const BrowseSchedule: React.FC = () => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ...sortData,
-                            name: { sort: false, ascending: false },
-                            startDate: { sort: false, ascending: false },
+                            field: 'Name',
+                            descending: false,
                           })
                         }
                       >
@@ -300,9 +283,8 @@ const BrowseSchedule: React.FC = () => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ...sortData,
-                            name: { sort: false, ascending: true },
-                            startDate: { sort: true, ascending: true },
+                            field: 'Name',
+                            descending: true,
                           })
                         }
                       >
@@ -356,25 +338,19 @@ const BrowseSchedule: React.FC = () => {
                     <Typography align="center">Unable to fetch data</Typography>
                   </TableCell>
                 </TableRow>
-              ) : filteredData && filteredData.length ? (
-                filteredData
-                  .slice(
-                    paginationData.pageNo * paginationData.rowsPerPage,
-                    paginationData.pageNo * paginationData.rowsPerPage +
-                      paginationData.rowsPerPage
-                  )
-                  .map((data: ScheduleWorkflow) => (
-                    <TableRow
-                      data-cy="workflowSchedulesTableRow"
-                      key={data.workflow_id}
-                    >
-                      <TableData
-                        data={data}
-                        deleteRow={deleteRow}
-                        handleToggleSchedule={handleToggleSchedule}
-                      />
-                    </TableRow>
-                  ))
+              ) : filteredWorkflows && filteredWorkflows.length ? (
+                filteredWorkflows.map((data) => (
+                  <TableRow
+                    data-cy="workflowSchedulesTableRow"
+                    key={data.workflow_id}
+                  >
+                    <TableData
+                      data={data}
+                      deleteRow={deleteRow}
+                      handleToggleSchedule={handleToggleSchedule}
+                    />
+                  </TableRow>
+                ))
               ) : (
                 <TableRow>
                   <TableCell data-cy="browseScheduleNoData" colSpan={7}>
@@ -388,19 +364,19 @@ const BrowseSchedule: React.FC = () => {
 
         {/* Pagination Section */}
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={filteredData?.length ?? 0}
-          rowsPerPage={paginationData.rowsPerPage}
-          page={paginationData.pageNo}
+          count={filteredWorkflows?.length ?? 0}
+          rowsPerPage={paginationData.limit}
+          page={paginationData.page}
           onChangePage={(_, page) =>
-            setPaginationData({ ...paginationData, pageNo: page })
+            setPaginationData({ ...paginationData, page })
           }
           onChangeRowsPerPage={(event) => {
             setPaginationData({
               ...paginationData,
-              pageNo: 0,
-              rowsPerPage: parseInt(event.target.value, 10),
+              page: 0,
+              limit: parseInt(event.target.value, 10),
             });
           }}
         />

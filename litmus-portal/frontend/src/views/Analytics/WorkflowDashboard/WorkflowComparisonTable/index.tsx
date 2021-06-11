@@ -25,10 +25,10 @@ import Loader from '../../../../components/Loader';
 import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
 import {
   ExecutionData,
+  ListWorkflowsInput,
+  ScheduledWorkflow,
+  ScheduledWorkflows,
   WeightageMap,
-  Workflow,
-  WorkflowList,
-  WorkflowListDataVars,
 } from '../../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import {
@@ -104,7 +104,7 @@ const WorkflowComparisonTable = () => {
     },
     searchTokens: [''],
   });
-  const [displayData, setDisplayData] = useState<Workflow[]>([]);
+  const [displayData, setDisplayData] = useState<ScheduledWorkflow[]>([]);
   const [clusters, setClusters] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -127,15 +127,15 @@ const WorkflowComparisonTable = () => {
   const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
-  const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
-    WORKFLOW_LIST_DETAILS,
-    {
-      variables: { projectID, workflowIDs: [] },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const { data, loading, error } = useQuery<
+    ScheduledWorkflows,
+    ListWorkflowsInput
+  >(WORKFLOW_LIST_DETAILS, {
+    variables: { workflowInput: { project_id: projectID } },
+    fetchPolicy: 'cache-and-network',
+  });
 
-  const getClusters = (searchingData: Workflow[]) => {
+  const getClusters = (searchingData: ScheduledWorkflow[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
       if (!uniqueList.includes(data.cluster_name)) {
@@ -158,7 +158,9 @@ const WorkflowComparisonTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = displayData.map((n: Workflow) => n.workflow_id);
+      const newSelecteds = displayData.map(
+        (n: ScheduledWorkflow) => n.workflow_id
+      );
       setSelected(newSelecteds);
       return;
     }
@@ -185,13 +187,13 @@ const WorkflowComparisonTable = () => {
   };
 
   const searchingDataRetriever = () => {
-    let searchingData: Workflow[] = [];
+    let searchingData: ScheduledWorkflow[] = [];
     if (compare === false) {
-      searchingData = data?.ListWorkflow ?? [];
+      searchingData = data?.ListWorkflow.workflows ?? [];
     } else {
-      const searchedData: Workflow[] = [];
+      const searchedData: ScheduledWorkflow[] = [];
       selected.forEach((workflowID) => {
-        data?.ListWorkflow.forEach((workflow) => {
+        data?.ListWorkflow.workflows.forEach((workflow) => {
           if (workflow.workflow_id === workflowID) {
             searchedData.push(workflow);
           }
@@ -230,14 +232,16 @@ const WorkflowComparisonTable = () => {
     const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
     const timeSeriesArray: DatedResilienceScore[][] = [];
     selected.forEach((workflow) => {
-      const workflowData = data?.ListWorkflow.filter(function match(wkf) {
+      const workflowData = data?.ListWorkflow.workflows.filter(function match(
+        wkf
+      ) {
         return wkf.workflow_id === workflow;
       });
       const runs = workflowData ? workflowData[0].workflow_runs : [];
       const workflowTimeSeriesData: DatedResilienceScore[] = [];
       let isWorkflowValid: boolean = false;
       try {
-        runs.forEach((data) => {
+        runs?.forEach((data) => {
           try {
             const executionData: ExecutionData = JSON.parse(
               data.execution_data
@@ -416,11 +420,11 @@ const WorkflowComparisonTable = () => {
 
   const CallbackForComparing = (compareWorkflows: boolean) => {
     setCompare(compareWorkflows);
-    const payload: Workflow[] = [];
+    const payload: ScheduledWorkflow[] = [];
     selected.forEach((workflow) => {
       displayData.forEach((displayWorkflow, i) => {
         if (displayWorkflow.workflow_id === workflow && data) {
-          payload.push(data.ListWorkflow[i]);
+          payload.push(data?.ListWorkflow.workflows[i]);
         }
       });
     });
@@ -554,13 +558,13 @@ const WorkflowComparisonTable = () => {
   };
 
   useEffect(() => {
-    setDisplayData(data ? data.ListWorkflow : []);
-    getClusters(data ? data.ListWorkflow : []);
+    setDisplayData(data ? data.ListWorkflow.workflows : []);
+    getClusters(data ? data.ListWorkflow.workflows : []);
   }, [data]);
 
   useEffect(() => {
     const payload = searchingDataRetriever()
-      .filter((wkf: Workflow) => {
+      .filter((wkf) => {
         return filter.searchTokens.every(
           (s: string) =>
             wkf.workflow_name.toLowerCase().includes(s) ||
@@ -589,7 +593,7 @@ const WorkflowComparisonTable = () => {
                   )
                 ).getTime();
       })
-      .sort((a: Workflow, b: Workflow) => {
+      .sort((a, b) => {
         // Sorting based on unique fields
         if (filter.sortData.name.sort) {
           const x = a.workflow_name;
@@ -752,7 +756,7 @@ const WorkflowComparisonTable = () => {
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
                         )
-                        .map((data: Workflow, index: number) => {
+                        .map((data, index) => {
                           const isItemSelected = isSelected(data.workflow_id);
                           const labelId = `enhanced-table-checkbox-${index}`;
                           return (
@@ -799,7 +803,7 @@ const WorkflowComparisonTable = () => {
                 </Table>
               </TableContainer>
               {/* </MuiThemeProvider> */}
-              {compare === false || showAll === true ? (
+              {!compare || showAll ? (
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, 50]}
                   component="div"
