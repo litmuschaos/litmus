@@ -247,7 +247,7 @@ type ComplexityRoot struct {
 		SendInvitation         func(childComplexity int, member model.MemberInput) int
 		SyncHub                func(childComplexity int, id string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
-		UpdateDashboard        func(childComplexity int, dashboard *model.UpdataDBInput) int
+		UpdateDashboard        func(childComplexity int, dashboard *model.UpdateDBInput) int
 		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
 		UpdateGitOps           func(childComplexity int, config model.GitConfig) int
 		UpdateImageRegistry    func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
@@ -454,6 +454,11 @@ type ComplexityRoot struct {
 		Value func(childComplexity int) int
 	}
 
+	ApplicationMetadataResponse struct {
+		Applications func(childComplexity int) int
+		Namespace    func(childComplexity int) int
+	}
+
 	ClusterRegResponse struct {
 		ClusterID   func(childComplexity int) int
 		ClusterName func(childComplexity int) int
@@ -475,21 +480,26 @@ type ComplexityRoot struct {
 	}
 
 	ListDashboardReponse struct {
-		ClusterID   func(childComplexity int) int
-		ClusterName func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		DbID        func(childComplexity int) int
-		DbName      func(childComplexity int) int
-		DbType      func(childComplexity int) int
-		DsID        func(childComplexity int) int
-		DsName      func(childComplexity int) int
-		DsType      func(childComplexity int) int
-		EndTime     func(childComplexity int) int
-		PanelGroups func(childComplexity int) int
-		ProjectID   func(childComplexity int) int
-		RefreshRate func(childComplexity int) int
-		StartTime   func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
+		ApplicationMetadataMap    func(childComplexity int) int
+		ChaosEventQueryTemplate   func(childComplexity int) int
+		ChaosVerdictQueryTemplate func(childComplexity int) int
+		ClusterID                 func(childComplexity int) int
+		ClusterName               func(childComplexity int) int
+		CreatedAt                 func(childComplexity int) int
+		DbID                      func(childComplexity int) int
+		DbInformation             func(childComplexity int) int
+		DbName                    func(childComplexity int) int
+		DbTypeID                  func(childComplexity int) int
+		DbTypeName                func(childComplexity int) int
+		DsID                      func(childComplexity int) int
+		DsName                    func(childComplexity int) int
+		DsType                    func(childComplexity int) int
+		EndTime                   func(childComplexity int) int
+		PanelGroups               func(childComplexity int) int
+		ProjectID                 func(childComplexity int) int
+		RefreshRate               func(childComplexity int) int
+		StartTime                 func(childComplexity int) int
+		UpdatedAt                 func(childComplexity int) int
 	}
 
 	MetricsPromResponse struct {
@@ -520,6 +530,7 @@ type ComplexityRoot struct {
 	}
 
 	PanelResponse struct {
+		CreatedAt    func(childComplexity int) int
 		PanelID      func(childComplexity int) int
 		PanelName    func(childComplexity int) int
 		PanelOptions func(childComplexity int) int
@@ -552,6 +563,11 @@ type ComplexityRoot struct {
 	PromSeriesResponse struct {
 		LabelValues func(childComplexity int) int
 		Series      func(childComplexity int) int
+	}
+
+	ResourceResponse struct {
+		Kind  func(childComplexity int) int
+		Names func(childComplexity int) int
 	}
 
 	Weightages struct {
@@ -592,9 +608,9 @@ type MutationResolver interface {
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
 	UpdateGitOps(ctx context.Context, config model.GitConfig) (bool, error)
 	CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error)
-	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (string, error)
+	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardReponse, error)
 	UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error)
-	UpdateDashboard(ctx context.Context, dashboard *model.UpdataDBInput) (string, error)
+	UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput) (string, error)
 	UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error)
 	DeleteDashboard(ctx context.Context, dbID *string) (bool, error)
 	DeleteDataSource(ctx context.Context, input model.DeleteDSInput) (bool, error)
@@ -1817,7 +1833,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(*model.UpdataDBInput)), true
+		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(*model.UpdateDBInput)), true
 
 	case "Mutation.updateDataSource":
 		if e.complexity.Mutation.UpdateDataSource == nil {
@@ -3065,6 +3081,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AnnotationsTimeStampValue.Value(childComplexity), true
 
+	case "applicationMetadataResponse.applications":
+		if e.complexity.ApplicationMetadataResponse.Applications == nil {
+			break
+		}
+
+		return e.complexity.ApplicationMetadataResponse.Applications(childComplexity), true
+
+	case "applicationMetadataResponse.namespace":
+		if e.complexity.ApplicationMetadataResponse.Namespace == nil {
+			break
+		}
+
+		return e.complexity.ApplicationMetadataResponse.Namespace(childComplexity), true
+
 	case "clusterRegResponse.cluster_id":
 		if e.complexity.ClusterRegResponse.ClusterID == nil {
 			break
@@ -3142,6 +3172,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LabelValue.Values(childComplexity), true
 
+	case "listDashboardReponse.application_metadata_map":
+		if e.complexity.ListDashboardReponse.ApplicationMetadataMap == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardReponse.ApplicationMetadataMap(childComplexity), true
+
+	case "listDashboardReponse.chaos_event_query_template":
+		if e.complexity.ListDashboardReponse.ChaosEventQueryTemplate == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardReponse.ChaosEventQueryTemplate(childComplexity), true
+
+	case "listDashboardReponse.chaos_verdict_query_template":
+		if e.complexity.ListDashboardReponse.ChaosVerdictQueryTemplate == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardReponse.ChaosVerdictQueryTemplate(childComplexity), true
+
 	case "listDashboardReponse.cluster_id":
 		if e.complexity.ListDashboardReponse.ClusterID == nil {
 			break
@@ -3170,6 +3221,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ListDashboardReponse.DbID(childComplexity), true
 
+	case "listDashboardReponse.db_information":
+		if e.complexity.ListDashboardReponse.DbInformation == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardReponse.DbInformation(childComplexity), true
+
 	case "listDashboardReponse.db_name":
 		if e.complexity.ListDashboardReponse.DbName == nil {
 			break
@@ -3177,12 +3235,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ListDashboardReponse.DbName(childComplexity), true
 
-	case "listDashboardReponse.db_type":
-		if e.complexity.ListDashboardReponse.DbType == nil {
+	case "listDashboardReponse.db_type_id":
+		if e.complexity.ListDashboardReponse.DbTypeID == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DbType(childComplexity), true
+		return e.complexity.ListDashboardReponse.DbTypeID(childComplexity), true
+
+	case "listDashboardReponse.db_type_name":
+		if e.complexity.ListDashboardReponse.DbTypeName == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardReponse.DbTypeName(childComplexity), true
 
 	case "listDashboardReponse.ds_id":
 		if e.complexity.ListDashboardReponse.DsID == nil {
@@ -3331,6 +3396,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PanelOptionResponse.Points(childComplexity), true
 
+	case "panelResponse.created_at":
+		if e.complexity.PanelResponse.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.PanelResponse.CreatedAt(childComplexity), true
+
 	case "panelResponse.panel_id":
 		if e.complexity.PanelResponse.PanelID == nil {
 			break
@@ -3471,6 +3543,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PromSeriesResponse.Series(childComplexity), true
 
+	case "resourceResponse.kind":
+		if e.complexity.ResourceResponse.Kind == nil {
+			break
+		}
+
+		return e.complexity.ResourceResponse.Kind(childComplexity), true
+
+	case "resourceResponse.names":
+		if e.complexity.ResourceResponse.Names == nil {
+			break
+		}
+
+		return e.complexity.ResourceResponse.Names(childComplexity), true
+
 	case "weightages.experiment_name":
 		if e.complexity.Weightages.ExperimentName == nil {
 			break
@@ -3602,7 +3688,12 @@ type DSResponse {
 input createDBInput {
     ds_id: String!
     db_name: String!
-    db_type: String!
+    db_type_name: String!
+    db_type_id: String!
+    db_information: String
+    chaos_event_query_template: String!
+    chaos_verdict_query_template: String!
+    application_metadata_map: [applicationMetadata]
     panel_groups: [panelGroup]!
     end_time: String!
     start_time: String!
@@ -3611,20 +3702,37 @@ input createDBInput {
     refresh_rate: String!
 }
 
-input updataDBInput {
+input applicationMetadata {
+    namespace: String!
+    applications: [resource]
+}
+
+input resource {
+    kind: String!
+    names: [String]
+}
+
+input updateDBInput {
     db_id: String!
     ds_id: String!
     db_name: String!
-    db_type: String!
+    db_type_name: String!
+    db_type_id: String!
+    db_information: String
+    chaos_event_query_template: String!
+    chaos_verdict_query_template: String!
+    application_metadata_map: [applicationMetadata]
+    panel_groups: [updatePanelGroupInput]!
     end_time: String!
     start_time: String!
+    cluster_id: ID!
     refresh_rate: String!
-    panel_groups: [updatePanelGroupInput]!
 }
 
 input updatePanelGroupInput {
     panel_group_name: String!
     panel_group_id: String!
+    panels: [panel]
 }
 
 input panelGroup {
@@ -3640,6 +3748,7 @@ input panel {
     x_axis_down: String
     unit: String
     panel_group_id: String
+    created_at: String
     prom_queries: [promQuery]
     panel_options: panelOption
     panel_name: String!
@@ -3734,7 +3843,12 @@ type listDashboardReponse {
     ds_id: String!
     db_id: String!
     db_name: String!
-    db_type: String!
+    db_type_id: String!
+    db_type_name: String!
+    db_information: String
+    chaos_event_query_template: String!
+    chaos_verdict_query_template: String!
+    application_metadata_map: [applicationMetadataResponse]
     cluster_name: String
     ds_name: String
     ds_type: String
@@ -3746,6 +3860,16 @@ type listDashboardReponse {
     cluster_id: ID!
     created_at: String
     updated_at: String
+}
+
+type applicationMetadataResponse {
+    namespace: String!
+    applications: [resourceResponse]
+}
+
+type resourceResponse {
+    kind: String!
+    names: [String]
 }
 
 type panelGroupResponse {
@@ -3763,6 +3887,7 @@ type panelResponse {
     prom_queries: [promQueryResponse]
     panel_options: panelOptionResponse
     panel_name: String
+    created_at: String
 }
 
 type panelOptionResponse {
@@ -4431,11 +4556,11 @@ type Mutation {
   # Analytics
   createDataSource(datasource: DSInput): DSResponse @authorized
 
-  createDashBoard(dashboard: createDBInput): String! @authorized
+  createDashBoard(dashboard: createDBInput): listDashboardReponse! @authorized
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updataDBInput): String! @authorized
+  updateDashboard(dashboard: updateDBInput): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
@@ -4999,9 +5124,9 @@ func (ec *executionContext) field_Mutation_updateChaosWorkflow_args(ctx context.
 func (ec *executionContext) field_Mutation_updateDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.UpdataDBInput
+	var arg0 *model.UpdateDBInput
 	if tmp, ok := rawArgs["dashboard"]; ok {
-		arg0, err = ec.unmarshalOupdataDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdataDBInput(ctx, tmp)
+		arg0, err = ec.unmarshalOupdateDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -11025,10 +11150,10 @@ func (ec *executionContext) _Mutation_createDashBoard(ctx context.Context, field
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(string); ok {
+		if data, ok := tmp.(*model.ListDashboardReponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ListDashboardReponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11040,9 +11165,9 @@ func (ec *executionContext) _Mutation_createDashBoard(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.ListDashboardReponse)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNlistDashboardReponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateDataSource(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -11131,7 +11256,7 @@ func (ec *executionContext) _Mutation_updateDashboard(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(*model.UpdataDBInput))
+			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(*model.UpdateDBInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -18369,6 +18494,71 @@ func (ec *executionContext) _annotationsTimeStampValue_value(ctx context.Context
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _applicationMetadataResponse_namespace(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationMetadataResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "applicationMetadataResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Namespace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _applicationMetadataResponse_applications(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationMetadataResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "applicationMetadataResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Applications, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ResourceResponse)
+	fc.Result = res
+	return ec.marshalOresourceResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResourceResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _clusterRegResponse_token(ctx context.Context, field graphql.CollectedField, obj *model.ClusterRegResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18833,7 +19023,7 @@ func (ec *executionContext) _listDashboardReponse_db_name(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_db_type(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardReponse_db_type_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -18850,7 +19040,7 @@ func (ec *executionContext) _listDashboardReponse_db_type(ctx context.Context, f
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.DbType, nil
+		return obj.DbTypeID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18865,6 +19055,170 @@ func (ec *executionContext) _listDashboardReponse_db_type(ctx context.Context, f
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _listDashboardReponse_db_type_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardReponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DbTypeName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _listDashboardReponse_db_information(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardReponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DbInformation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _listDashboardReponse_chaos_event_query_template(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardReponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChaosEventQueryTemplate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _listDashboardReponse_chaos_verdict_query_template(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardReponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChaosVerdictQueryTemplate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _listDashboardReponse_application_metadata_map(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardReponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ApplicationMetadataMap, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ApplicationMetadataResponse)
+	fc.Result = res
+	return ec.marshalOapplicationMetadataResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadataResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _listDashboardReponse_cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
@@ -19858,6 +20212,37 @@ func (ec *executionContext) _panelResponse_panel_name(ctx context.Context, field
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _panelResponse_created_at(ctx context.Context, field graphql.CollectedField, obj *model.PanelResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "panelResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _promQueryResponse_queryid(ctx context.Context, field graphql.CollectedField, obj *model.PromQueryResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -20234,6 +20619,71 @@ func (ec *executionContext) _promSeriesResponse_labelValues(ctx context.Context,
 	res := resTmp.([]*model.LabelValue)
 	fc.Result = res
 	return ec.marshalOlabelValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _resourceResponse_kind(ctx context.Context, field graphql.CollectedField, obj *model.ResourceResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "resourceResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _resourceResponse_names(ctx context.Context, field graphql.CollectedField, obj *model.ResourceResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "resourceResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Names, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _weightages_experiment_name(ctx context.Context, field graphql.CollectedField, obj *model.Weightages) (ret graphql.Marshaler) {
@@ -21358,6 +21808,30 @@ func (ec *executionContext) unmarshalInputWorkflowRunInput(ctx context.Context, 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputapplicationMetadata(ctx context.Context, obj interface{}) (model.ApplicationMetadata, error) {
+	var it model.ApplicationMetadata
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "namespace":
+			var err error
+			it.Namespace, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "applications":
+			var err error
+			it.Applications, err = ec.unmarshalOresource2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResource(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputcreateDBInput(ctx context.Context, obj interface{}) (model.CreateDBInput, error) {
 	var it model.CreateDBInput
 	var asMap = obj.(map[string]interface{})
@@ -21376,9 +21850,39 @@ func (ec *executionContext) unmarshalInputcreateDBInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "db_type":
+		case "db_type_name":
 			var err error
-			it.DbType, err = ec.unmarshalNString2string(ctx, v)
+			it.DbTypeName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "db_type_id":
+			var err error
+			it.DbTypeID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "db_information":
+			var err error
+			it.DbInformation, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "chaos_event_query_template":
+			var err error
+			it.ChaosEventQueryTemplate, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "chaos_verdict_query_template":
+			var err error
+			it.ChaosVerdictQueryTemplate, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "application_metadata_map":
+			var err error
+			it.ApplicationMetadataMap, err = ec.unmarshalOapplicationMetadata2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadata(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21571,6 +22075,12 @@ func (ec *executionContext) unmarshalInputpanel(ctx context.Context, obj interfa
 		case "panel_group_id":
 			var err error
 			it.PanelGroupID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "created_at":
+			var err error
+			it.CreatedAt, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21796,8 +22306,32 @@ func (ec *executionContext) unmarshalInputpromSeriesInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputupdataDBInput(ctx context.Context, obj interface{}) (model.UpdataDBInput, error) {
-	var it model.UpdataDBInput
+func (ec *executionContext) unmarshalInputresource(ctx context.Context, obj interface{}) (model.Resource, error) {
+	var it model.Resource
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "kind":
+			var err error
+			it.Kind, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "names":
+			var err error
+			it.Names, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputupdateDBInput(ctx context.Context, obj interface{}) (model.UpdateDBInput, error) {
+	var it model.UpdateDBInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -21820,9 +22354,45 @@ func (ec *executionContext) unmarshalInputupdataDBInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "db_type":
+		case "db_type_name":
 			var err error
-			it.DbType, err = ec.unmarshalNString2string(ctx, v)
+			it.DbTypeName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "db_type_id":
+			var err error
+			it.DbTypeID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "db_information":
+			var err error
+			it.DbInformation, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "chaos_event_query_template":
+			var err error
+			it.ChaosEventQueryTemplate, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "chaos_verdict_query_template":
+			var err error
+			it.ChaosVerdictQueryTemplate, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "application_metadata_map":
+			var err error
+			it.ApplicationMetadataMap, err = ec.unmarshalOapplicationMetadata2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadata(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "panel_groups":
+			var err error
+			it.PanelGroups, err = ec.unmarshalNupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21838,15 +22408,15 @@ func (ec *executionContext) unmarshalInputupdataDBInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "refresh_rate":
+		case "cluster_id":
 			var err error
-			it.RefreshRate, err = ec.unmarshalNString2string(ctx, v)
+			it.ClusterID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "panel_groups":
+		case "refresh_rate":
 			var err error
-			it.PanelGroups, err = ec.unmarshalNupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, v)
+			it.RefreshRate, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21871,6 +22441,12 @@ func (ec *executionContext) unmarshalInputupdatePanelGroupInput(ctx context.Cont
 		case "panel_group_id":
 			var err error
 			it.PanelGroupID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "panels":
+			var err error
+			it.Panels, err = ec.unmarshalOpanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPanel(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -24449,6 +25025,35 @@ func (ec *executionContext) _annotationsTimeStampValue(ctx context.Context, sel 
 	return out
 }
 
+var applicationMetadataResponseImplementors = []string{"applicationMetadataResponse"}
+
+func (ec *executionContext) _applicationMetadataResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ApplicationMetadataResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, applicationMetadataResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("applicationMetadataResponse")
+		case "namespace":
+			out.Values[i] = ec._applicationMetadataResponse_namespace(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "applications":
+			out.Values[i] = ec._applicationMetadataResponse_applications(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var clusterRegResponseImplementors = []string{"clusterRegResponse"}
 
 func (ec *executionContext) _clusterRegResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterRegResponse) graphql.Marshaler {
@@ -24584,11 +25189,30 @@ func (ec *executionContext) _listDashboardReponse(ctx context.Context, sel ast.S
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "db_type":
-			out.Values[i] = ec._listDashboardReponse_db_type(ctx, field, obj)
+		case "db_type_id":
+			out.Values[i] = ec._listDashboardReponse_db_type_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "db_type_name":
+			out.Values[i] = ec._listDashboardReponse_db_type_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "db_information":
+			out.Values[i] = ec._listDashboardReponse_db_information(ctx, field, obj)
+		case "chaos_event_query_template":
+			out.Values[i] = ec._listDashboardReponse_chaos_event_query_template(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "chaos_verdict_query_template":
+			out.Values[i] = ec._listDashboardReponse_chaos_verdict_query_template(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "application_metadata_map":
+			out.Values[i] = ec._listDashboardReponse_application_metadata_map(ctx, field, obj)
 		case "cluster_name":
 			out.Values[i] = ec._listDashboardReponse_cluster_name(ctx, field, obj)
 		case "ds_name":
@@ -24813,6 +25437,8 @@ func (ec *executionContext) _panelResponse(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._panelResponse_panel_options(ctx, field, obj)
 		case "panel_name":
 			out.Values[i] = ec._panelResponse_panel_name(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._panelResponse_created_at(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24931,6 +25557,35 @@ func (ec *executionContext) _promSeriesResponse(ctx context.Context, sel ast.Sel
 			}
 		case "labelValues":
 			out.Values[i] = ec._promSeriesResponse_labelValues(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var resourceResponseImplementors = []string{"resourceResponse"}
+
+func (ec *executionContext) _resourceResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ResourceResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, resourceResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("resourceResponse")
+		case "kind":
+			out.Values[i] = ec._resourceResponse_kind(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "names":
+			out.Values[i] = ec._resourceResponse_names(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26394,6 +27049,20 @@ func (ec *executionContext) unmarshalNimageRegistryInput2githubᚗcomᚋlitmusch
 	return ec.unmarshalInputimageRegistryInput(ctx, v)
 }
 
+func (ec *executionContext) marshalNlistDashboardReponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx context.Context, sel ast.SelectionSet, v model.ListDashboardReponse) graphql.Marshaler {
+	return ec._listDashboardReponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNlistDashboardReponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx context.Context, sel ast.SelectionSet, v *model.ListDashboardReponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._listDashboardReponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNpanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPanelGroup(ctx context.Context, v interface{}) ([]*model.PanelGroup, error) {
 	var vSlice []interface{}
 	if v != nil {
@@ -27308,6 +27977,89 @@ func (ec *executionContext) marshalOannotationsTimeStampValue2ᚖgithubᚗcomᚋ
 	return ec._annotationsTimeStampValue(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOapplicationMetadata2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadata(ctx context.Context, v interface{}) (model.ApplicationMetadata, error) {
+	return ec.unmarshalInputapplicationMetadata(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOapplicationMetadata2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadata(ctx context.Context, v interface{}) ([]*model.ApplicationMetadata, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.ApplicationMetadata, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOapplicationMetadata2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadata(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOapplicationMetadata2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadata(ctx context.Context, v interface{}) (*model.ApplicationMetadata, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOapplicationMetadata2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadata(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOapplicationMetadataResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadataResponse(ctx context.Context, sel ast.SelectionSet, v model.ApplicationMetadataResponse) graphql.Marshaler {
+	return ec._applicationMetadataResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOapplicationMetadataResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadataResponse(ctx context.Context, sel ast.SelectionSet, v []*model.ApplicationMetadataResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOapplicationMetadataResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadataResponse(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOapplicationMetadataResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadataResponse(ctx context.Context, sel ast.SelectionSet, v *model.ApplicationMetadataResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._applicationMetadataResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOcreateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateDBInput(ctx context.Context, v interface{}) (model.CreateDBInput, error) {
 	return ec.unmarshalInputcreateDBInput(ctx, v)
 }
@@ -27906,15 +28658,98 @@ func (ec *executionContext) unmarshalOpromSeriesInput2ᚖgithubᚗcomᚋlitmusch
 	return &res, err
 }
 
-func (ec *executionContext) unmarshalOupdataDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdataDBInput(ctx context.Context, v interface{}) (model.UpdataDBInput, error) {
-	return ec.unmarshalInputupdataDBInput(ctx, v)
+func (ec *executionContext) unmarshalOresource2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResource(ctx context.Context, v interface{}) (model.Resource, error) {
+	return ec.unmarshalInputresource(ctx, v)
 }
 
-func (ec *executionContext) unmarshalOupdataDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdataDBInput(ctx context.Context, v interface{}) (*model.UpdataDBInput, error) {
+func (ec *executionContext) unmarshalOresource2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResource(ctx context.Context, v interface{}) ([]*model.Resource, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.Resource, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOresource2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResource(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOresource2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResource(ctx context.Context, v interface{}) (*model.Resource, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOupdataDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdataDBInput(ctx, v)
+	res, err := ec.unmarshalOresource2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResource(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOresourceResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResourceResponse(ctx context.Context, sel ast.SelectionSet, v model.ResourceResponse) graphql.Marshaler {
+	return ec._resourceResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOresourceResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResourceResponse(ctx context.Context, sel ast.SelectionSet, v []*model.ResourceResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOresourceResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResourceResponse(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOresourceResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResourceResponse(ctx context.Context, sel ast.SelectionSet, v *model.ResourceResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._resourceResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {
+	return ec.unmarshalInputupdateDBInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOupdateDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (*model.UpdateDBInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, v)
 	return &res, err
 }
 

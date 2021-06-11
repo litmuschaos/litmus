@@ -237,7 +237,7 @@ func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *mod
 	return analyticsHandler.CreateDataSource(datasource)
 }
 
-func (r *mutationResolver) CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (string, error) {
+func (r *mutationResolver) CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardReponse, error) {
 	return analyticsHandler.CreateDashboard(dashboard)
 }
 
@@ -245,7 +245,7 @@ func (r *mutationResolver) UpdateDataSource(ctx context.Context, datasource mode
 	return analyticsHandler.UpdateDataSource(datasource)
 }
 
-func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdataDBInput) (string, error) {
+func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput) (string, error) {
 	return analyticsHandler.UpdateDashBoard(dashboard)
 }
 

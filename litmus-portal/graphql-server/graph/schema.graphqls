@@ -411,11 +411,11 @@ type Mutation {
   # Analytics
   createDataSource(datasource: DSInput): DSResponse @authorized
 
-  createDashBoard(dashboard: createDBInput): String! @authorized
+  createDashBoard(dashboard: createDBInput): listDashboardReponse! @authorized
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updataDBInput): String! @authorized
+  updateDashboard(dashboard: updateDBInput): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
