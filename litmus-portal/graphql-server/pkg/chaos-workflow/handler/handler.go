@@ -526,6 +526,7 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 	var workflows []dbSchemaWorkflow.AggregatedWorkflows
 
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
+		fmt.Println(err)
 		return &model.ListWorkflowsOutput{
 			TotalNoOfWorkflows: 0,
 			Workflows:          result,

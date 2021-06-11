@@ -257,6 +257,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   noTemplatesDesc: {
     fontSize: '1rem',
   },
+
+  errorText: {
+    marginLeft: theme.spacing(1.25),
+  },
+  errorBtn: {
+    backgroundColor: 'transparent !important',
+    color: theme.palette.primary.main,
+    marginLeft: theme.spacing(2.5),
+  },
+  retryText: {
+    marginLeft: theme.spacing(1.25),
+  },
 }));
 
 export default useStyles;
