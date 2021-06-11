@@ -20,15 +20,6 @@ export interface ScheduleWorkflow {
   regularity?: string;
   isRemoved: boolean;
 }
-
-export interface Schedules {
-  getScheduledWorkflows: ScheduleWorkflow[];
-}
-
-export interface ScheduleDataVars {
-  projectID: string;
-}
-
 export interface DeleteSchedule {
   workflow_id: string;
 }

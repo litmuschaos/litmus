@@ -16,13 +16,16 @@ import YamlEditor from '../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../components/YamlEditor/Validations';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
-import { SCHEDULE_DETAILS } from '../../graphql/queries';
+import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
 import {
   CreateWorkFlowInput,
   UpdateWorkflowResponse,
   WeightMap,
 } from '../../models/graphql/createWorkflowData';
-import { ScheduleDataVars, Schedules } from '../../models/graphql/scheduleData';
+import {
+  ListWorkflowsInput,
+  ScheduledWorkflows,
+} from '../../models/graphql/workflowListData';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -78,11 +81,17 @@ const EditSchedule: React.FC = () => {
   const projectID = getProjectID();
   const userRole = getProjectRole();
 
-  // Apollo query to get the scheduled data
-  const { data, loading } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
+  const { data, loading } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
+    WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: paramData.scheduleProjectID },
+      variables: {
+        workflowInput: {
+          project_id: projectID,
+          filter: {
+            workflow_name: paramData.workflowName,
+          },
+        },
+      },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -91,11 +100,7 @@ const EditSchedule: React.FC = () => {
     (state: RootState) => state.workflowManifest.manifest
   );
 
-  const wfDetails =
-    data &&
-    data.getScheduledWorkflows.filter(
-      (wf) => wf.workflow_name === paramData.workflowName
-    )[0];
+  const wfDetails = data && data.ListWorkflow.workflows[0];
   const doc = new YAML.Document();
   const w: Weights[] = [];
   const { cronSyntax, clusterid, clustername } = workflowData;

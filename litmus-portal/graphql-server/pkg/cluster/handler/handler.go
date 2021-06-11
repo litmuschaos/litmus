@@ -228,9 +228,10 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 	newAction := &model.ClusterAction{
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{
-			K8sManifest: subscriberRequest.K8sManifest,
-			Namespace:   subscriberRequest.Namespace,
-			RequestType: subscriberRequest.RequestType,
+			K8sManifest:  subscriberRequest.K8sManifest,
+			Namespace:    subscriberRequest.Namespace,
+			RequestType:  subscriberRequest.RequestType,
+			ExternalData: subscriberRequest.ExternalData,
 		},
 	}
 

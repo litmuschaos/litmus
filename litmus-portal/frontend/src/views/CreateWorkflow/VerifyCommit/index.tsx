@@ -225,20 +225,18 @@ const VerifyCommit = forwardRef(
     }, [modified]);
 
     // Create Workflow Mutation
-    const [
-      createChaosWorkFlow,
-      { loading, error: workflowError },
-    ] = useMutation<CreateWorkflowResponse, CreateWorkFlowInput>(
-      CREATE_WORKFLOW,
-      {
-        onError: () => {
-          setErrorModal(true);
-        },
-        onCompleted: () => {
-          setFinishModalOpen(true);
-        },
-      }
-    );
+    const [createChaosWorkFlow, { loading, error: workflowError }] =
+      useMutation<CreateWorkflowResponse, CreateWorkFlowInput>(
+        CREATE_WORKFLOW,
+        {
+          onError: () => {
+            setErrorModal(true);
+          },
+          onCompleted: () => {
+            setFinishModalOpen(true);
+          },
+        }
+      );
 
     isLoading(loading);
 
@@ -399,7 +397,7 @@ const VerifyCommit = forwardRef(
                         fullWidth
                         multiline
                         error={checkNameValidation()}
-                        onSave={(value) =>
+                        onSave={(value: any) =>
                           handleNameChange({ changedName: value })
                         }
                         helperText={
@@ -438,7 +436,7 @@ const VerifyCommit = forwardRef(
                           id="desc"
                           fullWidth
                           multiline
-                          onSave={(value) =>
+                          onSave={(value: any) =>
                             handleDescChange({ changedDesc: value })
                           }
                         />
@@ -471,7 +469,7 @@ const VerifyCommit = forwardRef(
                           fullWidth
                           multiline
                           error={checkSubjectValidation()}
-                          onSave={(value) =>
+                          onSave={(value: any) =>
                             handleSubjectChange({ changedSubject: value })
                           }
                           helperText={

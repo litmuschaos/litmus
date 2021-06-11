@@ -223,3 +223,8 @@ enum Filter {
   Weekly
   Hourly
 }
+
+type WorkflowStats {
+  date: Float!
+  value: Int!
+}

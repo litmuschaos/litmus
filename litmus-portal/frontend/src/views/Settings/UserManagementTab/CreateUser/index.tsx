@@ -34,14 +34,13 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
   });
 
   // handles password field
-  const handleCreatePassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setCreatePassword({
-      ...createPassword,
-      [prop]: event.target.value,
-    });
-  };
+  const handleCreatePassword =
+    (prop: keyof Password) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setCreatePassword({
+        ...createPassword,
+        [prop]: event.target.value,
+      });
+    };
 
   // for personal details fields
   const [personalData, setPersonalData] = React.useState<personalData>({

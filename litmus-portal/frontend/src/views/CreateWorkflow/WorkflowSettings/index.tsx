@@ -1,3 +1,4 @@
+import { useLazyQuery } from '@apollo/client';
 import { Avatar, Typography } from '@material-ui/core';
 import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import localforage from 'localforage';
@@ -9,21 +10,24 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import data from '../../../components/PredifinedWorkflows/data';
+import config from '../../../config';
+import { GET_EXPERIMENT_DATA } from '../../../graphql';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
+import { ExperimentDetail } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
+import { getProjectID } from '../../../utils/getSearchParams';
 import { validateWorkflowName } from '../../../utils/validate';
 import useStyles from './styles';
 
 const WorkflowSettings = forwardRef((_, ref) => {
   const classes = useStyles();
   const [avatarModal, setAvatarModal] = useState<boolean>(false);
-
+  const projectID = getProjectID();
   // Workflow States
   const [name, setName] = useState<string>('');
   const [descriptionHeader, setDescriptionHeader] = useState<JSX.Element>(
@@ -37,6 +41,24 @@ const WorkflowSettings = forwardRef((_, ref) => {
   const workflowData = useSelector((state: RootState) => state.workflowData);
   const { manifest } = useSelector(
     (state: RootState) => state.workflowManifest
+  );
+  const [hubName, setHubName] = useState('');
+  // Query to get charts of selected MyHub
+  const [getWorkflowDetails] = useLazyQuery<ExperimentDetail>(
+    GET_EXPERIMENT_DATA,
+    {
+      fetchPolicy: 'cache-and-network',
+      onCompleted: (data) => {
+        if (data.getHubExperiment !== undefined) {
+          setName(data.getHubExperiment.Metadata.Name.toLowerCase());
+          setDescription(data.getHubExperiment.Spec.CategoryDescription);
+          setIcon(
+            `${config.grahqlEndpoint}/icon/${projectID}/${hubName}/predefined/${data.getHubExperiment.Metadata.Name}.png`
+          );
+          setCRDLink(data.getHubExperiment.Metadata.Name);
+        }
+      },
+    }
   );
 
   const { t } = useTranslation();
@@ -81,16 +103,20 @@ const WorkflowSettings = forwardRef((_, ref) => {
 
   const initializeWithDefault = () => {
     localforage.getItem('selectedScheduleOption').then((value) => {
+      // Map over the list of predefined workflows and extract the name and detail
       if ((value as ChooseWorkflowRadio).selected === 'A') {
-        // Map over the list of predefined workflows and extract the name and detail
-        data.map((w) => {
-          if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
-            setName(w.title);
-            setDescription(w.details);
-            setIcon(w.urlToIcon);
-            setCRDLink(w.experimentPath);
-          }
-          return null;
+        localforage.getItem('selectedHub').then((hub) => {
+          setHubName(hub as string);
+          getWorkflowDetails({
+            variables: {
+              data: {
+                HubName: hub as string,
+                ProjectID: projectID,
+                ChartName: 'predefined',
+                ExperimentName: (value as ChooseWorkflowRadio).id,
+              },
+            },
+          });
         });
       }
       if ((value as ChooseWorkflowRadio).selected === 'B') {
@@ -123,6 +149,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
      *  and call checkForStoredData()
      *  else it will initializeWithDefault()
      */
+
     localforage.getItem('hasSetWorkflowData').then((isDataPresent) => {
       return isDataPresent ? checkForStoredData() : initializeWithDefault();
     });
@@ -224,6 +251,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
                 InputProps={{
                   readOnly: true,
                 }}
+                disabled
                 className={classes.nsInput}
                 label={t('createWorkflow.chooseWorkflow.label.namespace')}
                 value={workflowData.namespace}

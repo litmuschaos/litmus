@@ -114,18 +114,6 @@ type ChaosWorkFlowResponse {
   isCustomWorkflow: Boolean!
 }
 
-type WorkflowRun {
-  workflow_run_id: ID!
-  workflow_id: ID!
-  cluster_name: String!
-  last_updated: String!
-  project_id: ID!
-  cluster_id: ID!
-  workflow_name: String!
-  cluster_type: String
-  execution_data: String!
-}
-
 input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
@@ -133,6 +121,7 @@ input WorkflowRunInput {
   execution_data: String!
   cluster_id: ClusterIdentity!
   completed: Boolean!
+  isRemoved: Boolean
 }
 
 type PodLogResponse {
@@ -163,6 +152,7 @@ input PodLogRequest {
 }
 
 type ScheduledWorkflows {
+  workflow_type: String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -177,29 +167,6 @@ type ScheduledWorkflows {
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
-}
-
-type ScheduledWorkflowStats {
-  date: Float!
-  value: Int!
-}
-
-type Workflow {
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  isRemoved: Boolean!
-  workflow_runs: [WorkflowRuns]
 }
 
 type WorkflowRuns {
@@ -285,8 +252,9 @@ input KubeGVRRequest {
 }
 
 type Query {
-  # [Deprecated soon]
-  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
+  getWorkflowRuns(
+    workflowRunsInput: GetWorkflowRunsInput!
+  ): GetWorkflowsOutput! @authorized
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
@@ -300,16 +268,14 @@ type Query {
 
   users: [User!]! @authorized
 
-  # [Deprecated soon]
-  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
-
   getScheduledWorkflowStats(
-    filter: Filter!
     project_id: String!
-    start_time: String!
-  ): [ScheduledWorkflowStats]! @authorized
+    filter: Filter!
+    show_workflow_runs: Boolean!
+  ): [WorkflowStats]! @authorized
 
-  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+  ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
+    @authorized
 
   getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
 
@@ -355,12 +321,6 @@ type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-  #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
-
-  reRunChaosWorkFlow(workflowID: String!): String! @authorized
-
   createUser(user: CreateUserInput!): User! @authorized
 
   #It is used to create a project
@@ -368,7 +328,18 @@ type Mutation {
 
   updateUser(user: UpdateUserInput!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+  ## Workflow APIs
+  # It is used to create chaosworkflow
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
+
+  reRunChaosWorkFlow(workflowID: String!): String! @authorized
+
+  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
+    @authorized
+
+  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
+    @authorized
 
   #Used for sending invitation
   sendInvitation(member: MemberInput!): Member @authorized

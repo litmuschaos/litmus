@@ -38,14 +38,13 @@ const EditUser: React.FC<EditUserProps> = ({
   });
 
   // handles password field
-  const handleCreatePassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setCreatePassword({
-      ...createPassword,
-      [prop]: event.target.value,
-    });
-  };
+  const handleCreatePassword =
+    (prop: keyof Password) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setCreatePassword({
+        ...createPassword,
+        [prop]: event.target.value,
+      });
+    };
 
   return (
     <div className={classes.headDiv}>

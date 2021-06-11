@@ -51,7 +51,7 @@ export interface WorkflowRun {
   workflow_run_id: string;
 }
 
-export interface Workflow {
+export interface ScheduledWorkflow {
   workflow_id: string;
   workflow_manifest: string;
   cronSyntax: string;
@@ -66,11 +66,11 @@ export interface Workflow {
   cluster_id: string;
   cluster_type: string;
   isRemoved: Boolean;
-  workflow_runs: WorkflowRun[];
+  workflow_runs?: WorkflowRun[];
 }
 
 export interface WorkflowList {
-  ListWorkflow: Workflow[];
+  ListWorkflow: ScheduledWorkflow[];
 }
 
 export interface WorkflowListDataVars {
@@ -87,6 +87,39 @@ export interface ListManifestTemplateArray {
   isCustomWorkflow: boolean;
 }
 
+export interface Pagination {
+  page: number;
+  limit: number;
+}
+
 export interface ListManifestTemplate {
   ListManifestTemplate: ListManifestTemplateArray[];
+}
+
+export interface SortInput {
+  field: 'Name';
+  descending?: Boolean;
+}
+
+export interface WorkflowFilterInput {
+  workflow_name?: string;
+  cluster_name?: string;
+}
+export interface ListWorkflowsInput {
+  workflowInput: {
+    project_id: string;
+    workflow_ids?: string[];
+    pagination?: Pagination;
+    sort?: SortInput;
+    filter?: WorkflowFilterInput;
+  };
+}
+
+export interface ListWorkflowsOutput {
+  totalNoOfWorkflows: number;
+  workflows: ScheduledWorkflow[];
+}
+
+export interface ScheduledWorkflows {
+  ListWorkflow: ListWorkflowsOutput;
 }

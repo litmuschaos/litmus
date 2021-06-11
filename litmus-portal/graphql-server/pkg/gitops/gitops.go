@@ -523,7 +523,7 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 		}
 		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
 		kind := strings.ToLower(gjson.Get(string(data), "kind").String())
-		if kind != "cronworkflow" && kind != "workflow" {
+		if kind != "cronworkflow" && kind != "workflow" && kind != "chaosengine" {
 			continue
 		}
 
@@ -600,11 +600,11 @@ func createWorkflow(data, file string, config GitConfig) (bool, error) {
 		ProjectID:           config.ProjectID,
 		ClusterID:           clusterID,
 	}
-	input, err := ops.ProcessWorkflow(&workflow)
+	input, wfType, err := ops.ProcessWorkflow(&workflow)
 	if err != nil {
 		return false, err
 	}
-	err = ops.ProcessWorkflowCreation(input, store.Store)
+	err = ops.ProcessWorkflowCreation(input, wfType, store.Store)
 	if err != nil {
 		return false, err
 	}
@@ -662,11 +662,11 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 		ClusterID:           workflow[0].ClusterID,
 	}
 
-	input, err := ops.ProcessWorkflow(&workflowData)
+	input, wfType, err := ops.ProcessWorkflow(&workflowData)
 	if err != nil {
 		return err
 	}
-	return ops.ProcessWorkflowUpdate(input, store.Store)
+	return ops.ProcessWorkflowUpdate(input, wfType, store.Store)
 
 }
 
@@ -675,5 +675,11 @@ func deleteWorkflow(file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 
-	return ops.ProcessWorkflowDelete(bson.D{{"workflow_name", fileName}, {"project_id", config.ProjectID}}, store.Store)
+	query := bson.D{{"workflow_name", fileName}, {"project_id", config.ProjectID}}
+	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	if err != nil {
+		return err
+	}
+
+	return ops.ProcessWorkflowDelete(query, workflow, store.Store)
 }

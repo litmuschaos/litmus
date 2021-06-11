@@ -247,7 +247,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="timeout">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}(ms)
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}(sec)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -279,7 +279,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="interval">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.interval')}(ms)
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.interval')}(sec)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -294,7 +294,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
             </div>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="polling">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}(ms)
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}(sec)
               </InputLabel>
               <InputField
                 variant="primary"
@@ -310,7 +310,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="initial-delay">
               {t('createWorkflow.tuneWorkflow.addProbe.labels.initialDelay')}
-              (ms)
+              (sec)
             </InputLabel>
             <InputField
               variant="primary"

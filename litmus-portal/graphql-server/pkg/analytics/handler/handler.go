@@ -575,46 +575,64 @@ func firstDayOfISOWeek(year int, week int, timezone *time.Location) time.Time {
     return date
 }
 
-//GetScheduledWorkflowStats returns schedules data for analytics graph
-func GetScheduledWorkflowStats(filter model.Filter, project_id string, start string) ([]*model.ScheduledWorkflowStats, error) {
-
+// GetScheduledWorkflowStats returns schedules data for analytics graph
+func GetScheduledWorkflowStats(projectID string, filter model.Filter, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
 	var query bson.D
 	startTime:= strconv.FormatInt(time.Now().Unix(), 10)
-	//map to store schedule count monthly(last 6months) and weekly(last 4weeks)
-	m := make(map[int]model.ScheduledWorkflowStats)
 
-	//map to store schedule count hourly (last 48hrs)
-	dateMap := make(map[int]map[int]model.ScheduledWorkflowStats)
+	// Map to store schedule count monthly(last 6months) and weekly(last 4weeks)
+	m := make(map[int]model.WorkflowStats)
+
+	// Map to store schedule count hourly (last 48hrs)
+	dateMap := make(map[int]map[int]model.WorkflowStats)
 	
-	//switch case to initialize the query according to filter type
+	// Switch case to initialize the query according to filter type
 	switch filter{
 	case "Monthly":
-		//subtracting 6 months from the start time
+		// Subtracting 6 months from the start time
 		sixMonthsAgo:= time.Now().AddDate(0,-6, 0)
-		//to fetch data only for last 6 months
-		query = bson.D{{"created_at", bson.D{{"$gte",  strconv.FormatInt(sixMonthsAgo.Unix(), 10)},{"$lte", startTime}}}}
+		// To fetch data only for last 6 months
+		query = bson.D{
+			{"project_id", projectID},
+			{"created_at", bson.D{
+				{"$gte",  strconv.FormatInt(sixMonthsAgo.Unix(), 10)},
+				{"$lte", startTime},
+			}},
+		}
 	case "Weekly":
-		//subtracting 28days(4weeks) from the start time
+		// Subtracting 28days(4weeks) from the start time
 		fourWeeksAgo:= time.Now().AddDate(0, 0, -28)
-		//to fetch data only for last 4weeks
-		query = bson.D{{"created_at", bson.D{{"$gte", strconv.FormatInt(fourWeeksAgo.Unix(), 10)},{"$lte", startTime}}}}
+		// To fetch data only for last 4weeks
+		query = bson.D{
+			{"project_id", projectID},
+			{"created_at", bson.D{
+				{"$gte", strconv.FormatInt(fourWeeksAgo.Unix(), 10)},
+				{"$lte", startTime},
+			}},
+		}
 	case "Hourly":
-		//subtracting 48hrs from the start time
+		// Subtracting 48hrs from the start time
 		fortyEightHoursAgo:= time.Now().Add(time.Hour * -48)
-		//to fetch data only for last 48hrs
-		query = bson.D{{"created_at", bson.D{{"$gte", strconv.FormatInt(fortyEightHoursAgo.Unix(), 10)},{"$lte", startTime}}}}
+		// To fetch data only for last 48hrs
+		query = bson.D{
+			{"project_id", projectID},
+			{"created_at", bson.D{
+				{"$gte", strconv.FormatInt(fortyEightHoursAgo.Unix(), 10)},
+				{"$lte", startTime},
+			}},
+		}
 	default:
-		//returns error if no matching filter found
-		return nil, errors.New("No Matching Filter Found")
+		// Returns error if no matching filter found
+		return nil, errors.New("no matching filter found")
 	}
 
-	//query to fetch required data
+	// Query to fetch required data
 	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if err != nil {
 		return nil, err
 	}
 
-	//iterate through the chaosflows and find the frequency of schedules according to filter
+	// Iterate through the chaosWorkflows and find the frequency of schedules according to filter
 	for _, workflow := range chaosWorkflows {
 		//converts the time stamp(string) to unix
 		i, err := strconv.ParseInt(workflow.CreatedAt, 10, 64)
@@ -622,95 +640,95 @@ func GetScheduledWorkflowStats(filter model.Filter, project_id string, start str
 			panic(err)
 		}
 		
-		//converts unix time to time.Time
+		// Converts unix time to time.Time
 		createdAtInTime := time.Unix(i, 0)
-		var t model.ScheduledWorkflowStats
+		var t model.WorkflowStats
 		var key int
 		
-		//switch case to fill the map according to filter
+		// Switch case to fill the map according to filter
 		switch filter{
 		case "Monthly":
 			t = m[int(createdAtInTime.Month())]
 			key=int(createdAtInTime.Month()) 
-			//incrementing the value for each month
+			// Incrementing the value for each month
 			t.Value+=1 
-			//storing the timestamp of first day of the month
+			// Storing the timestamp of first day of the month
 			t.Date=float64(time.Date(createdAtInTime.Year(), createdAtInTime.Month(), 1, 0, 0, 0, 0, time.Local).Unix())*1000
 			m[key]=t //updating the map
 		case "Weekly":
 			_, week := createdAtInTime.ISOWeek()
 			t= m[week]
 			key=week
-			//incrementing the value for each ISO week
+			// Incrementing the value for each ISO week
 			t.Value+=1
-			//storing the timestamp of first day of the ISO week
+			// Storing the timestamp of first day of the ISO week
 			t.Date=float64(firstDayOfISOWeek(createdAtInTime.Year(),week,time.Local).Unix())*1000
 			m[key]=t //updating the map
 		case "Hourly":
-			//initializing the inner(nested) map
+			// Initializing the inner(nested) map
 			if dateMap[createdAtInTime.Day()] == nil {
-			dateMap[createdAtInTime.Day()] = make(map[int]model.ScheduledWorkflowStats)
+			dateMap[createdAtInTime.Day()] = make(map[int]model.WorkflowStats)
 			}
 			day:=dateMap[createdAtInTime.Day()]
 			hr:=day[createdAtInTime.Hour()]
-			//incrementing the value for each each hour
+			// Incrementing the value for each each hour
 			hr.Value+=1
-			//storing the timestamp of the starting of an hr
+			// Storing the timestamp of the starting of an hr
 			hr.Date=float64(time.Date(createdAtInTime.Year(), createdAtInTime.Month(), createdAtInTime.Day(), createdAtInTime.Hour(), 0, 0, 0, time.Local).Unix())*1000
 			day[createdAtInTime.Hour()]=hr
 			dateMap[createdAtInTime.Day()]=day //updating the dateMap
 		default:
-		return nil, errors.New("No Matching Filter Found")
+		return nil, errors.New("no matching filter found")
 		}
 	}
 
-	//result array
-	result := make([]*model.ScheduledWorkflowStats,0)
-	//to fill the result array from dateMap for hourly data
-	if(filter=="Hourly"){
+	// Result array
+	result := make([]*model.WorkflowStats,0)
+	// To fill the result array from dateMap for hourly data
+	if filter == "Hourly" {
 		for k := range dateMap { 
 			for _,value := range dateMap[k]{
-				val:= model.ScheduledWorkflowStats{value.Date,value.Value}
+				val:= model.WorkflowStats{Date: value.Date, Value: value.Value}
 				result=append(result,&val)
 			}
 		}
-		//sorts the result array in ascending order of time
+		// Sorts the result array in ascending order of time
 		sort.SliceStable(result, func(i, j int) bool { return result[i].Date < result[j].Date })
 
-		//preprends array with empty values incase the array doesn't contain 48 data points
+		// Prepends array with empty values in-case the array doesn't contain 48 data points
 		for i:=0; i<48-len(result);i+=1{
-		//subtracts 1 hr on every iteration
+		// Subtracts 1 hr on every iteration
 		x:= time.Unix(int64(result[0].Date)/1000, 0).Add(time.Hour * -1)
-		val:= []*model.ScheduledWorkflowStats{{float64(x.Unix())*1000,0}}
+		val:= []*model.WorkflowStats{{float64(x.Unix())*1000,0}}
 		result=append(val,result...)
 		}
 	return result,nil
 	}
 
-	//to fill the result array from dateMap for monthly and weekly data
+	// To fill the result array from dateMap for monthly and weekly data
 	for _, v := range m { 
-		val:= model.ScheduledWorkflowStats{v.Date,v.Value}
+		val:= model.WorkflowStats{Date: v.Date, Value: v.Value}
 		result=append(result,&val )
 	}
-	//sorts the result array in ascending order of time
+	// Sorts the result array in ascending order of time
 	sort.SliceStable(result, func(i, j int) bool { return result[i].Date < result[j].Date })
 	len:=len(result)
 
 	switch filter{
 	case "Monthly":
-		//preprends array with empty values incase the array doesn't contain 6 data points
+		// Prepends array with empty values in-case the array doesn't contain 6 data points
 		for i:=0; i<6-len;i+=1{
-		//Enter zero values for non existing points
+		// Enter zero values for non existing points
 		x:= time.Unix(int64(result[0].Date)/1000, 0).AddDate(0,-1, 0)
-		val:= []*model.ScheduledWorkflowStats{{float64(x.Unix())*1000,0}}
+		val:= []*model.WorkflowStats{{float64(x.Unix())*1000,0}}
 		result=append(val,result...)
 		}
 	case "Weekly":
-		//preprends array with empty values incase the array doesn't contain 4 data points
+		// Prepends array with empty values in-case the array doesn't contain 4 data points
 		for i:=0; i<4-len;i+=1{
-		//Enter zero values for non existing points
+		// Enter zero values for non existing points
 		x:= time.Unix(int64(result[0].Date)/1000, 0).AddDate(0,0, -7)
-		val:= []*model.ScheduledWorkflowStats{{float64(x.Unix())*1000,0}}
+		val:= []*model.WorkflowStats{{float64(x.Unix())*1000,0}}
 		result=append(val,result...)
 		}
 	}
