@@ -6,7 +6,7 @@ export default [
     information:
       'This dashboard visualizes Pod level CPU and memory usage metrics interleaved with chaos events.',
     urlToDashboard:
-      'https://raw.githubusercontent.com/ishangupta-ds/demo/main/portal_dashboards/pod_metrics.json',
+      'https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/portal-dashboards/pod_metrics.json',
     chaosEventQueryTemplate:
       'litmuschaos_awaited_experiments{job="chaos-exporter"}',
     chaosVerdictQueryTemplate:
@@ -19,7 +19,7 @@ export default [
     information:
       'This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics.',
     urlToDashboard:
-      'https://raw.githubusercontent.com/ishangupta-ds/demo/main/portal_dashboards/sock-shop.json',
+      'https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/portal-dashboards/sock-shop.json',
     chaosEventQueryTemplate:
       'litmuschaos_awaited_experiments{job="chaos-exporter"}',
     chaosVerdictQueryTemplate:
@@ -32,7 +32,7 @@ export default [
     information:
       'This dashboard visualizes Node level CPU, memory, disk and IO utilization metrics interleaved with chaos events.',
     urlToDashboard:
-      'https://raw.githubusercontent.com/ishangupta-ds/demo/main/portal_dashboards/node_metrics.json',
+      'https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/portal-dashboards/node_metrics.json',
     chaosEventQueryTemplate:
       'litmuschaos_awaited_experiments{job="chaos-exporter"}',
     chaosVerdictQueryTemplate:
