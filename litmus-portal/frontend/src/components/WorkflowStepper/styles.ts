@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   headerButtonWrapper: {
     display: 'flex',
-    width: '10rem',
+    width: '13rem',
     justifyContent: 'space-between',
   },
   bottomButtonWrapper: {

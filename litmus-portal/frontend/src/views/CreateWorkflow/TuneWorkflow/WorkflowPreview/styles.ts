@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         cursor: 'pointer',
         fill: 'none',
         '& circle': {
-          fill: theme.palette.status.completed,
+          fill: theme.palette.status.experiment.completed,
         },
         '& g.label g': {
           transform: (props: StyleProps) =>
@@ -36,15 +36,15 @@ const useStyles = makeStyles((theme: Theme) => ({
           `scale(1.8) translate(-5px, ${props.horizontal ? -3.6 : -1}px)`,
       },
       '& g.StepGroup.Succeeded': {
-        fill: theme.palette.status.completed,
+        fill: theme.palette.status.experiment.completed,
       },
     },
 
     // Styles for edges
     '& g g.edgePaths': {
       '& g.succeeded': {
-        fill: theme.palette.status.completed,
-        stroke: theme.palette.status.completed,
+        fill: theme.palette.status.experiment.completed,
+        stroke: theme.palette.status.experiment.completed,
       },
     },
   },

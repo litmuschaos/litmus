@@ -11,7 +11,7 @@ import {
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, LightPills } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import TimePopOver from '../../../components/TimePopOver';
@@ -30,7 +30,6 @@ import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
-import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -141,6 +140,19 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
     return timeDifference;
   };
 
+  const getVariant = (variant: string | undefined) => {
+    switch (variant) {
+      case 'succeeded':
+        return 'success';
+      case 'failed':
+        return 'danger';
+      case 'running':
+        return 'warning';
+      default:
+        return undefined;
+    }
+  };
+
   return (
     <>
       {/* Table cell for warning (if the workflow is in running state from 20 mins) */}
@@ -225,7 +237,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         </Popover>
       </TableCell>
       <TableCell>
-        <CustomStatus status={data.phase ?? ''} />
+        <LightPills
+          variant={getVariant(data.phase?.toLowerCase())}
+          label={data.phase ?? ''}
+        />
       </TableCell>
       <TableCell
         className={classes.workflowNameData}
