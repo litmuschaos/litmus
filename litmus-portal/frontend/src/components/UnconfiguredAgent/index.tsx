@@ -10,8 +10,6 @@ const UnconfiguredAgent: React.FC = () => {
   const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  // const projectRole = getProjectRole();
-
   const handleClose = () => {
     setModalOpen(false);
   };

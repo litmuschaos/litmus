@@ -75,7 +75,7 @@ const Overview: React.FC = () => {
 
   // Set boolean to conditionally render the banner
   if (dataSourceListData) {
-    dataSource = dataSourceListData?.ListDataSource.length > 0;
+    dataSource = dataSourceListData.ListDataSource.length > 0;
   }
 
   // Fetch data to display for the workflow dashboard cards
@@ -98,7 +98,7 @@ const Overview: React.FC = () => {
 
   // Get count for workflowData length to render conditionally
   if (workflowData) {
-    workflowDashboardCount = workflowData?.getWorkflowRuns.workflow_runs.length;
+    workflowDashboardCount = workflowData.getWorkflowRuns.workflow_runs.length;
   }
 
   // Fetch data to display for the application dashboard cards
@@ -113,7 +113,7 @@ const Overview: React.FC = () => {
 
   // Get count for dashboardListData length to render conditionally
   if (dashboardListData) {
-    applicationDashboardCount = dashboardListData?.ListDashboard?.length;
+    applicationDashboardCount = dashboardListData.ListDashboard?.length;
   }
 
   // Loader for confirmation of agent presence

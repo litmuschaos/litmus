@@ -18,7 +18,6 @@ const OverviewContainer: React.FC<OverviewContainerProps> = ({
   button,
 }) => {
   const classes = useStyles();
-  // const { t } = useTranslation();
 
   return (
     <div>
