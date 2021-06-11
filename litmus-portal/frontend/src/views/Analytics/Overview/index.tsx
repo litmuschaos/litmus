@@ -186,8 +186,11 @@ const Overview: React.FC = () => {
     );
   }
 
+  let filteredDashboardListData;
   // Select the latest 3 dashboards
-  const fillteredDashboardListData = dashboardListData?.ListDashboard.slice(-3);
+  if (applicationDashboardCount > 0) {
+    filteredDashboardListData = dashboardListData?.ListDashboard.slice(-3);
+  }
 
   // Generic Apollo error:
   if (dataSourceListError || workflowError || dashboardListError) {
@@ -237,7 +240,7 @@ const Overview: React.FC = () => {
           src="./icons/dashboardCloud.svg"
           alt="Schedule a workflow"
           heading="Configure a chaos interleaved dashboard"
-          description="Data sources has been found to be connected in this project. Select “Add dashboard” to configure a chaos interleaved dashboard"
+          description="Data source(s) have been found to be connected in this project. Select “Add dashboard” to configure a chaos interleaved dashboard"
           button={
             <ButtonFilled
               onClick={() => {
@@ -314,7 +317,7 @@ const Overview: React.FC = () => {
               <Loader />
             </Center>
           ) : (
-            fillteredDashboardListData?.map((dashboard) => {
+            filteredDashboardListData?.map((dashboard) => {
               return (
                 <ApplicationDashboardCard
                   key={dashboard.db_id}
