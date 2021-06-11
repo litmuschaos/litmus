@@ -268,6 +268,8 @@ func ResiliencyScoreCalculator(execData types.ExecutionData, wfid string) types.
 	weightMap := map[string]int{}
 	for _, weightEnty := range chaosWorkflows[0].Weightages {
 		weightMap[weightEnty.ExperimentName] = weightEnty.Weightage
+		// Total weight calculated for all experiments
+		weightSum = weightSum + weightEnty.Weightage
 	}
 
 	for _, value := range execData.Nodes {
@@ -276,10 +278,10 @@ func ResiliencyScoreCalculator(execData types.ExecutionData, wfid string) types.
 				continue
 			}
 			weight, ok := weightMap[value.ChaosExp.ExperimentName]
+			// probeSuccessPercentage will be included only if chaosData is present
 			if ok {
 				x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
 				totalTestResult += weight * x
-				weightSum += weight
 			}
 			if value.ChaosExp.ExperimentVerdict == "Pass" {
 				totalExperimentsPassed += 1
