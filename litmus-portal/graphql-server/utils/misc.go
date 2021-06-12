@@ -116,6 +116,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 	return []byte(strings.Join(generatedYAML, "\n")), nil
 }
 
+// ContainsString checks if a string is present in an array of strings
 func ContainsString(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {

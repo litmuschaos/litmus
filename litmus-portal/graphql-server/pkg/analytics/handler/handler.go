@@ -211,11 +211,12 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 	}, nil
 }
 
+// UpdateDashBoard function updates the dashboard based on it's ID
 func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	if dashboard.DbID == "" && dashboard.DsID == "" {
-		return "Could not find the dashboard or the connected data source.", errors.New("DashBoard ID or Datasource is nil or empty")
+		return "could not find the dashboard or the connected data source", errors.New("dashBoard ID or data source ID is nil or empty")
 	}
 
 	var (
@@ -280,13 +281,13 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 			var newPromQueries []*dbSchemaAnalytics.PromQuery
 			err := copier.Copy(&newPromQueries, &panel.PromQueries)
 			if err != nil {
-				return "Error updating queries", err
+				return "error updating queries", err
 			}
 
 			var newPanelOptions dbSchemaAnalytics.PanelOption
 			err = copier.Copy(&newPanelOptions, &panel.PanelOptions)
 			if err != nil {
-				return "Error updating options", err
+				return "error updating options", err
 			}
 
 			newPanel := dbSchemaAnalytics.Panel{
@@ -319,7 +320,7 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 
 	existingDashboard, err := dbOperationsAnalytics.GetDashboard(query)
 	if err != nil {
-		return "Error fetching dashboard details.", fmt.Errorf("error on query from dashboard collection by projectid: %v\n", err)
+		return "error fetching dashboard details", fmt.Errorf("error on query from dashboard collection by projectid: %v", err)
 	}
 
 	for _, panelGroup := range existingDashboard.PanelGroups {
@@ -329,13 +330,13 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 		}
 		panels, err := dbOperationsAnalytics.ListPanel(query)
 		if err != nil {
-			return "Error fetching panels.", fmt.Errorf("error on querying from promquery collection: %v\n", err)
+			return "error fetching panels", fmt.Errorf("error on querying from promquery collection: %v", err)
 		}
 
 		var tempPanels []*model.PanelResponse
 		err = copier.Copy(&tempPanels, &panels)
 		if err != nil {
-			return "Error fetching panel details.", err
+			return "error fetching panel details", err
 		}
 
 		for _, panel := range tempPanels {
@@ -345,13 +346,13 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 				var promQueriesInPanelToBeDeleted []*dbSchemaAnalytics.PromQuery
 				err := copier.Copy(&promQueriesInPanelToBeDeleted, &panel.PromQueries)
 				if err != nil {
-					return "Error updating queries", err
+					return "error updating queries", err
 				}
 
 				var panelOptionsOfPanelToBeDeleted dbSchemaAnalytics.PanelOption
 				err = copier.Copy(&panelOptionsOfPanelToBeDeleted, &panel.PanelOptions)
 				if err != nil {
-					return "Error updating options", err
+					return "error updating options", err
 				}
 
 				panelToBeDeleted := dbSchemaAnalytics.Panel{
@@ -378,9 +379,9 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 	if len(panelsToCreate) > 0 {
 		err = dbOperationsAnalytics.InsertPanel(panelsToCreate)
 		if err != nil {
-			return "Error creating new panels.", fmt.Errorf("error on inserting panel data", err)
+			return "error creating new panels", fmt.Errorf("error while inserting panel data", err)
 		}
-		log.Print("sucessfully inserted prom query into promquery-collection")
+		log.Print("successfully inserted prom query into promquery-collection")
 	}
 
 	if len(panelsToUpdate) > 0 {
@@ -388,19 +389,19 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 			timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 			if panel.PanelID == "" && panel.PanelGroupID == "" {
-				return "Error getting panel and group details.", errors.New("panel ID or panel group ID is nil or empty")
+				return "error getting panel and group details", errors.New("panel ID or panel group ID is nil or empty")
 			}
 
 			var newPanelOption dbSchemaAnalytics.PanelOption
 			err := copier.Copy(&newPanelOption, &panel.PanelOptions)
 			if err != nil {
-				return "Error updating panel option", err
+				return "error updating panel option", err
 			}
 
 			var newPromQueries []dbSchemaAnalytics.PromQuery
 			err = copier.Copy(&newPromQueries, panel.PromQueries)
 			if err != nil {
-				return "Error updating panel queries", err
+				return "error updating panel queries", err
 			}
 
 			query := bson.D{{"panel_id", panel.PanelID}}
@@ -413,7 +414,7 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 
 			err = dbOperationsAnalytics.UpdatePanel(query, update)
 			if err != nil {
-				return "Error updating panel.", err
+				return "error updating panel", err
 			}
 		}
 	}
@@ -428,7 +429,7 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 
 	err = dbOperationsAnalytics.UpdateDashboard(query, update)
 	if err != nil {
-		return "Error updating dashboard.", err
+		return "error updating dashboard", err
 	}
 
 	return "successfully updated", nil
@@ -440,14 +441,20 @@ func UpdatePanel(panels []*model.Panel) (string, error) {
 		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 		if *panel.PanelID == "" && *panel.PanelGroupID == "" {
-			return "", errors.New("DashBoard ID or Datasource is nil or empty")
+			return "error getting panel or group", errors.New("panel ID or panel group ID is nil or empty")
 		}
 
 		var newPanelOption dbSchemaAnalytics.PanelOption
-		copier.Copy(&newPanelOption, &panel.PanelOptions)
+		err := copier.Copy(&newPanelOption, &panel.PanelOptions)
+		if err != nil {
+			return "error while parsing panel", err
+		}
 
 		var newPromQueries []dbSchemaAnalytics.PromQuery
-		copier.Copy(&newPromQueries, panel.PromQueries)
+		err = copier.Copy(&newPromQueries, panel.PromQueries)
+		if err != nil {
+			return "error while updating queries", err
+		}
 
 		query := bson.D{{"panel_id", panel.PanelID}}
 
@@ -457,9 +464,9 @@ func UpdatePanel(panels []*model.Panel) (string, error) {
 			{"y_axis_left", panel.YAxisLeft}, {"y_axis_right", panel.YAxisRight},
 			{"x_axis_down", panel.XAxisDown}, {"unit", panel.Unit}}}}
 
-		err := dbOperationsAnalytics.UpdatePanel(query, update)
+		err = dbOperationsAnalytics.UpdatePanel(query, update)
 		if err != nil {
-			return "", err
+			return "error while updating panel", err
 		}
 	}
 
