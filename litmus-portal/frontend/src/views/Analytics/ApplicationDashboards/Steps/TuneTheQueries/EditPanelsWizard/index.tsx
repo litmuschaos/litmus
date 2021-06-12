@@ -459,7 +459,11 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
 
       {!reload &&
         dashboardDetails.selectedPanels?.map((panel, index) => (
-          <TabPanel value={tabValue} index={index}>
+          <TabPanel
+            value={tabValue}
+            index={index}
+            key={`tab-panel-${panel.panel_name}`}
+          >
             <QueryEditingWizard
               panelVars={panel}
               selectedApps={dashboardVars.applicationMetadataMap ?? []}

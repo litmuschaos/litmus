@@ -260,14 +260,10 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               >
                 <StyledTab
                   label={
-                    settings
-                      ? panelInfo.prom_queries.length > 1
-                        ? t(
-                            'analyticsDashboard.applicationDashboards.tuneTheQueries.queries'
-                          )
-                        : t(
-                            'analyticsDashboard.applicationDashboards.tuneTheQueries.query'
-                          )
+                    panelInfo.prom_queries.length > 1
+                      ? t(
+                          'analyticsDashboard.applicationDashboards.tuneTheQueries.queries'
+                        )
                       : t(
                           'analyticsDashboard.applicationDashboards.tuneTheQueries.query'
                         )
@@ -275,7 +271,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
                   icon={
                     <Avatar className={classes.avatar}>
                       <Typography className={classes.queryCount}>
-                        {settings ? panelInfo.prom_queries.length : 0}
+                        {panelInfo.prom_queries.length}
                       </Typography>
                     </Avatar>
                   }
@@ -293,6 +289,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               {panelInfo.prom_queries.map((prom_query, index) => (
                 <QueryEditor
                   index={index}
+                  key={`query-editor-${prom_query.queryid}`}
                   promQuery={prom_query}
                   selectedApps={selectedApps}
                   dsURL={panelInfo.ds_url ?? ''}

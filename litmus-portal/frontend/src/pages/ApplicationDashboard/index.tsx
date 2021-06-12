@@ -318,7 +318,8 @@ const DashboardPage: React.FC = () => {
               />
             </div> */}
             {selectedDashboardInformation.metaData[0] &&
-              selectedDashboardInformation.metaData[0].panel_groups.length &&
+              selectedDashboardInformation.metaData[0].panel_groups.length >
+                0 &&
               selectedDashboardInformation.metaData[0].panel_groups.map(
                 (panelGroup: PanelGroupResponse) => (
                   <div

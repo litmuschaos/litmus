@@ -104,7 +104,10 @@ const SelectTheMetricsForm: React.FC<SelectTheMetricsFormProps> = ({
               >
                 {panelGroup.groupName}
               </Typography>
-              <FormGroup key="metrics-group" className={classes.formGroup}>
+              <FormGroup
+                key={`metrics-group-${panelGroup.groupName}`}
+                className={classes.formGroup}
+              >
                 {panelGroup.panels.map((panel: string) => (
                   <FormControlLabel
                     control={
@@ -125,6 +128,7 @@ const SelectTheMetricsForm: React.FC<SelectTheMetricsFormProps> = ({
                         {panel}
                       </Typography>
                     }
+                    key={`metrics-group-${panelGroup.groupName}-label`}
                   />
                 ))}
               </FormGroup>

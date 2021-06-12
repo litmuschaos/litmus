@@ -418,11 +418,9 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   })
                 ) ?? []
               }
-              valueListCompletionOptions={
-                getValueList(
-                  labelValueData?.GetPromLabelNamesAndValues.labelValues ?? []
-                ) ?? []
-              }
+              valueListCompletionOptions={getValueList(
+                labelValueData?.GetPromLabelNamesAndValues.labelValues ?? []
+              )}
               saveQueryChange={(updatedQuery: string) => {
                 const existingBaseQuery: string = localQuery.base_query ?? '';
                 const newBaseQuery: string = updatedQuery
@@ -495,7 +493,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   data-cy="minStep"
                   width="9rem"
                   variant={
-                    !validateTimeInSeconds(`${localQuery.minstep}s` ?? '')
+                    !validateTimeInSeconds(`${localQuery.minstep}s`)
                       ? 'error'
                       : 'primary'
                   }

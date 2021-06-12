@@ -58,7 +58,7 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
   useEffect(() => {
     if (
       firstLoad &&
-      prometheusQueryData.ds_details.url !== '' &&
+      prometheusQueryData?.ds_details.url !== '' &&
       prometheusQueryData?.queries?.length !== 0
     ) {
       getGraphData();

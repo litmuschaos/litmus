@@ -153,6 +153,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                       {application}
                     </Typography>
                   }
+                  key={`${application}-application-label`}
                 />
               ))}
             </FormGroup>
@@ -180,6 +181,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                       {metric.name}
                     </Typography>
                   }
+                  key={`${metric}-metric-label`}
                 />
               ))}
             </FormGroup>
