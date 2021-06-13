@@ -2,8 +2,9 @@ package authorization
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 type contextKey string
@@ -42,7 +43,7 @@ func RestMiddlewareWithRole(handler http.Handler, roles []string) http.Handler {
 		}
 		user, err := UserValidateJWT(jwt)
 		if err != nil {
-			fmt.Println("Error in Cookie: ", err)
+			logrus.WithError(err).Error("Invalid Auth Cookie")
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Error verifying JWT token: " + err.Error()))
 			return
