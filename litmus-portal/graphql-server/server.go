@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/stat"
 	"log"
 	"net/http"
 	"os"
@@ -75,7 +76,8 @@ func main() {
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
-	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddleware(myhub.GetIconHandler)).Methods("GET")
+	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
+	router.Handle("/stats", authorization.RestMiddlewareWithRole(http.HandlerFunc(stat.GetStats), []string{"admin"})).Methods("GET")
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 

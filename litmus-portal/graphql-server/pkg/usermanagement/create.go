@@ -3,6 +3,7 @@ package usermanagement
 import (
 	"context"
 	"errors"
+	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"time"
 
@@ -73,7 +74,7 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 // GetUsers queries the list of all the users from the DB and returns it in the appropriate format
 func GetUsers(ctx context.Context) ([]*model.User, error) {
 
-	users, err := dbOperationsUserManagement.GetUsers(ctx)
+	users, err := dbOperationsUserManagement.GetUsers(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}

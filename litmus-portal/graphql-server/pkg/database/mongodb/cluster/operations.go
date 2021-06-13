@@ -82,3 +82,17 @@ func GetClusterWithProjectID(projectID string, clusterType *string) ([]*Cluster,
 
 	return clusters, nil
 }
+
+// GetClusters returns all the clusters matching the query
+func GetClusters(ctx context.Context, query bson.D) ([]*Cluster, error) {
+	var clusters []*Cluster
+	results, err := mongodb.Operator.List(ctx, mongodb.ClusterCollection, query)
+	if err != nil {
+		return []*Cluster{}, err
+	}
+	err = results.All(ctx, &clusters)
+	if err != nil {
+		return []*Cluster{}, err
+	}
+	return clusters, nil
+}
