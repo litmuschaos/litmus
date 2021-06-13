@@ -2,6 +2,8 @@ package stat
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
@@ -9,7 +11,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"net/http"
 )
 
 type AgentCount struct {

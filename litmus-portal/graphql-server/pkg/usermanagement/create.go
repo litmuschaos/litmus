@@ -3,16 +3,15 @@ package usermanagement
 import (
 	"context"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"time"
-
-	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
