@@ -2,19 +2,13 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   header: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
     color: theme.palette.text.primary,
-    margin: theme.spacing(1, 1.5, 2.5, 1.5),
-  },
-  scheduleBtn: {
-    marginLeft: 'auto',
+    margin: theme.spacing(1, 0, 2.5, 0),
   },
   appBar: {
-    background: 'transparent',
     boxShadow: 'none',
-    paddingLeft: theme.spacing(1.5),
+    position: 'static',
+    backgroundColor: 'inherit',
   },
 }));
 

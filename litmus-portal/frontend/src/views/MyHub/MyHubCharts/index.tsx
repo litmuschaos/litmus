@@ -1,16 +1,13 @@
 import { useQuery } from '@apollo/client';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Backdrop,
-  Typography,
-} from '@material-ui/core';
+import { AppBar, Backdrop, Typography } from '@material-ui/core';
+import Tabs from '@material-ui/core/Tabs';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
+import useTheme from '@material-ui/core/styles/useTheme';
+import { StyledTab, TabPanel } from '../../../components/Tabs';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
 import Scaffold from '../../../containers/layouts/Scaffold';
@@ -44,6 +41,8 @@ const MyHub: React.FC = () => {
     variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
   });
+  const theme = useTheme();
+  const [tabValue, setTabValue] = useState(1);
 
   // Filter the selected MyHub
   const UserHub = hubDetails?.getHubStatus.filter((myHub) => {
@@ -99,12 +98,9 @@ const MyHub: React.FC = () => {
     return 'Date not available';
   };
 
-  const [expanded, setExpanded] = React.useState<string | false>('panel2');
-
-  const handleChange =
-    (panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
+  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   useEffect(() => {
     if (data !== undefined) {
@@ -165,117 +161,99 @@ const MyHub: React.FC = () => {
         </Typography>
         {/* </div> */}
       </div>
-      <Accordion
-        square
-        classes={{
-          root: classes.MuiAccordionroot,
-        }}
-        expanded={expanded === 'panel1'}
-        onChange={handleChange('panel1')}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1d-content"
-          id="panel1d-header"
+      <AppBar position="static" color="default" className={classes.appBar}>
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: theme.palette.highlight,
+            },
+          }}
+          variant="fullWidth"
         >
-          <Typography variant="h4">
-            <strong>{t('myhub.myhubChart.preDefined')}</strong>
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <div className={classes.mainDiv}>
-            <HeaderSection
-              searchValue={searchPredefined}
-              changeSearch={handlePreDefinedSearch}
-            />
-            <div className={classes.chartsGroup}>
-              {filteredWorkflow?.length > 0 ? (
-                filteredWorkflow.map((expName: string) => {
-                  return (
-                    <ChartCard
-                      key={expName}
-                      expName={{
-                        ChaosName: 'predefined',
-                        ExperimentName: expName,
-                      }}
-                      UserHub={UserHub}
-                      setSearch={setSearchPredefined}
-                      projectID={projectID}
-                      userRole={getProjectRole()}
-                      isPredefined
-                    />
-                  );
-                })
-              ) : (
-                <>
-                  <img
-                    src="/icons/no-experiment-found.svg"
-                    alt="no experiment"
-                    width="80px"
-                    height="80px"
+          <StyledTab
+            label={`${t('myhub.myhubChart.preDefined')}`}
+            data-cy="browseWorkflow"
+          />
+          <StyledTab
+            label={`${t('myhub.myhubChart.chaosCharts')}`}
+            data-cy="browseSchedule"
+          />
+        </Tabs>
+      </AppBar>
+      <TabPanel value={tabValue} index={0}>
+        <div className={classes.mainDiv}>
+          <HeaderSection
+            searchValue={searchPredefined}
+            changeSearch={handlePreDefinedSearch}
+          />
+          <div className={classes.chartsGroup}>
+            {filteredWorkflow?.length > 0 ? (
+              filteredWorkflow.map((expName: string) => {
+                return (
+                  <ChartCard
+                    key={expName}
+                    expName={{
+                      ChaosName: 'predefined',
+                      ExperimentName: expName,
+                    }}
+                    UserHub={UserHub}
+                    setSearch={setSearchPredefined}
+                    projectID={projectID}
+                    userRole={getProjectRole()}
+                    isPredefined
                   />
-                  <Typography variant="h5" className={classes.noExp}>
-                    {t('myhub.myhubChart.noPredefinedExp')}
-                  </Typography>
-                </>
-              )}
-            </div>
+                );
+              })
+            ) : (
+              <>
+                <img
+                  src="/icons/no-experiment-found.svg"
+                  alt="no experiment"
+                  className={classes.noExpImage}
+                />
+                <Typography variant="h5" className={classes.noExp}>
+                  {t('myhub.myhubChart.noPredefinedExp')}
+                </Typography>
+              </>
+            )}
           </div>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion
-        square
-        classes={{
-          root: classes.MuiAccordionroot,
-        }}
-        expanded={expanded === 'panel2'}
-        onChange={handleChange('panel2')}
-        className={classes.chartAccordion}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2d-content"
-          id="panel2d-header"
-        >
-          <Typography variant="h4">
-            <strong>{t('myhub.myhubChart.chaosCharts')}</strong>
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <div className={classes.mainDiv}>
-            <HeaderSection searchValue={search} changeSearch={changeSearch} />
-            <div className={classes.chartsGroup}>
-              {filteredExperiment?.length > 0 ? (
-                filteredExperiment.map((expName: ChartName) => {
-                  return (
-                    <ChartCard
-                      key={`${expName.ChaosName}-${expName.ExperimentName}`}
-                      expName={expName}
-                      UserHub={UserHub}
-                      setSearch={setSearch}
-                      projectID={projectID}
-                      userRole={getProjectRole()}
-                      isPredefined={false}
-                    />
-                  );
-                })
-              ) : (
-                <>
-                  <img
-                    src="/icons/no-experiment-found.svg"
-                    alt="no experiment"
-                    width="80px"
-                    height="80px"
+        </div>
+      </TabPanel>
+      <TabPanel value={tabValue} index={1}>
+        <div className={classes.mainDiv}>
+          <HeaderSection searchValue={search} changeSearch={changeSearch} />
+          <div className={classes.chartsGroup}>
+            {filteredExperiment?.length > 0 ? (
+              filteredExperiment.map((expName: ChartName) => {
+                return (
+                  <ChartCard
+                    key={`${expName.ChaosName}-${expName.ExperimentName}`}
+                    expName={expName}
+                    UserHub={UserHub}
+                    setSearch={setSearch}
+                    projectID={projectID}
+                    userRole={getProjectRole()}
+                    isPredefined={false}
                   />
-                  <Typography variant="h5" className={classes.noExp}>
-                    {t('myhub.myhubChart.noExp')}
-                  </Typography>
-                </>
-              )}
-            </div>
+                );
+              })
+            ) : (
+              <>
+                <img
+                  src="/icons/no-experiment-found.svg"
+                  alt="no experiment"
+                  className={classes.noExpImage}
+                />
+                <Typography variant="h5" className={classes.noExp}>
+                  {t('myhub.myhubChart.noExp')}
+                </Typography>
+              </>
+            )}
           </div>
-        </AccordionDetails>
-      </Accordion>
+        </div>
+      </TabPanel>
     </Scaffold>
   );
 };

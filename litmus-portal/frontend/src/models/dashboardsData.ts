@@ -1,4 +1,4 @@
-import { EventMetric, GraphMetric } from 'litmus-ui';
+import { GraphMetric } from 'litmus-ui';
 import { PanelGroupResponse, PanelResponse } from './graphql/dashboardsDetails';
 
 export interface PanelGroupMap {
@@ -54,7 +54,7 @@ export interface GraphPanelGroupProps extends PanelGroupResponse {
 
 export interface ParsedPrometheusData {
   seriesData: Array<GraphMetric>;
-  chaosData: Array<EventMetric>;
+  chaosData: Array<GraphMetric>;
 }
 export interface RunWiseChaosMetrics {
   runIndex: number;

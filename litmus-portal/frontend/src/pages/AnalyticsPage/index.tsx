@@ -9,10 +9,10 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
-import DataSourceTable from '../../views/Analytics/DataSources/Table';
 import DashboardTable from '../../views/Analytics/ApplicationDashboards/Table';
-import WorkflowComparisonTable from '../../views/Analytics/WorkflowDashboard/WorkflowComparisonTable';
+import DataSourceTable from '../../views/Analytics/DataSources/Table';
 import Overview from '../../views/Analytics/Overview';
+import WorkflowComparisonTable from '../../views/Analytics/WorkflowDashboard/WorkflowComparisonTable';
 import useStyles from './styles';
 
 const AnalyticsDashboard = () => {
@@ -39,7 +39,7 @@ const AnalyticsDashboard = () => {
           </Typography>
         </div>
       </section>
-      <AppBar position="static" color="default" className={classes.appBar}>
+      <AppBar className={classes.appBar}>
         <Tabs
           value={analyticsTabValue}
           onChange={handleChange}
