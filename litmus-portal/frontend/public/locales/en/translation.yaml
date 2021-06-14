@@ -37,6 +37,7 @@ header:
     signedIn: 'Signed in as:'
     emailUnset: Email not set
     emailSet: Set up your email
+    switchProject: Please switch to a project you own to access settings
     goToSettingsTitle: Go to settings
     logOutTitle: Logout from the portal
     editProfileTitle: Edit your profile
@@ -369,7 +370,6 @@ homeViews:
       schedule: Schedule workflow
     agentInfoContainer:
       agent: Agent
-      agents: Agents
       description: Cloud native chaos engineering can be setup on this cluster using Litmus Chaos
       deploy: Deploy a new Agent
 

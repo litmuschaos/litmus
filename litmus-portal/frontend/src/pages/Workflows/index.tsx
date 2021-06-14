@@ -16,7 +16,6 @@ import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
-import Templates from '../../views/ChaosWorkflows/Templates';
 import useStyles from './styles';
 
 const Workflows = () => {
@@ -80,10 +79,6 @@ const Workflows = () => {
             label={`${t('workflows.schedules')}`}
             data-cy="browseSchedule"
           />
-          <StyledTab
-            label={`${t('workflows.templates')}`}
-            data-cy="templates"
-          />
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
@@ -91,9 +86,6 @@ const Workflows = () => {
       </TabPanel>
       <TabPanel value={workflowTabValue} index={1}>
         <BrowseSchedule />
-      </TabPanel>
-      <TabPanel value={workflowTabValue} index={2}>
-        <Templates />
       </TabPanel>
     </Scaffold>
   );

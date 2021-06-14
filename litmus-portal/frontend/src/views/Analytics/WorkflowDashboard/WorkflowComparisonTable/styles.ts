@@ -146,7 +146,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableHead: {
-    opacity: 0.7,
     color: theme.palette.text.primary,
   },
 

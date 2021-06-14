@@ -89,7 +89,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
       typeof engineManifest.spec.annotationCheck === 'boolean'
         ? engineManifest.spec.annotationCheck
         : engineManifest.spec.annotationCheck === 'true',
-    jobCleanUpPolicy: engineManifest.spec.jobCleanUpPolicy,
+    jobCleanUpPolicy: engineManifest.spec.jobCleanUpPolicy ?? 'retain',
   });
   const [addNodeSelector, setAddNodeSelector] = useState<boolean>(
     !!engineManifest.spec.experiments[0].spec.components['nodeSelectors']

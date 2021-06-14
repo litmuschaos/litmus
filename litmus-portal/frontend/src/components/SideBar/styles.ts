@@ -19,18 +19,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   active: {
-    backgroundColor: `${theme.palette.primary.light} !important`,
-    color: theme.palette.secondary.contrastText,
+    backgroundColor: `${theme.palette.cards.highlight} !important`,
+    color: theme.palette.highlight,
     '& path': {
-      fill: theme.palette.common.white,
+      fill: theme.palette.highlight,
     },
   },
   listIcon: {
     paddingLeft: theme.spacing(2),
   },
   listText: {
-    marginLeft: theme.spacing(0),
-    fontSize: '1rem',
+    '& span': {
+      fontWeight: 500,
+      fontSize: '1rem',
+    },
   },
   drawerList: {
     marginTop: theme.spacing(8.375),
