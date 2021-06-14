@@ -6,12 +6,12 @@ import (
 	"log"
 	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -73,7 +73,7 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 // GetUsers queries the list of all the users from the DB and returns it in the appropriate format
 func GetUsers(ctx context.Context) ([]*model.User, error) {
 
-	users, err := dbOperationsUserManagement.GetUsers(ctx)
+	users, err := dbOperationsUserManagement.GetUsers(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
