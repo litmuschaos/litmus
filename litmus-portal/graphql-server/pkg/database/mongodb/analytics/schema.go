@@ -21,19 +21,36 @@ type DataSource struct {
 
 // DashBoard ...
 type DashBoard struct {
-	DbID        string       `bson:"db_id"`
-	DsID        string       `bson:"ds_id"`
-	DbName      string       `bson:"db_name"`
-	DbType      string       `bson:"db_type"`
-	CreatedAt   string       `bson:"created_at"`
-	UpdatedAt   string       `bson:"updated_at"`
-	ClusterID   string       `bson:"cluster_id"`
-	ProjectID   string       `bson:"project_id"`
-	EndTime     string       `bson:"end_time"`
-	StartTime   string       `bson:"start_time"`
-	RefreshRate string       `bson:"refresh_rate"`
-	PanelGroups []PanelGroup `bson:"panel_groups"`
-	IsRemoved   bool         `bson:"is_removed"`
+	DbID                      string                `bson:"db_id"`
+	DsID                      string                `bson:"ds_id"`
+	DbName                    string                `bson:"db_name"`
+	DbTypeID                  string                `bson:"db_type_id"`
+	DbTypeName                string                `bson:"db_type_name"`
+	DbInformation             string                `bson:"db_information"`
+	ChaosEventQueryTemplate   string                `bson:"chaos_event_query_template"`
+	ChaosVerdictQueryTemplate string                `bson:"chaos_verdict_query_template"`
+	ApplicationMetadataMap    []ApplicationMetadata `bson:"application_metadata_map"`
+	CreatedAt                 string                `bson:"created_at"`
+	UpdatedAt                 string                `bson:"updated_at"`
+	ClusterID                 string                `bson:"cluster_id"`
+	ProjectID                 string                `bson:"project_id"`
+	EndTime                   string                `bson:"end_time"`
+	StartTime                 string                `bson:"start_time"`
+	RefreshRate               string                `bson:"refresh_rate"`
+	PanelGroups               []PanelGroup          `bson:"panel_groups"`
+	IsRemoved                 bool                  `bson:"is_removed"`
+}
+
+// ApplicationMetadata ...
+type ApplicationMetadata struct {
+	Namespace    string      `bson:"namespace"`
+	Applications []*Resource `bson:"applications"`
+}
+
+// Resource ...
+type Resource struct {
+	Kind  string    `bson:"kind"`
+	Names []*string `bson:"names"`
 }
 
 // PanelGroup ...
