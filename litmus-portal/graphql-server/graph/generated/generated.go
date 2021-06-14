@@ -3779,19 +3779,19 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
-    ds_id: String
-    ds_name: String!
-    ds_type: String!
-    ds_url: String!
-    access_type: String!
-    auth_type: String!
-    basic_auth_username: String
-    basic_auth_password: String
-    scrape_interval: Int!
-    query_timeout: Int!
-    http_method: String!
-    project_id: String
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
+  ds_id: String
+  ds_name: String!
+  ds_type: String!
+  ds_url: String!
+  access_type: String!
+  auth_type: String!
+  basic_auth_username: String
+  basic_auth_password: String
+  scrape_interval: Int!
+  query_timeout: Int!
+  http_method: String!
+  project_id: String
 }
 
 type DSResponse {
@@ -3813,53 +3813,53 @@ type DSResponse {
 }
 
 input createDBInput {
-    ds_id: String!
-    db_name: String!
-    db_type_name: String!
-    db_type_id: String!
-    db_information: String
-    chaos_event_query_template: String!
-    chaos_verdict_query_template: String!
-    application_metadata_map: [applicationMetadata]
-    panel_groups: [panelGroup]!
-    end_time: String!
-    start_time: String!
-    project_id: ID!
-    cluster_id: ID!
-    refresh_rate: String!
+  ds_id: String!
+  db_name: String!
+  db_type_name: String!
+  db_type_id: String!
+  db_information: String
+  chaos_event_query_template: String!
+  chaos_verdict_query_template: String!
+  application_metadata_map: [applicationMetadata]
+  panel_groups: [panelGroup]!
+  end_time: String!
+  start_time: String!
+  project_id: ID!
+  cluster_id: ID!
+  refresh_rate: String!
 }
 
 input applicationMetadata {
-    namespace: String!
-    applications: [resource]
+  namespace: String!
+  applications: [resource]
 }
 
 input resource {
-    kind: String!
-    names: [String]
+  kind: String!
+  names: [String]
 }
 
 input updateDBInput {
-    db_id: String!
-    ds_id: String!
-    db_name: String!
-    db_type_name: String!
-    db_type_id: String!
-    db_information: String
-    chaos_event_query_template: String!
-    chaos_verdict_query_template: String!
-    application_metadata_map: [applicationMetadata]
-    panel_groups: [updatePanelGroupInput]!
-    end_time: String!
-    start_time: String!
-    cluster_id: ID!
-    refresh_rate: String!
+  db_id: String!
+  ds_id: String!
+  db_name: String!
+  db_type_name: String!
+  db_type_id: String!
+  db_information: String
+  chaos_event_query_template: String!
+  chaos_verdict_query_template: String!
+  application_metadata_map: [applicationMetadata]
+  panel_groups: [updatePanelGroupInput]!
+  end_time: String!
+  start_time: String!
+  cluster_id: ID!
+  refresh_rate: String!
 }
 
 input updatePanelGroupInput {
-    panel_group_name: String!
-    panel_group_id: String!
-    panels: [panel]
+  panel_group_name: String!
+  panel_group_id: String!
+  panels: [panel]
 }
 
 input panelGroup {
@@ -3868,17 +3868,17 @@ input panelGroup {
 }
 
 input panel {
-    panel_id: String
-    db_id: String
-    y_axis_left: String
-    y_axis_right: String
-    x_axis_down: String
-    unit: String
-    panel_group_id: String
-    created_at: String
-    prom_queries: [promQuery]
-    panel_options: panelOption
-    panel_name: String!
+  panel_id: String
+  db_id: String
+  y_axis_left: String
+  y_axis_right: String
+  x_axis_down: String
+  unit: String
+  panel_group_id: String
+  created_at: String
+  prom_queries: [promQuery]
+  panel_options: panelOption
+  panel_name: String!
 }
 
 input panelOption {
@@ -3967,36 +3967,36 @@ type option {
 }
 
 type listDashboardResponse {
-    ds_id: String!
-    db_id: String!
-    db_name: String!
-    db_type_id: String!
-    db_type_name: String!
-    db_information: String
-    chaos_event_query_template: String!
-    chaos_verdict_query_template: String!
-    application_metadata_map: [applicationMetadataResponse]
-    cluster_name: String
-    ds_name: String
-    ds_type: String
-    panel_groups: [panelGroupResponse]!
-    end_time: String!
-    start_time: String!
-    refresh_rate: String!
-    project_id: ID!
-    cluster_id: ID!
-    created_at: String
-    updated_at: String
+  ds_id: String!
+  db_id: String!
+  db_name: String!
+  db_type_id: String!
+  db_type_name: String!
+  db_information: String
+  chaos_event_query_template: String!
+  chaos_verdict_query_template: String!
+  application_metadata_map: [applicationMetadataResponse]
+  cluster_name: String
+  ds_name: String
+  ds_type: String
+  panel_groups: [panelGroupResponse]!
+  end_time: String!
+  start_time: String!
+  refresh_rate: String!
+  project_id: ID!
+  cluster_id: ID!
+  created_at: String
+  updated_at: String
 }
 
 type applicationMetadataResponse {
-    namespace: String!
-    applications: [resourceResponse]
+  namespace: String!
+  applications: [resourceResponse]
 }
 
 type resourceResponse {
-    kind: String!
-    names: [String]
+  kind: String!
+  names: [String]
 }
 
 type panelGroupResponse {
@@ -4006,15 +4006,15 @@ type panelGroupResponse {
 }
 
 type panelResponse {
-    panel_id: String!
-    y_axis_left: String
-    y_axis_right: String
-    x_axis_down: String
-    unit: String
-    prom_queries: [promQueryResponse]
-    panel_options: panelOptionResponse
-    panel_name: String
-    created_at: String
+  panel_id: String!
+  y_axis_left: String
+  y_axis_right: String
+  x_axis_down: String
+  unit: String
+  prom_queries: [promQueryResponse]
+  panel_options: panelOptionResponse
+  panel_name: String
+  created_at: String
 }
 
 type panelOptionResponse {
@@ -4047,8 +4047,9 @@ enum TimeFrequency {
 type WorkflowStats {
   date: Float!
   value: Int!
-}`, BuiltIn: false},
-	{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+}
+`, BuiltIn: false},
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -4075,7 +4076,7 @@ type ImageRegistryResponse {
     is_removed: Boolean
 }
 `, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -4249,7 +4250,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -4281,7 +4282,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -4733,7 +4734,7 @@ type Subscription {
     @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -4764,7 +4765,7 @@ input UpdateUserInput {
   company_name: String
 }
 `, BuiltIn: false},
-	{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
+	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
   Running
