@@ -54,6 +54,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
                   key={panel.panel_id}
                   data-cy="dashboardPanel"
                   panel_id={panel.panel_id}
+                  created_at={panel.created_at}
                   panel_name={panel.panel_name}
                   panel_options={panel.panel_options}
                   prom_queries={panel.prom_queries}

@@ -3,7 +3,6 @@ import Icon from '@material-ui/core/Icon';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckBox } from '../../../../components/CheckBox';
-import DashboardList from '../../../../components/PreconfiguredDashboards/data';
 import {
   DashboardConfigurationDetails,
   PanelNameAndID,
@@ -84,16 +83,12 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
             </Typography>
             <div className={classes.iconWithTextDiv}>
               <img
-                src={`/icons/${
-                  dashboardConfigurationDetails.type === DashboardList[0].name
-                    ? 'kubernetes-platform'
-                    : 'sock-shop'
-                }.svg`}
+                src={`/icons/${dashboardConfigurationDetails.typeID}_dashboard.svg`}
                 alt="dashboard Icon"
                 className={classes.inlineIcon}
               />
               <Typography className={classes.infoValue}>
-                {dashboardConfigurationDetails.type}
+                {dashboardConfigurationDetails.typeID}
               </Typography>
             </div>
           </div>
@@ -132,7 +127,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               )}
             </Typography>
             <Typography className={classes.infoValue}>
-              {dashboardConfigurationDetails.agent}
+              {dashboardConfigurationDetails.agentName}
             </Typography>
           </div>
         </div>
@@ -143,8 +138,8 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
             )}
           </Typography>
           <div className={classes.checkBoxesContainer}>
-            {applicationsToBeShown.map((application: string) => (
-              <FormGroup key="application-group">
+            <FormGroup key="application-group">
+              {applicationsToBeShown.map((application: string) => (
                 <FormControlLabel
                   control={
                     <CheckBox
@@ -153,10 +148,15 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                       name={application}
                     />
                   }
-                  label={application}
+                  label={
+                    <Typography className={classes.formControlLabel}>
+                      {application}
+                    </Typography>
+                  }
+                  key={`${application}-application-label`}
                 />
-              </FormGroup>
-            ))}
+              ))}
+            </FormGroup>
           </div>
         </div>
         <div className={classes.infoSectionElement}>
@@ -166,8 +166,8 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
             )}
           </Typography>
           <div className={classes.checkBoxesContainer}>
-            {metricsToBeShown.map((metric: PanelNameAndID) => (
-              <FormGroup key="application-group">
+            <FormGroup key="metric-group">
+              {metricsToBeShown.map((metric: PanelNameAndID) => (
                 <FormControlLabel
                   control={
                     <CheckBox
@@ -176,11 +176,15 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                       name={metric.name}
                     />
                   }
-                  label={metric.name}
-                  className={classes.formControlLabel}
+                  label={
+                    <Typography className={classes.formControlLabel}>
+                      {metric.name}
+                    </Typography>
+                  }
+                  key={`${metric}-metric-label`}
                 />
-              </FormGroup>
-            ))}
+              ))}
+            </FormGroup>
           </div>
         </div>
       </div>

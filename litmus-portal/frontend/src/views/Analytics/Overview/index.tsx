@@ -214,7 +214,7 @@ const Overview: React.FC = () => {
             <ButtonFilled
               onClick={() => {
                 history.push({
-                  pathname: '/analytics/datasource/select',
+                  pathname: '/analytics/datasource/create',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
@@ -245,7 +245,7 @@ const Overview: React.FC = () => {
             <ButtonFilled
               onClick={() => {
                 history.push({
-                  pathname: '/analytics/dashboard/select',
+                  pathname: '/analytics/dashboard/create',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
@@ -307,7 +307,7 @@ const Overview: React.FC = () => {
       {applicationDashboardCount > 0 && (
         <RecentOverviewContainer
           heading="Recent Application Dashboards"
-          buttonLink="/analytics/dashboard/select"
+          buttonLink="/analytics/dashboard/create"
           buttonImgSrc="./icons/cloudWhite.svg"
           buttonImgAlt="Add kubernetes dashboard"
           buttonText="Add kubernetes dashbaord"
@@ -340,7 +340,7 @@ const Overview: React.FC = () => {
                 className={classes.infoContainerButton}
                 onClick={() => {
                   history.push({
-                    pathname: '/analytics/datasource/select',
+                    pathname: '/analytics/datasource/create',
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}

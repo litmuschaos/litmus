@@ -1,0 +1,144 @@
+{
+  "dashboardID": "generic_node_metrics",
+  "name": "Node metrics",
+  "information": "This dashboard visualizes Node level CPU, memory, disk and IO utilization metrics interleaved with chaos events.",
+  "chaosEventQueryTemplate": "litmuschaos_awaited_experiments{job=\"chaos-exporter\"}",
+  "chaosVerdictQueryTemplate": "litmuschaos_experiment_verdict{job=\"chaos-exporter\"}",
+  "panelGroupMap": [
+    {
+      "groupName": "CPU Utilization Metrics",
+      "panels": ["Chaos-Node-CPU Utilization"]
+    },
+    {
+      "groupName": "Memory Utilization Metrics",
+      "panels": ["Chaos-Node-Memory Utilization"]
+    },
+    {
+      "groupName": "Disk Usage Metrics",
+      "panels": [
+        "Chaos-Node-Disk I/O Usage R/W",
+        "Chaos-Node-Disk I/O Usage Times"
+      ]
+    },
+    {
+      "groupName": "Network Usage Metrics",
+      "panels": [
+        "Chaos-Node-Network Traffic Bytes",
+        "Chaos-Node-Network Traffic Packets"
+      ]
+    }
+  ],
+  "panelGroups": [
+    {
+      "panel_group_name": "CPU Usage Metrics",
+      "panels": [
+        {
+          "panel_name": "Chaos-Node-CPU Utilization",
+          "panel_options": {
+            "points": false,
+            "grids": true,
+            "left_axis": true
+          },
+          "y_axis_left": "Cores",
+          "y_axis_right": "CHAOS",
+          "x_axis_down": "Time",
+          "unit": "%",
+          "prom_queries": [
+            {
+              "prom_query_name": "instance:node_cpu_utilisation:rate1m*100",
+              "legend": "{{instance}}",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "panel_group_name": "Memory Usage Metrics",
+      "panels": [
+        {
+          "panel_name": "Chaos-Node-Memory Utilization",
+          "panel_options": {
+            "points": false,
+            "grids": true,
+            "left_axis": true
+          },
+          "y_axis_left": "Memory",
+          "y_axis_right": "CHAOS",
+          "x_axis_down": "Time",
+          "unit": "%",
+          "prom_queries": [
+            {
+              "prom_query_name": "instance:node_memory_utilisation:ratio*100",
+              "legend": "{{instance}}",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "panel_group_name": "Disk Usage Metrics",
+      "panels": [
+        {
+          "panel_name": "Chaos-Node-Disk I/O Usage R/W",
+          "panel_options": {
+            "points": false,
+            "grids": true,
+            "left_axis": true
+          },
+          "y_axis_left": "bytes read (-) / write (+)",
+          "y_axis_right": "CHAOS",
+          "x_axis_down": "Time",
+          "unit": "KiB",
+          "prom_queries": [
+            {
+              "prom_query_name": "node_disk_read_bytes_total",
+              "legend": "{{instance}} - {{device}} - Successfully read bytes",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            },
+            {
+              "prom_query_name": "node_disk_written_bytes_total",
+              "legend": "{{instance}} - {{device}} - Successfully written bytes",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            }
+          ]
+        },
+        {
+          "panel_name": "Chaos-Node-Disk I/O Usage Times",
+          "panel_options": {
+            "points": false,
+            "grids": true,
+            "left_axis": true
+          },
+          "y_axis_left": "time",
+          "y_axis_right": "CHAOS",
+          "x_axis_down": "Time",
+          "unit": "ms",
+          "prom_queries": [
+            {
+              "prom_query_name": "node_disk_io_time_seconds_total",
+              "legend": "{{instance}} - {{device}} - Time spent doing I/Os",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

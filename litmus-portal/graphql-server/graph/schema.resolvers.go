@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -241,7 +241,7 @@ func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *mod
 	return analyticsHandler.CreateDataSource(datasource)
 }
 
-func (r *mutationResolver) CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (string, error) {
+func (r *mutationResolver) CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error) {
 	return analyticsHandler.CreateDashboard(dashboard)
 }
 
@@ -249,7 +249,7 @@ func (r *mutationResolver) UpdateDataSource(ctx context.Context, datasource mode
 	return analyticsHandler.UpdateDataSource(datasource)
 }
 
-func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdataDBInput) (string, error) {
+func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput) (string, error) {
 	return analyticsHandler.UpdateDashBoard(dashboard)
 }
 
@@ -401,7 +401,7 @@ func (r *queryResolver) GetPromSeriesList(ctx context.Context, dsDetails *model.
 	return analyticsHandler.GetSeriesList(dsDetails)
 }
 
-func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error) {
+func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardResponse, error) {
 	return analyticsHandler.QueryListDashboard(projectID)
 }
 

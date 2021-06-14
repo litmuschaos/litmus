@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-expressions */
-import { ParsedPrometheusData } from '../models/dashboardsData';
-import { PromQuery } from '../models/graphql/dashboardsDetails';
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-param-reassign */
+import {
+  ParsedPrometheusData,
+  PromQueryDetails,
+  QueryLabelValue,
+} from '../models/dashboardsData';
 import {
   PrometheusResponse,
   promQueryInput,
@@ -10,13 +15,15 @@ import {
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
 } from '../pages/ApplicationDashboard/constants';
 
+const labelMatchOperators = ['==', '!=', '<=', '<', '>=', '>', '=~', '!~', '='];
+
 export const getPromQueryInput = (
-  prom_queries: PromQuery[],
+  prom_queries: PromQueryDetails[],
   timeRangeDiff: number,
   withEvents: Boolean
 ) => {
   const promQueries: promQueryInput[] = [];
-  prom_queries.forEach((query: PromQuery) => {
+  prom_queries.forEach((query: PromQueryDetails) => {
     promQueries.push({
       queryid: query.queryid,
       query: query.prom_query_name,
@@ -61,10 +68,12 @@ export const getPromQueryInput = (
 export const DataParserForPrometheus = (
   prometheusData: PrometheusResponse,
   lineGraph: string[],
-  areaGraph: string[]
+  areaGraph: string[],
+  closedAreaQueryIDs: string[]
 ) => {
   const parsedPrometheusData: ParsedPrometheusData = {
     seriesData: [],
+    closedAreaData: [],
     chaosData: [],
   };
   prometheusData.GetPromQuery.annotationsResponse?.forEach(
@@ -89,20 +98,173 @@ export const DataParserForPrometheus = (
   prometheusData.GetPromQuery.metricsResponse?.forEach(
     (queryResponse, mainIndex) => {
       if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
-        parsedPrometheusData.seriesData.push(
-          ...queryResponse.legends.map((elem, index) => ({
-            metricName: elem,
-            data: queryResponse.tsvs[index].map((dataPoint) => ({
-              ...dataPoint,
-            })),
-            baseColor:
-              lineGraph[
-                (mainIndex + (index % lineGraph.length)) % lineGraph.length
-              ],
-          }))
-        );
+        if (closedAreaQueryIDs.includes(queryResponse.queryid)) {
+          parsedPrometheusData.closedAreaData.push(
+            ...queryResponse.legends.map((elem, index) => ({
+              metricName: elem,
+              data: queryResponse.tsvs[index].map((dataPoint) => ({
+                ...dataPoint,
+              })),
+              baseColor:
+                areaGraph[
+                  (mainIndex + (index % areaGraph.length)) % areaGraph.length
+                ],
+            }))
+          );
+        } else {
+          parsedPrometheusData.seriesData.push(
+            ...queryResponse.legends.map((elem, index) => ({
+              metricName: elem,
+              data: queryResponse.tsvs[index].map((dataPoint) => ({
+                ...dataPoint,
+              })),
+              baseColor:
+                lineGraph[
+                  (mainIndex + (index % lineGraph.length)) % lineGraph.length
+                ],
+            }))
+          );
+        }
       }
     }
   );
   return parsedPrometheusData;
+};
+
+export const replaceBetween = (
+  origin: string,
+  startIndex: number,
+  endIndex: number,
+  insertion: string
+) =>
+  `${origin.substring(0, startIndex)}${insertion}${origin.substring(endIndex)}`;
+
+export const getLabelsAndValues = (queryString: string) => {
+  const labelValuesList: QueryLabelValue[] = [];
+  const re = /\{(.*?)\}/g;
+  const arr: string[] = queryString.match(re) as string[];
+  if (arr) {
+    const tempLabelValueList = arr[0].split(',');
+    tempLabelValueList.forEach((labelValue, index) => {
+      let adjustedLabelValue = labelValue;
+      if (index === 0) {
+        adjustedLabelValue = adjustedLabelValue.substring(1, labelValue.length);
+      }
+      if (index === tempLabelValueList.length - 1) {
+        adjustedLabelValue = adjustedLabelValue.substring(
+          0,
+          labelValue.length - 2
+        );
+      }
+      let splitOperator = '';
+      labelMatchOperators.some((val) => {
+        const ret = adjustedLabelValue.indexOf(val) !== -1;
+        if (ret) {
+          splitOperator = val;
+        }
+        return ret;
+      });
+      const labelAndValue = adjustedLabelValue.trim().split(splitOperator);
+      const re1 = /\"(.*?)\"/g;
+      if (labelAndValue.length > 0 && labelAndValue[1]) {
+        const arr1: string[] = labelAndValue[1].match(re1) as string[];
+        if (arr1 && arr1.length > 0) {
+          let updateStatus = false;
+          labelValuesList.forEach((labVal) => {
+            if (labVal.label === labelAndValue[0]) {
+              labVal.value = labVal.value.concat(
+                arr1[0].substring(1, arr1[0].length - 1).split('|')
+              );
+              updateStatus = true;
+            }
+          });
+          if (!updateStatus) {
+            labelValuesList.push({
+              label: labelAndValue[0],
+              value: arr1[0].substring(1, arr1[0].length - 1).split('|'),
+            });
+          }
+        }
+      }
+    });
+  }
+  return labelValuesList;
+};
+
+export const setLabelsAndValues = (
+  baseQueryString: string,
+  queryString: string,
+  labelValuesList: QueryLabelValue[]
+) => {
+  let existingQueryString: string = queryString;
+  labelValuesList.forEach((labVal) => {
+    const matchBracketIndex = existingQueryString.indexOf('{');
+    let matchLabelIndex = -1;
+    if (matchBracketIndex !== -1) {
+      matchLabelIndex = existingQueryString.indexOf(
+        labVal.label,
+        matchBracketIndex
+      );
+    }
+    if (matchLabelIndex === -1) {
+      if (matchBracketIndex === -1) {
+        const baseConcatIndex =
+          queryString.indexOf(baseQueryString) + baseQueryString.length - 1;
+        existingQueryString = `${existingQueryString.slice(
+          0,
+          baseConcatIndex + 1
+        )}{${labVal.label}=~"${labVal.value.join(
+          '|'
+        )}"}${existingQueryString.slice(baseConcatIndex + 1)}`;
+      } else {
+        existingQueryString = `${existingQueryString.slice(
+          0,
+          matchBracketIndex + 1
+        )}${labVal.label}=~"${labVal.value.join(
+          '|'
+        )}",${existingQueryString.slice(matchBracketIndex + 1)}`;
+      }
+    } else {
+      const lastIndexOfOpr = existingQueryString.indexOf(`"`, matchLabelIndex);
+      const lastIndexOfVal = existingQueryString.indexOf(
+        `"`,
+        lastIndexOfOpr + 1
+      );
+      const subStrToReplace = existingQueryString.substring(
+        lastIndexOfOpr,
+        lastIndexOfVal + 1
+      );
+      if (lastIndexOfOpr !== -1 && lastIndexOfVal !== -1) {
+        if (labVal.value.length) {
+          existingQueryString = existingQueryString.replace(
+            subStrToReplace,
+            `"${labVal.value.join('|')}"`
+          );
+          existingQueryString = replaceBetween(
+            existingQueryString,
+            matchLabelIndex + labVal.label.length,
+            lastIndexOfOpr,
+            '=~'
+          );
+        } else {
+          const graceIndexForBrackets =
+            (existingQueryString[lastIndexOfVal + 1] === '}' ||
+              existingQueryString[lastIndexOfVal + 2] === '}') &&
+            existingQueryString[matchLabelIndex - 1] === '{'
+              ? 1
+              : 0;
+          existingQueryString = existingQueryString.replace(
+            existingQueryString.substring(
+              matchLabelIndex - graceIndexForBrackets,
+              existingQueryString[lastIndexOfVal + 1] === ','
+                ? lastIndexOfVal + 2 + graceIndexForBrackets
+                : lastIndexOfVal + 1 + graceIndexForBrackets
+            ),
+            ``
+          );
+        }
+      }
+    }
+  });
+  return existingQueryString;
 };

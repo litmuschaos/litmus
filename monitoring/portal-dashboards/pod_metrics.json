@@ -1,0 +1,73 @@
+{
+  "dashboardID": "generic_pod_metrics",
+  "name": "Pod metrics",
+  "information": "This dashboard visualizes Pod level CPU and memory usage metrics interleaved with chaos events.",
+  "chaosEventQueryTemplate": "litmuschaos_awaited_experiments{job=\"chaos-exporter\"}",
+  "chaosVerdictQueryTemplate": "litmuschaos_experiment_verdict{job=\"chaos-exporter\"}",
+  "panelGroupMap": [
+    {
+      "groupName": "CPU Usage Metrics",
+      "panels": ["Chaos-Pod-CPU Usage"]
+    },
+    {
+      "groupName": "Memory Usage Metrics",
+      "panels": ["Chaos-Pod-Memory Usage"]
+    }
+  ],
+  "panelGroups": [
+    {
+      "panel_group_name": "CPU Usage Metrics",
+      "panels": [
+        {
+          "panel_name": "Chaos-Pod-CPU Usage",
+          "panel_options": {
+            "points": false,
+            "grids": true,
+            "left_axis": true
+          },
+          "y_axis_left": "Cores",
+          "y_axis_right": "CHAOS",
+          "x_axis_down": "Time",
+          "unit": "",
+          "prom_queries": [
+            {
+              "prom_query_name": "sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",pod!=\"\"}[5m])) by (pod)",
+              "legend": "{{pod}}",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "panel_group_name": "Memory Usage Metrics",
+      "panels": [
+        {
+          "panel_name": "Chaos-Pod-Memory Usage",
+          "panel_options": {
+            "points": false,
+            "grids": true,
+            "left_axis": true
+          },
+          "y_axis_left": "Memory",
+          "y_axis_right": "CHAOS",
+          "x_axis_down": "Time",
+          "unit": "GiB",
+          "prom_queries": [
+            {
+              "prom_query_name": "sum(container_memory_usage_bytes{container!=\"POD\",container!=\"\"}) by (pod)",
+              "legend": "{{pod}}",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
