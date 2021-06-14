@@ -34,7 +34,12 @@ type DSResponse {
 input createDBInput {
     ds_id: String!
     db_name: String!
-    db_type: String!
+    db_type_name: String!
+    db_type_id: String!
+    db_information: String
+    chaos_event_query_template: String!
+    chaos_verdict_query_template: String!
+    application_metadata_map: [applicationMetadata]
     panel_groups: [panelGroup]!
     end_time: String!
     start_time: String!
@@ -43,20 +48,37 @@ input createDBInput {
     refresh_rate: String!
 }
 
-input updataDBInput {
+input applicationMetadata {
+    namespace: String!
+    applications: [resource]
+}
+
+input resource {
+    kind: String!
+    names: [String]
+}
+
+input updateDBInput {
     db_id: String!
     ds_id: String!
     db_name: String!
-    db_type: String!
+    db_type_name: String!
+    db_type_id: String!
+    db_information: String
+    chaos_event_query_template: String!
+    chaos_verdict_query_template: String!
+    application_metadata_map: [applicationMetadata]
+    panel_groups: [updatePanelGroupInput]!
     end_time: String!
     start_time: String!
+    cluster_id: ID!
     refresh_rate: String!
-    panel_groups: [updatePanelGroupInput]!
 }
 
 input updatePanelGroupInput {
     panel_group_name: String!
     panel_group_id: String!
+    panels: [panel]
 }
 
 input panelGroup {
@@ -72,6 +94,7 @@ input panel {
     x_axis_down: String
     unit: String
     panel_group_id: String
+    created_at: String
     prom_queries: [promQuery]
     panel_options: panelOption
     panel_name: String!
@@ -162,11 +185,16 @@ type option {
     name: String!
 }
 
-type listDashboardReponse {
+type listDashboardResponse {
     ds_id: String!
     db_id: String!
     db_name: String!
-    db_type: String!
+    db_type_id: String!
+    db_type_name: String!
+    db_information: String
+    chaos_event_query_template: String!
+    chaos_verdict_query_template: String!
+    application_metadata_map: [applicationMetadataResponse]
     cluster_name: String
     ds_name: String
     ds_type: String
@@ -178,6 +206,16 @@ type listDashboardReponse {
     cluster_id: ID!
     created_at: String
     updated_at: String
+}
+
+type applicationMetadataResponse {
+    namespace: String!
+    applications: [resourceResponse]
+}
+
+type resourceResponse {
+    kind: String!
+    names: [String]
 }
 
 type panelGroupResponse {
@@ -195,6 +233,7 @@ type panelResponse {
     prom_queries: [promQueryResponse]
     panel_options: panelOptionResponse
     panel_name: String
+    created_at: String
 }
 
 type panelOptionResponse {

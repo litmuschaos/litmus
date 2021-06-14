@@ -60,6 +60,7 @@ rules:
       - deployments
       - statefulsets
       - daemonsets
+      - replicasets
     verbs:
       - get
       - list
@@ -69,6 +70,8 @@ rules:
     resources:
       - pods
       - namespaces
+      - nodes
+      - services
     verbs:
       - get
       - list
