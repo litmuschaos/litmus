@@ -27,7 +27,7 @@ export interface DeleteSchedule {
 export interface ScheduledWorkflowStatsVars {
   filter: Filter;
   project_id: string;
-  start_time: string;
+  show_workflow_runs: boolean;
 }
 
 export interface DateValue {

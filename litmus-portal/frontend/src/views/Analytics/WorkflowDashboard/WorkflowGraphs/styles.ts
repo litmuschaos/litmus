@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
+    marginBottom: theme.spacing(3.5),
   },
   root: {
     width: '100%',
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.5),
   },
   formControl: {
-    margin: theme.spacing(0, 3, 0, 2),
+    margin: theme.spacing(1, 3, 0, 2),
     minWidth: '9rem',
     '& fieldset': {
       height: '3.1875rem',

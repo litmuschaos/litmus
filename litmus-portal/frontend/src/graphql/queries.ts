@@ -44,12 +44,12 @@ export const SCHEDULED_WORKFLOW_STATS = gql`
   query getScheduledWorkflowStats(
     $filter: TimeFrequency!
     $project_id: String!
-    $start_time: String!
+    $show_workflow_runs: Boolean!
   ) {
     getScheduledWorkflowStats(
       filter: $filter
       project_id: $project_id
-      start_time: $start_time
+      show_workflow_runs: $show_workflow_runs
     ) {
       date
       value

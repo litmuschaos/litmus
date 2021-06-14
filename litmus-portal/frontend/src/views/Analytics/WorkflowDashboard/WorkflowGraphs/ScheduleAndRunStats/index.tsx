@@ -1,8 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Paper, Tabs, useTheme } from '@material-ui/core';
 import { LineAreaGraph } from 'litmus-ui';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
 import { StyledTab, TabPanel } from '../../../../../components/Tabs';
 import { SCHEDULED_WORKFLOW_STATS } from '../../../../../graphql';
 import {
@@ -43,51 +42,40 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
   const classes = useStyles();
   const projectID = getProjectID();
   const theme = useTheme();
-  const { t } = useTranslation();
   const [activeTab, setActiveTab] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
   };
 
-  const [presentTime, setPresentTime] = useState<string>(
-    `${Date.now() / 1000}`
-  );
-
   const [graphDataState, setGraphDataState] = useState<DateValue[]>([]);
 
-  useEffect(() => {
-    setPresentTime(`${Date.now() / 1000}`);
-  }, []);
+  const tempGraphData: Array<DateValue> = [];
 
-  // const presentTime = `${Date.now() / 1000}`;
-  let tempGraphData: Array<DateValue> = [];
-
-  const { data: dateValueData, loading, error } = useQuery<
-    ScheduledWorkflowStatsResponse,
-    ScheduledWorkflowStatsVars
-  >(SCHEDULED_WORKFLOW_STATS, {
-    variables: {
-      filter: filter,
-      project_id: projectID,
-      start_time: presentTime,
-    },
-    onCompleted: (dateValueData) => {
-      console.log(dateValueData.getScheduledWorkflowStats);
-      dateValueData.getScheduledWorkflowStats.map((data) => {
-        tempGraphData.push({
-          date: data.date,
-          value: data.value,
-        });
-      });
-      setGraphDataState(tempGraphData);
-    },
-  });
+  useQuery<ScheduledWorkflowStatsResponse, ScheduledWorkflowStatsVars>(
+    SCHEDULED_WORKFLOW_STATS,
+    {
+      variables: {
+        filter,
+        project_id: projectID,
+        show_workflow_runs: activeTab === 0,
+      },
+      onCompleted: (dateValueData) => {
+        dateValueData.getScheduledWorkflowStats.map((data) =>
+          tempGraphData.push({
+            date: data.date,
+            value: data.value,
+          })
+        );
+        setGraphDataState(tempGraphData);
+      },
+    }
+  );
 
   const closedSeriesData: Array<GraphMetric> = [
     {
-      metricName: 'schedules',
+      metricName: activeTab === 0 ? 'Runs' : 'Schedules',
       data: graphDataState,
-      baseColor: '#5B44BA',
+      baseColor: activeTab === 0 ? '#F6793E' : '#5B44BA',
     },
   ];
 
@@ -99,6 +87,8 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
         return '[W] W';
       case Filter.hourly:
         return 'HH[hrs]';
+      default:
+        return 'MMM';
     }
   }
 
@@ -116,38 +106,42 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
             }}
           >
             <StyledTab
-              data-cy="activeTab"
-              label="Schedule stats"
-              {...tabProps(0)}
-            />
-            <StyledTab
               data-cy="receivedTab"
               label=" Run stats"
               {...tabProps(1)}
             />
+            <StyledTab
+              data-cy="activeTab"
+              label="Schedule stats"
+              {...tabProps(0)}
+            />
           </Tabs>
           <TabPanel value={activeTab} index={0}>
-            <div
-              className={classes.graphContainer}
-              // style={{
-              //   width: '900px',
-              //   height: '320px',
-              //   marginLeft: '-70px',
-              //   marginBottom: '25px',
-              // }}
-            >
+            <div className={classes.graphContainer}>
               <LineAreaGraph
                 closedSeries={closedSeriesData}
                 showLegendTable={false}
-                showPoints={true}
-                showTips={true}
+                showPoints
+                showTips
                 showMultiToolTip
                 yLabelOffset={35}
                 xAxistimeFormat={xAxisTimeFormat(filter)}
               />
             </div>
           </TabPanel>
-          <TabPanel value={activeTab} index={1} />
+          <TabPanel value={activeTab} index={1}>
+            <div className={classes.graphContainer}>
+              <LineAreaGraph
+                closedSeries={closedSeriesData}
+                showLegendTable={false}
+                showPoints
+                showTips
+                showMultiToolTip
+                yLabelOffset={35}
+                xAxistimeFormat={xAxisTimeFormat(filter)}
+              />
+            </div>
+          </TabPanel>
         </Paper>
       </Paper>
     </div>

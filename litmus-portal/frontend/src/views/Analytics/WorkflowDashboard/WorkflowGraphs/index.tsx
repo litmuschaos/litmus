@@ -6,19 +6,17 @@ import {
   Select,
 } from '@material-ui/core';
 import { RadialChart } from 'litmus-ui';
-// import { RadialChart } from 'litmus-ui';
 import React, { useState } from 'react';
 import { Filter } from '../../../../models/graphql/scheduleData';
 import {
   ExecutionData,
-  // ExecutionData,
-  WorkflowList,
+  ScheduledWorkflows,
 } from '../../../../models/graphql/workflowListData';
 import ScheduleAndRunStats from './ScheduleAndRunStats';
 import useStyles from './styles';
 
 interface WorkflowGraphsProps {
-  data: WorkflowList | undefined;
+  data: ScheduledWorkflows | undefined;
 }
 
 interface RadialChartMetric {
@@ -34,9 +32,9 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
   let running = 0;
   let failed = 0;
 
-  data?.ListWorkflow.map((datarow) => {
+  /* eslint-disable no-unused-expressions */
+  data?.ListWorkflow.workflows.map((datarow) =>
     datarow.workflow_runs?.map((runs) => {
-      console.log((JSON.parse(runs.execution_data) as ExecutionData).phase);
       if (
         (JSON.parse(runs.execution_data) as ExecutionData).phase === 'Succeeded'
       )
@@ -49,8 +47,8 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
         (JSON.parse(runs.execution_data) as ExecutionData).phase === 'Failed'
       )
         failed++;
-    });
-  });
+    })
+  );
 
   // States for filters
   const [filters, setFilters] = useState<Filter>(Filter.monthly);
@@ -64,7 +62,7 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
     <div>
       <Paper className={classes.paper}>
         <FormControl variant="outlined" className={classes.formControl} focused>
-          <InputLabel className={classes.selectText}></InputLabel>
+          <InputLabel className={classes.selectText} />
           <Select
             value={filters}
             onChange={(event) => {
