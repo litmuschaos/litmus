@@ -352,6 +352,9 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 
 	// Call aggregation on pipeline
 	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+	if err != nil {
+		return nil, err
+	}
 
 	var result []*model.WorkflowRun
 
@@ -516,7 +519,6 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 
 	// Call aggregation on pipeline
 	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
-
 	if err != nil {
 		return nil, err
 	}

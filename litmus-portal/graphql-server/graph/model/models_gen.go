@@ -588,6 +588,11 @@ type WorkflowSortInput struct {
 	Descending *bool                `json:"descending"`
 }
 
+type WorkflowStats struct {
+	Date  float64 `json:"date"`
+	Value int     `json:"value"`
+}
+
 type AnnotationsPromResponse struct {
 	Queryid string                         `json:"queryid"`
 	Legends []*string                      `json:"legends"`
@@ -928,6 +933,49 @@ func (e *MemberRole) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type TimeFrequency string
+
+const (
+	TimeFrequencyMonthly TimeFrequency = "Monthly"
+	TimeFrequencyWeekly  TimeFrequency = "Weekly"
+	TimeFrequencyHourly  TimeFrequency = "Hourly"
+)
+
+var AllTimeFrequency = []TimeFrequency{
+	TimeFrequencyMonthly,
+	TimeFrequencyWeekly,
+	TimeFrequencyHourly,
+}
+
+func (e TimeFrequency) IsValid() bool {
+	switch e {
+	case TimeFrequencyMonthly, TimeFrequencyWeekly, TimeFrequencyHourly:
+		return true
+	}
+	return false
+}
+
+func (e TimeFrequency) String() string {
+	return string(e)
+}
+
+func (e *TimeFrequency) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = TimeFrequency(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid TimeFrequency", str)
+	}
+	return nil
+}
+
+func (e TimeFrequency) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

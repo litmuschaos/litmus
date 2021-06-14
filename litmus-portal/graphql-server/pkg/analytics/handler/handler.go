@@ -1,24 +1,31 @@
 package handler
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
-	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops/prometheus"
 	dbOperationsAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbSchemaAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
@@ -802,4 +809,160 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardResponse, error
 	}
 
 	return newListDashboard, nil
+}
+
+// GetScheduledWorkflowStats returns schedules data for analytics graph
+func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
+	var pipeline mongo.Pipeline
+	dbKey := "created_at"
+	now := time.Now()
+	startTime := strconv.FormatInt(now.Unix(), 10)
+
+	// Match with projectID
+	matchProjectIdStage := bson.D{
+		{"$match", bson.D{
+			{"project_id", projectID},
+		}},
+	}
+	pipeline = append(pipeline, matchProjectIdStage)
+
+	// Unwind the workflow runs if workflow run stats are requested
+	if showWorkflowRuns {
+		// Flatten out the workflow runs
+		unwindStage := bson.D{
+			{"$unwind", bson.D{
+				{"path", "$workflow_runs"},
+			}},
+		}
+		pipeline = append(pipeline, unwindStage)
+		dbKey = "workflow_runs.last_updated"
+	}
+
+	// Query the database according to filter type
+	switch filter {
+	case model.TimeFrequencyMonthly:
+		// Subtracting 6 months from the start time
+		sixMonthsAgo := now.AddDate(0, -6, 0)
+		// To fetch data only for last 6 months
+		filterMonthlyStage := bson.D{
+			{"$match", bson.D{
+				{dbKey, bson.D{
+					{"$gte", strconv.FormatInt(sixMonthsAgo.Unix(), 10)},
+					{"$lte", startTime},
+				}},
+			}},
+		}
+		pipeline = append(pipeline, filterMonthlyStage)
+	case model.TimeFrequencyWeekly:
+		// Subtracting 28days(4weeks) from the start time
+		fourWeeksAgo := now.AddDate(0, 0, -28)
+		// To fetch data only for last 4weeks
+		filterWeeklyStage := bson.D{
+			{"$match", bson.D{
+				{dbKey, bson.D{
+					{"$gte", strconv.FormatInt(fourWeeksAgo.Unix(), 10)},
+					{"$lte", startTime},
+				}},
+			}},
+		}
+		pipeline = append(pipeline, filterWeeklyStage)
+	case model.TimeFrequencyHourly:
+		// Subtracting 48hrs from the start time
+		fortyEightHoursAgo := now.Add(time.Hour * -48)
+		// To fetch data only for last 48hrs
+		filterHourlyStage := bson.D{
+			{"$match", bson.D{
+				{dbKey, bson.D{
+					{"$gte", strconv.FormatInt(fortyEightHoursAgo.Unix(), 10)},
+					{"$lte", startTime},
+				}},
+			}},
+		}
+		pipeline = append(pipeline, filterHourlyStage)
+	default:
+		// Returns error if no matching filter found
+		return nil, errors.New("no matching filter found")
+	}
+
+	// Call aggregation on pipeline
+	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	// Result array
+	var result []*model.WorkflowStats
+
+	// Map to store schedule count monthly(last 6months), weekly(last 4weeks) and hourly (last 48hrs)
+	statsMap := make(map[string]model.WorkflowStats)
+
+	// Initialize the value of the map based on filter
+	switch filter {
+	case model.TimeFrequencyMonthly:
+		for monthsAgo := now.AddDate(0, -5, 0); monthsAgo.Before(now) || monthsAgo.Equal(now); monthsAgo = monthsAgo.AddDate(0, 1, 0) {
+			// Storing the timestamp of first day of the monthsAgo
+			date := float64(time.Date(monthsAgo.Year(), monthsAgo.Month(), 1, 0, 0, 0, 0, time.Local).Unix())
+			statsMap[string(int(monthsAgo.Month())%12)] = model.WorkflowStats{
+				Date:  date * 1000,
+				Value: 0,
+			}
+		}
+	case model.TimeFrequencyWeekly:
+		year, endWeek := now.ISOWeek()
+		for week := endWeek - 3; week <= endWeek; week++ {
+			// Storing the timestamp of first day of the ISO week
+			date := float64(ops.FirstDayOfISOWeek(year, week, time.Local).Unix())
+			statsMap[string(week%53)] = model.WorkflowStats{
+				Date:  date * 1000,
+				Value: 0,
+			}
+		}
+	case model.TimeFrequencyHourly:
+		for hoursAgo := now.Add(time.Hour * -48); hoursAgo.Before(now) || hoursAgo.Equal(now); hoursAgo = hoursAgo.Add(time.Hour * 1) {
+			// Storing the timestamp of first day of the hoursAgo
+			date := float64(time.Date(hoursAgo.Year(), hoursAgo.Month(), hoursAgo.Day(), hoursAgo.Hour(), 0, 0, 0, time.Local).Unix())
+			statsMap[fmt.Sprintf("%d-%d", hoursAgo.Day(), hoursAgo.Hour())] = model.WorkflowStats{
+				Date:  date * 1000,
+				Value: 0,
+			}
+		}
+	}
+
+	if showWorkflowRuns {
+		var workflows []dbSchemaWorkflow.FlattenedWorkflowRun
+		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
+			fmt.Println(err)
+			return result, nil
+		}
+
+		// Iterate through the workflows and find the frequency of workflow runs according to filter
+		for _, workflow := range workflows {
+			if err = ops.CreateDateMap(workflow.WorkflowRuns.LastUpdated, filter, statsMap); err != nil {
+				return result, err
+			}
+		}
+	} else {
+		var workflows []dbSchemaWorkflow.ChaosWorkFlowInput
+		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
+			fmt.Println(err)
+			return result, nil
+		}
+
+		// Iterate through the workflows and find the frequency of workflows according to filter
+		for _, workflow := range workflows {
+			if err = ops.CreateDateMap(workflow.UpdatedAt, filter, statsMap); err != nil {
+				return result, err
+			}
+		}
+	}
+
+	// To fill the result array from statsMap for monthly and weekly data
+	for _, val := range statsMap {
+		result = append(result, &model.WorkflowStats{Date: val.Date, Value: val.Value})
+	}
+
+	// Sorts the result array in ascending order of time
+	sort.SliceStable(result, func(i, j int) bool { return result[i].Date < result[j].Date })
+
+	return result, nil
 }

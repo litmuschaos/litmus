@@ -268,6 +268,12 @@ type Query {
 
   users: [User!]! @authorized
 
+  getScheduledWorkflowStats(
+    project_id: String!
+    filter: TimeFrequency!
+    show_workflow_runs: Boolean!
+  ): [WorkflowStats]! @authorized
+
   ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
     @authorized
 

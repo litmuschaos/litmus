@@ -40,6 +40,23 @@ export const WORKFLOW_DETAILS = gql`
   }
 `;
 
+export const WORKFLOW_STATS = gql`
+  query getScheduledWorkflowStats(
+    $filter: TimeFrequency!
+    $project_id: String!
+    $show_workflow_runs: Boolean!
+  ) {
+    getScheduledWorkflowStats(
+      filter: $filter
+      project_id: $project_id
+      show_workflow_runs: $show_workflow_runs
+    ) {
+      date
+      value
+    }
+  }
+`;
+
 export const WORKFLOW_LIST_DETAILS = gql`
   query workflowListDetails($workflowInput: ListWorkflowsInput!) {
     ListWorkflow(workflowInput: $workflowInput) {

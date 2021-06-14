@@ -196,9 +196,11 @@ const Overview: React.FC = () => {
   if (dataSourceListError || workflowError || dashboardListError) {
     console.error('Error fetching the data!');
     return (
-      <Center>
-        <Typography>Error fetching the data!</Typography>
-      </Center>
+      <div style={{ height: '50vh' }}>
+        <Center>
+          <Typography>Error fetching the data!</Typography>
+        </Center>
+      </div>
     );
   }
 
