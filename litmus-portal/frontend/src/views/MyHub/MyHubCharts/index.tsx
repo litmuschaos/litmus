@@ -211,8 +211,7 @@ const MyHub: React.FC = () => {
                 <img
                   src="/icons/no-experiment-found.svg"
                   alt="no experiment"
-                  width="80px"
-                  height="80px"
+                  className={classes.noExpImage}
                 />
                 <Typography variant="h5" className={classes.noExp}>
                   {t('myhub.myhubChart.noPredefinedExp')}
@@ -245,8 +244,7 @@ const MyHub: React.FC = () => {
                 <img
                   src="/icons/no-experiment-found.svg"
                   alt="no experiment"
-                  width="80px"
-                  height="80px"
+                  className={classes.noExpImage}
                 />
                 <Typography variant="h5" className={classes.noExp}>
                   {t('myhub.myhubChart.noExp')}

@@ -113,6 +113,10 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'none',
     marginBottom: theme.spacing(1),
   },
+  noExpImage: {
+    width: '5rem',
+    height: '5rem',
+  },
 }));
 
 export default useStyles;
