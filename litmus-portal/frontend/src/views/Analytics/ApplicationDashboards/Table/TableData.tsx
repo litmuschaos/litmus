@@ -169,7 +169,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           >
             <div className={classes.expDiv}>
               <img
-                src="./icons/analytics.svg"
+                src="/icons/analytics.svg"
                 alt="See Analytics"
                 className={classes.btnImg}
               />
@@ -197,7 +197,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           >
             <div className={classes.expDiv}>
               <img
-                src="./icons/cogwheel.svg"
+                src="/icons/cogWheel.svg"
                 alt="Configure"
                 className={classes.btnImg}
               />
@@ -224,7 +224,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           >
             <div className={classes.expDiv}>
               <img
-                src="./icons/delete.svg"
+                src="/icons/delete.svg"
                 alt="Delete"
                 className={classes.btnImg}
               />
@@ -260,7 +260,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             <Typography align="center">
               {success === true ? (
                 <img
-                  src="./icons/finish.svg"
+                  src="/icons/finish.svg"
                   alt="success"
                   className={classes.icon}
                 />
@@ -348,7 +348,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             <div>
               <Typography align="center">
                 <img
-                  src="./icons/delete_large_icon.svg"
+                  src="/icons/delete_large_icon.svg"
                   alt="delete"
                   className={classes.icon}
                 />

@@ -298,7 +298,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
     generatePanelGroupsList(panelsWithActiveIndex.panels);
     setTabValue(panelsWithActiveIndex.activeIndex);
     getSeriesList();
-    if (dashboardVars.dashboardTypeID === 'custom') {
+    if (dashboardVars.dashboardTypeID === 'custom' && !configure) {
       handleCreatePanel();
     } else {
       setUpdate(true);

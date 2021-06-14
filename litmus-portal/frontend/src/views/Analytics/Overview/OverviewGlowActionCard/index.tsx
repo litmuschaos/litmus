@@ -31,7 +31,7 @@ const OverviewGlowCard: React.FC<GlowActionCardType> = ({ variant }) => {
           info={t('analyticsDashboard.glowCard.heading-0')}
           handleClick={() => {
             history.push({
-              pathname: '/analytics/datasource/select',
+              pathname: '/analytics/datasource/create',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
@@ -45,7 +45,7 @@ const OverviewGlowCard: React.FC<GlowActionCardType> = ({ variant }) => {
           info={t('analyticsDashboard.glowCard.heading-1')}
           handleClick={() => {
             history.push({
-              pathname: '/analytics/dashboard/select',
+              pathname: '/analytics/dashboard/create',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}

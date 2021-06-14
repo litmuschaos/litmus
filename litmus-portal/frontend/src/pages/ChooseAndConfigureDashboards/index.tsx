@@ -170,7 +170,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
 
     useEffect(() => {
       if (configure === true) {
-        dashboardList?.ListDashboard.forEach(
+        dashboardList?.ListDashboard?.forEach(
           (dashboardDetail: ListDashboardResponse) => {
             if (
               dashboardDetail.db_id === selectedDashboard.selectedDashboardID
