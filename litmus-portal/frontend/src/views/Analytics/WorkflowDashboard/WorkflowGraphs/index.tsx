@@ -5,7 +5,7 @@ import {
   Paper,
   Select,
 } from '@material-ui/core';
-import { RadialChart } from 'litmus-ui';
+import { RadialChart, RadialChartMetric } from 'litmus-ui';
 import React, { useState } from 'react';
 import { Filter } from '../../../../models/graphql/scheduleData';
 import {
@@ -17,12 +17,6 @@ import useStyles from './styles';
 
 interface WorkflowGraphsProps {
   data: ScheduledWorkflows | undefined;
-}
-
-interface RadialChartMetric {
-  value: number;
-  label?: string;
-  baseColor?: string;
 }
 
 const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {

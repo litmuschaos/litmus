@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { Paper, Tabs, useTheme } from '@material-ui/core';
-import { LineAreaGraph } from 'litmus-ui';
+import { GraphMetric, LineAreaGraph } from 'litmus-ui';
 import React, { useState } from 'react';
 import { StyledTab, TabPanel } from '../../../../../components/Tabs';
 import { WORKFLOW_STATS } from '../../../../../graphql';
@@ -19,17 +19,6 @@ function tabProps(index: any) {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
   };
-}
-
-export interface GraphMetric {
-  // Name of the GraphMetric
-  metricName: string;
-
-  // Array of {date and value}
-  data: Array<DateValue>;
-
-  // Color of the metric in the graph and legends
-  baseColor?: string;
 }
 
 interface ScheduleAndRunStatsProps {
