@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"sort"
 	"strconv"
@@ -16,11 +18,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops/prometheus"
 	dbOperationsAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbSchemaAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
@@ -556,182 +560,158 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 	return newListDashboard, nil
 }
 
-// firstDayOfISOWeek returns first day of the given ISO week
-func firstDayOfISOWeek(year int, week int, timezone *time.Location) time.Time {
-    date := time.Date(year, 0, 0, 0, 0, 0, 0, timezone)
-    isoYear, isoWeek := date.ISOWeek()
-    for date.Weekday() != time.Monday { // iterate back to Monday
-        date = date.AddDate(0, 0, -1)
-        isoYear, isoWeek = date.ISOWeek()
-    }
-    for isoYear < year { // iterate forward to the first day of the first week
-        date = date.AddDate(0, 0, 1)
-        isoYear, isoWeek = date.ISOWeek()
-    }
-    for isoWeek < week { // iterate forward to the first day of the given week
-        date = date.AddDate(0, 0, 1)
-        isoYear, isoWeek = date.ISOWeek()
-    }
-    return date
-}
-
 // GetScheduledWorkflowStats returns schedules data for analytics graph
-func GetScheduledWorkflowStats(projectID string, filter model.Filter, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
-	var query bson.D
-	startTime:= strconv.FormatInt(time.Now().Unix(), 10)
+func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
+	var pipeline mongo.Pipeline
+	dbKey := "created_at"
+	now := time.Now()
+	startTime := strconv.FormatInt(now.Unix(), 10)
 
-	// Map to store schedule count monthly(last 6months) and weekly(last 4weeks)
-	m := make(map[int]model.WorkflowStats)
+	// Match with projectID
+	matchProjectIdStage := bson.D{
+		{"$match", bson.D{
+			{"project_id", projectID},
+		}},
+	}
+	pipeline = append(pipeline, matchProjectIdStage)
 
-	// Map to store schedule count hourly (last 48hrs)
-	dateMap := make(map[int]map[int]model.WorkflowStats)
-	
-	// Switch case to initialize the query according to filter type
-	switch filter{
-	case "Monthly":
+	// Unwind the workflow runs if workflow run stats are requested
+	if showWorkflowRuns {
+		// Flatten out the workflow runs
+		unwindStage := bson.D{
+			{"$unwind", bson.D{
+				{"path", "$workflow_runs"},
+			}},
+		}
+		pipeline = append(pipeline, unwindStage)
+		dbKey = "workflow_runs.last_updated"
+	}
+
+	// Query the database according to filter type
+	switch filter {
+	case model.TimeFrequencyMonthly:
 		// Subtracting 6 months from the start time
-		sixMonthsAgo:= time.Now().AddDate(0,-6, 0)
+		sixMonthsAgo := now.AddDate(0, -6, 0)
 		// To fetch data only for last 6 months
-		query = bson.D{
-			{"project_id", projectID},
-			{"created_at", bson.D{
-				{"$gte",  strconv.FormatInt(sixMonthsAgo.Unix(), 10)},
-				{"$lte", startTime},
+		filterMonthlyStage := bson.D{
+			{"$match", bson.D{
+				{dbKey, bson.D{
+					{"$gte", strconv.FormatInt(sixMonthsAgo.Unix(), 10)},
+					{"$lte", startTime},
+				}},
 			}},
 		}
-	case "Weekly":
+		pipeline = append(pipeline, filterMonthlyStage)
+	case model.TimeFrequencyWeekly:
 		// Subtracting 28days(4weeks) from the start time
-		fourWeeksAgo:= time.Now().AddDate(0, 0, -28)
+		fourWeeksAgo := now.AddDate(0, 0, -28)
 		// To fetch data only for last 4weeks
-		query = bson.D{
-			{"project_id", projectID},
-			{"created_at", bson.D{
-				{"$gte", strconv.FormatInt(fourWeeksAgo.Unix(), 10)},
-				{"$lte", startTime},
+		filterWeeklyStage := bson.D{
+			{"$match", bson.D{
+				{dbKey, bson.D{
+					{"$gte", strconv.FormatInt(fourWeeksAgo.Unix(), 10)},
+					{"$lte", startTime},
+				}},
 			}},
 		}
-	case "Hourly":
+		pipeline = append(pipeline, filterWeeklyStage)
+	case model.TimeFrequencyHourly:
 		// Subtracting 48hrs from the start time
-		fortyEightHoursAgo:= time.Now().Add(time.Hour * -48)
+		fortyEightHoursAgo := now.Add(time.Hour * -48)
 		// To fetch data only for last 48hrs
-		query = bson.D{
-			{"project_id", projectID},
-			{"created_at", bson.D{
-				{"$gte", strconv.FormatInt(fortyEightHoursAgo.Unix(), 10)},
-				{"$lte", startTime},
+		filterHourlyStage := bson.D{
+			{"$match", bson.D{
+				{dbKey, bson.D{
+					{"$gte", strconv.FormatInt(fortyEightHoursAgo.Unix(), 10)},
+					{"$lte", startTime},
+				}},
 			}},
 		}
+		pipeline = append(pipeline, filterHourlyStage)
 	default:
 		// Returns error if no matching filter found
 		return nil, errors.New("no matching filter found")
 	}
 
-	// Query to fetch required data
-	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(query)
+	// Call aggregation on pipeline
+	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	// Iterate through the chaosWorkflows and find the frequency of schedules according to filter
-	for _, workflow := range chaosWorkflows {
-		//converts the time stamp(string) to unix
-		i, err := strconv.ParseInt(workflow.CreatedAt, 10, 64)
-		if err != nil {
-			panic(err)
-		}
-		
-		// Converts unix time to time.Time
-		createdAtInTime := time.Unix(i, 0)
-		var t model.WorkflowStats
-		var key int
-		
-		// Switch case to fill the map according to filter
-		switch filter{
-		case "Monthly":
-			t = m[int(createdAtInTime.Month())]
-			key=int(createdAtInTime.Month()) 
-			// Incrementing the value for each month
-			t.Value+=1 
-			// Storing the timestamp of first day of the month
-			t.Date=float64(time.Date(createdAtInTime.Year(), createdAtInTime.Month(), 1, 0, 0, 0, 0, time.Local).Unix())*1000
-			m[key]=t //updating the map
-		case "Weekly":
-			_, week := createdAtInTime.ISOWeek()
-			t= m[week]
-			key=week
-			// Incrementing the value for each ISO week
-			t.Value+=1
-			// Storing the timestamp of first day of the ISO week
-			t.Date=float64(firstDayOfISOWeek(createdAtInTime.Year(),week,time.Local).Unix())*1000
-			m[key]=t //updating the map
-		case "Hourly":
-			// Initializing the inner(nested) map
-			if dateMap[createdAtInTime.Day()] == nil {
-			dateMap[createdAtInTime.Day()] = make(map[int]model.WorkflowStats)
-			}
-			day:=dateMap[createdAtInTime.Day()]
-			hr:=day[createdAtInTime.Hour()]
-			// Incrementing the value for each each hour
-			hr.Value+=1
-			// Storing the timestamp of the starting of an hr
-			hr.Date=float64(time.Date(createdAtInTime.Year(), createdAtInTime.Month(), createdAtInTime.Day(), createdAtInTime.Hour(), 0, 0, 0, time.Local).Unix())*1000
-			day[createdAtInTime.Hour()]=hr
-			dateMap[createdAtInTime.Day()]=day //updating the dateMap
-		default:
-		return nil, errors.New("no matching filter found")
-		}
-	}
-
 	// Result array
-	result := make([]*model.WorkflowStats,0)
-	// To fill the result array from dateMap for hourly data
-	if filter == "Hourly" {
-		for k := range dateMap { 
-			for _,value := range dateMap[k]{
-				val:= model.WorkflowStats{Date: value.Date, Value: value.Value}
-				result=append(result,&val)
+	var result []*model.WorkflowStats
+
+	// Map to store schedule count monthly(last 6months), weekly(last 4weeks) and hourly (last 48hrs)
+	statsMap := make(map[string]model.WorkflowStats)
+
+	// Initialize the value of the map based on filter
+	switch filter {
+	case model.TimeFrequencyMonthly:
+		for monthsAgo := now.AddDate(0, -5, 0); monthsAgo.Before(now) || monthsAgo.Equal(now); monthsAgo = monthsAgo.AddDate(0, 1, 0) {
+			// Storing the timestamp of first day of the monthsAgo
+			date := float64(time.Date(monthsAgo.Year(), monthsAgo.Month(), 1, 0, 0, 0, 0, time.Local).Unix())
+			statsMap[string(int(monthsAgo.Month())%12)] = model.WorkflowStats{
+				Date:  date * 1000,
+				Value: 0,
 			}
 		}
-		// Sorts the result array in ascending order of time
-		sort.SliceStable(result, func(i, j int) bool { return result[i].Date < result[j].Date })
-
-		// Prepends array with empty values in-case the array doesn't contain 48 data points
-		for i:=0; i<48-len(result);i+=1{
-		// Subtracts 1 hr on every iteration
-		x:= time.Unix(int64(result[0].Date)/1000, 0).Add(time.Hour * -1)
-		val:= []*model.WorkflowStats{{float64(x.Unix())*1000,0}}
-		result=append(val,result...)
+	case model.TimeFrequencyWeekly:
+		year, endWeek := now.ISOWeek()
+		for week := endWeek - 3; week <= endWeek; week++ {
+			// Storing the timestamp of first day of the ISO week
+			date := float64(ops.FirstDayOfISOWeek(year, week, time.Local).Unix())
+			statsMap[string(week%53)] = model.WorkflowStats{
+				Date:  date * 1000,
+				Value: 0,
+			}
 		}
-	return result,nil
+	case model.TimeFrequencyHourly:
+		for hoursAgo := now.Add(time.Hour * -48); hoursAgo.Before(now) || hoursAgo.Equal(now); hoursAgo = hoursAgo.Add(time.Hour * 1) {
+			// Storing the timestamp of first day of the hoursAgo
+			date := float64(time.Date(hoursAgo.Year(), hoursAgo.Month(), hoursAgo.Day(), hoursAgo.Hour(), 0, 0, 0, time.Local).Unix())
+			statsMap[fmt.Sprintf("%d-%d", hoursAgo.Day(), hoursAgo.Hour())] = model.WorkflowStats{
+				Date:  date * 1000,
+				Value: 0,
+			}
+		}
 	}
 
-	// To fill the result array from dateMap for monthly and weekly data
-	for _, v := range m { 
-		val:= model.WorkflowStats{Date: v.Date, Value: v.Value}
-		result=append(result,&val )
+	if showWorkflowRuns {
+		var workflows []dbSchemaWorkflow.FlattenedWorkflowRun
+		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
+			fmt.Println(err)
+			return result, nil
+		}
+
+		// Iterate through the workflows and find the frequency of workflow runs according to filter
+		for _, workflow := range workflows {
+			if err = ops.CreateDateMap(workflow.WorkflowRuns.LastUpdated, filter, statsMap); err != nil {
+				return result, err
+			}
+		}
+	} else {
+		var workflows []dbSchemaWorkflow.ChaosWorkFlowInput
+		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
+			fmt.Println(err)
+			return result, nil
+		}
+
+		// Iterate through the workflows and find the frequency of workflows according to filter
+		for _, workflow := range workflows {
+			if err = ops.CreateDateMap(workflow.UpdatedAt, filter, statsMap); err != nil {
+				return result, err
+			}
+		}
 	}
+
+	// To fill the result array from statsMap for monthly and weekly data
+	for _, val := range statsMap {
+		result = append(result, &model.WorkflowStats{Date: val.Date, Value: val.Value})
+	}
+
 	// Sorts the result array in ascending order of time
 	sort.SliceStable(result, func(i, j int) bool { return result[i].Date < result[j].Date })
-	len:=len(result)
 
-	switch filter{
-	case "Monthly":
-		// Prepends array with empty values in-case the array doesn't contain 6 data points
-		for i:=0; i<6-len;i+=1{
-		// Enter zero values for non existing points
-		x:= time.Unix(int64(result[0].Date)/1000, 0).AddDate(0,-1, 0)
-		val:= []*model.WorkflowStats{{float64(x.Unix())*1000,0}}
-		result=append(val,result...)
-		}
-	case "Weekly":
-		// Prepends array with empty values in-case the array doesn't contain 4 data points
-		for i:=0; i<4-len;i+=1{
-		// Enter zero values for non existing points
-		x:= time.Unix(int64(result[0].Date)/1000, 0).AddDate(0,0, -7)
-		val:= []*model.WorkflowStats{{float64(x.Unix())*1000,0}}
-		result=append(val,result...)
-		}
-	}
-
-return result,nil
+	return result, nil
 }

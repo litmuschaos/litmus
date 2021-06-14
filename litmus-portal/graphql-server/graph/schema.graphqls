@@ -270,7 +270,7 @@ type Query {
 
   getScheduledWorkflowStats(
     project_id: String!
-    filter: Filter!
+    filter: TimeFrequency!
     show_workflow_runs: Boolean!
   ): [WorkflowStats]! @authorized
 

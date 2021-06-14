@@ -854,49 +854,6 @@ func (e AuthType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type Filter string
-
-const (
-	FilterMonthly Filter = "Monthly"
-	FilterWeekly  Filter = "Weekly"
-	FilterHourly  Filter = "Hourly"
-)
-
-var AllFilter = []Filter{
-	FilterMonthly,
-	FilterWeekly,
-	FilterHourly,
-}
-
-func (e Filter) IsValid() bool {
-	switch e {
-	case FilterMonthly, FilterWeekly, FilterHourly:
-		return true
-	}
-	return false
-}
-
-func (e Filter) String() string {
-	return string(e)
-}
-
-func (e *Filter) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = Filter(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Filter", str)
-	}
-	return nil
-}
-
-func (e Filter) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type MemberRole string
 
 const (
@@ -937,6 +894,49 @@ func (e *MemberRole) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type TimeFrequency string
+
+const (
+	TimeFrequencyMonthly TimeFrequency = "Monthly"
+	TimeFrequencyWeekly  TimeFrequency = "Weekly"
+	TimeFrequencyHourly  TimeFrequency = "Hourly"
+)
+
+var AllTimeFrequency = []TimeFrequency{
+	TimeFrequencyMonthly,
+	TimeFrequencyWeekly,
+	TimeFrequencyHourly,
+}
+
+func (e TimeFrequency) IsValid() bool {
+	switch e {
+	case TimeFrequencyMonthly, TimeFrequencyWeekly, TimeFrequencyHourly:
+		return true
+	}
+	return false
+}
+
+func (e TimeFrequency) String() string {
+	return string(e)
+}
+
+func (e *TimeFrequency) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = TimeFrequency(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid TimeFrequency", str)
+	}
+	return nil
+}
+
+func (e TimeFrequency) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

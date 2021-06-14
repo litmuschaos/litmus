@@ -90,5 +90,4 @@ const (
 	Weekly Filter = "Weekly"
 
 	Hourly Filter = "Hourly"
-
 )

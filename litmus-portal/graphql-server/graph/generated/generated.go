@@ -345,7 +345,7 @@ type ComplexityRoot struct {
 		GetPromLabelNamesAndValues  func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery                func(childComplexity int, query *model.PromInput) int
 		GetPromSeriesList           func(childComplexity int, dsDetails *model.DsDetails) int
-		GetScheduledWorkflowStats   func(childComplexity int, projectID string, filter model.Filter, showWorkflowRuns bool) int
+		GetScheduledWorkflowStats   func(childComplexity int, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) int
 		GetTemplateManifestByID     func(childComplexity int, templateID string) int
 		GetUser                     func(childComplexity int, username string) int
 		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
@@ -635,7 +635,7 @@ type QueryResolver interface {
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	ListProjects(ctx context.Context) ([]*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
-	GetScheduledWorkflowStats(ctx context.Context, projectID string, filter model.Filter, showWorkflowRuns bool) ([]*model.WorkflowStats, error)
+	GetScheduledWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error)
 	ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error)
 	GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
@@ -2448,7 +2448,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetScheduledWorkflowStats(childComplexity, args["project_id"].(string), args["filter"].(model.Filter), args["show_workflow_runs"].(bool)), true
+		return e.complexity.Query.GetScheduledWorkflowStats(childComplexity, args["project_id"].(string), args["filter"].(model.TimeFrequency), args["show_workflow_runs"].(bool)), true
 
 	case "Query.GetTemplateManifestByID":
 		if e.complexity.Query.GetTemplateManifestByID == nil {
@@ -3913,7 +3913,7 @@ input deleteDSInput {
   ds_id: String!
 }
 
-enum Filter {
+enum TimeFrequency {
   Monthly
   Weekly
   Hourly
@@ -4428,7 +4428,7 @@ type Query {
 
   getScheduledWorkflowStats(
     project_id: String!
-    filter: Filter!
+    filter: TimeFrequency!
     show_workflow_runs: Boolean!
   ): [WorkflowStats]! @authorized
 
@@ -5740,9 +5740,9 @@ func (ec *executionContext) field_Query_getScheduledWorkflowStats_args(ctx conte
 		}
 	}
 	args["project_id"] = arg0
-	var arg1 model.Filter
+	var arg1 model.TimeFrequency
 	if tmp, ok := rawArgs["filter"]; ok {
-		arg1, err = ec.unmarshalNFilter2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFilter(ctx, tmp)
+		arg1, err = ec.unmarshalNTimeFrequency2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeFrequency(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -14014,7 +14014,7 @@ func (ec *executionContext) _Query_getScheduledWorkflowStats(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetScheduledWorkflowStats(rctx, args["project_id"].(string), args["filter"].(model.Filter), args["show_workflow_runs"].(bool))
+			return ec.resolvers.Query().GetScheduledWorkflowStats(rctx, args["project_id"].(string), args["filter"].(model.TimeFrequency), args["show_workflow_runs"].(bool))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -26481,15 +26481,6 @@ func (ec *executionContext) marshalNExperiments2ᚖgithubᚗcomᚋlitmuschaosᚋ
 	return ec._Experiments(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNFilter2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFilter(ctx context.Context, v interface{}) (model.Filter, error) {
-	var res model.Filter
-	return res, res.UnmarshalGQL(v)
-}
-
-func (ec *executionContext) marshalNFilter2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFilter(ctx context.Context, sel ast.SelectionSet, v model.Filter) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
 	return graphql.UnmarshalFloat(v)
 }
@@ -27123,6 +27114,15 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalNTimeFrequency2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeFrequency(ctx context.Context, v interface{}) (model.TimeFrequency, error) {
+	var res model.TimeFrequency
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNTimeFrequency2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeFrequency(ctx context.Context, sel ast.SelectionSet, v model.TimeFrequency) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNUpdateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateMyHub(ctx context.Context, v interface{}) (model.UpdateMyHub, error) {
