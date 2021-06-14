@@ -47,13 +47,13 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		cluster.AgentSaExists = &defaultState
 	}
 
-	if !*cluster.AgentNsExists && cluster.AgentNamespace != nil && *cluster.AgentNamespace != "" {
+	if cluster.AgentNamespace != nil && *cluster.AgentNamespace != "" {
 		AgentNamespace = *cluster.AgentNamespace
 	} else {
 		AgentNamespace = DefaultAgentNamespace
 	}
 
-	if !*cluster.AgentSaExists && cluster.Serviceaccount != nil && *cluster.Serviceaccount != "" {
+	if cluster.Serviceaccount != nil && *cluster.Serviceaccount != "" {
 		ServiceAccountName = *cluster.Serviceaccount
 	} else {
 		ServiceAccountName = DefaultServiceAccountName
