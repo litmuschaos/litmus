@@ -86,20 +86,26 @@ const ProfileDropdown: React.FC = () => {
             <div
               className={`${classes.profileDropdownRow} ${classes.profileUnset}`}
             >
-              <Typography id="emailUnset">
+              <Typography className={classes.emailUnset}>
                 {t('header.profileDropdown.emailUnset')}
               </Typography>
-              <Link
-                to={{
-                  pathname: '/settings',
-                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                }}
-                onClick={() => tabs.changeSettingsTabs(0)}
-              >
-                <Typography title="Go to settings">
-                  {t('header.profileDropdown.emailSet')}
+              {projectRole === 'Owner' ? (
+                <Link
+                  to={{
+                    pathname: '/settings',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  }}
+                  onClick={() => tabs.changeSettingsTabs(0)}
+                >
+                  <Typography title="Go to settings">
+                    {t('header.profileDropdown.emailSet')}
+                  </Typography>
+                </Link>
+              ) : (
+                <Typography className={classes.projectRoleHint}>
+                  {t('header.profileDropdown.switchProject')}
                 </Typography>
-              </Link>
+              )}
             </div>
           )}
           <div
@@ -111,11 +117,13 @@ const ProfileDropdown: React.FC = () => {
                 onClick={() => logout()}
               >
                 {t('header.profileDropdown.logout')}
-                <img id="logoutIcon" src="/icons/logout.svg" alt="logout" />
+                <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
               </ButtonFilled>
             </div>
+
             <ButtonOutlined
               title="Edit your profile"
+              disabled={projectRole !== 'Owner'}
               onClick={() => {
                 tabs.changeSettingsTabs(0);
                 history.push({

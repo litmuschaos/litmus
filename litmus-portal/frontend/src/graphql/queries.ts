@@ -369,6 +369,14 @@ export const LIST_DATASOURCE = gql`
   }
 `;
 
+export const LIST_DATASOURCE_OVERVIEW = gql`
+  query listDataSource($projectID: String!) {
+    ListDataSource(project_id: $projectID) {
+      ds_id
+    }
+  }
+`;
+
 export const LIST_DASHBOARD = gql`
   query listDashboard($projectID: String!) {
     ListDashboard(project_id: $projectID) {
@@ -411,6 +419,19 @@ export const LIST_DASHBOARD = gql`
       project_id
       cluster_id
       created_at
+      updated_at
+    }
+  }
+`;
+
+export const LIST_DASHBOARD_OVERVIEW = gql`
+  query listDashboard($projectID: String!) {
+    ListDashboard(project_id: $projectID) {
+      db_id
+      db_name
+      db_type
+      cluster_name
+      cluster_id
       updated_at
     }
   }
