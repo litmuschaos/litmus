@@ -666,7 +666,7 @@ type LabelValue struct {
 	Values []*Option `json:"values"`
 }
 
-type ListDashboardReponse struct {
+type ListDashboardResponse struct {
 	DsID                      string                         `json:"ds_id"`
 	DbID                      string                         `json:"db_id"`
 	DbName                    string                         `json:"db_name"`

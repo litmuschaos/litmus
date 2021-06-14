@@ -61,7 +61,7 @@ func CreateDataSource(datasource *model.DSInput) (*model.DSResponse, error) {
 	}
 }
 
-func CreateDashboard(dashboard *model.CreateDBInput) (*model.ListDashboardReponse, error) {
+func CreateDashboard(dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error) {
 
 	newDashboard := dbSchemaAnalytics.DashBoard{
 		DbID:                      uuid.New().String(),
@@ -158,7 +158,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (*model.ListDashboardRepons
 	}
 	log.Print("sucessfully inserted dashboard into dashboard-collection")
 
-	var newDBResponse = model.ListDashboardReponse{}
+	var newDBResponse = model.ListDashboardResponse{}
 	_ = copier.Copy(&newDBResponse, &newDashboard)
 
 	cluster, err := dbOperationsCluster.GetCluster(dashboard.ClusterID)
@@ -215,7 +215,7 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
-	if dashboard.DbID == "" && dashboard.DsID == "" {
+	if dashboard.DbID == "" || dashboard.DsID == "" {
 		return "could not find the dashboard or the connected data source", errors.New("dashBoard ID or data source ID is nil or empty")
 	}
 
@@ -747,7 +747,7 @@ func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListR
 	return newPromSeriesListResponse, nil
 }
 
-func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error) {
+func QueryListDashboard(projectID string) ([]*model.ListDashboardResponse, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"is_removed", false},
@@ -758,7 +758,7 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 		return nil, fmt.Errorf("error on query from dashboard collection by projectid: %v\n", err)
 	}
 
-	var newListDashboard []*model.ListDashboardReponse
+	var newListDashboard []*model.ListDashboardResponse
 	err = copier.Copy(&newListDashboard, &dashboards)
 	if err != nil {
 		return nil, err

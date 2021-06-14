@@ -185,7 +185,7 @@ type option {
     name: String!
 }
 
-type listDashboardReponse {
+type listDashboardResponse {
     ds_id: String!
     db_id: String!
     db_name: String!

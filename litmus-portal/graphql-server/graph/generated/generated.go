@@ -496,7 +496,7 @@ type ComplexityRoot struct {
 		Values func(childComplexity int) int
 	}
 
-	ListDashboardReponse struct {
+	ListDashboardResponse struct {
 		ApplicationMetadataMap    func(childComplexity int) int
 		ChaosEventQueryTemplate   func(childComplexity int) int
 		ChaosVerdictQueryTemplate func(childComplexity int) int
@@ -626,7 +626,7 @@ type MutationResolver interface {
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
 	UpdateGitOps(ctx context.Context, config model.GitConfig) (bool, error)
 	CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error)
-	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardReponse, error)
+	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error)
 	UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error)
 	UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput) (string, error)
 	UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error)
@@ -656,7 +656,7 @@ type QueryResolver interface {
 	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
 	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
 	GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error)
-	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error)
+	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardResponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
 	GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error)
@@ -3266,145 +3266,145 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LabelValue.Values(childComplexity), true
 
-	case "listDashboardReponse.application_metadata_map":
-		if e.complexity.ListDashboardReponse.ApplicationMetadataMap == nil {
+	case "listDashboardResponse.application_metadata_map":
+		if e.complexity.ListDashboardResponse.ApplicationMetadataMap == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.ApplicationMetadataMap(childComplexity), true
+		return e.complexity.ListDashboardResponse.ApplicationMetadataMap(childComplexity), true
 
-	case "listDashboardReponse.chaos_event_query_template":
-		if e.complexity.ListDashboardReponse.ChaosEventQueryTemplate == nil {
+	case "listDashboardResponse.chaos_event_query_template":
+		if e.complexity.ListDashboardResponse.ChaosEventQueryTemplate == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.ChaosEventQueryTemplate(childComplexity), true
+		return e.complexity.ListDashboardResponse.ChaosEventQueryTemplate(childComplexity), true
 
-	case "listDashboardReponse.chaos_verdict_query_template":
-		if e.complexity.ListDashboardReponse.ChaosVerdictQueryTemplate == nil {
+	case "listDashboardResponse.chaos_verdict_query_template":
+		if e.complexity.ListDashboardResponse.ChaosVerdictQueryTemplate == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.ChaosVerdictQueryTemplate(childComplexity), true
+		return e.complexity.ListDashboardResponse.ChaosVerdictQueryTemplate(childComplexity), true
 
-	case "listDashboardReponse.cluster_id":
-		if e.complexity.ListDashboardReponse.ClusterID == nil {
+	case "listDashboardResponse.cluster_id":
+		if e.complexity.ListDashboardResponse.ClusterID == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.ClusterID(childComplexity), true
+		return e.complexity.ListDashboardResponse.ClusterID(childComplexity), true
 
-	case "listDashboardReponse.cluster_name":
-		if e.complexity.ListDashboardReponse.ClusterName == nil {
+	case "listDashboardResponse.cluster_name":
+		if e.complexity.ListDashboardResponse.ClusterName == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.ClusterName(childComplexity), true
+		return e.complexity.ListDashboardResponse.ClusterName(childComplexity), true
 
-	case "listDashboardReponse.created_at":
-		if e.complexity.ListDashboardReponse.CreatedAt == nil {
+	case "listDashboardResponse.created_at":
+		if e.complexity.ListDashboardResponse.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.CreatedAt(childComplexity), true
+		return e.complexity.ListDashboardResponse.CreatedAt(childComplexity), true
 
-	case "listDashboardReponse.db_id":
-		if e.complexity.ListDashboardReponse.DbID == nil {
+	case "listDashboardResponse.db_id":
+		if e.complexity.ListDashboardResponse.DbID == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DbID(childComplexity), true
+		return e.complexity.ListDashboardResponse.DbID(childComplexity), true
 
-	case "listDashboardReponse.db_information":
-		if e.complexity.ListDashboardReponse.DbInformation == nil {
+	case "listDashboardResponse.db_information":
+		if e.complexity.ListDashboardResponse.DbInformation == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DbInformation(childComplexity), true
+		return e.complexity.ListDashboardResponse.DbInformation(childComplexity), true
 
-	case "listDashboardReponse.db_name":
-		if e.complexity.ListDashboardReponse.DbName == nil {
+	case "listDashboardResponse.db_name":
+		if e.complexity.ListDashboardResponse.DbName == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DbName(childComplexity), true
+		return e.complexity.ListDashboardResponse.DbName(childComplexity), true
 
-	case "listDashboardReponse.db_type_id":
-		if e.complexity.ListDashboardReponse.DbTypeID == nil {
+	case "listDashboardResponse.db_type_id":
+		if e.complexity.ListDashboardResponse.DbTypeID == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DbTypeID(childComplexity), true
+		return e.complexity.ListDashboardResponse.DbTypeID(childComplexity), true
 
-	case "listDashboardReponse.db_type_name":
-		if e.complexity.ListDashboardReponse.DbTypeName == nil {
+	case "listDashboardResponse.db_type_name":
+		if e.complexity.ListDashboardResponse.DbTypeName == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DbTypeName(childComplexity), true
+		return e.complexity.ListDashboardResponse.DbTypeName(childComplexity), true
 
-	case "listDashboardReponse.ds_id":
-		if e.complexity.ListDashboardReponse.DsID == nil {
+	case "listDashboardResponse.ds_id":
+		if e.complexity.ListDashboardResponse.DsID == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DsID(childComplexity), true
+		return e.complexity.ListDashboardResponse.DsID(childComplexity), true
 
-	case "listDashboardReponse.ds_name":
-		if e.complexity.ListDashboardReponse.DsName == nil {
+	case "listDashboardResponse.ds_name":
+		if e.complexity.ListDashboardResponse.DsName == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DsName(childComplexity), true
+		return e.complexity.ListDashboardResponse.DsName(childComplexity), true
 
-	case "listDashboardReponse.ds_type":
-		if e.complexity.ListDashboardReponse.DsType == nil {
+	case "listDashboardResponse.ds_type":
+		if e.complexity.ListDashboardResponse.DsType == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.DsType(childComplexity), true
+		return e.complexity.ListDashboardResponse.DsType(childComplexity), true
 
-	case "listDashboardReponse.end_time":
-		if e.complexity.ListDashboardReponse.EndTime == nil {
+	case "listDashboardResponse.end_time":
+		if e.complexity.ListDashboardResponse.EndTime == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.EndTime(childComplexity), true
+		return e.complexity.ListDashboardResponse.EndTime(childComplexity), true
 
-	case "listDashboardReponse.panel_groups":
-		if e.complexity.ListDashboardReponse.PanelGroups == nil {
+	case "listDashboardResponse.panel_groups":
+		if e.complexity.ListDashboardResponse.PanelGroups == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.PanelGroups(childComplexity), true
+		return e.complexity.ListDashboardResponse.PanelGroups(childComplexity), true
 
-	case "listDashboardReponse.project_id":
-		if e.complexity.ListDashboardReponse.ProjectID == nil {
+	case "listDashboardResponse.project_id":
+		if e.complexity.ListDashboardResponse.ProjectID == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.ProjectID(childComplexity), true
+		return e.complexity.ListDashboardResponse.ProjectID(childComplexity), true
 
-	case "listDashboardReponse.refresh_rate":
-		if e.complexity.ListDashboardReponse.RefreshRate == nil {
+	case "listDashboardResponse.refresh_rate":
+		if e.complexity.ListDashboardResponse.RefreshRate == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.RefreshRate(childComplexity), true
+		return e.complexity.ListDashboardResponse.RefreshRate(childComplexity), true
 
-	case "listDashboardReponse.start_time":
-		if e.complexity.ListDashboardReponse.StartTime == nil {
+	case "listDashboardResponse.start_time":
+		if e.complexity.ListDashboardResponse.StartTime == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.StartTime(childComplexity), true
+		return e.complexity.ListDashboardResponse.StartTime(childComplexity), true
 
-	case "listDashboardReponse.updated_at":
-		if e.complexity.ListDashboardReponse.UpdatedAt == nil {
+	case "listDashboardResponse.updated_at":
+		if e.complexity.ListDashboardResponse.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.ListDashboardReponse.UpdatedAt(childComplexity), true
+		return e.complexity.ListDashboardResponse.UpdatedAt(childComplexity), true
 
 	case "metricsPromResponse.legends":
 		if e.complexity.MetricsPromResponse.Legends == nil {
@@ -3933,7 +3933,7 @@ type option {
     name: String!
 }
 
-type listDashboardReponse {
+type listDashboardResponse {
     ds_id: String!
     db_id: String!
     db_name: String!
@@ -4531,7 +4531,7 @@ type Query {
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
-  ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+  ListDashboard(project_id: String!): [listDashboardResponse] @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -4634,7 +4634,7 @@ type Mutation {
   # Analytics
   createDataSource(datasource: DSInput): DSResponse @authorized
 
-  createDashBoard(dashboard: createDBInput): listDashboardReponse! @authorized
+  createDashBoard(dashboard: createDBInput): listDashboardResponse! @authorized
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
@@ -11586,10 +11586,10 @@ func (ec *executionContext) _Mutation_createDashBoard(ctx context.Context, field
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.ListDashboardReponse); ok {
+		if data, ok := tmp.(*model.ListDashboardResponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ListDashboardReponse`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ListDashboardResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11601,9 +11601,9 @@ func (ec *executionContext) _Mutation_createDashBoard(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.ListDashboardReponse)
+	res := resTmp.(*model.ListDashboardResponse)
 	fc.Result = res
-	return ec.marshalNlistDashboardReponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx, field.Selections, res)
+	return ec.marshalNlistDashboardResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateDataSource(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -14686,10 +14686,10 @@ func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field grap
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.ListDashboardReponse); ok {
+		if data, ok := tmp.([]*model.ListDashboardResponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ListDashboardReponse`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ListDashboardResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14698,9 +14698,9 @@ func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.ListDashboardReponse)
+	res := resTmp.([]*model.ListDashboardResponse)
 	fc.Result = res
-	return ec.marshalOlistDashboardReponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx, field.Selections, res)
+	return ec.marshalOlistDashboardResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getGitOpsDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -19488,7 +19488,7 @@ func (ec *executionContext) _labelValue_values(ctx context.Context, field graphq
 	return ec.marshalOoption2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐOption(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_ds_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_ds_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19496,7 +19496,7 @@ func (ec *executionContext) _listDashboardReponse_ds_id(ctx context.Context, fie
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19522,7 +19522,7 @@ func (ec *executionContext) _listDashboardReponse_ds_id(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_db_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_db_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19530,7 +19530,7 @@ func (ec *executionContext) _listDashboardReponse_db_id(ctx context.Context, fie
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19556,7 +19556,7 @@ func (ec *executionContext) _listDashboardReponse_db_id(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_db_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_db_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19564,7 +19564,7 @@ func (ec *executionContext) _listDashboardReponse_db_name(ctx context.Context, f
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19590,7 +19590,7 @@ func (ec *executionContext) _listDashboardReponse_db_name(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_db_type_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_db_type_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19598,7 +19598,7 @@ func (ec *executionContext) _listDashboardReponse_db_type_id(ctx context.Context
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19624,7 +19624,7 @@ func (ec *executionContext) _listDashboardReponse_db_type_id(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_db_type_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_db_type_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19632,7 +19632,7 @@ func (ec *executionContext) _listDashboardReponse_db_type_name(ctx context.Conte
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19658,7 +19658,7 @@ func (ec *executionContext) _listDashboardReponse_db_type_name(ctx context.Conte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_db_information(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_db_information(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19666,7 +19666,7 @@ func (ec *executionContext) _listDashboardReponse_db_information(ctx context.Con
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19689,7 +19689,7 @@ func (ec *executionContext) _listDashboardReponse_db_information(ctx context.Con
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_chaos_event_query_template(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_chaos_event_query_template(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19697,7 +19697,7 @@ func (ec *executionContext) _listDashboardReponse_chaos_event_query_template(ctx
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19723,7 +19723,7 @@ func (ec *executionContext) _listDashboardReponse_chaos_event_query_template(ctx
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_chaos_verdict_query_template(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_chaos_verdict_query_template(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19731,7 +19731,7 @@ func (ec *executionContext) _listDashboardReponse_chaos_verdict_query_template(c
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19757,7 +19757,7 @@ func (ec *executionContext) _listDashboardReponse_chaos_verdict_query_template(c
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_application_metadata_map(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_application_metadata_map(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19765,7 +19765,7 @@ func (ec *executionContext) _listDashboardReponse_application_metadata_map(ctx c
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19788,7 +19788,7 @@ func (ec *executionContext) _listDashboardReponse_application_metadata_map(ctx c
 	return ec.marshalOapplicationMetadataResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐApplicationMetadataResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19796,7 +19796,7 @@ func (ec *executionContext) _listDashboardReponse_cluster_name(ctx context.Conte
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19819,7 +19819,7 @@ func (ec *executionContext) _listDashboardReponse_cluster_name(ctx context.Conte
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_ds_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_ds_name(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19827,7 +19827,7 @@ func (ec *executionContext) _listDashboardReponse_ds_name(ctx context.Context, f
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19850,7 +19850,7 @@ func (ec *executionContext) _listDashboardReponse_ds_name(ctx context.Context, f
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_ds_type(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_ds_type(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19858,7 +19858,7 @@ func (ec *executionContext) _listDashboardReponse_ds_type(ctx context.Context, f
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19881,7 +19881,7 @@ func (ec *executionContext) _listDashboardReponse_ds_type(ctx context.Context, f
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_panel_groups(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_panel_groups(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19889,7 +19889,7 @@ func (ec *executionContext) _listDashboardReponse_panel_groups(ctx context.Conte
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19915,7 +19915,7 @@ func (ec *executionContext) _listDashboardReponse_panel_groups(ctx context.Conte
 	return ec.marshalNpanelGroupResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPanelGroupResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_end_time(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_end_time(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19923,7 +19923,7 @@ func (ec *executionContext) _listDashboardReponse_end_time(ctx context.Context, 
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19949,7 +19949,7 @@ func (ec *executionContext) _listDashboardReponse_end_time(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_start_time(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_start_time(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19957,7 +19957,7 @@ func (ec *executionContext) _listDashboardReponse_start_time(ctx context.Context
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19983,7 +19983,7 @@ func (ec *executionContext) _listDashboardReponse_start_time(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_refresh_rate(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_refresh_rate(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19991,7 +19991,7 @@ func (ec *executionContext) _listDashboardReponse_refresh_rate(ctx context.Conte
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -20017,7 +20017,7 @@ func (ec *executionContext) _listDashboardReponse_refresh_rate(ctx context.Conte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_project_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_project_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -20025,7 +20025,7 @@ func (ec *executionContext) _listDashboardReponse_project_id(ctx context.Context
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -20051,7 +20051,7 @@ func (ec *executionContext) _listDashboardReponse_project_id(ctx context.Context
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -20059,7 +20059,7 @@ func (ec *executionContext) _listDashboardReponse_cluster_id(ctx context.Context
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -20085,7 +20085,7 @@ func (ec *executionContext) _listDashboardReponse_cluster_id(ctx context.Context
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_created_at(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_created_at(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -20093,7 +20093,7 @@ func (ec *executionContext) _listDashboardReponse_created_at(ctx context.Context
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -20116,7 +20116,7 @@ func (ec *executionContext) _listDashboardReponse_created_at(ctx context.Context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _listDashboardReponse_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardReponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _listDashboardResponse_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -20124,7 +20124,7 @@ func (ec *executionContext) _listDashboardReponse_updated_at(ctx context.Context
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "listDashboardReponse",
+		Object:   "listDashboardResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -26060,96 +26060,96 @@ func (ec *executionContext) _labelValue(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
-var listDashboardReponseImplementors = []string{"listDashboardReponse"}
+var listDashboardResponseImplementors = []string{"listDashboardResponse"}
 
-func (ec *executionContext) _listDashboardReponse(ctx context.Context, sel ast.SelectionSet, obj *model.ListDashboardReponse) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, listDashboardReponseImplementors)
+func (ec *executionContext) _listDashboardResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ListDashboardResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, listDashboardResponseImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("listDashboardReponse")
+			out.Values[i] = graphql.MarshalString("listDashboardResponse")
 		case "ds_id":
-			out.Values[i] = ec._listDashboardReponse_ds_id(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_ds_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "db_id":
-			out.Values[i] = ec._listDashboardReponse_db_id(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_db_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "db_name":
-			out.Values[i] = ec._listDashboardReponse_db_name(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_db_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "db_type_id":
-			out.Values[i] = ec._listDashboardReponse_db_type_id(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_db_type_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "db_type_name":
-			out.Values[i] = ec._listDashboardReponse_db_type_name(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_db_type_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "db_information":
-			out.Values[i] = ec._listDashboardReponse_db_information(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_db_information(ctx, field, obj)
 		case "chaos_event_query_template":
-			out.Values[i] = ec._listDashboardReponse_chaos_event_query_template(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_chaos_event_query_template(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "chaos_verdict_query_template":
-			out.Values[i] = ec._listDashboardReponse_chaos_verdict_query_template(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_chaos_verdict_query_template(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "application_metadata_map":
-			out.Values[i] = ec._listDashboardReponse_application_metadata_map(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_application_metadata_map(ctx, field, obj)
 		case "cluster_name":
-			out.Values[i] = ec._listDashboardReponse_cluster_name(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_cluster_name(ctx, field, obj)
 		case "ds_name":
-			out.Values[i] = ec._listDashboardReponse_ds_name(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_ds_name(ctx, field, obj)
 		case "ds_type":
-			out.Values[i] = ec._listDashboardReponse_ds_type(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_ds_type(ctx, field, obj)
 		case "panel_groups":
-			out.Values[i] = ec._listDashboardReponse_panel_groups(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_panel_groups(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "end_time":
-			out.Values[i] = ec._listDashboardReponse_end_time(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_end_time(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "start_time":
-			out.Values[i] = ec._listDashboardReponse_start_time(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_start_time(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "refresh_rate":
-			out.Values[i] = ec._listDashboardReponse_refresh_rate(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_refresh_rate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "project_id":
-			out.Values[i] = ec._listDashboardReponse_project_id(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_project_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "cluster_id":
-			out.Values[i] = ec._listDashboardReponse_cluster_id(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_cluster_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "created_at":
-			out.Values[i] = ec._listDashboardReponse_created_at(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_created_at(ctx, field, obj)
 		case "updated_at":
-			out.Values[i] = ec._listDashboardReponse_updated_at(ctx, field, obj)
+			out.Values[i] = ec._listDashboardResponse_updated_at(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -27963,18 +27963,18 @@ func (ec *executionContext) unmarshalNimageRegistryInput2githubᚗcomᚋlitmusch
 	return ec.unmarshalInputimageRegistryInput(ctx, v)
 }
 
-func (ec *executionContext) marshalNlistDashboardReponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx context.Context, sel ast.SelectionSet, v model.ListDashboardReponse) graphql.Marshaler {
-	return ec._listDashboardReponse(ctx, sel, &v)
+func (ec *executionContext) marshalNlistDashboardResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx context.Context, sel ast.SelectionSet, v model.ListDashboardResponse) graphql.Marshaler {
+	return ec._listDashboardResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNlistDashboardReponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx context.Context, sel ast.SelectionSet, v *model.ListDashboardReponse) graphql.Marshaler {
+func (ec *executionContext) marshalNlistDashboardResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx context.Context, sel ast.SelectionSet, v *model.ListDashboardResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._listDashboardReponse(ctx, sel, v)
+	return ec._listDashboardResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNpanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPanelGroup(ctx context.Context, v interface{}) ([]*model.PanelGroup, error) {
@@ -29156,11 +29156,11 @@ func (ec *executionContext) marshalOlabelValue2ᚖgithubᚗcomᚋlitmuschaosᚋl
 	return ec._labelValue(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOlistDashboardReponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx context.Context, sel ast.SelectionSet, v model.ListDashboardReponse) graphql.Marshaler {
-	return ec._listDashboardReponse(ctx, sel, &v)
+func (ec *executionContext) marshalOlistDashboardResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx context.Context, sel ast.SelectionSet, v model.ListDashboardResponse) graphql.Marshaler {
+	return ec._listDashboardResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOlistDashboardReponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx context.Context, sel ast.SelectionSet, v []*model.ListDashboardReponse) graphql.Marshaler {
+func (ec *executionContext) marshalOlistDashboardResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx context.Context, sel ast.SelectionSet, v []*model.ListDashboardResponse) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -29187,7 +29187,7 @@ func (ec *executionContext) marshalOlistDashboardReponse2ᚕᚖgithubᚗcomᚋli
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOlistDashboardReponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx, sel, v[i])
+			ret[i] = ec.marshalOlistDashboardResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -29200,11 +29200,11 @@ func (ec *executionContext) marshalOlistDashboardReponse2ᚕᚖgithubᚗcomᚋli
 	return ret
 }
 
-func (ec *executionContext) marshalOlistDashboardReponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx context.Context, sel ast.SelectionSet, v *model.ListDashboardReponse) graphql.Marshaler {
+func (ec *executionContext) marshalOlistDashboardResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx context.Context, sel ast.SelectionSet, v *model.ListDashboardResponse) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._listDashboardReponse(ctx, sel, v)
+	return ec._listDashboardResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOmetricsPromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx context.Context, sel ast.SelectionSet, v model.MetricsPromResponse) graphql.Marshaler {
