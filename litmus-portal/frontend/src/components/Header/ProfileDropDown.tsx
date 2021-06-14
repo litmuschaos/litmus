@@ -103,7 +103,7 @@ const ProfileDropdown: React.FC = () => {
                 </Link>
               ) : (
                 <Typography className={classes.projectRoleHint}>
-                  Please switch to a project you own to access settings
+                  {t('header.profileDropdown.switchProject')}
                 </Typography>
               )}
             </div>

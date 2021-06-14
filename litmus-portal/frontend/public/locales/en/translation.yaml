@@ -37,6 +37,7 @@ header:
     signedIn: 'Signed in as:'
     emailUnset: Email not set
     emailSet: Set up your email
+    switchProject: Please switch to a project you own to access settings
     goToSettingsTitle: Go to settings
     logOutTitle: Logout from the portal
     editProfileTitle: Edit your profile

@@ -7,7 +7,6 @@ if (loc.protocol === 'https:') {
 } else {
   sockURL = 'ws:';
 }
-
 if (
   process.env.NODE_ENV.trim() === 'development' ||
   process.env.NODE_ENV.trim() === 'test'
