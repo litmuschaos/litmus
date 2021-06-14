@@ -3,9 +3,10 @@ package ops
 import (
 	"errors"
 	"fmt"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"strconv"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
 // FirstDayOfISOWeek returns first day of the given ISO week
