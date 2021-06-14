@@ -747,6 +747,7 @@ func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListR
 	return newPromSeriesListResponse, nil
 }
 
+// QueryListDashboard lists all the dashboards present in a project using the projectID
 func QueryListDashboard(projectID string) ([]*model.ListDashboardResponse, error) {
 	query := bson.D{
 		{"project_id", projectID},
