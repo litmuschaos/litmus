@@ -35,7 +35,6 @@ import { ReactComponent as CopyQuery } from '../../../../../../../../svg/queryCo
 import { ReactComponent as DeleteQuery } from '../../../../../../../../svg/queryDelete.svg';
 import { ReactComponent as ShowHideQuery } from '../../../../../../../../svg/queryHide.svg';
 import { ReactComponent as ShrinkAccordion } from '../../../../../../../../svg/shrinkQueryAccordion.svg';
-import { copyTextToClipboard } from '../../../../../../../../utils/generic';
 import {
   getLabelsAndValues,
   setLabelsAndValues,
@@ -203,6 +202,16 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
       });
     });
     return completionOptions;
+  };
+
+  const copyTextToClipboard = (text: string) => {
+    if (!navigator.clipboard) {
+      console.error('Oops Could not copy text: ');
+      return;
+    }
+    navigator.clipboard
+      .writeText(text)
+      .catch((err) => console.error('Async: Could not copy text: ', err));
   };
 
   return (

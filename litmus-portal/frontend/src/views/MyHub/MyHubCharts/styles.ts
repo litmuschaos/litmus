@@ -35,8 +35,6 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '0.0625rem solid',
-    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
   },
   search: {
@@ -58,12 +56,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    border: '0.0625rem solid',
     marginTop: theme.spacing(3),
     paddingTop: theme.spacing(2),
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
   },
   cardDiv: {
@@ -111,6 +107,15 @@ const useStyles = makeStyles((theme) => ({
   },
   chartAccordion: {
     marginTop: theme.spacing(2.5),
+  },
+  appBar: {
+    background: 'transparent',
+    boxShadow: 'none',
+    marginBottom: theme.spacing(1),
+  },
+  noExpImage: {
+    width: '5rem',
+    height: '5rem',
   },
 }));
 

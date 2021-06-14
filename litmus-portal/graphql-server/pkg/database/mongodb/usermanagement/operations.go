@@ -59,8 +59,7 @@ func GetUserByUserID(ctx context.Context, userID string) (*User, error) {
 }
 
 // GetUsers returns the list of users present in the project
-func GetUsers(ctx context.Context) ([]User, error) {
-	query := bson.D{{}}
+func GetUsers(ctx context.Context, query bson.D) ([]User, error) {
 	result, err := mongodb.Operator.List(ctx, mongodb.UserCollection, query)
 	if err != nil {
 		log.Print("Error getting users : ", err)
