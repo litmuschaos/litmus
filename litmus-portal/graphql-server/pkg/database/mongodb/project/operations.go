@@ -41,6 +41,22 @@ func GetProject(ctx context.Context, query bson.D) (*Project, error) {
 	return project, err
 }
 
+// GetProjects takes a query parameter to retrieve the projects that match query
+func GetProjects(ctx context.Context, query bson.D) ([]Project, error) {
+	results, err := mongodb.Operator.List(ctx, mongodb.ProjectCollection, query)
+	if err != nil {
+		return nil, err
+	}
+
+	var projects []Project
+	err = results.All(ctx, &projects)
+	if err != nil {
+		return nil, err
+	}
+
+	return projects, nil
+}
+
 // GetProjectsByUserID returns a project based on the userID
 func GetProjectsByUserID(ctx context.Context, userID string) ([]Project, error) {
 	var projects []Project

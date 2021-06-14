@@ -17,9 +17,6 @@ const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const GetStarted = lazy(() => import('../../pages/GetStartedPage'));
 const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
-const BrowseTemplate = lazy(
-  () => import('../../views/ChaosWorkflows/BrowseTemplate')
-);
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
@@ -200,11 +197,6 @@ const Routes: React.FC = () => {
             exact
             path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
             component={SetNewSchedule}
-          />
-          <Route
-            exact
-            path="/workflows/template/:templateName"
-            component={BrowseTemplate}
           />
           <Route
             exact
