@@ -3,12 +3,12 @@ import { Paper, Tabs, useTheme } from '@material-ui/core';
 import { LineAreaGraph } from 'litmus-ui';
 import React, { useState } from 'react';
 import { StyledTab, TabPanel } from '../../../../../components/Tabs';
-import { SCHEDULED_WORKFLOW_STATS } from '../../../../../graphql';
+import { WORKFLOW_STATS } from '../../../../../graphql';
 import {
   DateValue,
   Filter,
-  ScheduledWorkflowStatsResponse,
-  ScheduledWorkflowStatsVars,
+  WorkflowStatsResponse,
+  WorkflowStatsVars,
 } from '../../../../../models/graphql/scheduleData';
 import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './style';
@@ -51,25 +51,22 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
 
   const tempGraphData: Array<DateValue> = [];
 
-  useQuery<ScheduledWorkflowStatsResponse, ScheduledWorkflowStatsVars>(
-    SCHEDULED_WORKFLOW_STATS,
-    {
-      variables: {
-        filter,
-        project_id: projectID,
-        show_workflow_runs: activeTab === 0,
-      },
-      onCompleted: (dateValueData) => {
-        dateValueData.getScheduledWorkflowStats.map((data) =>
-          tempGraphData.push({
-            date: data.date,
-            value: data.value,
-          })
-        );
-        setGraphDataState(tempGraphData);
-      },
-    }
-  );
+  useQuery<WorkflowStatsResponse, WorkflowStatsVars>(WORKFLOW_STATS, {
+    variables: {
+      filter,
+      project_id: projectID,
+      show_workflow_runs: activeTab === 0,
+    },
+    onCompleted: (dateValueData) => {
+      dateValueData.getScheduledWorkflowStats.map((data) =>
+        tempGraphData.push({
+          date: data.date,
+          value: data.value,
+        })
+      );
+      setGraphDataState(tempGraphData);
+    },
+  });
 
   const closedSeriesData: Array<GraphMetric> = [
     {
