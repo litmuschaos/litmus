@@ -231,6 +231,15 @@ analyticsDashboard:
       noRecords: No chaos happened during the interval
       showTable: Show Chaos during this interval
       hideTable: Hide Chaos during this interval
+    dashboardCloneModal:
+      heading: Clone the application dashboard
+      cancel: Cancel
+      ok: OK
+      error: Error cloning dashboard
+    options:
+      clone: Clone
+      json: JSON
+      pdf: PDF
   workflowClusterDashboard:
     title: Dashboard
     tab1: Hourly
@@ -261,8 +270,134 @@ analyticsDashboard:
   workflowDashboard: Workflow Dashboards
   overviewTabdataSourceTable: Connected Data Sources
   applicationDashboard: Application Dashboards
+  applicationDashboards:
+    createHeader: Create a new dashboard
+    configureHeader: Configure dashboard
+    chooseADashboardType:
+      header: Select a dashboard type
+      description: Select a dashboard from given types or upload a dashbaord’s json file for real time monitoring
+      uploadModal:
+        heading: Upload a dashboard
+        option1: Drag & Drop JSON file to upload
+        or: -- or --
+        option2: Select JSON file from your device
+        successMessage: Successfully uploaded
+    configureDashboardMetadata:
+      header: Dashboard metadata
+      description: Provide the dashboard information like names, data source, agents etc.
+      form:
+        name: Name
+        agent: Agent
+        dataSource: Data source
+        dashboardType: Dashboard type
+        applications: Applications
+        selectNamespaces: Select namespaces
+        addNamespace: Add namespace
+        selectApplicationType: Select application type
+        selectApplications: Select applications
+        addApplication: Add application
+    selectTheMetrics:
+      header: Select metrics
+      description: Based on the namespaces and application these are the possible metrics that can be plotted.
+      errorMessage: No panel groups or panels were found. Re-upload the dashboard.
+    tuneTheQueries:
+      header: Tune the queries
+      description: Edit queries to the data source for fetching relevant metrics.
+      addMetric: + Add Metric
+      query: Query
+      queries: Queries
+      visualization: Visualization
+      points: Points
+      grids: Grids
+      addQuery: Add Query
+      discardChanges: Discard Changes
+      metric: Metric
+      keys: Keys
+      selectKey: Select key
+      values: Values
+      addValue: Add value
+      seriesName: Series name
+      label: Label
+      labelFor: Label for
+      configuration: Configuration
+      legend: Legend
+      legendInfo: Legend
+      minStep: Min-step
+      minStepInfo: Min-step
+      format: Format
+      formatInfo: Format
+      timeSeries: Time Series
+      graph: Graph
+      graphInfo: Graph
+      areaGraph: Area graph
+      lineGraph: Line graph
+      resolution: Resolution
+      resolutionInfo: Resolution
+    stepper:
+      steps:
+        step1: Choose a dashboard type
+        step2: Configure dashboard metadata
+        step3: Select the metrics
+        step4: Tune the queries
+      buttons:
+        next: Next
+        back: Back
+        saveChanges: Save changes
+        status:
+          updating: Updating
+          creating: Creating
+      errors:
+        step1:
+          message: Error loading dashboard
+          messageViewer: You cannot create a dashboard as a Viewer
+        step2:
+          messageViewer: You cannot configure a dashboard as a Viewer
+        step3:
+          message: At-least one metric needs to be defined.
+        step4:
+          messageCreate: Error creating dashboard
+          messageConfigure: Error updating dashboard
   connectedDataSources: Connected Data Sources
   dataSource: Data sources
+  dataSourceForm:
+    headingAdd: Add a new data source
+    headingConfigure: Configure data source
+    back: Back
+    step: Step
+    of2: of 2
+    saveChanges: Save changes
+    next: Next
+    modalHeadingSuccessAdd: A new data source is successfully connected
+    modalHeadingSuccessConfigure: Data source information is successfully updated
+    modalHeadingFailed: There was a problem with connecting your data source
+    modalBodySuccessAdd: You will see the data source connected in the data source table.
+    modalBodySuccessConfigure: You will see the data source information updated in the data source table.
+    modalBodyFailed: Try back again or check your entered details.
+    modalActionsBack: Back to Data Source
+    modalActionsTryAgain: Try Again
+    general: General
+    generalInfo: Provide a name and choose the data source type
+    name: Name
+    dataSourceType: Data Source Type
+    docsAndSetup: Read about Prometheus docs and setup
+    endPoint: End point
+    endPointInfo: Provide an URL and access type
+    url: URL
+    access: Access
+    authentication: Authentication
+    authenticationInfo: Select an authentication option for the data source
+    noAuth: No auth
+    basicAuth: Basic auth
+    withCredentials: With credentials
+    tlsClientAuth: TLS Client Auth
+    withCACert: with CA Cert
+    username: Username
+    password: Password
+    configuration: Configuration
+    configurationInfo: Provide the configuration details
+    scrapeInterval: Scrape Interval
+    queryTimeOut: Query timeout
+    httpMethod: HTTP Method
   dataSourceTable:
     tableHead1: Status
     tableHead2: Data Source Name

@@ -48,9 +48,7 @@ export interface PrometheusResponse {
 
 export interface promSeriesInput {
   series: string;
-  url: string;
-  start: string;
-  end: string;
+  ds_details: dsDetails;
 }
 
 export interface Option {

@@ -23,7 +23,7 @@ export const constants = {
   statefulsets: 'statefulsets',
   daemonsets: 'daemonsets',
   deploymentconfigs: 'deploymentconfigs',
-  rollouts: 'rollout',
+  rollouts: 'rollouts',
   apps: 'apps',
   v1: 'v1',
   openshift: 'apps.openshift.io',
@@ -34,7 +34,10 @@ export const constants = {
   appLabel: 'applabel',
   jobCleanUp: 'jobCleanUpPolicy',
   nodeselector: 'nodeselector',
-
+  pods: 'pods',
+  services: 'services',
+  nodes: 'nodes',
+  replicasets: 'replicasets',
   /**
    * Template Saved Constants [Component Used in -> Save Template Modal]
    */

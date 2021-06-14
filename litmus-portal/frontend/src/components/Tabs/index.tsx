@@ -1,5 +1,5 @@
 import { createStyles, Tab, withStyles } from '@material-ui/core';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 interface TabPanelProps {
   index: number;
@@ -19,7 +19,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      style={style}
+      style={style ?? {}}
     >
       {value === index && children}
     </div>
@@ -27,6 +27,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
 };
 interface StyledTabProps {
   label: string;
+  icon?: string | ReactElement;
 }
 const StyledTab = withStyles((theme) =>
   createStyles({
@@ -43,6 +44,13 @@ const StyledTab = withStyles((theme) =>
     },
     selected: {
       color: theme.palette.highlight,
+    },
+    wrapper: {
+      flexDirection: 'row-reverse',
+    },
+    labelContainer: {
+      width: 'auto',
+      padding: 0,
     },
   })
 )((props: StyledTabProps) => <Tab {...props} />);

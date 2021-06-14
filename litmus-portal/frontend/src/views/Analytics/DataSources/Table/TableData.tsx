@@ -159,7 +159,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             <Typography align="center">
               {success === true ? (
                 <img
-                  src="./icons/finish.svg"
+                  src="/icons/finish.svg"
                   alt="success"
                   className={classes.icon}
                 />
@@ -271,7 +271,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             <div>
               <Typography align="center">
                 <img
-                  src="./icons/delete_large_icon.svg"
+                  src="/icons/delete_large_icon.svg"
                   alt="delete"
                   className={classes.icon}
                 />

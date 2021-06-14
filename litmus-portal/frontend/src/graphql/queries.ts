@@ -383,13 +383,25 @@ export const LIST_DASHBOARD = gql`
       db_id
       ds_id
       db_name
-      db_type
       cluster_name
       ds_name
       ds_type
+      db_type_id
+      db_type_name
+      db_information
+      chaos_event_query_template
+      chaos_verdict_query_template
+      application_metadata_map {
+        namespace
+        applications {
+          kind
+          names
+        }
+      }
       panel_groups {
         panels {
           panel_id
+          created_at
           prom_queries {
             queryid
             prom_query_name
@@ -429,10 +441,48 @@ export const LIST_DASHBOARD_OVERVIEW = gql`
     ListDashboard(project_id: $projectID) {
       db_id
       db_name
-      db_type
+      db_type_id
+      db_type_name
       cluster_name
       cluster_id
       updated_at
+      db_information
+      chaos_event_query_template
+      chaos_verdict_query_template
+      application_metadata_map {
+        namespace
+        applications {
+          kind
+          names
+        }
+      }
+      panel_groups {
+        panels {
+          panel_id
+          created_at
+          prom_queries {
+            queryid
+            prom_query_name
+            legend
+            resolution
+            minstep
+            line
+            close_area
+          }
+          panel_options {
+            points
+            grids
+            left_axis
+          }
+          panel_name
+          y_axis_left
+          y_axis_right
+          x_axis_down
+          unit
+        }
+        panel_group_name
+        panel_group_id
+      }
     }
   }
 `;

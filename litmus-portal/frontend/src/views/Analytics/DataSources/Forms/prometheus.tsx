@@ -1,10 +1,14 @@
 /* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
-import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
-import { InputField } from 'litmus-ui';
+import {
+  FormControlLabel,
+  FormGroup,
+  Icon,
+  Typography,
+} from '@material-ui/core';
+import { InputField, RadioButton } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
-import { CheckBox } from '../../../../components/CheckBox';
+import { useTranslation } from 'react-i18next';
 import { LIST_DATASOURCE } from '../../../../graphql';
 import { DataSourceDetails } from '../../../../models/dataSourceData';
 import {
@@ -23,15 +27,18 @@ import useStyles from './styles';
 interface ConfigurePrometheusProps {
   configure: boolean;
   dataSourceID?: string;
+  page: number;
   CallbackToSetVars: (vars: DataSourceDetails) => void;
 }
 
 const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
   configure,
   dataSourceID,
+  page,
   CallbackToSetVars,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const projectID = getProjectID();
   const [dataSourceDetails, setDataSourceDetails] = useState<DataSourceDetails>(
     {
@@ -180,223 +187,271 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
   }, [update]);
 
   return (
-    <div>
-      <div className={classes.root}>
-        <Typography className={classes.heading}>
-          <strong>Source information</strong>
-        </Typography>
-        <div className={classes.flexDisplay}>
-          <div className={classes.inputDiv}>
-            <InputField
-              label="Name"
-              data-cy="inputDataSourceName"
-              variant={
-                validateTextEmpty(dataSourceDetails.name) ? 'error' : 'primary'
-              }
-              onChange={nameChangeHandler}
-              value={dataSourceDetails.name}
-            />
-          </div>
-          <div className={classes.inputDiv}>
-            <InputField
-              label="Data Source Type"
-              data-cy="inputDataSourceType"
-              variant={
-                validateTextEmpty(dataSourceDetails.dataSourceType)
-                  ? 'error'
-                  : 'primary'
-              }
-              disabled
-              value={dataSourceDetails.dataSourceType}
-            />
-          </div>
-        </div>
-        <Divider variant="middle" className={classes.horizontalLine} />
-        <Typography className={classes.heading}>
-          <strong>End Point</strong>
-        </Typography>
-        <div className={classes.flexDisplay}>
-          <div className={classes.inputDiv}>
-            <InputField
-              label="URL"
-              data-cy="inputDataSourceURL"
-              variant={
-                isValidWebUrl(dataSourceDetails.url) ? 'primary' : 'error'
-              }
-              onChange={urlChangeHandler}
-              value={dataSourceDetails.url}
-            />
-          </div>
-          <div className={classes.inputDiv}>
-            <InputField
-              label="Access"
-              data-cy="inputDataSourceAccess"
-              variant={
-                validateTextEmpty(dataSourceDetails.access)
-                  ? 'error'
-                  : 'primary'
-              }
-              disabled
-              value={dataSourceDetails.access}
-            />
-          </div>
-        </div>
-        <Divider variant="middle" className={classes.horizontalLine} />
-        <Typography className={classes.heading}>
-          <strong>Auth</strong>
-        </Typography>
-        <FormGroup>
-          <div className={classes.inputDivCheckBox}>
-            <FormControlLabel
-              control={
-                <CheckBox
-                  color="primary"
-                  checked={dataSourceDetails.noAuth}
-                  onChange={handleAuthChange}
-                  name="noAuth"
-                />
-              }
-              label="No auth"
-            />
-            <FormControlLabel
-              className={classes.basicAuth}
-              control={
-                <CheckBox
-                  color="primary"
-                  disabled
-                  checked={dataSourceDetails.basicAuth}
-                  onChange={handleAuthChange}
-                  name="basicAuth"
-                />
-              }
-              label="Basic auth"
-            />
-            <FormControlLabel
-              className={classes.withCredentials}
-              control={
-                <CheckBox
-                  color="primary"
-                  disabled
-                  checked={dataSourceDetails.withCredentials}
-                  onChange={handleAuthChange}
-                  name="withCredentials"
-                />
-              }
-              label="with Credentials"
-            />
-          </div>
-          <div className={classes.inputDivCheckBox}>
-            <FormControlLabel
-              control={
-                <CheckBox
-                  color="primary"
-                  disabled
-                  checked={dataSourceDetails.tlsClientAuth}
-                  onChange={handleAuthChange}
-                  name="tlsClientAuth"
-                />
-              }
-              label="TLS Client Auth"
-            />
-            <FormControlLabel
-              className={classes.withCACert}
-              control={
-                <CheckBox
-                  color="primary"
-                  disabled
-                  checked={dataSourceDetails.withCACert}
-                  onChange={handleAuthChange}
-                  name="withCACert"
-                />
-              }
-              label="with CA Cert"
-            />
-          </div>
-        </FormGroup>
-        <Divider variant="middle" className={classes.horizontalLine} />
-        {dataSourceDetails.basicAuth ? (
-          <div>
-            <Typography className={classes.heading}>
-              <strong>Basic Auth Details</strong>
-            </Typography>
-            <div className={classes.flexDisplay}>
-              <div className={classes.inputDiv}>
-                <InputField
-                  label="Username"
-                  data-cy="inputPrometheusUsername"
-                  variant={
-                    validateTextEmpty(dataSourceDetails.username)
-                      ? 'error'
-                      : 'primary'
-                  }
-                  onChange={usernameChangeHandler}
-                  value={dataSourceDetails.username}
-                />
-              </div>
-              <div className={classes.inputDiv}>
-                <InputField
-                  label="Password"
-                  data-cy="inputPrometheusPassword"
-                  variant={
-                    validateTextEmpty(dataSourceDetails.password)
-                      ? 'error'
-                      : 'primary'
-                  }
-                  onChange={passwordChangeHandler}
-                  value={dataSourceDetails.password}
-                />
-              </div>
+    <div className={classes.root}>
+      {page === 1 ? (
+        <div>
+          <Typography className={classes.heading}>
+            {t('analyticsDashboard.dataSourceForm.general')}
+          </Typography>
+          <Typography className={classes.subHeading}>
+            {t('analyticsDashboard.dataSourceForm.generalInfo')}
+          </Typography>
+          <div className={classes.flexDisplay} style={{ width: '80%' }}>
+            <div className={classes.inputDiv}>
+              <InputField
+                label={t('analyticsDashboard.dataSourceForm.name')}
+                data-cy="inputDataSourceName"
+                width="22.5rem"
+                variant={
+                  validateTextEmpty(dataSourceDetails.name)
+                    ? 'error'
+                    : 'primary'
+                }
+                onChange={nameChangeHandler}
+                value={dataSourceDetails.name}
+              />
             </div>
-            <Divider variant="middle" className={classes.horizontalLine} />
+            <div className={classes.inputDiv}>
+              <InputField
+                label={t('analyticsDashboard.dataSourceForm.dataSourceType')}
+                data-cy="inputDataSourceType"
+                width="22.5rem"
+                variant={
+                  validateTextEmpty(dataSourceDetails.dataSourceType)
+                    ? 'error'
+                    : 'primary'
+                }
+                disabled
+                value={dataSourceDetails.dataSourceType}
+              />
+            </div>
           </div>
-        ) : (
-          <div />
-        )}
-        <Typography className={classes.heading}>
-          <strong>Configuration</strong>
-        </Typography>
-        <div className={classes.flexDisplay}>
-          <div className={classes.inputDiv}>
-            <InputField
-              label="Scrape Interval"
-              data-cy="inputScrapeInterval"
-              variant={
-                validateTimeInSeconds(dataSourceDetails.scrapeInterval)
-                  ? 'primary'
-                  : 'error'
-              }
-              onChange={scrapeIntervalChangeHandler}
-              value={dataSourceDetails.scrapeInterval}
+          <div className={classes.iconWithTextDiv}>
+            <img
+              src="/icons/docs.svg"
+              alt="Docs icon"
+              className={classes.inlineIcon}
             />
+            <Typography className={classes.infoValue}>
+              {t('analyticsDashboard.dataSourceForm.docsAndSetup')}
+            </Typography>
+            <Icon
+              onClick={() => {
+                window.open(
+                  'https://github.com/litmuschaos/litmus/tree/master/monitoring#model-1-optional-prometheus-scrape-config-model'
+                );
+              }}
+            >
+              <img
+                src="/icons/externalLink.svg"
+                alt="external link"
+                className={classes.linkIcon}
+              />
+            </Icon>
           </div>
-          <div className={classes.inputDiv}>
-            <InputField
-              label="Query timeout"
-              data-cy="inputQueryTimeout"
-              variant={
-                validateTimeInSeconds(dataSourceDetails.queryTimeout)
-                  ? 'primary'
-                  : 'error'
-              }
-              onChange={queryTimeoutChangeHandler}
-              value={dataSourceDetails.queryTimeout}
-            />
+          <div className={classes.horizontalLine} />
+          <Typography className={classes.heading}>
+            {t('analyticsDashboard.dataSourceForm.endPoint')}
+          </Typography>
+          <Typography className={classes.subHeading}>
+            {t('analyticsDashboard.dataSourceForm.endPointInfo')}
+          </Typography>
+          <div className={classes.flexDisplay} style={{ width: '80%' }}>
+            <div className={classes.inputDiv}>
+              <InputField
+                label={t('analyticsDashboard.dataSourceForm.url')}
+                data-cy="inputDataSourceURL"
+                width="22.5rem"
+                variant={
+                  isValidWebUrl(dataSourceDetails.url) ? 'primary' : 'error'
+                }
+                onChange={urlChangeHandler}
+                value={dataSourceDetails.url}
+              />
+            </div>
+            <div className={classes.inputDiv}>
+              <InputField
+                label={t('analyticsDashboard.dataSourceForm.Access')}
+                data-cy="inputDataSourceAccess"
+                width="22.5rem"
+                variant={
+                  validateTextEmpty(dataSourceDetails.access)
+                    ? 'error'
+                    : 'primary'
+                }
+                disabled
+                value={dataSourceDetails.access}
+              />
+            </div>
+          </div>
+          <div className={classes.horizontalLine} />
+        </div>
+      ) : (
+        <div>
+          <Typography className={classes.heading}>
+            {t('analyticsDashboard.dataSourceForm.authentication')}
+          </Typography>
+          <Typography className={classes.subHeading}>
+            {t('analyticsDashboard.dataSourceForm.authenticationInfo')}
+          </Typography>
+          <FormGroup>
+            <div className={classes.inputDivRadioButton}>
+              <FormControlLabel
+                control={
+                  <RadioButton
+                    color="primary"
+                    checked={dataSourceDetails.noAuth}
+                    onChange={handleAuthChange}
+                    name="noAuth"
+                  />
+                }
+                label={t('analyticsDashboard.dataSourceForm.noAuth')}
+              />
+              <FormControlLabel
+                className={classes.basicAuth}
+                control={
+                  <RadioButton
+                    color="primary"
+                    checked={dataSourceDetails.basicAuth}
+                    onChange={handleAuthChange}
+                    name="basicAuth"
+                  />
+                }
+                label={t('analyticsDashboard.dataSourceForm.basicAuth')}
+              />
+              <FormControlLabel
+                className={classes.withCredentials}
+                control={
+                  <RadioButton
+                    color="primary"
+                    disabled
+                    checked={dataSourceDetails.withCredentials}
+                    onChange={handleAuthChange}
+                    name="withCredentials"
+                  />
+                }
+                label={t('analyticsDashboard.dataSourceForm.withCredentials')}
+              />
+            </div>
+            <div className={classes.inputDivRadioButton}>
+              <FormControlLabel
+                control={
+                  <RadioButton
+                    color="primary"
+                    disabled
+                    checked={dataSourceDetails.tlsClientAuth}
+                    onChange={handleAuthChange}
+                    name="tlsClientAuth"
+                  />
+                }
+                label={t('analyticsDashboard.dataSourceForm.tlsClientAuth')}
+              />
+              <FormControlLabel
+                className={classes.withCACert}
+                control={
+                  <RadioButton
+                    color="primary"
+                    disabled
+                    checked={dataSourceDetails.withCACert}
+                    onChange={handleAuthChange}
+                    name="withCACert"
+                  />
+                }
+                label={t('analyticsDashboard.dataSourceForm.withCACert')}
+              />
+            </div>
+          </FormGroup>
+          <div className={classes.horizontalLine} />
+          {dataSourceDetails.basicAuth ? (
+            <div>
+              <div className={classes.flexDisplay} style={{ width: '55%' }}>
+                <div className={classes.inputDiv}>
+                  <InputField
+                    label={t('analyticsDashboard.dataSourceForm.username')}
+                    data-cy="inputPrometheusUsername"
+                    width="14rem"
+                    variant={
+                      validateTextEmpty(dataSourceDetails.username)
+                        ? 'error'
+                        : 'primary'
+                    }
+                    onChange={usernameChangeHandler}
+                    value={dataSourceDetails.username}
+                  />
+                </div>
+                <div className={classes.inputDiv}>
+                  <InputField
+                    label={t('analyticsDashboard.dataSourceForm.password')}
+                    type="password"
+                    data-cy="inputPrometheusPassword"
+                    width="14rem"
+                    variant={
+                      validateTextEmpty(dataSourceDetails.password)
+                        ? 'error'
+                        : 'primary'
+                    }
+                    onChange={passwordChangeHandler}
+                    value={dataSourceDetails.password}
+                  />
+                </div>
+              </div>
+              <div className={classes.horizontalLine} />
+            </div>
+          ) : (
+            <div />
+          )}
+          <Typography className={classes.heading}>
+            {t('analyticsDashboard.dataSourceForm.configuration')}
+          </Typography>
+          <Typography className={classes.subHeading}>
+            {t('analyticsDashboard.dataSourceForm.configurationInfo')}
+          </Typography>
+          <div className={classes.flexDisplay} style={{ width: '80%' }}>
+            <div className={classes.inputDiv}>
+              <InputField
+                label={t('analyticsDashboard.dataSourceForm.scrapeInterval')}
+                data-cy="inputScrapeInterval"
+                width="13.5rem"
+                variant={
+                  validateTimeInSeconds(dataSourceDetails.scrapeInterval)
+                    ? 'primary'
+                    : 'error'
+                }
+                onChange={scrapeIntervalChangeHandler}
+                value={dataSourceDetails.scrapeInterval}
+              />
+            </div>
+            <div className={classes.inputDiv}>
+              <InputField
+                label={t('analyticsDashboard.dataSourceForm.queryTimeOut')}
+                data-cy="inputQueryTimeout"
+                width="13.5rem"
+                variant={
+                  validateTimeInSeconds(dataSourceDetails.queryTimeout)
+                    ? 'primary'
+                    : 'error'
+                }
+                onChange={queryTimeoutChangeHandler}
+                value={dataSourceDetails.queryTimeout}
+              />
+            </div>
+            <div className={classes.inputDiv}>
+              <InputField
+                label={t('analyticsDashboard.dataSourceForm.httpMethod')}
+                data-cy="inputHTTPMethod"
+                width="13.5rem"
+                variant={
+                  validateTextEmpty(dataSourceDetails.httpMethod)
+                    ? 'error'
+                    : 'primary'
+                }
+                disabled
+                value={dataSourceDetails.httpMethod}
+              />
+            </div>
           </div>
         </div>
-        <div className={classes.inputDivLeft}>
-          <InputField
-            label="HTTP Method"
-            data-cy="inputHTTPMethod"
-            variant={
-              validateTextEmpty(dataSourceDetails.httpMethod)
-                ? 'error'
-                : 'primary'
-            }
-            disabled
-            value={dataSourceDetails.httpMethod}
-          />
-        </div>
-      </div>
+      )}
     </div>
   );
 };
