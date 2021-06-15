@@ -267,3 +267,13 @@ type WorkflowStats {
   date: Float!
   value: Int!
 }
+
+type WorkflowRunDetails {
+  no_of_runs: Int!
+  date_stamp: Float!
+}
+
+type WorkflowRunsData {
+  value: Float!
+  workflowRunDetail: WorkflowRunDetails
+}

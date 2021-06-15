@@ -337,6 +337,10 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return usermanagement.GetUsers(ctx)
 }
 
+func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([][]*model.WorkflowRunsData, error) {
+	return analyticsHandler.GetHeatMapData(workflowID, projectID, year)
+}
+
 func (r *queryResolver) GetScheduledWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
 	return analyticsHandler.GetScheduledWorkflowStats(projectID, filter, showWorkflowRuns)
 }

@@ -555,6 +555,11 @@ type WorkflowRun struct {
 	IsRemoved         *bool    `json:"isRemoved"`
 }
 
+type WorkflowRunDetails struct {
+	NoOfRuns  int     `json:"no_of_runs"`
+	DateStamp float64 `json:"date_stamp"`
+}
+
 type WorkflowRunFilterInput struct {
 	WorkflowName   *string            `json:"workflow_name"`
 	ClusterName    *string            `json:"cluster_name"`
@@ -581,6 +586,11 @@ type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
 	LastUpdated   string `json:"last_updated"`
+}
+
+type WorkflowRunsData struct {
+	Value             float64             `json:"value"`
+	WorkflowRunDetail *WorkflowRunDetails `json:"workflowRunDetail"`
 }
 
 type WorkflowSortInput struct {
