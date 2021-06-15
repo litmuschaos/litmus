@@ -11,7 +11,7 @@ data:
   AGENT_SCOPE: #{AGENT-SCOPE}
   IS_CLUSTER_CONFIRMED: "false"
   COMPONENTS: |
-    DEPLOYMENTS: ["app=chaos-exporter", "name=chaos-operator", "app=argo-server", "app=event-tracker", "app=workflow-controller"]
+    DEPLOYMENTS: ["app=chaos-exporter", "name=chaos-operator", "app=event-tracker", "app=workflow-controller"]
 ---
 apiVersion: apps/v1
 kind: Deployment
