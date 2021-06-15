@@ -7,7 +7,6 @@ type SubscriberConfigurationVars struct {
 	GQLServerURI             string
 	SubscriberImage          string
 	EventTrackerImage        string
-	ArgoServerImage          string
 	WorkflowControllerImage  string
 	ChaosOperatorImage       string
 	WorkflowExecutorImage    string

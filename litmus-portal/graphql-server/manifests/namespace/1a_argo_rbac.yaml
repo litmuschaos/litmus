@@ -5,12 +5,6 @@ metadata:
   name: argo
   namespace: #{AGENT-NAMESPACE}
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: argo-server
-  namespace: #{AGENT-NAMESPACE}
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -185,68 +179,6 @@ rules:
       - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: argo-server-role
-  namespace: #{AGENT-NAMESPACE}
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    verbs:
-      - get
-      - watch
-      - list
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - get
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-      - pods/exec
-      - pods/log
-    verbs:
-      - get
-      - list
-      - watch
-      - delete
-  - apiGroups:
-      - ""
-    resources:
-      - events
-    verbs:
-      - watch
-      - create
-      - patch
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-      - serviceaccounts
-    verbs:
-      - get
-  - apiGroups:
-      - argoproj.io
-    resources:
-      - workflows
-      - workfloweventbindings
-      - workflowtemplates
-      - cronworkflows
-    verbs:
-      - create
-      - get
-      - list
-      - watch
-      - update
-      - patch
-      - delete
----
-apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argo-binding
@@ -258,18 +190,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo
-    namespace: #{AGENT-NAMESPACE}
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: argo-server-binding
-  namespace: #{AGENT-NAMESPACE}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: argo-server-role
-subjects:
-  - kind: ServiceAccount
-    name: argo-server
     namespace: #{AGENT-NAMESPACE}
