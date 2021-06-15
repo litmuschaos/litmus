@@ -17,7 +17,7 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 ## **Installation**
 
 #### Applying k8s manifest
-> Litmus-2.0.0-Beta7 (Stable)
+> Litmus-2.0.0-Beta8 (Stable)
 ```bash
 kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
@@ -84,7 +84,7 @@ View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)
 
 ### **Uninstallation**
 
-> Litmus-2.0.0-Beta7 (Stable)
+> Litmus-2.0.0-Beta8 (Stable)
 ```bash
 kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
