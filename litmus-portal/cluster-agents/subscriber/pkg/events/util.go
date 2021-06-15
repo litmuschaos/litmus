@@ -35,9 +35,15 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	cd.ProbeSuccessPercentage = "0"
 	cd.FailStep = ""
 	cd.EngineUID = string(crd.ObjectMeta.UID)
+
+	if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped"{
+		cd.ExperimentVerdict = "Fail"
+		cd.ExperimentStatus = string(crd.Status.EngineStatus)
+	}
 	if len(crd.Status.Experiments) == 0 {
 		return cd, nil
 	}
+
 	// considering chaosengine will only have 1 experiment
 	cd.ExperimentPod = crd.Status.Experiments[0].ExpPod
 	cd.RunnerPod = crd.Status.Experiments[0].Runner
