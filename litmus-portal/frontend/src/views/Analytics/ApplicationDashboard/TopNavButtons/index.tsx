@@ -254,7 +254,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
         >
           <div className={classes.expDiv}>
             <img
-              src="/icons/cogWheel.svg"
+              src="/icons/cogwheel.svg"
               alt="Configure"
               className={classes.btnImg}
             />
