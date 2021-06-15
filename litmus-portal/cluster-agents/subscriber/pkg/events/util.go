@@ -15,7 +15,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 )
@@ -36,7 +35,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	cd.FailStep = ""
 	cd.EngineUID = string(crd.ObjectMeta.UID)
 
-	if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped"{
+	if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped" {
 		cd.ExperimentVerdict = "Fail"
 		cd.ExperimentStatus = string(crd.Status.EngineStatus)
 	}
