@@ -1,6 +1,5 @@
 package analytics
 
-// DataSource ...
 type DataSource struct {
 	DsID              string  `bson:"ds_id"`
 	DsName            string  `bson:"ds_name"`
@@ -19,7 +18,6 @@ type DataSource struct {
 	IsRemoved         bool    `bson:"is_removed"`
 }
 
-// DashBoard ...
 type DashBoard struct {
 	DbID                      string                `bson:"db_id"`
 	DsID                      string                `bson:"ds_id"`
@@ -41,25 +39,21 @@ type DashBoard struct {
 	IsRemoved                 bool                  `bson:"is_removed"`
 }
 
-// ApplicationMetadata ...
 type ApplicationMetadata struct {
 	Namespace    string      `bson:"namespace"`
 	Applications []*Resource `bson:"applications"`
 }
 
-// Resource ...
 type Resource struct {
 	Kind  string    `bson:"kind"`
 	Names []*string `bson:"names"`
 }
 
-// PanelGroup ...
 type PanelGroup struct {
 	PanelGroupName string `bson:"panel_group_name"`
 	PanelGroupID   string `bson:"panel_group_id"`
 }
 
-// Panel ...
 type Panel struct {
 	PanelID      string       `bson:"panel_id"`
 	PanelOptions *PanelOption `bson:"panel_options"`
@@ -75,14 +69,12 @@ type Panel struct {
 	IsRemoved    bool         `bson:"is_removed"`
 }
 
-// PanelOption ...
 type PanelOption struct {
 	Points   *bool `bson:"points"`
 	Grids    *bool `bson:"grids"`
 	LeftAxis *bool `bson:"left_axis"`
 }
 
-// PromQuery ...
 type PromQuery struct {
 	Queryid       string  `bson:"queryid"`
 	PromQueryName *string `bson:"prom_query_name"`
@@ -91,4 +83,26 @@ type PromQuery struct {
 	Minstep       *string `bson:"minstep"`
 	Line          *bool   `bson:"line"`
 	CloseArea     *bool   `bson:"close_area"`
+}
+
+type WorkflowRunStats struct {
+	TotalWorkflowRuns      []Count           `bson:"total_workflow_runs"`
+	SucceededWorkflowRuns  []Count           `bson:"succeeded_workflow_runs"`
+	FailedWorkflowRuns     []Count           `bson:"failed_workflow_runs"`
+	RunningWorkflowRuns    []Count           `bson:"running_workflow_runs"`
+	AverageResiliencyScore []Average         `bson:"average_resiliency_score"`
+	PassedPercentage       []ExperimentStats `bson:"passed_percentage"`
+}
+
+type Count struct {
+	Count int `bson:"count"`
+}
+
+type Average struct {
+	Avg float64 `bson:"avg"`
+}
+
+type ExperimentStats struct {
+	TotalExperimentsPassed float64 `bson:"total_experiments_passed"`
+	TotalExperiments       float64 `bson:"total_experiments"`
 }
