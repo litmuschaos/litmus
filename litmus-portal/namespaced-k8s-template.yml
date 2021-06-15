@@ -156,8 +156,6 @@ spec:
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
-            - name: ARGO_SERVER_IMAGE
-              value: "litmuschaos/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v2.9.3"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
