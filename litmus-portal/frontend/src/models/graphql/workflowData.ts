@@ -119,3 +119,18 @@ export interface WorkflowDataVars {
     filter?: WorkflowRunFilterInput;
   };
 }
+
+export interface HeatmapDataVars {
+  project_id: string;
+  workflow_id: string;
+  year: number;
+}
+
+export interface WorkflowRunDetails {
+  no_of_runs: number;
+  date_stamp: number;
+}
+export interface HeatmapDataResponse {
+  value: number;
+  workflowRunDetail: WorkflowRunDetails[];
+}

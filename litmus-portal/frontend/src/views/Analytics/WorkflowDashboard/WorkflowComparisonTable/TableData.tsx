@@ -89,10 +89,17 @@ const TableData: React.FC<TableDataProps> = ({
             aria-label="analytics for workflow id"
             aria-haspopup="true"
             onClick={() => {
-              history.push({
-                pathname: `/workflows/analytics/${data.workflow_id}`,
-                search: `?projectID=${projectID}&projectRole=${userRole}`,
-              });
+              if (data.cronSyntax === '') {
+                history.push({
+                  pathname: `/home`,
+                  search: `?projectID=${projectID}&projectRole=${userRole}`,
+                });
+              } else {
+                history.push({
+                  pathname: `/workflows/analytics/${data.workflow_id}`,
+                  search: `?projectID=${projectID}&projectRole=${userRole}`,
+                });
+              }
             }}
             className={classes.buttonSeeAnalytics}
           >
