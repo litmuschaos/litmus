@@ -1046,7 +1046,7 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 		bson.D{{"$count", "count"}},
 	}
 
-	// Count Succeeded workflowRuns
+	// Count Failed workflowRuns
 	failedWorkflowRuns := bson.A{
 		bson.D{{"$match", bson.D{
 			{"workflow_runs.phase", model.WorkflowRunStatusFailed},
@@ -1055,7 +1055,7 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 		bson.D{{"$count", "count"}},
 	}
 
-	// Count Succeeded workflowRuns
+	// Count Running workflowRuns
 	runningWorkflowRuns := bson.A{
 		bson.D{{"$match", bson.D{
 			{"workflow_runs.phase", model.WorkflowRunStatusRunning},
