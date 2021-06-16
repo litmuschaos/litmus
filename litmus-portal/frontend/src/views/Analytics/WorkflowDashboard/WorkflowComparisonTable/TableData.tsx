@@ -96,7 +96,7 @@ const TableData: React.FC<TableDataProps> = ({
                 });
               } else {
                 history.push({
-                  pathname: `/workflows/analytics/${data.workflow_id}`,
+                  pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
                   search: `?projectID=${projectID}&projectRole=${userRole}`,
                 });
               }

@@ -117,13 +117,17 @@ const WorkflowComparisonTable = () => {
   const [compare, setCompare] = React.useState<Boolean>(false);
   const [isDataAvailable, setIsDataAvailable] = React.useState<Boolean>(true);
   const [showAll, setShowAll] = React.useState<Boolean>(true);
-  const [plotDataForComparison, setPlotDataForComparison] =
-    React.useState<ResilienceScoreComparisonPlotProps>();
+  const [
+    plotDataForComparison,
+    setPlotDataForComparison,
+  ] = React.useState<ResilienceScoreComparisonPlotProps>();
   const [totalValidWorkflowRuns, setTotalValidWorkflowRuns] = React.useState<
     WorkflowDataForExport[]
   >([]);
-  const [totalValidWorkflowRunsCount, setTotalValidWorkflowRunsCount] =
-    React.useState<number>(0);
+  const [
+    totalValidWorkflowRunsCount,
+    setTotalValidWorkflowRunsCount,
+  ] = React.useState<number>(0);
 
   const projectID = getProjectID();
 
@@ -313,19 +317,18 @@ const WorkflowComparisonTable = () => {
                 tests_failed:
                   experimentTestResultsArrayPerWorkflowRun.length -
                   totalExperimentsPassed,
-                resilience_score:
-                  experimentTestResultsArrayPerWorkflowRun.length
-                    ? parseFloat(
-                        (
-                          (experimentTestResultsArrayPerWorkflowRun.reduce(
-                            (a, b) => a + b,
-                            0
-                          ) /
-                            weightsSum) *
-                          100
-                        ).toFixed(2)
-                      )
-                    : 0,
+                resilience_score: experimentTestResultsArrayPerWorkflowRun.length
+                  ? parseFloat(
+                      (
+                        (experimentTestResultsArrayPerWorkflowRun.reduce(
+                          (a, b) => a + b,
+                          0
+                        ) /
+                          weightsSum) *
+                        100
+                      ).toFixed(2)
+                    )
+                  : 0,
                 test_details: testDetails,
               });
               workflowTimeSeriesData.push({

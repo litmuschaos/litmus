@@ -36,6 +36,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    '& div': {
+      padding: theme.spacing(1),
+    },
+    // Regularity info stat section fix for smaller screens
+    '& div:last-child': {
+      width: '326px',
+    },
   },
   infoHeader: {
     fontWeight: 500,

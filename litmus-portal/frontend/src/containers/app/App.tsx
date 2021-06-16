@@ -24,7 +24,7 @@ const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
 const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
-const AnalyticsPage = lazy(() => import('../../pages/WorkflowAnalytics'));
+const WorkflowInfoStats = lazy(() => import('../../pages/WorkflowInfoStats'));
 const AnalyticsDashboard = lazy(() => import('../../pages/AnalyticsPage'));
 const DataSourceConfigurePage = lazy(
   () => import('../../pages/ConfigureDataSources')
@@ -183,8 +183,8 @@ const Routes: React.FC = () => {
           />
           <Route
             exact
-            path="/workflows/analytics/:workflowRunId"
-            component={AnalyticsPage}
+            path="/analytics/workflowdashboard/:workflowRunId"
+            component={WorkflowInfoStats}
           />
           <Route exact path="/community" component={Community} />
           <Route exact path="/targets" component={Targets} />
