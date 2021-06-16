@@ -1,3 +1,5 @@
+import { WeekData } from 'litmus-ui';
+
 export interface ChaosData {
   engineName: string;
   engineUID: string;
@@ -130,7 +132,11 @@ export interface WorkflowRunDetails {
   no_of_runs: number;
   date_stamp: number;
 }
-export interface HeatmapDataResponse {
+export interface HeatMapData {
   value: number;
   workflowRunDetail: WorkflowRunDetails[];
+}
+
+export interface HeatmapDataResponse {
+  getHeatmapData: WeekData[];
 }

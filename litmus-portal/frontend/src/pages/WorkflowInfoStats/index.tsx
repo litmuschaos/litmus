@@ -8,7 +8,11 @@ import { useParams } from 'react-router';
 import YAML from 'yaml';
 import BackButton from '../../components/Button/BackButton';
 import Scaffold from '../../containers/layouts/Scaffold';
-import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
+import { GET_HEATMAP_DATA, WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
+import {
+  HeatmapDataResponse,
+  HeatmapDataVars,
+} from '../../models/graphql/workflowData';
 import {
   ListWorkflowsInput,
   ScheduledWorkflows,
@@ -16,7 +20,7 @@ import {
 import timeDifferenceForDate from '../../utils/datesModifier';
 import { getProjectID } from '../../utils/getSearchParams';
 import useStyles from './styles';
-import { TestCalendarHeatmapTooltip, testData } from './testData';
+import { TestCalendarHeatmapTooltip } from './testData';
 
 interface URLParams {
   workflowRunId: string;
@@ -42,12 +46,29 @@ const WorkflowInfoStats: React.FC = () => {
     }
   );
 
-  let parsedYAML;
+  const presentYear = new Date().getFullYear();
 
-  if (data) {
-    parsedYAML = YAML.parse(data?.ListWorkflow.workflows[0].workflow_manifest);
-    console.log('manifest Subject: ', parsedYAML.metadata.labels.subject);
-  }
+  // Apollo query to get the heatmap data
+  const { data: heatmapData } = useQuery<HeatmapDataResponse, HeatmapDataVars>(
+    GET_HEATMAP_DATA,
+    {
+      variables: {
+        project_id: projectID,
+        workflow_id: workflowRunId,
+        year: presentYear,
+      },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
+
+  //   let filteredHeatMapData
+
+  // if(){
+
+  //   filteredHeatMapData =
+  // }
+
+  console.log('Heatmap data: ', heatmapData?.getHeatmapData[0].bins);
 
   return (
     <Scaffold>
@@ -175,12 +196,14 @@ const WorkflowInfoStats: React.FC = () => {
       {/* HeatMap Area */}
       <div className={classes.heatmapArea}>
         <Typography className={classes.sectionHeading}>Analytics</Typography>
-        <div style={{ width: '100%', height: '10.5rem' }}>
-          <CalendarHeatmap
-            calendarHeatmapMetric={testData}
-            valueThreshold={valueThreshold}
-            CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
-          />
+        <div className={classes.heatmap}>
+          <div style={{ width: '60rem', height: '9rem' }}>
+            <CalendarHeatmap
+              calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
+              valueThreshold={valueThreshold}
+              CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
+            />
+          </div>
         </div>
       </div>
     </Scaffold>

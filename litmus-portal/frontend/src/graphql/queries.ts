@@ -608,10 +608,12 @@ export const GET_HEATMAP_DATA = gql`
       workflow_id: $workflow_id
       year: $year
     ) {
-      value
-      workflowRunDetail {
-        no_of_runs
-        date_stamp
+      bins {
+        value
+        workflowRunDetail {
+          no_of_runs
+          date_stamp
+        }
       }
     }
   }

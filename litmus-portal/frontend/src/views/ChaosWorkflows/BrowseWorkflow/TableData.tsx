@@ -87,8 +87,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   /**
    * State variables for warning popover
    */
-  const [popWarningAnchorEl, setWarningPopAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+  const [
+    popWarningAnchorEl,
+    setWarningPopAnchorEl,
+  ] = React.useState<null | HTMLElement>(null);
   const isWarningOpen = Boolean(popWarningAnchorEl);
   const idWarning = isWarningOpen ? 'simple-popover' : undefined;
   const handleWarningPopOverClose = () => {
@@ -411,7 +413,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             onClick={() => {
               if (data.phase?.toLowerCase() !== 'notavailable')
                 history.push({
-                  pathname: `/workflows/analytics/${data.workflow_id}`,
+                  pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
             }}
