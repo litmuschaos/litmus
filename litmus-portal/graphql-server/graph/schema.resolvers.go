@@ -337,7 +337,11 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return usermanagement.GetUsers(ctx)
 }
 
-func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([][]*model.WorkflowRunsData, error) {
+func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return analyticsHandler.GetHeatMapData(workflowID, projectID, year)
 }
 

@@ -61,15 +61,6 @@ const WorkflowInfoStats: React.FC = () => {
     }
   );
 
-  //   let filteredHeatMapData
-
-  // if(){
-
-  //   filteredHeatMapData =
-  // }
-
-  console.log('Heatmap data: ', heatmapData?.getHeatmapData[0].bins);
-
   return (
     <Scaffold>
       <BackButton />

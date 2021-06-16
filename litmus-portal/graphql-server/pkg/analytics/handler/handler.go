@@ -967,7 +967,7 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	return result, nil
 }
 
-func GetHeatMapData(workflow_id string, project_id string, year int) ([][]*model.WorkflowRunsData, error) {
+func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.HeatmapData, error) {
 	start := time.Date(year, time.January, 1, 0, 00, 00, 0, time.Local)
 	startTimeStamp := time.Date(year, time.January, 1, 0, 00, 00, 0, time.Local).Unix()
 	endTimeStamp := time.Date(year, time.December, 31, 23, 59, 59, 1e9-1, time.Local).Unix()
@@ -1049,7 +1049,7 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([][]*model
 
 	var chaosWorkflowRuns []dbSchemaWorkflow.ChaosWorkFlowInput
 
-	result := make([][]*model.WorkflowRunsData, 0, noOfDays)
+	result := make([]*model.HeatmapData, 0, noOfDays)
 
 	if err = workflowsCursor.All(context.Background(), &chaosWorkflowRuns); err != nil {
 		fmt.Println(err)
@@ -1098,7 +1098,9 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([][]*model
 
 			day += 1
 		}
-		result = append(result, x)
+		var temp model.HeatmapData
+		temp.Bins = x
+		result = append(result, &temp)
 		week += 1
 
 	}

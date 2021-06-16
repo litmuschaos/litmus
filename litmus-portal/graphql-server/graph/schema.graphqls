@@ -273,7 +273,7 @@ type Query {
     project_id: String!
     workflow_id: String!
     year: Int!
-  ): [[WorkflowRunsData]]! @authorized
+  ): [HeatmapData]! @authorized
 
   getScheduledWorkflowStats(
     project_id: String!

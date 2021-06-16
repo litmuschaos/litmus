@@ -167,6 +167,10 @@ type ComplexityRoot struct {
 		UserName      func(childComplexity int) int
 	}
 
+	HeatmapData struct {
+		Bins func(childComplexity int) int
+	}
+
 	ImageRegistryResponse struct {
 		CreatedAt         func(childComplexity int) int
 		ImageRegistryID   func(childComplexity int) int
@@ -662,7 +666,7 @@ type QueryResolver interface {
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	ListProjects(ctx context.Context) ([]*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
-	GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([][]*model.WorkflowRunsData, error)
+	GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error)
 	GetScheduledWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error)
 	ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error)
 	GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
@@ -1271,6 +1275,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GitConfigResponse.UserName(childComplexity), true
+
+	case "HeatmapData.bins":
+		if e.complexity.HeatmapData.Bins == nil {
+			break
+		}
+
+		return e.complexity.HeatmapData.Bins(childComplexity), true
 
 	case "ImageRegistryResponse.created_at":
 		if e.complexity.ImageRegistryResponse.CreatedAt == nil {
@@ -4110,6 +4121,10 @@ type WorkflowRunsData {
   value: Float!
   workflowRunDetail: WorkflowRunDetails
 }
+
+type HeatmapData {
+  bins: [WorkflowRunsData]!
+}
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
@@ -4619,7 +4634,7 @@ type Query {
     project_id: String!
     workflow_id: String!
     year: Int!
-  ): [[WorkflowRunsData]]! @authorized
+  ): [HeatmapData]! @authorized
 
   getScheduledWorkflowStats(
     project_id: String!
@@ -8794,6 +8809,40 @@ func (ec *executionContext) _GitConfigResponse_SSHPrivateKey(ctx context.Context
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _HeatmapData_bins(ctx context.Context, field graphql.CollectedField, obj *model.HeatmapData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "HeatmapData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Bins, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WorkflowRunsData)
+	fc.Result = res
+	return ec.marshalNWorkflowRunsData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ImageRegistryResponse_image_registry_info(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistryResponse) (ret graphql.Marshaler) {
@@ -14255,10 +14304,10 @@ func (ec *executionContext) _Query_getHeatmapData(ctx context.Context, field gra
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([][]*model.WorkflowRunsData); ok {
+		if data, ok := tmp.([]*model.HeatmapData); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be [][]*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.WorkflowRunsData`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.HeatmapData`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14270,9 +14319,9 @@ func (ec *executionContext) _Query_getHeatmapData(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.([][]*model.WorkflowRunsData)
+	res := resTmp.([]*model.HeatmapData)
 	fc.Result = res
-	return ec.marshalNWorkflowRunsData2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, field.Selections, res)
+	return ec.marshalNHeatmapData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getScheduledWorkflowStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -24387,6 +24436,33 @@ func (ec *executionContext) _GitConfigResponse(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var heatmapDataImplementors = []string{"HeatmapData"}
+
+func (ec *executionContext) _HeatmapData(ctx context.Context, sel ast.SelectionSet, obj *model.HeatmapData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, heatmapDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("HeatmapData")
+		case "bins":
+			out.Values[i] = ec._HeatmapData_bins(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var imageRegistryResponseImplementors = []string{"ImageRegistryResponse"}
 
 func (ec *executionContext) _ImageRegistryResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ImageRegistryResponse) graphql.Marshaler {
@@ -27555,6 +27631,43 @@ func (ec *executionContext) marshalNGitConfigResponse2ᚖgithubᚗcomᚋlitmusch
 	return ec._GitConfigResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNHeatmapData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx context.Context, sel ast.SelectionSet, v []*model.HeatmapData) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOHeatmapData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalID(v)
 }
@@ -28341,7 +28454,7 @@ func (ec *executionContext) marshalNWorkflowRunSortingField2githubᚗcomᚋlitmu
 	return v
 }
 
-func (ec *executionContext) marshalNWorkflowRunsData2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v [][]*model.WorkflowRunsData) graphql.Marshaler {
+func (ec *executionContext) marshalNWorkflowRunsData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v []*model.WorkflowRunsData) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -28365,7 +28478,7 @@ func (ec *executionContext) marshalNWorkflowRunsData2ᚕᚕᚖgithubᚗcomᚋlit
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOWorkflowRunsData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, sel, v[i])
+			ret[i] = ec.marshalOWorkflowRunsData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -28985,6 +29098,17 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	return ec.marshalOFloat2float64(ctx, sel, *v)
 }
 
+func (ec *executionContext) marshalOHeatmapData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx context.Context, sel ast.SelectionSet, v model.HeatmapData) graphql.Marshaler {
+	return ec._HeatmapData(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOHeatmapData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx context.Context, sel ast.SelectionSet, v *model.HeatmapData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._HeatmapData(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalID(v)
 }
@@ -29385,46 +29509,6 @@ func (ec *executionContext) marshalOWorkflowRuns2ᚖgithubᚗcomᚋlitmuschaos�
 
 func (ec *executionContext) marshalOWorkflowRunsData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRunsData) graphql.Marshaler {
 	return ec._WorkflowRunsData(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOWorkflowRunsData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v []*model.WorkflowRunsData) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOWorkflowRunsData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
 }
 
 func (ec *executionContext) marshalOWorkflowRunsData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowRunsData) graphql.Marshaler {

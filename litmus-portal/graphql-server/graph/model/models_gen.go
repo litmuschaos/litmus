@@ -252,6 +252,10 @@ type GitConfigResponse struct {
 	SSHPrivateKey *string   `json:"SSHPrivateKey"`
 }
 
+type HeatmapData struct {
+	Bins []*WorkflowRunsData `json:"bins"`
+}
+
 type ImageRegistryResponse struct {
 	ImageRegistryInfo *ImageRegistry `json:"image_registry_info"`
 	ImageRegistryID   string         `json:"image_registry_id"`
