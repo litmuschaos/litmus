@@ -1070,22 +1070,24 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 
 		lastUpdated := time.Unix(i, 0)
 		date := float64(lastUpdated.Unix())
-		avgRSTemp := (wfRunsInYear[lastUpdated.YearDay()-1].Value) * (float64(wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns))
+		if wfRunsInYear[lastUpdated.YearDay()-1].Value == nil {
+			x := 0.0
+			wfRunsInYear[lastUpdated.YearDay()-1].Value = &x
+		}
+		avgRSTemp := (*wfRunsInYear[lastUpdated.YearDay()-1].Value) * (float64(wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns))
 		wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns += 1
 		wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.DateStamp = date
-		wfRunsInYear[lastUpdated.YearDay()-1].Value = (avgRSTemp + *workflowRun.ResiliencyScore) / (float64(wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns))
+		*wfRunsInYear[lastUpdated.YearDay()-1].Value = (avgRSTemp + *workflowRun.ResiliencyScore) / (float64(wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns))
 	}
 
 	for i := startDay; i > 0; i -= 1 {
-		x := make([]model.WorkflowRunsData, 1, 1)
-		x[0].Value = -1
-		wfRunsInYear = append(x, wfRunsInYear...)
+		x := -1.0
+		wfRunsInYear = append([]model.WorkflowRunsData{{Value: &x, WorkflowRunDetail: nil}}, wfRunsInYear...)
 	}
 
 	for i := endDay; i < 6; i += 1 {
-		var y model.WorkflowRunsData
-		y.Value = -1
-		wfRunsInYear = append(wfRunsInYear, y)
+		y := -1.0
+		wfRunsInYear = append(wfRunsInYear, model.WorkflowRunsData{Value: &y, WorkflowRunDetail: nil})
 	}
 
 	day := 0

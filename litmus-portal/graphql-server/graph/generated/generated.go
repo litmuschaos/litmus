@@ -4118,7 +4118,7 @@ type WorkflowRunDetails {
 }
 
 type WorkflowRunsData {
-  value: Float!
+  value: Float
   workflowRunDetail: WorkflowRunDetails
 }
 
@@ -18295,14 +18295,11 @@ func (ec *executionContext) _WorkflowRunsData_value(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(*float64)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRunsData_workflowRunDetail(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunsData) (ret graphql.Marshaler) {
@@ -26276,9 +26273,6 @@ func (ec *executionContext) _WorkflowRunsData(ctx context.Context, sel ast.Selec
 			out.Values[i] = graphql.MarshalString("WorkflowRunsData")
 		case "value":
 			out.Values[i] = ec._WorkflowRunsData_value(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "workflowRunDetail":
 			out.Values[i] = ec._WorkflowRunsData_workflowRunDetail(ctx, field, obj)
 		default:

@@ -593,7 +593,7 @@ type WorkflowRuns struct {
 }
 
 type WorkflowRunsData struct {
-	Value             float64             `json:"value"`
+	Value             *float64            `json:"value"`
 	WorkflowRunDetail *WorkflowRunDetails `json:"workflowRunDetail"`
 }
 

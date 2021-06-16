@@ -274,7 +274,7 @@ type WorkflowRunDetails {
 }
 
 type WorkflowRunsData {
-  value: Float!
+  value: Float
   workflowRunDetail: WorkflowRunDetails
 }
 
