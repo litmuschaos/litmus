@@ -346,7 +346,19 @@ func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, wo
 }
 
 func (r *queryResolver) GetScheduledWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
+	err := validate.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
 	return analyticsHandler.GetScheduledWorkflowStats(projectID, filter, showWorkflowRuns)
+}
+
+func (r *queryResolver) GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error) {
+	err := validate.ValidateRole(ctx, workflowRunStatsRequest.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return analyticsHandler.GetWorkflowRunStats(workflowRunStatsRequest)
 }
 
 func (r *queryResolver) ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {

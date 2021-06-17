@@ -910,8 +910,11 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	case model.TimeFrequencyWeekly:
 		year, endWeek := now.ISOWeek()
 		for week := endWeek - 3; week <= endWeek; week++ {
+			if week <= 0 {
+				year -= 1
+			}
 			// Storing the timestamp of first day of the ISO week
-			date := float64(ops.FirstDayOfISOWeek(year, week, time.Local).Unix())
+			date := float64(ops.FirstDayOfISOWeek(year, week%53, time.Local).Unix())
 			statsMap[string(week%53)] = model.WorkflowStats{
 				Date:  date * 1000,
 				Value: 0,
@@ -967,45 +970,29 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	return result, nil
 }
 
-func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.HeatmapData, error) {
-	start := time.Date(year, time.January, 1, 0, 00, 00, 0, time.Local)
-	startTimeStamp := time.Date(year, time.January, 1, 0, 00, 00, 0, time.Local).Unix()
-	endTimeStamp := time.Date(year, time.December, 31, 23, 59, 59, 1e9-1, time.Local).Unix()
-	startDay := (int)(time.Unix(startTimeStamp, 0).Weekday())
-	endDay := (int)(time.Unix(endTimeStamp, 0).Weekday())
-
-	var noOfDays int
-	if time.Unix(endTimeStamp, 0).YearDay() == 366 {
-		noOfDays = 366
-	} else {
-		noOfDays = 365
-	}
-
-	wfRunsInYear := make([]model.WorkflowRunsData, 0, noOfDays)
-	for i := 0; i < noOfDays; i += 1 {
-		var y model.WorkflowRunsData
-		var x model.WorkflowRunDetails
-		x.DateStamp = float64(start.AddDate(0, 0, i).Unix())
-		x.NoOfRuns = 0
-		y.WorkflowRunDetail = &x
-		wfRunsInYear = append(wfRunsInYear, y)
-	}
-
+func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error) {
 	var pipeline mongo.Pipeline
 
 	// Match with projectID
-	matchProjectIDStage := bson.D{
+	matchProjectIdStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", project_id},
+			{"project_id", workflowRunStatsRequest.ProjectID},
 		}},
 	}
+	pipeline = append(pipeline, matchProjectIdStage)
 
-	matchWfIDStage := bson.D{
-		{"$match", bson.D{
-			{"workflow_id", workflow_id},
-		}},
+	// Match the workflowIds from the input array
+	if len(workflowRunStatsRequest.WorkflowIds) != 0 {
+		matchWfIdStage := bson.D{
+			{"$match", bson.D{
+				{"workflow_id", bson.D{
+					{"$in", workflowRunStatsRequest.WorkflowIds},
+				}},
+			}},
+		}
+
+		pipeline = append(pipeline, matchWfIdStage)
 	}
-	pipeline = append(pipeline, matchProjectIDStage, matchWfIDStage)
 
 	includeAllFromWorkflow := bson.D{
 		{"workflow_id", 1},
@@ -1024,87 +1011,169 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 		{"isRemoved", 1},
 	}
 
-	filterWfRunDateStage := bson.D{
+	// Filter the available workflows where isRemoved is false
+	matchWfRunIsRemovedStage := bson.D{
 		{"$project", append(includeAllFromWorkflow,
 			bson.E{Key: "workflow_runs", Value: bson.D{
 				{"$filter", bson.D{
 					{"input", "$workflow_runs"},
 					{"as", "wfRun"},
 					{"cond", bson.D{
-						{"$and", bson.A{
-							bson.D{{"$ne", bson.A{"$$wfRun.phase", "Running"}}},
-							bson.D{{"$lte", bson.A{"$$wfRun.last_updated", strconv.FormatInt(endTimeStamp, 10)}}},
-							bson.D{{"$gte", bson.A{"$$wfRun.last_updated", strconv.FormatInt(startTimeStamp, 10)}}},
-						}},
+						{"$eq", bson.A{"$$wfRun.isRemoved", false}},
 					}},
 				}},
 			}},
 		)},
 	}
+	pipeline = append(pipeline, matchWfRunIsRemovedStage)
 
-	pipeline = append(pipeline, filterWfRunDateStage)
+	// Flatten out the workflow runs
+	unwindStage := bson.D{
+		{"$unwind", bson.D{
+			{"path", "$workflow_runs"},
+		}},
+	}
+	pipeline = append(pipeline, unwindStage)
+
+	// Count all workflowRuns
+	totalWorkflowRuns := bson.A{
+		bson.D{{"$count", "count"}},
+	}
+
+	// Count Succeeded workflowRuns
+	succeededWorkflowRuns := bson.A{
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", model.WorkflowRunStatusSucceeded},
+		}},
+		},
+		bson.D{{"$count", "count"}},
+	}
+
+	// Count Failed workflowRuns
+	failedWorkflowRuns := bson.A{
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", model.WorkflowRunStatusFailed},
+		}},
+		},
+		bson.D{{"$count", "count"}},
+	}
+
+	// Count Running workflowRuns
+	runningWorkflowRuns := bson.A{
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", model.WorkflowRunStatusRunning},
+		}}},
+		bson.D{{"$count", "count"}},
+	}
+
+	// Calculate average resiliency score
+	averageResiliencyScore := bson.A{
+		// Filter out running workflows
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", bson.D{
+				{"$ne", model.WorkflowRunStatusRunning},
+			}},
+		}}},
+
+		// Calculate average
+		bson.D{{"$group", bson.D{
+			{"_id", nil},
+			{"avg", bson.D{
+				{"$avg", "$workflow_runs.resiliency_score"},
+			}},
+		}}},
+	}
+
+	// Calculate passed percentage
+	passedPercentage := bson.A{
+		// Filter out running workflows
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", bson.D{
+				{"$ne", model.WorkflowRunStatusRunning},
+			}},
+		}}},
+
+		// Calculate average
+		bson.D{{"$group", bson.D{
+			{"_id", nil},
+			{"total_experiments_passed", bson.D{
+				{"$sum", "$workflow_runs.experiments_passed"},
+			}},
+			{"total_experiments", bson.D{
+				{"$sum", "$workflow_runs.total_experiments"},
+			}},
+		}}},
+	}
+
+	// Calculate all the stats
+	facetStage := bson.D{
+		{"$facet", bson.D{
+			{"total_workflow_runs", totalWorkflowRuns},
+			{"succeeded_workflow_runs", succeededWorkflowRuns},
+			{"failed_workflow_runs", failedWorkflowRuns},
+			{"running_workflow_runs", runningWorkflowRuns},
+			{"average_resiliency_score", averageResiliencyScore},
+			{"passed_percentage", passedPercentage},
+		}},
+	}
+	pipeline = append(pipeline, facetStage)
 
 	// Call aggregation on pipeline
-	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+	workflowsRunStatsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+	if err != nil {
+		return nil, err
+	}
 
-	var chaosWorkflowRuns []dbSchemaWorkflow.ChaosWorkFlowInput
+	var workflowsRunStats []dbSchemaAnalytics.WorkflowRunStats
 
-	result := make([]*model.HeatmapData, 0, noOfDays)
-
-	if err = workflowsCursor.All(context.Background(), &chaosWorkflowRuns); err != nil {
+	if err = workflowsRunStatsCursor.All(context.Background(), &workflowsRunStats); err != nil || len(workflowsRunStats) == 0 {
 		fmt.Println(err)
-		return result, nil
+		return &model.WorkflowRunStatsResponse{}, nil
 	}
 
-	var WorkflowRuns []*dbSchemaWorkflow.ChaosWorkflowRun
+	totalWorkflowRunsCounter := 0
+	succeededWorkflowRunsCounter := 0
+	failedWorkflowRunsCounter := 0
+	runningWorkflowRunsCounter := 0
+	averageResiliencyScoreCounter := 0.0
+	passedPercentageCounter := 0.0
+	failedPercentageCounter := 0.0
 
-	for _, workflow := range chaosWorkflowRuns {
-		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
-	}
-
-	for _, workflowRun := range WorkflowRuns {
-		i, err := strconv.ParseInt(workflowRun.LastUpdated, 10, 64)
-		if err != nil {
-			fmt.Println("error", err)
+	if len(workflowsRunStats) > 0 {
+		if len(workflowsRunStats[0].TotalWorkflowRuns) > 0 {
+			totalWorkflowRunsCounter = workflowsRunStats[0].TotalWorkflowRuns[0].Count
 		}
-
-		lastUpdated := time.Unix(i, 0)
-		date := float64(lastUpdated.Unix())
-		if wfRunsInYear[lastUpdated.YearDay()-1].Value == nil {
-			x := 0.0
-			wfRunsInYear[lastUpdated.YearDay()-1].Value = &x
+		if len(workflowsRunStats[0].SucceededWorkflowRuns) > 0 {
+			succeededWorkflowRunsCounter = workflowsRunStats[0].SucceededWorkflowRuns[0].Count
 		}
-		avgRSTemp := (*wfRunsInYear[lastUpdated.YearDay()-1].Value) * (float64(wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns))
-		wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns += 1
-		wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.DateStamp = date
-		*wfRunsInYear[lastUpdated.YearDay()-1].Value = (avgRSTemp + *workflowRun.ResiliencyScore) / (float64(wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns))
-	}
-
-	for i := startDay; i > 0; i -= 1 {
-		x := -1.0
-		wfRunsInYear = append([]model.WorkflowRunsData{{Value: &x, WorkflowRunDetail: nil}}, wfRunsInYear...)
-	}
-
-	for i := endDay; i < 6; i += 1 {
-		y := -1.0
-		wfRunsInYear = append(wfRunsInYear, model.WorkflowRunsData{Value: &y, WorkflowRunDetail: nil})
-	}
-
-	day := 0
-	week := 1
-	for i := 0; i < 53; i += 1 {
-		var x []*model.WorkflowRunsData
-
-		for j := 0; j < 7; j += 1 {
-			x = append(x, &wfRunsInYear[day])
-
-			day += 1
+		if len(workflowsRunStats[0].FailedWorkflowRuns) > 0 {
+			failedWorkflowRunsCounter = workflowsRunStats[0].FailedWorkflowRuns[0].Count
 		}
-		var temp model.HeatmapData
-		temp.Bins = x
-		result = append(result, &temp)
-		week += 1
-
+		if len(workflowsRunStats[0].RunningWorkflowRuns) > 0 {
+			runningWorkflowRunsCounter = workflowsRunStats[0].RunningWorkflowRuns[0].Count
+		}
+		if len(workflowsRunStats[0].AverageResiliencyScore) > 0 {
+			averageResiliencyScoreCounter = workflowsRunStats[0].AverageResiliencyScore[0].Avg
+		}
+		if len(workflowsRunStats[0].PassedPercentage) > 0 {
+			experimentStats := workflowsRunStats[0].PassedPercentage[0]
+			passedPercentageCounter = (experimentStats.TotalExperimentsPassed / experimentStats.TotalExperiments) * 100
+		}
+		if len(workflowsRunStats[0].PassedPercentage) > 0 {
+			experimentStats := workflowsRunStats[0].PassedPercentage[0]
+			if experimentStats.TotalExperiments != 0 {
+				failedPercentageCounter = 100 - passedPercentageCounter
+			}
+		}
 	}
-	return result, nil
+
+	return &model.WorkflowRunStatsResponse{
+		TotalWorkflowRuns:      totalWorkflowRunsCounter,
+		SucceededWorkflowRuns:  succeededWorkflowRunsCounter,
+		FailedWorkflowRuns:     failedWorkflowRunsCounter,
+		RunningWorkflowRuns:    runningWorkflowRunsCounter,
+		AverageResiliencyScore: averageResiliencyScoreCounter,
+		PassedPercentage:       passedPercentageCounter,
+		FailedPercentage:       failedPercentageCounter,
+	}, nil
 }

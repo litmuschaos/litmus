@@ -276,10 +276,12 @@ type Query {
   ): [HeatmapData]! @authorized
 
   getScheduledWorkflowStats(
-    project_id: String!
+    project_id: ID!
     filter: TimeFrequency!
     show_workflow_runs: Boolean!
   ): [WorkflowStats]! @authorized
+
+  getWorkflowRunStats(workflowRunStatsRequest: WorkflowRunStatsRequest!): WorkflowRunStatsResponse! @authorized
 
   ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
     @authorized

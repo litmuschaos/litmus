@@ -183,7 +183,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 	pipeline = append(pipeline, matchWfRunIsRemovedStage)
 
-	// Match the pipelineIds from the input array
+	// Match the workflowIds from the input array
 	if len(input.WorkflowRunIds) != 0 {
 		matchWfRunIdStage := bson.D{
 			{"$project", append(includeAllFromWorkflow,
