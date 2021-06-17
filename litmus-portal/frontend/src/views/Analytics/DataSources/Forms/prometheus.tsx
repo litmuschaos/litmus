@@ -1,12 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
-import {
-  FormControlLabel,
-  FormGroup,
-  Icon,
-  Typography,
-} from '@material-ui/core';
-import { InputField, RadioButton } from 'litmus-ui';
+import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
+import { ButtonFilled, InputField, RadioButton } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LIST_DATASOURCE } from '../../../../graphql';
@@ -16,6 +11,8 @@ import {
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../../../models/graphql/dataSourceDetails';
+import { ReactComponent as ExternalLinkIcon } from '../../../../svg/externalLink.svg';
+import { ReactComponent as DocsIcon } from '../../../../svg/prometheusDocs.svg';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   isValidWebUrl,
@@ -226,29 +223,21 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
               />
             </div>
           </div>
-          <div className={classes.iconWithTextDiv}>
-            <img
-              src="/icons/docs.svg"
-              alt="Docs icon"
-              className={classes.inlineIcon}
-            />
+          <ButtonFilled
+            className={classes.button}
+            onClick={() => {
+              window.open(
+                'https://github.com/litmuschaos/litmus/tree/master/monitoring#model-1-optional-prometheus-scrape-config-model'
+              );
+            }}
+            startIcon={<DocsIcon className={classes.inlineIcon} />}
+            endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
+            classes={{ label: classes.buttonLabel }}
+          >
             <Typography className={classes.infoValue}>
               {t('analyticsDashboard.dataSourceForm.docsAndSetup')}
             </Typography>
-            <Icon
-              onClick={() => {
-                window.open(
-                  'https://github.com/litmuschaos/litmus/tree/master/monitoring#model-1-optional-prometheus-scrape-config-model'
-                );
-              }}
-            >
-              <img
-                src="/icons/externalLink.svg"
-                alt="external link"
-                className={classes.linkIcon}
-              />
-            </Icon>
-          </div>
+          </ButtonFilled>
           <div className={classes.horizontalLine} />
           <Typography className={classes.heading}>
             {t('analyticsDashboard.dataSourceForm.endPoint')}
@@ -271,7 +260,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             </div>
             <div className={classes.inputDiv}>
               <InputField
-                label={t('analyticsDashboard.dataSourceForm.Access')}
+                label={t('analyticsDashboard.dataSourceForm.access')}
                 data-cy="inputDataSourceAccess"
                 width="22.5rem"
                 variant={

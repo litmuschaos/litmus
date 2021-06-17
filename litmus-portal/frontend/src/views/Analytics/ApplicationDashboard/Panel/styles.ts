@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.background.paper,
     display: 'grid',
     gridTemplateColumns: '49% 49%',
-    gridGap: theme.spacing(1.75),
+    gridGap: '0.875rem',
     padding: theme.spacing(1, 1, 1, 1.75),
     boxShadow:
       '0px 0.3px 0.9px rgba(0, 0, 0, 0.1), 0px 1.6px 3.6px rgba(0, 0, 0, 0.13)',

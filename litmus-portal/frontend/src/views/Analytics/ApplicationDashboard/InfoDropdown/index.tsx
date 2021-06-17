@@ -1,5 +1,5 @@
-import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
+import { FormControlLabel, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckBox } from '../../../../components/CheckBox';
@@ -7,7 +7,9 @@ import {
   DashboardConfigurationDetails,
   PanelNameAndID,
 } from '../../../../models/dashboardsData';
-import useStyles from './styles';
+import { ReactComponent as ExternalLinkIcon } from '../../../../svg/externalLink.svg';
+import { ReactComponent as PrometheusIcon } from '../../../../svg/prometheus.svg';
+import useStyles, { FormGroupGrid } from './styles';
 
 interface InfoDropdownProps {
   dashboardConfigurationDetails: DashboardConfigurationDetails;
@@ -98,28 +100,19 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'analyticsDashboard.monitoringDashboardPage.infoDropdown.metaData3'
               )}
             </Typography>
-            <div className={classes.iconWithTextDiv}>
-              <img
-                src="/icons/prometheus.svg"
-                alt="data source Icon"
-                className={classes.inlineIcon}
-                style={{ cursor: 'pointer' }}
-              />
+            <ButtonFilled
+              className={classes.button}
+              onClick={() => {
+                window.open(dashboardConfigurationDetails.dataSourceURL);
+              }}
+              startIcon={<PrometheusIcon className={classes.inlineIcon} />}
+              endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
+              classes={{ label: classes.buttonLabel }}
+            >
               <Typography className={classes.infoValue}>
                 {dashboardConfigurationDetails.dataSourceName}
               </Typography>
-              <Icon
-                onClick={() => {
-                  window.open(dashboardConfigurationDetails.dataSourceURL);
-                }}
-              >
-                <img
-                  src="/icons/externalLink.svg"
-                  alt="external link"
-                  className={classes.linkIcon}
-                />
-              </Icon>
-            </div>
+            </ButtonFilled>
           </div>
           <div className={classes.dashboardMetaDataItem}>
             <Typography className={classes.infoKey}>
@@ -138,27 +131,25 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               'analyticsDashboard.monitoringDashboardPage.infoDropdown.subHeading2'
             )}
           </Typography>
-          <div className={classes.checkBoxesContainer}>
-            <FormGroup key="application-group">
-              {applicationsToBeShown.map((application: string) => (
-                <FormControlLabel
-                  control={
-                    <CheckBox
-                      checked={selectedApplications.includes(application)}
-                      onChange={() => handleApplicationSelect(application)}
-                      name={application}
-                    />
-                  }
-                  label={
-                    <Typography className={classes.formControlLabel}>
-                      {application}
-                    </Typography>
-                  }
-                  key={`${application}-application-label`}
-                />
-              ))}
-            </FormGroup>
-          </div>
+          <FormGroupGrid key="application-group">
+            {applicationsToBeShown.map((application: string) => (
+              <FormControlLabel
+                control={
+                  <CheckBox
+                    checked={selectedApplications.includes(application)}
+                    onChange={() => handleApplicationSelect(application)}
+                    name={application}
+                  />
+                }
+                label={
+                  <Typography className={classes.formControlLabel}>
+                    {application}
+                  </Typography>
+                }
+                key={`${application}-application-label`}
+              />
+            ))}
+          </FormGroupGrid>
         </div>
         <div className={classes.infoSectionElement}>
           <Typography className={classes.sectionHeader}>
@@ -166,27 +157,25 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               'analyticsDashboard.monitoringDashboardPage.infoDropdown.subHeading3'
             )}
           </Typography>
-          <div className={classes.checkBoxesContainer}>
-            <FormGroup key="metric-group">
-              {metricsToBeShown.map((metric: PanelNameAndID) => (
-                <FormControlLabel
-                  control={
-                    <CheckBox
-                      checked={selectedMetrics.includes(metric.id)}
-                      onChange={() => handleMetricSelect(metric.id)}
-                      name={metric.name}
-                    />
-                  }
-                  label={
-                    <Typography className={classes.formControlLabel}>
-                      {metric.name}
-                    </Typography>
-                  }
-                  key={`${metric}-metric-label`}
-                />
-              ))}
-            </FormGroup>
-          </div>
+          <FormGroupGrid key="metric-group">
+            {metricsToBeShown.map((metric: PanelNameAndID) => (
+              <FormControlLabel
+                control={
+                  <CheckBox
+                    checked={selectedMetrics.includes(metric.id)}
+                    onChange={() => handleMetricSelect(metric.id)}
+                    name={metric.name}
+                  />
+                }
+                label={
+                  <Typography className={classes.formControlLabel}>
+                    {metric.name}
+                  </Typography>
+                }
+                key={`${metric}-metric-label`}
+              />
+            ))}
+          </FormGroupGrid>
         </div>
       </div>
     </div>

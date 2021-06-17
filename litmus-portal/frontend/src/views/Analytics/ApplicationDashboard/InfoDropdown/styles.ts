@@ -1,4 +1,5 @@
-import { makeStyles } from '@material-ui/core';
+import { createStyles, FormGroup, makeStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,13 +47,7 @@ const useStyles = makeStyles((theme) => ({
   infoValue: {
     fontSize: '0.825rem',
     lineHeight: '150%',
-  },
-  checkBoxesContainer: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    maxHeight: '7rem',
-    overflowY: 'scroll',
-    paddingLeft: theme.spacing(1),
+    color: theme.palette.text.primary,
   },
   formControlLabel: {
     fontSize: '0.75rem',
@@ -60,18 +55,42 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: '150%',
   },
   inlineIcon: {
-    margin: theme.spacing(0.5, 1, 0, 0),
-    width: '1rem',
-    height: '1rem',
-  },
-  linkIcon: {
-    margin: theme.spacing(0, 0, 0.45, 0.75),
+    margin: theme.spacing(0.25, 0),
     width: '1rem',
     height: '1rem',
   },
   iconWithTextDiv: {
     display: 'flex',
+    gap: '0.5rem',
+  },
+  button: {
+    background: 'none',
+    boxShadow: 'none',
+    minWidth: 0,
+    minHeight: 0,
+    padding: 0,
+    '&:hover': {
+      background: 'none',
+      boxShadow: 'none',
+      cursor: 'pointer !important',
+    },
+  },
+  buttonLabel: {
+    justifyContent: 'flex-start',
+    marginLeft: theme.spacing(0.5),
   },
 }));
+
+export const FormGroupGrid = withStyles((theme) =>
+  createStyles({
+    root: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      maxHeight: '7rem',
+      overflowY: 'scroll',
+      paddingLeft: theme.spacing(1),
+    },
+  })
+)(FormGroup);
 
 export default useStyles;

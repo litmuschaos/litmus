@@ -49,6 +49,10 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(7.5),
   },
 
+  flexEnd: {
+    justifyContent: 'flex-end',
+  },
+
   saveButton: {
     display: 'flex',
   },

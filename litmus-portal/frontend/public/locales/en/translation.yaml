@@ -367,14 +367,6 @@ analyticsDashboard:
     of2: of 2
     saveChanges: Save changes
     next: Next
-    modalHeadingSuccessAdd: A new data source is successfully connected
-    modalHeadingSuccessConfigure: Data source information is successfully updated
-    modalHeadingFailed: There was a problem with connecting your data source
-    modalBodySuccessAdd: You will see the data source connected in the data source table.
-    modalBodySuccessConfigure: You will see the data source information updated in the data source table.
-    modalBodyFailed: Try back again or check your entered details.
-    modalActionsBack: Back to Data Source
-    modalActionsTryAgain: Try Again
     general: General
     generalInfo: Provide a name and choose the data source type
     name: Name

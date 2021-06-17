@@ -165,16 +165,6 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
         onClose={() => {
           onClose();
         }}
-        modalActions={
-          <ButtonOutlined
-            className={classes.closeButton}
-            onClick={() => {
-              onClose();
-            }}
-          >
-            &#x2715;
-          </ButtonOutlined>
-        }
         width="45%"
         height="fit-content"
       >

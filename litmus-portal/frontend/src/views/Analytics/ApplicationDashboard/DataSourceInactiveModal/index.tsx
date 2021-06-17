@@ -33,16 +33,6 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
       onClose={() => {
         history.goBack();
       }}
-      modalActions={
-        <ButtonOutlined
-          className={classes.closeButton}
-          onClick={() => {
-            history.goBack();
-          }}
-        >
-          &#x2715;
-        </ButtonOutlined>
-      }
       width="60%"
       height="fit-content"
     >

@@ -63,21 +63,28 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inlineIcon: {
-    margin: theme.spacing(0.5, 1, 0, 0),
-    width: '1rem',
-    height: '1rem',
+    margin: theme.spacing(0.25, 0),
+    width: '1.25rem',
+    height: '1.25rem',
   },
 
-  linkIcon: {
-    margin: theme.spacing(0, 0, 0.45, 0.75),
-    width: '1rem',
-    height: '1rem',
-    cursor: 'pointer',
-  },
-
-  iconWithTextDiv: {
-    display: 'flex',
+  button: {
+    background: 'none',
+    boxShadow: 'none',
+    minWidth: 0,
+    minHeight: 0,
+    padding: 0,
     margin: theme.spacing(1.5, 0, 0, 2),
+    '&:hover': {
+      background: 'none',
+      boxShadow: 'none',
+      cursor: 'pointer !important',
+    },
+  },
+
+  buttonLabel: {
+    justifyContent: 'flex-start',
+    marginLeft: theme.spacing(0.5),
   },
 
   infoValue: {
