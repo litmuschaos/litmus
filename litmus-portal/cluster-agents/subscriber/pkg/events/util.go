@@ -31,7 +31,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	}
 	if nodeStatus.StartedAt.Unix() > crd.ObjectMeta.CreationTimestamp.Unix() {
 		logrus.Errorf("chaosengine resource older than current events node | workflow time : %v | engine time : %v", nodeStatus.StartedAt.Unix(), crd.ObjectMeta.CreationTimestamp.Unix())
-		return nil, errors.New("chaosengine resource older than current events node")
+		return nil, nil
 	}
 	cd.ProbeSuccessPercentage = "0"
 	cd.FailStep = ""
