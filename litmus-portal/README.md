@@ -17,7 +17,7 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 ## **Installation**
 
 #### Applying k8s manifest
-> Litmus-2.0.0-Beta7 (Stable)
+> Litmus-2.0.0-Beta8 (Stable)
 ```bash
 kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
@@ -80,11 +80,11 @@ Note: Default `username: admin` and `password: litmus`
 
 Litmus-Portal provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
-View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)
+View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)</b>
 
 ### **Uninstallation**
 
-> Litmus-2.0.0-Beta7 (Stable)
+> Litmus-2.0.0-Beta8 (Stable)
 ```bash
 kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
@@ -108,20 +108,6 @@ kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.ym
 ### Build custom images
 
 - To build custom docker images for portal component refer the [build image guide](./BUILD_IMAGE.md).
-
-### **Tech Stack**
-
--   Frontend
-    -   TypeScript
-    -   JavaScript
-    -   ReactJS
-    -   Apollo GraphQL client
-    -   MaterialUI
--   Backend
-    -   GoLang
-    -   GQLGEN GraphQL Server
--   Database
-    -   MongoDB
 
 ##### **Additional information**
 
