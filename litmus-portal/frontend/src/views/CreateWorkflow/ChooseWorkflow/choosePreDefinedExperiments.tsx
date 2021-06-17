@@ -144,7 +144,7 @@ const ChoosePreDefinedExperiments = () => {
                 {t('createWorkflow.chooseWorkflow.selectMyHub')}
               </InputLabel>
               <Select
-                data-cy="myHubDropDown"
+                data-cy="selectPreDefinedMyHub"
                 value={selectedHub}
                 onChange={(e) => {
                   handleMyHubChange(e);
@@ -153,12 +153,10 @@ const ChoosePreDefinedExperiments = () => {
                 MenuProps={MenuProps}
               >
                 {availableHubs.map((hubs) => (
-                  <MenuItem
-                    key={hubs.HubName}
-                    data-cy="hubOption"
-                    value={hubs.HubName}
-                  >
-                    {hubs.HubName}
+                  <MenuItem key={hubs.HubName} value={hubs.HubName}>
+                    <Typography data-cy="PreDefinedHubOption">
+                      {hubs.HubName}
+                    </Typography>
                   </MenuItem>
                 ))}
               </Select>
@@ -206,32 +204,47 @@ const ChoosePreDefinedExperiments = () => {
               data-cy="PredefinedWorkflowsRadioGroup"
               onChange={handleChange}
             >
-              {filteredPreDefinedWorkflows?.map((wfData) => (
-                <LitmusCard
-                  width="100%"
-                  height="5rem"
-                  key={wfData}
-                  borderColor={palette.border.main}
-                  className={classes.predefinedWorkflowCard}
-                >
-                  <RadioButton value={wfData}>
-                    {/* Wrap the entire body with 100% width to divide into 40-60 */}
-                    <div id="body">
-                      {/* Left Div => Icon + Name of Workflow */}
-                      <div id="left-div">
-                        <img
-                          className={classes.experimentIcon}
-                          src={`${config.grahqlEndpoint}/icon/${selectedProjectID}/${selectedHub}/predefined/${wfData}.png`}
-                          alt="Experiment Icon"
-                        />
-                        <Typography className={classes.predefinedWorkflowName}>
-                          {wfData}
-                        </Typography>
+              {filteredPreDefinedWorkflows?.length > 0 ? (
+                filteredPreDefinedWorkflows?.map((wfData) => (
+                  <LitmusCard
+                    width="100%"
+                    height="5rem"
+                    key={wfData}
+                    borderColor={palette.border.main}
+                    className={classes.predefinedWorkflowCard}
+                  >
+                    <RadioButton value={wfData}>
+                      {/* Wrap the entire body with 100% width to divide into 40-60 */}
+                      <div id="body">
+                        {/* Left Div => Icon + Name of Workflow */}
+                        <div id="left-div">
+                          <img
+                            className={classes.experimentIcon}
+                            src={`${config.grahqlEndpoint}/icon/${selectedProjectID}/${selectedHub}/predefined/${wfData}.png`}
+                            alt="Experiment Icon"
+                          />
+                          <Typography
+                            className={classes.predefinedWorkflowName}
+                          >
+                            {wfData}
+                          </Typography>
+                        </div>
                       </div>
-                    </div>
-                  </RadioButton>
-                </LitmusCard>
-              ))}
+                    </RadioButton>
+                  </LitmusCard>
+                ))
+              ) : (
+                <div className={classes.noTemplatesDiv}>
+                  <Typography className={classes.noTemplatesText}>
+                    <strong>
+                      {t('createWorkflow.chooseWorkflow.noPredefined')}
+                    </strong>
+                  </Typography>
+                  <Typography className={classes.noTemplatesDesc}>
+                    {t('createWorkflow.chooseWorkflow.searchTerm')}
+                  </Typography>
+                </div>
+              )}
             </RadioGroup>
           )}
         </div>
