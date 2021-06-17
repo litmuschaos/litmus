@@ -14,6 +14,7 @@ import {
   PanelGroupDetails,
   PromQueryDetails,
 } from '../../../../../../models/dashboardsData';
+import { PanelOption } from '../../../../../../models/graphql/dashboardsDetails';
 import {
   PrometheusSeriesListQueryVars,
   PrometheusSeriesListResponse,
@@ -205,9 +206,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
     setPanelGroupsList(newPanelGroupOptions);
   };
 
-  const handleCreatePanel = () => {
-    const existingPanels: PanelDetails[] =
-      dashboardDetails.selectedPanels ?? [];
+  const getNewPanel = () => {
     const newPanel: PanelDetails = {
       panel_id: '',
       panel_group_id: '',
@@ -237,6 +236,14 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       x_axis_down: '',
       unit: '',
     };
+
+    return newPanel;
+  };
+
+  const handleCreatePanel = () => {
+    const existingPanels: PanelDetails[] =
+      dashboardDetails.selectedPanels ?? [];
+    const newPanel = getNewPanel();
     existingPanels.push(newPanel);
     setDashboardDetails({
       ...dashboardDetails,
@@ -353,9 +360,12 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       dashboardDetails.selectedPanels ?? [];
     let panelGroupList: PanelGroupDetails[] = [];
     if (configure) {
-      panelGroupList = dashboardVars.panelGroups ?? [];
+      panelGroupList = dashboardVars.panelGroupMap ?? [];
     } else {
-      panelGroupList = selectedDashboard.dashboardJSON.panelGroups;
+      panelGroupList =
+        dashboardVars.dashboardTypeID !== 'custom'
+          ? selectedDashboard.dashboardJSON.panelGroups
+          : [];
     }
     panelGroupList.forEach((panelGroup) => {
       panelGroup.panels.forEach((selectedPanel) => {
@@ -363,14 +373,32 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
           configure &&
           selectedPanel.panel_id === existingPanels[index].panel_id
         ) {
+          const existingPromQueries: PromQueryDetails[] = [];
+          selectedPanel.prom_queries.forEach((promQuery) => {
+            existingPromQueries.push({
+              hidden: false,
+              queryid: promQuery.queryid,
+              prom_query_name: promQuery.prom_query_name,
+              legend: promQuery.legend,
+              resolution: promQuery.resolution,
+              minstep: promQuery.minstep,
+              line: promQuery.line,
+              close_area: promQuery.close_area,
+            });
+          });
+          const existingPanelOptions: PanelOption = {
+            points: selectedPanel.panel_options.points,
+            grids: selectedPanel.panel_options.grids,
+            left_axis: selectedPanel.panel_options.left_axis,
+          };
           existingPanels[index] = {
             panel_id: selectedPanel.panel_id ?? '',
             panel_group_id: panelGroup.panel_group_id ?? '',
             created_at: selectedPanel.created_at ?? '',
             panel_group_name: panelGroup.panel_group_name,
             ds_url: dashboardVars.dataSourceURL ?? '',
-            prom_queries: selectedPanel.prom_queries,
-            panel_options: selectedPanel.panel_options,
+            prom_queries: existingPromQueries,
+            panel_options: existingPanelOptions,
             panel_name: selectedPanel.panel_name,
             y_axis_left: selectedPanel.y_axis_left,
             y_axis_right: selectedPanel.y_axis_right,
@@ -408,6 +436,9 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
         }
       });
     });
+    if (!configure && dashboardVars.dashboardTypeID === 'custom') {
+      existingPanels[index] = getNewPanel();
+    }
     setDashboardDetails({
       ...dashboardDetails,
       selectedPanels: existingPanels,
@@ -446,13 +477,18 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
           scrollButtons="auto"
         >
           {dashboardDetails.selectedPanels?.map((panel, index) => (
-            <StyledTab label={panel.panel_name} {...a11yProps(index)} />
+            <StyledTab
+              label={panel.panel_name}
+              {...a11yProps(index)}
+              key={`tab-${panel.panel_group_name}-${panel.panel_name}`}
+            />
           ))}
           <StyledTab
             label={t(
               'analyticsDashboard.applicationDashboards.tuneTheQueries.addMetric'
             )}
             {...a11yProps(dashboardDetails.selectedPanels?.length)}
+            key="tab-addMetric"
           />
         </Tabs>
       </AppBar>

@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0, 0, 0.45, 0.75),
     width: '1rem',
     height: '1rem',
+    cursor: 'pointer',
   },
 
   iconWithTextDiv: {

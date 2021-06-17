@@ -564,21 +564,10 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                     )}
                   </InputLabel>
                   <Select
-                    value={
-                      localQuery.line
-                        ? t(
-                            'analyticsDashboard.applicationDashboards.tuneTheQueries.lineGraph'
-                          )
-                        : t(
-                            'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'
-                          )
-                    }
+                    value={localQuery.line ? 'Line graph' : 'Area graph'}
                     onChange={(event) => {
                       const line =
-                        (event.target.value as string) ===
-                        t(
-                          'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'
-                        );
+                        (event.target.value as string) === 'Line graph';
                       setLocalQuery({
                         ...localQuery,
                         line,
@@ -595,9 +584,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                       key={`${t(
                         'analyticsDashboard.applicationDashboards.tuneTheQueries.lineGraph'
                       )}`}
-                      value={t(
-                        'analyticsDashboard.applicationDashboards.tuneTheQueries.lineGraph'
-                      )}
+                      value="Line graph"
                     >
                       {t(
                         'analyticsDashboard.applicationDashboards.tuneTheQueries.lineGraph'
@@ -607,9 +594,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                       key={`${t(
                         'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'
                       )}`}
-                      value={t(
-                        'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'
-                      )}
+                      value="Area graph"
                     >
                       {t(
                         'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'

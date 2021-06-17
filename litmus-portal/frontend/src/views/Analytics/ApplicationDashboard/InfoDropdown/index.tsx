@@ -103,6 +103,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 src="/icons/prometheus.svg"
                 alt="data source Icon"
                 className={classes.inlineIcon}
+                style={{ cursor: 'pointer' }}
               />
               <Typography className={classes.infoValue}>
                 {dashboardConfigurationDetails.dataSourceName}
