@@ -1134,6 +1134,7 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 	runningWorkflowRunsCounter := 0
 	averageResiliencyScoreCounter := 0.0
 	passedPercentageCounter := 0.0
+	failedPercentageCounter := 0.0
 
 	if len(workflowsRunStats) > 0 {
 		if len(workflowsRunStats[0].TotalWorkflowRuns) > 0 {
@@ -1155,6 +1156,12 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 			experimentStats := workflowsRunStats[0].PassedPercentage[0]
 			passedPercentageCounter = (experimentStats.TotalExperimentsPassed / experimentStats.TotalExperiments) * 100
 		}
+		if len(workflowsRunStats[0].PassedPercentage) > 0 {
+			experimentStats := workflowsRunStats[0].PassedPercentage[0]
+			if experimentStats.TotalExperiments != 0 {
+				failedPercentageCounter = 100 - passedPercentageCounter
+			}
+		}
 	}
 
 	return &model.WorkflowRunStatsResponse{
@@ -1164,6 +1171,6 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 		RunningWorkflowRuns:    runningWorkflowRunsCounter,
 		AverageResiliencyScore: averageResiliencyScoreCounter,
 		PassedPercentage:       passedPercentageCounter,
-		FailedPercentage:       100 - passedPercentageCounter,
+		FailedPercentage:       failedPercentageCounter,
 	}, nil
 }
