@@ -43,7 +43,7 @@ export const WORKFLOW_DETAILS = gql`
 export const WORKFLOW_STATS = gql`
   query getScheduledWorkflowStats(
     $filter: TimeFrequency!
-    $project_id: String!
+    $project_id: ID!
     $show_workflow_runs: Boolean!
   ) {
     getScheduledWorkflowStats(
