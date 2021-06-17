@@ -461,6 +461,11 @@ type ComplexityRoot struct {
 		WorkflowRunID     func(childComplexity int) int
 	}
 
+	WorkflowRunDetails struct {
+		DateStamp func(childComplexity int) int
+		NoOfRuns  func(childComplexity int) int
+	}
+
 	WorkflowRunStatsResponse struct {
 		AverageResiliencyScore func(childComplexity int) int
 		FailedPercentage       func(childComplexity int) int
@@ -3192,6 +3197,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRun.WorkflowRunID(childComplexity), true
 
+	case "WorkflowRunDetails.date_stamp":
+		if e.complexity.WorkflowRunDetails.DateStamp == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunDetails.DateStamp(childComplexity), true
+
+	case "WorkflowRunDetails.no_of_runs":
+		if e.complexity.WorkflowRunDetails.NoOfRuns == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunDetails.NoOfRuns(childComplexity), true
+
 	case "WorkflowRunStatsResponse.average_resiliency_score":
 		if e.complexity.WorkflowRunStatsResponse.AverageResiliencyScore == nil {
 			break
@@ -4166,6 +4185,19 @@ type WorkflowStats {
   value: Int!
 }
 
+type WorkflowRunDetails {
+  no_of_runs: Int!
+  date_stamp: Float!
+}
+
+type WorkflowRunsData {
+  value: Float
+  workflowRunDetail: WorkflowRunDetails
+}
+
+type HeatmapData {
+  bins: [WorkflowRunsData]!
+}
 input WorkflowRunStatsRequest {
   project_id: ID!
   workflow_ids: [ID]
@@ -4179,7 +4211,8 @@ type WorkflowRunStatsResponse {
   average_resiliency_score: Float!
   passed_percentage: Float!
   failed_percentage: Float!
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
@@ -18232,6 +18265,74 @@ func (ec *executionContext) _WorkflowRun_isRemoved(ctx context.Context, field gr
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkflowRunDetails_no_of_runs(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunDetails) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoOfRuns, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunDetails_date_stamp(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunDetails) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DateStamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkflowRunStatsResponse_total_workflow_runs(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18296,8 +18397,11 @@ func (ec *executionContext) _WorkflowRunStatsResponse_succeeded_workflow_runs(ct
 		return graphql.Null
 	}
 	res := resTmp.(int)
+	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
 
+func (ec *executionContext) _WorkflowRunStatsResponse_failed_workflow_runs(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -26527,6 +26631,38 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var workflowRunDetailsImplementors = []string{"WorkflowRunDetails"}
+
+func (ec *executionContext) _WorkflowRunDetails(ctx context.Context, sel ast.SelectionSet, obj *model.WorkflowRunDetails) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workflowRunDetailsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkflowRunDetails")
+		case "no_of_runs":
+			out.Values[i] = ec._WorkflowRunDetails_no_of_runs(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "date_stamp":
+			out.Values[i] = ec._WorkflowRunDetails_date_stamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var workflowRunStatsResponseImplementors = []string{"WorkflowRunStatsResponse"}
 
 func (ec *executionContext) _WorkflowRunStatsResponse(ctx context.Context, sel ast.SelectionSet, obj *model.WorkflowRunStatsResponse) graphql.Marshaler {
@@ -28825,6 +28961,43 @@ func (ec *executionContext) marshalNWorkflowRunStatsResponse2ᚖgithubᚗcomᚋl
 		return graphql.Null
 	}
 	return ec._WorkflowRunStatsResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWorkflowRunsData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v []*model.WorkflowRunsData) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOWorkflowRunsData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) unmarshalNWorkflowSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortingField(ctx context.Context, v interface{}) (model.WorkflowSortingField, error) {

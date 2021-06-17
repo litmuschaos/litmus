@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-// Component styles
 const useStyles = makeStyles((theme) => ({
   headingSection: {
     display: 'flex',
@@ -19,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
   sectionHeading: {
     fontSize: '1.5rem',
     fontWeight: 500,
+    flexGrow: 1,
   },
   infoStatsHeader: {
     padding: theme.spacing(3.5),
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     },
     // Regularity info stat section fix for smaller screens
     '& div:last-child': {
-      width: '326px',
+      width: '320px',
     },
   },
   infoHeader: {
@@ -54,6 +54,10 @@ const useStyles = makeStyles((theme) => ({
   heatmapArea: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(4),
+  },
+  heatmapAreaHeading: {
+    display: 'flex',
+    alignItems: 'center',
   },
   heatmap: {
     display: 'grid',

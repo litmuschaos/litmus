@@ -1,10 +1,16 @@
 import { useQuery } from '@apollo/client';
-import { Typography } from '@material-ui/core';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from '@material-ui/core';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, CalendarHeatmap } from 'litmus-ui';
-import React from 'react';
-import { useParams } from 'react-router';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import BackButton from '../../components/Button/BackButton';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -48,6 +54,8 @@ const WorkflowInfoStats: React.FC = () => {
 
   const presentYear = new Date().getFullYear();
 
+  const [year, setYear] = useState<number>(presentYear);
+
   // Apollo query to get the heatmap data
   const { data: heatmapData } = useQuery<HeatmapDataResponse, HeatmapDataVars>(
     GET_HEATMAP_DATA,
@@ -55,11 +63,13 @@ const WorkflowInfoStats: React.FC = () => {
       variables: {
         project_id: projectID,
         workflow_id: workflowRunId,
-        year: presentYear,
+        year,
       },
       fetchPolicy: 'cache-and-network',
     }
   );
+
+  const yearArray = [presentYear, presentYear - 1, presentYear - 2];
 
   return (
     <Scaffold>
@@ -148,7 +158,7 @@ const WorkflowInfoStats: React.FC = () => {
           {/* Column 3 */}
           <div>
             <Typography className={classes.infoHeader}>
-              Total Runs :{' '}
+              Total Runs : {/* Replace with LIST_API */}
               {data?.ListWorkflow.workflows[0].workflow_runs?.length}
             </Typography>
             <Typography>
@@ -186,7 +196,23 @@ const WorkflowInfoStats: React.FC = () => {
 
       {/* HeatMap Area */}
       <div className={classes.heatmapArea}>
-        <Typography className={classes.sectionHeading}>Analytics</Typography>
+        <div className={classes.heatmapAreaHeading}>
+          <Typography className={classes.sectionHeading}>Analytics</Typography>
+          {/* Year selection filter */}
+          <FormControl variant="outlined" focused>
+            <InputLabel />
+            <Select
+              value={year}
+              onChange={(event) => {
+                setYear(event.target.value as number);
+              }}
+            >
+              {yearArray.map((selectedYear) => (
+                <MenuItem value={selectedYear}>{selectedYear}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
         <div className={classes.heatmap}>
           <div style={{ width: '60rem', height: '9rem' }}>
             <CalendarHeatmap
