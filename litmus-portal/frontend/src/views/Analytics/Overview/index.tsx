@@ -311,8 +311,8 @@ const Overview: React.FC = () => {
           heading="Recent Application Dashboards"
           buttonLink="/analytics/dashboard/create"
           buttonImgSrc="./icons/cloudWhite.svg"
-          buttonImgAlt="Add kubernetes dashboard"
-          buttonText="Add kubernetes dashbaord"
+          buttonImgAlt="Add dashboard"
+          buttonText="Add dashbaord"
         >
           {dashboardListLoading ? (
             <Center>

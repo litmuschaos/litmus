@@ -370,6 +370,8 @@ spec:
                                     type: integer
                                   initialDelaySeconds:
                                     type: integer
+                                  stopOnFailure:
+                                    type: boolean
                               mode:
                                 type: string
                                 pattern: ^(SOT|EOT|Edge|Continuous|OnChaos)$
@@ -730,6 +732,7 @@ spec:
                           allowEmptyValue: false
                           minLength: 1
                   securityContext:
+                    x-kubernetes-preserve-unknown-fields: true
                     type: object
                   hostPID:
                     type: boolean
