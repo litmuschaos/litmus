@@ -895,6 +895,7 @@ createWorkflow:
     selectHub: Select a hub and continue with a pre-defined workflow
     noPredefined: No Pre-defined experiments present
     addPredefined: Add a pre-defined workflow to continue scheduling.
+    searchTerm: Enter a correct search term
   reliabilityScore:
     header: Adjust the weights of the experiments in the workflow
     info: You have selected
@@ -1153,6 +1154,9 @@ workflowAgent:
     selectAgent: Select a target Kubernetes cluster to run this workflow
   search:
     placeholder: Search
+  connectAgent: Connect an agent to start scheduling workflows
+  noAgents: You have not connected any agents yet
+  noAgentSearch: No agents found
 
 workflows:
   browseWorkflows: Browse workflows
