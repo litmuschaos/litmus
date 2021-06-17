@@ -81,11 +81,36 @@ metadata:
   name: chaos-cluster-role
 rules:
   - apiGroups:
-      - "*"
+      - ""
     resources:
-      - "*"
+      - pods
     verbs:
-      - "*"
+      - get
+      - watch
+      - patch
+      - create
+      - delete
+  # logs get/watch are used to get the pods logs for script outputs, and for log archival
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
+      - get
+      - watch
+  - apiGroups:
+      - litmuschaos.io
+    resources:
+      - chaosengines
+      - chaosexperiments
+      - chaosresults
+    verbs:
+      - create
+      - list
+      - delete
+      - get
+      - patch
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
