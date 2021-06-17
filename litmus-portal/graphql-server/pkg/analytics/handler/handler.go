@@ -910,10 +910,10 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	case model.TimeFrequencyWeekly:
 		year, endWeek := now.ISOWeek()
 		for week := endWeek - 3; week <= endWeek; week++ {
-			// Storing the timestamp of first day of the ISO week
 			if week <= 0 {
 				year -=1
 			}
+			// Storing the timestamp of first day of the ISO week
 			date := float64(ops.FirstDayOfISOWeek(year, week % 53, time.Local).Unix())
 			statsMap[string(week % 53)] = model.WorkflowStats{
 				Date:  date * 1000,
