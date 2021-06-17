@@ -902,7 +902,7 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 		for monthsAgo := now.AddDate(0, -5, 0); monthsAgo.Before(now) || monthsAgo.Equal(now); monthsAgo = monthsAgo.AddDate(0, 1, 0) {
 			// Storing the timestamp of first day of the monthsAgo
 			date := float64(time.Date(monthsAgo.Year(), monthsAgo.Month(), 1, 0, 0, 0, 0, time.Local).Unix())
-			statsMap[string(int(monthsAgo.Month())%12)] = model.WorkflowStats{
+			statsMap[string(int(monthsAgo.Month()) % 12)] = model.WorkflowStats{
 				Date:  date * 1000,
 				Value: 0,
 			}
@@ -911,8 +911,11 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 		year, endWeek := now.ISOWeek()
 		for week := endWeek - 3; week <= endWeek; week++ {
 			// Storing the timestamp of first day of the ISO week
-			date := float64(ops.FirstDayOfISOWeek(year, week, time.Local).Unix())
-			statsMap[string(week%53)] = model.WorkflowStats{
+			if week <= 0 {
+				year -=1
+			}
+			date := float64(ops.FirstDayOfISOWeek(year, week % 53, time.Local).Unix())
+			statsMap[string(week % 53)] = model.WorkflowStats{
 				Date:  date * 1000,
 				Value: 0,
 			}
