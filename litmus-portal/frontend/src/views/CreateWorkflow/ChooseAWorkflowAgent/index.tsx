@@ -1,6 +1,12 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { RadioGroup, Typography, useTheme } from '@material-ui/core';
-import { LitmusCard, RadioButton, Search } from 'litmus-ui';
+import {
+  ButtonOutlined,
+  LitmusCard,
+  Modal,
+  RadioButton,
+  Search,
+} from 'litmus-ui';
 import React, {
   forwardRef,
   useEffect,
@@ -9,6 +15,8 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import { AgentDeployModal } from '../../../components/AgentDeployModal';
 import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
@@ -48,6 +56,12 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   const [search, setSearch] = useState<string | null>(null);
   const [currentlySelectedAgent, setCurrentlySelectedAgent] =
     useState<string>('');
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const toggleModel = () => {
+    setModalOpen(!modalOpen);
+  };
 
   const [getRegistryData] = useLazyQuery(GET_IMAGE_REGISTRY, {
     fetchPolicy: 'network-only',
@@ -214,38 +228,82 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
         />
 
         {/* Cluster Data */}
-        <RadioGroup
-          name="Agent Selection"
-          value={currentlySelectedAgent}
-          onChange={(e) => handleChange(e)}
-        >
-          <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
-            {filteredCluster.map((cluster) => (
-              <LitmusCard
-                key={cluster.cluster_id}
-                glow={currentlySelectedAgent === cluster.cluster_id}
-                width="40%"
-                height="4rem"
-                className={classes.litmusCard}
-                borderColor={
-                  currentlySelectedAgent === cluster.cluster_id
-                    ? palette.primary.main
-                    : palette.border.main
+        {clusterData.length === 0 ? (
+          <div className={classes.noAgents}>
+            <Typography className={classes.noAgentsText}>
+              <strong>{t('workflowAgent.noAgents')}</strong>
+            </Typography>
+            <Typography className={classes.connectAgent}>
+              {t('workflowAgent.connectAgent')}
+            </Typography>
+            <div className={classes.connectBtn}>
+              <ButtonOutlined
+                onClick={toggleModel}
+                className={classes.infoContainerButton}
+              >
+                <Typography>
+                  <ArrowUpwardIcon />
+                  {t('homeViews.agentConfiguredHome.agentInfoContainer.deploy')}
+                </Typography>
+              </ButtonOutlined>
+
+              <Modal
+                height="50%"
+                width="50%"
+                open={modalOpen}
+                onClose={toggleModel}
+                modalActions={
+                  <ButtonOutlined onClick={toggleModel}>
+                    &#x2715;
+                  </ButtonOutlined>
                 }
               >
-                <RadioButton
-                  value={cluster.cluster_id}
-                  className={classes.agentRadioButton}
-                >
-                  <div>
-                    <Typography>{cluster.cluster_name}</Typography>
-                    <Typography>{cluster.cluster_id}</Typography>
-                  </div>
-                </RadioButton>
-              </LitmusCard>
-            ))}
+                <AgentDeployModal handleClose={toggleModel} />
+              </Modal>
+            </div>
           </div>
-        </RadioGroup>
+        ) : (
+          <RadioGroup
+            name="Agent Selection"
+            value={currentlySelectedAgent}
+            onChange={(e) => handleChange(e)}
+          >
+            <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
+              {filteredCluster?.length > 0 ? (
+                filteredCluster.map((cluster) => (
+                  <LitmusCard
+                    key={cluster.cluster_id}
+                    glow={currentlySelectedAgent === cluster.cluster_id}
+                    width="40%"
+                    height="4rem"
+                    className={classes.litmusCard}
+                    borderColor={
+                      currentlySelectedAgent === cluster.cluster_id
+                        ? palette.primary.main
+                        : palette.border.main
+                    }
+                  >
+                    <RadioButton
+                      value={cluster.cluster_id}
+                      className={classes.agentRadioButton}
+                    >
+                      <div>
+                        <Typography>{cluster.cluster_name}</Typography>
+                        <Typography>{cluster.cluster_id}</Typography>
+                      </div>
+                    </RadioButton>
+                  </LitmusCard>
+                ))
+              ) : (
+                <div className={classes.noAgentsText}>
+                  <Typography>
+                    <strong>{t('workflowAgent.noAgentSearch')}</strong>
+                  </Typography>
+                </div>
+              )}
+            </div>
+          </RadioGroup>
+        )}
       </div>
     </div>
   );

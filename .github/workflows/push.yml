@@ -9,7 +9,7 @@ on:
 defaults:
   run:
     working-directory: litmus-portal
-    shell: bash  
+    shell: bash
 
 jobs:
   backend-checks:
@@ -53,7 +53,7 @@ jobs:
           echo export FRONTEND_IMAGE="litmusportal-frontend" >> env-vars
           echo export SUBSCRIBER_IMAGE="litmusportal-subscriber" >> env-vars
           echo export EVENT_TRACKER="litmusportal-event-tracker" >> env-vars
-          
+
       - name: Uploading envs
         uses: actions/upload-artifact@v2
         with:
@@ -95,8 +95,8 @@ jobs:
           REPONAME: ${{ secrets.REPONAME }}
           DIRECTORY: "graphql-server"
         run: |
-            source env-vars
-            make push-portal-component
+          source env-vars
+          make push-portal-component
 
   docker-build-and-push-authentication-server:
     runs-on: ubuntu-latest
@@ -130,7 +130,7 @@ jobs:
           IMAGE_NAME: ${AUTHENTICATION_SERVER_IMAGE}
           IMG_TAG: ${IMG_TAG}
           PLATFORMS: ${{ secrets.PLATFORMS }}
-          REPONAME: ${{ secrets.REPONAME }}         
+          REPONAME: ${{ secrets.REPONAME }}
           DIRECTORY: "authentication"
         run: |
           source env-vars
@@ -168,11 +168,11 @@ jobs:
           IMAGE_NAME: ${SUBSCRIBER_IMAGE}
           IMG_TAG: ${IMG_TAG}
           PLATFORMS: ${{ secrets.PLATFORMS }}
-          REPONAME: ${{ secrets.REPONAME }}         
+          REPONAME: ${{ secrets.REPONAME }}
           DIRECTORY: "cluster-agents/subscriber/"
         run: |
           source env-vars
-          make push-portal-component            
+          make push-portal-component
 
   docker-build-and-push-event-tracker:
     runs-on: ubuntu-latest
@@ -206,13 +206,13 @@ jobs:
           IMAGE_NAME: ${EVENT_TRACKER}
           IMG_TAG: ${IMG_TAG}
           PLATFORMS: ${{ secrets.PLATFORMS }}
-          REPONAME: ${{ secrets.REPONAME }}         
-          DIRECTORY: "cluster-agents/event-tracker/"      
+          REPONAME: ${{ secrets.REPONAME }}
+          DIRECTORY: "cluster-agents/event-tracker/"
         run: |
           source env-vars
-          make 
+          make push-portal-component
 
-  ## TODO: the build time for multiarch frontend image is higher so it is used in release 
+  ## TODO: the build time for multiarch frontend image is higher so it is used in release
   ## builds only need to optimize the build duration and also add it with ci tag
   docker-build-and-push-frontend:
     runs-on: ubuntu-latest
@@ -246,8 +246,8 @@ jobs:
           FRONTEND_IMAGE: ${FRONTEND_IMAGE}
           IMG_TAG: ${IMG_TAG}
           PLATFORMS: ${{ secrets.PLATFORMS }}
-          REPONAME: ${{ secrets.REPONAME }}         
-          timestamp: ${timestamp}         
+          REPONAME: ${{ secrets.REPONAME }}
+          timestamp: ${timestamp}
         run: |
           source env-vars
           timestamp=`date "+%s"`

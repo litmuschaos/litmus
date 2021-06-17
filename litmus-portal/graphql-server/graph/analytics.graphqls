@@ -243,7 +243,7 @@ type panelOptionResponse {
 }
 
 type promQueryResponse {
-  queryid: String!
+  queryid: ID!
   prom_query_name: String
   legend: String
   resolution: String
@@ -254,7 +254,7 @@ type promQueryResponse {
 
 input deleteDSInput {
   force_delete: Boolean!
-  ds_id: String!
+  ds_id: ID!
 }
 
 enum TimeFrequency {
@@ -266,4 +266,19 @@ enum TimeFrequency {
 type WorkflowStats {
   date: Float!
   value: Int!
+}
+
+input WorkflowRunStatsRequest {
+  project_id: ID!
+  workflow_ids: [ID]
+}
+
+type WorkflowRunStatsResponse {
+  total_workflow_runs: Int!
+  succeeded_workflow_runs: Int!
+  failed_workflow_runs: Int!
+  running_workflow_runs: Int!
+  average_resiliency_score: Float!
+  passed_percentage: Float!
+  failed_percentage: Float!
 }

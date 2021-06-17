@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Probes Table
   table: {
-    minWidth: '40.625rem',
+    marginTop: theme.spacing(2.5),
     minHeight: '9rem',
   },
 
