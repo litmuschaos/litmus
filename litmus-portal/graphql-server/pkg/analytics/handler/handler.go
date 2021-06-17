@@ -910,8 +910,11 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	case model.TimeFrequencyWeekly:
 		year, endWeek := now.ISOWeek()
 		for week := endWeek - 3; week <= endWeek; week++ {
+			if week <= 0 {
+				year -= 1
+			}
 			// Storing the timestamp of first day of the ISO week
-			date := float64(ops.FirstDayOfISOWeek(year, week, time.Local).Unix())
+			date := float64(ops.FirstDayOfISOWeek(year, week%53, time.Local).Unix())
 			statsMap[string(week%53)] = model.WorkflowStats{
 				Date:  date * 1000,
 				Value: 0,
@@ -965,4 +968,212 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	sort.SliceStable(result, func(i, j int) bool { return result[i].Date < result[j].Date })
 
 	return result, nil
+}
+
+func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error) {
+	var pipeline mongo.Pipeline
+
+	// Match with projectID
+	matchProjectIdStage := bson.D{
+		{"$match", bson.D{
+			{"project_id", workflowRunStatsRequest.ProjectID},
+		}},
+	}
+	pipeline = append(pipeline, matchProjectIdStage)
+
+	// Match the workflowIds from the input array
+	if len(workflowRunStatsRequest.WorkflowIds) != 0 {
+		matchWfIdStage := bson.D{
+			{"$match", bson.D{
+				{"workflow_id", bson.D{
+					{"$in", workflowRunStatsRequest.WorkflowIds},
+				}},
+			}},
+		}
+
+		pipeline = append(pipeline, matchWfIdStage)
+	}
+
+	includeAllFromWorkflow := bson.D{
+		{"workflow_id", 1},
+		{"workflow_name", 1},
+		{"workflow_manifest", 1},
+		{"cronSyntax", 1},
+		{"workflow_description", 1},
+		{"weightages", 1},
+		{"isCustomWorkflow", 1},
+		{"updated_at", 1},
+		{"created_at", 1},
+		{"project_id", 1},
+		{"cluster_id", 1},
+		{"cluster_name", 1},
+		{"cluster_type", 1},
+		{"isRemoved", 1},
+	}
+
+	// Filter the available workflows where isRemoved is false
+	matchWfRunIsRemovedStage := bson.D{
+		{"$project", append(includeAllFromWorkflow,
+			bson.E{Key: "workflow_runs", Value: bson.D{
+				{"$filter", bson.D{
+					{"input", "$workflow_runs"},
+					{"as", "wfRun"},
+					{"cond", bson.D{
+						{"$eq", bson.A{"$$wfRun.isRemoved", false}},
+					}},
+				}},
+			}},
+		)},
+	}
+	pipeline = append(pipeline, matchWfRunIsRemovedStage)
+
+	// Flatten out the workflow runs
+	unwindStage := bson.D{
+		{"$unwind", bson.D{
+			{"path", "$workflow_runs"},
+		}},
+	}
+	pipeline = append(pipeline, unwindStage)
+
+	// Count all workflowRuns
+	totalWorkflowRuns := bson.A{
+		bson.D{{"$count", "count"}},
+	}
+
+	// Count Succeeded workflowRuns
+	succeededWorkflowRuns := bson.A{
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", model.WorkflowRunStatusSucceeded},
+		}},
+		},
+		bson.D{{"$count", "count"}},
+	}
+
+	// Count Failed workflowRuns
+	failedWorkflowRuns := bson.A{
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", model.WorkflowRunStatusFailed},
+		}},
+		},
+		bson.D{{"$count", "count"}},
+	}
+
+	// Count Running workflowRuns
+	runningWorkflowRuns := bson.A{
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", model.WorkflowRunStatusRunning},
+		}}},
+		bson.D{{"$count", "count"}},
+	}
+
+	// Calculate average resiliency score
+	averageResiliencyScore := bson.A{
+		// Filter out running workflows
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", bson.D{
+				{"$ne", model.WorkflowRunStatusRunning},
+			}},
+		}}},
+
+		// Calculate average
+		bson.D{{"$group", bson.D{
+			{"_id", nil},
+			{"avg", bson.D{
+				{"$avg", "$workflow_runs.resiliency_score"},
+			}},
+		}}},
+	}
+
+	// Calculate passed percentage
+	passedPercentage := bson.A{
+		// Filter out running workflows
+		bson.D{{"$match", bson.D{
+			{"workflow_runs.phase", bson.D{
+				{"$ne", model.WorkflowRunStatusRunning},
+			}},
+		}}},
+
+		// Calculate average
+		bson.D{{"$group", bson.D{
+			{"_id", nil},
+			{"total_experiments_passed", bson.D{
+				{"$sum", "$workflow_runs.experiments_passed"},
+			}},
+			{"total_experiments", bson.D{
+				{"$sum", "$workflow_runs.total_experiments"},
+			}},
+		}}},
+	}
+
+	// Calculate all the stats
+	facetStage := bson.D{
+		{"$facet", bson.D{
+			{"total_workflow_runs", totalWorkflowRuns},
+			{"succeeded_workflow_runs", succeededWorkflowRuns},
+			{"failed_workflow_runs", failedWorkflowRuns},
+			{"running_workflow_runs", runningWorkflowRuns},
+			{"average_resiliency_score", averageResiliencyScore},
+			{"passed_percentage", passedPercentage},
+		}},
+	}
+	pipeline = append(pipeline, facetStage)
+
+	// Call aggregation on pipeline
+	workflowsRunStatsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	var workflowsRunStats []dbSchemaAnalytics.WorkflowRunStats
+
+	if err = workflowsRunStatsCursor.All(context.Background(), &workflowsRunStats); err != nil || len(workflowsRunStats) == 0 {
+		fmt.Println(err)
+		return &model.WorkflowRunStatsResponse{}, nil
+	}
+
+	totalWorkflowRunsCounter := 0
+	succeededWorkflowRunsCounter := 0
+	failedWorkflowRunsCounter := 0
+	runningWorkflowRunsCounter := 0
+	averageResiliencyScoreCounter := 0.0
+	passedPercentageCounter := 0.0
+	failedPercentageCounter := 0.0
+
+	if len(workflowsRunStats) > 0 {
+		if len(workflowsRunStats[0].TotalWorkflowRuns) > 0 {
+			totalWorkflowRunsCounter = workflowsRunStats[0].TotalWorkflowRuns[0].Count
+		}
+		if len(workflowsRunStats[0].SucceededWorkflowRuns) > 0 {
+			succeededWorkflowRunsCounter = workflowsRunStats[0].SucceededWorkflowRuns[0].Count
+		}
+		if len(workflowsRunStats[0].FailedWorkflowRuns) > 0 {
+			failedWorkflowRunsCounter = workflowsRunStats[0].FailedWorkflowRuns[0].Count
+		}
+		if len(workflowsRunStats[0].RunningWorkflowRuns) > 0 {
+			runningWorkflowRunsCounter = workflowsRunStats[0].RunningWorkflowRuns[0].Count
+		}
+		if len(workflowsRunStats[0].AverageResiliencyScore) > 0 {
+			averageResiliencyScoreCounter = workflowsRunStats[0].AverageResiliencyScore[0].Avg
+		}
+		if len(workflowsRunStats[0].PassedPercentage) > 0 {
+			experimentStats := workflowsRunStats[0].PassedPercentage[0]
+			passedPercentageCounter = (experimentStats.TotalExperimentsPassed / experimentStats.TotalExperiments) * 100
+		}
+		if len(workflowsRunStats[0].PassedPercentage) > 0 {
+			experimentStats := workflowsRunStats[0].PassedPercentage[0]
+			if experimentStats.TotalExperiments != 0 {
+				failedPercentageCounter = 100 - passedPercentageCounter
+			}
+		}
+	}
+
+	return &model.WorkflowRunStatsResponse{
+		TotalWorkflowRuns:      totalWorkflowRunsCounter,
+		SucceededWorkflowRuns:  succeededWorkflowRunsCounter,
+		FailedWorkflowRuns:     failedWorkflowRunsCounter,
+		RunningWorkflowRuns:    runningWorkflowRunsCounter,
+		AverageResiliencyScore: averageResiliencyScoreCounter,
+		PassedPercentage:       passedPercentageCounter,
+		FailedPercentage:       failedPercentageCounter,
+	}, nil
 }
