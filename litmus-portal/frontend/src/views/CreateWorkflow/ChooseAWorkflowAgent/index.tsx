@@ -59,12 +59,8 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  const handleClose = () => {
-    setModalOpen(false);
-  };
-
-  const handleOpen = () => {
-    setModalOpen(true);
+  const toggleModel = () => {
+    setModalOpen(!modalOpen);
   };
 
   const [getRegistryData] = useLazyQuery(GET_IMAGE_REGISTRY, {
@@ -242,7 +238,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
             </Typography>
             <div className={classes.connectBtn}>
               <ButtonOutlined
-                onClick={handleOpen}
+                onClick={toggleModel}
                 className={classes.infoContainerButton}
               >
                 <Typography>
@@ -255,14 +251,14 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
                 height="50%"
                 width="50%"
                 open={modalOpen}
-                onClose={handleClose}
+                onClose={toggleModel}
                 modalActions={
-                  <ButtonOutlined onClick={handleClose}>
+                  <ButtonOutlined onClick={toggleModel}>
                     &#x2715;
                   </ButtonOutlined>
                 }
               >
-                <AgentDeployModal handleClose={handleClose} />
+                <AgentDeployModal handleClose={toggleModel} />
               </Modal>
             </div>
           </div>
