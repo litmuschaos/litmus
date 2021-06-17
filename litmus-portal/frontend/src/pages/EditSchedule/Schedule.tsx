@@ -524,9 +524,8 @@ const ScheduleWorkflow = () => {
                                     setMinute(event.target.value as number);
                                     setCronValue({
                                       ...cronValue,
-                                      minute: (
-                                        event.target.value as number
-                                      ).toString(),
+                                      minute: (event.target
+                                        .value as number).toString(),
                                       hour: '0-23',
                                     });
                                     workflowAction.setWorkflowDetails({
@@ -623,18 +622,20 @@ const ScheduleWorkflow = () => {
                                       setCronValue({
                                         ...cronValue,
                                         month: '*',
-                                        day_week: (
-                                          e.target.value as unknown as string
-                                        ).slice(0, 3),
+                                        day_week: ((e.target
+                                          .value as unknown) as string).slice(
+                                          0,
+                                          3
+                                        ),
                                       });
                                       setDays(
-                                        e.target.value as unknown as string
+                                        (e.target.value as unknown) as string
                                       );
                                       workflowAction.setWorkflowDetails({
                                         scheduleInput: {
                                           ...workflowData.scheduleInput,
-                                          weekday: e.target
-                                            .value as unknown as string,
+                                          weekday: (e.target
+                                            .value as unknown) as string,
                                         },
                                       });
                                     }}
@@ -697,9 +698,8 @@ const ScheduleWorkflow = () => {
                                   handleChange={(event) => {
                                     setCronValue({
                                       ...cronValue,
-                                      day_month: (
-                                        event.target.value as number
-                                      ).toString(),
+                                      day_month: (event.target
+                                        .value as number).toString(),
                                     });
                                     setDates(event.target.value as number);
                                     workflowAction.setWorkflowDetails({

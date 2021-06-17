@@ -9,8 +9,10 @@ interface TimePopOverProps {
 
 const TimePopOver: React.FC<TimePopOverProps> = ({ unixTime }) => {
   const classes = useStyles();
-  const [lastUpdatedAnchorEl, setLastUpdatedAnchorEl] =
-    React.useState<HTMLElement | null>(null);
+  const [
+    lastUpdatedAnchorEl,
+    setLastUpdatedAnchorEl,
+  ] = React.useState<HTMLElement | null>(null);
 
   const handleLastUpdatedOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>

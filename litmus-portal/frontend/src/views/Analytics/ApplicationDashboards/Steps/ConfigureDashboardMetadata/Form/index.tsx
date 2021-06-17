@@ -121,8 +121,10 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
       : dashboardVars.applicationMetadataMap ?? [],
   });
   const [update, setUpdate] = useState(false);
-  const [availableApplicationMetadataMap, setAvailableApplicationMetadataMap] =
-    useState<ApplicationMetadata[]>([]);
+  const [
+    availableApplicationMetadataMap,
+    setAvailableApplicationMetadataMap,
+  ] = useState<ApplicationMetadata[]>([]);
   const [kubeObjInput, setKubeObjInput] = useState<GVRRequest>({
     group: '',
     version: 'v1',

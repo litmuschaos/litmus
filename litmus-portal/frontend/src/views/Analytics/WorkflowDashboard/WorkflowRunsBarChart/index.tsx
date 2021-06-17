@@ -240,9 +240,9 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     processData();
     processLayout();
     try {
-      const nodeStyle = (
-        document.getElementsByClassName('modebar')[0] as HTMLElement
-      ).style;
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
       nodeStyle.left = '29%';
       nodeStyle.transform = 'translateY(110%)';
     } catch (err) {
@@ -254,9 +254,9 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     processData();
     processLayout();
     try {
-      const nodeStyle = (
-        document.getElementsByClassName('modebar')[0] as HTMLElement
-      ).style;
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
       nodeStyle.left = '29%';
       nodeStyle.transform = 'translateY(110%)';
     } catch (err) {
@@ -267,9 +267,9 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   useEffect(() => {
     processData();
     try {
-      const nodeStyle = (
-        document.getElementsByClassName('modebar')[0] as HTMLElement
-      ).style;
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
       nodeStyle.left = '29%';
       nodeStyle.transform = 'translateY(110%)';
     } catch (err) {
@@ -330,7 +330,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               }
               if (!recolour) {
                 for (let i = 0; i < data.points.length; i++) {
-                  ind = data.points[i].customdata as unknown as number;
+                  ind = (data.points[i].customdata as unknown) as number;
                   loc = {
                     x: data.event.pageX,
                     y: data.event.pageY - data.event.offsetY,
@@ -362,7 +362,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               const newFailedColours = [];
               let ind = 0;
               for (let i = 0; i < data.points.length; i++) {
-                ind = data.points[i].customdata as unknown as number;
+                ind = (data.points[i].customdata as unknown) as number;
               }
               for (let i = 0; i < colorsPassed.length; i++) {
                 if (i !== ind) {

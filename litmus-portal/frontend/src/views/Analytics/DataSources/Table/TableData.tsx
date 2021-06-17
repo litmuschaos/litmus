@@ -35,14 +35,18 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const [mutate, setMutate] = React.useState(false);
   const [confirm, setConfirm] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
-  const [connectedDashboardsMessage, setConnectedDashboardsMessage] =
-    React.useState<string>('');
+  const [
+    connectedDashboardsMessage,
+    setConnectedDashboardsMessage,
+  ] = React.useState<string>('');
   const [open, setOpen] = React.useState(false);
-  const [dataSourceSelectedForDeleting, setDataSourceSelectedForDeleting] =
-    React.useState<deleteDSInput>({
-      ds_id: '',
-      force_delete: false,
-    });
+  const [
+    dataSourceSelectedForDeleting,
+    setDataSourceSelectedForDeleting,
+  ] = React.useState<deleteDSInput>({
+    ds_id: '',
+    force_delete: false,
+  });
   // Function to convert UNIX time in format of dddd, DD MMM YYYY, HH:mm
   const formatDate = (date: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();

@@ -71,10 +71,8 @@ const CommunityAnalyticsPlot: React.FC = () => {
   };
 
   const cumulativeSum = (timeSeriesCounts: any) => {
-    const countSum = (
-      (sum: any) => (value: any) =>
-        (sum = parseInt(sum, 10) + parseInt(value, 10))
-    )(0);
+    const countSum = ((sum: any) => (value: any) =>
+      (sum = parseInt(sum, 10) + parseInt(value, 10)))(0);
     const MappedCumulativeSum = timeSeriesCounts.map(countSum);
     return MappedCumulativeSum;
   };
@@ -188,9 +186,9 @@ const CommunityAnalyticsPlot: React.FC = () => {
   useEffect(() => {
     processData();
     try {
-      const nodeStyle = (
-        document.getElementsByClassName('modebar')[0] as HTMLElement
-      ).style;
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
       nodeStyle.left = '29%';
       nodeStyle.width = 'fit-content';
       nodeStyle.backgroundColor = palette.background.paper;
@@ -333,9 +331,9 @@ const CommunityAnalyticsPlot: React.FC = () => {
         }}
         onInitialized={() => {
           try {
-            const nodeStyle = (
-              document.getElementsByClassName('modebar')[0] as HTMLElement
-            ).style;
+            const nodeStyle = (document.getElementsByClassName(
+              'modebar'
+            )[0] as HTMLElement).style;
             nodeStyle.left = '29%';
             nodeStyle.width = 'fit-content';
             nodeStyle.backgroundColor = palette.background.paper;

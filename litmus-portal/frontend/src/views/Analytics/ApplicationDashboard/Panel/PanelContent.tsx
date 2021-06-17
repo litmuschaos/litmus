@@ -69,18 +69,20 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   const areaGraph: string[] = palette.graph.area;
   const [popOut, setPopOut] = useState(false);
   const [viewEventMetric, setViewEventMetric] = useState(false);
-  const [prometheusQueryData, setPrometheusQueryData] =
-    React.useState<PrometheusQueryDataInterface>({
-      promInput: {
-        ds_details: {
-          url: '',
-          start: '',
-          end: '',
-        },
-        queries: [],
+  const [
+    prometheusQueryData,
+    setPrometheusQueryData,
+  ] = React.useState<PrometheusQueryDataInterface>({
+    promInput: {
+      ds_details: {
+        url: '',
+        start: '',
+        end: '',
       },
-      firstLoad: true,
-    });
+      queries: [],
+    },
+    firstLoad: true,
+  });
 
   const [graphData, setGraphData] = React.useState<ParsedPrometheusData>({
     seriesData: [],

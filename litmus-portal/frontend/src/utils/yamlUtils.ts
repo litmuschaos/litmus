@@ -230,8 +230,9 @@ export const updateNamespace = (manifest: string, namespace: string) => {
     updatedManifest.spec.workflowSpec.arguments.parameters.forEach(
       (parameter: any, index: number) => {
         if (parameter.name === constants.adminMode) {
-          updatedManifest.spec.workflowSpec.arguments.parameters[index].value =
-            namespace;
+          updatedManifest.spec.workflowSpec.arguments.parameters[
+            index
+          ].value = namespace;
         }
       }
     );

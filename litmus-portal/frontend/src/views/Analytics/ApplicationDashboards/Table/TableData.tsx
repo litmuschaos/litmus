@@ -38,10 +38,12 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const [confirm, setConfirm] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
-  const [dashboardSelectedForDeleting, setDashboardSelectedForDeleting] =
-    React.useState<DeleteDashboardInput>({
-      dbID: '',
-    });
+  const [
+    dashboardSelectedForDeleting,
+    setDashboardSelectedForDeleting,
+  ] = React.useState<DeleteDashboardInput>({
+    dbID: '',
+  });
 
   const [deleteDashboard] = useMutation<boolean, DeleteDashboardInput>(
     DELETE_DASHBOARD,

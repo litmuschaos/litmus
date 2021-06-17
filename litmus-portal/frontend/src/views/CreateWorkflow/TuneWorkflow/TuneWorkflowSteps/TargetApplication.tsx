@@ -180,8 +180,9 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
     }
     engineManifest.spec.jobCleanUpPolicy = targetApp.jobCleanUpPolicy;
     const mainManifest = YAML.parse(manifest.manifest);
-    mainManifest.spec.templates[engineIndex].inputs.artifacts[0].raw.data =
-      YAML.stringify(engineManifest);
+    mainManifest.spec.templates[
+      engineIndex
+    ].inputs.artifacts[0].raw.data = YAML.stringify(engineManifest);
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(engineManifest),
     });
