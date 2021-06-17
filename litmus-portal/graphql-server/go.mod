@@ -7,6 +7,7 @@ require (
 	github.com/argoproj/argo v0.0.0-20200806220847-5759a0e198d3
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
+	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-git/go-git/v5 v5.2.0
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4

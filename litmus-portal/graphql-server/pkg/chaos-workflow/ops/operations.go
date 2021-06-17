@@ -259,8 +259,8 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 
 // ResiliencyScoreCalculator calculates the Resiliency Score and returns the updated ExecutionData
 func ResiliencyScoreCalculator(execData types.ExecutionData, wfid string) types.ExecutionData {
-	var resiliencyScore float64 = 0.0
-	var weightSum, totalTestResult, totalExperiments, totalExperimentsPassed int = 0, 0, 0, 0
+	var resiliencyScore = 0.0
+	var weightSum, totalTestResult, totalExperiments, totalExperimentsPassed = 0, 0, 0, 0
 
 	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": []string{wfid}}}})
 

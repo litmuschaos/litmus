@@ -577,6 +577,21 @@ type WorkflowRunSortInput struct {
 	Descending *bool                   `json:"descending"`
 }
 
+type WorkflowRunStatsRequest struct {
+	ProjectID   string    `json:"project_id"`
+	WorkflowIds []*string `json:"workflow_ids"`
+}
+
+type WorkflowRunStatsResponse struct {
+	TotalWorkflowRuns      int     `json:"total_workflow_runs"`
+	SucceededWorkflowRuns  int     `json:"succeeded_workflow_runs"`
+	FailedWorkflowRuns     int     `json:"failed_workflow_runs"`
+	RunningWorkflowRuns    int     `json:"running_workflow_runs"`
+	AverageResiliencyScore float64 `json:"average_resiliency_score"`
+	PassedPercentage       float64 `json:"passed_percentage"`
+	FailedPercentage       float64 `json:"failed_percentage"`
+}
+
 type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
