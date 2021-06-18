@@ -72,6 +72,10 @@ const ChooseWorkflow = forwardRef((_, ref) => {
     workflowAction.setWorkflowManifest({
       manifest: '',
     });
+    /**
+     * Removes the workflow details if already present
+     */
+    localforage.removeItem('workflow');
   }, []);
 
   useImperativeHandle(ref, () => ({
