@@ -25,10 +25,6 @@ import SelectMyHub from './SelectMyHub';
 import useStyles from './styles';
 import UploadYAML from './uploadYAML';
 
-interface ChildRef {
-  onNext: () => void;
-}
-
 const ChooseWorkflow = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -40,6 +36,9 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const workflowAction = useActions(WorkflowActions);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.value);
+    localforage.setItem('selectedScheduleOption', {
+      selected: event.target.value,
+    });
     if (event.target.value === 'C' || event.target.value === 'D') {
       workflowAction.setWorkflowManifest({
         isCustomWorkflow: true,
