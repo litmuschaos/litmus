@@ -27,10 +27,3 @@ export function changeAnalyticsDashboardTabs(tabNumber: number): TabAction {
     payload: tabNumber,
   };
 }
-
-export function changeOverviewDashboardTabs(tabNumber: number): TabAction {
-  return {
-    type: TabActions.CHANGE_OVERVIEW_DASHBOARD_TAB,
-    payload: tabNumber,
-  };
-}
