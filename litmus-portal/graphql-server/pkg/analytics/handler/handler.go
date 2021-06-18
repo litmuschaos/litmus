@@ -1085,7 +1085,7 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 	}
 
 	// Calculate passed percentage
-	passedPercentage := bson.A{
+	experimentStats := bson.A{
 		// Filter out running workflows
 		bson.D{{"$match", bson.D{
 			{"workflow_runs.phase", bson.D{
@@ -1096,8 +1096,17 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 		// Calculate average
 		bson.D{{"$group", bson.D{
 			{"_id", nil},
-			{"total_experiments_passed", bson.D{
+			{"experiments_passed", bson.D{
 				{"$sum", "$workflow_runs.experiments_passed"},
+			}},
+			{"experiments_failed", bson.D{
+				{"$sum", "$workflow_runs.experiments_failed"},
+			}},
+			{"experiments_awaited", bson.D{
+				{"$sum", "$workflow_runs.experiments_awaited"},
+			}},
+			{"experiments_na", bson.D{
+				{"$sum", "$workflow_runs.experiments_na"},
 			}},
 			{"total_experiments", bson.D{
 				{"$sum", "$workflow_runs.total_experiments"},
@@ -1113,7 +1122,7 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 			{"failed_workflow_runs", failedWorkflowRuns},
 			{"running_workflow_runs", runningWorkflowRuns},
 			{"average_resiliency_score", averageResiliencyScore},
-			{"passed_percentage", passedPercentage},
+			{"experiment_stats", experimentStats},
 		}},
 	}
 	pipeline = append(pipeline, facetStage)
@@ -1131,49 +1140,39 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 		return &model.WorkflowRunStatsResponse{}, nil
 	}
 
-	totalWorkflowRunsCounter := 0
-	succeededWorkflowRunsCounter := 0
-	failedWorkflowRunsCounter := 0
-	runningWorkflowRunsCounter := 0
-	averageResiliencyScoreCounter := 0.0
-	passedPercentageCounter := 0.0
-	failedPercentageCounter := 0.0
+	var result model.WorkflowRunStatsResponse
 
 	if len(workflowsRunStats) > 0 {
 		if len(workflowsRunStats[0].TotalWorkflowRuns) > 0 {
-			totalWorkflowRunsCounter = workflowsRunStats[0].TotalWorkflowRuns[0].Count
-		}
-		if len(workflowsRunStats[0].SucceededWorkflowRuns) > 0 {
-			succeededWorkflowRunsCounter = workflowsRunStats[0].SucceededWorkflowRuns[0].Count
-		}
-		if len(workflowsRunStats[0].FailedWorkflowRuns) > 0 {
-			failedWorkflowRunsCounter = workflowsRunStats[0].FailedWorkflowRuns[0].Count
-		}
-		if len(workflowsRunStats[0].RunningWorkflowRuns) > 0 {
-			runningWorkflowRunsCounter = workflowsRunStats[0].RunningWorkflowRuns[0].Count
+			result.TotalWorkflowRuns = workflowsRunStats[0].TotalWorkflowRuns[0].Count
+
+			if len(workflowsRunStats[0].SucceededWorkflowRuns) > 0 {
+				result.SucceededWorkflowRuns = workflowsRunStats[0].SucceededWorkflowRuns[0].Count
+			}
+			if len(workflowsRunStats[0].FailedWorkflowRuns) > 0 {
+				result.FailedWorkflowRuns = workflowsRunStats[0].FailedWorkflowRuns[0].Count
+			}
+			if len(workflowsRunStats[0].RunningWorkflowRuns) > 0 {
+				result.RunningWorkflowRuns = workflowsRunStats[0].RunningWorkflowRuns[0].Count
+			}
+
+			result.WorkflowRunSucceededPercentage = utils.Truncate((float64(result.SucceededWorkflowRuns) / float64(result.TotalWorkflowRuns)) * 100)
+			result.WorkflowRunFailedPercentage = utils.Truncate((float64(result.FailedWorkflowRuns) / float64(result.TotalWorkflowRuns)) * 100)
 		}
 		if len(workflowsRunStats[0].AverageResiliencyScore) > 0 {
-			averageResiliencyScoreCounter = workflowsRunStats[0].AverageResiliencyScore[0].Avg
+			result.AverageResiliencyScore = utils.Truncate(workflowsRunStats[0].AverageResiliencyScore[0].Avg)
 		}
-		if len(workflowsRunStats[0].PassedPercentage) > 0 {
-			experimentStats := workflowsRunStats[0].PassedPercentage[0]
-			passedPercentageCounter = (experimentStats.TotalExperimentsPassed / experimentStats.TotalExperiments) * 100
-		}
-		if len(workflowsRunStats[0].PassedPercentage) > 0 {
-			experimentStats := workflowsRunStats[0].PassedPercentage[0]
-			if experimentStats.TotalExperiments != 0 {
-				failedPercentageCounter = 100 - passedPercentageCounter
-			}
+		if len(workflowsRunStats[0].ExperimentStats) > 0 {
+			experimentStats := workflowsRunStats[0].ExperimentStats[0]
+			result.TotalExperiments = experimentStats.TotalExperiments
+			result.ExperimentsPassed = experimentStats.ExperimentsPassed
+			result.ExperimentsFailed = experimentStats.ExperimentsFailed
+			result.ExperimentsAwaited = experimentStats.ExperimentsAwaited
+			result.ExperimentsNa = experimentStats.ExperimentsNA
+			result.PassedPercentage = utils.Truncate((float64(experimentStats.ExperimentsPassed) / float64(experimentStats.TotalExperiments)) * 100)
+			result.FailedPercentage = utils.Truncate((float64(experimentStats.ExperimentsFailed) / float64(experimentStats.TotalExperiments)) * 100)
 		}
 	}
 
-	return &model.WorkflowRunStatsResponse{
-		TotalWorkflowRuns:      totalWorkflowRunsCounter,
-		SucceededWorkflowRuns:  succeededWorkflowRunsCounter,
-		FailedWorkflowRuns:     failedWorkflowRunsCounter,
-		RunningWorkflowRuns:    runningWorkflowRunsCounter,
-		AverageResiliencyScore: averageResiliencyScoreCounter,
-		PassedPercentage:       passedPercentageCounter,
-		FailedPercentage:       failedPercentageCounter,
-	}, nil
+	return &result, nil
 }
