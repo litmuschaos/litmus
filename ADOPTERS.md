@@ -20,6 +20,7 @@ Please send PRs to add or remove organizations/users.
 |[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
 |[Kitopi](https://www.kitopi.com/)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/kitopi.md)|
 |[AnutaNetworks](https://www.anutanetworks.com/)|Chaos Engineering as part of SRE practices in QA environments |[Our Story](adopters/organizations/anutanetworks.md)|
+|[Lenskart](https://www.lenskart.com/)|Chaos Engineering for better Resiliency | [Our Story](adopters/organizations/lenskart.md)
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
