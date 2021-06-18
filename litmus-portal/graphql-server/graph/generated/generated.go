@@ -4995,6 +4995,7 @@ input WorkflowRunSortInput {
 input GetWorkflowRunsInput {
   project_id: ID!
   workflow_run_ids: [ID]
+  workflow_ids: [ID]
   pagination: Pagination
   sort: WorkflowRunSortInput
   filter: WorkflowRunFilterInput
@@ -23020,6 +23021,12 @@ func (ec *executionContext) unmarshalInputGetWorkflowRunsInput(ctx context.Conte
 		case "workflow_run_ids":
 			var err error
 			it.WorkflowRunIds, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workflow_ids":
+			var err error
+			it.WorkflowIds, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}

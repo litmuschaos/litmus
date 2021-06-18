@@ -150,6 +150,19 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 	pipeline = append(pipeline, matchProjectIdStage)
 
+	// Match the workflowIds from the input array
+	if len(input.WorkflowIds) != 0 {
+		matchWfIdStage := bson.D{
+			{"$match", bson.D{
+				{"workflow_id", bson.D{
+					{"$in", input.WorkflowIds},
+				}},
+			}},
+		}
+
+		pipeline = append(pipeline, matchWfIdStage)
+	}
+
 	includeAllFromWorkflow := bson.D{
 		{"workflow_id", 1},
 		{"workflow_name", 1},
@@ -418,7 +431,7 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 	}
 	pipeline = append(pipeline, matchProjectIdStage)
 
-	// Match the pipelineIds from the input array
+	// Match the workflowIds from the input array
 	if len(workflowInput.WorkflowIds) != 0 {
 		matchWfIdStage := bson.D{
 			{"$match", bson.D{

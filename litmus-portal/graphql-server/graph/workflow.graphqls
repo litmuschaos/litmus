@@ -35,6 +35,7 @@ input WorkflowRunSortInput {
 input GetWorkflowRunsInput {
   project_id: ID!
   workflow_run_ids: [ID]
+  workflow_ids: [ID]
   pagination: Pagination
   sort: WorkflowRunSortInput
   filter: WorkflowRunFilterInput

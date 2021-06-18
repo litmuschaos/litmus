@@ -219,6 +219,7 @@ type Experiments struct {
 type GetWorkflowRunsInput struct {
 	ProjectID      string                  `json:"project_id"`
 	WorkflowRunIds []*string               `json:"workflow_run_ids"`
+	WorkflowIds    []*string               `json:"workflow_ids"`
 	Pagination     *Pagination             `json:"pagination"`
 	Sort           *WorkflowRunSortInput   `json:"sort"`
 	Filter         *WorkflowRunFilterInput `json:"filter"`
