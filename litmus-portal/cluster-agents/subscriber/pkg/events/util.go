@@ -13,6 +13,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -29,7 +30,8 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 		return nil, err
 	}
 	if nodeStatus.StartedAt.Unix() > crd.ObjectMeta.CreationTimestamp.Unix() {
-		return nil, errors.New("chaosenginge resource older than current events node")
+		logrus.Errorf("chaosengine resource older than current events node | workflow time : %v | engine time : %v", nodeStatus.StartedAt.Unix(), crd.ObjectMeta.CreationTimestamp.Unix())
+		return nil, nil
 	}
 	cd.ProbeSuccessPercentage = "0"
 	cd.FailStep = ""
