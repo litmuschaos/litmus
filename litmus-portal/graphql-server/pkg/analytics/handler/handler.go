@@ -1105,6 +1105,9 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 			{"experiments_awaited", bson.D{
 				{"$sum", "$workflow_runs.experiments_awaited"},
 			}},
+			{"experiments_stopped", bson.D{
+				{"$sum", "$workflow_runs.experiments_stopped"},
+			}},
 			{"experiments_na", bson.D{
 				{"$sum", "$workflow_runs.experiments_na"},
 			}},
@@ -1168,6 +1171,7 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 			result.ExperimentsPassed = experimentStats.ExperimentsPassed
 			result.ExperimentsFailed = experimentStats.ExperimentsFailed
 			result.ExperimentsAwaited = experimentStats.ExperimentsAwaited
+			result.ExperimentsStopped = experimentStats.ExperimentsStopped
 			result.ExperimentsNa = experimentStats.ExperimentsNA
 			result.PassedPercentage = utils.Truncate((float64(experimentStats.ExperimentsPassed) / float64(experimentStats.TotalExperiments)) * 100)
 			result.FailedPercentage = utils.Truncate((float64(experimentStats.ExperimentsFailed) / float64(experimentStats.TotalExperiments)) * 100)

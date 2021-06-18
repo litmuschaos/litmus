@@ -596,6 +596,7 @@ type WorkflowRunStatsResponse struct {
 	ExperimentsPassed              int     `json:"experiments_passed"`
 	ExperimentsFailed              int     `json:"experiments_failed"`
 	ExperimentsAwaited             int     `json:"experiments_awaited"`
+	ExperimentsStopped             int     `json:"experiments_stopped"`
 	ExperimentsNa                  int     `json:"experiments_na"`
 	PassedPercentage               float64 `json:"passed_percentage"`
 	FailedPercentage               float64 `json:"failed_percentage"`

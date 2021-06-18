@@ -106,6 +106,7 @@ type ExperimentMetric struct {
 	ExperimentsPassed  int `bson:"experiments_passed"`
 	ExperimentsFailed  int `bson:"experiments_failed"`
 	ExperimentsAwaited int `bson:"experiments_awaited"`
+	ExperimentsStopped int `bson:"experiments_stopped"`
 	ExperimentsNA      int `bson:"experiments_na"`
 	TotalExperiments   int `bson:"total_experiments"`
 }

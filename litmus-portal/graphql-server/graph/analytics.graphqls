@@ -283,6 +283,7 @@ type WorkflowRunStatsResponse {
   experiments_passed: Int!
   experiments_failed: Int!
   experiments_awaited: Int!
+  experiments_stopped: Int!
   experiments_na: Int!
   passed_percentage: Float!
   failed_percentage: Float!

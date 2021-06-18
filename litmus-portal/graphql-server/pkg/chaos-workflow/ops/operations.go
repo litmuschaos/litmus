@@ -296,7 +296,7 @@ func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) type
 			if value.ChaosExp.ExperimentVerdict == "Stopped" {
 				result.ExperimentsStopped += 1
 			}
-			if value.ChaosExp.ExperimentVerdict == "N/A" {
+			if value.ChaosExp.ExperimentVerdict == "N/A" || value.ChaosExp.ExperimentVerdict == "" {
 				result.ExperimentsNA += 1
 			}
 		}
