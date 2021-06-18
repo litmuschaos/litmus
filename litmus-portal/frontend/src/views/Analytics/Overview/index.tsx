@@ -221,12 +221,13 @@ const Overview: React.FC = () => {
           link={
             <Link
               underline="none"
-              color="primary"
               href="https://prometheus.io/docs/introduction/overview/"
               target="_blank"
               rel="noreferrer"
             >
-              <Typography>Read prometheus doc</Typography>
+              <TextButton variant="highlight">
+                <Typography>Read prometheus doc</Typography>
+              </TextButton>
             </Link>
           }
         />
