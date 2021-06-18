@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { Link, Typography } from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, TextButton } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
@@ -28,8 +28,6 @@ import {
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
-import useActions from '../../../redux/actions';
-import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import { ApplicationDashboardCard } from './ApplicationDashboardCard';
@@ -41,8 +39,6 @@ const Overview: React.FC = () => {
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const { t } = useTranslation();
-
-  const tabs = useActions(TabActions);
 
   let dataSource = false;
   let workflowDashboardCount = 0;
@@ -155,13 +151,11 @@ const Overview: React.FC = () => {
           </ButtonFilled>
         }
         link={
-          <Link
-            underline="none"
-            color="primary"
+          <TextButton
+            variant="highlight"
             onClick={() => {
-              tabs.changeWorkflowsTabs(2);
               history.push({
-                pathname: '/workflows',
+                pathname: '/myhub/Chaos%20Hub',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -169,7 +163,7 @@ const Overview: React.FC = () => {
             <Typography>
               {t('homeViews.agentConfiguredHome.noWorkflow.explore')}
             </Typography>
-          </Link>
+          </TextButton>
         }
       />
     );

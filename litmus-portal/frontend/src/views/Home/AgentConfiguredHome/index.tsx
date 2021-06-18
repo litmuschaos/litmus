@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Link, Typography } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal, TextButton } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AgentDeployModal } from '../../../components/AgentDeployModal';
@@ -138,13 +138,11 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             </ButtonFilled>
           }
           link={
-            <Link
-              underline="none"
-              color="primary"
+            <TextButton
+              variant="highlight"
               onClick={() => {
-                tabs.changeWorkflowsTabs(2);
                 history.push({
-                  pathname: '/workflows',
+                  pathname: '/myhub/Chaos%20Hub',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
@@ -152,7 +150,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
               <Typography>
                 {t('homeViews.agentConfiguredHome.noWorkflow.explore')}
               </Typography>
-            </Link>
+            </TextButton>
           }
         />
       )}
