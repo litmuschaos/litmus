@@ -26,11 +26,11 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		userRequest.UserName = utils.SanitizeString(userRequest.UserName)
 		if userRequest.Role == "" || userRequest.UserName == "" || userRequest.Password == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		userRequest.UserName = utils.SanitizeString(userRequest.UserName)
 		userResponse, err := service.CreateUser(&userRequest)
 		if err == utils.ErrUserExists {
 			log.Info(err)
@@ -82,11 +82,11 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		userRequest.UserName = utils.SanitizeString(userRequest.UserName)
 		if userRequest.UserName == "" || userRequest.Password == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		userRequest.UserName = utils.SanitizeString(userRequest.UserName)
 		authenticatedUser, err := service.FindUser(&userRequest)
 		if err != nil {
 			log.Warn(err)
@@ -111,13 +111,9 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 func UpdatePassword(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		username := c.MustGet("username").(string)
-		uid := c.MustGet("uid").(string)
-		var adminUser entities.User
-		adminUser.UserName = username
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
 		userPasswordRequest.Username = username
-		adminUser.ID, _ = primitive.ObjectIDFromHex(uid)
 		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))

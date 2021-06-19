@@ -117,7 +117,7 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	if findOneErr != nil {
 		return findOneErr
 	}
-	if result.UserName != utils.AdminName || result.Role != entities.RoleAdmin {
+	if result.Role != entities.RoleAdmin {
 		return utils.ErrInvalidCredentials
 	}
 	return nil
