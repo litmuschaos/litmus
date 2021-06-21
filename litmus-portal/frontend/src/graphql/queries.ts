@@ -617,3 +617,30 @@ export const GET_GLOBAL_STATS = gql`
     }
   }
 `;
+
+export const GLOBAL_PROJECT_DATA = gql`
+  query getStats($query: UsageQuery!) {
+    UsageQuery(query: $query) {
+      Projects {
+        Name
+        Workflows {
+          Schedules
+          ExpRuns
+          Runs
+        }
+        Agents {
+          Total
+          Ns
+          Cluster
+        }
+        Members {
+          Owner {
+            Name
+            Username
+          }
+          Total
+        }
+      }
+    }
+  }
+`;

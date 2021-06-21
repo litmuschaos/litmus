@@ -4,11 +4,16 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
-import { Member, ProjectDetail, Projects } from '../../models/graphql/user';
+import {
+  Member,
+  ProjectDetail,
+  Projects,
+  UserRole,
+} from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
-import { getToken, getUserId } from '../../utils/auth';
+import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
@@ -42,6 +47,7 @@ const Routes: React.FC = () => {
   const baseRoute = window.location.pathname.split('/')[1];
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
+  const role = getUserRole();
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
   const [isProjectMember, setIsProjectMember] = useState<boolean>(false);
@@ -207,7 +213,7 @@ const Routes: React.FC = () => {
               }}
             />
           )}
-          {projectRole === 'Owner' ? (
+          {role === UserRole.admin ? (
             <Route path="/usage" component={Usage} />
           ) : (
             <Redirect

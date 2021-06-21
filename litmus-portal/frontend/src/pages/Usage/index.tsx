@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import React from 'react';
 import Scaffold from '../../containers/layouts/Scaffold';
 import UsageStats from '../../views/Usage/UsageStats';
+import UsageTable from '../../views/Usage/UsageTable';
 import useStyles from './styles';
 
 const Usage = () => {
@@ -14,6 +15,14 @@ const Usage = () => {
         user.
       </Typography>
       <UsageStats />
+      <br />
+      <br />
+      <Typography variant="h4">Project Statistics</Typography>
+      <Typography className={classes.description}>
+        Includes the number of schedules, workflow runs and experiment run in
+        each project.
+      </Typography>
+      <UsageTable />
     </Scaffold>
   );
 };
