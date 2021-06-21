@@ -6,13 +6,22 @@ const useStyles = makeStyles((theme: Theme) => ({
   headerSection: {
     marginBottom: theme.spacing(2),
     width: '100%',
-    height: '5.625rem',
+    height: '5rem',
     display: 'flex',
     backgroundColor: theme.palette.cards.background,
   },
 
   search: {
     margin: theme.spacing(2),
+  },
+
+  noProjects: {
+    padding: theme.spacing(3),
+  },
+
+  center: {
+    margin: 'auto',
+    textAlign: 'center',
   },
 
   table: {

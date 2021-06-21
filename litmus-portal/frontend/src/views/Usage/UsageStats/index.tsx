@@ -52,29 +52,29 @@ const UsageStats = () => {
             header="Users"
             subtitle="Total number of Litmus users."
             color={classes.usersData}
-            data={data.UsageQuery?.TotalCount.Users}
+            data={data?.UsageQuery.TotalCount.Users}
           />
           <Card
             image="./icons/viewProjects.svg"
             header="Projects"
             subtitle="Total number of Litmus projects."
             color={classes.projectData}
-            data={data.UsageQuery?.TotalCount.Projects}
+            data={data?.UsageQuery.TotalCount.Projects}
           />
           <Card
             image="./icons/targets.svg"
             header="Agents"
             subtitle="Total number of Litmus agents connected to Litmus center."
             color={classes.agentsData}
-            data={data.UsageQuery?.TotalCount.Agents.Total}
+            data={data?.UsageQuery.TotalCount.Agents.Total}
             split
             subData={[
               {
-                option1: data.UsageQuery?.TotalCount.Agents.Cluster,
+                option1: data?.UsageQuery.TotalCount.Agents.Cluster,
                 option2: 'cluster scope',
               },
               {
-                option1: data.UsageQuery?.TotalCount.Agents.Ns,
+                option1: data?.UsageQuery.TotalCount.Agents.Ns,
                 option2: 'namespace scope',
               },
             ]}
@@ -85,21 +85,21 @@ const UsageStats = () => {
             header="Workflow Schedules"
             subtitle="Total number of chaos workflows scheduled in the last one month."
             color={classes.schedules}
-            data={data.UsageQuery?.TotalCount.Workflows.Schedules}
+            data={data?.UsageQuery.TotalCount.Workflows.Schedules}
           />
           <Card
             image="./icons/workflows-outline.svg"
             header="Workflow Runs"
             subtitle="Number of workflows ran last month."
             color={classes.wfRuns}
-            data={data.UsageQuery?.TotalCount.Workflows.Runs}
+            data={data?.UsageQuery.TotalCount.Workflows.Runs}
           />
           <Card
             image="./icons/myhub.svg"
             header="Experiments Runs"
             subtitle="Total number of chaos experiments run in the last one month."
             color={classes.expRuns}
-            data={data.UsageQuery?.TotalCount.Workflows.ExpRuns}
+            data={data?.UsageQuery.TotalCount.Workflows.ExpRuns}
           />
         </>
       )}

@@ -8,6 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from '@material-ui/core';
 import { Search } from 'litmus-ui';
 import React, { useState } from 'react';
@@ -46,8 +47,12 @@ const UsageTable = () => {
 
   // Filter the users based on search results
   const filteredData = data?.UsageQuery.Projects.filter((project: any) => {
-    if (search === null) return project;
-    if (project.Name.toLowerCase().includes(search.toLowerCase()))
+    if (!loading && search === null) return project;
+    if (
+      !loading &&
+      search !== null &&
+      project.Name.toLowerCase().includes(search.toLowerCase())
+    )
       return project;
     return null;
   });
@@ -82,23 +87,35 @@ const UsageTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredData.map((project: any) => (
-                  <TableRow key={project.Name}>
-                    <TableCell component="th" scope="row">
-                      {project.Name}
-                    </TableCell>
-                    <TableCell align="right">
-                      {project.Members.Owner.Name}
-                    </TableCell>
-                    <TableCell align="right">{project.Agents.Total}</TableCell>
-                    <TableCell align="right">
-                      {project.Workflows.Schedules}
-                    </TableCell>
-                    <TableCell align="right">
-                      {project.Workflows.Runs}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {filteredData?.length > 0 ? (
+                  filteredData.map((project: any) => (
+                    <TableRow key={project.Name}>
+                      <TableCell component="th" scope="row">
+                        {project.Name}
+                      </TableCell>
+                      <TableCell align="right">
+                        {project.Members.Owner.Name}
+                      </TableCell>
+                      <TableCell align="right">
+                        {project.Agents.Total}
+                      </TableCell>
+                      <TableCell align="right">
+                        {project.Workflows.Schedules}
+                      </TableCell>
+                      <TableCell align="right">
+                        {project.Workflows.Runs}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <div className={classes.noProjects}>
+                    <TableRow>
+                      <Typography className={classes.center}>
+                        <strong>No Projects Found</strong>
+                      </Typography>
+                    </TableRow>
+                  </div>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
