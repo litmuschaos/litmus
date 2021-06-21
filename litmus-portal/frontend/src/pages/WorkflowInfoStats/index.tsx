@@ -5,6 +5,7 @@ import {
   MenuItem,
   Select,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
@@ -13,6 +14,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import BackButton from '../../components/Button/BackButton';
+import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { GET_HEATMAP_DATA, WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
 import {
@@ -25,6 +27,7 @@ import {
 } from '../../models/graphql/workflowListData';
 import timeDifferenceForDate from '../../utils/datesModifier';
 import { getProjectID } from '../../utils/getSearchParams';
+import StackedBarGraph from './StackedBar';
 import useStyles from './styles';
 import { TestCalendarHeatmapTooltip } from './testData';
 
@@ -36,7 +39,7 @@ const valueThreshold = [13, 26, 39, 49, 59, 69, 79, 89, 100];
 
 const WorkflowInfoStats: React.FC = () => {
   const classes = useStyles();
-
+  const theme = useTheme();
   const projectID = getProjectID();
 
   const { workflowRunId }: URLParams = useParams();
@@ -70,6 +73,11 @@ const WorkflowInfoStats: React.FC = () => {
   );
 
   const yearArray = [presentYear, presentYear - 1, presentYear - 2];
+
+  const [showStackBar, setShowStackBar] = useState<boolean>(false);
+  const [dataCheck, setDataCheck] = useState<boolean>(false);
+
+  const [workflowRunDate, setworkflowRunDate] = useState<number>(0);
 
   return (
     <Scaffold>
@@ -199,28 +207,65 @@ const WorkflowInfoStats: React.FC = () => {
         <div className={classes.heatmapAreaHeading}>
           <Typography className={classes.sectionHeading}>Analytics</Typography>
           {/* Year selection filter */}
-          <FormControl variant="outlined" focused>
-            <InputLabel />
-            <Select
-              value={year}
-              onChange={(event) => {
-                setYear(event.target.value as number);
-              }}
-            >
-              {yearArray.map((selectedYear) => (
-                <MenuItem value={selectedYear}>{selectedYear}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
         </div>
         <div className={classes.heatmap}>
-          <div style={{ width: '60rem', height: '9rem' }}>
-            <CalendarHeatmap
-              calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
-              valueThreshold={valueThreshold}
-              CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
-            />
+          <div className={classes.heatmapBorder}>
+            <div className={classes.formControlParent}>
+              <Typography>
+                Total runs till date:{' '}
+                {data?.ListWorkflow.workflows[0].workflow_runs?.length}
+              </Typography>
+              <FormControl variant="outlined" focused>
+                <InputLabel />
+                <Select
+                  value={year}
+                  onChange={(event) => {
+                    setYear(event.target.value as number);
+                  }}
+                >
+                  {yearArray.map((selectedYear) => (
+                    <MenuItem value={selectedYear}>{selectedYear}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div
+              style={{
+                width: '60rem',
+                height: '10rem',
+              }}
+            >
+              <CalendarHeatmap
+                calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
+                valueThreshold={valueThreshold}
+                CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
+                handleBinClick={(bin) => {
+                  if (bin.bin.workflowRunDetail.no_of_runs) {
+                    setShowStackBar(!showStackBar);
+                    setDataCheck(false);
+                    setworkflowRunDate(bin.bin.workflowRunDetail.date_stamp);
+                  } else {
+                    setDataCheck(true);
+                    setShowStackBar(false);
+                    setworkflowRunDate(0);
+                  }
+                }}
+              />
+            </div>
           </div>
+          {showStackBar && (
+            <StackedBarGraph
+              workflowID={workflowRunId}
+              date={workflowRunDate}
+            />
+          )}
+          {dataCheck && !showStackBar && (
+            <div className={classes.noData}>
+              <Center>
+                <Typography>No data to display</Typography>
+              </Center>
+            </div>
+          )}
         </div>
       </div>
     </Scaffold>

@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     },
     // Regularity info stat section fix for smaller screens
     '& div:last-child': {
-      width: '320px',
+      width: '20rem',
     },
   },
   infoHeader: {
@@ -54,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
   heatmapArea: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(4),
+    overflow: 'hidden',
   },
   heatmapAreaHeading: {
     display: 'flex',
@@ -62,6 +63,22 @@ const useStyles = makeStyles((theme) => ({
   heatmap: {
     display: 'grid',
     placeContent: 'center',
+  },
+  heatmapBorder: {
+    minHeight: '20rem',
+    border: `1px solid ${theme.palette.border.main}`,
+    padding: theme.spacing(1.5, 3.5, 2.5, 2.5),
+  },
+  formControlParent: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: theme.spacing(0, 0, 3, 0),
+  },
+  noData: {
+    height: '25vh',
+    marginTop: theme.spacing(3),
+    border: `1px solid ${theme.palette.border.main}`,
   },
 }));
 

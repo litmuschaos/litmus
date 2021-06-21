@@ -57,6 +57,21 @@ export const WORKFLOW_STATS = gql`
   }
 `;
 
+export const STACKED_BAR_GRAPH = gql`
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_run_id
+        workflow_name
+        last_updated
+        total_experiments
+        experiments_passed
+        resiliency_score
+      }
+    }
+  }
+`;
 export const WORKFLOW_LIST_DETAILS = gql`
   query workflowListDetails($workflowInput: ListWorkflowsInput!) {
     ListWorkflow(workflowInput: $workflowInput) {
