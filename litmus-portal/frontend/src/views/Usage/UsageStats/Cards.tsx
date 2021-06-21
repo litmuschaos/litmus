@@ -52,7 +52,7 @@ const Card: React.FC<CardProps> = ({
             <Typography className={`${color} ${classes.dataField}`}>
               {data}
             </Typography>
-            <div style={{ marginLeft: 'auto', marginTop: 20 }}>
+            <div className={classes.subData}>
               {subData?.map((option) => {
                 return (
                   <Typography style={{ opacity: 0.5 }}>

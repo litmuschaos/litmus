@@ -1357,9 +1357,17 @@ usage:
     agentClusterScope: cluster scope
     agentNamespaceScope: namespace scope
     workflowScheduleHeader: Workflow Schedules
-    workflowScheduleSubtitle: Total number of chaos workflows scheduled in the last one month.
+    workflowScheduleSubtitle: Total number of chaos workflows scheduled in this month.
     workflowRunHeader: Workflow Runs
-    workflowRunSubtitle: Number of workflows ran last month.
+    workflowRunSubtitle: Number of workflows ran this month.
     experimentRunHeader: Experiments Runs
-    experimentRunSubtitle: Total number of chaos experiments run in the last one month.
-
+    experimentRunSubtitle: Total number of chaos experiments ran this month.
+  table:
+    project: Projects
+    owner: Project Owner
+    agents: Agents
+    schedules: Workflow Schedules
+    wfRuns: Workflow runs
+    expRuns: Experiment runs
+    team: Team Members
+    noProject: No Projects Found

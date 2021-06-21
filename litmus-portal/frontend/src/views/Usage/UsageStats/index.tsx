@@ -6,23 +6,6 @@ import { GET_GLOBAL_STATS } from '../../../graphql';
 import Card from './Cards';
 import useStyles from './styles';
 
-// interface UsageCount {
-//   TotalCount: {
-//     Workflows: {
-//       Runs: number;
-//       ExpRuns: number;
-//       Schedules: number;
-//     };
-//     Agents: {
-//       Ns: number;
-//       Cluster: number;
-//       Total: number;
-//     };
-//     Projects: number;
-//     Users: number;
-//   };
-// }
-
 const UsageStats = () => {
   const classes = useStyles();
   const { t } = useTranslation();

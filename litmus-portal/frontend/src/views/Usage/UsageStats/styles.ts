@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: theme.spacing(2.5, 5, 2.5, 0),
     borderRadius: 5,
     padding: theme.spacing(2.5, 1.875),
+    flexGrow: 1,
   },
   cardDiv: {
     marginTop: theme.spacing(2.5),
@@ -54,6 +55,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   dataField: {
     marginTop: theme.spacing(1.875),
     fontSize: '1.875rem',
+  },
+  subData: {
+    marginLeft: 'auto',
+    marginTop: theme.spacing(2.5),
   },
 }));
 export default useStyles;

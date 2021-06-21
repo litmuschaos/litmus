@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
 import {
   Paper,
@@ -7,11 +6,13 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from '@material-ui/core';
 import { Search } from 'litmus-ui';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import { GLOBAL_PROJECT_DATA } from '../../../graphql';
 import { Pagination } from '../../../models/graphql/workflowListData';
@@ -19,6 +20,7 @@ import useStyles from './styles';
 
 const UsageTable = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const [paginationData, setPaginationData] = useState<Pagination>({
     page: 0,
     limit: 10,
@@ -47,7 +49,7 @@ const UsageTable = () => {
   });
 
   return (
-    <div>
+    <div className={classes.table}>
       <div className={classes.headerSection}>
         {/* Search Bar */}
         <Search
@@ -59,56 +61,86 @@ const UsageTable = () => {
           onChange={(event: any) => setSearch(event.target.value)}
         />
       </div>
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
+
+      <Paper>
+        <TableContainer className={classes.tableMain}>
+          <Table stickyHeader aria-label="simple table">
+            <TableHead>
+              <TableRow className={classes.tableHead}>
+                <TableCell className={classes.projectName}>
+                  {t('usage.table.project')}
+                </TableCell>
+                <TableCell align="left">{t('usage.table.owner')}</TableCell>
+                <TableCell align="center">{t('usage.table.agents')}</TableCell>
+                <TableCell align="center">
+                  {t('usage.table.schedules')}
+                </TableCell>
+                <TableCell align="center">{t('usage.table.wfRuns')}</TableCell>
+                <TableCell align="center">{t('usage.table.expRuns')}</TableCell>
+                <TableCell align="center">{t('usage.table.team')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {loading ? (
+                <Loader />
+              ) : data?.UsageQuery.Projects.length > 0 ? (
+                data?.UsageQuery.Projects.map((project: any) => (
+                  <TableRow key={project.Name} className={classes.projectData}>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      className={classes.tableDataProjectName}
+                    >
+                      {project.Name}
+                    </TableCell>
+                    <TableCell align="left">
+                      {project.Members.Owner.Username}
+                    </TableCell>
+                    <TableCell align="center">{project.Agents.Total}</TableCell>
+                    <TableCell align="center">
+                      {project.Workflows.Schedules}
+                    </TableCell>
+                    <TableCell align="center">
+                      {project.Workflows.Runs}
+                    </TableCell>
+                    <TableCell align="center">
+                      {project.Workflows.Runs}
+                    </TableCell>
+                    <TableCell align="center">
+                      {project.Members.Total}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
                 <TableRow>
-                  <TableCell>Projects</TableCell>
-                  <TableCell align="right">Project Owner</TableCell>
-                  <TableCell align="right">Agents</TableCell>
-                  <TableCell align="right">Workflow Schedules</TableCell>
-                  <TableCell align="right">Workflow runs</TableCell>
+                  <TableCell colSpan={7}>
+                    <Typography className={classes.center}>
+                      <strong>{t('usage.table.noProject')}</strong>
+                    </Typography>
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {data?.UsageQuery.Projects.length > 0 ? (
-                  data?.UsageQuery.Projects.map((project: any) => (
-                    <TableRow key={project.Name}>
-                      <TableCell component="th" scope="row">
-                        {project.Name}
-                      </TableCell>
-                      <TableCell align="right">
-                        {project.Members.Owner.Name}
-                      </TableCell>
-                      <TableCell align="right">
-                        {project.Agents.Total}
-                      </TableCell>
-                      <TableCell align="right">
-                        {project.Workflows.Schedules}
-                      </TableCell>
-                      <TableCell align="right">
-                        {project.Workflows.Runs}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <div className={classes.noProjects}>
-                    <TableRow>
-                      <Typography className={classes.center}>
-                        <strong>No Projects Found</strong>
-                      </Typography>
-                    </TableRow>
-                  </div>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      )}
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={data?.UsageQuery.Projects.length ?? 0}
+          rowsPerPage={paginationData.limit}
+          page={paginationData.page}
+          onChangePage={(_, page) =>
+            setPaginationData({ ...paginationData, page })
+          }
+          onChangeRowsPerPage={(event) => {
+            setPaginationData({
+              ...paginationData,
+              page: 0,
+              limit: parseInt(event.target.value, 10),
+            });
+          }}
+        />
+      </Paper>
     </div>
   );
 };
