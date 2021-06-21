@@ -72,7 +72,7 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 		case model.UsageSortProject:
 			orderField = "name"
 		case model.UsageSortOwner:
-			orderField = "members.owner.name"
+			orderField = "members.owner.username"
 		case model.UsageSortAgents:
 			orderField = "agents.total"
 		case model.UsageSortSchedules:
