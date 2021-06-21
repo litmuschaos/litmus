@@ -85,6 +85,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   imgSize: {
     width: '1.25rem',
+    height: '1.25rem',
   },
 }));
 export default useStyles;

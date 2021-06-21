@@ -84,7 +84,7 @@ const UsageTable = () => {
 
       <Paper>
         <TableContainer className={classes.tableMain}>
-          <Table aria-label="simple table">
+          <Table stickyHeader aria-label="simple table">
             <TableHead>
               <TableRow className={classes.tableHead}>
                 {/* Projects */}
