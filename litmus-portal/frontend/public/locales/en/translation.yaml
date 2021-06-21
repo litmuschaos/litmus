@@ -1338,3 +1338,9 @@ customWorkflow:
     dragexp: Drag the selected experiment between the rows or to the end of rows to make it sequential experiment or drag into the rows to make it parallel experiment.
     saveChanges: Save changes
     discard: Discard changes
+
+######################################
+############   Usage    ##############
+######################################
+usage:
+  usageHeader: Usage

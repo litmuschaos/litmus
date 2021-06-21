@@ -23,7 +23,7 @@ const UsageTable = () => {
     page: 0,
     limit: 10,
   });
-  const [search, setSearch] = useState<string | null>(null);
+  const [search, setSearch] = useState<string>('');
   const { data, loading } = useQuery(GLOBAL_PROJECT_DATA, {
     variables: {
       query: {
@@ -41,40 +41,28 @@ const UsageTable = () => {
           page: paginationData.page,
           limit: paginationData.limit,
         },
+        SearchProject: search,
       },
     },
   });
 
-  // Filter the users based on search results
-  const filteredData = data?.UsageQuery.Projects.filter((project: any) => {
-    if (!loading && search === null) return project;
-    if (
-      !loading &&
-      search !== null &&
-      project.Name.toLowerCase().includes(search.toLowerCase())
-    )
-      return project;
-    return null;
-  });
-
   return (
     <div>
+      <div className={classes.headerSection}>
+        {/* Search Bar */}
+        <Search
+          className={classes.search}
+          data-cy="projectSearch"
+          id="input-with-icon-textfield"
+          placeholder="Search Projects"
+          value={search}
+          onChange={(event: any) => setSearch(event.target.value)}
+        />
+      </div>
       {loading ? (
         <Loader />
       ) : (
         <>
-          <div className={classes.headerSection}>
-            {/* Search Bar */}
-            <Search
-              className={classes.search}
-              data-cy="projectSearch"
-              id="input-with-icon-textfield"
-              placeholder="Search Projects"
-              value={search}
-              onChange={(event: any) => setSearch(event.target.value)}
-            />
-          </div>
-
           <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="simple table">
               <TableHead>
@@ -87,8 +75,8 @@ const UsageTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredData?.length > 0 ? (
-                  filteredData.map((project: any) => (
+                {data?.UsageQuery.Projects.length > 0 ? (
+                  data?.UsageQuery.Projects.map((project: any) => (
                     <TableRow key={project.Name}>
                       <TableCell component="th" scope="row">
                         {project.Name}
