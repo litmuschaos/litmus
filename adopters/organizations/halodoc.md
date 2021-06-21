@@ -17,9 +17,9 @@ after evaluating different tools of similar flavour, we wanted to excercise our 
 
 
 
-### How we explored litmus
+### How we use litmus
 
-At Halodoc we explored Litmus to validate the resiliency of our private aws managed eks by covering the following areas.
+At Halodoc we use Litmus to validate the resiliency of our private aws managed eks by covering the following areas.
 
 - Testing resiliency of Control plane Kubernetes Infrastructure 
 - Validating the HA of different control plane services
