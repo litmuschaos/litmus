@@ -2,8 +2,8 @@ import { RadioGroup, Typography, useTheme } from '@material-ui/core';
 import {
   ButtonFilled,
   ButtonOutlined,
-  Modal,
   LitmusCard,
+  Modal,
   RadioButton,
   Search,
 } from 'litmus-ui';
@@ -85,7 +85,6 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
         </Typography>
         <br />
         <Search
-          data-cy="agentSearch"
           id="input-with-icon-textfield"
           placeholder="Search"
           value={search}
@@ -94,7 +93,11 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
 
         <br />
         <div className={classes.radioList}>
-          <RadioGroup value={selectedExp} onChange={onSelectChange}>
+          <RadioGroup
+            data-cy="ExperimentList"
+            value={selectedExp}
+            onChange={onSelectChange}
+          >
             {filteredExperiments.map((exp: ChartName) => (
               <LitmusCard
                 width="100%"
@@ -122,6 +125,7 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
           onClick={() => {
             handleDone();
           }}
+          data-cy="AddExperimentDoneButton"
           className={classes.doneBtn}
         >
           {t('createWorkflow.tuneWorkflow.done')}

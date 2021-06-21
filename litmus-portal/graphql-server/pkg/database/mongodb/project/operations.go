@@ -6,11 +6,11 @@ import (
 	"log"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // CreateProject creates a new project for a user
@@ -189,4 +189,14 @@ func UpdateProjectName(ctx context.Context, projectID string, projectName string
 	}
 
 	return nil
+}
+
+// GetAggregateProjects takes a mongo pipeline to retrieve the project details from the database
+func GetAggregateProjects(ctx context.Context, pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ProjectCollection, pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }

@@ -277,7 +277,6 @@ github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 h1:Mn26/9ZMNWSw9C9ER
 github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32/go.mod h1:GIjDIg/heH5DOkXY3YJ/wNhfHsQHoXGjl8G8amsYQ1I=
 github.com/gliderlabs/ssh v0.2.2/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
 github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb/go.mod h1:xkRDCp4j0OGD1HRkm4kmhM+pmpv3AKq5SU7GMg4oO/Q=
-github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8 h1:DujepqpGd1hyOd7aW59XpK7Qymp8iy83xq74fLr21is=
 github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8/go.mod h1:xkRDCp4j0OGD1HRkm4kmhM+pmpv3AKq5SU7GMg4oO/Q=
 github.com/go-acme/lego v2.5.0+incompatible/go.mod h1:yzMNe9CasVUhkquNvti5nAtPmG94USbYxYrZfTkIn0M=
 github.com/go-bindata/go-bindata v3.1.1+incompatible/go.mod h1:xK8Dsgwmeed+BBsSy2XTopBn/8uK2HWuGSnA11C3Joo=
@@ -625,12 +624,7 @@ github.com/litmuschaos/chaos-operator v0.0.0-20210224131102-ca6a465ed348/go.mod 
 github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032 h1:Nza94oOqOsao8eFWC19iFviS8XsxS2eVk7Q0a9WDKBE=
 github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032/go.mod h1:7EO6kbZKeJGKzkchgQepCxywvqNFNvNHW0G+u9923AY=
 github.com/litmuschaos/elves v0.0.0-20201107015738-552d74669e3c/go.mod h1:DsbHGNUq/78NZozWVVI9Q6eBei4I+JjlkkD5aibJ3MQ=
-github.com/litmuschaos/litmus v0.0.0-20210614060828-454347e15c01 h1:UAkWlQRwDcP/MWlJiMZ20vWWc+fmVVK8hAxjd8DpjAA=
-github.com/litmuschaos/litmus v0.0.0-20210614085358-3ef78a10e32b h1:+LhWl0rj/1mT6QUB8VUqnhujcuik2/zOoAuYrtnMAPk=
-github.com/litmuschaos/litmus v0.0.0-20210615041256-fe709ecaddb9 h1:bO5zBEXHA6XBS6kF+XBAFjyj/5DKEXCcCKdqAwuD7LA=
-github.com/litmuschaos/litmus v0.0.0-20210617093453-a0143c38cf54 h1:opH7nExy6sNDtC3lYuWxrqCuSOkkECLa/a9z2QLK/GU=
-github.com/litmuschaos/litmus v0.0.0-20210618050306-456985ccfc57 h1:cT5QHENbhNWFeJXKYwfxQDEeUS+avXahcpHn92Pckng=
-github.com/litmuschaos/litmus v0.0.0-20210618080014-302c7051a03d h1:tomQ4XjsAx61eeIWwp8ZCygRmdzYz2Ldf+744pyjH1Y=
+github.com/litmuschaos/litmus v0.0.0-20210621045052-c575ab033108 h1:ikWhdz8oOLAwgXRuT2EizmCd905mmMi1sh3PN/pzVqo=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=
 github.com/lucas-clemente/aes12 v0.0.0-20171027163421-cd47fb39b79f/go.mod h1:JpH9J1c9oX6otFSgdUHwUBUizmKlrMjxWnIAjff4m04=
@@ -859,7 +853,6 @@ github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFR
 github.com/rogpeppe/go-internal v1.2.2/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.5.0/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
-github.com/rs/cors v1.6.0 h1:G9tHG9lebljV9mfp9SNPDL36nCDxmo3zTlAf1YgvzmI=
 github.com/rs/cors v1.6.0/go.mod h1:gFx+x8UowdsKA9AchylcLynDq+nNFfI8FkUZdN/jGCU=
 github.com/rubenv/sql-migrate v0.0.0-20191025130928-9355dd04f4b3/go.mod h1:WS0rl9eEliYI8DPnr3TOwz4439pay+qNgzJoVya/DmY=
 github.com/rubiojr/go-vhd v0.0.0-20160810183302-0bfd3b39853c/go.mod h1:DM5xW0nvfNNm2uytzsvhI3OnX8uzaRAg8UX/CnDqbto=
