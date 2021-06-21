@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import {
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -13,10 +14,24 @@ import {
 import { Search } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Loader from '../../../components/Loader';
 import { GLOBAL_PROJECT_DATA } from '../../../graphql';
 import { Pagination } from '../../../models/graphql/workflowListData';
 import useStyles from './styles';
+
+interface SortInput {
+  Field:
+    | 'Project'
+    | 'Owner'
+    | 'Agents'
+    | 'Schedules'
+    | 'WorkflowRuns'
+    | 'ExperimentRuns'
+    | 'TeamMembers';
+  Descending?: boolean;
+}
 
 const UsageTable = () => {
   const classes = useStyles();
@@ -24,6 +39,10 @@ const UsageTable = () => {
   const [paginationData, setPaginationData] = useState<Pagination>({
     page: 0,
     limit: 10,
+  });
+  const [sortData, setSortData] = useState<SortInput>({
+    Field: 'Project',
+    Descending: false,
   });
   const [search, setSearch] = useState<string>('');
   const { data, loading } = useQuery(GLOBAL_PROJECT_DATA, {
@@ -44,6 +63,7 @@ const UsageTable = () => {
           limit: paginationData.limit,
         },
         SearchProject: search,
+        Sort: sortData,
       },
     },
   });
@@ -64,20 +84,267 @@ const UsageTable = () => {
 
       <Paper>
         <TableContainer className={classes.tableMain}>
-          <Table stickyHeader aria-label="simple table">
+          <Table aria-label="simple table">
             <TableHead>
               <TableRow className={classes.tableHead}>
+                {/* Projects */}
                 <TableCell className={classes.projectName}>
-                  {t('usage.table.project')}
+                  <div style={{ display: 'flex' }}>
+                    <Typography className={classes.tableHeadName}>
+                      {t('usage.table.project')}
+                    </Typography>
+                    <div className={classes.sortIconDiv}>
+                      <IconButton
+                        aria-label="sort project ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'Project',
+                            Descending: false,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort project descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'Project',
+                            Descending: true,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
                 </TableCell>
-                <TableCell align="left">{t('usage.table.owner')}</TableCell>
-                <TableCell align="center">{t('usage.table.agents')}</TableCell>
+
+                {/* Owners */}
+                <TableCell align="left">
+                  <div style={{ display: 'flex' }}>
+                    <Typography className={classes.tableHeadName}>
+                      {t('usage.table.owner')}
+                    </Typography>
+                    <div className={classes.sortIconDiv}>
+                      <IconButton
+                        aria-label="sort owner ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'Owner',
+                            Descending: false,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort owner descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'Owner',
+                            Descending: true,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
+                </TableCell>
+
+                {/* Agents */}
                 <TableCell align="center">
-                  {t('usage.table.schedules')}
+                  <div style={{ display: 'flex' }}>
+                    <Typography className={classes.tableHeadName}>
+                      {t('usage.table.agents')}
+                    </Typography>
+                    <div className={classes.sortIconDiv}>
+                      <IconButton
+                        aria-label="sort agent ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'Agents',
+                            Descending: false,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort agents descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'Agents',
+                            Descending: true,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
                 </TableCell>
-                <TableCell align="center">{t('usage.table.wfRuns')}</TableCell>
-                <TableCell align="center">{t('usage.table.expRuns')}</TableCell>
-                <TableCell align="center">{t('usage.table.team')}</TableCell>
+
+                {/* Schedules */}
+                <TableCell align="center">
+                  <div style={{ display: 'flex' }}>
+                    <Typography className={classes.tableHeadName}>
+                      {t('usage.table.schedules')}
+                    </Typography>
+                    <div className={classes.sortIconDiv}>
+                      <IconButton
+                        aria-label="sort schedules ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'Schedules',
+                            Descending: false,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort schedules descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'Schedules',
+                            Descending: true,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
+                </TableCell>
+
+                {/* WorkflowRuns */}
+                <TableCell align="center">
+                  <div style={{ display: 'flex' }}>
+                    <Typography className={classes.tableHeadName}>
+                      {t('usage.table.wfRuns')}
+                    </Typography>
+                    <div className={classes.sortIconDiv}>
+                      <IconButton
+                        aria-label="sort WorkflowRuns ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'WorkflowRuns',
+                            Descending: false,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort WorkflowRuns descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'WorkflowRuns',
+                            Descending: true,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
+                </TableCell>
+
+                {/* ExperimentRuns */}
+                <TableCell align="center">
+                  <div style={{ display: 'flex' }}>
+                    <Typography className={classes.tableHeadName}>
+                      {t('usage.table.expRuns')}
+                    </Typography>
+                    <div className={classes.sortIconDiv}>
+                      <IconButton
+                        aria-label="sort ExperimentRuns ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'ExperimentRuns',
+                            Descending: false,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort ExperimentRuns descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'ExperimentRuns',
+                            Descending: true,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
+                </TableCell>
+
+                {/* Team Mambers */}
+                <TableCell align="center">
+                  <div style={{ display: 'flex' }}>
+                    <Typography className={classes.tableHeadName}>
+                      {t('usage.table.team')}
+                    </Typography>
+                    <div className={classes.sortIconDiv}>
+                      <IconButton
+                        aria-label="sort TeamMembers ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'TeamMembers',
+                            Descending: false,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort TeamMembers descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            Field: 'TeamMembers',
+                            Descending: true,
+                          })
+                        }
+                        className={classes.imgSize}
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

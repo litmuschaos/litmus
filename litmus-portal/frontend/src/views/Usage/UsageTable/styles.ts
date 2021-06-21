@@ -50,7 +50,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
     height: '4.6875rem',
     '& p': {
-      display: 'block',
+      fontSize: '0.75rem',
+      fontWeight: 500,
     },
     '& th': {
       backgroundColor: theme.palette.cards.background,
@@ -70,6 +71,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '0.875rem',
     fontWeight: 500,
     paddingLeft: theme.spacing(5),
+  },
+
+  tableHeadName: {
+    marginTop: theme.spacing(1.25),
+    marginRight: theme.spacing(1.875),
+  },
+
+  sortIconDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  imgSize: {
+    width: '1.25rem',
   },
 }));
 export default useStyles;
