@@ -6,8 +6,8 @@ Halodoc is the 2018 Forbes Indonesia Choice Award winner and Galen Growth’s 20
 
 ### **Why we explored litmus**
 
-We wanted a tool that we could leverage to test the resiliciency of multi k8s cluster workloads in private cloud, 
-after evaluating different tools of similar flavour, we wanted to excercise our chaoas experiments using Litmus, it has the following benefits.
+We wanted a tool that we could leverage to test the resiliency of multi k8s cluster workloads in a private cloud, 
+after evaluating different tools of similar flavour, we wanted to exercise our chaos experiments using Litmus, as it has the following benefits.
 
 - It is designed for Kubernetes workload
 - It has the wide range of chaos experiments to perform on k8s workload and Infrastructure
