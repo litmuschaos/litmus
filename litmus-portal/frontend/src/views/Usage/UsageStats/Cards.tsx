@@ -55,7 +55,7 @@ const Card: React.FC<CardProps> = ({
             <div className={classes.subData}>
               {subData?.map((option) => {
                 return (
-                  <Typography style={{ opacity: 0.5 }}>
+                  <Typography key={option.option1} style={{ opacity: 0.5 }}>
                     <strong>{option.option1}</strong> {option.option2}
                   </Typography>
                 );
