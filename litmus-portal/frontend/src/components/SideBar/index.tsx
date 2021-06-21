@@ -15,6 +15,7 @@ import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
+import { ReactComponent as UsageIcon } from '../../svg/usage.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
@@ -148,6 +149,21 @@ const SideBar: React.FC = () => {
             selected={pathName === 'settings'}
           >
             <SettingsIcon />
+          </CustomisedListItem>
+        )}
+        {projectRole === 'Owner' && (
+          <CustomisedListItem
+            key="usage"
+            handleClick={() => {
+              history.push({
+                pathname: `/usage`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
+            label="Usage"
+            selected={pathName === 'usage'}
+          >
+            <UsageIcon />
           </CustomisedListItem>
         )}
         <hr id="quickActions" />

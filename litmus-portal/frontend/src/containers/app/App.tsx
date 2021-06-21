@@ -20,6 +20,7 @@ const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
+const Usage = lazy(() => import('../../pages/Usage'));
 const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
 const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
@@ -198,6 +199,16 @@ const Routes: React.FC = () => {
           />
           {projectRole === 'Owner' ? (
             <Route path="/settings" component={Settings} />
+          ) : (
+            <Redirect
+              to={{
+                pathname: '/home',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              }}
+            />
+          )}
+          {projectRole === 'Owner' ? (
+            <Route path="/usage" component={Usage} />
           ) : (
             <Redirect
               to={{
