@@ -225,6 +225,7 @@ type Experiments struct {
 type GetWorkflowRunsInput struct {
 	ProjectID      string                  `json:"project_id"`
 	WorkflowRunIds []*string               `json:"workflow_run_ids"`
+	WorkflowIds    []*string               `json:"workflow_ids"`
 	Pagination     *Pagination             `json:"pagination"`
 	Sort           *WorkflowRunSortInput   `json:"sort"`
 	Filter         *WorkflowRunFilterInput `json:"filter"`
@@ -589,20 +590,24 @@ type WorkflowFilterInput struct {
 }
 
 type WorkflowRun struct {
-	WorkflowRunID     string   `json:"workflow_run_id"`
-	WorkflowID        string   `json:"workflow_id"`
-	ClusterName       string   `json:"cluster_name"`
-	LastUpdated       string   `json:"last_updated"`
-	ProjectID         string   `json:"project_id"`
-	ClusterID         string   `json:"cluster_id"`
-	WorkflowName      string   `json:"workflow_name"`
-	ClusterType       *string  `json:"cluster_type"`
-	Phase             string   `json:"phase"`
-	ResiliencyScore   *float64 `json:"resiliency_score"`
-	ExperimentsPassed *int     `json:"experiments_passed"`
-	TotalExperiments  *int     `json:"total_experiments"`
-	ExecutionData     string   `json:"execution_data"`
-	IsRemoved         *bool    `json:"isRemoved"`
+	WorkflowRunID      string   `json:"workflow_run_id"`
+	WorkflowID         string   `json:"workflow_id"`
+	ClusterName        string   `json:"cluster_name"`
+	LastUpdated        string   `json:"last_updated"`
+	ProjectID          string   `json:"project_id"`
+	ClusterID          string   `json:"cluster_id"`
+	WorkflowName       string   `json:"workflow_name"`
+	ClusterType        *string  `json:"cluster_type"`
+	Phase              string   `json:"phase"`
+	ResiliencyScore    *float64 `json:"resiliency_score"`
+	ExperimentsPassed  *int     `json:"experiments_passed"`
+	ExperimentsFailed  *int     `json:"experiments_failed"`
+	ExperimentsAwaited *int     `json:"experiments_awaited"`
+	ExperimentsStopped *int     `json:"experiments_stopped"`
+	ExperimentsNa      *int     `json:"experiments_na"`
+	TotalExperiments   *int     `json:"total_experiments"`
+	ExecutionData      string   `json:"execution_data"`
+	IsRemoved          *bool    `json:"isRemoved"`
 }
 
 type WorkflowRunFilterInput struct {
@@ -633,13 +638,21 @@ type WorkflowRunStatsRequest struct {
 }
 
 type WorkflowRunStatsResponse struct {
-	TotalWorkflowRuns      int     `json:"total_workflow_runs"`
-	SucceededWorkflowRuns  int     `json:"succeeded_workflow_runs"`
-	FailedWorkflowRuns     int     `json:"failed_workflow_runs"`
-	RunningWorkflowRuns    int     `json:"running_workflow_runs"`
-	AverageResiliencyScore float64 `json:"average_resiliency_score"`
-	PassedPercentage       float64 `json:"passed_percentage"`
-	FailedPercentage       float64 `json:"failed_percentage"`
+	TotalWorkflowRuns              int     `json:"total_workflow_runs"`
+	SucceededWorkflowRuns          int     `json:"succeeded_workflow_runs"`
+	FailedWorkflowRuns             int     `json:"failed_workflow_runs"`
+	RunningWorkflowRuns            int     `json:"running_workflow_runs"`
+	AverageResiliencyScore         float64 `json:"average_resiliency_score"`
+	TotalExperiments               int     `json:"total_experiments"`
+	ExperimentsPassed              int     `json:"experiments_passed"`
+	ExperimentsFailed              int     `json:"experiments_failed"`
+	ExperimentsAwaited             int     `json:"experiments_awaited"`
+	ExperimentsStopped             int     `json:"experiments_stopped"`
+	ExperimentsNa                  int     `json:"experiments_na"`
+	PassedPercentage               float64 `json:"passed_percentage"`
+	FailedPercentage               float64 `json:"failed_percentage"`
+	WorkflowRunSucceededPercentage float64 `json:"workflow_run_succeeded_percentage"`
+	WorkflowRunFailedPercentage    float64 `json:"workflow_run_failed_percentage"`
 }
 
 type WorkflowRuns struct {

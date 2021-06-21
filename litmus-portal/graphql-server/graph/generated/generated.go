@@ -479,30 +479,42 @@ type ComplexityRoot struct {
 	}
 
 	WorkflowRun struct {
-		ClusterID         func(childComplexity int) int
-		ClusterName       func(childComplexity int) int
-		ClusterType       func(childComplexity int) int
-		ExecutionData     func(childComplexity int) int
-		ExperimentsPassed func(childComplexity int) int
-		IsRemoved         func(childComplexity int) int
-		LastUpdated       func(childComplexity int) int
-		Phase             func(childComplexity int) int
-		ProjectID         func(childComplexity int) int
-		ResiliencyScore   func(childComplexity int) int
-		TotalExperiments  func(childComplexity int) int
-		WorkflowID        func(childComplexity int) int
-		WorkflowName      func(childComplexity int) int
-		WorkflowRunID     func(childComplexity int) int
+		ClusterID          func(childComplexity int) int
+		ClusterName        func(childComplexity int) int
+		ClusterType        func(childComplexity int) int
+		ExecutionData      func(childComplexity int) int
+		ExperimentsAwaited func(childComplexity int) int
+		ExperimentsFailed  func(childComplexity int) int
+		ExperimentsNa      func(childComplexity int) int
+		ExperimentsPassed  func(childComplexity int) int
+		ExperimentsStopped func(childComplexity int) int
+		IsRemoved          func(childComplexity int) int
+		LastUpdated        func(childComplexity int) int
+		Phase              func(childComplexity int) int
+		ProjectID          func(childComplexity int) int
+		ResiliencyScore    func(childComplexity int) int
+		TotalExperiments   func(childComplexity int) int
+		WorkflowID         func(childComplexity int) int
+		WorkflowName       func(childComplexity int) int
+		WorkflowRunID      func(childComplexity int) int
 	}
 
 	WorkflowRunStatsResponse struct {
-		AverageResiliencyScore func(childComplexity int) int
-		FailedPercentage       func(childComplexity int) int
-		FailedWorkflowRuns     func(childComplexity int) int
-		PassedPercentage       func(childComplexity int) int
-		RunningWorkflowRuns    func(childComplexity int) int
-		SucceededWorkflowRuns  func(childComplexity int) int
-		TotalWorkflowRuns      func(childComplexity int) int
+		AverageResiliencyScore         func(childComplexity int) int
+		ExperimentsAwaited             func(childComplexity int) int
+		ExperimentsFailed              func(childComplexity int) int
+		ExperimentsNa                  func(childComplexity int) int
+		ExperimentsPassed              func(childComplexity int) int
+		ExperimentsStopped             func(childComplexity int) int
+		FailedPercentage               func(childComplexity int) int
+		FailedWorkflowRuns             func(childComplexity int) int
+		PassedPercentage               func(childComplexity int) int
+		RunningWorkflowRuns            func(childComplexity int) int
+		SucceededWorkflowRuns          func(childComplexity int) int
+		TotalExperiments               func(childComplexity int) int
+		TotalWorkflowRuns              func(childComplexity int) int
+		WorkflowRunFailedPercentage    func(childComplexity int) int
+		WorkflowRunSucceededPercentage func(childComplexity int) int
 	}
 
 	WorkflowRuns struct {
@@ -3290,12 +3302,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRun.ExecutionData(childComplexity), true
 
+	case "WorkflowRun.experiments_awaited":
+		if e.complexity.WorkflowRun.ExperimentsAwaited == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.ExperimentsAwaited(childComplexity), true
+
+	case "WorkflowRun.experiments_failed":
+		if e.complexity.WorkflowRun.ExperimentsFailed == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.ExperimentsFailed(childComplexity), true
+
+	case "WorkflowRun.experiments_na":
+		if e.complexity.WorkflowRun.ExperimentsNa == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.ExperimentsNa(childComplexity), true
+
 	case "WorkflowRun.experiments_passed":
 		if e.complexity.WorkflowRun.ExperimentsPassed == nil {
 			break
 		}
 
 		return e.complexity.WorkflowRun.ExperimentsPassed(childComplexity), true
+
+	case "WorkflowRun.experiments_stopped":
+		if e.complexity.WorkflowRun.ExperimentsStopped == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.ExperimentsStopped(childComplexity), true
 
 	case "WorkflowRun.isRemoved":
 		if e.complexity.WorkflowRun.IsRemoved == nil {
@@ -3367,6 +3407,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRunStatsResponse.AverageResiliencyScore(childComplexity), true
 
+	case "WorkflowRunStatsResponse.experiments_awaited":
+		if e.complexity.WorkflowRunStatsResponse.ExperimentsAwaited == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunStatsResponse.ExperimentsAwaited(childComplexity), true
+
+	case "WorkflowRunStatsResponse.experiments_failed":
+		if e.complexity.WorkflowRunStatsResponse.ExperimentsFailed == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunStatsResponse.ExperimentsFailed(childComplexity), true
+
+	case "WorkflowRunStatsResponse.experiments_na":
+		if e.complexity.WorkflowRunStatsResponse.ExperimentsNa == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunStatsResponse.ExperimentsNa(childComplexity), true
+
+	case "WorkflowRunStatsResponse.experiments_passed":
+		if e.complexity.WorkflowRunStatsResponse.ExperimentsPassed == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunStatsResponse.ExperimentsPassed(childComplexity), true
+
+	case "WorkflowRunStatsResponse.experiments_stopped":
+		if e.complexity.WorkflowRunStatsResponse.ExperimentsStopped == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunStatsResponse.ExperimentsStopped(childComplexity), true
+
 	case "WorkflowRunStatsResponse.failed_percentage":
 		if e.complexity.WorkflowRunStatsResponse.FailedPercentage == nil {
 			break
@@ -3402,12 +3477,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRunStatsResponse.SucceededWorkflowRuns(childComplexity), true
 
+	case "WorkflowRunStatsResponse.total_experiments":
+		if e.complexity.WorkflowRunStatsResponse.TotalExperiments == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunStatsResponse.TotalExperiments(childComplexity), true
+
 	case "WorkflowRunStatsResponse.total_workflow_runs":
 		if e.complexity.WorkflowRunStatsResponse.TotalWorkflowRuns == nil {
 			break
 		}
 
 		return e.complexity.WorkflowRunStatsResponse.TotalWorkflowRuns(childComplexity), true
+
+	case "WorkflowRunStatsResponse.workflow_run_failed_percentage":
+		if e.complexity.WorkflowRunStatsResponse.WorkflowRunFailedPercentage == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunStatsResponse.WorkflowRunFailedPercentage(childComplexity), true
+
+	case "WorkflowRunStatsResponse.workflow_run_succeeded_percentage":
+		if e.complexity.WorkflowRunStatsResponse.WorkflowRunSucceededPercentage == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunStatsResponse.WorkflowRunSucceededPercentage(childComplexity), true
 
 	case "WorkflowRuns.execution_data":
 		if e.complexity.WorkflowRuns.ExecutionData == nil {
@@ -4352,8 +4448,16 @@ type WorkflowRunStatsResponse {
   failed_workflow_runs: Int!
   running_workflow_runs: Int!
   average_resiliency_score: Float!
+  total_experiments: Int!
+  experiments_passed: Int!
+  experiments_failed: Int!
+  experiments_awaited: Int!
+  experiments_stopped: Int!
+  experiments_na: Int!
   passed_percentage: Float!
   failed_percentage: Float!
+  workflow_run_succeeded_percentage: Float!
+  workflow_run_failed_percentage: Float!
 }`, BuiltIn: false},
 	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
@@ -5177,6 +5281,7 @@ input WorkflowRunSortInput {
 input GetWorkflowRunsInput {
   project_id: ID!
   workflow_run_ids: [ID]
+  workflow_ids: [ID]
   pagination: Pagination
   sort: WorkflowRunSortInput
   filter: WorkflowRunFilterInput
@@ -5194,6 +5299,10 @@ type WorkflowRun {
   phase: String!
   resiliency_score: Float
   experiments_passed: Int
+  experiments_failed: Int
+  experiments_awaited: Int
+  experiments_stopped: Int
+  experiments_na: Int
   total_experiments: Int
   execution_data: String!
   isRemoved: Boolean
@@ -19001,6 +19110,130 @@ func (ec *executionContext) _WorkflowRun_experiments_passed(ctx context.Context,
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkflowRun_experiments_failed(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsFailed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_experiments_awaited(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsAwaited, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_experiments_stopped(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsStopped, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_experiments_na(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsNa, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkflowRun_total_experiments(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19267,6 +19500,210 @@ func (ec *executionContext) _WorkflowRunStatsResponse_average_resiliency_score(c
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkflowRunStatsResponse_total_experiments(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunStatsResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalExperiments, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunStatsResponse_experiments_passed(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunStatsResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsPassed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunStatsResponse_experiments_failed(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunStatsResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsFailed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunStatsResponse_experiments_awaited(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunStatsResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsAwaited, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunStatsResponse_experiments_stopped(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunStatsResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsStopped, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunStatsResponse_experiments_na(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunStatsResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentsNa, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkflowRunStatsResponse_passed_percentage(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19319,6 +19756,74 @@ func (ec *executionContext) _WorkflowRunStatsResponse_failed_percentage(ctx cont
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.FailedPercentage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunStatsResponse_workflow_run_succeeded_percentage(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunStatsResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowRunSucceededPercentage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunStatsResponse_workflow_run_failed_percentage(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunStatsResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowRunFailedPercentage, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23662,6 +24167,12 @@ func (ec *executionContext) unmarshalInputGetWorkflowRunsInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
+		case "workflow_ids":
+			var err error
+			it.WorkflowIds, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "pagination":
 			var err error
 			it.Pagination, err = ec.unmarshalOPagination2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPagination(ctx, v)
@@ -27680,6 +28191,14 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._WorkflowRun_resiliency_score(ctx, field, obj)
 		case "experiments_passed":
 			out.Values[i] = ec._WorkflowRun_experiments_passed(ctx, field, obj)
+		case "experiments_failed":
+			out.Values[i] = ec._WorkflowRun_experiments_failed(ctx, field, obj)
+		case "experiments_awaited":
+			out.Values[i] = ec._WorkflowRun_experiments_awaited(ctx, field, obj)
+		case "experiments_stopped":
+			out.Values[i] = ec._WorkflowRun_experiments_stopped(ctx, field, obj)
+		case "experiments_na":
+			out.Values[i] = ec._WorkflowRun_experiments_na(ctx, field, obj)
 		case "total_experiments":
 			out.Values[i] = ec._WorkflowRun_total_experiments(ctx, field, obj)
 		case "execution_data":
@@ -27736,6 +28255,36 @@ func (ec *executionContext) _WorkflowRunStatsResponse(ctx context.Context, sel a
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "total_experiments":
+			out.Values[i] = ec._WorkflowRunStatsResponse_total_experiments(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "experiments_passed":
+			out.Values[i] = ec._WorkflowRunStatsResponse_experiments_passed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "experiments_failed":
+			out.Values[i] = ec._WorkflowRunStatsResponse_experiments_failed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "experiments_awaited":
+			out.Values[i] = ec._WorkflowRunStatsResponse_experiments_awaited(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "experiments_stopped":
+			out.Values[i] = ec._WorkflowRunStatsResponse_experiments_stopped(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "experiments_na":
+			out.Values[i] = ec._WorkflowRunStatsResponse_experiments_na(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "passed_percentage":
 			out.Values[i] = ec._WorkflowRunStatsResponse_passed_percentage(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -27743,6 +28292,16 @@ func (ec *executionContext) _WorkflowRunStatsResponse(ctx context.Context, sel a
 			}
 		case "failed_percentage":
 			out.Values[i] = ec._WorkflowRunStatsResponse_failed_percentage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "workflow_run_succeeded_percentage":
+			out.Values[i] = ec._WorkflowRunStatsResponse_workflow_run_succeeded_percentage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "workflow_run_failed_percentage":
+			out.Values[i] = ec._WorkflowRunStatsResponse_workflow_run_failed_percentage(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
