@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography, useTheme } from '@material-ui/core';
 import { LitmusCard } from 'litmus-ui';
 import React from 'react';
 import useStyles from './styles';
@@ -31,15 +31,16 @@ const Card: React.FC<CardProps> = ({
   subData,
 }) => {
   const classes = useStyles();
+  const { palette } = useTheme();
   return (
     <LitmusCard
-      borderColor="#B3B7CC"
-      width="360px"
-      height="165px"
+      borderColor={palette.border.main}
+      width="22.5rem"
+      height="10.3rem"
       className={classes.litmusCard}
     >
       <div>
-        <div className={classes.cardHeader}>
+        <div className={classes.flex}>
           <img src={image} alt="users" />
           <Typography variant="h6" className={classes.cardTitle}>
             {header}
@@ -47,7 +48,7 @@ const Card: React.FC<CardProps> = ({
         </div>
         <Typography className={classes.cardDescription}>{subtitle}</Typography>
         {split ? (
-          <div style={{ display: 'flex' }}>
+          <div className={classes.flex}>
             <Typography className={`${color} ${classes.dataField}`}>
               {data}
             </Typography>

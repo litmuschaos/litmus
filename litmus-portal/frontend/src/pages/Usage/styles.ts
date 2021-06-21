@@ -6,8 +6,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   description: {
     fontWeight: 400,
-    fontSize: '18px',
-    marginTop: 20,
+    fontSize: '1rem',
+    margin: theme.spacing(3, 0),
     color: theme.palette.text.hint,
   },
 }));

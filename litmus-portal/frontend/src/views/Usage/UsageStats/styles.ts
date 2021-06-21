@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  cardHeader: {
+  flex: {
     display: 'flex',
   },
   cardTitle: {
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.status.experiment.omitted,
   },
   expRuns: {
-    color: '#EFC078',
+    color: theme.palette.status.experiment.error,
   },
   agentType: {
     marginLeft: 'auto',
