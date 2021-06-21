@@ -1344,3 +1344,22 @@ customWorkflow:
 ######################################
 usage:
   usageHeader: Usage
+  usageSubtitle: Global and project level usage details. Available only to the admin user.
+  projectStatistics: Project Statistics
+  projectSubtitle: Includes the number of schedules, workflow runs and experiment run in each project.
+  card:
+    userHeader: Users
+    userSubtitle: Total number of Litmus users.
+    projectHeader: Projects
+    projectSubtitle: Total number of Litmus projects.
+    agentHeader: Agents
+    agentSubtitle: Total number of Litmus agents connected to Litmus center.
+    agentClusterScope: cluster scope
+    agentNamespaceScope: namespace scope
+    workflowScheduleHeader: Workflow Schedules
+    workflowScheduleSubtitle: Total number of chaos workflows scheduled in the last one month.
+    workflowRunHeader: Workflow Runs
+    workflowRunSubtitle: Number of workflows ran last month.
+    experimentRunHeader: Experiments Runs
+    experimentRunSubtitle: Total number of chaos experiments run in the last one month.
+

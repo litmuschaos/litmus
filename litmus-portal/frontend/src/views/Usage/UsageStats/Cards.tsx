@@ -41,7 +41,7 @@ const Card: React.FC<CardProps> = ({
     >
       <div>
         <div className={classes.flex}>
-          <img src={image} alt="users" />
+          <img src={image} alt="Alternate" />
           <Typography variant="h6" className={classes.cardTitle}>
             {header}
           </Typography>

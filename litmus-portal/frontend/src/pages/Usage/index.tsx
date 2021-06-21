@@ -13,16 +13,14 @@ const Usage = () => {
     <Scaffold>
       <Typography variant="h3">{t('usage.usageHeader')}</Typography>
       <Typography className={classes.description}>
-        Global and project level usage details. Available only to the admin
-        user.
+        {t('usage.usageSubtitle')}
       </Typography>
       <UsageStats />
       <br />
       <br />
-      <Typography variant="h4">Project Statistics</Typography>
+      <Typography variant="h4">{t('usage.projectStatistics')}</Typography>
       <Typography className={classes.description}>
-        Includes the number of schedules, workflow runs and experiment run in
-        each project.
+        {t('usage.projectSubtitle')}
       </Typography>
       <UsageTable />
     </Scaffold>
