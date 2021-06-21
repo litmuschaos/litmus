@@ -4,10 +4,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   Head: {
     margin: theme.spacing(1, 0, 2.5),
   },
-  litmusCard: {
-    margin: '20px 20px 20px 0px',
-    borderRadius: 5,
-    padding: '20px 15px',
+  description: {
+    fontWeight: 400,
+    fontSize: '18px',
+    marginTop: 20,
+    color: theme.palette.text.hint,
   },
 }));
 export default useStyles;

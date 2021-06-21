@@ -43,14 +43,7 @@ const UsageStats = () => {
   });
 
   return (
-    <div
-      style={{
-        marginTop: 20,
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-      }}
-    >
+    <div className={classes.cardDiv}>
       {loading ? (
         <Loader />
       ) : (
@@ -62,19 +55,17 @@ const UsageStats = () => {
             className={classes.litmusCard}
           >
             <div>
-              <div style={{ display: 'flex' }}>
+              <div className={classes.cardHeader}>
                 <img src="./icons/users.svg" alt="users" />
-                <Typography variant="h6" style={{ marginLeft: 10 }}>
+                <Typography variant="h6" className={classes.cardTitle}>
                   Users
                 </Typography>
               </div>
-              <Typography
-                style={{ color: '#696F8C', marginTop: 12, height: 30 }}
-              >
+              <Typography className={classes.cardDescription}>
                 Total number of Litmus users.
               </Typography>
               <Typography
-                style={{ marginTop: 15, fontSize: 30, color: '#0098DD' }}
+                className={`${classes.usersData} ${classes.dataField}`}
               >
                 {data.UsageQuery?.TotalCount.Users}
               </Typography>
@@ -87,19 +78,17 @@ const UsageStats = () => {
             className={classes.litmusCard}
           >
             <div>
-              <div style={{ display: 'flex' }}>
+              <div className={classes.cardHeader}>
                 <img src="./icons/viewProjects.svg" alt="projects" />
-                <Typography variant="h6" style={{ marginLeft: 10 }}>
+                <Typography variant="h6" className={classes.cardTitle}>
                   Projects
                 </Typography>
               </div>
-              <Typography
-                style={{ color: '#696F8C', marginTop: 12, height: 30 }}
-              >
+              <Typography className={classes.cardDescription}>
                 Total number of Litmus projects.
               </Typography>
               <Typography
-                style={{ marginTop: 15, fontSize: 30, color: '#00CC9A' }}
+                className={`${classes.projectData} ${classes.dataField}`}
               >
                 {data.UsageQuery?.TotalCount.Projects}
               </Typography>
@@ -112,31 +101,29 @@ const UsageStats = () => {
             className={classes.litmusCard}
           >
             <div>
-              <div style={{ display: 'flex' }}>
+              <div className={classes.cardHeader}>
                 <img src="./icons/targets.svg" alt="targets" />
-                <Typography variant="h6" style={{ marginLeft: 10 }}>
+                <Typography variant="h6" className={classes.cardTitle}>
                   Agents
                 </Typography>
               </div>
-              <Typography
-                style={{ color: '#696F8C', marginTop: 12, height: 30 }}
-              >
+              <Typography className={classes.cardDescription}>
                 Total number of Litmus agents connected to Litmus center.
               </Typography>
-              <div style={{ display: 'flex' }}>
+              <div className={classes.cardHeader}>
                 <Typography
-                  style={{ marginTop: 15, fontSize: 30, color: '#5469D4' }}
+                  className={`${classes.agentsData} ${classes.dataField}`}
                 >
                   {data.UsageQuery?.TotalCount.Agents.Total}
                 </Typography>
-                <div style={{ marginLeft: 'auto', marginTop: 20 }}>
-                  <Typography style={{ opacity: 0.5 }}>
+                <div className={classes.agentType}>
+                  <Typography className={classes.agentTypeText}>
                     <strong>
                       {data.UsageQuery?.TotalCount.Agents.Cluster}
                     </strong>{' '}
                     cluster scope
                   </Typography>
-                  <Typography style={{ opacity: 0.5 }}>
+                  <Typography className={classes.agentTypeText}>
                     <strong>{data.UsageQuery?.TotalCount.Agents.Ns}</strong>{' '}
                     namespace scope
                   </Typography>
@@ -152,19 +139,17 @@ const UsageStats = () => {
             className={classes.litmusCard}
           >
             <div>
-              <div style={{ display: 'flex' }}>
+              <div className={classes.cardHeader}>
                 <img src="./icons/workflow-calender.svg" alt="schedules" />
-                <Typography variant="h6" style={{ marginLeft: 10 }}>
+                <Typography variant="h6" className={classes.cardTitle}>
                   Workflow Schedules
                 </Typography>
               </div>
-              <Typography
-                style={{ color: '#696F8C', marginTop: 12, height: 30 }}
-              >
+              <Typography className={classes.cardDescription}>
                 Total number of chaos workflows scheduled in the last one month.
               </Typography>
               <Typography
-                style={{ marginTop: 15, fontSize: 30, color: '#F2536D' }}
+                className={`${classes.schedules} ${classes.dataField}`}
               >
                 {data.UsageQuery?.TotalCount.Workflows.Schedules}
               </Typography>
@@ -177,20 +162,16 @@ const UsageStats = () => {
             className={classes.litmusCard}
           >
             <div>
-              <div style={{ display: 'flex' }}>
+              <div className={classes.cardHeader}>
                 <img src="./icons/workflows-outline.svg" alt="runs" />
-                <Typography variant="h6" style={{ marginLeft: 10 }}>
+                <Typography variant="h6" className={classes.cardTitle}>
                   Workflow Runs
                 </Typography>
               </div>
-              <Typography
-                style={{ color: '#696F8C', marginTop: 12, height: 30 }}
-              >
+              <Typography className={classes.cardDescription}>
                 Number of workflows runned last month.
               </Typography>
-              <Typography
-                style={{ marginTop: 15, fontSize: 30, color: '#A93DDB' }}
-              >
+              <Typography className={`${classes.wfRuns} ${classes.dataField}`}>
                 {data.UsageQuery?.TotalCount.Workflows.Runs}
               </Typography>
             </div>
@@ -202,20 +183,16 @@ const UsageStats = () => {
             className={classes.litmusCard}
           >
             <div>
-              <div style={{ display: 'flex' }}>
+              <div className={classes.cardHeader}>
                 <img src="./icons/myhub.svg" alt="exp runs" />
-                <Typography variant="h6" style={{ marginLeft: 10 }}>
+                <Typography variant="h6" className={classes.cardTitle}>
                   Experiments Runs
                 </Typography>
               </div>
-              <Typography
-                style={{ color: '#696F8C', marginTop: 12, height: 30 }}
-              >
+              <Typography className={classes.cardDescription}>
                 Total number of chaos experiments run in the last one month.
               </Typography>
-              <Typography
-                style={{ marginTop: 15, fontSize: 30, color: '#EFC078' }}
-              >
+              <Typography className={`${classes.expRuns} ${classes.dataField}`}>
                 {data.UsageQuery?.TotalCount.Workflows.ExpRuns}
               </Typography>
             </div>
