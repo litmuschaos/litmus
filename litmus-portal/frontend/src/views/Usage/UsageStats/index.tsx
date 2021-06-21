@@ -1,10 +1,9 @@
-import { Typography } from '@material-ui/core';
-import React from 'react';
-import { LitmusCard } from 'litmus-ui';
 import { useQuery } from '@apollo/client';
-import useStyles from './styles';
-import { GET_GLOBAL_STATS } from '../../../graphql';
+import React from 'react';
 import Loader from '../../../components/Loader';
+import { GET_GLOBAL_STATS } from '../../../graphql';
+import Card from './Cards';
+import useStyles from './styles';
 
 // interface UsageCount {
 //   TotalCount: {
@@ -48,155 +47,60 @@ const UsageStats = () => {
         <Loader />
       ) : (
         <>
-          <LitmusCard
-            borderColor="#B3B7CC"
-            width="360px"
-            height="165px"
-            className={classes.litmusCard}
-          >
-            <div>
-              <div className={classes.cardHeader}>
-                <img src="./icons/users.svg" alt="users" />
-                <Typography variant="h6" className={classes.cardTitle}>
-                  Users
-                </Typography>
-              </div>
-              <Typography className={classes.cardDescription}>
-                Total number of Litmus users.
-              </Typography>
-              <Typography
-                className={`${classes.usersData} ${classes.dataField}`}
-              >
-                {data.UsageQuery?.TotalCount.Users}
-              </Typography>
-            </div>
-          </LitmusCard>
-          <LitmusCard
-            borderColor="#B3B7CC"
-            width="360px"
-            height="165px"
-            className={classes.litmusCard}
-          >
-            <div>
-              <div className={classes.cardHeader}>
-                <img src="./icons/viewProjects.svg" alt="projects" />
-                <Typography variant="h6" className={classes.cardTitle}>
-                  Projects
-                </Typography>
-              </div>
-              <Typography className={classes.cardDescription}>
-                Total number of Litmus projects.
-              </Typography>
-              <Typography
-                className={`${classes.projectData} ${classes.dataField}`}
-              >
-                {data.UsageQuery?.TotalCount.Projects}
-              </Typography>
-            </div>
-          </LitmusCard>
-          <LitmusCard
-            borderColor="#B3B7CC"
-            width="360px"
-            height="165px"
-            className={classes.litmusCard}
-          >
-            <div>
-              <div className={classes.cardHeader}>
-                <img src="./icons/targets.svg" alt="targets" />
-                <Typography variant="h6" className={classes.cardTitle}>
-                  Agents
-                </Typography>
-              </div>
-              <Typography className={classes.cardDescription}>
-                Total number of Litmus agents connected to Litmus center.
-              </Typography>
-              <div className={classes.cardHeader}>
-                <Typography
-                  className={`${classes.agentsData} ${classes.dataField}`}
-                >
-                  {data.UsageQuery?.TotalCount.Agents.Total}
-                </Typography>
-                <div className={classes.agentType}>
-                  <Typography className={classes.agentTypeText}>
-                    <strong>
-                      {data.UsageQuery?.TotalCount.Agents.Cluster}
-                    </strong>{' '}
-                    cluster scope
-                  </Typography>
-                  <Typography className={classes.agentTypeText}>
-                    <strong>{data.UsageQuery?.TotalCount.Agents.Ns}</strong>{' '}
-                    namespace scope
-                  </Typography>
-                </div>
-              </div>
-            </div>
-          </LitmusCard>
+          <Card
+            image="./icons/users.svg"
+            header="Users"
+            subtitle="Total number of Litmus users."
+            color={classes.usersData}
+            data={data.UsageQuery?.TotalCount.Users}
+          />
+          <Card
+            image="./icons/viewProjects.svg"
+            header="Projects"
+            subtitle="Total number of Litmus projects."
+            color={classes.projectData}
+            data={data.UsageQuery?.TotalCount.Projects}
+          />
+          <Card
+            image="./icons/targets.svg"
+            header="Agents"
+            subtitle="Total number of Litmus agents connected to Litmus center."
+            color={classes.agentsData}
+            data={data.UsageQuery?.TotalCount.Agents.Total}
+            split
+            subData={[
+              {
+                option1: data.UsageQuery?.TotalCount.Agents.Cluster,
+                option2: 'cluster scope',
+              },
+              {
+                option1: data.UsageQuery?.TotalCount.Agents.Ns,
+                option2: 'namespace scope',
+              },
+            ]}
+          />
 
-          <LitmusCard
-            borderColor="#B3B7CC"
-            width="360px"
-            height="165px"
-            className={classes.litmusCard}
-          >
-            <div>
-              <div className={classes.cardHeader}>
-                <img src="./icons/workflow-calender.svg" alt="schedules" />
-                <Typography variant="h6" className={classes.cardTitle}>
-                  Workflow Schedules
-                </Typography>
-              </div>
-              <Typography className={classes.cardDescription}>
-                Total number of chaos workflows scheduled in the last one month.
-              </Typography>
-              <Typography
-                className={`${classes.schedules} ${classes.dataField}`}
-              >
-                {data.UsageQuery?.TotalCount.Workflows.Schedules}
-              </Typography>
-            </div>
-          </LitmusCard>
-          <LitmusCard
-            borderColor="#B3B7CC"
-            width="360px"
-            height="165px"
-            className={classes.litmusCard}
-          >
-            <div>
-              <div className={classes.cardHeader}>
-                <img src="./icons/workflows-outline.svg" alt="runs" />
-                <Typography variant="h6" className={classes.cardTitle}>
-                  Workflow Runs
-                </Typography>
-              </div>
-              <Typography className={classes.cardDescription}>
-                Number of workflows runned last month.
-              </Typography>
-              <Typography className={`${classes.wfRuns} ${classes.dataField}`}>
-                {data.UsageQuery?.TotalCount.Workflows.Runs}
-              </Typography>
-            </div>
-          </LitmusCard>
-          <LitmusCard
-            borderColor="#B3B7CC"
-            width="360px"
-            height="165px"
-            className={classes.litmusCard}
-          >
-            <div>
-              <div className={classes.cardHeader}>
-                <img src="./icons/myhub.svg" alt="exp runs" />
-                <Typography variant="h6" className={classes.cardTitle}>
-                  Experiments Runs
-                </Typography>
-              </div>
-              <Typography className={classes.cardDescription}>
-                Total number of chaos experiments run in the last one month.
-              </Typography>
-              <Typography className={`${classes.expRuns} ${classes.dataField}`}>
-                {data.UsageQuery?.TotalCount.Workflows.ExpRuns}
-              </Typography>
-            </div>
-          </LitmusCard>
+          <Card
+            image="./icons/workflow-calender.svg"
+            header="Workflow Schedules"
+            subtitle="Total number of chaos workflows scheduled in the last one month."
+            color={classes.schedules}
+            data={data.UsageQuery?.TotalCount.Workflows.Schedules}
+          />
+          <Card
+            image="./icons/workflows-outline.svg"
+            header="Workflow Runs"
+            subtitle="Number of workflows ran last month."
+            color={classes.wfRuns}
+            data={data.UsageQuery?.TotalCount.Workflows.Runs}
+          />
+          <Card
+            image="./icons/myhub.svg"
+            header="Experiments Runs"
+            subtitle="Total number of chaos experiments run in the last one month."
+            color={classes.expRuns}
+            data={data.UsageQuery?.TotalCount.Workflows.ExpRuns}
+          />
         </>
       )}
     </div>
