@@ -12,7 +12,7 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 
 ## **Pre-requisites**
 
--   Kubernetes 1.11 or later.
+-   Kubernetes 1.15 or later.
 
 ## **Installation**
 
