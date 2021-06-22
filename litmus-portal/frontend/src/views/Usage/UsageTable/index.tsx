@@ -11,11 +11,11 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Search } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Loader from '../../../components/Loader';
 import { GLOBAL_PROJECT_DATA } from '../../../graphql';
 import { Pagination } from '../../../models/graphql/workflowListData';
@@ -349,7 +349,11 @@ const UsageTable = () => {
             </TableHead>
             <TableBody>
               {loading ? (
-                <Loader />
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <Loader />
+                  </TableCell>
+                </TableRow>
               ) : data?.UsageQuery.Projects.length > 0 ? (
                 data?.UsageQuery.Projects.map((project: any) => (
                   <TableRow key={project.Name} className={classes.projectData}>
