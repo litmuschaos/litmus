@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: litmus
+  name: litmus-ns-exp-sa
   namespace: default
   labels:
     app.kubernetes.io/name: litmus
@@ -11,12 +11,12 @@ metadata:
     app.kubernetes.io/component: operator-serviceaccount
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
-    name: litmus
+    name: litmus-ns-exp-sa
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: litmus
+  name: litmus-ns-exp-sa
   namespace: default
   labels:
     app.kubernetes.io/name: litmus
@@ -26,7 +26,7 @@ metadata:
     app.kubernetes.io/component: operator-role
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
-    name: litmus
+    name: litmus-ns-exp-sa
 rules:
 - apiGroups: [""]
   resources: ["replicationcontrollers","secrets"]
@@ -53,7 +53,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: litmus
+  name: litmus-ns-exp-sa
   namespace: default
   labels:
     app.kubernetes.io/name: litmus
@@ -66,8 +66,8 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: litmus
+  name: litmus-ns-exp-sa
 subjects:
 - kind: ServiceAccount
-  name: litmus
+  name: litmus-ns-exp-sa
   namespace: default
