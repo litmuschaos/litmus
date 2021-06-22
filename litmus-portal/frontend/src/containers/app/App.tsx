@@ -25,7 +25,7 @@ const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
-const Usage = lazy(() => import('../../pages/Usage'));
+const UsageStatistics = lazy(() => import('../../pages/UsageStatistics'));
 const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
 const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
@@ -214,7 +214,7 @@ const Routes: React.FC = () => {
             />
           )}
           {role === UserRole.admin ? (
-            <Route path="/usage" component={Usage} />
+            <Route path="/usage-statistics" component={UsageStatistics} />
           ) : (
             <Redirect
               to={{
