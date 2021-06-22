@@ -11,6 +11,8 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 -   Okteto Cloud
 -   AKS
 -   K3S
+-   Civo Cloud
+-   Kublr
 
 ## **Pre-requisites**
 
