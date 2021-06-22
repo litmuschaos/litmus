@@ -1330,3 +1330,36 @@ customWorkflow:
     dragexp: Drag the selected experiment between the rows or to the end of rows to make it sequential experiment or drag into the rows to make it parallel experiment.
     saveChanges: Save changes
     discard: Discard changes
+
+######################################
+############   Usage    ##############
+######################################
+usage:
+  usageHeader: Usage
+  usageSubtitle: Global and project level usage details. Available only to the admin user.
+  projectStatistics: Project Statistics
+  projectSubtitle: Includes the number of schedules, workflow runs and experiment run in each project.
+  card:
+    userHeader: Users
+    userSubtitle: Total number of Litmus users.
+    projectHeader: Projects
+    projectSubtitle: Total number of Litmus projects.
+    agentHeader: Agents
+    agentSubtitle: Total number of Litmus agents connected to Litmus center.
+    agentClusterScope: cluster scope
+    agentNamespaceScope: namespace scope
+    workflowScheduleHeader: Workflow Schedules
+    workflowScheduleSubtitle: Total number of chaos workflows scheduled in this month.
+    workflowRunHeader: Workflow Runs
+    workflowRunSubtitle: Number of workflows ran this month.
+    experimentRunHeader: Experiments Runs
+    experimentRunSubtitle: Total number of chaos experiments ran this month.
+  table:
+    project: Projects
+    owner: Project Owner
+    agents: Agents
+    schedules: Workflow Schedules
+    wfRuns: Workflow runs
+    expRuns: Experiment runs
+    team: Team Members
+    noProject: No Projects Found

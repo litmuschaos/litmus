@@ -35,15 +35,19 @@ type WeightagesInput struct {
 
 // ChaosWorkflowRun contains the required fields to be stored in the database for a workflow run
 type ChaosWorkflowRun struct {
-	WorkflowRunID     string   `bson:"workflow_run_id"`
-	LastUpdated       string   `bson:"last_updated"`
-	Phase             string   `bson:"phase"`
-	ResiliencyScore   *float64 `bson:"resiliency_score,string,omitempty"`
-	ExperimentsPassed *int     `bson:"experiments_passed,string,omitempty"`
-	TotalExperiments  *int     `bson:"total_experiments,string,omitempty"`
-	ExecutionData     string   `bson:"execution_data"`
-	Completed         bool     `bson:"completed"`
-	IsRemoved         *bool    `bson:"isRemoved"`
+	WorkflowRunID      string   `bson:"workflow_run_id"`
+	LastUpdated        string   `bson:"last_updated"`
+	Phase              string   `bson:"phase"`
+	ResiliencyScore    *float64 `bson:"resiliency_score,string,omitempty"`
+	ExperimentsPassed  *int     `bson:"experiments_passed,string,omitempty"`
+	ExperimentsFailed  *int     `bson:"experiments_failed,string,omitempty"`
+	ExperimentsAwaited *int     `bson:"experiments_awaited,string,omitempty"`
+	ExperimentsStopped *int     `bson:"experiments_stopped,string,omitempty"`
+	ExperimentsNA      *int     `bson:"experiments_na,string,omitempty"`
+	TotalExperiments   *int     `bson:"total_experiments,string,omitempty"`
+	ExecutionData      string   `bson:"execution_data"`
+	Completed          bool     `bson:"completed"`
+	IsRemoved          *bool    `bson:"isRemoved"`
 }
 
 type AggregatedWorkflowRuns struct {
