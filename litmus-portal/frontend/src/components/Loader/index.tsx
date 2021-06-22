@@ -22,7 +22,7 @@ const Loader: React.FC<LoaderProps> = ({ size, message }) => {
   const classes = useStyles();
   const defaultSize = 40;
   return (
-    <div>
+    <>
       <Center>
         <CircularProgress
           className={classes.spinner}
@@ -30,7 +30,7 @@ const Loader: React.FC<LoaderProps> = ({ size, message }) => {
         />
       </Center>
       <Typography>{message}</Typography>
-    </div>
+    </>
   );
 };
 

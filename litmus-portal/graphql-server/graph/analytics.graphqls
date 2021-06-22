@@ -292,6 +292,14 @@ type WorkflowRunStatsResponse {
   failed_workflow_runs: Int!
   running_workflow_runs: Int!
   average_resiliency_score: Float!
+  total_experiments: Int!
+  experiments_passed: Int!
+  experiments_failed: Int!
+  experiments_awaited: Int!
+  experiments_stopped: Int!
+  experiments_na: Int!
   passed_percentage: Float!
   failed_percentage: Float!
+  workflow_run_succeeded_percentage: Float!
+  workflow_run_failed_percentage: Float!
 }

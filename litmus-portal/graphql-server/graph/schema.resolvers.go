@@ -28,6 +28,7 @@ import (
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 	validate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rbac"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -453,6 +454,14 @@ func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID st
 	}
 
 	return imageRegistry, err
+}
+
+func (r *queryResolver) UsageQuery(ctx context.Context, query model.UsageQuery) (*model.UsageData, error) {
+	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
+	if claims["role"].(string) != "admin" {
+		return nil, errors.New("only portal admin access")
+	}
+	return usage.GetUsage(ctx, query)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
