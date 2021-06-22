@@ -164,11 +164,11 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.13.5"
+              value: "litmuschaos/chaos-operator:1.13.6"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.13.5"
+              value: "litmuschaos/chaos-runner:1.13.6"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:1.13.5"
+              value: "litmuschaos/chaos-exporter:1.13.6"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: NODE_NAME

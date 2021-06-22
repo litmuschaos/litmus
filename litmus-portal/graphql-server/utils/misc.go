@@ -125,3 +125,8 @@ func ContainsString(s []string, str string) bool {
 
 	return false
 }
+
+// Truncate a float to two levels of precision
+func Truncate(num float64) float64 {
+	return float64(int(num*100)) / 100
+}
