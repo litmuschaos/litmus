@@ -28,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   cancelButton: {
-    borderColor: theme.palette.border.main,
     marginRight: theme.spacing(1.5),
     padding: theme.spacing(0, 3),
   },

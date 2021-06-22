@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-expressions */
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import {
+  Drawer,
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -10,13 +12,17 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import { ButtonFilled, ButtonOutlined, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
+import { DELETE_DATASOURCE } from '../../../../graphql';
 import { LIST_DATASOURCE } from '../../../../graphql/queries';
 import {
   DataSourceList,
+  DeleteDataSourceInput,
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../../../models/graphql/dataSourceDetails';
@@ -70,6 +76,15 @@ const DataSourceTable: React.FC = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const projectID = getProjectID();
+  const [success, setSuccess] = React.useState(false);
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
+  const [drawerState, setDrawerState] = React.useState(false);
+  const [showAllDashboards, setShowAllDashboards] = React.useState(false);
+  const [connectedDashboards, setConnectedDashboards] = React.useState<
+    string[]
+  >([]);
+  const [dsIDToDelete, setDsIDToDelete] = React.useState<string>('');
+  const [dsNameToDelete, setDsNameToDelete] = React.useState<string>('');
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -83,14 +98,35 @@ const DataSourceTable: React.FC = () => {
   };
 
   // Apollo query to get the data source data
-  const { data, loading, error } = useQuery<DataSourceList, ListDataSourceVars>(
-    LIST_DATASOURCE,
+  const { data, loading, error, refetch } = useQuery<
+    DataSourceList,
+    ListDataSourceVars
+  >(LIST_DATASOURCE, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 10000,
+  });
+
+  const alertStateHandler = (successState: boolean) => {
+    setSuccess(successState);
+    setIsAlertOpen(true);
+  };
+
+  const [deleteDataSource] = useMutation<boolean, DeleteDataSourceInput>(
+    DELETE_DATASOURCE,
     {
-      variables: { projectID },
-      fetchPolicy: 'cache-and-network',
-      pollInterval: 10000,
+      onCompleted: () => alertStateHandler(true),
+      onError: () => alertStateHandler(false),
     }
   );
+
+  const cleanDrawerState = () => {
+    setDsIDToDelete('');
+    setDsNameToDelete('');
+    setConnectedDashboards([]);
+    setShowAllDashboards(false);
+    setDrawerState(false);
+  };
 
   const getDataSourceType = (searchingData: ListDataSourceResponse[]) => {
     const uniqueList: string[] = [];
@@ -286,7 +322,20 @@ const DataSourceTable: React.FC = () => {
                           key={data.ds_id}
                           className={classes.tableRow}
                         >
-                          <TableData data={data} />
+                          <TableData
+                            data={data}
+                            drawerStateHandler={(
+                              ds_id,
+                              ds_name,
+                              dashboards
+                            ) => {
+                              setDsIDToDelete(ds_id);
+                              setDsNameToDelete(ds_name);
+                              setConnectedDashboards(dashboards);
+                              setDrawerState(true);
+                            }}
+                            alertStateHandler={alertStateHandler}
+                          />
                         </TableRow>
                       );
                     })
@@ -314,6 +363,132 @@ const DataSourceTable: React.FC = () => {
           />
         </section>
       </Paper>
+      {isAlertOpen && (
+        <Snackbar
+          open={isAlertOpen}
+          autoHideDuration={3000}
+          onClose={() => {
+            if (success) {
+              refetch();
+            }
+            setIsAlertOpen(false);
+          }}
+        >
+          <Alert
+            onClose={() => {
+              if (success) {
+                refetch();
+              }
+              setIsAlertOpen(false);
+            }}
+            severity={success ? 'success' : 'error'}
+          >
+            {success
+              ? 'Successfully deleted the data source'
+              : 'Error while deleting the data source'}
+          </Alert>
+        </Snackbar>
+      )}
+      <Drawer
+        className={classes.drawer}
+        variant="persistent"
+        anchor="right"
+        open={drawerState}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        ModalProps={{
+          keepMounted: true,
+        }}
+      >
+        <div className={classes.drawerContent}>
+          <div className={classes.flexContainer}>
+            <Typography className={classes.drawerHeading} align="left">
+              Delete
+              <b>
+                <i>{` ${dsNameToDelete} `}</i>
+              </b>
+            </Typography>
+            <ButtonOutlined
+              className={classes.closeButton}
+              onClick={() => cleanDrawerState()}
+            >
+              &#x2715;
+            </ButtonOutlined>
+          </div>
+          <blockquote className={classes.warningBlock}>
+            <Typography className={classes.warningText} align="left">
+              Unexpected bad things will happen if you don’t read this!
+            </Typography>
+          </blockquote>
+          <Typography className={classes.drawerBodyText} align="left">
+            The data source seems to be connected to following Application
+            Dashboards. Dashboards will be unable to show metrics if data source
+            is deleted.
+          </Typography>
+          <Typography
+            className={classes.drawerBodyText}
+            style={{ fontWeight: 500 }}
+            align="left"
+          >
+            Connected Dashboards :
+          </Typography>
+          <div className={classes.dashboardsList}>
+            {(showAllDashboards
+              ? connectedDashboards
+              : connectedDashboards.slice(0, 3)
+            ).map((name: string, index: number) => (
+              <Typography
+                className={`${classes.drawerBodyText} ${classes.drawerListItem}`}
+                align="left"
+              >
+                {`${index + 1}. ${name}`}
+              </Typography>
+            ))}
+          </div>
+          {connectedDashboards.length - 3 >= 1 && (
+            <TextButton
+              onClick={() => setShowAllDashboards(!showAllDashboards)}
+              className={classes.cancelButton}
+              variant="highlight"
+            >
+              <Typography className={classes.buttonText}>
+                {showAllDashboards
+                  ? `Show Less Dashboards`
+                  : `+${connectedDashboards.length - 3} Dashboards`}
+              </Typography>
+            </TextButton>
+          )}
+          <div className={classes.flexButtons}>
+            <TextButton
+              onClick={() => cleanDrawerState()}
+              className={classes.cancelButton}
+            >
+              <Typography className={classes.buttonText}>Cancel</Typography>
+            </TextButton>
+            <ButtonFilled
+              onClick={() => {
+                deleteDataSource({
+                  variables: {
+                    deleteDSInput: {
+                      ds_id: dsIDToDelete,
+                      force_delete: true,
+                    },
+                  },
+                });
+                cleanDrawerState();
+              }}
+              variant="error"
+            >
+              <Typography
+                className={`${classes.buttonText} ${classes.confirmButtonText}`}
+              >
+                Force Delete
+              </Typography>
+            </ButtonFilled>
+          </div>
+        </div>
+      </Drawer>
     </div>
   );
 };

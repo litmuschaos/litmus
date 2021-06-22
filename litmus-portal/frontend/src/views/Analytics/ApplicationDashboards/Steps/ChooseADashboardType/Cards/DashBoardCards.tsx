@@ -82,15 +82,11 @@ const DashboardCards: React.FC<DashboardCardsProps> = ({
       {upload && (
         <Modal
           open
-          onClose={() => {
-            setUpload(false);
-          }}
+          onClose={() => setUpload(false)}
           modalActions={
             <ButtonOutlined
               className={classes.closeButton}
-              onClick={() => {
-                setUpload(false);
-              }}
+              onClick={() => setUpload(false)}
             >
               &#x2715;
             </ButtonOutlined>
@@ -106,9 +102,7 @@ const DashboardCards: React.FC<DashboardCardsProps> = ({
             </Typography>
             <UploadJSON
               successHandler={() => handleClick()}
-              errorHandler={() => {
-                generateAlert();
-              }}
+              errorHandler={() => generateAlert()}
             />
           </div>
         </Modal>

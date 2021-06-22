@@ -281,25 +281,27 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   const getAvailableApplications = () => {
     const availableApplications: Array<Option> = [];
     availableApplicationMetadataMap.forEach((appMetadata) => {
-      selectedNamespaceList.forEach((namespaceOption) => {
-        if (namespaceOption.name === appMetadata.namespace) {
-          const apps: Resource[] = appMetadata.applications.filter(
-            (application) => application.kind === kubeObjInput.resource
-          );
-          if (apps.length) {
-            apps[0].names.forEach((appName) => {
-              availableApplications.push({
-                name: `${
-                  namespaceOption.name
-                } / ${kubeObjInput.resource.substring(
-                  0,
-                  kubeObjInput.resource.length - 1
-                )} / ${appName}`,
+      if (selectedNamespaceList.length) {
+        selectedNamespaceList.forEach((namespaceOption) => {
+          if (namespaceOption.name === appMetadata.namespace) {
+            const apps: Resource[] = appMetadata.applications.filter(
+              (application) => application.kind === kubeObjInput.resource
+            );
+            if (apps.length) {
+              apps[0].names.forEach((appName) => {
+                availableApplications.push({
+                  name: `${
+                    namespaceOption.name
+                  } / ${kubeObjInput.resource.substring(
+                    0,
+                    kubeObjInput.resource.length - 1
+                  )} / ${appName}`,
+                });
               });
-            });
+            }
           }
-        }
-      });
+        });
+      }
     });
     return availableApplications;
   };
@@ -472,12 +474,19 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
 
           <AutocompleteChipInput
             defaultValue={getSelectedAppNamespaces()}
-            onChange={(event, value, reason) => {
-              setSelectedNamespaceList(value as Array<Option>);
-            }}
-            options={availableApplicationMetadataMap.map((value) => {
-              return { name: value.namespace };
-            })}
+            onChange={(event, value) =>
+              setSelectedNamespaceList(value as Array<Option>)
+            }
+            getOptionSelected={(option) =>
+              selectedNamespaceList
+                .map((selections) => selections.name)
+                .includes(option.name)
+            }
+            options={
+              availableApplicationMetadataMap.map((value) => {
+                return { name: value.namespace };
+              }) ?? []
+            }
             label={t(
               'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.selectNamespaces'
             )}
@@ -526,7 +535,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
 
             <AutocompleteChipInput
               defaultValue={getSelectedAppDetails()}
-              onChange={(event, value, reason) => {
+              onChange={(event, value) => {
                 const newSelection: ApplicationMetadata[] = [];
                 const selectedApps: Array<Option> = value as Array<Option>;
                 selectedApps.forEach((nsKindApp) => {
@@ -575,6 +584,11 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
                 });
                 setUpdate(true);
               }}
+              getOptionSelected={(option) =>
+                getSelectedAppDetails()
+                  .map((selections) => selections.name)
+                  .includes(option.name)
+              }
               options={getAvailableApplications()}
               label={t(
                 'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.selectApplications'

@@ -23,6 +23,12 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       border: `1px solid ${theme.palette.primary.main}`,
     },
+    [theme.breakpoints.down('md')]: {
+      height: '9rem',
+    },
+    [theme.breakpoints.down('sm')]: {
+      height: 'fit-content',
+    },
   },
 
   // CARD MEDIA
@@ -40,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
   // CARD CONTENT
   cardContent: {
+    padding: theme.spacing(1.25, 1, 0),
     display: 'grid',
     gridTemplateColumns: '0.2fr 0.8fr',
   },
@@ -78,8 +85,8 @@ const useStyles = makeStyles((theme) => ({
   closeButton: {
     borderColor: theme.palette.border.main,
     color: theme.palette.border.main,
-    padding: theme.spacing(0.5),
-    minWidth: '2.5rem',
+    padding: theme.spacing(0.25, 2),
+    minWidth: 0,
   },
 }));
 

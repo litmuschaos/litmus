@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, Modal, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,7 @@ import {
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
-import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
-import { ReactComponent as CrossMarkIcon } from '../../../../svg/crossmark.svg';
 import {
   getProjectID,
   getProjectRole,
@@ -24,19 +22,17 @@ import useStyles, { StyledTableCell } from './styles';
 
 interface TableDataProps {
   data: ListDashboardResponse;
+  alertStateHandler: (successState: boolean) => void;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data }) => {
+const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const dashboard = useActions(DashboardActions);
   const dataSource = useActions(DataSourceActions);
-  const tabs = useActions(TabActions);
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const [mutate, setMutate] = React.useState(false);
-  const [confirm, setConfirm] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
   const [dashboardSelectedForDeleting, setDashboardSelectedForDeleting] =
     React.useState<DeleteDashboardInput>({
@@ -47,13 +43,12 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     DELETE_DASHBOARD,
     {
       onCompleted: () => {
-        setSuccess(true);
         setMutate(false);
-        setOpenModal(true);
+        alertStateHandler(true);
       },
       onError: () => {
         setMutate(false);
-        setOpenModal(true);
+        alertStateHandler(false);
       },
     }
   );
@@ -235,168 +230,46 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           </MenuItem>
         </Menu>
       </StyledTableCell>
-
       <Modal
         open={openModal}
-        onClose={() => {
-          setConfirm(false);
-          setOpenModal(false);
-        }}
-        width="60%"
-        modalActions={
-          <ButtonOutlined
-            className={classes.closeButton}
-            onClick={() => {
-              setConfirm(false);
-              setOpenModal(false);
-            }}
-          >
-            &#x2715;
-          </ButtonOutlined>
-        }
+        onClose={() => setOpenModal(false)}
+        width="45%"
+        height="fit-content"
       >
         <div className={classes.modal}>
-          {confirm === true ? (
-            <Typography align="center">
-              {success === true ? (
-                <img
-                  src="/icons/finish.svg"
-                  alt="success"
-                  className={classes.icon}
-                />
-              ) : (
-                <CrossMarkIcon className={classes.icon} />
-              )}
-            </Typography>
-          ) : (
-            <div />
-          )}
+          <Typography className={classes.modalHeading} align="left">
+            Remove dashboard ?
+          </Typography>
 
-          {confirm === true ? (
-            <Typography
-              className={classes.modalHeading}
-              align="center"
-              variant="h3"
+          <Typography className={classes.modalBodyText} align="left">
+            Are you sure you want to remove the dashboard
+            <b>
+              <i>{` ${data.db_name} `}</i>
+            </b>
+            ?
+          </Typography>
+
+          <div className={classes.flexButtons}>
+            <TextButton
+              onClick={() => setOpenModal(false)}
+              className={classes.cancelButton}
             >
-              {success === true
-                ? `The dashboard is successfully deleted.`
-                : `There was a problem deleting your dashboard.`}
-            </Typography>
-          ) : (
-            <div />
-          )}
-
-          {confirm === true ? (
-            <Typography
-              align="center"
-              variant="body1"
-              className={classes.modalBody}
-            >
-              {success === true ? (
-                <div>
-                  You will see the dashboard deleted in the dashboard table.
-                </div>
-              ) : (
-                <div>
-                  Error encountered while deleting the dashboard. Please try
-                  again.
-                </div>
-              )}
-            </Typography>
-          ) : (
-            <div />
-          )}
-
-          {success === true && confirm === true ? (
+              <Typography className={classes.buttonText}>Cancel</Typography>
+            </TextButton>
             <ButtonFilled
-              variant="success"
               onClick={() => {
-                setConfirm(false);
+                setMutate(true);
                 setOpenModal(false);
-                tabs.changeAnalyticsDashboardTabs(2);
-                window.location.reload();
               }}
+              variant="error"
             >
-              <div>Back to Kubernetes Dashboard</div>
+              <Typography
+                className={`${classes.buttonText} ${classes.confirmButtonText}`}
+              >
+                Delete
+              </Typography>
             </ButtonFilled>
-          ) : success === false && confirm === true ? (
-            <div className={classes.flexButtons}>
-              <ButtonOutlined
-                className={classes.buttonOutlineWarning}
-                onClick={() => {
-                  setOpenModal(false);
-                  setMutate(true);
-                }}
-                disabled={false}
-              >
-                <div>Try Again</div>
-              </ButtonOutlined>
-
-              <ButtonFilled
-                variant="success"
-                onClick={() => {
-                  setConfirm(false);
-                  setOpenModal(false);
-                  tabs.changeAnalyticsDashboardTabs(2);
-                  window.location.reload();
-                }}
-              >
-                <div>Back to Kubernetes Dashboard</div>
-              </ButtonFilled>
-            </div>
-          ) : (
-            <div>
-              <Typography align="center">
-                <img
-                  src="/icons/delete_large_icon.svg"
-                  alt="delete"
-                  className={classes.icon}
-                />
-              </Typography>
-
-              <Typography
-                className={classes.modalHeading}
-                align="center"
-                variant="h3"
-              >
-                Are you sure to remove this dashboard?
-              </Typography>
-
-              <Typography
-                align="center"
-                variant="body1"
-                className={classes.modalBody}
-              >
-                The following action cannot be reverted.
-              </Typography>
-
-              <div className={classes.flexButtons}>
-                <ButtonOutlined
-                  onClick={() => {
-                    setOpenModal(false);
-                    history.push({
-                      pathname: '/analytics',
-                      search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                    });
-                  }}
-                  disabled={false}
-                >
-                  <div>No</div>
-                </ButtonOutlined>
-
-                <ButtonFilled
-                  variant="error"
-                  onClick={() => {
-                    setConfirm(true);
-                    setOpenModal(false);
-                    setMutate(true);
-                  }}
-                >
-                  <div>Yes</div>
-                </ButtonFilled>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </Modal>
     </>

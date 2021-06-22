@@ -69,6 +69,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
   },
+
+  buttonText: {
+    paddingRight: theme.spacing(1),
+  },
 }));
 
 export default useStyles;

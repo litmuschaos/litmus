@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
+import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { CREATE_DATASOURCE, UPDATE_DATASOURCE } from '../../graphql/mutations';
 import { DataSourceDetails } from '../../models/dataSourceData';
@@ -70,15 +71,15 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
   >(CREATE_DATASOURCE, {
     onCompleted: () => {
       setMutate(false);
-      setIsAlertOpen(true);
       setAlertMessage('Successfully connected to the data source');
       setSuccess(true);
+      setIsAlertOpen(true);
     },
     onError: () => {
       setMutate(false);
-      setIsAlertOpen(true);
       setAlertMessage('Error connecting to the data source');
       setSuccess(false);
+      setIsAlertOpen(true);
     },
   });
   const [updateDataSource] = useMutation<
@@ -87,15 +88,15 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
   >(UPDATE_DATASOURCE, {
     onCompleted: () => {
       setMutate(false);
-      setIsAlertOpen(true);
       setAlertMessage('Successfully updated the data source information');
       setSuccess(true);
+      setIsAlertOpen(true);
     },
     onError: () => {
       setMutate(false);
-      setIsAlertOpen(true);
       setAlertMessage('Error updating the data source information');
       setSuccess(false);
+      setIsAlertOpen(true);
     },
   });
 
@@ -243,7 +244,10 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
             </Typography>
             <ButtonFilled
               disabled={
-                page === 1 && dataSourceVars.name === ''
+                (page === 1 &&
+                  (dataSourceVars.name === '' ||
+                    !isValidWebUrl(dataSourceVars.url))) ||
+                mutate
                   ? true
                   : page === 2
                   ? disabled
@@ -253,11 +257,16 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
                 page === 2 && !disabled ? setMutate(true) : setPage(2)
               }
             >
-              <Typography>
+              <Typography className={classes.buttonText}>
                 {page === 2
-                  ? `${t('analyticsDashboard.dataSourceForm.saveChanges')}`
+                  ? mutate
+                    ? !configure
+                      ? 'Adding'
+                      : 'Updating'
+                    : `${t('analyticsDashboard.dataSourceForm.saveChanges')}`
                   : `${t('analyticsDashboard.dataSourceForm.next')}`}
               </Typography>
+              {mutate && <Loader size={20} />}
             </ButtonFilled>
           </div>
         </div>

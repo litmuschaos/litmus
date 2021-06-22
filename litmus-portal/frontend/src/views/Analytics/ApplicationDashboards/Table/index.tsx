@@ -2,6 +2,7 @@
 import { useQuery } from '@apollo/client';
 import {
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -10,6 +11,7 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -74,6 +76,13 @@ const DashboardTable: React.FC = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const projectID = getProjectID();
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+
+  const alertStateHandler = (successState: boolean) => {
+    setSuccess(successState);
+    setIsAlertOpen(true);
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -87,13 +96,13 @@ const DashboardTable: React.FC = () => {
   };
 
   // Apollo query to get the dashboard data
-  const { data, loading, error } = useQuery<DashboardList, ListDashboardVars>(
-    LIST_DASHBOARD,
-    {
-      variables: { projectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const { data, loading, error, refetch } = useQuery<
+    DashboardList,
+    ListDashboardVars
+  >(LIST_DASHBOARD, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   const getDataSourceType = (searchingData: ListDashboardResponse[]) => {
     const uniqueList: string[] = [];
@@ -321,7 +330,10 @@ const DashboardTable: React.FC = () => {
                           key={data.db_id}
                           className={classes.tableRow}
                         >
-                          <TableData data={data} />
+                          <TableData
+                            data={data}
+                            alertStateHandler={alertStateHandler}
+                          />
                         </TableRow>
                       );
                     })
@@ -351,6 +363,32 @@ const DashboardTable: React.FC = () => {
           />
         </section>
       </Paper>
+      {isAlertOpen && (
+        <Snackbar
+          open={isAlertOpen}
+          autoHideDuration={3000}
+          onClose={() => {
+            if (success) {
+              refetch();
+            }
+            setIsAlertOpen(false);
+          }}
+        >
+          <Alert
+            onClose={() => {
+              if (success) {
+                refetch();
+              }
+              setIsAlertOpen(false);
+            }}
+            severity={success ? 'success' : 'error'}
+          >
+            {success
+              ? 'Successfully deleted the dashboard'
+              : 'Error while deleting the dashboard'}
+          </Alert>
+        </Snackbar>
+      )}
     </div>
   );
 };

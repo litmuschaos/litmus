@@ -355,7 +355,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
 
               <AutocompleteChipInput
                 value={selectedValuesForLabel}
-                onChange={(event, value, reason) => {
+                onChange={(event, value) => {
                   const selectedValues: Array<Option> = value as Array<Option>;
                   const existingLabelValuesList: QueryLabelValue[] =
                     localQuery.labels_and_values_list ?? [];
@@ -386,6 +386,11 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   getSelectedValuesForLabel(selectedLabel ?? '');
                   setUpdate(true);
                 }}
+                getOptionSelected={(option) =>
+                  selectedValuesForLabel
+                    .map((selections) => selections.name)
+                    .includes(option.name)
+                }
                 options={getAvailableValues(selectedLabel ?? '')}
                 label={t(
                   'analyticsDashboard.applicationDashboards.tuneTheQueries.values'

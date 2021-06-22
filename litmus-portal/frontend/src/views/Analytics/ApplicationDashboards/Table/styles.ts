@@ -203,37 +203,39 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
   },
 
-  icon: {
-    width: '6rem',
-    height: '6rem',
-  },
-
+  // modal
   modalHeading: {
-    marginTop: theme.spacing(3.5),
-    fontSize: '2.25rem',
-    marginBottom: theme.spacing(4.5),
+    fontSize: '1.5rem',
+    lineHeight: '130%',
+    fontWeight: 'bold',
+    fontFeatureSettings: 'pnum on, lnum on',
+    margin: theme.spacing(2.5, 0, 4.5),
+    padding: theme.spacing(0, 6.5),
   },
-
-  modalBody: {
-    marginBottom: theme.spacing(4.5),
+  modalBodyText: {
+    fontSize: '1rem',
+    lineHeight: '130%',
+    padding: theme.spacing(0, 6.5),
   },
-
-  closeButton: {
-    borderColor: theme.palette.border.main,
-  },
-
   flexButtons: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(5.5, 6.5, 0, 0),
   },
-
-  buttonOutlineWarning: {
-    borderColor: theme.palette.error.dark,
-  },
-
   modal: {
-    padding: theme.spacing(15, 0),
+    padding: theme.spacing(5, 0),
+  },
+  buttonText: {
+    lineHeight: '140%',
+    fontSize: '0.875rem',
+  },
+  confirmButtonText: {
+    color: theme.palette.text.secondary,
+    padding: theme.spacing(0, 3),
+  },
+  cancelButton: {
+    marginRight: theme.spacing(1.5),
+    padding: theme.spacing(0, 3),
   },
 }));
 

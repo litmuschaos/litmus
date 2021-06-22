@@ -197,37 +197,102 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
   },
 
-  icon: {
-    width: '6rem',
-    height: '6rem',
-  },
-
+  // modal
   modalHeading: {
-    marginTop: theme.spacing(3.5),
-    fontSize: '2.25rem',
-    marginBottom: theme.spacing(4.5),
+    fontSize: '1.5rem',
+    lineHeight: '130%',
+    fontWeight: 'bold',
+    fontFeatureSettings: 'pnum on, lnum on',
+    margin: theme.spacing(2.5, 0, 4.5),
+    padding: theme.spacing(0, 6.5),
   },
-
-  modalBody: {
-    marginBottom: theme.spacing(4.5),
+  modalBodyText: {
+    fontSize: '1rem',
+    lineHeight: '130%',
+    padding: theme.spacing(0, 6.5),
   },
-
-  closeButton: {
-    borderColor: theme.palette.border.main,
-  },
-
   flexButtons: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-end',
+    marginTop: 'auto',
   },
-
-  buttonOutlineWarning: {
-    borderColor: theme.palette.error.dark,
+  flexButtonsPadding: {
+    padding: theme.spacing(5.5, 6.5, 0, 0),
   },
-
   modal: {
-    padding: theme.spacing(15, 0),
+    padding: theme.spacing(5, 0),
+  },
+  buttonText: {
+    lineHeight: '140%',
+    fontSize: '0.875rem',
+  },
+  confirmButtonText: {
+    color: theme.palette.text.secondary,
+    padding: theme.spacing(0, 3),
+  },
+  cancelButton: {
+    width: 'fit-content',
+    marginRight: theme.spacing(1.5),
+    padding: theme.spacing(0, 3),
+  },
+
+  // drawer
+  drawer: {
+    width: 'fit-content',
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: '100%',
+    background: 'rgba(0, 0, 0, 0.6)',
+  },
+  drawerContent: {
+    height: '100%',
+    width: '50%',
+    marginLeft: '50%',
+    background: theme.palette.background.paper,
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing(10, 6.5),
+  },
+  closeButton: {
+    borderColor: theme.palette.border.main,
+    color: theme.palette.border.main,
+    padding: theme.spacing(0.25, 2),
+    minWidth: 0,
+  },
+  flexContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  drawerHeading: {
+    fontSize: '1.5rem',
+    lineHeight: '130%',
+    fontFeatureSettings: 'pnum on, lnum on',
+  },
+  warningBlock: {
+    margin: theme.spacing(5, 0),
+    padding: theme.spacing(0.5, 3),
+    borderLeft: `5px solid ${theme.palette.warning.main}`,
+    borderRadius: '5px 0px 0px 5px',
+    background: theme.palette.warning.light,
+  },
+  warningText: {
+    margin: theme.spacing(1.5, 0),
+    fontSize: '0.875rem',
+    lineHeight: '143%',
+  },
+  drawerBodyText: {
+    fontSize: '1rem',
+    lineHeight: '150%',
+    marginBottom: theme.spacing(3),
+  },
+  dashboardsList: {
+    maxHeight: '12rem',
+    overflowY: 'scroll',
+    marginBottom: theme.spacing(3),
+  },
+  drawerListItem: {
+    marginBottom: theme.spacing(2),
   },
 }));
 

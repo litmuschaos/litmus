@@ -2,7 +2,7 @@
 import { useMutation } from '@apollo/client';
 import { Snackbar, Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
+import { ButtonFilled, InputField, Modal, TextButton } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuidv4 } from 'uuid';
@@ -185,7 +185,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
             value={cloneName}
           />
           <div className={classes.flexButtons}>
-            <ButtonOutlined
+            <TextButton
               onClick={() => {
                 onClose();
               }}
@@ -196,7 +196,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
                   'analyticsDashboard.monitoringDashboardPage.dashboardCloneModal.cancel'
                 )}
               </Typography>
-            </ButtonOutlined>
+            </TextButton>
             <ButtonFilled onClick={() => handleCreateMutation()}>
               <Typography
                 className={`${classes.buttonText} ${classes.okButtonText}`}
