@@ -119,7 +119,14 @@ func UpdatePassword(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		if userPasswordRequest.OldPassword == "" || userPasswordRequest.NewPassword == "" {
+		if utils.StrictPasswordPolicy {
+			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
+			if err != nil {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))
+				return
+			}
+		}
+		if userPasswordRequest.NewPassword == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
@@ -147,6 +154,13 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
+		}
+		if utils.StrictPasswordPolicy {
+			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
+			if err != nil {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))
+				return
+			}
 		}
 		if userPasswordRequest.Username == "" || userPasswordRequest.NewPassword == "" {
 			log.Warn(err)
