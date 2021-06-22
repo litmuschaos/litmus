@@ -397,7 +397,7 @@ const UsageTable = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={data?.UsageQuery.Projects.length ?? 0}
+          count={data?.UsageQuery.TotalCount.Projects ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>
