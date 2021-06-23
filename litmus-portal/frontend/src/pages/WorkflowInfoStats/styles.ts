@@ -67,7 +67,13 @@ const useStyles = makeStyles((theme) => ({
   heatmapBorder: {
     minHeight: '20rem',
     border: `1px solid ${theme.palette.border.main}`,
+    borderRadius: '0.1875rem',
     padding: theme.spacing(1.5, 3.5, 2.5, 2.5),
+  },
+  heatmapParent: {
+    width: '60rem',
+    height: '10rem',
+    position: 'relative',
   },
   formControlParent: {
     display: 'flex',
@@ -78,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
   noData: {
     height: '25vh',
     marginTop: theme.spacing(3),
+    borderRadius: '0.1875rem',
     border: `1px solid ${theme.palette.border.main}`,
   },
 }));

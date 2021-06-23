@@ -9,11 +9,16 @@ import {
 } from '@material-ui/core';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
-import { ButtonFilled, CalendarHeatmap } from 'litmus-ui';
+import {
+  ButtonFilled,
+  CalendarHeatmap,
+  CalendarHeatmapTooltipProps,
+} from 'litmus-ui';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import BackButton from '../../components/Button/BackButton';
+import Loader from '../../components/Loader';
 import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { GET_HEATMAP_DATA, WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
@@ -29,7 +34,21 @@ import timeDifferenceForDate from '../../utils/datesModifier';
 import { getProjectID } from '../../utils/getSearchParams';
 import StackedBarGraph from './StackedBar';
 import useStyles from './styles';
-import { TestCalendarHeatmapTooltip } from './testData';
+
+const TestCalendarHeatmapTooltip = ({
+  tooltipData,
+}: CalendarHeatmapTooltipProps): React.ReactElement => {
+  return (
+    <div>
+      <div style={{ marginBottom: '0.2rem' }}>
+        {tooltipData?.data?.bin?.bin.value ?? 0}% Average Resiliency
+      </div>
+      <div>
+        {tooltipData?.data?.bin?.bin.workflowRunDetail.no_of_runs ?? 0} runs
+      </div>
+    </div>
+  );
+};
 
 interface URLParams {
   workflowRunId: string;
@@ -60,17 +79,17 @@ const WorkflowInfoStats: React.FC = () => {
   const [year, setYear] = useState<number>(presentYear);
 
   // Apollo query to get the heatmap data
-  const { data: heatmapData } = useQuery<HeatmapDataResponse, HeatmapDataVars>(
-    GET_HEATMAP_DATA,
-    {
-      variables: {
-        project_id: projectID,
-        workflow_id: workflowRunId,
-        year,
-      },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const { data: heatmapData, loading } = useQuery<
+    HeatmapDataResponse,
+    HeatmapDataVars
+  >(GET_HEATMAP_DATA, {
+    variables: {
+      project_id: projectID,
+      workflow_id: workflowRunId,
+      year,
+    },
+    fetchPolicy: 'cache-and-network',
+  });
 
   const yearArray = [presentYear, presentYear - 1, presentYear - 2];
 
@@ -78,7 +97,7 @@ const WorkflowInfoStats: React.FC = () => {
   const [dataCheck, setDataCheck] = useState<boolean>(false);
 
   const [workflowRunDate, setworkflowRunDate] = useState<number>(0);
-
+  // console.log(heatmapData);
   return (
     <Scaffold>
       <BackButton />
@@ -221,6 +240,9 @@ const WorkflowInfoStats: React.FC = () => {
                   value={year}
                   onChange={(event) => {
                     setYear(event.target.value as number);
+                    setDataCheck(false);
+                    setShowStackBar(false);
+                    setworkflowRunDate(0);
                   }}
                 >
                   {yearArray.map((selectedYear) => (
@@ -229,28 +251,30 @@ const WorkflowInfoStats: React.FC = () => {
                 </Select>
               </FormControl>
             </div>
-            <div
-              style={{
-                width: '60rem',
-                height: '10rem',
-              }}
-            >
-              <CalendarHeatmap
-                calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
-                valueThreshold={valueThreshold}
-                CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
-                handleBinClick={(bin) => {
-                  if (bin.bin.workflowRunDetail.no_of_runs) {
-                    setShowStackBar(!showStackBar);
-                    setDataCheck(false);
-                    setworkflowRunDate(bin.bin.workflowRunDetail.date_stamp);
-                  } else {
-                    setDataCheck(true);
-                    setShowStackBar(false);
-                    setworkflowRunDate(0);
-                  }
-                }}
-              />
+            <div className={classes.heatmapParent}>
+              {loading ? (
+                <Center>
+                  <Loader />
+                </Center>
+              ) : (
+                <CalendarHeatmap
+                  calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
+                  valueThreshold={valueThreshold}
+                  CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
+                  handleBinClick={(bin) => {
+                    // console.log(bin)
+                    if (bin.bin.workflowRunDetail.no_of_runs) {
+                      setShowStackBar(true);
+                      setDataCheck(false);
+                      setworkflowRunDate(bin.bin.workflowRunDetail.date_stamp);
+                    } else {
+                      setDataCheck(true);
+                      setShowStackBar(false);
+                      setworkflowRunDate(0);
+                    }
+                  }}
+                />
+              )}
             </div>
           </div>
           {showStackBar && (

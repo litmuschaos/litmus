@@ -115,8 +115,8 @@ export interface WorkflowRunFilterInput {
 export interface WorkflowDataVars {
   workflowRunsInput: {
     project_id: string;
-    workflow_ids?: string[];
     workflow_run_ids?: string[];
+    workflow_ids?: string[];
     pagination?: Pagination;
     sort?: SortInput;
     filter?: WorkflowRunFilterInput;

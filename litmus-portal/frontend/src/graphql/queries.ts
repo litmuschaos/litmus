@@ -40,6 +40,27 @@ export const WORKFLOW_DETAILS = gql`
   }
 `;
 
+export const WORKFLOW_RUN_DETAILS = gql`
+  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      total_no_of_workflow_runs
+      workflow_runs {
+        workflow_id
+        workflow_name
+        workflow_run_id
+        cluster_name
+        execution_data
+        last_updated
+        phase
+        resiliency_score
+        experiments_passed
+        total_experiments
+        isRemoved
+      }
+    }
+  }
+`;
+
 export const WORKFLOW_STATS = gql`
   query getScheduledWorkflowStats(
     $filter: TimeFrequency!

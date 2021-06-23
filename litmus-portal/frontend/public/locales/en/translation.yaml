@@ -170,7 +170,8 @@ analytics:
   tableHead3: Regularity
   tableHead4: Cluster
   workflowRunDetailsTable:
-    tableHead1: Test Name
+    tableHead0: Test Name
+    tableHead1: Experiment Name
     tableHead2: Test Result
     tableHead3: Weight of the test
     tableHead4: Resulting Points

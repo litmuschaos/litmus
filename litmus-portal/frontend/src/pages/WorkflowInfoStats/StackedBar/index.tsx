@@ -8,6 +8,8 @@ import {
 } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
+import Loader from '../../../components/Loader';
+import Center from '../../../containers/layouts/Center';
 import { WORKFLOW_DETAILS } from '../../../graphql';
 import {
   Workflow,
@@ -15,6 +17,7 @@ import {
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { STATUS_RUNNING } from '../../ApplicationDashboard/constants';
+import WorkflowRunTable from '../WorkflowRunTable';
 import useStyles from './styles';
 
 interface StackedBarGraphProps {
@@ -28,6 +31,9 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
   const projectID = getProjectID();
   const classes = useStyles();
   const theme = useTheme();
+  const [showTable, setShowTable] = useState<boolean>(false);
+  const [workflowRunID, setWorkflowRunID] = useState<string>('');
+
   const [graphData, setGraphData] = useState<StackBarMetric[]>([]);
   const stackBarData: Array<StackBarMetric> = [];
   const [openSeriesData, setOpenSeriesData] = useState<LineMetricSeries>({
@@ -37,10 +43,11 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
   });
   const openseries: Array<BarDateValue> = [];
 
-  useQuery<Workflow, WorkflowDataVars>(WORKFLOW_DETAILS, {
+  const { loading } = useQuery<Workflow, WorkflowDataVars>(WORKFLOW_DETAILS, {
     variables: {
       workflowRunsInput: {
         project_id: projectID,
+        workflow_ids: [workflowID],
         sort: {
           field: 'Time',
         },
@@ -55,19 +62,20 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     onCompleted: (data) => {
       console.log(data);
       data.getWorkflowRuns.workflow_runs.map((wfrun) => {
+        console.log(wfrun);
         wfrun.phase !== STATUS_RUNNING &&
           stackBarData.push({
             id: wfrun.workflow_run_id,
             date: Number(wfrun.last_updated) * 1000,
             passPercentage:
               wfrun.total_experiments &&
-              wfrun.experiments_passed &&
+              wfrun.experiments_passed !== undefined &&
               wfrun.total_experiments > 0
                 ? (wfrun.experiments_passed * 100) / wfrun.total_experiments
                 : 0,
             failPercentage:
               wfrun.total_experiments &&
-              wfrun.experiments_passed &&
+              wfrun.experiments_passed !== undefined &&
               wfrun.total_experiments > 0
                 ? ((wfrun.total_experiments - wfrun.experiments_passed) * 100) /
                   wfrun.total_experiments
@@ -75,7 +83,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
             passCount: wfrun.experiments_passed ?? 0,
             failCount:
               wfrun.total_experiments &&
-              wfrun.experiments_passed &&
+              wfrun.experiments_passed !== undefined &&
               wfrun.total_experiments > 0
                 ? wfrun.total_experiments - wfrun.experiments_passed
                 : 0,
@@ -98,9 +106,10 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     if (date) return resDate;
     return 'Date not available';
   };
+  console.log('click', showTable);
 
-  console.log('bar data', graphData);
-  console.log('open', openSeriesData);
+  // console.log('bar data', graphData);
+  // console.log('open', openSeriesData);
   return (
     <div>
       <Typography className={classes.stackbarHeader}>
@@ -122,17 +131,35 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
           padding: theme.spacing(2.5, 3.5, 2.5, 0),
         }}
       >
-        <StackBar
-          openSeries={openSeriesData}
-          barSeries={graphData}
-          unit="%"
-          yLabel="Chaos"
-          yLabelOffset={60}
-          initialxAxisDate={0}
-          xAxistimeFormat="HH"
-          handleBarClick={(barData: any) => console.log('click', barData)}
-        />
+        {loading && openSeriesData.data.length <= 0 && graphData.length <= 0 ? (
+          <Center>
+            <Loader />
+          </Center>
+        ) : (
+          <StackBar
+            openSeries={openSeriesData}
+            barSeries={graphData}
+            unit="%"
+            yLabel="Chaos"
+            yLabelOffset={60}
+            // initialxAxisDate={1624182897000}
+            xAxistimeFormat="HH"
+            handleBarClick={(barData: any) => {
+              setShowTable(true);
+              setWorkflowRunID(barData as string);
+              console.log('click', barData);
+            }}
+          />
+        )}
       </div>
+      {showTable ? (
+        <WorkflowRunTable
+          workflowId={workflowID}
+          workflowRunId={workflowRunID}
+        />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
