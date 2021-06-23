@@ -811,8 +811,8 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardResponse, error
 	return newListDashboard, nil
 }
 
-// GetScheduledWorkflowStats returns schedules data for analytics graph
-func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
+// GetWorkflowStats returns schedules data for analytics graph
+func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
 	var pipeline mongo.Pipeline
 	dbKey := "created_at"
 	now := time.Now()
@@ -853,7 +853,7 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 			}},
 		}
 		pipeline = append(pipeline, filterMonthlyStage)
-	case model.TimeFrequencyWeekly:
+	case model.TimeFrequencyDaily:
 		// Subtracting 28days(4weeks) from the start time
 		fourWeeksAgo := now.AddDate(0, 0, -28)
 		// To fetch data only for last 4weeks
@@ -900,29 +900,26 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	switch filter {
 	case model.TimeFrequencyMonthly:
 		for monthsAgo := now.AddDate(0, -5, 0); monthsAgo.Before(now) || monthsAgo.Equal(now); monthsAgo = monthsAgo.AddDate(0, 1, 0) {
-			// Storing the timestamp of first day of the monthsAgo
+			// Storing the timestamp of first day of the month
 			date := float64(time.Date(monthsAgo.Year(), monthsAgo.Month(), 1, 0, 0, 0, 0, time.Local).Unix())
 			statsMap[string(int(monthsAgo.Month())%12)] = model.WorkflowStats{
 				Date:  date * 1000,
 				Value: 0,
 			}
 		}
-	case model.TimeFrequencyWeekly:
-		year, endWeek := now.ISOWeek()
-		for week := endWeek - 3; week <= endWeek; week++ {
-			if week <= 0 {
-				year -= 1
-			}
-			// Storing the timestamp of first day of the ISO week
-			date := float64(ops.FirstDayOfISOWeek(year, week%53, time.Local).Unix())
-			statsMap[string(week%53)] = model.WorkflowStats{
+	case model.TimeFrequencyDaily:
+		for daysAgo := now.AddDate(0, 0, -28); daysAgo.Before(now) || daysAgo.Equal(now); daysAgo = daysAgo.AddDate(0, 0, 1) {
+			// Storing the timestamp of first hour of the day
+			date := float64(time.Date(daysAgo.Year(), daysAgo.Month(), daysAgo.Day(), 0, 0, 0, 0, time.Local).Unix())
+			statsMap[fmt.Sprintf("%d-%d", daysAgo.Month(), daysAgo.Day())] = model.WorkflowStats{
 				Date:  date * 1000,
 				Value: 0,
 			}
 		}
+		fmt.Println(statsMap)
 	case model.TimeFrequencyHourly:
 		for hoursAgo := now.Add(time.Hour * -48); hoursAgo.Before(now) || hoursAgo.Equal(now); hoursAgo = hoursAgo.Add(time.Hour * 1) {
-			// Storing the timestamp of first day of the hoursAgo
+			// Storing the timestamp of first minute of the hour
 			date := float64(time.Date(hoursAgo.Year(), hoursAgo.Month(), hoursAgo.Day(), hoursAgo.Hour(), 0, 0, 0, time.Local).Unix())
 			statsMap[fmt.Sprintf("%d-%d", hoursAgo.Day(), hoursAgo.Hour())] = model.WorkflowStats{
 				Date:  date * 1000,

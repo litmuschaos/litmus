@@ -41,12 +41,12 @@ export const WORKFLOW_DETAILS = gql`
 `;
 
 export const WORKFLOW_STATS = gql`
-  query getScheduledWorkflowStats(
+  query getWorkflowStats(
     $filter: TimeFrequency!
     $project_id: ID!
     $show_workflow_runs: Boolean!
   ) {
-    getScheduledWorkflowStats(
+    getWorkflowStats(
       filter: $filter
       project_id: $project_id
       show_workflow_runs: $show_workflow_runs

@@ -1,15 +1,14 @@
 import { useQuery } from '@apollo/client';
 import { Paper, Tabs, useTheme } from '@material-ui/core';
 import { GraphMetric, LineAreaGraph } from 'litmus-ui';
-import React, { useState } from 'react';
+import React from 'react';
 import { StyledTab, TabPanel } from '../../../../../components/Tabs';
 import { WORKFLOW_STATS } from '../../../../../graphql';
 import {
-  DateValue,
   Filter,
   WorkflowStatsResponse,
   WorkflowStatsVars,
-} from '../../../../../models/graphql/scheduleData';
+} from '../../../../../models/graphql/workflowStats';
 import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './style';
 
@@ -36,101 +35,95 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
     setActiveTab(actTab);
   };
 
-  const [graphDataState, setGraphDataState] = useState<DateValue[]>([]);
-
-  const tempGraphData: Array<DateValue> = [];
-
-  useQuery<WorkflowStatsResponse, WorkflowStatsVars>(WORKFLOW_STATS, {
-    variables: {
-      filter,
-      project_id: projectID,
-      show_workflow_runs: activeTab === 0,
-    },
-    onCompleted: (dateValueData) => {
-      dateValueData.getScheduledWorkflowStats.map((data) =>
-        tempGraphData.push({
-          date: data.date,
-          value: data.value,
-        })
-      );
-      setGraphDataState(tempGraphData);
-    },
-  });
+  const { data } = useQuery<WorkflowStatsResponse, WorkflowStatsVars>(
+    WORKFLOW_STATS,
+    {
+      variables: {
+        filter,
+        project_id: projectID,
+        show_workflow_runs: activeTab === 0,
+      },
+    }
+  );
 
   const closedSeriesData: Array<GraphMetric> = [
     {
       metricName: activeTab === 0 ? 'Runs' : 'Schedules',
-      data: graphDataState,
+      data: data?.getWorkflowStats ?? [],
       baseColor: activeTab === 0 ? '#F6793E' : '#5B44BA',
     },
   ];
 
   function xAxisTimeFormat(filter: Filter) {
     switch (filter) {
-      case Filter.monthly:
-        return 'MMM';
-      case Filter.weekly:
-        return '[W] W';
-      case Filter.hourly:
-        return 'HH[hrs]';
+      case Filter.Monthly:
+        return 'MMM-YY';
+      case Filter.Daily:
+        return 'DD-MMM-YY';
+      case Filter.Hourly:
+        return 'HH[hrs]-DD';
       default:
         return 'MMM';
     }
   }
 
   return (
-    <div>
-      <Paper elevation={0}>
-        <Paper className={classes.workflowGraphs}>
-          <Tabs
-            value={activeTab}
-            onChange={handleChange}
-            TabIndicatorProps={{
-              style: {
-                backgroundColor: theme.palette.primary.main,
-              },
+    <Paper className={classes.workflowGraphs}>
+      <Tabs
+        value={activeTab}
+        onChange={handleChange}
+        TabIndicatorProps={{
+          style: {
+            backgroundColor: theme.palette.primary.main,
+          },
+        }}
+      >
+        <StyledTab data-cy="receivedTab" label=" Run stats" {...tabProps(1)} />
+        <StyledTab
+          data-cy="activeTab"
+          label="Schedule stats"
+          {...tabProps(0)}
+        />
+      </Tabs>
+      <TabPanel value={activeTab} index={0}>
+        <div className={classes.graphContainer}>
+          <LineAreaGraph
+            closedSeries={closedSeriesData}
+            showLegendTable={false}
+            showPoints
+            showTips
+            showMultiToolTip
+            yLabelOffset={35}
+            xAxistimeFormat={xAxisTimeFormat(filter)}
+            margin={{
+              top: 20,
+              left: 10,
+              bottom: 20,
+              right: 20,
             }}
-          >
-            <StyledTab
-              data-cy="receivedTab"
-              label=" Run stats"
-              {...tabProps(1)}
-            />
-            <StyledTab
-              data-cy="activeTab"
-              label="Schedule stats"
-              {...tabProps(0)}
-            />
-          </Tabs>
-          <TabPanel value={activeTab} index={0}>
-            <div className={classes.graphContainer}>
-              <LineAreaGraph
-                closedSeries={closedSeriesData}
-                showLegendTable={false}
-                showPoints
-                showTips
-                showMultiToolTip
-                yLabelOffset={35}
-                xAxistimeFormat={xAxisTimeFormat(filter)}
-              />
-            </div>
-          </TabPanel>
-          <TabPanel value={activeTab} index={1}>
-            <div className={classes.graphContainer}>
-              <LineAreaGraph
-                closedSeries={closedSeriesData}
-                showLegendTable={false}
-                showPoints
-                showTips
-                showMultiToolTip
-                yLabelOffset={35}
-                xAxistimeFormat={xAxisTimeFormat(filter)}
-              />
-            </div>
-          </TabPanel>
-        </Paper>
-      </Paper>
-    </div>
+          />
+        </div>
+      </TabPanel>
+      <TabPanel value={activeTab} index={1}>
+        <div className={classes.graphContainer}>
+          <LineAreaGraph
+            closedSeries={closedSeriesData}
+            showLegendTable={false}
+            showPoints
+            showTips
+            showMultiToolTip
+            yLabelOffset={35}
+            xAxistimeFormat={xAxisTimeFormat(filter)}
+            margin={{
+              top: 20,
+              left: 10,
+              bottom: 0,
+              right: 20,
+            }}
+          />
+        </div>
+      </TabPanel>
+    </Paper>
   );
 };
 export default ScheduleAndRunStats;

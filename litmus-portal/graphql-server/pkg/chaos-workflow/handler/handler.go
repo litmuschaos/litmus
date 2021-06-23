@@ -163,6 +163,16 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		pipeline = append(pipeline, matchWfIdStage)
 	}
 
+	// Filtering out the workflows that are deleted/removed
+	matchWfIsRemovedStage := bson.D{
+		{"$match", bson.D{
+			{"isRemoved", bson.D{
+				{"$eq", false},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, matchWfIsRemovedStage)
+
 	includeAllFromWorkflow := bson.D{
 		{"workflow_id", 1},
 		{"workflow_name", 1},
