@@ -9,8 +9,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   graphContainer: {
     width: '900px',
     height: '320px',
-    marginLeft: '-70px',
-    marginBottom: '25px',
   },
 }));
 export default useStyles;

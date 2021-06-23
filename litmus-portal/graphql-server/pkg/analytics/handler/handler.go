@@ -811,8 +811,8 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardResponse, error
 	return newListDashboard, nil
 }
 
-// GetScheduledWorkflowStats returns schedules data for analytics graph
-func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
+// GetWorkflowStats returns schedules data for analytics graph
+func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
 	var pipeline mongo.Pipeline
 	dbKey := "created_at"
 	now := time.Now()
@@ -826,8 +826,51 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	}
 	pipeline = append(pipeline, matchProjectIdStage)
 
+	// Filtering out the workflows that are deleted/removed
+	matchWfIsRemovedStage := bson.D{
+		{"$match", bson.D{
+			{"isRemoved", bson.D{
+				{"$eq", false},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, matchWfIsRemovedStage)
+
 	// Unwind the workflow runs if workflow run stats are requested
 	if showWorkflowRuns {
+		includeAllFromWorkflow := bson.D{
+			{"workflow_id", 1},
+			{"workflow_name", 1},
+			{"workflow_manifest", 1},
+			{"cronSyntax", 1},
+			{"workflow_description", 1},
+			{"weightages", 1},
+			{"isCustomWorkflow", 1},
+			{"updated_at", 1},
+			{"created_at", 1},
+			{"project_id", 1},
+			{"cluster_id", 1},
+			{"cluster_name", 1},
+			{"cluster_type", 1},
+			{"isRemoved", 1},
+		}
+
+		// Filter the available workflows where isRemoved is false
+		matchWfRunIsRemovedStage := bson.D{
+			{"$project", append(includeAllFromWorkflow,
+				bson.E{Key: "workflow_runs", Value: bson.D{
+					{"$filter", bson.D{
+						{"input", "$workflow_runs"},
+						{"as", "wfRun"},
+						{"cond", bson.D{
+							{"$eq", bson.A{"$$wfRun.isRemoved", false}},
+						}},
+					}},
+				}},
+			)},
+		}
+		pipeline = append(pipeline, matchWfRunIsRemovedStage)
+
 		// Flatten out the workflow runs
 		unwindStage := bson.D{
 			{"$unwind", bson.D{
@@ -853,7 +896,7 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 			}},
 		}
 		pipeline = append(pipeline, filterMonthlyStage)
-	case model.TimeFrequencyWeekly:
+	case model.TimeFrequencyDaily:
 		// Subtracting 28days(4weeks) from the start time
 		fourWeeksAgo := now.AddDate(0, 0, -28)
 		// To fetch data only for last 4weeks
@@ -900,29 +943,25 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	switch filter {
 	case model.TimeFrequencyMonthly:
 		for monthsAgo := now.AddDate(0, -5, 0); monthsAgo.Before(now) || monthsAgo.Equal(now); monthsAgo = monthsAgo.AddDate(0, 1, 0) {
-			// Storing the timestamp of first day of the monthsAgo
+			// Storing the timestamp of first day of the month
 			date := float64(time.Date(monthsAgo.Year(), monthsAgo.Month(), 1, 0, 0, 0, 0, time.Local).Unix())
 			statsMap[string(int(monthsAgo.Month())%12)] = model.WorkflowStats{
 				Date:  date * 1000,
 				Value: 0,
 			}
 		}
-	case model.TimeFrequencyWeekly:
-		year, endWeek := now.ISOWeek()
-		for week := endWeek - 3; week <= endWeek; week++ {
-			if week <= 0 {
-				year -= 1
-			}
-			// Storing the timestamp of first day of the ISO week
-			date := float64(ops.FirstDayOfISOWeek(year, week%53, time.Local).Unix())
-			statsMap[string(week%53)] = model.WorkflowStats{
+	case model.TimeFrequencyDaily:
+		for daysAgo := now.AddDate(0, 0, -28); daysAgo.Before(now) || daysAgo.Equal(now); daysAgo = daysAgo.AddDate(0, 0, 1) {
+			// Storing the timestamp of first hour of the day
+			date := float64(time.Date(daysAgo.Year(), daysAgo.Month(), daysAgo.Day(), 0, 0, 0, 0, time.Local).Unix())
+			statsMap[fmt.Sprintf("%d-%d", daysAgo.Month(), daysAgo.Day())] = model.WorkflowStats{
 				Date:  date * 1000,
 				Value: 0,
 			}
 		}
 	case model.TimeFrequencyHourly:
 		for hoursAgo := now.Add(time.Hour * -48); hoursAgo.Before(now) || hoursAgo.Equal(now); hoursAgo = hoursAgo.Add(time.Hour * 1) {
-			// Storing the timestamp of first day of the hoursAgo
+			// Storing the timestamp of first minute of the hour
 			date := float64(time.Date(hoursAgo.Year(), hoursAgo.Month(), hoursAgo.Day(), hoursAgo.Hour(), 0, 0, 0, time.Local).Unix())
 			statsMap[fmt.Sprintf("%d-%d", hoursAgo.Day(), hoursAgo.Hour())] = model.WorkflowStats{
 				Date:  date * 1000,
@@ -934,7 +973,6 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	if showWorkflowRuns {
 		var workflows []dbSchemaWorkflow.FlattenedWorkflowRun
 		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-			fmt.Println(err)
 			return result, nil
 		}
 
@@ -947,7 +985,6 @@ func GetScheduledWorkflowStats(projectID string, filter model.TimeFrequency, sho
 	} else {
 		var workflows []dbSchemaWorkflow.ChaosWorkFlowInput
 		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-			fmt.Println(err)
 			return result, nil
 		}
 
@@ -993,6 +1030,16 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 
 		pipeline = append(pipeline, matchWfIdStage)
 	}
+
+	// Filtering out the workflows that are deleted/removed
+	matchWfIsRemovedStage := bson.D{
+		{"$match", bson.D{
+			{"isRemoved", bson.D{
+				{"$eq", false},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, matchWfIsRemovedStage)
 
 	includeAllFromWorkflow := bson.D{
 		{"workflow_id", 1},
@@ -1139,7 +1186,6 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 	var workflowsRunStats []dbSchemaAnalytics.WorkflowRunStats
 
 	if err = workflowsRunStatsCursor.All(context.Background(), &workflowsRunStats); err != nil || len(workflowsRunStats) == 0 {
-		fmt.Println(err)
 		return &model.WorkflowRunStatsResponse{}, nil
 	}
 
