@@ -221,12 +221,12 @@ const Overview: React.FC = () => {
           link={
             <Link
               underline="none"
-              href="https://prometheus.io/docs/introduction/overview/"
+              href="https://github.com/litmuschaos/litmus/tree/master/monitoring#model-1-optional-prometheus-scrape-config-model"
               target="_blank"
               rel="noreferrer"
             >
               <TextButton variant="highlight">
-                <Typography>Read prometheus doc</Typography>
+                <Typography>Sample Prometheus configuration</Typography>
               </TextButton>
             </Link>
           }
