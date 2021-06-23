@@ -15,6 +15,12 @@ type ActionPayload struct {
 	ExternalData *string `json:"external_data"`
 }
 
+type AgentStat struct {
+	Ns      int `json:"Ns"`
+	Cluster int `json:"Cluster"`
+	Total   int `json:"Total"`
+}
+
 type Annotation struct {
 	Categories       string `json:"Categories"`
 	Vendor           string `json:"Vendor"`
@@ -219,6 +225,7 @@ type Experiments struct {
 type GetWorkflowRunsInput struct {
 	ProjectID      string                  `json:"project_id"`
 	WorkflowRunIds []*string               `json:"workflow_run_ids"`
+	WorkflowIds    []*string               `json:"workflow_ids"`
 	Pagination     *Pagination             `json:"pagination"`
 	Sort           *WorkflowRunSortInput   `json:"sort"`
 	Filter         *WorkflowRunFilterInput `json:"filter"`
@@ -335,6 +342,11 @@ type MemberInput struct {
 	Role      *MemberRole `json:"role"`
 }
 
+type MemberStat struct {
+	Owner *Owner `json:"Owner"`
+	Total int    `json:"Total"`
+}
+
 type Metadata struct {
 	Name        string      `json:"Name"`
 	Version     string      `json:"Version"`
@@ -375,6 +387,12 @@ type MyHubStatus struct {
 	SSHPrivateKey *string  `json:"SSHPrivateKey"`
 	SSHPublicKey  *string  `json:"SSHPublicKey"`
 	LastSyncedAt  string   `json:"LastSyncedAt"`
+}
+
+type Owner struct {
+	UserID   string `json:"UserId"`
+	Username string `json:"Username"`
+	Name     string `json:"Name"`
 }
 
 type PackageInformation struct {
@@ -422,6 +440,14 @@ type Project struct {
 	CreatedAt string    `json:"created_at"`
 	UpdatedAt string    `json:"updated_at"`
 	RemovedAt string    `json:"removed_at"`
+}
+
+type ProjectData struct {
+	Name      string        `json:"Name"`
+	Workflows *WorkflowStat `json:"Workflows"`
+	Agents    *AgentStat    `json:"Agents"`
+	ProjectID string        `json:"ProjectId"`
+	Members   *MemberStat   `json:"Members"`
 }
 
 type Provider struct {
@@ -474,6 +500,13 @@ type TemplateInput struct {
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
+type TotalCount struct {
+	Projects  int           `json:"Projects"`
+	Users     int           `json:"Users"`
+	Agents    *AgentStat    `json:"Agents"`
+	Workflows *WorkflowStat `json:"Workflows"`
+}
+
 type UpdateMyHub struct {
 	ID            string   `json:"id"`
 	HubName       string   `json:"HubName"`
@@ -493,6 +526,24 @@ type UpdateUserInput struct {
 	Name        *string `json:"name"`
 	Email       *string `json:"email"`
 	CompanyName *string `json:"company_name"`
+}
+
+type UsageData struct {
+	Projects     []*ProjectData `json:"Projects"`
+	TotalEntries int            `json:"TotalEntries"`
+	TotalCount   *TotalCount    `json:"TotalCount"`
+}
+
+type UsageQuery struct {
+	Pagination    *Pagination     `json:"Pagination"`
+	DateRange     *DateRange      `json:"DateRange"`
+	Sort          *UsageSortInput `json:"Sort"`
+	SearchProject *string         `json:"SearchProject"`
+}
+
+type UsageSortInput struct {
+	Field      UsageSort `json:"Field"`
+	Descending bool      `json:"Descending"`
 }
 
 type User struct {
@@ -539,20 +590,24 @@ type WorkflowFilterInput struct {
 }
 
 type WorkflowRun struct {
-	WorkflowRunID     string   `json:"workflow_run_id"`
-	WorkflowID        string   `json:"workflow_id"`
-	ClusterName       string   `json:"cluster_name"`
-	LastUpdated       string   `json:"last_updated"`
-	ProjectID         string   `json:"project_id"`
-	ClusterID         string   `json:"cluster_id"`
-	WorkflowName      string   `json:"workflow_name"`
-	ClusterType       *string  `json:"cluster_type"`
-	Phase             string   `json:"phase"`
-	ResiliencyScore   *float64 `json:"resiliency_score"`
-	ExperimentsPassed *int     `json:"experiments_passed"`
-	TotalExperiments  *int     `json:"total_experiments"`
-	ExecutionData     string   `json:"execution_data"`
-	IsRemoved         *bool    `json:"isRemoved"`
+	WorkflowRunID      string   `json:"workflow_run_id"`
+	WorkflowID         string   `json:"workflow_id"`
+	ClusterName        string   `json:"cluster_name"`
+	LastUpdated        string   `json:"last_updated"`
+	ProjectID          string   `json:"project_id"`
+	ClusterID          string   `json:"cluster_id"`
+	WorkflowName       string   `json:"workflow_name"`
+	ClusterType        *string  `json:"cluster_type"`
+	Phase              string   `json:"phase"`
+	ResiliencyScore    *float64 `json:"resiliency_score"`
+	ExperimentsPassed  *int     `json:"experiments_passed"`
+	ExperimentsFailed  *int     `json:"experiments_failed"`
+	ExperimentsAwaited *int     `json:"experiments_awaited"`
+	ExperimentsStopped *int     `json:"experiments_stopped"`
+	ExperimentsNa      *int     `json:"experiments_na"`
+	TotalExperiments   *int     `json:"total_experiments"`
+	ExecutionData      string   `json:"execution_data"`
+	IsRemoved          *bool    `json:"isRemoved"`
 }
 
 type WorkflowRunFilterInput struct {
@@ -583,13 +638,21 @@ type WorkflowRunStatsRequest struct {
 }
 
 type WorkflowRunStatsResponse struct {
-	TotalWorkflowRuns      int     `json:"total_workflow_runs"`
-	SucceededWorkflowRuns  int     `json:"succeeded_workflow_runs"`
-	FailedWorkflowRuns     int     `json:"failed_workflow_runs"`
-	RunningWorkflowRuns    int     `json:"running_workflow_runs"`
-	AverageResiliencyScore float64 `json:"average_resiliency_score"`
-	PassedPercentage       float64 `json:"passed_percentage"`
-	FailedPercentage       float64 `json:"failed_percentage"`
+	TotalWorkflowRuns              int     `json:"total_workflow_runs"`
+	SucceededWorkflowRuns          int     `json:"succeeded_workflow_runs"`
+	FailedWorkflowRuns             int     `json:"failed_workflow_runs"`
+	RunningWorkflowRuns            int     `json:"running_workflow_runs"`
+	AverageResiliencyScore         float64 `json:"average_resiliency_score"`
+	TotalExperiments               int     `json:"total_experiments"`
+	ExperimentsPassed              int     `json:"experiments_passed"`
+	ExperimentsFailed              int     `json:"experiments_failed"`
+	ExperimentsAwaited             int     `json:"experiments_awaited"`
+	ExperimentsStopped             int     `json:"experiments_stopped"`
+	ExperimentsNa                  int     `json:"experiments_na"`
+	PassedPercentage               float64 `json:"passed_percentage"`
+	FailedPercentage               float64 `json:"failed_percentage"`
+	WorkflowRunSucceededPercentage float64 `json:"workflow_run_succeeded_percentage"`
+	WorkflowRunFailedPercentage    float64 `json:"workflow_run_failed_percentage"`
 }
 
 type WorkflowRuns struct {
@@ -601,6 +664,12 @@ type WorkflowRuns struct {
 type WorkflowSortInput struct {
 	Field      WorkflowSortingField `json:"field"`
 	Descending *bool                `json:"descending"`
+}
+
+type WorkflowStat struct {
+	Schedules int `json:"Schedules"`
+	Runs      int `json:"Runs"`
+	ExpRuns   int `json:"ExpRuns"`
 }
 
 type WorkflowStats struct {
@@ -991,6 +1060,57 @@ func (e *TimeFrequency) UnmarshalGQL(v interface{}) error {
 }
 
 func (e TimeFrequency) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type UsageSort string
+
+const (
+	UsageSortProject        UsageSort = "Project"
+	UsageSortOwner          UsageSort = "Owner"
+	UsageSortAgents         UsageSort = "Agents"
+	UsageSortSchedules      UsageSort = "Schedules"
+	UsageSortWorkflowRuns   UsageSort = "WorkflowRuns"
+	UsageSortExperimentRuns UsageSort = "ExperimentRuns"
+	UsageSortTeamMembers    UsageSort = "TeamMembers"
+)
+
+var AllUsageSort = []UsageSort{
+	UsageSortProject,
+	UsageSortOwner,
+	UsageSortAgents,
+	UsageSortSchedules,
+	UsageSortWorkflowRuns,
+	UsageSortExperimentRuns,
+	UsageSortTeamMembers,
+}
+
+func (e UsageSort) IsValid() bool {
+	switch e {
+	case UsageSortProject, UsageSortOwner, UsageSortAgents, UsageSortSchedules, UsageSortWorkflowRuns, UsageSortExperimentRuns, UsageSortTeamMembers:
+		return true
+	}
+	return false
+}
+
+func (e UsageSort) String() string {
+	return string(e)
+}
+
+func (e *UsageSort) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UsageSort(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UsageSort", str)
+	}
+	return nil
+}
+
+func (e UsageSort) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

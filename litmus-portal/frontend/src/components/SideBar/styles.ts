@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: `${theme.palette.cards.highlight} !important`,
     color: theme.palette.highlight,
     '& path': {
-      fill: theme.palette.highlight,
+      stroke: theme.palette.highlight,
     },
   },
   listIcon: {

@@ -24,6 +24,7 @@ import (
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	workflowDBOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -257,19 +258,19 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 	r.Mutex.Unlock()
 }
 
-// ResiliencyScoreCalculator calculates the Resiliency Score and returns the updated ExecutionData
-func ResiliencyScoreCalculator(execData types.ExecutionData, wfid string) types.ExecutionData {
-	var resiliencyScore = 0.0
-	var weightSum, totalTestResult, totalExperiments, totalExperimentsPassed = 0, 0, 0, 0
+// ProcessCompletedWorkflowRun calculates the Resiliency Score and returns the updated ExecutionData
+func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) types.WorkflowRunMetrics {
+	var weightSum, totalTestResult = 0, 0
+	var result types.WorkflowRunMetrics
 
-	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": []string{wfid}}}})
+	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}})
 
-	totalExperiments = len(chaosWorkflows[0].Weightages)
+	result.TotalExperiments = len(chaosWorkflows[0].Weightages)
 	weightMap := map[string]int{}
-	for _, weightEnty := range chaosWorkflows[0].Weightages {
-		weightMap[weightEnty.ExperimentName] = weightEnty.Weightage
+	for _, weightEntry := range chaosWorkflows[0].Weightages {
+		weightMap[weightEntry.ExperimentName] = weightEntry.Weightage
 		// Total weight calculated for all experiments
-		weightSum = weightSum + weightEnty.Weightage
+		weightSum = weightSum + weightEntry.Weightage
 	}
 
 	for _, value := range execData.Nodes {
@@ -284,19 +285,27 @@ func ResiliencyScoreCalculator(execData types.ExecutionData, wfid string) types.
 				totalTestResult += weight * x
 			}
 			if value.ChaosExp.ExperimentVerdict == "Pass" {
-				totalExperimentsPassed += 1
+				result.ExperimentsPassed += 1
+			}
+			if value.ChaosExp.ExperimentVerdict == "Fail" {
+				result.ExperimentsFailed += 1
+			}
+			if value.ChaosExp.ExperimentVerdict == "Awaited" {
+				result.ExperimentsAwaited += 1
+			}
+			if value.ChaosExp.ExperimentVerdict == "Stopped" {
+				result.ExperimentsStopped += 1
+			}
+			if value.ChaosExp.ExperimentVerdict == "N/A" || value.ChaosExp.ExperimentVerdict == "" {
+				result.ExperimentsNA += 1
 			}
 		}
 	}
 	if weightSum != 0 {
-		resiliencyScore = float64(totalTestResult) / float64(weightSum)
+		result.ResiliencyScore = utils.Truncate(float64(totalTestResult) / float64(weightSum))
 	}
 
-	execData.ResiliencyScore = resiliencyScore
-	execData.ExperimentsPassed = totalExperimentsPassed
-	execData.TotalExperiments = totalExperiments
-
-	return execData
+	return result
 }
 
 func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {

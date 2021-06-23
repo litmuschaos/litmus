@@ -35,6 +35,7 @@ input WorkflowRunSortInput {
 input GetWorkflowRunsInput {
   project_id: ID!
   workflow_run_ids: [ID]
+  workflow_ids: [ID]
   pagination: Pagination
   sort: WorkflowRunSortInput
   filter: WorkflowRunFilterInput
@@ -52,6 +53,10 @@ type WorkflowRun {
   phase: String!
   resiliency_score: Float
   experiments_passed: Int
+  experiments_failed: Int
+  experiments_awaited: Int
+  experiments_stopped: Int
+  experiments_na: Int
   total_experiments: Int
   execution_data: String!
   isRemoved: Boolean

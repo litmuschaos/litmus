@@ -150,6 +150,19 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 	pipeline = append(pipeline, matchProjectIdStage)
 
+	// Match the workflowIds from the input array
+	if len(input.WorkflowIds) != 0 {
+		matchWfIdStage := bson.D{
+			{"$match", bson.D{
+				{"workflow_id", bson.D{
+					{"$in", input.WorkflowIds},
+				}},
+			}},
+		}
+
+		pipeline = append(pipeline, matchWfIdStage)
+	}
+
 	includeAllFromWorkflow := bson.D{
 		{"workflow_id", 1},
 		{"workflow_name", 1},
@@ -372,20 +385,24 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		workflowRun := workflow.WorkflowRuns
 
 		newWorkflowRun := model.WorkflowRun{
-			WorkflowName:      workflow.WorkflowName,
-			WorkflowID:        workflow.WorkflowID,
-			WorkflowRunID:     workflowRun.WorkflowRunID,
-			LastUpdated:       workflowRun.LastUpdated,
-			ProjectID:         workflow.ProjectID,
-			ClusterID:         workflow.ClusterID,
-			Phase:             workflowRun.Phase,
-			ResiliencyScore:   workflowRun.ResiliencyScore,
-			ExperimentsPassed: workflowRun.ExperimentsPassed,
-			TotalExperiments:  workflowRun.TotalExperiments,
-			ExecutionData:     workflowRun.ExecutionData,
-			ClusterName:       workflow.ClusterName,
-			ClusterType:       &workflow.ClusterType,
-			IsRemoved:         workflowRun.IsRemoved,
+			WorkflowName:       workflow.WorkflowName,
+			WorkflowID:         workflow.WorkflowID,
+			WorkflowRunID:      workflowRun.WorkflowRunID,
+			LastUpdated:        workflowRun.LastUpdated,
+			ProjectID:          workflow.ProjectID,
+			ClusterID:          workflow.ClusterID,
+			Phase:              workflowRun.Phase,
+			ResiliencyScore:    workflowRun.ResiliencyScore,
+			ExperimentsPassed:  workflowRun.ExperimentsPassed,
+			ExperimentsFailed:  workflowRun.ExperimentsFailed,
+			ExperimentsAwaited: workflowRun.ExperimentsAwaited,
+			ExperimentsStopped: workflowRun.ExperimentsStopped,
+			ExperimentsNa:      workflowRun.ExperimentsNA,
+			TotalExperiments:   workflowRun.TotalExperiments,
+			ExecutionData:      workflowRun.ExecutionData,
+			ClusterName:        workflow.ClusterName,
+			ClusterType:        &workflow.ClusterType,
+			IsRemoved:          workflowRun.IsRemoved,
 		}
 		result = append(result, &newWorkflowRun)
 	}
@@ -414,7 +431,7 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 	}
 	pipeline = append(pipeline, matchProjectIdStage)
 
-	// Match the pipelineIds from the input array
+	// Match the workflowIds from the input array
 	if len(workflowInput.WorkflowIds) != 0 {
 		matchWfIdStage := bson.D{
 			{"$match", bson.D{
@@ -593,23 +610,28 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
+	var workflowRunMetrics types.WorkflowRunMetrics
 	// Resiliency Score will be calculated only if workflow execution is completed
 	if input.Completed {
-		executionData = ops.ResiliencyScoreCalculator(executionData, input.WorkflowID)
+		workflowRunMetrics = ops.ProcessCompletedWorkflowRun(executionData, input.WorkflowID)
 	}
 
 	count := 0
 	isRemoved := false
 	count, err = dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
-		WorkflowRunID:     input.WorkflowRunID,
-		LastUpdated:       strconv.FormatInt(time.Now().Unix(), 10),
-		Phase:             executionData.Phase,
-		ResiliencyScore:   &executionData.ResiliencyScore,
-		ExperimentsPassed: &executionData.ExperimentsPassed,
-		TotalExperiments:  &executionData.TotalExperiments,
-		ExecutionData:     input.ExecutionData,
-		Completed:         input.Completed,
-		IsRemoved:         &isRemoved,
+		WorkflowRunID:      input.WorkflowRunID,
+		LastUpdated:        strconv.FormatInt(time.Now().Unix(), 10),
+		Phase:              executionData.Phase,
+		ResiliencyScore:    &workflowRunMetrics.ResiliencyScore,
+		ExperimentsPassed:  &workflowRunMetrics.ExperimentsPassed,
+		ExperimentsFailed:  &workflowRunMetrics.ExperimentsFailed,
+		ExperimentsAwaited: &workflowRunMetrics.ExperimentsAwaited,
+		ExperimentsStopped: &workflowRunMetrics.ExperimentsStopped,
+		ExperimentsNA:      &workflowRunMetrics.ExperimentsNA,
+		TotalExperiments:   &workflowRunMetrics.TotalExperiments,
+		ExecutionData:      input.ExecutionData,
+		Completed:          input.Completed,
+		IsRemoved:          &isRemoved,
 	})
 
 	if err != nil {
@@ -622,19 +644,23 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 	}
 
 	ops.SendWorkflowEvent(model.WorkflowRun{
-		ClusterID:         cluster.ClusterID,
-		ClusterName:       cluster.ClusterName,
-		ProjectID:         cluster.ProjectID,
-		LastUpdated:       strconv.FormatInt(time.Now().Unix(), 10),
-		WorkflowRunID:     input.WorkflowRunID,
-		WorkflowName:      input.WorkflowName,
-		Phase:             executionData.Phase,
-		ResiliencyScore:   &executionData.ResiliencyScore,
-		ExperimentsPassed: &executionData.ExperimentsPassed,
-		TotalExperiments:  &executionData.TotalExperiments,
-		ExecutionData:     input.ExecutionData,
-		WorkflowID:        input.WorkflowID,
-		IsRemoved:         &isRemoved,
+		ClusterID:          cluster.ClusterID,
+		ClusterName:        cluster.ClusterName,
+		ProjectID:          cluster.ProjectID,
+		LastUpdated:        strconv.FormatInt(time.Now().Unix(), 10),
+		WorkflowRunID:      input.WorkflowRunID,
+		WorkflowName:       input.WorkflowName,
+		Phase:              executionData.Phase,
+		ResiliencyScore:    &workflowRunMetrics.ResiliencyScore,
+		ExperimentsPassed:  &workflowRunMetrics.ExperimentsPassed,
+		ExperimentsFailed:  &workflowRunMetrics.ExperimentsFailed,
+		ExperimentsAwaited: &workflowRunMetrics.ExperimentsAwaited,
+		ExperimentsStopped: &workflowRunMetrics.ExperimentsStopped,
+		ExperimentsNa:      &workflowRunMetrics.ExperimentsNA,
+		TotalExperiments:   &workflowRunMetrics.TotalExperiments,
+		ExecutionData:      input.ExecutionData,
+		WorkflowID:         input.WorkflowID,
+		IsRemoved:          &isRemoved,
 	}, &r)
 
 	return "Workflow Run Accepted", nil
