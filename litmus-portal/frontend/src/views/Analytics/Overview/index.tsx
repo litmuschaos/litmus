@@ -225,8 +225,13 @@ const Overview: React.FC = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <TextButton variant="highlight">
+              <TextButton variant="highlight" className={classes.docsButton}>
                 <Typography>Sample Prometheus configuration</Typography>
+                <img
+                  src="./icons/externalLink.svg"
+                  alt="external link"
+                  title="Read documentation"
+                />
               </TextButton>
             </Link>
           }
