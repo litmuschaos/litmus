@@ -826,8 +826,51 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 	}
 	pipeline = append(pipeline, matchProjectIdStage)
 
+	// Filtering out the workflows that are deleted/removed
+	matchWfIsRemovedStage := bson.D{
+		{"$match", bson.D{
+			{"isRemoved", bson.D{
+				{"$eq", false},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, matchWfIsRemovedStage)
+
 	// Unwind the workflow runs if workflow run stats are requested
 	if showWorkflowRuns {
+		includeAllFromWorkflow := bson.D{
+			{"workflow_id", 1},
+			{"workflow_name", 1},
+			{"workflow_manifest", 1},
+			{"cronSyntax", 1},
+			{"workflow_description", 1},
+			{"weightages", 1},
+			{"isCustomWorkflow", 1},
+			{"updated_at", 1},
+			{"created_at", 1},
+			{"project_id", 1},
+			{"cluster_id", 1},
+			{"cluster_name", 1},
+			{"cluster_type", 1},
+			{"isRemoved", 1},
+		}
+
+		// Filter the available workflows where isRemoved is false
+		matchWfRunIsRemovedStage := bson.D{
+			{"$project", append(includeAllFromWorkflow,
+				bson.E{Key: "workflow_runs", Value: bson.D{
+					{"$filter", bson.D{
+						{"input", "$workflow_runs"},
+						{"as", "wfRun"},
+						{"cond", bson.D{
+							{"$eq", bson.A{"$$wfRun.isRemoved", false}},
+						}},
+					}},
+				}},
+			)},
+		}
+		pipeline = append(pipeline, matchWfRunIsRemovedStage)
+
 		// Flatten out the workflow runs
 		unwindStage := bson.D{
 			{"$unwind", bson.D{
@@ -916,7 +959,6 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 				Value: 0,
 			}
 		}
-		fmt.Println(statsMap)
 	case model.TimeFrequencyHourly:
 		for hoursAgo := now.Add(time.Hour * -48); hoursAgo.Before(now) || hoursAgo.Equal(now); hoursAgo = hoursAgo.Add(time.Hour * 1) {
 			// Storing the timestamp of first minute of the hour
@@ -931,7 +973,6 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 	if showWorkflowRuns {
 		var workflows []dbSchemaWorkflow.FlattenedWorkflowRun
 		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-			fmt.Println(err)
 			return result, nil
 		}
 
@@ -944,7 +985,6 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 	} else {
 		var workflows []dbSchemaWorkflow.ChaosWorkFlowInput
 		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-			fmt.Println(err)
 			return result, nil
 		}
 
@@ -990,6 +1030,16 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 
 		pipeline = append(pipeline, matchWfIdStage)
 	}
+
+	// Filtering out the workflows that are deleted/removed
+	matchWfIsRemovedStage := bson.D{
+		{"$match", bson.D{
+			{"isRemoved", bson.D{
+				{"$eq", false},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, matchWfIsRemovedStage)
 
 	includeAllFromWorkflow := bson.D{
 		{"workflow_id", 1},
@@ -1136,7 +1186,6 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 	var workflowsRunStats []dbSchemaAnalytics.WorkflowRunStats
 
 	if err = workflowsRunStatsCursor.All(context.Background(), &workflowsRunStats); err != nil || len(workflowsRunStats) == 0 {
-		fmt.Println(err)
 		return &model.WorkflowRunStatsResponse{}, nil
 	}
 
