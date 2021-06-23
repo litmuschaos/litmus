@@ -174,17 +174,38 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 					"$filter": bson.M{
 						"input": "$cluster",
 						"as":    "cluster",
-						"cond":  bson.M{"$eq": bson.A{"$$cluster.agent_scope", "namespace"}},
+						"cond": bson.M{"$and": bson.A{
+							bson.M{
+								"$eq": bson.A{"$$cluster.agent_scope", "namespace"},
+							},
+							bson.M{
+								"$eq": bson.A{"$$cluster.is_removed", false},
+							},
+						},
+						},
 					}}},
 				"cluster": bson.M{
 					"$size": bson.M{
 						"$filter": bson.M{
 							"input": "$cluster",
 							"as":    "cluster",
-							"cond":  bson.M{"$eq": bson.A{"$$cluster.agent_scope", "cluster"}},
+							"cond": bson.M{"$and": bson.A{
+								bson.M{
+									"$eq": bson.A{"$$cluster.agent_scope", "cluster"},
+								},
+								bson.M{
+									"$eq": bson.A{"$$cluster.is_removed", false},
+								},
+							},
+							},
 						}}},
 				"total": bson.M{
-					"$size": "$cluster",
+					"$size": bson.M{
+						"$filter": bson.M{
+							"input": "$cluster",
+							"as":    "cluster",
+							"cond":  bson.M{"$eq": bson.A{"$$cluster.is_removed", false}},
+						}},
 				},
 			},
 			"workflows": bson.M{
