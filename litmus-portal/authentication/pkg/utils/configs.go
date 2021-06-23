@@ -6,18 +6,19 @@ import (
 )
 
 var (
-	JwtSecret            = os.Getenv("JWT_SECRET")
-	AdminName            = os.Getenv("ADMIN_USERNAME")
-	AdminPassword        = os.Getenv("ADMIN_PASSWORD")
-	DBUrl                = os.Getenv("DB_SERVER")
-	DBUser               = os.Getenv("DB_USER")
-	DBPassword           = os.Getenv("DB_PASSWORD")
-	JWTExpiryDuration    = getEnvAsInt("JWT_EXPIRY_MINS", 1440)
-	StrictPasswordPolicy = getEnvAsBool("STRICT_PASSWORD_POLICY", false)
-	DBName               = "auth"
-	Port                 = ":3000"
-	CollectionName       = "users"
-	UsernameField        = "username"
+	JwtSecret              = os.Getenv("JWT_SECRET")
+	AdminName              = os.Getenv("ADMIN_USERNAME")
+	AdminPassword          = os.Getenv("ADMIN_PASSWORD")
+	DBUrl                  = os.Getenv("DB_SERVER")
+	DBUser                 = os.Getenv("DB_USER")
+	DBPassword             = os.Getenv("DB_PASSWORD")
+	JWTExpiryDuration      = getEnvAsInt("JWT_EXPIRY_MINS", 1440)
+	StrictPasswordPolicy   = getEnvAsBool("STRICT_PASSWORD_POLICY", false)
+	DBName                 = "auth"
+	Port                   = ":3000"
+	CollectionName         = "usercredentials"
+	UsernameField          = "username"
+	PasswordEncryptionCost = 15
 )
 
 func getEnvAsInt(name string, defaultVal int) int {

@@ -25,9 +25,13 @@ func main() {
 
 	db, err := utils.DatabaseConnection()
 	if err != nil {
-		log.Fatal("Database Connection Error $s", err)
+		log.Fatal("database connection error $s", err)
 	}
 	err = utils.CreateIndex(utils.CollectionName, utils.UsernameField, db)
+	if err != nil {
+		log.Fatalf("failed to create index  %s", err)
+	}
+
 	userCollection := db.Collection(utils.CollectionName)
 	userRepo := user.NewRepo(userCollection)
 	userService := user.NewService(userRepo)

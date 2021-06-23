@@ -9,7 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateUser(service user.Service) gin.HandlerFunc {
@@ -147,7 +146,7 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 		uid := c.MustGet("uid").(string)
 		var adminUser entities.User
 		adminUser.UserName = c.MustGet("username").(string)
-		adminUser.ID, _ = primitive.ObjectIDFromHex(uid)
+		adminUser.ID = uid
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
 		if err != nil {

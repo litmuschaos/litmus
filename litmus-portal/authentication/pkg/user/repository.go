@@ -5,8 +5,8 @@ import (
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
 
+	uuid "github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -57,20 +57,22 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 			return err
 		}
 	}
-	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), bcrypt.DefaultCost)
+
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
 	_, err = r.Collection.UpdateOne(context.Background(), bson.M{"_id": result.ID}, bson.M{"$set": bson.M{
 		"password": string(newHashedPassword),
 	}})
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
 //CreateUser creates a new user in the database
 func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
-	user.ID = primitive.NewObjectID()
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.ID = uuid.Must(uuid.NewRandom()).String()
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
 	user.Password = string(hashedPassword)
 	_, err = r.Collection.InsertOne(context.Background(), user)
 	if err != nil {
@@ -89,6 +91,7 @@ func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return user.SanitizedUser(), nil
 }
 
