@@ -2,11 +2,11 @@ import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Scaffold from '../../containers/layouts/Scaffold';
-import UsageStats from '../../views/Usage/UsageStats';
-import UsageTable from '../../views/Usage/UsageTable';
+import UsageStats from '../../views/UsageStatistics/UsageStats';
+import UsageTable from '../../views/UsageStatistics/UsageTable';
 import useStyles from './styles';
 
-const Usage = () => {
+const UsageStatistics = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   return (
@@ -27,4 +27,4 @@ const Usage = () => {
   );
 };
 
-export default Usage;
+export default UsageStatistics;

@@ -7,7 +7,6 @@ const initialState: TabState = {
   settings: 0,
   node: 0,
   analytics: 0,
-  overviewDashboard: 0,
 };
 
 export const tabNumber = createReducer<TabState>(initialState, {
@@ -36,15 +35,6 @@ export const tabNumber = createReducer<TabState>(initialState, {
     return {
       ...state,
       analytics: action.payload,
-    };
-  },
-  [TabActions.CHANGE_OVERVIEW_DASHBOARD_TAB](
-    state: TabState,
-    action: TabAction
-  ) {
-    return {
-      ...state,
-      overviewDashboard: action.payload,
     };
   },
 });

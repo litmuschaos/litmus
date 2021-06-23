@@ -158,15 +158,15 @@ const SideBar: React.FC = () => {
 
         {role === UserRole.admin && (
           <CustomisedListItem
-            key="usage"
+            key="usage-statistics"
             handleClick={() => {
               history.push({
-                pathname: `/usage`,
+                pathname: `/usage-statistics`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="Usage"
-            selected={pathName === 'usage'}
+            label="Usage Statistics"
+            selected={pathName === 'usage-statistics'}
           >
             <UsageIcon />
           </CustomisedListItem>

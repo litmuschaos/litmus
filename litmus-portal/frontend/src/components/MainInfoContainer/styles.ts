@@ -40,16 +40,13 @@ const useStyles = makeStyles((theme) => ({
       marginRight: theme.spacing(1.5),
     },
 
-    '& a': {
-      textDecoration: 'none',
-      marginLeft: theme.spacing(1.875),
-      display: 'flex',
-      alignItems: 'center',
-      cursor: 'pointer',
-      '& p': {
-        fontWeight: 500,
-        fontSize: '1rem',
-      },
+    '& p': {
+      fontWeight: 500,
+      fontSize: '1rem',
+    },
+
+    '& button:last-child': {
+      marginLeft: theme.spacing(2.5),
     },
   },
 }));

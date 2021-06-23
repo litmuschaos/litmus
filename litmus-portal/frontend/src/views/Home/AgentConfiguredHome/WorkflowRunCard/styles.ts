@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   animatedContainer: {
     marginTop: theme.spacing(3.125),
-    padding: theme.spacing(2.5, 0),
+    padding: theme.spacing(2.5),
     willChange: `transform`,
     transition: `transform 250ms`,
     cursor: 'pointer',
@@ -19,19 +19,14 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '75%',
-
-    '& svg': {
-      width: '3.75rem',
-    },
-
-    '& circle': {
-      r: '1',
-      cx: '5',
-      cy: '5',
-    },
   },
   statusDiv: {
     display: 'flex',
+
+    '& img': {
+      width: '2.5rem',
+      marginRight: theme.spacing(2),
+    },
   },
 
   testName: {
@@ -50,35 +45,8 @@ const useStyles = makeStyles((theme) => ({
   lastRunTime: {
     width: '4.8125rem',
   },
-  listContainer: {
-    '& img': {
-      width: '1rem',
-      marginLeft: theme.spacing(2.25),
-    },
-    '& span': {
-      marginRight: theme.spacing(1.25),
-    },
-  },
-  listItem: {
-    '&:hover': {
-      background: theme.palette.cards.highlight,
-    },
-  },
   noWrapProvider: {
     whiteSpace: 'nowrap',
-  },
-  // Phase states indicating the present run status
-  succeeded: {
-    fill: theme.palette.success.main,
-  },
-  running: {
-    fill: theme.palette.primary.main,
-  },
-  failed: {
-    fill: theme.palette.error.main,
-  },
-  pending: {
-    fill: theme.palette.primary.main,
   },
   // Resiliency Score indicators
   lowScore: {

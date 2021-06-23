@@ -623,6 +623,9 @@ export const GET_GLOBAL_STATS = gql`
 export const GLOBAL_PROJECT_DATA = gql`
   query getStats($query: UsageQuery!) {
     UsageQuery(query: $query) {
+      TotalCount {
+        Projects
+      }
       Projects {
         Name
         Workflows {
