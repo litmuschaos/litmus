@@ -89,6 +89,8 @@ The Litmus community meets on the third wednesday of every month at 10:00PM IST/
 - [Observability Considerations in Chaos: The Metrics Story](https://dev.to/ksatchit/observability-considerations-in-chaos-the-metrics-story-6cb)
 
 Community Blogs:
+
+- Daniyal Rayn: [Do I need Chaos Engineering on my environment? Trust me you need it!](https://maveric-systems.com/blog/do-i-need-chaos-engineering-on-my-environment-trust-me-you-need-it/)
 - LiveWyer: [LitmusChaos Showcase: Chaos Experiments in a Helm Chart Test Suite](https://livewyer.io/blog/2021/03/22/litmuschaos-showcase-chaos-experiments-in-a-helm-chart-test-suite/)
 - Jessica Cherry: [Test Kubernetes cluster failures and experiments in your terminal](https://opensource.com/article/21/6/kubernetes-litmus-chaos)
 - Yang Chuansheng(KubeSphere): [KubeSphere 部署 Litmus 至 Kubernetes 开启混沌实验](https://kubesphere.io/zh/blogs/litmus-kubesphere/)
