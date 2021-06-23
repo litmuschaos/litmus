@@ -108,8 +108,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: './icons/docs.svg',
           alt: 'docs',
-          onClick: () =>
-            window.open('https://litmuschaos.github.io/litmus/api.html'),
+          onClick: () => window.open('/api-docs/index.html'),
           text: t('quickActionCard.readAPIDocs'),
         }
       : emptyData,
