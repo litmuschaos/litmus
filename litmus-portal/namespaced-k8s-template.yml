@@ -180,6 +180,8 @@ spec:
               cpu: 200m
               memory: 250Mi
           env:
+            - name: STRICT_PASSWORD_POLICY
+              value: "false"
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:

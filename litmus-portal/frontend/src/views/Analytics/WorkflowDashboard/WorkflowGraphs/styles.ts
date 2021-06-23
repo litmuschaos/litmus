@@ -1,14 +1,15 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
+  root: {
+    background: theme.palette.background.paper,
     padding: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
     marginBottom: theme.spacing(3.5),
   },
-  root: {
+  graphs: {
     width: '100%',
     padding: theme.spacing(4.375),
     display: 'flex',
