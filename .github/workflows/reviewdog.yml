@@ -1,5 +1,11 @@
 name: reviewdog
-on: [pull_request]
+on:
+ push:
+    branches:
+      - adding-review-dog
+ pull_request:
+     branches:
+      - master
 jobs:
   reviewdog:
     name: reviewdog
