@@ -370,11 +370,11 @@ type ComplexityRoot struct {
 		GetPromLabelNamesAndValues  func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery                func(childComplexity int, query *model.PromInput) int
 		GetPromSeriesList           func(childComplexity int, dsDetails *model.DsDetails) int
-		GetScheduledWorkflowStats   func(childComplexity int, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) int
 		GetTemplateManifestByID     func(childComplexity int, templateID string) int
 		GetUser                     func(childComplexity int, username string) int
 		GetWorkflowRunStats         func(childComplexity int, workflowRunStatsRequest model.WorkflowRunStatsRequest) int
 		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
+		GetWorkflowStats            func(childComplexity int, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) int
 		GetYAMLData                 func(childComplexity int, experimentInput model.ExperimentInput) int
 		ListDashboard               func(childComplexity int, projectID string) int
 		ListDataSource              func(childComplexity int, projectID string) int
@@ -719,7 +719,7 @@ type QueryResolver interface {
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	ListProjects(ctx context.Context) ([]*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
-	GetScheduledWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error)
+	GetWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error)
 	GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error)
 	ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error)
 	GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
@@ -2615,18 +2615,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPromSeriesList(childComplexity, args["ds_details"].(*model.DsDetails)), true
 
-	case "Query.getScheduledWorkflowStats":
-		if e.complexity.Query.GetScheduledWorkflowStats == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getScheduledWorkflowStats_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetScheduledWorkflowStats(childComplexity, args["project_id"].(string), args["filter"].(model.TimeFrequency), args["show_workflow_runs"].(bool)), true
-
 	case "Query.GetTemplateManifestByID":
 		if e.complexity.Query.GetTemplateManifestByID == nil {
 			break
@@ -2674,6 +2662,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetWorkflowRuns(childComplexity, args["workflowRunsInput"].(model.GetWorkflowRunsInput)), true
+
+	case "Query.getWorkflowStats":
+		if e.complexity.Query.GetWorkflowStats == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getWorkflowStats_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetWorkflowStats(childComplexity, args["project_id"].(string), args["filter"].(model.TimeFrequency), args["show_workflow_runs"].(bool)), true
 
 	case "Query.getYAMLData":
 		if e.complexity.Query.GetYAMLData == nil {
@@ -4428,7 +4428,7 @@ input deleteDSInput {
 
 enum TimeFrequency {
   Monthly
-  Weekly
+  Daily
   Hourly
 }
 
@@ -4962,7 +4962,7 @@ type Query {
 
   users: [User!]! @authorized
 
-  getScheduledWorkflowStats(
+  getWorkflowStats(
     project_id: ID!
     filter: TimeFrequency!
     show_workflow_runs: Boolean!
@@ -6353,36 +6353,6 @@ func (ec *executionContext) field_Query_getProject_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getScheduledWorkflowStats_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["project_id"]; ok {
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["project_id"] = arg0
-	var arg1 model.TimeFrequency
-	if tmp, ok := rawArgs["filter"]; ok {
-		arg1, err = ec.unmarshalNTimeFrequency2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeFrequency(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filter"] = arg1
-	var arg2 bool
-	if tmp, ok := rawArgs["show_workflow_runs"]; ok {
-		arg2, err = ec.unmarshalNBoolean2bool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["show_workflow_runs"] = arg2
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_getUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6422,6 +6392,36 @@ func (ec *executionContext) field_Query_getWorkflowRuns_args(ctx context.Context
 		}
 	}
 	args["workflowRunsInput"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getWorkflowStats_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["project_id"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["project_id"] = arg0
+	var arg1 model.TimeFrequency
+	if tmp, ok := rawArgs["filter"]; ok {
+		arg1, err = ec.unmarshalNTimeFrequency2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeFrequency(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg1
+	var arg2 bool
+	if tmp, ok := rawArgs["show_workflow_runs"]; ok {
+		arg2, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["show_workflow_runs"] = arg2
 	return args, nil
 }
 
@@ -15069,7 +15069,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getScheduledWorkflowStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_getWorkflowStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -15085,7 +15085,7 @@ func (ec *executionContext) _Query_getScheduledWorkflowStats(ctx context.Context
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getScheduledWorkflowStats_args(ctx, rawArgs)
+	args, err := ec.field_Query_getWorkflowStats_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -15094,7 +15094,7 @@ func (ec *executionContext) _Query_getScheduledWorkflowStats(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetScheduledWorkflowStats(rctx, args["project_id"].(string), args["filter"].(model.TimeFrequency), args["show_workflow_runs"].(bool))
+			return ec.resolvers.Query().GetWorkflowStats(rctx, args["project_id"].(string), args["filter"].(model.TimeFrequency), args["show_workflow_runs"].(bool))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -27372,7 +27372,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "getScheduledWorkflowStats":
+		case "getWorkflowStats":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -27380,7 +27380,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getScheduledWorkflowStats(ctx, field)
+				res = ec._Query_getWorkflowStats(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
