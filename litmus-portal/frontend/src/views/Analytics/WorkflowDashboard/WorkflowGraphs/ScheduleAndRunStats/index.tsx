@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { Paper, Tabs, useTheme } from '@material-ui/core';
 import { GraphMetric, LineAreaGraph } from 'litmus-ui';
 import React from 'react';
-import { StyledTab, TabPanel } from '../../../../../components/Tabs';
+import { StyledTab } from '../../../../../components/Tabs';
 import { WORKFLOW_STATS } from '../../../../../graphql';
 import {
   Filter,
@@ -43,6 +43,7 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
         project_id: projectID,
         show_workflow_runs: activeTab === 0,
       },
+      fetchPolicy: 'cache-and-network',
     }
   );
 
@@ -85,44 +86,23 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
           {...tabProps(0)}
         />
       </Tabs>
-      <TabPanel value={activeTab} index={0}>
-        <div className={classes.graphContainer}>
-          <LineAreaGraph
-            closedSeries={closedSeriesData}
-            showLegendTable={false}
-            showPoints
-            showTips
-            showMultiToolTip
-            yLabelOffset={35}
-            xAxistimeFormat={xAxisTimeFormat(filter)}
-            margin={{
-              top: 20,
-              left: 10,
-              bottom: 20,
-              right: 20,
-            }}
-          />
-        </div>
-      </TabPanel>
-      <TabPanel value={activeTab} index={1}>
-        <div className={classes.graphContainer}>
-          <LineAreaGraph
-            closedSeries={closedSeriesData}
-            showLegendTable={false}
-            showPoints
-            showTips
-            showMultiToolTip
-            yLabelOffset={35}
-            xAxistimeFormat={xAxisTimeFormat(filter)}
-            margin={{
-              top: 20,
-              left: 10,
-              bottom: 0,
-              right: 20,
-            }}
-          />
-        </div>
-      </TabPanel>
+      <div className={classes.graphContainer}>
+        <LineAreaGraph
+          closedSeries={closedSeriesData}
+          showLegendTable={false}
+          showPoints
+          showTips
+          showMultiToolTip
+          yLabelOffset={35}
+          xAxistimeFormat={xAxisTimeFormat(filter)}
+          margin={{
+            top: 20,
+            left: 35,
+            bottom: 30,
+            right: 20,
+          }}
+        />
+      </div>
     </Paper>
   );
 };
