@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DELETE_WORKFLOW_TEMPLATE,
@@ -18,17 +18,23 @@ import {
   ListManifestTemplate,
   ListManifestTemplateArray,
 } from '../../../models/graphql/workflowListData';
-import { getProjectID } from '../../../utils/getSearchParams';
-import * as WorkflowActions from '../../../redux/actions/workflow';
-import useStyles from './styles';
 import useActions from '../../../redux/actions';
+import * as WorkflowActions from '../../../redux/actions/workflow';
+import { getProjectID } from '../../../utils/getSearchParams';
+import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
   selected: string;
   id: string;
 }
 
-const ChooseWorkflowFromExisting = () => {
+interface ChooseWorkflowFromExistingProps {
+  selectedExp: (expID: string) => void;
+}
+
+const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
+  selectedExp,
+}) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { palette } = useTheme();
@@ -73,6 +79,7 @@ const ChooseWorkflowFromExisting = () => {
       selected: 'B',
       id: event.target.value,
     };
+    selectedExp(selection.id);
     const templateData = filteredExistingWorkflows.filter((workflow) => {
       return workflow.template_id === event.target.value;
     })[0];
@@ -88,17 +95,6 @@ const ChooseWorkflowFromExisting = () => {
     });
     localforage.setItem('hasSetWorkflowData', true);
   };
-
-  // Selects Option B -> Sub Experiment Options which was already selected by the user
-  useEffect(() => {
-    localforage
-      .getItem('selectedScheduleOption')
-      .then((value) =>
-        value !== null
-          ? setSelected((value as ChooseWorkflowRadio).id)
-          : setSelected('')
-      );
-  }, []);
 
   return (
     <AccordionDetails>

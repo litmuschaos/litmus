@@ -14,7 +14,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -30,6 +29,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
   const [selected, setSelected] = useState<string>('');
+  const [id, setSelectedID] = useState<string | undefined>(undefined);
   const workflowDetails = useSelector(
     (state: RootState) => state.workflowManifest.manifest
   );
@@ -55,6 +55,10 @@ const ChooseWorkflow = forwardRef((_, ref) => {
       alert.changeAlertState(true); // No Workflow Type has been selected and user clicked on Next
       return false;
     }
+    if (id === undefined) {
+      alert.changeAlertState(true);
+      return false;
+    }
     if (selected === 'D' && workflowDetails === '') {
       alert.changeAlertState(true);
       return false;
@@ -64,19 +68,15 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   }
 
   useEffect(() => {
-    localforage.getItem('selectedScheduleOption').then((value) => {
-      if (value) {
-        setSelected((value as ChooseWorkflowRadio).selected);
-      } else setSelected('');
-    });
-    workflowAction.setWorkflowManifest({
-      manifest: '',
-    });
     /**
      * Removes the workflow details if already present
      */
     localforage.removeItem('workflow');
   }, []);
+
+  const pickedExperiment = (subExpNumber: string) => {
+    setSelectedID(subExpNumber);
+  };
 
   useImperativeHandle(ref, () => ({
     onNext,
@@ -120,7 +120,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
                 </span>
               </RadioButton>
             </AccordionSummary>
-            <ChoosePreDefinedExperiments />
+            <ChoosePreDefinedExperiments selectedExp={pickedExperiment} />
           </Accordion>
 
           <Accordion
@@ -141,7 +141,7 @@ const ChooseWorkflow = forwardRef((_, ref) => {
                 </span>
               </RadioButton>
             </AccordionSummary>
-            <ChooseWorkflowFromExisting />
+            <ChooseWorkflowFromExisting selectedExp={pickedExperiment} />
           </Accordion>
 
           <Accordion
