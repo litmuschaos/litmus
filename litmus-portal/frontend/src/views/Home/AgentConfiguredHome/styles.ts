@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  linkPointer: {
-    cursor: 'pointer',
+  textButton: {
+    marginRight: theme.spacing(4.5),
   },
   infoContainerButton: {
     '& svg': {
