@@ -12,7 +12,7 @@ func SanitizeString(input string) string {
 }
 
 /*ValidateStrictPassword represents and checks for the following patterns:
-- Input more than 8 characters
+- Input is at least than 8 characters long
 - Input contains at least one special character
 - Input contains at least one digit
 - Input contains at least one uppercase alphabet

@@ -191,6 +191,8 @@ spec:
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
           env:
+            - name: STRICT_PASSWORD_POLICY
+              value: "false"
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
