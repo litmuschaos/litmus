@@ -88,6 +88,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       <InputField
         label="Name of the template"
         value={templateName}
+        data-cy="WorkflowName"
         helperText=""
         required
         onChange={(e) => setTemplateName(e.target.value)}
@@ -97,6 +98,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       <InputField
         label="Description of the template"
         value={templateDesc}
+        data-cy="WorkflowDescription"
         helperText=""
         required
         onChange={(e) => setTemplateDesc(e.target.value)}
@@ -122,6 +124,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
             {t('chaosWorkflows.browseSchedules.cancel')}
           </IconButton>
           <ButtonFilled
+            data-cy="saveTemplateButton"
             onClick={() => {
               addWorkflowTemplate();
             }}
@@ -150,6 +153,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
         open={displayResult}
         autoHideDuration={6000}
         onClose={handleAlertOnClose}
+        data-cy="templateAlert"
       >
         <Alert
           onClose={handleAlertOnClose}

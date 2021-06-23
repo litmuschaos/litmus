@@ -80,13 +80,7 @@ const ChooseWorkflowFromExisting = () => {
       isCustomWorkflow: templateData.isCustomWorkflow,
     });
     localforage.setItem('selectedScheduleOption', selection);
-    localforage.setItem('workflow', {
-      name: templateData.template_name.toLowerCase(),
-      description: templateData.template_description,
-      icon: './avatars/litmus.svg',
-      CRDLink: templateData.template_id,
-    });
-    localforage.setItem('hasSetWorkflowData', true);
+    localforage.setItem('hasSetWorkflowData', false);
   };
 
   // Selects Option B -> Sub Experiment Options which was already selected by the user

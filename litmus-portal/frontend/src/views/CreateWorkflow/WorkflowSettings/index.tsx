@@ -11,7 +11,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import config from '../../../config';
-import { GET_EXPERIMENT_DATA } from '../../../graphql';
+import { GET_EXPERIMENT_DATA, GET_TEMPLATE_BY_ID } from '../../../graphql';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { ExperimentDetail } from '../../../models/redux/myhub';
@@ -60,6 +60,18 @@ const WorkflowSettings = forwardRef((_, ref) => {
       },
     }
   );
+
+  const [getSavedTemplateDetails] = useLazyQuery(GET_TEMPLATE_BY_ID, {
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      if (data.GetTemplateManifestByID !== undefined) {
+        setName(data.GetTemplateManifestByID.template_name);
+        setDescription(data.GetTemplateManifestByID.template_description);
+        setIcon('./avatars/litmus.svg');
+        setCRDLink(data.GetTemplateManifestByID.template_id);
+      }
+    },
+  });
 
   const { t } = useTranslation();
   const alert = useActions(AlertActions);
@@ -120,6 +132,11 @@ const WorkflowSettings = forwardRef((_, ref) => {
         });
       }
       if ((value as ChooseWorkflowRadio).selected === 'B') {
+        getSavedTemplateDetails({
+          variables: {
+            data: (value as ChooseWorkflowRadio).id,
+          },
+        });
         workflowAction.setWorkflowManifest({ manifest: '' });
       }
       if ((value as ChooseWorkflowRadio).selected === 'C') {
