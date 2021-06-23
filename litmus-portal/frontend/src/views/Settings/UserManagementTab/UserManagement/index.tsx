@@ -23,12 +23,12 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
-import { LightPills } from 'litmus-ui';
+import { ButtonFilled, LightPills } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import config from '../../../../config';
+import { UserRole } from '../../../../models/graphql/user';
 import { getToken } from '../../../../utils/auth';
 import CreateUser from '../CreateUser';
 import EditUser from '../EditUser';
@@ -109,9 +109,9 @@ const UserManagement: React.FC = () => {
   }, [showDiv]);
 
   const filteredData = rows
-    ?.filter((dataRow) => dataRow.username !== 'admin')
+    ?.filter((dataRow) => dataRow.username !== UserRole.admin)
     ?.filter((dataRow) =>
-      dataRow.name.toLowerCase().includes(filters.search.toLowerCase())
+      dataRow.username.toLowerCase().includes(filters.search.toLowerCase())
     )
     .filter((datarow) => {
       if (filters.status === 'all') return true;
@@ -189,7 +189,10 @@ const UserManagement: React.FC = () => {
                         ),
                       }}
                     />
-                    {/* filter menu */}
+                  </div>
+
+                  {/* filter menu */}
+                  <div className={classes.toolbarSecondCol}>
                     <div className={classes.filter}>
                       <FormControl
                         variant="outlined"
@@ -229,16 +232,17 @@ const UserManagement: React.FC = () => {
                         </Select>
                       </FormControl>
                     </div>
-                  </div>
-                  <div data-cy="createUser">
-                    <ButtonFilled
-                      handleClick={() => {
-                        setShowDiv(true);
-                      }}
-                      isPrimary
-                    >
-                      <div>{t('settings.userManagementTab.button.create')}</div>
-                    </ButtonFilled>
+                    <div data-cy="createUser">
+                      <ButtonFilled
+                        onClick={() => {
+                          setShowDiv(true);
+                        }}
+                      >
+                        <div>
+                          {t('settings.userManagementTab.button.create')}
+                        </div>
+                      </ButtonFilled>
+                    </div>
                   </div>
                 </Toolbar>
                 {/* user table */}

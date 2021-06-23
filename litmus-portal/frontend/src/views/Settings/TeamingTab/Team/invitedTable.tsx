@@ -29,8 +29,6 @@ interface InvitedTableProps {
 const InvitedTable: React.FC<InvitedTableProps> = ({
   notAcceptedFilteredData,
   showModal,
-  handleOpen,
-  open,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -81,8 +79,6 @@ const InvitedTable: React.FC<InvitedTableProps> = ({
                       index={index}
                       row={row}
                       showModal={showModal}
-                      handleOpen={handleOpen}
-                      open={open}
                     />
                   </TableRow>
                 ))

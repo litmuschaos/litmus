@@ -47,13 +47,13 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		cluster.AgentSaExists = &defaultState
 	}
 
-	if !*cluster.AgentNsExists && cluster.AgentNamespace != nil && *cluster.AgentNamespace != "" {
+	if cluster.AgentNamespace != nil && *cluster.AgentNamespace != "" {
 		AgentNamespace = *cluster.AgentNamespace
 	} else {
 		AgentNamespace = DefaultAgentNamespace
 	}
 
-	if !*cluster.AgentSaExists && cluster.Serviceaccount != nil && *cluster.Serviceaccount != "" {
+	if cluster.Serviceaccount != nil && *cluster.Serviceaccount != "" {
 		ServiceAccountName = *cluster.Serviceaccount
 	} else {
 		ServiceAccountName = DefaultServiceAccountName
@@ -64,7 +64,8 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n"
 	)
 
-	if *cluster.AgentNsExists == false {
+	// Checking if the agent namespace does not exist and its scope of installation is not namespaced
+	if *cluster.AgentNsExists == false && cluster.AgentScope != "namespace" {
 		generatedYAML = append(generatedYAML, fmt.Sprintf(namspaceStr))
 	}
 
@@ -93,23 +94,39 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 
 		var newContent = string(fileContent)
 
-		newContent = strings.Replace(newContent, "#{CID}", cluster.ClusterID, -1)
-		newContent = strings.Replace(newContent, "#{KEY}", cluster.AccessKey, -1)
-		newContent = strings.Replace(newContent, "#{SERVER}", subscriberConfig.GQLServerURI, -1)
-		newContent = strings.Replace(newContent, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
+		newContent = strings.Replace(newContent, "#{CLUSTER_ID}", cluster.ClusterID, -1)
+		newContent = strings.Replace(newContent, "#{ACCESS_KEY}", cluster.AccessKey, -1)
+		newContent = strings.Replace(newContent, "#{SERVER_ADDR}", subscriberConfig.GQLServerURI, -1)
+		newContent = strings.Replace(newContent, "#{SUBSCRIBER-IMAGE}", subscriberConfig.SubscriberImage, -1)
 		newContent = strings.Replace(newContent, "#{EVENT-TRACKER-IMAGE}", subscriberConfig.EventTrackerImage, -1)
 		newContent = strings.Replace(newContent, "#{AGENT-NAMESPACE}", AgentNamespace, -1)
 		newContent = strings.Replace(newContent, "#{SUBSCRIBER-SERVICE-ACCOUNT}", ServiceAccountName, -1)
 		newContent = strings.Replace(newContent, "#{AGENT-SCOPE}", cluster.AgentScope, -1)
-		newContent = strings.Replace(newContent, "#{ARGO-SERVER}", subscriberConfig.ArgoServerImage, -1)
 		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-CONTROLLER}", subscriberConfig.WorkflowControllerImage, -1)
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-OPERATOR}", subscriberConfig.ChaosOperatorImage, -1)
 		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-EXECUTOR}", subscriberConfig.WorkflowExecutorImage, -1)
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-RUNNER}", subscriberConfig.ChaosRunnerImage, -1)
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-EXPORTER}", subscriberConfig.ChaosExporterImage, -1)
+		newContent = strings.Replace(newContent, "#{ARGO-CONTAINER-RUNTIME-EXECUTOR}", subscriberConfig.ContainerRuntimeExecutor, -1)
 
 		generatedYAML = append(generatedYAML, newContent)
 	}
 
 	return []byte(strings.Join(generatedYAML, "\n")), nil
+}
+
+// ContainsString checks if a string is present in an array of strings
+func ContainsString(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
+}
+
+// Truncate a float to two levels of precision
+func Truncate(num float64) float64 {
+	return float64(int(num*100)) / 100
 }

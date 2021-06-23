@@ -12,11 +12,11 @@ import {
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import SearchIcon from '@material-ui/icons/Search';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@material-ui/core/styles';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import useStyles from './styles';
@@ -140,7 +140,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           <Select
             value={clusterValue}
             onChange={changeCluster}
-            label="Target Cluster"
+            label="Target Agent"
             className={classes.selectText}
           >
             <MenuItem value="All">
@@ -155,14 +155,14 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           </Select>
         </FormControl>
         <div className={classes.dateBtn}>
-          <ButtonOutline isDisabled={false} handleClick={popOverClick}>
+          <ButtonOutlined disabled={false} onClick={popOverClick}>
             <Typography className={classes.displayDate}>
               {displayDate}
               <IconButton className={classes.iconButton}>
                 {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
               </IconButton>
             </Typography>
-          </ButtonOutline>
+          </ButtonOutlined>
         </div>
         <Popover
           open={isOpen}

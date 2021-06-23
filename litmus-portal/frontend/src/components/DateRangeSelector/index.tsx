@@ -13,10 +13,11 @@ interface RangeCallBackType {
 }
 
 interface DateRangeSelectorProps {
-  anchorEl: HTMLElement;
+  anchorEl: HTMLElement | null;
   isOpen: boolean;
   onClose: () => void;
   callbackToSetRange: RangeCallBackType;
+  className?: string;
 }
 
 const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({
@@ -24,6 +25,7 @@ const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({
   isOpen,
   onClose,
   callbackToSetRange,
+  className,
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
@@ -39,7 +41,7 @@ const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({
   return (
     <div>
       <Popover
-        id={id}
+        id={id ?? ''}
         open={isOpen}
         anchorEl={anchorEl}
         onClose={onClose}
@@ -49,11 +51,12 @@ const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'center',
+          horizontal: 'left',
         }}
         classes={{
           paper: classes.popoverDateRangeSelector,
         }}
+        className={className ?? ''}
       >
         <div className={classes.dateRangeSelectorContainer}>
           <DateRangePicker

@@ -1,8 +1,7 @@
 import { Divider, Typography } from '@material-ui/core';
-import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
 import { getToken } from '../../../../utils/auth';
@@ -42,34 +41,31 @@ const AccountSettings: React.FC = () => {
   });
 
   // handleCurrPassword handles password for first password field
-  const handleCurrPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPassword({
-      ...password,
-      [prop]: event.target.value,
-    });
-  };
+  const handleCurrPassword =
+    (prop: keyof Password) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword({
+        ...password,
+        [prop]: event.target.value,
+      });
+    };
 
   // handleNewPassword handles password for second password field
-  const handleNewPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPassword({
-      ...password,
-      [prop]: event.target.value,
-    });
-  };
+  const handleNewPassword =
+    (prop: keyof Password) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword({
+        ...password,
+        [prop]: event.target.value,
+      });
+    };
 
   // handleConfPassword handles password for third password field
-  const handleConfPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPassword({
-      ...password,
-      [prop]: event.target.value,
-    });
-  };
+  const handleConfPassword =
+    (prop: keyof Password) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword({
+        ...password,
+        [prop]: event.target.value,
+      });
+    };
 
   if (
     password.confNewPassword.length > 0 &&
@@ -201,8 +197,7 @@ const AccountSettings: React.FC = () => {
           <div data-cy="change-password" className={classes.buttonModal}>
             <ButtonFilled
               data-cy="button"
-              isPrimary
-              isDisabled={
+              disabled={
                 !(
                   password.newPassword.length > 0 &&
                   password.newPassword === password.confNewPassword &&
@@ -210,7 +205,7 @@ const AccountSettings: React.FC = () => {
                   !loading
                 )
               }
-              handleClick={handleChangePassword}
+              onClick={handleChangePassword}
             >
               {loading ? (
                 <div>
@@ -252,11 +247,7 @@ const AccountSettings: React.FC = () => {
                   </Typography>
                 </div>
                 <div data-cy="done" className={classes.buttonModal}>
-                  <ButtonFilled
-                    isPrimary
-                    isDisabled={false}
-                    handleClick={handleClose}
-                  >
+                  <ButtonFilled disabled={false} onClick={handleClose}>
                     <>
                       {t('settings.accountsTab.accountsSettings.button.done')}
                     </>
@@ -282,11 +273,7 @@ const AccountSettings: React.FC = () => {
                   </Typography>
                 </div>
                 <div data-cy="done" className={classes.buttonModal}>
-                  <ButtonFilled
-                    isPrimary
-                    isDisabled={false}
-                    handleClick={handleClose}
-                  >
+                  <ButtonFilled disabled={false} onClick={handleClose}>
                     <>
                       {t('settings.accountsTab.accountsSettings.button.done')}
                     </>

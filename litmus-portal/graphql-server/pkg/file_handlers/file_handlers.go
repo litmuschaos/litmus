@@ -15,16 +15,16 @@ import (
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
-	AgentNamespace:          os.Getenv("AGENT_NAMESPACE"),
-	AgentScope:              os.Getenv("AGENT_SCOPE"),
-	SubscriberImage:         os.Getenv("SUBSCRIBER_IMAGE"),
-	EventTrackerImage:       os.Getenv("EVENT_TRACKER_IMAGE"),
-	ArgoServerImage:         os.Getenv("ARGO_SERVER_IMAGE"),
-	WorkflowControllerImage: os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
-	ChaosOperatorImage:      os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE"),
-	WorkflowExecutorImage:   os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE"),
-	ChaosRunnerImage:        os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
-	ChaosExporterImage:      os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE"),
+	AgentNamespace:           os.Getenv("AGENT_NAMESPACE"),
+	AgentScope:               os.Getenv("AGENT_SCOPE"),
+	SubscriberImage:          os.Getenv("SUBSCRIBER_IMAGE"),
+	EventTrackerImage:        os.Getenv("EVENT_TRACKER_IMAGE"),
+	WorkflowControllerImage:  os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
+	ChaosOperatorImage:       os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE"),
+	WorkflowExecutorImage:    os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE"),
+	ChaosRunnerImage:         os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
+	ChaosExporterImage:       os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE"),
+	ContainerRuntimeExecutor: os.Getenv("CONTAINER_RUNTIME_EXECUTOR"),
 }
 
 // FileHandler dynamically generates the manifest file and sends it as a response
@@ -36,7 +36,7 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	response, statusCode, err := GetManifest(token)
 	if err != nil {
-		log.Print("error", err)
+		log.Print("error: ", err)
 		utils.WriteHeaders(&w, statusCode)
 	}
 
@@ -45,9 +45,6 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetManifest(token string) ([]byte, int, error) {
-	var (
-		portalEndpoint string
-	)
 
 	id, err := cluster.ClusterValidateJWT(token)
 	if err != nil {
@@ -60,15 +57,14 @@ func GetManifest(token string) ([]byte, int, error) {
 	}
 
 	if os.Getenv("PORTAL_SCOPE") == "cluster" {
-		portalEndpoint, err = k8s.GetPortalEndpoint()
+		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
 		if err != nil {
 			return nil, 500, err
 		}
 	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
-		portalEndpoint = os.Getenv("PORTAL_ENDPOINT")
+		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
 	}
 
-	subscriberConfiguration.GQLServerURI = portalEndpoint + "/query"
 	if !reqCluster.IsRegistered {
 		var respData []byte
 
@@ -87,5 +83,4 @@ func GetManifest(token string) ([]byte, int, error) {
 	} else {
 		return []byte("Cluster is already registered"), 409, nil
 	}
-
 }

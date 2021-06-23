@@ -39,20 +39,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   table: {
     backgroundColor: theme.palette.background.paper,
     height: '25.125rem',
-    '&::-webkit-scrollbar': {
-      width: '0.2em',
+
+    '& ::-webkit-scrollbar': {
+      width: '0.2rem',
     },
-    '&::-webkit-scrollbar-track': {
-      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
+    '& ::-webkit-scrollbar-track': {
+      marginTop: theme.spacing(1),
+      webkitBoxShadow: `inset 0 0 8px ${theme.palette.common.black}`,
     },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+    '& ::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.primary.light,
+      borderRadius: 8,
     },
   },
   tablePagination: {
-    marginTop: theme.spacing(-0.25),
     height: '3.5rem',
-    borderTop: `1px solid ${theme.palette.border.main}`,
   },
   toolbar: {
     height: '6.125rem',
@@ -228,16 +229,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   project: {
     margin: theme.spacing(3.875, 'auto', 2.5, 'auto'),
-    display: 'flex',
-    alignItems: 'center',
   },
   projectName: {
-    margin: theme.spacing(0, 0, 0, 1.56),
     textTransform: 'uppercase',
     fontWeight: 500,
     fontSize: '1rem',
   },
-
   active: {
     textTransform: 'capitalize',
     color: theme.palette.primary.main,

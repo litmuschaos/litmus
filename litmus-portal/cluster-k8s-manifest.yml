@@ -159,24 +159,38 @@ spec:
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
-            - name: ARGO_SERVER_IMAGE
-              value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "argoproj/workflow-controller:v2.9.3"
+              value: "litmuschaos/workflow-controller:v2.9.3"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "argoproj/argoexec:v2.9.3"
+              value: "litmuschaos/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.13.0"
+              value: "litmuschaos/chaos-operator:1.13.6"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.13.0"
+              value: "litmuschaos/chaos-runner:1.13.6"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:1.13.0"
+              value: "litmuschaos/chaos-exporter:1.13.6"
+            - name: SERVER_SERVICE_NAME
+              value: "litmusportal-server-service"
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: INGRESS
+              value: "false"
+            - name: INGRESS_NAME
+              value: "litmus-ingress"
+            - name: CONTAINER_RUNTIME_EXECUTOR
+              value: "k8sapi"
+            - name: HUB_BRANCH_NAME
+              value: "v1.13.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
           env:
+            - name: STRICT_PASSWORD_POLICY
+              value: "false"
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
@@ -243,7 +257,7 @@ spec:
     spec:
       containers:
         - name: mongo
-          image: mongo:4.2.8
+          image: litmuschaos/mongo:4.2.8
           ports:
             - containerPort: 27017
           imagePullPolicy: Always

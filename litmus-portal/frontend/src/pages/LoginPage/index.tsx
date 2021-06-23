@@ -1,6 +1,7 @@
-import { TextField, Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { Tooltip, Typography } from '@material-ui/core';
+import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import config from '../../config';
 import Center from '../../containers/layouts/Center';
@@ -15,7 +16,7 @@ interface authData {
 
 const LoginPage: React.FC = () => {
   const classes = useStyles();
-
+  const { t } = useTranslation();
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [authData, setAuthData] = useState<authData>({
@@ -64,12 +65,11 @@ const LoginPage: React.FC = () => {
         <div className={classes.rootDiv}>
           <div>
             <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
-            {/* TODO: Add translations */}
             <Typography className={classes.HeaderText}>
-              One-stop-shop for Chaos Engineering on kubernetes
+              {t('login.heading')}
             </Typography>
             <Typography className={classes.litmusText}>
-              Browse, create, manage monitor and analyze your chaos workflows
+              {t('login.subHeading1')}
             </Typography>
           </div>
           <form
@@ -79,17 +79,19 @@ const LoginPage: React.FC = () => {
             className={classes.inputDiv}
           >
             <div>
-              <TextField
+              <InputField
+                data-cy="inputName"
                 className={classes.inputValue}
                 label="Username"
                 value={authData.username}
                 helperText={
                   validateStartEmptySpacing(authData.username)
-                    ? 'Should not start with an empty space'
+                    ? t(
+                        'settings.userManagementTab.createUser.userDetails.validationEmptySpace'
+                      )
                     : ''
                 }
-                variant="filled"
-                required
+                filled
                 onChange={(e) =>
                   setAuthData({
                     username: e.target.value,
@@ -97,18 +99,15 @@ const LoginPage: React.FC = () => {
                   })
                 }
               />
-              <TextField
+              <InputField
+                data-cy="inputPassword"
                 className={classes.inputValue}
                 label="Password"
                 type="password"
                 required
                 value={authData.password}
-                helperText={
-                  isError
-                    ? 'Wrong Credentials - Try again with correct username or password'
-                    : ''
-                }
-                variant="filled"
+                helperText={isError ? t('login.wrongCredentials') : ''}
+                filled
                 onChange={(e) =>
                   setAuthData({
                     username: authData.username,
@@ -117,16 +116,29 @@ const LoginPage: React.FC = () => {
                 }
               />
             </div>
-
-            <ButtonFilled
-              className={classes.loginButton}
-              type="submit"
-              disabled={isLoading}
-            >
-              <div data-cy="loginButton">
-                {isLoading ? <Loader size={loaderSize} /> : 'Login'}
-              </div>
-            </ButtonFilled>
+            <div className={classes.buttonGroup}>
+              <ButtonFilled
+                className={classes.loginButton}
+                type="submit"
+                disabled={isLoading}
+              >
+                <div data-cy="loginButton">
+                  {isLoading ? <Loader size={loaderSize} /> : 'Login'}
+                </div>
+              </ButtonFilled>
+              <Tooltip
+                classes={{
+                  tooltip: classes.tooltip,
+                }}
+                disableFocusListener
+                placement="bottom"
+                title={<Typography>{t('login.tooltipText')}</Typography>}
+              >
+                <Typography className={classes.forgetPwdText}>
+                  {t('login.forgetPassword')}
+                </Typography>
+              </Tooltip>
+            </div>
           </form>
         </div>
       </Center>

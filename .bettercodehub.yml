@@ -5,7 +5,8 @@ languages:
 exclude:
 - /build/plugins/.*
 - /build/utils/.*
-- /litmus-portal/backend/graphql-server/graph/generated/.*
+- /litmus-portal/graphql-server/graph/generated/.*
+- /litmus-portal/graphql-server/graph/model/.*
 test:
     include:
-      - /contribute/developer_guide/test_*\.py
+      - /litmus-portal/frontend/src/.*

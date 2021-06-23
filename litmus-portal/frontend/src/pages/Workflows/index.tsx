@@ -15,8 +15,7 @@ import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
-import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
-import Templates from '../../views/ChaosWorkflows/Templates';
+import BrowseWorkflow from '../../views/ChaosWorkflows/Runs';
 import useStyles from './styles';
 
 const Workflows = () => {
@@ -67,22 +66,15 @@ const Workflows = () => {
           onChange={handleChange}
           TabIndicatorProps={{
             style: {
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor: theme.palette.highlight,
             },
           }}
           variant="fullWidth"
         >
-          <StyledTab
-            label={`${t('workflows.browseWorkflows')}`}
-            data-cy="browseWorkflow"
-          />
+          <StyledTab label={`${t('workflows.runs')}`} data-cy="runs" />
           <StyledTab
             label={`${t('workflows.schedules')}`}
             data-cy="browseSchedule"
-          />
-          <StyledTab
-            label={`${t('workflows.templates')}`}
-            data-cy="templates"
           />
         </Tabs>
       </AppBar>
@@ -91,9 +83,6 @@ const Workflows = () => {
       </TabPanel>
       <TabPanel value={workflowTabValue} index={1}>
         <BrowseSchedule />
-      </TabPanel>
-      <TabPanel value={workflowTabValue} index={2}>
-        <Templates />
       </TabPanel>
     </Scaffold>
   );

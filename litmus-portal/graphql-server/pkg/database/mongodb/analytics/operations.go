@@ -5,30 +5,19 @@ import (
 	"errors"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
-	dataSourceCollection *mongo.Collection
-	panelCollection      *mongo.Collection
-	dashBoardCollection  *mongo.Collection
-	backgroundContext    = context.Background()
+	backgroundContext = context.Background()
 )
-
-func init() {
-	dataSourceCollection = mongodb.Database.Collection("datasource-collection")
-	panelCollection = mongodb.Database.Collection("panel-collection")
-	dashBoardCollection = mongodb.Database.Collection("dashboard-collection")
-}
 
 // InsertDataSource takes details of a data source and inserts into the database collection
 func InsertDataSource(datasource DataSource) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	_, err := dataSourceCollection.InsertOne(ctx, datasource)
+	err := mongodb.Operator.Create(ctx, mongodb.DataSourceCollection, datasource)
 	if err != nil {
 		return err
 	}
@@ -40,7 +29,7 @@ func InsertDataSource(datasource DataSource) error {
 func InsertDashBoard(dashboard DashBoard) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	_, err := dashBoardCollection.InsertOne(ctx, dashboard)
+	err := mongodb.Operator.Create(ctx, mongodb.DashboardCollection, dashboard)
 	if err != nil {
 		return err
 	}
@@ -52,12 +41,12 @@ func InsertDashBoard(dashboard DashBoard) error {
 func InsertPanel(panels []*Panel) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	var newInterface []interface{}
+	var panelList []interface{}
 	for _, panel := range panels {
-		newInterface = append(newInterface, panel)
+		panelList = append(panelList, panel)
 	}
 
-	_, err := panelCollection.InsertMany(ctx, newInterface)
+	err := mongodb.Operator.CreateMany(ctx, mongodb.PanelCollection, panelList)
 	if err != nil {
 		return err
 	}
@@ -66,34 +55,34 @@ func InsertPanel(panels []*Panel) error {
 }
 
 // ListDataSource takes a query parameter to retrieve the data source details from the database
-func ListDataSource(query bson.M) ([]*DataSource, error) {
+func ListDataSource(query bson.D) ([]*DataSource, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	var datasources []*DataSource
-	cursor, err := dataSourceCollection.Find(ctx, query)
+	var dataSources []*DataSource
+	results, err := mongodb.Operator.List(ctx, mongodb.DataSourceCollection, query)
 	if err != nil {
 		return []*DataSource{}, err
 	}
 
-	err = cursor.All(ctx, &datasources)
+	err = results.All(ctx, &dataSources)
 	if err != nil {
 		return []*DataSource{}, err
 	}
 
-	return datasources, nil
+	return dataSources, nil
 }
 
 // ListDashboard takes a query parameter to retrieve the dashboard details from the database
-func ListDashboard(query bson.M) ([]*DashBoard, error) {
+func ListDashboard(query bson.D) ([]*DashBoard, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	var dashboards []*DashBoard
-	cursor, err := dashBoardCollection.Find(ctx, query)
+	results, err := mongodb.Operator.List(ctx, mongodb.DashboardCollection, query)
 	if err != nil {
 		return []*DashBoard{}, err
 	}
 
-	err = cursor.All(ctx, &dashboards)
+	err = results.All(ctx, &dashboards)
 	if err != nil {
 		return []*DashBoard{}, err
 	}
@@ -102,16 +91,16 @@ func ListDashboard(query bson.M) ([]*DashBoard, error) {
 }
 
 // ListPanel takes a query parameter to retrieve the dashboard panel details from the database
-func ListPanel(query bson.M) ([]*Panel, error) {
+func ListPanel(query bson.D) ([]*Panel, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	var panels []*Panel
-	cursor, err := panelCollection.Find(ctx, query)
+	results, err := mongodb.Operator.List(ctx, mongodb.PanelCollection, query)
 	if err != nil {
 		return []*Panel{}, err
 	}
 
-	err = cursor.All(ctx, &panels)
+	err = results.All(ctx, &panels)
 	if err != nil {
 		return []*Panel{}, err
 	}
@@ -122,10 +111,11 @@ func ListPanel(query bson.M) ([]*Panel, error) {
 // GetDataSourceByID takes a dsID parameter to retrieve the data source details from the database
 func GetDataSourceByID(dsID string) (*DataSource, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	query := bson.M{"ds_id": dsID}
+	query := bson.D{{"ds_id", dsID}}
 
 	var datasource *DataSource
-	err := dataSourceCollection.FindOne(ctx, query).Decode(&datasource)
+	results, err := mongodb.Operator.Get(ctx, mongodb.DataSourceCollection, query)
+	err = results.Decode(&datasource)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +127,7 @@ func GetDataSourceByID(dsID string) (*DataSource, error) {
 func UpdateDataSource(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	_, err := dataSourceCollection.UpdateOne(ctx, query, update)
+	_, err := mongodb.Operator.Update(ctx, mongodb.DataSourceCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -149,7 +139,7 @@ func UpdateDataSource(query bson.D, update bson.D) error {
 func UpdateDashboard(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	_, err := dashBoardCollection.UpdateOne(ctx, query, update)
+	_, err := mongodb.Operator.Update(ctx, mongodb.DashboardCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -161,24 +151,25 @@ func UpdateDashboard(query bson.D, update bson.D) error {
 func UpdatePanel(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	updateResult, err := panelCollection.UpdateOne(ctx, query, update)
+	updateResult, err := mongodb.Operator.Update(ctx, mongodb.PanelCollection, query, update)
 	if err != nil {
 		return err
 	}
 
 	if updateResult.MatchedCount == 0 {
-		return errors.New("Panel collection query didn't matched")
+		return errors.New("panel collection query didn't matched")
 	}
 
 	return nil
 }
 
 // GetDashboard takes a query parameter to retrieve the dashboard details from the database
-func GetDashboard(query bson.M) (DashBoard, error) {
+func GetDashboard(query bson.D) (DashBoard, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	var dashboard DashBoard
-	err := dashBoardCollection.FindOne(ctx, query).Decode(&dashboard)
+	result, err := mongodb.Operator.Get(ctx, mongodb.DashboardCollection, query)
+	err = result.Decode(&dashboard)
 	if err != nil {
 		return DashBoard{}, err
 	}

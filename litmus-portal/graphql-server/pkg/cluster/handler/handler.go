@@ -87,10 +87,10 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 		newCluster := model.Cluster{}
 		copier.Copy(&newCluster, &cluster)
 
-		log.Print("CLUSTER Confirmed : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
+		log.Print("Cluster Confirmed having ID: ", cluster.ClusterID, ", PID: ", cluster.ProjectID)
 		SendClusterEvent("cluster-registration", "New Cluster", "New Cluster registration", newCluster, r)
 
-		return &model.ClusterConfirmResponse{IsClusterConfirmed: true, NewClusterKey: &newKey, ClusterID: &cluster.ClusterID}, err
+		return &model.ClusterConfirmResponse{IsClusterConfirmed: true, NewAccessKey: &newKey, ClusterID: &cluster.ClusterID}, err
 	}
 	return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
 }
@@ -144,7 +144,7 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 		   "apiVersion": "v1",
 		   "kind": "ConfigMap",
 		   "metadata": {
-			  "name": "litmus-portal-config",
+			  "name": "agent-config",
 			  "namespace": ` + *cluster.AgentNamespace + `
 		   }
 		}`,
@@ -228,9 +228,10 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 	newAction := &model.ClusterAction{
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{
-			K8sManifest: subscriberRequest.K8sManifest,
-			Namespace:   subscriberRequest.Namespace,
-			RequestType: subscriberRequest.RequestType,
+			K8sManifest:  subscriberRequest.K8sManifest,
+			Namespace:    subscriberRequest.Namespace,
+			RequestType:  subscriberRequest.RequestType,
+			ExternalData: subscriberRequest.ExternalData,
 		},
 	}
 

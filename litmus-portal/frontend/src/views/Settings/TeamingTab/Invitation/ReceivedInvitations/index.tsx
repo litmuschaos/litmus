@@ -15,7 +15,7 @@ import {
 } from '../../../../../models/graphql/invite';
 import { Projects } from '../../../../../models/graphql/user';
 import { getUserId } from '../../../../../utils/auth';
-import { userInitials } from '../../../../../utils/user';
+import { userInitials } from '../../../../../utils/userInitials';
 import useStyles from './styles';
 
 interface ReceivedInvitation {

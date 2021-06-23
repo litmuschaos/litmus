@@ -4,11 +4,16 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
-import { Member, ProjectDetail, Projects } from '../../models/graphql/user';
+import {
+  Member,
+  ProjectDetail,
+  Projects,
+  UserRole,
+} from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
-import { getToken, getUserId } from '../../utils/auth';
+import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import Center from '../layouts/Center';
 
@@ -18,45 +23,32 @@ const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const GetStarted = lazy(() => import('../../pages/GetStartedPage'));
 const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
-const BrowseTemplate = lazy(
-  () => import('../../views/ChaosWorkflows/BrowseTemplate')
-);
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
+const UsageStatistics = lazy(() => import('../../pages/UsageStatistics'));
 const Targets = lazy(() => import('../../pages/Targets'));
+const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
+const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
-const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
-const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
-const AnalyticsDashboard = lazy(
-  () => import('../../pages/AnalyticsDashboards')
-);
-const DataSourceSelectPage = lazy(
-  () => import('../../pages/SelectAndConfigureDataSource/Select')
-);
+const AnalyticsPage = lazy(() => import('../../pages/WorkflowAnalytics'));
+const AnalyticsDashboard = lazy(() => import('../../pages/AnalyticsPage'));
 const DataSourceConfigurePage = lazy(
-  () => import('../../pages/SelectAndConfigureDataSource/Configure')
+  () => import('../../pages/ConfigureDataSources')
 );
-const DashboardSelectPage = lazy(
-  () => import('../../pages/SelectAndConfigureDashboards/Select')
+const ChooseAndConfigureDashboards = lazy(
+  () => import('../../pages/ChooseAndConfigureDashboards')
 );
-const DashboardConfigurePage = lazy(
-  () => import('../../pages/SelectAndConfigureDashboards/Configure')
-);
-const DashboardPage = lazy(() => import('../../pages/MonitoringDashboardPage'));
-const MyHub = lazy(() => import('../../pages/MyHub'));
-const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
+const DashboardPage = lazy(() => import('../../pages/ApplicationDashboard'));
+const MyHub = lazy(() => import('../../pages/ChaosHub'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
-const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));
-const CreateCustomWorkflow = lazy(
-  () => import('../../pages/CreateCustomWorkflow')
-);
 
 const Routes: React.FC = () => {
   const baseRoute = window.location.pathname.split('/')[1];
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
+  const role = getUserRole();
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
   const [isProjectMember, setIsProjectMember] = useState<boolean>(false);
@@ -158,11 +150,6 @@ const Routes: React.FC = () => {
           <Route exact path="/analytics" component={AnalyticsDashboard} />
           <Route
             exact
-            path="/analytics/datasource/select"
-            component={DataSourceSelectPage}
-          />
-          <Route
-            exact
             path="/analytics/datasource/create"
             component={() => <DataSourceConfigurePage configure={false} />}
           />
@@ -173,26 +160,20 @@ const Routes: React.FC = () => {
           />
           <Route
             exact
-            path="/analytics/dashboard/select"
-            component={DashboardSelectPage}
-          />
-          <Route
-            exact
             path="/analytics/dashboard/create"
-            component={() => <DashboardConfigurePage configure={false} />}
+            component={() => <ChooseAndConfigureDashboards configure={false} />}
           />
           <Route
             exact
             path="/analytics/dashboard/configure"
-            component={() => <DashboardConfigurePage configure />}
+            component={() => <ChooseAndConfigureDashboards configure />}
           />
           <Route
             exact
-            path="/analytics/dashboard"
+            path="/analytics/application-dashboard"
             component={() => <DashboardPage />}
           />
           <Route exact path="/create-workflow" component={CreateWorkflow} />
-
           <Route
             exact
             path="/workflows/:workflowRunId"
@@ -200,13 +181,13 @@ const Routes: React.FC = () => {
           />
           <Route
             exact
-            path="/workflows/schedule/:scheduleProjectID/:workflowName" // Check
-            component={SchedulePage}
+            path="/workflows/schedule/:scheduleProjectID/:workflowName"
+            component={EditSchedule}
           />
           <Route
             exact
-            path="/workflows/template/:templateName"
-            component={BrowseTemplate}
+            path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
+            component={SetNewSchedule}
           />
           <Route
             exact
@@ -217,18 +198,11 @@ const Routes: React.FC = () => {
           <Route exact path="/targets" component={Targets} />
           <Route exact path="/target-connect" component={ConnectTargets} />
           <Route exact path="/myhub" component={MyHub} />
-          <Route exact path="/myhub/connect" component={MyHubConnect} />
-          <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
           <Route exact path="/myhub/:hubname" component={ChaosChart} />
           <Route
             exact
             path="/myhub/:hubname/:chart/:experiment"
             component={MyHubExperiment}
-          />
-          <Route
-            exact
-            path="/create-workflow/custom"
-            component={CreateCustomWorkflow}
           />
           {projectRole === 'Owner' ? (
             <Route path="/settings" component={Settings} />
@@ -240,13 +214,21 @@ const Routes: React.FC = () => {
               }}
             />
           )}
+          {role === UserRole.admin ? (
+            <Route path="/usage-statistics" component={UsageStatistics} />
+          ) : (
+            <Redirect
+              to={{
+                pathname: '/home',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              }}
+            />
+          )}
           <Route exact path="/404" component={ErrorPage} />
-
           {/* Redirects */}
           <Redirect exact path="/getStarted" to="/home" />
           <Redirect exact path="/workflows/schedule" to="/workflows" />
           <Redirect exact path="/workflows/template" to="/workflows" />
-
           <Redirect exact path="/analytics/overview" to="/analytics" />
           <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
           <Redirect
@@ -275,9 +257,11 @@ function App() {
     <LitmusThemeProvider>
       <Suspense
         fallback={
-          <Center>
-            <Loader />
-          </Center>
+          <div style={{ height: '100vh' }}>
+            <Center>
+              <Loader />
+            </Center>
+          </div>
         }
       >
         <Router history={history}>

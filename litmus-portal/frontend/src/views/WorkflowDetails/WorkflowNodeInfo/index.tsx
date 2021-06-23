@@ -1,150 +1,175 @@
-/* eslint-disable */
-import { Typography } from '@material-ui/core';
-import React, { useState } from 'react';
+import { IconButton, Typography } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import YAML from 'yaml';
+import { ButtonOutlined } from 'litmus-ui';
 import { useSelector } from 'react-redux';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
-import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
-import NodeLogs from '../NodeLogs';
-import ChaosResult from '../ChaosResult';
 import useStyles from './styles';
+import trimstring from '../../../utils/trim';
+import WorkflowStatus from '../WorkflowStatus';
+import LogsSwitcher from '../LogsSwitcher';
+import { stepEmbeddedYAMLExtractor } from '../../../utils/yamlUtils';
+import { ExecutionData } from '../../../models/graphql/workflowData';
+import { RootState } from '../../../redux/reducers';
 
 interface WorkflowNodeInfoProps {
+  setIsInfoToggled: React.Dispatch<React.SetStateAction<boolean>>;
+  manifest: string;
   cluster_id: string;
   workflow_run_id: string;
-  pod_namespace: string;
+  data: ExecutionData;
 }
 
 const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
+  manifest,
   cluster_id,
   workflow_run_id,
-  pod_namespace,
+  data,
+  setIsInfoToggled,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const [isAppInfoVisible, setIsAppInfoVisible] = useState(false);
 
-  const [logsOpen, setLogsOpen] = useState<boolean>(false);
-  const [resultModal, setResultModal] = useState(false);
-  // Get the nelected node from redux
-  const { name, phase, pod_name, type, startedAt, finishedAt } = useSelector(
-    (state: RootState) => state.selectedNode
-  );
+  const { pod_name } = useSelector((state: RootState) => state.selectedNode);
 
-  const handleClose = () => {
-    setLogsOpen(false);
-  };
-  const handleResultClose = () => {
-    setResultModal(false);
-  };
+  const [embeddedYAMLString, setEmbeddedYAMLString] = useState('');
+
+  useEffect(() => {
+    const currentEmbeddedYAMLString = stepEmbeddedYAMLExtractor(
+      manifest,
+      data.nodes[pod_name].name
+    );
+    setEmbeddedYAMLString(currentEmbeddedYAMLString);
+    if (embeddedYAMLString && !YAML.parse(embeddedYAMLString).spec.appinfo)
+      setIsAppInfoVisible(false);
+  }, [pod_name]);
+
   return (
     <div className={classes.root}>
-      {/* Logs Modal */}
-      {logsOpen ? (
-        <NodeLogs
-          logsOpen={logsOpen}
-          handleClose={handleClose}
-          cluster_id={cluster_id}
-          workflow_run_id={workflow_run_id}
-          pod_namespace={pod_namespace}
-          pod_name={pod_name}
-          pod_type={type}
-        />
-      ) : (
-        <></>
-      )}
-      {/* Chaos Result Modal */}
-      {resultModal ? (
-        <ChaosResult
-          chaosResultOpen={resultModal}
-          handleResultClose={handleResultClose}
-          workflow_run_id={workflow_run_id}
-          pod_name={pod_name}
-        />
-      ) : null}
-      {/* Node Type */}
-      <div className={classes.heightMaintainer}>
-        <Typography className={classes.nodeSpacing}>
-          <span className={classes.bold}>
-            {t('workflowDetailsView.workflowNodeInfo.type')}:
-          </span>{' '}
-          {type}
+      {/* Node Details */}
+
+      {/* Header */}
+      <div className={classes.header}>
+        <Typography className={classes.title}>
+          <strong>{trimstring(data.nodes[pod_name].name, 30)}</strong>
         </Typography>
+        <ButtonOutlined
+          className={classes.closeButton}
+          onClick={() => {
+            setIsInfoToggled(false);
+          }}
+        >
+          &#x2715;
+        </ButtonOutlined>
       </div>
-      <hr />
 
-      {/* Node Phase */}
-      <div className={classes.nodeSpacing}>
-        <div className={classes.heightMaintainer}>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.phase')}:
-            </span>{' '}
-            {phase}
-          </Typography>
-        </div>
-      </div>
-      <hr />
-
-      {/* Node Durations */}
-      <div className={classes.nodeSpacing}>
-        <div className={classes.heightMaintainer}>
-          <Typography>
-            <span className={classes.bold}>
+      {/* Section */}
+      <div className={classes.section}>
+        {/* Left-Panel Containing details about selected Node. */}
+        <div className={classes.leftPanel}>
+          {/* Phase */}
+          <WorkflowStatus phase={data.nodes[pod_name].phase} />
+          {/* Start Time */}
+          <Typography className={classes.textMargin}>
+            <strong>
               {t('workflowDetailsView.workflowNodeInfo.startTime')}:
-            </span>{' '}
-            {timeDifference(startedAt)}
+            </strong>
+            &nbsp;&nbsp;&nbsp;
+            <span>
+              {data.nodes[pod_name].phase !== 'Pending'
+                ? timeDifference(data.nodes[pod_name].startedAt)
+                : '- -'}
+            </span>
           </Typography>
-          <Typography>
-            <span className={classes.bold}>
+          {/* End Time */}
+          <Typography className={classes.textMargin}>
+            <strong>
               {t('workflowDetailsView.workflowNodeInfo.endTime')}:
-            </span>{' '}
-            {finishedAt !== ''
-              ? timeDifference(finishedAt)
-              : 'Not yet finished'}
+            </strong>
+            &nbsp;&nbsp;&nbsp;
+            {data.nodes[pod_name].finishedAt !== '' ? (
+              <span>{timeDifference(data.nodes[pod_name].finishedAt)}</span>
+            ) : (
+              <span>- -</span>
+            )}
           </Typography>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.duration')}:{' '}
-            </span>{' '}
-            {finishedAt !== ''
+          {/* Duration */}
+          <Typography className={classes.textMargin}>
+            <strong>
+              {t('workflowDetailsView.workflowNodeInfo.duration')}:
+            </strong>
+            &nbsp;&nbsp;&nbsp;
+            {data.nodes[pod_name].finishedAt !== ''
               ? (
-                  (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
+                  (parseInt(data.nodes[pod_name].finishedAt, 10) -
+                    parseInt(data.nodes[pod_name].startedAt, 10)) /
                   60
                 ).toFixed(1)
               : (
-                  (new Date().getTime() / 1000 - parseInt(startedAt, 10)) /
+                  (new Date().getTime() / 1000 -
+                    parseInt(data.nodes[pod_name].startedAt, 10)) /
                   60
                 ).toFixed(1)}{' '}
             minutes
           </Typography>
+          {/* Button to show Application Details */}
+          {data.nodes[pod_name].type === 'ChaosEngine' && embeddedYAMLString && (
+            <>
+              <IconButton
+                disabled={!YAML.parse(embeddedYAMLString).spec.appinfo}
+                onClick={() => setIsAppInfoVisible(!isAppInfoVisible)}
+                className={classes.buttonAlign}
+              >
+                {isAppInfoVisible ? (
+                  <img
+                    src="/icons/down-arrow.svg"
+                    alt="down arrow icon"
+                    className={classes.icon}
+                  />
+                ) : (
+                  <img
+                    src="/icons/right-arrow.svg"
+                    alt="right-arrow icon"
+                    className={classes.icon}
+                  />
+                )}
+                <Typography>
+                  <strong>
+                    {t(
+                      'workflowDetailsView.workflowNodeInfo.viewApplicationDetails'
+                    )}
+                  </strong>
+                </Typography>
+              </IconButton>
+              {isAppInfoVisible && YAML.parse(embeddedYAMLString).spec.appinfo && (
+                <Typography className={classes.textMargin}>
+                  {Object.keys(YAML.parse(embeddedYAMLString).spec.appinfo).map(
+                    (key, index) => (
+                      <div key={index.toString()}>
+                        <strong>{key} :</strong>
+                        <span>
+                          &nbsp;&nbsp;
+                          {YAML.parse(embeddedYAMLString).spec.appinfo[key]}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </Typography>
+              )}
+            </>
+          )}
         </div>
-      </div>
-      <hr />
-      {/* Step Name */}
-      <div className={classes.nodeSpacing}>
-        <div className={classes.heightMaintainer}>
-          <Typography>
-            <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.nodeName')}:
-            </span>{' '}
-            {name}
-          </Typography>
-        </div>
-      </div>
-      <div className={classes.footerButton}>
-        <ButtonOutline isDisabled={false} handleClick={() => setLogsOpen(true)}>
-          {t('workflowDetailsView.workflowNodeInfo.button.logs')}
-        </ButtonOutline>
-        <div className={classes.resultBtn}>
-          {type === 'ChaosEngine' ? (
-            <ButtonOutline
-              isDisabled={false}
-              handleClick={() => setResultModal(true)}
-            >
-              {t('workflowDetailsView.workflowNodeInfo.button.result')}
-            </ButtonOutline>
-          ) : null}
+        {/* Right Panel for Node Logs */}
+        <div className={classes.rightPanel}>
+          <LogsSwitcher
+            cluster_id={cluster_id}
+            workflow_run_id={workflow_run_id}
+            pod_namespace={data.namespace}
+            pod_type={data.nodes[pod_name].type}
+            pod_name={pod_name}
+          />
         </div>
       </div>
     </div>

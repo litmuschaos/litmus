@@ -6,22 +6,28 @@ import (
 	"log"
 	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// CreateUser :creates a user
+const (
+	AcceptedInvitation = "Accepted"
+	PendingInvitation  = "Pending"
+)
+
+// CreateUser checks if the user with the given username is already present in the database
+// if not it creates a new user and puts in the DB
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
 	outputUser, err := GetUser(ctx, user.Username)
 	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
 	} else if outputUser != nil {
-		return outputUser, errors.New("User already exists")
+		return outputUser, errors.New("user already exists")
 	}
 
 	newUser := &dbSchemaUserManagement.User{
@@ -34,9 +40,9 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		Role:        &user.Role,
 	}
 
-	err = dbOperationsUserManagement.InsertUser(ctx, newUser)
+	err = dbOperationsUserManagement.CreateUser(ctx, newUser)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Print("Error in creating a new user:", err)
 		return nil, err
 	}
 
@@ -44,7 +50,9 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	return outputUser, nil
 }
 
-// GetUser ...
+// GetUser queries the user collection for a user with a given username,
+// then queries the project collection for the projects of the user with the userID
+// and finally return the user with its projects set properly
 func GetUser(ctx context.Context, username string) (*model.User, error) {
 
 	user, err := dbOperationsUserManagement.GetUserByUserName(ctx, username)
@@ -62,10 +70,10 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 	return outputUser, nil
 }
 
-// GetUsers ...
+// GetUsers queries the list of all the users from the DB and returns it in the appropriate format
 func GetUsers(ctx context.Context) ([]*model.User, error) {
 
-	users, err := dbOperationsUserManagement.GetUsers(ctx)
+	users, err := dbOperationsUserManagement.GetUsers(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +86,7 @@ func GetUsers(ctx context.Context) ([]*model.User, error) {
 	return outputUsers, nil
 }
 
-// UpdateUser ...
+// UpdateUser updates the user details and returns a status
 func UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
 
 	dbUser := &dbSchemaUserManagement.User{

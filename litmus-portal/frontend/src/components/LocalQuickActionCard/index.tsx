@@ -1,7 +1,8 @@
 /* eslint-disable no-return-assign */
-import { QuickActionCard } from 'litmus-ui';
+import { QuickActionCard, QuickActionCardProps } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { constants } from '../../constants';
 import { Role } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -13,13 +14,6 @@ type Variant = 'homePage' | 'returningHome' | 'analytics' | 'community';
 interface LocalQuickActionCardProps {
   variant?: Variant;
   className?: string;
-}
-
-interface QuickActionCardProps {
-  onClick?: () => void;
-  src: string;
-  alt: string;
-  text: string;
 }
 
 const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
@@ -97,7 +91,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: '/icons/survey.svg',
           alt: 'survey',
-          onClick: () => window.open('https://forms.gle/qMuVphRyEWCFqjD56'),
+          onClick: () => window.open(constants.FeedbackForm),
           text: t('quickActionCard.quickSurvey'),
         }
       : emptyData,
@@ -114,10 +108,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       ? {
           src: './icons/docs.svg',
           alt: 'docs',
-          onClick: () =>
-            window.open(
-              'https://docs.litmus.com/docs/litmus-api-documentation'
-            ),
+          onClick: () => window.open('/api-docs/index.html'),
           text: t('quickActionCard.readAPIDocs'),
         }
       : emptyData,

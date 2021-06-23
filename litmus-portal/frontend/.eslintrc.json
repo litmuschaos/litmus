@@ -1,7 +1,12 @@
 {
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
-  "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended",
+    "prettier/react"
+  ],
   "env": {
     "browser": true,
     "es6": true
@@ -34,6 +39,7 @@
     "camelcase": 0,
     "jsx-a11y/anchor-is-valid": 0,
     "jsx-a11y/href-no-hash": ["off"],
+    "jest/no-conditional-expect": ["off"],
     "react/jsx-props-no-spreading": ["off"],
     "react/jsx-filename-extension": [
       "warn",

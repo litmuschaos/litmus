@@ -9,8 +9,8 @@ import {
   TableRow,
   Toolbar,
   Typography,
+  useTheme,
 } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -110,17 +110,15 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   });
 
   // mutation to send invitation to selected users
-  const [
-    SendInvite,
-    { error: errorB, loading: loadingB },
-  ] = useMutation<MemberInviteNew>(SEND_INVITE, {
-    refetchQueries: [
-      {
-        query: GET_PROJECT,
-        variables: { projectID },
-      },
-    ],
-  });
+  const [SendInvite, { error: errorB, loading: loadingB }] =
+    useMutation<MemberInviteNew>(SEND_INVITE, {
+      refetchQueries: [
+        {
+          query: GET_PROJECT,
+          variables: { projectID },
+        },
+      ],
+    });
 
   // Checks if the user the already selected or not
   const isSelected = (user: UserInvite) => {
@@ -214,7 +212,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     data-cy="inviteNewMemberSuccessModalDoneButton"
                     className={classes.buttonModal}
                   >
-                    <ButtonFilled disabled={false} onClick={handleModal}>
+                    <ButtonFilled onClick={handleModal}>
                       <>
                         {t('settings.teamingTab.inviteNew.invite.button.done')}
                       </>
@@ -259,18 +257,12 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     className: classes.input,
                     style: {
                       color: theme.palette.text.primary,
-                      maxWidth: '21.38rem',
-                      minWidth: '21.38rem',
                     },
                   }}
                 />
               </div>
-              <div
-                data-cy="inviteNewMemberSendInviteButton"
-                className={classes.InviteBtn}
-              >
+              <div data-cy="inviteNewMemberSendInviteButton">
                 <ButtonFilled
-                  className={classes.btnFilled}
                   disabled={!selected.length}
                   onClick={() => {
                     setShowsuccess(true);

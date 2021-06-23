@@ -40,7 +40,6 @@ var (
 	backgroundContext = context.Background()
 )
 
-// TODO add projectID and user permission validation
 // EnableGitOpsHandler enables gitops for a particular project
 func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, error) {
 	gitLock.Lock(config.ProjectID, nil)
@@ -49,7 +48,7 @@ func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, err
 	gitLock.Lock(config.RepoURL, &config.Branch)
 	defer gitLock.Unlock(config.RepoURL, &config.Branch)
 
-	_, err := dbOperationsProject.GetProject(ctx, config.ProjectID)
+	_, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", config.ProjectID}})
 	if err != nil {
 		return false, errors.New("Failed to setup GitOps : " + err.Error())
 	}
@@ -211,7 +210,7 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
-	}, "create", store.Store)
+	}, nil, "create", store.Store)
 
 	return "Request Acknowledged for workflowID: " + workflowID, nil
 }

@@ -1,6 +1,7 @@
 export interface Metadata {
   name: string;
   namespace: string;
+  labels?: Labels;
 }
 
 export interface SecurityContext {
@@ -55,6 +56,7 @@ export interface Spec {
   securityContext: SecurityContext;
   arguments: Arguments;
   templates: Template[];
+  workflowSpec?: any;
 }
 
 export interface CustomYAML {
@@ -62,4 +64,8 @@ export interface CustomYAML {
   kind: string;
   metadata: Metadata;
   spec: Spec;
+}
+
+export interface Labels {
+  subject: string;
 }

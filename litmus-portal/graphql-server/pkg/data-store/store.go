@@ -12,6 +12,7 @@ type StateData struct {
 	ConnectedCluster     map[string]chan *model.ClusterAction
 	WorkflowEventPublish map[string][]chan *model.WorkflowRun
 	WorkflowLog          map[string]chan *model.PodLogResponse
+	KubeObjectData       map[string]chan *model.KubeObjectResponse
 	Mutex                *sync.Mutex
 }
 
@@ -21,6 +22,7 @@ func NewStore() *StateData {
 		ConnectedCluster:     make(map[string]chan *model.ClusterAction),
 		WorkflowEventPublish: make(map[string][]chan *model.WorkflowRun),
 		WorkflowLog:          make(map[string]chan *model.PodLogResponse),
+		KubeObjectData:       make(map[string]chan *model.KubeObjectResponse),
 		Mutex:                &sync.Mutex{},
 	}
 }

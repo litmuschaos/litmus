@@ -80,7 +80,7 @@ input ClusterIdentity {
 
 type ClusterConfirmResponse {
   isClusterConfirmed: Boolean!
-  newClusterKey: String
+  newAccessKey: String
   cluster_id: String
 }
 
@@ -114,18 +114,6 @@ type ChaosWorkFlowResponse {
   isCustomWorkflow: Boolean!
 }
 
-type WorkflowRun {
-  workflow_run_id: ID!
-  workflow_id: ID!
-  cluster_name: String!
-  last_updated: String!
-  project_id: ID!
-  cluster_id: ID!
-  workflow_name: String!
-  cluster_type: String
-  execution_data: String!
-}
-
 input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
@@ -133,6 +121,7 @@ input WorkflowRunInput {
   execution_data: String!
   cluster_id: ClusterIdentity!
   completed: Boolean!
+  isRemoved: Boolean
 }
 
 type PodLogResponse {
@@ -163,6 +152,7 @@ input PodLogRequest {
 }
 
 type ScheduledWorkflows {
+  workflow_type: String!
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -177,24 +167,6 @@ type ScheduledWorkflows {
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
-}
-
-type Workflow {
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  isRemoved: Boolean!
-  workflow_runs: [WorkflowRuns]
 }
 
 type WorkflowRuns {
@@ -235,9 +207,54 @@ type GitConfigResponse {
   Password: String
   SSHPrivateKey: String
 }
+
+type ManifestTemplate {
+  template_id: ID!
+  manifest: String!
+  template_name: String!
+  template_description: String!
+  project_id: String!
+  project_name: String!
+  created_at: String!
+  is_removed: Boolean!
+  isCustomWorkflow: Boolean!
+}
+
+input TemplateInput {
+  manifest: String!
+  template_name: String!
+  template_description: String!
+  project_id: String!
+  isCustomWorkflow: Boolean!
+}
+
+type KubeObjectResponse {
+  cluster_id: ID!
+  kube_obj: String!
+}
+
+input KubeObjectData {
+  request_id: ID!
+  cluster_id: ClusterIdentity!
+  kube_obj: String!
+}
+
+input KubeObjectRequest {
+  cluster_id: ID!
+  object_type: String!
+  kube_obj_request: KubeGVRRequest!
+}
+
+input KubeGVRRequest {
+  group: String!
+  version: String!
+  resource: String!
+}
+
 type Query {
-  # [Deprecated soon]
-  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
+  getWorkflowRuns(
+    workflowRunsInput: GetWorkflowRunsInput!
+  ): GetWorkflowsOutput! @authorized
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
@@ -251,10 +268,16 @@ type Query {
 
   users: [User!]! @authorized
 
-  # [Deprecated soon]
-  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
+  getScheduledWorkflowStats(
+    project_id: ID!
+    filter: TimeFrequency!
+    show_workflow_runs: Boolean!
+  ): [WorkflowStats]! @authorized
 
-  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+  getWorkflowRunStats(workflowRunStatsRequest: WorkflowRunStatsRequest!): WorkflowRunStatsResponse! @authorized
+
+  ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
+    @authorized
 
   getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
 
@@ -264,25 +287,43 @@ type Query {
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 
+  GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
+
+  GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+
   ListDataSource(project_id: String!): [DSResponse]! @authorized
 
-  GetPromQuery(query: promInput): [promResponse!]! @authorized
+  GetPromQuery(query: promInput): promResponse! @authorized
 
-  ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse!
+    @authorized
+
+  GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
+
+  ListDashboard(project_id: String!): [listDashboardResponse] @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
+
+  # Manifest Template
+  ListManifestTemplate(project_id: String!): [ManifestTemplate]! @authorized
+
+  GetTemplateManifestByID(template_id: String!): ManifestTemplate! @authorized
+
+  #Image Registry Queries
+  ListImageRegistry(project_id: String!): [ImageRegistryResponse!] @authorized
+
+  GetImageRegistry(
+    image_registry_id: String!
+    project_id: String!
+  ): ImageRegistryResponse! @authorized
+
+  UsageQuery(query:UsageQuery!): UsageData! @authorized
 }
 
 type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
-
-  #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
-
-  reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -291,7 +332,18 @@ type Mutation {
 
   updateUser(user: UpdateUserInput!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+  ## Workflow APIs
+  # It is used to create chaosworkflow
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
+
+  reRunChaosWorkFlow(workflowID: String!): String! @authorized
+
+  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
+    @authorized
+
+  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
+    @authorized
 
   #Used for sending invitation
   sendInvitation(member: MemberInput!): Member @authorized
@@ -308,6 +360,10 @@ type Mutation {
   #Used for leaving a project
   leaveProject(member: MemberInput!): String! @authorized
 
+  #Used to update project name
+  updateProjectName(projectID: String!, projectName: String!): String!
+    @authorized
+
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
@@ -317,6 +373,8 @@ type Mutation {
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
+
+  kubeObj(kubeData: KubeObjectData!): String!
 
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
@@ -336,7 +394,6 @@ type Mutation {
   deleteMyHub(hub_id: String!): Boolean! @authorized
 
   # Gitops
-
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
 
   enableGitOps(config: GitConfig!): Boolean! @authorized
@@ -346,20 +403,40 @@ type Mutation {
   updateGitOps(config: GitConfig!): Boolean! @authorized
 
   # Analytics
-
   createDataSource(datasource: DSInput): DSResponse @authorized
 
-  createDashBoard(dashboard: createDBInput): String! @authorized
+  createDashBoard(dashboard: createDBInput): listDashboardResponse! @authorized
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updataDBInput): String! @authorized
+  updateDashboard(dashboard: updateDBInput): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
   deleteDashboard(db_id: String): Boolean! @authorized
 
   deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+
+  # Manifest Template
+  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
+    @authorized
+
+  deleteManifestTemplate(template_id: String!): Boolean! @authorized
+
+  #Image Registry Mutations
+  createImageRegistry(
+    project_id: String!
+    imageRegistryInfo: imageRegistryInput!
+  ): ImageRegistryResponse! @authorized
+
+  updateImageRegistry(
+    image_registry_id: String!
+    project_id: String!
+    imageRegistryInfo: imageRegistryInput!
+  ): ImageRegistryResponse! @authorized
+
+  deleteImageRegistry(image_registry_id: String!, project_id: String!): String!
+    @authorized
 }
 
 type Subscription {
@@ -372,4 +449,7 @@ type Subscription {
 
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+
+  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
+    @authorized
 }

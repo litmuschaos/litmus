@@ -25,7 +25,7 @@ type Data struct {
 
 type ClusterConfirm struct {
 	IsClusterConfirmed bool   `json:isClusterConfirmed`
-	NewClusterKey      string `json:newClusterKey`
+	NewAccessKey       string `json:newAccessKey`
 	ClusterID          string `json:cluster_id`
 }
 
@@ -34,9 +34,27 @@ type ClusterConnect struct {
 	Action    Action `json:"action"`
 }
 
+type KubeObjRequest struct {
+	RequestID      string
+	ClusterID      string         `json:"cluster_id"`
+	ObjectType     string         `json:"object_type"`
+	KubeGVRRequest KubeGVRRequest `json:"kube_obj_request"`
+}
+
+type KubeGVRRequest struct {
+	Group    string `json:"group"`
+	Version  string `json:"version"`
+	Resource string `json:"resource"`
+}
+
 type Action struct {
-	K8SManifest  string      `json:"k8s_manifest"`
-	ExternalData interface{} `json:"external_data"`
-	RequestType  string      `json:"request_type"`
-	Namespace    string      `json:"namespace"`
+	K8SManifest  string `json:"k8s_manifest"`
+	ExternalData string `json:"external_data"`
+	RequestType  string `json:"request_type"`
+	Namespace    string `json:"namespace"`
+}
+
+type WorkflowSyncExternalData struct {
+	WorkflowID    string `json:"workflow_id"`
+	WorkflowRunID string `json:"workflow_run_id"`
 }

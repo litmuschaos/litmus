@@ -6,16 +6,19 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
 import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
+import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
+import { ReactComponent as UsageIcon } from '../../svg/usage.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
+import { getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -49,7 +52,7 @@ const SideBar: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
-  const { t } = useTranslation();
+  const role = getUserRole();
   const pathName = useLocation().pathname.split('/')[1];
   const version = process.env.REACT_APP_KB_CHAOS_VERSION;
   const buildTime = moment
@@ -66,19 +69,6 @@ const SideBar: React.FC = () => {
       }}
       anchor="left"
     >
-      <Link to="/" className={classes.homeLink}>
-        <div className={classes.litmusDiv}>
-          <img
-            src="/icons/litmusPurple.svg"
-            alt="litmus logo"
-            className={classes.logo}
-          />
-          <Typography className={classes.litmusHome} variant="body1">
-            {t('sidebar.title')}
-          </Typography>
-        </div>
-      </Link>
-
       <List className={classes.drawerList}>
         <CustomisedListItem
           key="home"
@@ -117,7 +107,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="MyHubs"
+            label="ChaosHubs"
             selected={pathName === 'myhub'}
           >
             <MyHubIcon />
@@ -131,7 +121,7 @@ const SideBar: React.FC = () => {
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
-          label="Targets"
+          label="Agents"
           selected={['targets', 'target-connect'].includes(pathName)}
         >
           <TargetsIcon />
@@ -149,6 +139,7 @@ const SideBar: React.FC = () => {
         >
           <AnalyticsIcon />
         </CustomisedListItem>
+
         {projectRole === 'Owner' && (
           <CustomisedListItem
             key="settings"
@@ -164,6 +155,33 @@ const SideBar: React.FC = () => {
             <SettingsIcon />
           </CustomisedListItem>
         )}
+
+        {role === UserRole.admin && (
+          <CustomisedListItem
+            key="usage-statistics"
+            handleClick={() => {
+              history.push({
+                pathname: `/usage-statistics`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
+            label="Usage Statistics"
+            selected={pathName === 'usage-statistics'}
+          >
+            <UsageIcon />
+          </CustomisedListItem>
+        )}
+        <hr id="quickActions" />
+        <CustomisedListItem
+          key="litmusDocs"
+          handleClick={() => {
+            window.open('https://docs.litmuschaos.io/docs/getstarted');
+          }}
+          label="Litmus Docs"
+          selected={pathName === 'docs'}
+        >
+          <DocsIcon />
+        </CustomisedListItem>
         <CustomisedListItem
           key="community"
           handleClick={() => {

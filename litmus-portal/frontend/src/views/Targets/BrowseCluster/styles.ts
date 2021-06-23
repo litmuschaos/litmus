@@ -160,26 +160,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.secondary.dark,
   },
   // Table status
-  check: {
-    width: '5.9125rem',
-    textAlign: 'center',
-    borderRadius: 3,
-    paddingTop: theme.spacing(0.375),
-    paddingBottom: theme.spacing(0.375),
-    color: theme.palette.primary.dark,
-  },
-  active: {
-    color: theme.palette.status.completed.text,
-    background: theme.palette.success.light,
-  },
-  notactive: {
-    color: theme.palette.error.dark,
-    backgroundColor: theme.palette.error.light,
-  },
-  pending: {
-    background: theme.palette.warning.light,
-    color: theme.palette.warning.main,
-  },
   statusFont: {
     fontSize: '0.725rem',
   },

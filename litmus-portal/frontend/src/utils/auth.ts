@@ -68,7 +68,7 @@ export function getUserEmail(): string {
   return '';
 }
 
-export function getUserName(): string {
+export function getUserFullName(): string {
   if (getToken()) return getUserDetailsFromJwt().name ?? '';
   return '';
 }

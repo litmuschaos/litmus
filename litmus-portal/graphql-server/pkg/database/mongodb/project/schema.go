@@ -2,7 +2,7 @@ package project
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
-// Project ...
+// Project contains the required fields to be stored in the database for a project
 type Project struct {
 	ID        string    `bson:"_id"`
 	Name      string    `bson:"name"`
@@ -13,7 +13,7 @@ type Project struct {
 	RemovedAt string    `bson:"removed_at"`
 }
 
-// GetOutputProject ...
+// GetOutputProject takes a Project struct as input and returns the graphQL model equivalent
 func (project *Project) GetOutputProject() *model.Project {
 
 	return &model.Project{
@@ -27,10 +27,10 @@ func (project *Project) GetOutputProject() *model.Project {
 	}
 }
 
-// GetOutputMembers ...
+// GetOutputMembers takes a Project struct as input and returns the graphQL model equivalent for a members of the project
 func (project *Project) GetOutputMembers() []*model.Member {
 
-	outputMembers := []*model.Member{}
+	var outputMembers []*model.Member
 
 	for _, member := range project.Members {
 		outputMembers = append(outputMembers, member.GetOutputMember())
@@ -39,7 +39,7 @@ func (project *Project) GetOutputMembers() []*model.Member {
 	return outputMembers
 }
 
-// Member ...
+// Member contains the required fields to be stored in the database for a member
 type Member struct {
 	UserID     string           `bson:"user_id"`
 	UserName   string           `bson:"username"`
@@ -50,7 +50,7 @@ type Member struct {
 	JoinedAt   string           `bson:"joined_at"`
 }
 
-// GetOutputMember ...
+// GetOutputMember takes a Member struct as input and returns the graphQL model equivalent
 func (member *Member) GetOutputMember() *model.Member {
 
 	return &model.Member{
@@ -64,19 +64,30 @@ func (member *Member) GetOutputMember() *model.Member {
 	}
 }
 
-// Invitation ...
+// Invitation defines the type of the invitation that is sent by the Owner of the project to other users
 type Invitation string
 
 const (
-	// PendingInvitation ...
+	// PendingInvitation is the state when the Invitation is sent but not accepted
 	PendingInvitation Invitation = "Pending"
 
-	// AcceptedInvitation ...
+	// AcceptedInvitation is the state when the Invitation is sent and is accepted as well
 	AcceptedInvitation Invitation = "Accepted"
 
-	// DeclinedInvitation ...
+	// DeclinedInvitation is the state when the Invitation is sent but it is rejected/declined
 	DeclinedInvitation Invitation = "Declined"
 
-	//ExitedProject ...
+	//ExitedProject is the state when the user has exited the project
 	ExitedProject Invitation = "Exited"
+)
+
+// Filter: different types of filter for graphs
+type Filter string
+
+const (
+	Monthly Filter = "Monthly"
+
+	Weekly Filter = "Weekly"
+
+	Hourly Filter = "Hourly"
 )

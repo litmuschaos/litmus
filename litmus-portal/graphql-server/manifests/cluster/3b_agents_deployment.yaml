@@ -1,4 +1,18 @@
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-config
+  namespace: #{AGENT-NAMESPACE}
+data:
+  SERVER_ADDR: #{SERVER_ADDR}
+  CLUSTER_ID: #{CLUSTER_ID}
+  ACCESS_KEY: #{ACCESS_KEY}
+  AGENT_SCOPE: #{AGENT-SCOPE}
+  IS_CLUSTER_CONFIRMED: "false"
+  COMPONENTS: |
+    DEPLOYMENTS: ["app=chaos-exporter", "name=chaos-operator", "app=event-tracker", "app=workflow-controller"]
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,17 +32,12 @@ spec:
       serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
       containers:
         - name: subscriber
-          image: #{SUB-IMAGE}
+          image: #{SUBSCRIBER-IMAGE}
           imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: agent-config
           env:
-            - name: GQL_SERVER
-              value: #{SERVER}
-            - name: CID
-              value: #{CID}
-            - name: KEY
-              value: #{KEY}
-            - name: AGENT_SCOPE
-              value: #{AGENT-SCOPE}
             - name: AGENT_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -56,9 +65,10 @@ spec:
         - image: #{EVENT-TRACKER-IMAGE}
           imagePullPolicy: Always
           name: litmus-event-tracker
+          envFrom:
+            - configMapRef:
+                name: agent-config
           env:
-            - name: GQL_SERVER
-              value: #{SERVER}
             - name: AGENT_NAMESPACE
               valueFrom:
                 fieldRef:

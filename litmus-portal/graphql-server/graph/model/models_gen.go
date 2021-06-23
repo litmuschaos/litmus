@@ -15,6 +15,12 @@ type ActionPayload struct {
 	ExternalData *string `json:"external_data"`
 }
 
+type AgentStat struct {
+	Ns      int `json:"Ns"`
+	Cluster int `json:"Cluster"`
+	Total   int `json:"Total"`
+}
+
 type Annotation struct {
 	Categories       string `json:"Categories"`
 	Vendor           string `json:"Vendor"`
@@ -105,7 +111,7 @@ type ClusterActionInput struct {
 
 type ClusterConfirmResponse struct {
 	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
-	NewClusterKey      *string `json:"newClusterKey"`
+	NewAccessKey       *string `json:"newAccessKey"`
 	ClusterID          *string `json:"cluster_id"`
 }
 
@@ -197,6 +203,11 @@ type DSResponse struct {
 	UpdatedAt         *string `json:"updated_at"`
 }
 
+type DateRange struct {
+	StartDate string  `json:"start_date"`
+	EndDate   *string `json:"end_date"`
+}
+
 type ExperimentInput struct {
 	ProjectID      string  `json:"ProjectID"`
 	ChartName      string  `json:"ChartName"`
@@ -209,6 +220,20 @@ type Experiments struct {
 	Name string `json:"Name"`
 	Csv  string `json:"CSV"`
 	Desc string `json:"Desc"`
+}
+
+type GetWorkflowRunsInput struct {
+	ProjectID      string                  `json:"project_id"`
+	WorkflowRunIds []*string               `json:"workflow_run_ids"`
+	WorkflowIds    []*string               `json:"workflow_ids"`
+	Pagination     *Pagination             `json:"pagination"`
+	Sort           *WorkflowRunSortInput   `json:"sort"`
+	Filter         *WorkflowRunFilterInput `json:"filter"`
+}
+
+type GetWorkflowsOutput struct {
+	TotalNoOfWorkflowRuns int            `json:"total_no_of_workflow_runs"`
+	WorkflowRuns          []*WorkflowRun `json:"workflow_runs"`
 }
 
 type GitConfig struct {
@@ -234,14 +259,71 @@ type GitConfigResponse struct {
 	SSHPrivateKey *string   `json:"SSHPrivateKey"`
 }
 
+type ImageRegistryResponse struct {
+	ImageRegistryInfo *ImageRegistry `json:"image_registry_info"`
+	ImageRegistryID   string         `json:"image_registry_id"`
+	ProjectID         string         `json:"project_id"`
+	UpdatedAt         *string        `json:"updated_at"`
+	CreatedAt         *string        `json:"created_at"`
+	IsRemoved         *bool          `json:"is_removed"`
+}
+
+type KubeGVRRequest struct {
+	Group    string `json:"group"`
+	Version  string `json:"version"`
+	Resource string `json:"resource"`
+}
+
+type KubeObjectData struct {
+	RequestID string           `json:"request_id"`
+	ClusterID *ClusterIdentity `json:"cluster_id"`
+	KubeObj   string           `json:"kube_obj"`
+}
+
+type KubeObjectRequest struct {
+	ClusterID      string          `json:"cluster_id"`
+	ObjectType     string          `json:"object_type"`
+	KubeObjRequest *KubeGVRRequest `json:"kube_obj_request"`
+}
+
+type KubeObjectResponse struct {
+	ClusterID string `json:"cluster_id"`
+	KubeObj   string `json:"kube_obj"`
+}
+
 type Link struct {
 	Name string `json:"Name"`
 	URL  string `json:"Url"`
 }
 
+type ListWorkflowsInput struct {
+	ProjectID   string               `json:"project_id"`
+	WorkflowIds []*string            `json:"workflow_ids"`
+	Pagination  *Pagination          `json:"pagination"`
+	Sort        *WorkflowSortInput   `json:"sort"`
+	Filter      *WorkflowFilterInput `json:"filter"`
+}
+
+type ListWorkflowsOutput struct {
+	TotalNoOfWorkflows int         `json:"total_no_of_workflows"`
+	Workflows          []*Workflow `json:"workflows"`
+}
+
 type Maintainer struct {
 	Name  string `json:"Name"`
 	Email string `json:"Email"`
+}
+
+type ManifestTemplate struct {
+	TemplateID          string `json:"template_id"`
+	Manifest            string `json:"manifest"`
+	TemplateName        string `json:"template_name"`
+	TemplateDescription string `json:"template_description"`
+	ProjectID           string `json:"project_id"`
+	ProjectName         string `json:"project_name"`
+	CreatedAt           string `json:"created_at"`
+	IsRemoved           bool   `json:"is_removed"`
+	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
 type Member struct {
@@ -258,6 +340,11 @@ type MemberInput struct {
 	ProjectID string      `json:"project_id"`
 	UserID    string      `json:"user_id"`
 	Role      *MemberRole `json:"role"`
+}
+
+type MemberStat struct {
+	Owner *Owner `json:"Owner"`
+	Total int    `json:"Total"`
 }
 
 type Metadata struct {
@@ -302,9 +389,20 @@ type MyHubStatus struct {
 	LastSyncedAt  string   `json:"LastSyncedAt"`
 }
 
+type Owner struct {
+	UserID   string `json:"UserId"`
+	Username string `json:"Username"`
+	Name     string `json:"Name"`
+}
+
 type PackageInformation struct {
 	PackageName string         `json:"PackageName"`
 	Experiments []*Experiments `json:"Experiments"`
+}
+
+type Pagination struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
 }
 
 type PodLog struct {
@@ -344,6 +442,14 @@ type Project struct {
 	RemovedAt string    `json:"removed_at"`
 }
 
+type ProjectData struct {
+	Name      string        `json:"Name"`
+	Workflows *WorkflowStat `json:"Workflows"`
+	Agents    *AgentStat    `json:"Agents"`
+	ProjectID string        `json:"ProjectId"`
+	Members   *MemberStat   `json:"Members"`
+}
+
 type Provider struct {
 	Name string `json:"Name"`
 }
@@ -354,6 +460,7 @@ type SSHKey struct {
 }
 
 type ScheduledWorkflows struct {
+	WorkflowType        string        `json:"workflow_type"`
 	WorkflowID          string        `json:"workflow_id"`
 	WorkflowManifest    string        `json:"workflow_manifest"`
 	CronSyntax          string        `json:"cronSyntax"`
@@ -385,6 +492,21 @@ type Spec struct {
 	ChaosType           *string       `json:"ChaosType"`
 }
 
+type TemplateInput struct {
+	Manifest            string `json:"manifest"`
+	TemplateName        string `json:"template_name"`
+	TemplateDescription string `json:"template_description"`
+	ProjectID           string `json:"project_id"`
+	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+}
+
+type TotalCount struct {
+	Projects  int           `json:"Projects"`
+	Users     int           `json:"Users"`
+	Agents    *AgentStat    `json:"Agents"`
+	Workflows *WorkflowStat `json:"Workflows"`
+}
+
 type UpdateMyHub struct {
 	ID            string   `json:"id"`
 	HubName       string   `json:"HubName"`
@@ -404,6 +526,24 @@ type UpdateUserInput struct {
 	Name        *string `json:"name"`
 	Email       *string `json:"email"`
 	CompanyName *string `json:"company_name"`
+}
+
+type UsageData struct {
+	Projects     []*ProjectData `json:"Projects"`
+	TotalEntries int            `json:"TotalEntries"`
+	TotalCount   *TotalCount    `json:"TotalCount"`
+}
+
+type UsageQuery struct {
+	Pagination    *Pagination     `json:"Pagination"`
+	DateRange     *DateRange      `json:"DateRange"`
+	Sort          *UsageSortInput `json:"Sort"`
+	SearchProject *string         `json:"SearchProject"`
+}
+
+type UsageSortInput struct {
+	Field      UsageSort `json:"Field"`
+	Descending bool      `json:"Descending"`
 }
 
 type User struct {
@@ -444,16 +584,37 @@ type Workflow struct {
 	WorkflowRuns        []*WorkflowRuns `json:"workflow_runs"`
 }
 
+type WorkflowFilterInput struct {
+	WorkflowName *string `json:"workflow_name"`
+	ClusterName  *string `json:"cluster_name"`
+}
+
 type WorkflowRun struct {
-	WorkflowRunID string  `json:"workflow_run_id"`
-	WorkflowID    string  `json:"workflow_id"`
-	ClusterName   string  `json:"cluster_name"`
-	LastUpdated   string  `json:"last_updated"`
-	ProjectID     string  `json:"project_id"`
-	ClusterID     string  `json:"cluster_id"`
-	WorkflowName  string  `json:"workflow_name"`
-	ClusterType   *string `json:"cluster_type"`
-	ExecutionData string  `json:"execution_data"`
+	WorkflowRunID      string   `json:"workflow_run_id"`
+	WorkflowID         string   `json:"workflow_id"`
+	ClusterName        string   `json:"cluster_name"`
+	LastUpdated        string   `json:"last_updated"`
+	ProjectID          string   `json:"project_id"`
+	ClusterID          string   `json:"cluster_id"`
+	WorkflowName       string   `json:"workflow_name"`
+	ClusterType        *string  `json:"cluster_type"`
+	Phase              string   `json:"phase"`
+	ResiliencyScore    *float64 `json:"resiliency_score"`
+	ExperimentsPassed  *int     `json:"experiments_passed"`
+	ExperimentsFailed  *int     `json:"experiments_failed"`
+	ExperimentsAwaited *int     `json:"experiments_awaited"`
+	ExperimentsStopped *int     `json:"experiments_stopped"`
+	ExperimentsNa      *int     `json:"experiments_na"`
+	TotalExperiments   *int     `json:"total_experiments"`
+	ExecutionData      string   `json:"execution_data"`
+	IsRemoved          *bool    `json:"isRemoved"`
+}
+
+type WorkflowRunFilterInput struct {
+	WorkflowName   *string            `json:"workflow_name"`
+	ClusterName    *string            `json:"cluster_name"`
+	WorkflowStatus *WorkflowRunStatus `json:"workflow_status"`
+	DateRange      *DateRange         `json:"date_range"`
 }
 
 type WorkflowRunInput struct {
@@ -463,12 +624,78 @@ type WorkflowRunInput struct {
 	ExecutionData string           `json:"execution_data"`
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
 	Completed     bool             `json:"completed"`
+	IsRemoved     *bool            `json:"isRemoved"`
+}
+
+type WorkflowRunSortInput struct {
+	Field      WorkflowRunSortingField `json:"field"`
+	Descending *bool                   `json:"descending"`
+}
+
+type WorkflowRunStatsRequest struct {
+	ProjectID   string    `json:"project_id"`
+	WorkflowIds []*string `json:"workflow_ids"`
+}
+
+type WorkflowRunStatsResponse struct {
+	TotalWorkflowRuns              int     `json:"total_workflow_runs"`
+	SucceededWorkflowRuns          int     `json:"succeeded_workflow_runs"`
+	FailedWorkflowRuns             int     `json:"failed_workflow_runs"`
+	RunningWorkflowRuns            int     `json:"running_workflow_runs"`
+	AverageResiliencyScore         float64 `json:"average_resiliency_score"`
+	TotalExperiments               int     `json:"total_experiments"`
+	ExperimentsPassed              int     `json:"experiments_passed"`
+	ExperimentsFailed              int     `json:"experiments_failed"`
+	ExperimentsAwaited             int     `json:"experiments_awaited"`
+	ExperimentsStopped             int     `json:"experiments_stopped"`
+	ExperimentsNa                  int     `json:"experiments_na"`
+	PassedPercentage               float64 `json:"passed_percentage"`
+	FailedPercentage               float64 `json:"failed_percentage"`
+	WorkflowRunSucceededPercentage float64 `json:"workflow_run_succeeded_percentage"`
+	WorkflowRunFailedPercentage    float64 `json:"workflow_run_failed_percentage"`
 }
 
 type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
 	LastUpdated   string `json:"last_updated"`
+}
+
+type WorkflowSortInput struct {
+	Field      WorkflowSortingField `json:"field"`
+	Descending *bool                `json:"descending"`
+}
+
+type WorkflowStat struct {
+	Schedules int `json:"Schedules"`
+	Runs      int `json:"Runs"`
+	ExpRuns   int `json:"ExpRuns"`
+}
+
+type WorkflowStats struct {
+	Date  float64 `json:"date"`
+	Value int     `json:"value"`
+}
+
+type AnnotationsPromResponse struct {
+	Queryid string                         `json:"queryid"`
+	Legends []*string                      `json:"legends"`
+	Tsvs    [][]*AnnotationsTimeStampValue `json:"tsvs"`
+}
+
+type AnnotationsTimeStampValue struct {
+	Date  *float64 `json:"date"`
+	Value *int     `json:"value"`
+}
+
+type ApplicationMetadata struct {
+	Namespace    string      `json:"namespace"`
+	Applications []*Resource `json:"applications"`
+}
+
+type ApplicationMetadataResponse struct {
+	Namespace    string              `json:"namespace"`
+	Applications []*ResourceResponse `json:"applications"`
 }
 
 type ClusterRegResponse struct {
@@ -478,15 +705,20 @@ type ClusterRegResponse struct {
 }
 
 type CreateDBInput struct {
-	DsID        string        `json:"ds_id"`
-	DbName      string        `json:"db_name"`
-	DbType      string        `json:"db_type"`
-	PanelGroups []*PanelGroup `json:"panel_groups"`
-	EndTime     string        `json:"end_time"`
-	StartTime   string        `json:"start_time"`
-	ProjectID   string        `json:"project_id"`
-	ClusterID   string        `json:"cluster_id"`
-	RefreshRate string        `json:"refresh_rate"`
+	DsID                      string                 `json:"ds_id"`
+	DbName                    string                 `json:"db_name"`
+	DbTypeName                string                 `json:"db_type_name"`
+	DbTypeID                  string                 `json:"db_type_id"`
+	DbInformation             *string                `json:"db_information"`
+	ChaosEventQueryTemplate   string                 `json:"chaos_event_query_template"`
+	ChaosVerdictQueryTemplate string                 `json:"chaos_verdict_query_template"`
+	ApplicationMetadataMap    []*ApplicationMetadata `json:"application_metadata_map"`
+	PanelGroups               []*PanelGroup          `json:"panel_groups"`
+	EndTime                   string                 `json:"end_time"`
+	StartTime                 string                 `json:"start_time"`
+	ProjectID                 string                 `json:"project_id"`
+	ClusterID                 string                 `json:"cluster_id"`
+	RefreshRate               string                 `json:"refresh_rate"`
 }
 
 type DeleteDSInput struct {
@@ -494,22 +726,71 @@ type DeleteDSInput struct {
 	DsID        string `json:"ds_id"`
 }
 
-type ListDashboardReponse struct {
-	DsID        string                `json:"ds_id"`
-	DbID        string                `json:"db_id"`
-	DbName      string                `json:"db_name"`
-	DbType      string                `json:"db_type"`
-	ClusterName *string               `json:"cluster_name"`
-	DsName      *string               `json:"ds_name"`
-	DsType      *string               `json:"ds_type"`
-	PanelGroups []*PanelGroupResponse `json:"panel_groups"`
-	EndTime     string                `json:"end_time"`
-	StartTime   string                `json:"start_time"`
-	RefreshRate string                `json:"refresh_rate"`
-	ProjectID   string                `json:"project_id"`
-	ClusterID   string                `json:"cluster_id"`
-	CreatedAt   *string               `json:"created_at"`
-	UpdatedAt   *string               `json:"updated_at"`
+type DsDetails struct {
+	URL   string `json:"url"`
+	Start string `json:"start"`
+	End   string `json:"end"`
+}
+
+type ImageRegistry struct {
+	ImageRegistryName string  `json:"image_registry_name"`
+	ImageRepoName     string  `json:"image_repo_name"`
+	ImageRegistryType string  `json:"image_registry_type"`
+	SecretName        *string `json:"secret_name"`
+	SecretNamespace   *string `json:"secret_namespace"`
+	EnableRegistry    *bool   `json:"enable_registry"`
+}
+
+type ImageRegistryInput struct {
+	ImageRegistryName string  `json:"image_registry_name"`
+	ImageRepoName     string  `json:"image_repo_name"`
+	ImageRegistryType string  `json:"image_registry_type"`
+	SecretName        *string `json:"secret_name"`
+	SecretNamespace   *string `json:"secret_namespace"`
+	EnableRegistry    *bool   `json:"enable_registry"`
+}
+
+type LabelValue struct {
+	Label  string    `json:"label"`
+	Values []*Option `json:"values"`
+}
+
+type ListDashboardResponse struct {
+	DsID                      string                         `json:"ds_id"`
+	DbID                      string                         `json:"db_id"`
+	DbName                    string                         `json:"db_name"`
+	DbTypeID                  string                         `json:"db_type_id"`
+	DbTypeName                string                         `json:"db_type_name"`
+	DbInformation             *string                        `json:"db_information"`
+	ChaosEventQueryTemplate   string                         `json:"chaos_event_query_template"`
+	ChaosVerdictQueryTemplate string                         `json:"chaos_verdict_query_template"`
+	ApplicationMetadataMap    []*ApplicationMetadataResponse `json:"application_metadata_map"`
+	ClusterName               *string                        `json:"cluster_name"`
+	DsName                    *string                        `json:"ds_name"`
+	DsType                    *string                        `json:"ds_type"`
+	PanelGroups               []*PanelGroupResponse          `json:"panel_groups"`
+	EndTime                   string                         `json:"end_time"`
+	StartTime                 string                         `json:"start_time"`
+	RefreshRate               string                         `json:"refresh_rate"`
+	ProjectID                 string                         `json:"project_id"`
+	ClusterID                 string                         `json:"cluster_id"`
+	CreatedAt                 *string                        `json:"created_at"`
+	UpdatedAt                 *string                        `json:"updated_at"`
+}
+
+type MetricsPromResponse struct {
+	Queryid string                     `json:"queryid"`
+	Legends []*string                  `json:"legends"`
+	Tsvs    [][]*MetricsTimeStampValue `json:"tsvs"`
+}
+
+type MetricsTimeStampValue struct {
+	Date  *float64 `json:"date"`
+	Value *float64 `json:"value"`
+}
+
+type Option struct {
+	Name string `json:"name"`
 }
 
 type Panel struct {
@@ -520,6 +801,7 @@ type Panel struct {
 	XAxisDown    *string      `json:"x_axis_down"`
 	Unit         *string      `json:"unit"`
 	PanelGroupID *string      `json:"panel_group_id"`
+	CreatedAt    *string      `json:"created_at"`
 	PromQueries  []*PromQuery `json:"prom_queries"`
 	PanelOptions *PanelOption `json:"panel_options"`
 	PanelName    string       `json:"panel_name"`
@@ -557,13 +839,12 @@ type PanelResponse struct {
 	PromQueries  []*PromQueryResponse `json:"prom_queries"`
 	PanelOptions *PanelOptionResponse `json:"panel_options"`
 	PanelName    *string              `json:"panel_name"`
+	CreatedAt    *string              `json:"created_at"`
 }
 
 type PromInput struct {
-	Queries []*PromQueryInput `json:"queries"`
-	URL     string            `json:"url"`
-	Start   string            `json:"start"`
-	End     string            `json:"end"`
+	Queries   []*PromQueryInput `json:"queries"`
+	DsDetails *DsDetails        `json:"ds_details"`
 }
 
 type PromQuery struct {
@@ -595,30 +876,55 @@ type PromQueryResponse struct {
 }
 
 type PromResponse struct {
-	Queryid string              `json:"queryid"`
-	Legends [][]*string         `json:"legends"`
-	Tsvs    [][]*TimeStampValue `json:"tsvs"`
+	MetricsResponse     []*MetricsPromResponse     `json:"metricsResponse"`
+	AnnotationsResponse []*AnnotationsPromResponse `json:"annotationsResponse"`
 }
 
-type TimeStampValue struct {
-	Timestamp *string `json:"timestamp"`
-	Value     *string `json:"value"`
+type PromSeriesInput struct {
+	Series    string     `json:"series"`
+	DsDetails *DsDetails `json:"ds_details"`
 }
 
-type UpdataDBInput struct {
-	DbID        string                   `json:"db_id"`
-	DsID        string                   `json:"ds_id"`
-	DbName      string                   `json:"db_name"`
-	DbType      string                   `json:"db_type"`
-	EndTime     string                   `json:"end_time"`
-	StartTime   string                   `json:"start_time"`
-	RefreshRate string                   `json:"refresh_rate"`
-	PanelGroups []*UpdatePanelGroupInput `json:"panel_groups"`
+type PromSeriesListResponse struct {
+	SeriesList []*string `json:"seriesList"`
+}
+
+type PromSeriesResponse struct {
+	Series      string        `json:"series"`
+	LabelValues []*LabelValue `json:"labelValues"`
+}
+
+type Resource struct {
+	Kind  string    `json:"kind"`
+	Names []*string `json:"names"`
+}
+
+type ResourceResponse struct {
+	Kind  string    `json:"kind"`
+	Names []*string `json:"names"`
+}
+
+type UpdateDBInput struct {
+	DbID                      string                   `json:"db_id"`
+	DsID                      string                   `json:"ds_id"`
+	DbName                    string                   `json:"db_name"`
+	DbTypeName                string                   `json:"db_type_name"`
+	DbTypeID                  string                   `json:"db_type_id"`
+	DbInformation             *string                  `json:"db_information"`
+	ChaosEventQueryTemplate   string                   `json:"chaos_event_query_template"`
+	ChaosVerdictQueryTemplate string                   `json:"chaos_verdict_query_template"`
+	ApplicationMetadataMap    []*ApplicationMetadata   `json:"application_metadata_map"`
+	PanelGroups               []*UpdatePanelGroupInput `json:"panel_groups"`
+	EndTime                   string                   `json:"end_time"`
+	StartTime                 string                   `json:"start_time"`
+	ClusterID                 string                   `json:"cluster_id"`
+	RefreshRate               string                   `json:"refresh_rate"`
 }
 
 type UpdatePanelGroupInput struct {
-	PanelGroupName string `json:"panel_group_name"`
-	PanelGroupID   string `json:"panel_group_id"`
+	PanelGroupName string   `json:"panel_group_name"`
+	PanelGroupID   string   `json:"panel_group_id"`
+	Panels         []*Panel `json:"panels"`
 }
 
 type Weightages struct {
@@ -711,5 +1017,224 @@ func (e *MemberRole) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type TimeFrequency string
+
+const (
+	TimeFrequencyMonthly TimeFrequency = "Monthly"
+	TimeFrequencyWeekly  TimeFrequency = "Weekly"
+	TimeFrequencyHourly  TimeFrequency = "Hourly"
+)
+
+var AllTimeFrequency = []TimeFrequency{
+	TimeFrequencyMonthly,
+	TimeFrequencyWeekly,
+	TimeFrequencyHourly,
+}
+
+func (e TimeFrequency) IsValid() bool {
+	switch e {
+	case TimeFrequencyMonthly, TimeFrequencyWeekly, TimeFrequencyHourly:
+		return true
+	}
+	return false
+}
+
+func (e TimeFrequency) String() string {
+	return string(e)
+}
+
+func (e *TimeFrequency) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = TimeFrequency(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid TimeFrequency", str)
+	}
+	return nil
+}
+
+func (e TimeFrequency) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type UsageSort string
+
+const (
+	UsageSortProject        UsageSort = "Project"
+	UsageSortOwner          UsageSort = "Owner"
+	UsageSortAgents         UsageSort = "Agents"
+	UsageSortSchedules      UsageSort = "Schedules"
+	UsageSortWorkflowRuns   UsageSort = "WorkflowRuns"
+	UsageSortExperimentRuns UsageSort = "ExperimentRuns"
+	UsageSortTeamMembers    UsageSort = "TeamMembers"
+)
+
+var AllUsageSort = []UsageSort{
+	UsageSortProject,
+	UsageSortOwner,
+	UsageSortAgents,
+	UsageSortSchedules,
+	UsageSortWorkflowRuns,
+	UsageSortExperimentRuns,
+	UsageSortTeamMembers,
+}
+
+func (e UsageSort) IsValid() bool {
+	switch e {
+	case UsageSortProject, UsageSortOwner, UsageSortAgents, UsageSortSchedules, UsageSortWorkflowRuns, UsageSortExperimentRuns, UsageSortTeamMembers:
+		return true
+	}
+	return false
+}
+
+func (e UsageSort) String() string {
+	return string(e)
+}
+
+func (e *UsageSort) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UsageSort(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UsageSort", str)
+	}
+	return nil
+}
+
+func (e UsageSort) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type WorkflowRunSortingField string
+
+const (
+	WorkflowRunSortingFieldName WorkflowRunSortingField = "Name"
+	WorkflowRunSortingFieldTime WorkflowRunSortingField = "Time"
+)
+
+var AllWorkflowRunSortingField = []WorkflowRunSortingField{
+	WorkflowRunSortingFieldName,
+	WorkflowRunSortingFieldTime,
+}
+
+func (e WorkflowRunSortingField) IsValid() bool {
+	switch e {
+	case WorkflowRunSortingFieldName, WorkflowRunSortingFieldTime:
+		return true
+	}
+	return false
+}
+
+func (e WorkflowRunSortingField) String() string {
+	return string(e)
+}
+
+func (e *WorkflowRunSortingField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WorkflowRunSortingField(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WorkflowRunSortingField", str)
+	}
+	return nil
+}
+
+func (e WorkflowRunSortingField) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type WorkflowRunStatus string
+
+const (
+	WorkflowRunStatusAll       WorkflowRunStatus = "All"
+	WorkflowRunStatusFailed    WorkflowRunStatus = "Failed"
+	WorkflowRunStatusRunning   WorkflowRunStatus = "Running"
+	WorkflowRunStatusSucceeded WorkflowRunStatus = "Succeeded"
+)
+
+var AllWorkflowRunStatus = []WorkflowRunStatus{
+	WorkflowRunStatusAll,
+	WorkflowRunStatusFailed,
+	WorkflowRunStatusRunning,
+	WorkflowRunStatusSucceeded,
+}
+
+func (e WorkflowRunStatus) IsValid() bool {
+	switch e {
+	case WorkflowRunStatusAll, WorkflowRunStatusFailed, WorkflowRunStatusRunning, WorkflowRunStatusSucceeded:
+		return true
+	}
+	return false
+}
+
+func (e WorkflowRunStatus) String() string {
+	return string(e)
+}
+
+func (e *WorkflowRunStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WorkflowRunStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WorkflowRunStatus", str)
+	}
+	return nil
+}
+
+func (e WorkflowRunStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type WorkflowSortingField string
+
+const (
+	WorkflowSortingFieldName WorkflowSortingField = "Name"
+)
+
+var AllWorkflowSortingField = []WorkflowSortingField{
+	WorkflowSortingFieldName,
+}
+
+func (e WorkflowSortingField) IsValid() bool {
+	switch e {
+	case WorkflowSortingFieldName:
+		return true
+	}
+	return false
+}
+
+func (e WorkflowSortingField) String() string {
+	return string(e)
+}
+
+func (e *WorkflowSortingField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WorkflowSortingField(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WorkflowSortingField", str)
+	}
+	return nil
+}
+
+func (e WorkflowSortingField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -2,21 +2,30 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    background: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    padding: theme.spacing(0, 2),
     margin: '0 auto',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    maxWidth: '80%',
-    border: 1,
-    borderColor: 'rgba(0, 0, 0, 0.05)',
-    borderRadius: 3,
+    width: '98%',
+    height: '100%',
+    flexDirection: 'column',
+    [theme.breakpoints.up('lg')]: {
+      width: '99%',
+    },
   },
-  mainDiv: {
-    paddingLeft: theme.spacing(3.75),
-    paddingRight: theme.spacing(3.75),
-    paddingTop: theme.spacing(3.75),
+
+  // Inner Container
+  innerContainer: {
+    margin: theme.spacing(4, 'auto'),
+    width: '95%', // Inner width of the container
   },
+
   headerText: {
     marginTop: theme.spacing(1.25),
-    fontSize: '1.5625rem',
+    fontSize: '1.2rem',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1.4rem',
+    },
   },
   errorText: {
     marginTop: theme.spacing(10),
@@ -185,10 +194,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(5),
-  },
-  divRow: {
-    display: 'flex',
-    flexDirection: 'row',
   },
   toolTipDiv: {
     marginLeft: theme.spacing(1.25),

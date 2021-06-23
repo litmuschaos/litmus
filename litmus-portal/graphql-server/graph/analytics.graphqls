@@ -1,176 +1,292 @@
 input DSInput {
-    ds_id: String
-    ds_name: String!
-    ds_type: String!
-    ds_url: String!
-    access_type: String!
-    auth_type: String!
-    basic_auth_username: String
-    basic_auth_password: String
-    scrape_interval: Int!
-    query_timeout: Int!
-    http_method: String!
-    project_id: String
+  ds_id: String
+  ds_name: String!
+  ds_type: String!
+  ds_url: String!
+  access_type: String!
+  auth_type: String!
+  basic_auth_username: String
+  basic_auth_password: String
+  scrape_interval: Int!
+  query_timeout: Int!
+  http_method: String!
+  project_id: String
 }
 
 type DSResponse {
-    ds_id: String
-    ds_name: String
-    ds_type: String
-    ds_url: String
-    access_type: String
-    auth_type: String
-    basic_auth_username: String
-    basic_auth_password: String
-    scrape_interval: Int
-    query_timeout: Int
-    http_method: String
-    project_id: ID!
-    health_status: String!
-    created_at: String
-    updated_at: String
+  ds_id: String
+  ds_name: String
+  ds_type: String
+  ds_url: String
+  access_type: String
+  auth_type: String
+  basic_auth_username: String
+  basic_auth_password: String
+  scrape_interval: Int
+  query_timeout: Int
+  http_method: String
+  project_id: ID!
+  health_status: String!
+  created_at: String
+  updated_at: String
 }
 
 input createDBInput {
-    ds_id: String!
-    db_name: String!
-    db_type: String!
-    panel_groups: [panelGroup]!
-    end_time: String!
-    start_time: String!
-    project_id: ID!
-    cluster_id: ID!
-    refresh_rate: String!
+  ds_id: String!
+  db_name: String!
+  db_type_name: String!
+  db_type_id: String!
+  db_information: String
+  chaos_event_query_template: String!
+  chaos_verdict_query_template: String!
+  application_metadata_map: [applicationMetadata]
+  panel_groups: [panelGroup]!
+  end_time: String!
+  start_time: String!
+  project_id: ID!
+  cluster_id: ID!
+  refresh_rate: String!
 }
 
-input updataDBInput {
-    db_id: String!
-    ds_id: String!
-    db_name: String!
-    db_type: String!
-    end_time: String!
-    start_time: String!
-    refresh_rate: String!
-    panel_groups: [updatePanelGroupInput]!
+input applicationMetadata {
+  namespace: String!
+  applications: [resource]
+}
+
+input resource {
+  kind: String!
+  names: [String]
+}
+
+input updateDBInput {
+  db_id: String!
+  ds_id: String!
+  db_name: String!
+  db_type_name: String!
+  db_type_id: String!
+  db_information: String
+  chaos_event_query_template: String!
+  chaos_verdict_query_template: String!
+  application_metadata_map: [applicationMetadata]
+  panel_groups: [updatePanelGroupInput]!
+  end_time: String!
+  start_time: String!
+  cluster_id: ID!
+  refresh_rate: String!
 }
 
 input updatePanelGroupInput {
-    panel_group_name: String!
-    panel_group_id: String!
+  panel_group_name: String!
+  panel_group_id: String!
+  panels: [panel]
 }
 
 input panelGroup {
-    panels: [panel]
-    panel_group_name: String!
+  panels: [panel]
+  panel_group_name: String!
 }
 
 input panel {
-    panel_id: String
-    db_id: String
-    y_axis_left: String
-    y_axis_right: String
-    x_axis_down: String
-    unit: String
-    panel_group_id: String
-    prom_queries: [promQuery]
-    panel_options: panelOption
-    panel_name: String!
+  panel_id: String
+  db_id: String
+  y_axis_left: String
+  y_axis_right: String
+  x_axis_down: String
+  unit: String
+  panel_group_id: String
+  created_at: String
+  prom_queries: [promQuery]
+  panel_options: panelOption
+  panel_name: String!
 }
 
 input panelOption {
-    points: Boolean
-    grids: Boolean
-    left_axis: Boolean
+  points: Boolean
+  grids: Boolean
+  left_axis: Boolean
 }
 
 input promQuery {
-    queryid: String!
-    prom_query_name: String,
-    legend: String,
-    resolution: String,
-    minstep: String,
-    line: Boolean
-    close_area: Boolean
+  queryid: String!
+  prom_query_name: String
+  legend: String
+  resolution: String
+  minstep: String
+  line: Boolean
+  close_area: Boolean
 }
 
 input promInput {
-    queries: [promQueryInput]
-    url: String!
-    start: String!
-    end: String!
+  queries: [promQueryInput]
+  ds_details: dsDetails!
+}
+
+input promSeriesInput {
+  series: String!
+  ds_details: dsDetails!
+}
+
+input dsDetails {
+  url: String!
+  start: String!
+  end: String!
 }
 
 input promQueryInput {
-    queryid: String!
-    query: String!
-    legend: String
-    resolution: String
-    minstep: Int!
+  queryid: String!
+  query: String!
+  legend: String
+  resolution: String
+  minstep: Int!
+}
+
+type metricsPromResponse {
+  queryid: String!
+  legends: [String]
+  tsvs: [[metricsTimeStampValue]]
+}
+
+type metricsTimeStampValue {
+  date: Float
+  value: Float
+}
+
+type annotationsPromResponse {
+  queryid: String!
+  legends: [String]
+  tsvs: [[annotationsTimeStampValue]]
+}
+
+type annotationsTimeStampValue {
+  date: Float
+  value: Int
 }
 
 type promResponse {
-    queryid: String!
-    legends: [[String]]
-    tsvs: [[timeStampValue]]
+  metricsResponse: [metricsPromResponse]
+  annotationsResponse: [annotationsPromResponse]
 }
 
-type timeStampValue{
-    timestamp: String
-    value: String
+type promSeriesResponse {
+  series: String!
+  labelValues: [labelValue]
 }
 
-type listDashboardReponse {
-    ds_id: String!
-    db_id: String!
-    db_name: String!
-    db_type: String!
-    cluster_name: String
-    ds_name: String
-    ds_type: String
-    panel_groups: [panelGroupResponse]!
-    end_time: String!
-    start_time: String!
-    refresh_rate: String!
-    project_id: ID!
-    cluster_id: ID!
-    created_at: String
-    updated_at: String
+type promSeriesListResponse {
+  seriesList: [String]
+}
+
+type labelValue {
+  label: String!
+  values: [option]
+}
+
+type option {
+  name: String!
+}
+
+type listDashboardResponse {
+  ds_id: String!
+  db_id: String!
+  db_name: String!
+  db_type_id: String!
+  db_type_name: String!
+  db_information: String
+  chaos_event_query_template: String!
+  chaos_verdict_query_template: String!
+  application_metadata_map: [applicationMetadataResponse]
+  cluster_name: String
+  ds_name: String
+  ds_type: String
+  panel_groups: [panelGroupResponse]!
+  end_time: String!
+  start_time: String!
+  refresh_rate: String!
+  project_id: ID!
+  cluster_id: ID!
+  created_at: String
+  updated_at: String
+}
+
+type applicationMetadataResponse {
+  namespace: String!
+  applications: [resourceResponse]
+}
+
+type resourceResponse {
+  kind: String!
+  names: [String]
 }
 
 type panelGroupResponse {
-    panels: [panelResponse]
-    panel_group_name: String!
-    panel_group_id: String
+  panels: [panelResponse]
+  panel_group_name: String!
+  panel_group_id: String
 }
 
 type panelResponse {
-    panel_id: String!
-    y_axis_left: String
-    y_axis_right: String
-    x_axis_down: String
-    unit: String
-    prom_queries: [promQueryResponse]
-    panel_options: panelOptionResponse
-    panel_name: String
+  panel_id: String!
+  y_axis_left: String
+  y_axis_right: String
+  x_axis_down: String
+  unit: String
+  prom_queries: [promQueryResponse]
+  panel_options: panelOptionResponse
+  panel_name: String
+  created_at: String
 }
 
 type panelOptionResponse {
-    points: Boolean
-    grids: Boolean
-    left_axis: Boolean
+  points: Boolean
+  grids: Boolean
+  left_axis: Boolean
 }
 
 type promQueryResponse {
-    queryid: String!
-    prom_query_name: String
-    legend: String
-    resolution: String
-    minstep: String
-    line: Boolean
-    close_area: Boolean
+  queryid: ID!
+  prom_query_name: String
+  legend: String
+  resolution: String
+  minstep: String
+  line: Boolean
+  close_area: Boolean
 }
 
 input deleteDSInput {
-    force_delete: Boolean!
-    ds_id: String!
+  force_delete: Boolean!
+  ds_id: ID!
+}
+
+enum TimeFrequency {
+  Monthly
+  Weekly
+  Hourly
+}
+
+type WorkflowStats {
+  date: Float!
+  value: Int!
+}
+
+input WorkflowRunStatsRequest {
+  project_id: ID!
+  workflow_ids: [ID]
+}
+
+type WorkflowRunStatsResponse {
+  total_workflow_runs: Int!
+  succeeded_workflow_runs: Int!
+  failed_workflow_runs: Int!
+  running_workflow_runs: Int!
+  average_resiliency_score: Float!
+  total_experiments: Int!
+  experiments_passed: Int!
+  experiments_failed: Int!
+  experiments_awaited: Int!
+  experiments_stopped: Int!
+  experiments_na: Int!
+  passed_percentage: Float!
+  failed_percentage: Float!
+  workflow_run_succeeded_percentage: Float!
+  workflow_run_failed_percentage: Float!
 }

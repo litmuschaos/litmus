@@ -2,10 +2,10 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: subscriber-namespace
+  name: subscriber-role
   namespace: #{AGENT-NAMESPACE}
   labels:
-    name: subscriber-namespace
+    name: subscriber-role
 rules:
   - apiGroups:
       - ""
@@ -15,13 +15,20 @@ rules:
       - get
       - create
       - delete
+      - update
   - apiGroups:
       - litmuschaos.io
     resources:
       - chaosengines
+      - chaosschedules
       - chaosresults
     verbs:
+      - create
       - get
+      - list
+      - watch
+      - delete
+      - update
   - apiGroups:
       - argoproj.io
     resources:
@@ -31,6 +38,7 @@ rules:
       - workflowtemplates/finalizers
       - cronworkflows
       - cronworkflows/finalizers
+      - rollouts
     verbs:
       - create
       - get
@@ -47,16 +55,38 @@ rules:
       - list
       - watch
   - apiGroups:
-      - "apps"
+      - apps
     resources:
       - deployments
+      - statefulsets
+      - daemonsets
+      - replicasets
     verbs:
+      - get
+      - list
       - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - namespaces
+      - nodes
+      - services
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps.openshift.io
+    resources:
+      - deploymentconfigs
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: subscriber-namespace-rb
+  name: subscriber-role-binding
   namespace: #{AGENT-NAMESPACE}
 subjects:
   - kind: ServiceAccount
@@ -64,7 +94,7 @@ subjects:
     namespace: #{AGENT-NAMESPACE}
 roleRef:
   kind: Role
-  name: subscriber-namespace
+  name: subscriber-role
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1
@@ -157,14 +187,35 @@ subjects:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: litmus-event-tracker-sa
+  name: event-tracker-sa
   namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: litmus-event-tracker-cluster-role
+  creationTimestamp: null
+  name: event-tracker-role
 rules:
+  - apiGroups:
+      - eventtracker.litmuschaos.io
+    resources:
+      - eventtrackerpolicies
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - eventtracker.litmuschaos.io
+    resources:
+      - eventtrackerpolicies/status
+    verbs:
+      - get
+      - patch
+      - update
   - apiGroups:
       - ""
       - extensions
@@ -183,12 +234,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: litmus-event-tracker-clusterole-binding
+  name: event-tracker-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: litmus-event-tracker-cluster-role
+  name: event-tracker-role
 subjects:
   - kind: ServiceAccount
-    name: litmus-event-tracker-sa
+    name: event-tracker-sa
     namespace: #{AGENT-NAMESPACE}

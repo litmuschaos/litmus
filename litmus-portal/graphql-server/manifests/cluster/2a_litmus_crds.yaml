@@ -33,8 +33,6 @@ spec:
             x-kubernetes-preserve-unknown-fields: true
             type: object
             properties:
-              monitoring:
-                type: boolean
               jobCleanUpPolicy:
                 type: string
                 pattern: ^(delete|retain)$
@@ -62,6 +60,8 @@ spec:
                 pattern: ^(active|stop)$
               chaosServiceAccount:
                 type: string
+              terminationGracePeriodSeconds:
+                type: integer
               components:
                 type: object
                 properties:
@@ -74,7 +74,7 @@ spec:
                       type:
                         type: string
                         pattern: ^(go)$
-                      runnerannotation:
+                      runnerAnnotations:
                         type: object
                         additionalProperties:
                           type: string
@@ -85,6 +85,29 @@ spec:
                             value:
                               type: string
                               minLength: 1
+                      tolerations:
+                        description: Pod's tolerations.
+                        items:
+                          description: The pod with this Toleration tolerates any taint matches the <key,value,effect> using the matching operator <operator>.
+                          properties:
+                            effect:
+                              description: Effect to match. Empty means all effects.
+                              type: string
+                            key:
+                              description: Taint key the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists.
+                              type: string
+                            operator:
+                              description: Operators are Exists or Equal. Defaults to Equal.
+                              type: string
+                            tolerationSeconds:
+                              description: Period of time the toleration tolerates the taint.
+                              format: int64
+                              type: integer
+                            value:
+                              description: If the operator is Exists, the value should be empty, otherwise just a regular string.
+                              type: string
+                          type: object
+                        type: array
               experiments:
                 type: array
                 items:
@@ -220,6 +243,8 @@ spec:
                                     type: integer
                                   initialDelaySeconds:
                                     type: integer
+                                  stopOnFailure:
+                                    type: boolean
                               mode:
                                 type: string
                                 pattern: ^(SOT|EOT|Edge|Continuous|OnChaos)$
@@ -227,6 +252,7 @@ spec:
                               data:
                                 type: string
                         components:
+                          x-kubernetes-preserve-unknown-fields: true 
                           type: object
                           properties:
                             statusCheckTimeouts:
@@ -238,7 +264,17 @@ spec:
                                   type: integer
                             nodeSelector:
                               type: object
-                              minLength: 1
+                              additionalProperties:
+                                type: string
+                                properties:
+                                  key:
+                                    type: string
+                                    minLength: 1
+                                    allowEmptyValue: false
+                                  value:
+                                    type: string
+                                    minLength: 1
+                                    allowEmptyValue: false
                             experimentImage:
                               type: string
                             env:
@@ -374,7 +410,7 @@ spec:
                                     type: string
                                   mountPath:
                                     type: string
-                            experimentannotation:
+                            experimentAnnotations:
                               type: object
                               additionalProperties:
                                 type: string
@@ -387,6 +423,29 @@ spec:
                                     type: string
                                     minLength: 1
                                     allowEmptyValue: false
+                            tolerations:
+                              description: Pod's tolerations.
+                              items:
+                                description: The pod with this Toleration tolerates any taint matches the <key,value,effect> using the matching operator <operator>.
+                                properties:
+                                  effect:
+                                    description: Effect to match. Empty means all effects.
+                                    type: string
+                                  key:
+                                    description: Taint key the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists.
+                                    type: string
+                                  operator:
+                                    description: Operators are Exists or Equal. Defaults to Equal.
+                                    type: string
+                                  tolerationSeconds:
+                                    description: Period of time the toleration tolerates the taint.
+                                    format: int64
+                                    type: integer
+                                  value:
+                                    description: If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                    type: string
+                                type: object
+                              type: array
 
           status:
             x-kubernetes-preserve-unknown-fields: true
@@ -435,10 +494,10 @@ spec:
             x-kubernetes-preserve-unknown-fields: true
             type: object            
           spec:
-            x-kubernetes-preserve-unknown-fields: true
             type: object
             properties:
               definition:
+                x-kubernetes-preserve-unknown-fields: true
                 type: object
                 properties:
                   args:
@@ -459,6 +518,8 @@ spec:
                         value:
                           type: string
                   image:
+                    type: string
+                  imagePullPolicy:
                     type: string
                   labels:
                     type: object
@@ -497,7 +558,7 @@ spec:
                           type: array
                           items:
                             type: string
-                  configmaps:
+                  configMaps:
                     type: array
                     items:
                       type: object
@@ -544,6 +605,7 @@ spec:
                           allowEmptyValue: false
                           minLength: 1
                   securityContext:
+                    x-kubernetes-preserve-unknown-fields: true
                     type: object
                   hostPID:
                     type: boolean
@@ -595,3 +657,87 @@ spec:
     subresources: {}
   conversion:
     strategy: None
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: eventtrackerpolicies.eventtracker.litmuschaos.io
+spec:
+  group: eventtracker.litmuschaos.io
+  names:
+    kind: EventTrackerPolicy
+    listKind: EventTrackerPolicyList
+    plural: eventtrackerpolicies
+    singular: eventtrackerpolicy
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: EventTrackerPolicy is the Schema for the eventtrackerpolicies API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: EventTrackerPolicySpec defines the desired state of EventTrackerPolicy
+          properties:
+            condition_type:
+              description: Foo is an example field of EventTrackerPolicy. Edit EventTrackerPolicy_types.go
+                to remove/update
+              type: string
+            conditions:
+              items:
+                properties:
+                  key:
+                    type: string
+                  operator:
+                    type: string
+                  value:
+                    type: string
+                type: object
+              type: array
+          type: object
+        statuses:
+          items:
+            description: EventTrackerPolicyStatus defines the observed state of EventTrackerPolicy
+            properties:
+              is_triggered:
+                type: string
+              resource:
+                type: string
+              resource_name:
+                type: string
+              result:
+                type: string
+              time_stamp:
+                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                  of cluster Important: Run "make" to regenerate code after modifying
+                  this file'
+                type: string
+              workflow_id:
+                type: string
+            type: object
+          type: array
+      type: object
+  version: v1
+  versions:
+    - name: v1
+      served: true
+      storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

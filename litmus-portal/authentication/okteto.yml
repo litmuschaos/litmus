@@ -2,7 +2,7 @@ name: litmusportal-server
 labels:
   component: litmusportal-server
 container: auth-server
-image: okteto/golang:1.14
+image: okteto/golang:1.16
 command: bash
 workdir: /auth-server
 sync:

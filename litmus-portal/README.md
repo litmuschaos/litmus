@@ -9,6 +9,10 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 -   KIND
 -   EKS
 -   Okteto Cloud
+-   AKS
+-   K3S
+-   Civo Cloud
+-   Kublr
 
 ## **Pre-requisites**
 
@@ -17,7 +21,7 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 ## **Installation**
 
 #### Applying k8s manifest
-> Litmus-2.0.0-Beta1 (Stable)
+> Litmus-2.0.0-Beta8 (Stable)
 ```bash
 kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
@@ -36,10 +40,9 @@ Or
 export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
-curl https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/2.0.0-Beta/litmus-namespaced-2.0.0-Beta.yaml --output litmus-portal-namespaced-K8s-template.yml
-envsubst < litmus-portal-namespaced-K8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+curl https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/2.0.0-Beta/litmus-namespaced-2.0.0-Beta.yaml --output litmus-portal-namespaced-k8s-template.yml
+envsubst < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
 
 #### Configuration Options for Cluster scope.
@@ -81,11 +84,11 @@ Note: Default `username: admin` and `password: litmus`
 
 Litmus-Portal provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
-View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)
+View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)</b>
 
 ### **Uninstallation**
 
-> Litmus-2.0.0-Beta1 (Stable)
+> Litmus-2.0.0-Beta8 (Stable)
 ```bash
 kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
 ```
@@ -104,22 +107,11 @@ Or
 export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
 
-### **Tech Stack**
+### Build custom images
 
--   Frontend
-    -   TypeScript
-    -   JavaScript
-    -   ReactJS
-    -   Apollo GraphQL client
-    -   MaterialUI
--   Backend
-    -   GoLang
-    -   GQLGEN GraphQL Server
--   Database
-    -   MongoDB
+- To build custom docker images for portal component refer the [build image guide](./BUILD_IMAGE.md).
 
 ##### **Additional information**
 

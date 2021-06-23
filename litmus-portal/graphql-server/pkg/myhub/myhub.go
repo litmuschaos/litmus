@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -231,13 +232,16 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 
 // GetExperiment is used for getting details of a given experiment using chartserviceversion.yaml.
 func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
-
-	ExperimentPath := handler.GetExperimentChartsVersionYamlPath(ctx, experimentInput)
+	var ExperimentPath string
+	if strings.ToLower(experimentInput.ChartName) == "predefined" {
+		ExperimentPath = handler.GetPreDefinedWorkflowCSVPath(ctx, experimentInput)
+	} else {
+		ExperimentPath = handler.GetExperimentChartsVersionYamlPath(ctx, experimentInput)
+	}
 	ExperimentData, err := handler.GetExperimentData(ExperimentPath)
 	if err != nil {
 		return nil, err
 	}
-
 	return ExperimentData, nil
 }
 
@@ -281,6 +285,16 @@ func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
 // GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
 func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
 	YAMLPath := handler.GetExperimentYAMLPath(ctx, experimentInput)
+	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
+	if err != nil {
+		return "", err
+	}
+	return YAMLData, nil
+}
+
+// GetPredefinedExperimentYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
+func GetPredefinedExperimentYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	YAMLPath := handler.GetPredefinedExperimentManifest(ctx, experimentInput)
 	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
 	if err != nil {
 		return "", err
@@ -384,11 +398,23 @@ func DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
 // GetIconHandler ...
 var GetIconHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	img, err := os.Open("/tmp/version/" + vars["ProjectID"] + "/" + vars["HubName"] + "/charts/" + vars["ChartName"] + "/icons/" + vars["IconName"])
-	responseStatusCode := 200
-	if err != nil {
-		responseStatusCode = 500
-		fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
+	var img *os.File
+	var err error
+	var responseStatusCode int
+	if strings.ToLower(vars["ChartName"]) == "predefined" {
+		img, err = os.Open("/tmp/version/" + vars["ProjectID"] + "/" + vars["HubName"] + "/workflows/icons/" + vars["IconName"])
+		responseStatusCode = 200
+		if err != nil {
+			responseStatusCode = 500
+			fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
+		}
+	} else {
+		img, err = os.Open("/tmp/version/" + vars["ProjectID"] + "/" + vars["HubName"] + "/charts/" + vars["ChartName"] + "/icons/" + vars["IconName"])
+		responseStatusCode = 200
+		if err != nil {
+			responseStatusCode = 500
+			fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
+		}
 	}
 	defer img.Close()
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -424,4 +450,12 @@ func RecurringHubSync() {
 		// Syncing Completed
 		time.Sleep(timeInterval)
 	}
+}
+
+func GetPredefinedWorkflowList(hubname string, projectID string) ([]string, error) {
+	expList, err := handler.GetPredefinedWorkflowFileList(hubname, projectID)
+	if err != nil {
+		return nil, err
+	}
+	return expList, nil
 }
