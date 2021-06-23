@@ -317,6 +317,8 @@ type Query {
     image_registry_id: String!
     project_id: String!
   ): ImageRegistryResponse! @authorized
+
+  UsageQuery(query:UsageQuery!): UsageData! @authorized
 }
 
 type Mutation {

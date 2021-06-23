@@ -15,7 +15,7 @@ import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
-import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
+import BrowseWorkflow from '../../views/ChaosWorkflows/Runs';
 import useStyles from './styles';
 
 const Workflows = () => {
@@ -71,10 +71,7 @@ const Workflows = () => {
           }}
           variant="fullWidth"
         >
-          <StyledTab
-            label={`${t('workflows.browseWorkflows')}`}
-            data-cy="browseWorkflow"
-          />
+          <StyledTab label={`${t('workflows.runs')}`} data-cy="runs" />
           <StyledTab
             label={`${t('workflows.schedules')}`}
             data-cy="browseSchedule"

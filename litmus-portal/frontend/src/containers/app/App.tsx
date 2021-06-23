@@ -4,12 +4,18 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
-import { Member, ProjectDetail, Projects } from '../../models/graphql/user';
+import {
+  Member,
+  ProjectDetail,
+  Projects,
+  UserRole,
+} from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
-import { getToken, getUserId } from '../../utils/auth';
+import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
+import Center from '../layouts/Center';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -20,6 +26,7 @@ const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
+const UsageStatistics = lazy(() => import('../../pages/UsageStatistics'));
 const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
 const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
@@ -41,6 +48,7 @@ const Routes: React.FC = () => {
   const baseRoute = window.location.pathname.split('/')[1];
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
+  const role = getUserRole();
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
   const [isProjectMember, setIsProjectMember] = useState<boolean>(false);
@@ -206,6 +214,16 @@ const Routes: React.FC = () => {
               }}
             />
           )}
+          {role === UserRole.admin ? (
+            <Route path="/usage-statistics" component={UsageStatistics} />
+          ) : (
+            <Redirect
+              to={{
+                pathname: '/home',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              }}
+            />
+          )}
           <Route exact path="/404" component={ErrorPage} />
           {/* Redirects */}
           <Redirect exact path="/getStarted" to="/home" />
@@ -240,7 +258,9 @@ function App() {
       <Suspense
         fallback={
           <div style={{ height: '100vh' }}>
-            <Loader />
+            <Center>
+              <Loader />
+            </Center>
           </div>
         }
       >

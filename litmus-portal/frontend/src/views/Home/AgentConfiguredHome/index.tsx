@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { Link, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { ButtonFilled, ButtonOutlined, Modal, TextButton } from 'litmus-ui';
 import React, { useState } from 'react';
@@ -86,9 +86,9 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             'homeViews.agentConfiguredHome.recentWorkflowRuns.heading'
           )}
           link={
-            <Link
-              underline="none"
-              color="primary"
+            <TextButton
+              className={classes.textButton}
+              variant="highlight"
               onClick={() => {
                 tabs.changeWorkflowsTabs(0);
                 history.push({
@@ -97,10 +97,10 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
                 });
               }}
             >
-              <Typography className={classes.linkPointer}>
+              <Typography>
                 {t('homeViews.agentConfiguredHome.recentWorkflowRuns.viewAll')}
               </Typography>
-            </Link>
+            </TextButton>
           }
           buttonLink="/create-workflow"
           buttonImgSrc="./icons/calendarBlank.svg"

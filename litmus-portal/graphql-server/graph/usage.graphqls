@@ -1,0 +1,65 @@
+type WorkflowStat {
+    Schedules : Int!
+    Runs      : Int!
+    ExpRuns   : Int!
+}
+
+type AgentStat{
+    Ns      : Int!
+    Cluster : Int!
+    Total   : Int!
+}
+
+type Owner {
+    UserId   : ID!
+    Username : String!
+    Name     : String!
+}
+
+type MemberStat {
+    Owner : Owner!
+    Total : Int!
+}
+
+type ProjectData {
+    Name      : String!
+    Workflows : WorkflowStat!
+    Agents    : AgentStat!
+    ProjectId : String!
+    Members   : MemberStat!
+}
+
+type TotalCount{
+    Projects  : Int!
+    Users     : Int!
+    Agents    : AgentStat!
+    Workflows : WorkflowStat!
+}
+
+type UsageData {
+    Projects   : [ProjectData]!
+    TotalEntries : Int!
+    TotalCount : TotalCount!
+}
+
+enum UsageSort {
+    Project
+    Owner
+    Agents
+    Schedules
+    WorkflowRuns
+    ExperimentRuns
+    TeamMembers
+}
+
+input UsageSortInput {
+    Field: UsageSort!
+    Descending: Boolean!
+}
+
+input UsageQuery{
+    Pagination: Pagination
+    DateRange: DateRange!
+    Sort: UsageSortInput
+    SearchProject: String
+}

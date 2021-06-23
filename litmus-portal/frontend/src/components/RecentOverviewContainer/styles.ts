@@ -8,12 +8,6 @@ const useStyles = makeStyles((theme) => ({
   containerHeading: {
     display: 'flex',
     alignItems: 'center',
-
-    '& a': {
-      textDecoration: 'none',
-      color: theme.palette.primary.main,
-      marginRight: theme.spacing(4.5),
-    },
   },
   heading: {
     flexGrow: 1,

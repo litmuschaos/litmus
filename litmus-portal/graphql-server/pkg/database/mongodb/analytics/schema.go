@@ -86,12 +86,12 @@ type PromQuery struct {
 }
 
 type WorkflowRunStats struct {
-	TotalWorkflowRuns      []Count           `bson:"total_workflow_runs"`
-	SucceededWorkflowRuns  []Count           `bson:"succeeded_workflow_runs"`
-	FailedWorkflowRuns     []Count           `bson:"failed_workflow_runs"`
-	RunningWorkflowRuns    []Count           `bson:"running_workflow_runs"`
-	AverageResiliencyScore []Average         `bson:"average_resiliency_score"`
-	PassedPercentage       []ExperimentStats `bson:"passed_percentage"`
+	TotalWorkflowRuns      []Count            `bson:"total_workflow_runs"`
+	SucceededWorkflowRuns  []Count            `bson:"succeeded_workflow_runs"`
+	FailedWorkflowRuns     []Count            `bson:"failed_workflow_runs"`
+	RunningWorkflowRuns    []Count            `bson:"running_workflow_runs"`
+	AverageResiliencyScore []Average          `bson:"average_resiliency_score"`
+	ExperimentStats        []ExperimentMetric `bson:"experiment_stats"`
 }
 
 type Count struct {
@@ -102,7 +102,11 @@ type Average struct {
 	Avg float64 `bson:"avg"`
 }
 
-type ExperimentStats struct {
-	TotalExperimentsPassed float64 `bson:"total_experiments_passed"`
-	TotalExperiments       float64 `bson:"total_experiments"`
+type ExperimentMetric struct {
+	ExperimentsPassed  int `bson:"experiments_passed"`
+	ExperimentsFailed  int `bson:"experiments_failed"`
+	ExperimentsAwaited int `bson:"experiments_awaited"`
+	ExperimentsStopped int `bson:"experiments_stopped"`
+	ExperimentsNA      int `bson:"experiments_na"`
+	TotalExperiments   int `bson:"total_experiments"`
 }

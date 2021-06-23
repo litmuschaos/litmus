@@ -161,11 +161,11 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.13.5"
+              value: "litmuschaos/chaos-operator:1.13.6"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.13.5"
+              value: "litmuschaos/chaos-runner:1.13.6"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:1.13.5"
+              value: "litmuschaos/chaos-exporter:1.13.6"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
@@ -180,6 +180,8 @@ spec:
               cpu: 200m
               memory: 250Mi
           env:
+            - name: STRICT_PASSWORD_POLICY
+              value: "false"
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:

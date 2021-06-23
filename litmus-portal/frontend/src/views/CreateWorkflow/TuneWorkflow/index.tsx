@@ -756,6 +756,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
                       setSelectedExp('');
                       setAddExpModal(true);
                     }}
+                    data-cy="addExperimentButton"
                   >
                     {t('createWorkflow.tuneWorkflow.addANewExperiment')}
                   </ButtonOutlined>

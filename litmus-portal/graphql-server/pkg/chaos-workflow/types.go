@@ -2,6 +2,16 @@ package chaos_workflow
 
 import chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 
+type WorkflowRunMetrics struct {
+	ResiliencyScore    float64 `json:"resiliency_score"`
+	ExperimentsPassed  int     `json:"experiments_passed"`
+	ExperimentsFailed  int     `json:"experiments_failed"`
+	ExperimentsAwaited int     `json:"experiments_awaited"`
+	ExperimentsStopped int     `json:"experiments_stopped"`
+	ExperimentsNA      int     `json:"experiments_na"`
+	TotalExperiments   int     `json:"total_experiments"`
+}
+
 type ExecutionData struct {
 	WorkflowType      string          `json:"workflow_type"`
 	WorkflowID        string          `json:"-"`
@@ -15,9 +25,6 @@ type ExecutionData struct {
 	StartedAt         string          `json:"startedAt"`
 	FinishedAt        string          `json:"finishedAt"`
 	Nodes             map[string]Node `json:"nodes"`
-	ResiliencyScore   float64         `json:"resiliency_score,string,omitempty"`
-	ExperimentsPassed int             `json:"experiments_passed,string,omitempty"`
-	TotalExperiments  int             `json:"total_experiments,string,omitempty"`
 }
 
 // Node represents each node/step data
