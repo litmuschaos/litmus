@@ -8,6 +8,13 @@ import {
   getProjectID,
   getProjectRole,
 } from '../../../../utils/getSearchParams';
+import {
+  FAILED,
+  NOTAVAILABLE,
+  PENDING,
+  RUNNING,
+  SUCCEEDED,
+} from '../../../WorkflowDetails/workflowConstants';
 import useStyles from './styles';
 
 interface WorkflowDashboardCardProps {
@@ -24,15 +31,15 @@ const WorkflowDashboardCard: React.FC<WorkflowDashboardCardProps> = ({
 
   function getStatusVariant(phase: string) {
     switch (phase) {
-      case 'Running':
+      case RUNNING:
         return 'status-running.svg';
-      case 'Succeeded':
+      case SUCCEEDED:
         return 'status-success.svg';
-      case 'Failed':
+      case FAILED:
         return 'status-failed.svg';
-      case 'Pending':
+      case PENDING:
         return 'status-pending.svg';
-      case 'NotAvailabe':
+      case NOTAVAILABLE:
         return 'status-NotAvailable.svg';
       default:
         return '';

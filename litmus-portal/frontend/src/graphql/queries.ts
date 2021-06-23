@@ -654,3 +654,53 @@ export const GET_HEATMAP_DATA = gql`
     }
   }
 `;
+export const GET_GLOBAL_STATS = gql`
+  query getGlobalStats($query: UsageQuery!) {
+    UsageQuery(query: $query) {
+      TotalCount {
+        Workflows {
+          Runs
+          ExpRuns
+          Schedules
+        }
+        Agents {
+          Ns
+          Cluster
+          Total
+        }
+        Projects
+        Users
+      }
+    }
+  }
+`;
+
+export const GLOBAL_PROJECT_DATA = gql`
+  query getStats($query: UsageQuery!) {
+    UsageQuery(query: $query) {
+      TotalCount {
+        Projects
+      }
+      Projects {
+        Name
+        Workflows {
+          Schedules
+          ExpRuns
+          Runs
+        }
+        Agents {
+          Total
+          Ns
+          Cluster
+        }
+        Members {
+          Owner {
+            Name
+            Username
+          }
+          Total
+        }
+      }
+    }
+  }
+`;

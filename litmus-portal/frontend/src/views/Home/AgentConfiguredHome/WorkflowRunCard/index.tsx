@@ -12,6 +12,7 @@ import {
 } from '../../../../utils/getSearchParams';
 import {
   FAILED,
+  NOTAVAILABLE,
   PENDING,
   RUNNING,
   SUCCEEDED,
@@ -31,18 +32,20 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
 
   const nodeSelection = useActions(NodeSelectionActions);
 
-  function getPhaseVariant(variant: string | undefined): string {
-    switch (variant) {
+  function getStatusVariant(phase: string | undefined): string {
+    switch (phase) {
       case SUCCEEDED:
-        return classes.succeeded;
+        return 'status-success.svg';
       case RUNNING:
-        return classes.running;
+        return 'status-running.svg';
       case FAILED:
-        return classes.failed;
+        return 'status-failed.svg';
       case PENDING:
-        return classes.pending;
+        return 'status-pending.svg';
+      case NOTAVAILABLE:
+        return 'status-NotAvailable.svg';
       default:
-        return classes.pending;
+        return '';
     }
   }
 
@@ -77,9 +80,11 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
         <div className={classes.workflowDataContainer}>
           <div>
             <div className={classes.statusDiv}>
-              <svg viewBox="0 0 10 10">
-                <circle className={getPhaseVariant(data.phase)} />
-              </svg>
+              <img
+                src={`./icons/${getStatusVariant(data.phase)}`}
+                alt={data.phase}
+                title={data.phase}
+              />
               <div>
                 <Typography
                   className={`${classes.testName} ${classes.noWrapProvider}`}
