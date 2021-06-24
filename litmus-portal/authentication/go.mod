@@ -1,18 +1,13 @@
-module github.com/litmuschaos/litmus/litmus-portal/authentication
+module litmus/litmus-portal/authentication
 
-go 1.13
+go 1.16
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
-	github.com/gin-gonic/gin v1.6.3
-	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
-	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
-	golang.org/x/net v0.0.0-20200202094626-16171245cfb2 // indirect
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
+	github.com/gin-gonic/gin v1.7.2
+	github.com/google/uuid v1.2.0 // indirect
+	github.com/sirupsen/logrus v1.4.2
+	go.mongodb.org/mongo-driver v1.5.3
+	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 )

@@ -31,6 +31,7 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
+import Loader from '../../../components/Loader';
 
 interface Cluster {
   cluster_name: string;
@@ -110,7 +111,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
     },
   });
 
-  const [getCluster] = useLazyQuery(GET_CLUSTER, {
+  const [getCluster, { loading }] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
       const clusters: Cluster[] = [];
       if (data && data.getCluster.length !== 0) {
@@ -228,7 +229,9 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
         />
 
         {/* Cluster Data */}
-        {clusterData.length === 0 ? (
+        {loading ? (
+          <Loader />
+        ) : clusterData.length === 0 ? (
           <div className={classes.noAgents}>
             <Typography className={classes.noAgentsText}>
               <strong>{t('workflowAgent.noAgents')}</strong>

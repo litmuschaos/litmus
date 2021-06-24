@@ -7,11 +7,11 @@ import {
 } from '@material-ui/core';
 import { RadialChart, RadialChartMetric } from 'litmus-ui';
 import React, { useState } from 'react';
-import { Filter } from '../../../../models/graphql/scheduleData';
 import {
   ExecutionData,
   ScheduledWorkflows,
 } from '../../../../models/graphql/workflowListData';
+import { Filter } from '../../../../models/graphql/workflowStats';
 import ScheduleAndRunStats from './ScheduleAndRunStats';
 import useStyles from './styles';
 
@@ -45,7 +45,7 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
   );
 
   // States for filters
-  const [filters, setFilters] = useState<Filter>(Filter.monthly);
+  const [filters, setFilters] = useState<Filter>(Filter.Monthly);
 
   const graphData: RadialChartMetric[] = [
     { value: completed, label: 'Completed', baseColor: '#00CC9A' },
@@ -53,33 +53,32 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
     { value: failed, label: 'Failed', baseColor: '#CA2C2C' },
   ];
   return (
-    <div>
-      <Paper className={classes.paper}>
-        <FormControl variant="outlined" className={classes.formControl} focused>
-          <InputLabel className={classes.selectText} />
-          <Select
-            value={filters}
-            onChange={(event) => {
-              setFilters(event.target.value as Filter);
-            }}
-            className={classes.selectText}
-          >
-            <MenuItem value={Filter.monthly}>Monthly</MenuItem>
-            <MenuItem value={Filter.weekly}>Weekly</MenuItem>
-            <MenuItem value={Filter.hourly}>Hourly</MenuItem>
-          </Select>
-        </FormControl>
-        <div className={classes.root}>
-          <ScheduleAndRunStats filter={filters} />
-          <Paper className={classes.radialChartContainer}>
-            <RadialChart
-              radialData={graphData}
-              heading="Workflows"
-              showCenterHeading
-            />
-          </Paper>
-        </div>
-      </Paper>
+    <div className={classes.root}>
+      <FormControl variant="outlined" className={classes.formControl} focused>
+        <InputLabel className={classes.selectText} />
+        <Select
+          value={filters}
+          onChange={(event) => {
+            setFilters(event.target.value as Filter);
+          }}
+          className={classes.selectText}
+        >
+          <MenuItem value={Filter.Monthly}>Monthly</MenuItem>
+          <MenuItem value={Filter.Daily}>Daily</MenuItem>
+          <MenuItem value={Filter.Hourly}>Hourly</MenuItem>
+        </Select>
+      </FormControl>
+      <div className={classes.graphs}>
+        <ScheduleAndRunStats filter={filters} />
+        <Paper className={classes.radialChartContainer}>
+          <RadialChart
+            radialData={graphData}
+            legendTableHeight={150}
+            heading="Workflows"
+            showCenterHeading
+          />
+        </Paper>
+      </div>
     </div>
   );
 };

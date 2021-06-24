@@ -1152,7 +1152,7 @@ workflowAgent:
   noAgentSearch: No agents found
 
 workflows:
-  browseWorkflows: Browse workflows
+  runs: Runs
   schedules: Schedules
   templates: Templates
   analytics: Analytics

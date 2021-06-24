@@ -41,12 +41,12 @@ export const WORKFLOW_DETAILS = gql`
 `;
 
 export const WORKFLOW_STATS = gql`
-  query getScheduledWorkflowStats(
+  query getWorkflowStats(
     $filter: TimeFrequency!
     $project_id: ID!
     $show_workflow_runs: Boolean!
   ) {
-    getScheduledWorkflowStats(
+    getWorkflowStats(
       filter: $filter
       project_id: $project_id
       show_workflow_runs: $show_workflow_runs
@@ -553,6 +553,8 @@ export const GET_TEMPLATE_BY_ID = gql`
   query GetManifestTemplate($data: String!) {
     GetTemplateManifestByID(template_id: $data) {
       template_id
+      template_name
+      template_description
       manifest
     }
   }
@@ -621,6 +623,9 @@ export const GET_GLOBAL_STATS = gql`
 export const GLOBAL_PROJECT_DATA = gql`
   query getStats($query: UsageQuery!) {
     UsageQuery(query: $query) {
+      TotalCount {
+        Projects
+      }
       Projects {
         Name
         Workflows {
