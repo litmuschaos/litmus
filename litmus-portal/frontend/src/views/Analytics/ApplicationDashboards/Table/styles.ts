@@ -21,21 +21,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     alignContent: 'center',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    overflowX: 'auto',
     height: '6rem',
     backgroundColor: theme.palette.background.paper,
-  },
-
-  headerIcon: {
-    color: theme.palette.text.primary,
-    opacity: 0.6,
-  },
-
-  input: {
-    '&:-webkit-autofill': {
-      WebkitTextFillColor: theme.palette.text.primary,
-      WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
-    },
   },
 
   tableRow: {
@@ -43,9 +32,26 @@ const useStyles = makeStyles((theme) => ({
   },
 
   search: {
-    marginRight: 'auto',
-    marginLeft: theme.spacing(6.25),
-    borderBottom: `1px solid ${theme.palette.border.main}`,
+    marginLeft: theme.spacing(6),
+  },
+
+  warningBlock: {
+    margin: theme.spacing(0, 0, 4),
+    padding: theme.spacing(0.5, 3),
+    borderLeft: `5px solid ${theme.palette.warning.main}`,
+    borderRadius: '5px 0px 0px 5px',
+    background: theme.palette.warning.light,
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  warningText: {
+    margin: theme.spacing(1.5, 0),
+    fontSize: '1rem',
+    lineHeight: '130%',
+    fontFeatureSettings: 'pnum on, lnum on',
+  },
+  addButton: {
+    padding: theme.spacing(0, 3),
   },
 
   tableMain: {
@@ -55,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '25rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
+      height: '0.2em',
     },
     '&::-webkit-scrollbar-track': {
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
@@ -65,6 +72,37 @@ const useStyles = makeStyles((theme) => ({
     '& td': {
       borderBottom: `1px solid ${theme.palette.border.main}`,
     },
+  },
+
+  minHeight: {
+    height: '20rem',
+    minHeight: '20rem',
+  },
+
+  noRecords: {
+    height: '12.5rem',
+    display: 'flex',
+    padding: theme.spacing(7.5, 3, 5),
+    justifyContent: 'center',
+  },
+
+  loading: {
+    flexDirection: 'column',
+    padding: theme.spacing(2, 3, 7.5),
+  },
+
+  unavailableIcon: {
+    height: '3.5rem',
+    width: '3.5rem',
+    marginTop: theme.spacing(0.65),
+  },
+
+  noRecordsText: {
+    color: theme.palette.text.hint,
+    padding: theme.spacing(2),
+    fontSize: '1.5rem',
+    lineHeight: '150%',
+    letterSpacing: '0.1176px',
   },
 
   tableHead: {
@@ -82,13 +120,28 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '12rem',
   },
 
-  dashboardNameHead: {
-    margin: '0 auto',
+  dashboardType: {
     marginTop: theme.spacing(2.5),
   },
 
-  dashboardType: {
+  dashboardNameHead: {
     marginTop: theme.spacing(2.5),
+    fontWeight: 500,
+    fontSize: '0.75rem',
+    lineHeight: '150%',
+  },
+
+  dashboardNameHeadWithoutSort: {
+    marginTop: theme.spacing(0.75),
+  },
+
+  dashboardNameCol: {
+    paddingLeft: theme.spacing(4),
+  },
+
+  headSpacing: {
+    minWidth: '5rem',
+    paddingLeft: theme.spacing(2),
   },
 
   nameContent: {
@@ -119,24 +172,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   options: {
-    minWidth: '4rem',
+    minWidth: '3rem',
     paddingRight: theme.spacing(2),
-  },
-
-  // Menu option with icon
-  expDiv: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-
-  btnImg: {
-    width: '0.8125rem',
-    height: '0.8125rem',
-    marginTop: theme.spacing(0.375),
-  },
-
-  btnText: {
-    paddingLeft: theme.spacing(1.625),
   },
 
   tablePagination: {
@@ -152,12 +189,19 @@ const useStyles = makeStyles((theme) => ({
 
   selectDate: {
     display: 'flex',
-    height: '2.9rem',
+    height: '2.75rem',
     minWidth: '9rem',
     border: `0.1px solid ${theme.palette.border.main}`,
     borderRadius: 4,
     marginRight: theme.spacing(1.5),
     textTransform: 'none',
+    '&:hover': {
+      borderColor: theme.palette.highlight,
+    },
+  },
+
+  selectDateFocused: {
+    border: `2px solid ${theme.palette.highlight}`,
   },
 
   rangeSelectorIcon: {
@@ -165,10 +209,38 @@ const useStyles = makeStyles((theme) => ({
     height: '0.625rem',
   },
 
+  tableObjects: {
+    display: 'flex',
+    gap: '0.5rem',
+    textAlign: 'left',
+    color: theme.palette.text.primary,
+    fontSize: '0.75rem',
+    lineHeight: '150%',
+  },
+
+  inlineIcon: {
+    margin: theme.spacing(0.25, 0),
+    width: '1rem',
+    height: '1rem',
+  },
+
+  inlineTypeIcon: {
+    width: '1.25rem',
+    height: '1.25rem',
+  },
+
+  columnDivider: {
+    borderRight: `1px solid ${theme.palette.border.main}`,
+  },
+
+  dividerPadding: {
+    paddingLeft: theme.spacing(4),
+  },
+
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
-    height: '2.8rem',
+    height: '2.6rem',
     minWidth: '9rem',
   },
 
@@ -186,21 +258,37 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.4),
   },
 
+  createButton: {
+    marginRight: theme.spacing(3),
+    marginLeft: theme.spacing(1),
+    padding: theme.spacing(0, 2.5),
+  },
+
+  // Menu option with icon
   menuItem: {
     width: '10rem',
     height: '2.5rem',
+    '&:hover': {
+      background: theme.palette.cards.highlight,
+    },
   },
-
-  dateRangeDefault: {
-    height: '2rem',
-    textDecoration: 'none',
-    textTransform: 'none',
-    padding: theme.spacing(1),
+  headerIcon: {
+    color: theme.palette.border.main,
   },
-
-  addButton: {
-    marginRight: theme.spacing(3),
-    marginLeft: theme.spacing(1),
+  expDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  btnImg: {
+    width: '0.8125rem',
+    height: '0.8125rem',
+    marginTop: theme.spacing(0.375),
+  },
+  btnText: {
+    paddingLeft: theme.spacing(1.625),
+  },
+  deleteText: {
+    color: theme.palette.error.main,
   },
 
   // modal
@@ -229,6 +317,9 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: '140%',
     fontSize: '0.875rem',
   },
+  disabledText: {
+    color: theme.palette.text.disabled,
+  },
   confirmButtonText: {
     color: theme.palette.text.secondary,
     padding: theme.spacing(0, 3),
@@ -236,6 +327,23 @@ const useStyles = makeStyles((theme) => ({
   cancelButton: {
     marginRight: theme.spacing(1.5),
     padding: theme.spacing(0, 3),
+  },
+
+  // select
+  menuList: {
+    boxShadow: '0px 5px 9px rgba(0, 0, 0, 0.1)',
+  },
+  menuListItem: {
+    background: `${theme.palette.background.paper} !important`,
+    fontSize: '0.875rem',
+    lineHeight: '150%',
+    height: '1.875rem',
+    '&:hover': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
+    '&.Mui-selected': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
   },
 }));
 
@@ -245,12 +353,12 @@ export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
       borderColor: theme.palette.border.main,
     },
     '&:hover $notchedOutline': {
-      borderColor: theme.palette.border.main,
+      borderColor: theme.palette.highlight,
     },
     '&$focused $notchedOutline': {
-      borderColor: theme.palette.border.main,
+      borderColor: theme.palette.highlight,
     },
-    height: '2.9rem',
+    height: '2.75rem',
   },
   focused: {},
   notchedOutline: {},

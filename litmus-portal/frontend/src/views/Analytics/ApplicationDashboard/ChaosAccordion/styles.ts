@@ -4,7 +4,8 @@ const useStyles = makeStyles((theme) => ({
   accordionSummary: {
     display: 'flex',
     justifyItems: 'center',
-    background: theme.palette.disabledBackground,
+    background: theme.palette.cards.header,
+    borderRadius: '3px 3px 0px 0px',
   },
 
   accordionDetails: {

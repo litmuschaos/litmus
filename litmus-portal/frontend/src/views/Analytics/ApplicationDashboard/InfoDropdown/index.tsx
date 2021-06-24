@@ -1,5 +1,5 @@
 import { FormControlLabel, Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { TextButton } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckBox } from '../../../../components/CheckBox';
@@ -7,14 +7,18 @@ import {
   DashboardConfigurationDetails,
   PanelNameAndID,
 } from '../../../../models/dashboardsData';
+import {
+  ApplicationMetadata,
+  Resource,
+} from '../../../../models/graphql/dashboardsDetails';
 import { ReactComponent as ExternalLinkIcon } from '../../../../svg/externalLink.svg';
 import { ReactComponent as PrometheusIcon } from '../../../../svg/prometheus.svg';
-import useStyles, { FormGroupGrid } from './styles';
+import useStyles, { FormGroupApplicationsGrid, FormGroupGrid } from './styles';
 
 interface InfoDropdownProps {
   dashboardConfigurationDetails: DashboardConfigurationDetails;
   metricsToBeShown: PanelNameAndID[];
-  applicationsToBeShown: string[];
+  applicationsToBeShown: ApplicationMetadata[];
   postPanelSelectionRoutine: (selectedPanelList: string[]) => void;
   postApplicationSelectionRoutine: (selectedApplicationList: string[]) => void;
 }
@@ -31,7 +35,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
 
   const [selectedApplications, setSelectedApplications] = React.useState<
     string[]
-  >(applicationsToBeShown);
+  >([]);
 
   const [selectedMetrics, setSelectedMetrics] = React.useState<string[]>(
     metricsToBeShown.map((metric) => metric.id)
@@ -90,7 +94,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 className={classes.inlineIcon}
               />
               <Typography className={classes.infoValue}>
-                {dashboardConfigurationDetails.typeID}
+                {dashboardConfigurationDetails.typeName}
               </Typography>
             </div>
           </div>
@@ -100,7 +104,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'analyticsDashboard.monitoringDashboardPage.infoDropdown.metaData3'
               )}
             </Typography>
-            <ButtonFilled
+            <TextButton
               className={classes.button}
               onClick={() => {
                 window.open(dashboardConfigurationDetails.dataSourceURL);
@@ -112,7 +116,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               <Typography className={classes.infoValue}>
                 {dashboardConfigurationDetails.dataSourceName}
               </Typography>
-            </ButtonFilled>
+            </TextButton>
           </div>
           <div className={classes.dashboardMetaDataItem}>
             <Typography className={classes.infoKey}>
@@ -131,25 +135,45 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               'analyticsDashboard.monitoringDashboardPage.infoDropdown.subHeading2'
             )}
           </Typography>
-          <FormGroupGrid key="application-group">
-            {applicationsToBeShown.map((application: string) => (
-              <FormControlLabel
-                control={
-                  <CheckBox
-                    checked={selectedApplications.includes(application)}
-                    onChange={() => handleApplicationSelect(application)}
-                    name={application}
-                  />
-                }
-                label={
-                  <Typography className={classes.formControlLabel}>
-                    {application}
-                  </Typography>
-                }
-                key={`${application}-application-label`}
-              />
-            ))}
-          </FormGroupGrid>
+          <FormGroupApplicationsGrid key="application-group">
+            {applicationsToBeShown?.map(
+              (applicationMetadata: ApplicationMetadata) => (
+                <>
+                  <div className={classes.namespaceBox}>
+                    <Typography className={classes.infoKey}>
+                      Namespace
+                    </Typography>
+                    <Typography className={classes.infoValue}>
+                      {applicationMetadata.namespace}
+                    </Typography>
+                  </div>
+                  {applicationMetadata.applications.map(
+                    (resource: Resource) => (
+                      <>
+                        {resource.names.map((name: string) => (
+                          <FormControlLabel
+                            control={
+                              <CheckBox
+                                checked={selectedApplications.includes(name)}
+                                onChange={() => handleApplicationSelect(name)}
+                                name={name}
+                              />
+                            }
+                            label={
+                              <Typography className={classes.formControlLabel}>
+                                {`${resource.kind} / ${name}`}
+                              </Typography>
+                            }
+                            key={`${resource.kind} / ${name}-application-label`}
+                          />
+                        ))}
+                      </>
+                    )
+                  )}
+                </>
+              )
+            )}
+          </FormGroupApplicationsGrid>
         </div>
         <div className={classes.infoSectionElement}>
           <Typography className={classes.sectionHeader}>

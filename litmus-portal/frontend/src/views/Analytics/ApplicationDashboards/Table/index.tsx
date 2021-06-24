@@ -12,17 +12,27 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { TextButton } from 'litmus-ui';
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
-import { LIST_DASHBOARD } from '../../../../graphql/queries';
+import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../../../graphql/queries';
 import {
   DashboardList,
   ListDashboardResponse,
   ListDashboardVars,
 } from '../../../../models/graphql/dashboardsDetails';
-import { getProjectID } from '../../../../utils/getSearchParams';
+import {
+  DataSourceList,
+  ListDataSourceResponse,
+  ListDataSourceVars,
+} from '../../../../models/graphql/dataSourceDetails';
+import { history } from '../../../../redux/configureStore';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -42,9 +52,6 @@ interface RangeType {
 interface SortData {
   lastViewed: { sort: boolean; ascending: boolean };
   name: { sort: boolean; ascending: boolean };
-  agent: { sort: boolean; ascending: boolean };
-  dataSourceType: { sort: boolean; ascending: boolean };
-  dashboardType: { sort: boolean; ascending: boolean };
 }
 
 interface Filter {
@@ -66,9 +73,6 @@ const DashboardTable: React.FC = () => {
     sortData: {
       name: { sort: false, ascending: true },
       lastViewed: { sort: true, ascending: false },
-      agent: { sort: false, ascending: true },
-      dataSourceType: { sort: false, ascending: true },
-      dashboardType: { sort: false, ascending: true },
     },
     selectedAgentName: 'All',
     searchTokens: [''],
@@ -76,12 +80,36 @@ const DashboardTable: React.FC = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
+  const [activeDataSourceAvailable, setActiveDataSourceAvailable] =
+    React.useState(false);
+
+  // Apollo query to get the dashboard data
+  const { data, loading, error, refetch } = useQuery<
+    DashboardList,
+    ListDashboardVars
+  >(LIST_DASHBOARD, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  // Apollo query to get the data source data
+  const { data: dataSourceList, loading: loadingDataSources } = useQuery<
+    DataSourceList,
+    ListDataSourceVars
+  >(LIST_DATASOURCE, {
+    variables: { projectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   const alertStateHandler = (successState: boolean) => {
     setSuccess(successState);
     setIsAlertOpen(true);
+    if (successState) {
+      refetch();
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -94,15 +122,6 @@ const DashboardTable: React.FC = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  // Apollo query to get the dashboard data
-  const { data, loading, error, refetch } = useQuery<
-    DashboardList,
-    ListDashboardVars
-  >(LIST_DASHBOARD, {
-    variables: { projectID },
-    fetchPolicy: 'cache-and-network',
-  });
 
   const getDataSourceType = (searchingData: ListDashboardResponse[]) => {
     const uniqueList: string[] = [];
@@ -117,8 +136,8 @@ const DashboardTable: React.FC = () => {
   const getDashboardType = (searchingData: ListDashboardResponse[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.db_type)) {
-        uniqueList.push(data.db_type);
+      if (!uniqueList.includes(data.db_type_name)) {
+        uniqueList.push(data.db_type_name);
       }
     });
     return uniqueList;
@@ -138,12 +157,8 @@ const DashboardTable: React.FC = () => {
     ? !data.ListDashboard
       ? []
       : data.ListDashboard.filter((db: ListDashboardResponse) => {
-          return filter.searchTokens.every(
-            (s: string) =>
-              db.db_name.toLowerCase().includes(s) ||
-              db.db_type.toLowerCase().includes(s) ||
-              db.ds_type.toLowerCase().includes(s) ||
-              db.cluster_name.toLowerCase().includes(s)
+          return filter.searchTokens.every((s: string) =>
+            db.db_name.toLowerCase().includes(s)
           );
         })
           .filter((data) => {
@@ -154,7 +169,7 @@ const DashboardTable: React.FC = () => {
           .filter((data) => {
             return filter.selectedDashboardType === 'All'
               ? true
-              : data.db_type === filter.selectedDashboardType;
+              : data.db_type_name === filter.selectedDashboardType;
           })
           .filter((data) => {
             return filter.selectedAgentName === 'All'
@@ -192,33 +207,49 @@ const DashboardTable: React.FC = () => {
                 ? sortNumAsc(y, x)
                 : sortNumDesc(y, x);
             }
-            if (filter.sortData.dashboardType.sort) {
-              const x = a.db_type;
-              const y = b.db_type;
-              return filter.sortData.dashboardType.ascending
-                ? sortAlphaAsc(x, y)
-                : sortAlphaDesc(x, y);
-            }
-            if (filter.sortData.dataSourceType.sort) {
-              const x = a.ds_type;
-              const y = b.ds_type;
-              return filter.sortData.dataSourceType.ascending
-                ? sortAlphaAsc(x, y)
-                : sortAlphaDesc(x, y);
-            }
-            if (filter.sortData.agent.sort) {
-              const x = a.cluster_name;
-              const y = b.cluster_name;
-              return filter.sortData.agent.ascending
-                ? sortAlphaAsc(x, y)
-                : sortAlphaDesc(x, y);
-            }
             return 0;
           })
     : [];
 
+  useEffect(() => {
+    if (dataSourceList && dataSourceList.ListDataSource) {
+      const activeDataSources: ListDataSourceResponse[] =
+        dataSourceList.ListDataSource.filter(
+          (dataSource) => dataSource.health_status === 'Active'
+        ) ?? [];
+      if (activeDataSources.length) {
+        setActiveDataSourceAvailable(true);
+      }
+    }
+  }, [dataSourceList]);
+
   return (
     <div className={classes.root}>
+      {!activeDataSourceAvailable && !loadingDataSources && (
+        <blockquote className={classes.warningBlock}>
+          <Typography className={classes.warningText} align="left">
+            No data source available. To create an Application dashboard you
+            need to add a data source
+          </Typography>
+          <TextButton
+            onClick={() => {
+              history.push({
+                pathname: '/analytics/datasource/create',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
+            variant="highlight"
+            className={classes.addButton}
+          >
+            <Typography
+              className={classes.buttonText}
+              style={{ fontWeight: 500 }}
+            >
+              Add data source
+            </Typography>
+          </TextButton>
+        </blockquote>
+      )}
       <Paper>
         <section className="Heading section">
           <TableToolBar
@@ -238,9 +269,9 @@ const DashboardTable: React.FC = () => {
                   .filter((s) => s !== ''),
               })
             }
-            dataSourceTypes={getDataSourceType(payload)}
-            dashboardTypes={getDashboardType(payload)}
-            agentNames={getAgentName(payload)}
+            dataSourceTypes={getDataSourceType(data?.ListDashboard ?? [])}
+            dashboardTypes={getDashboardType(data?.ListDashboard ?? [])}
+            agentNames={getAgentName(data?.ListDashboard ?? [])}
             callbackToSetDataSourceType={(dataSourceType: string) => {
               setFilter({
                 ...filter,
@@ -271,12 +302,19 @@ const DashboardTable: React.FC = () => {
                 },
               });
             }}
+            createButtonDisabled={
+              !activeDataSourceAvailable && !loadingDataSources
+            }
           />
         </section>
       </Paper>
       <Paper>
         <section className="table section">
-          <TableContainer className={classes.tableMain}>
+          <TableContainer
+            className={`${classes.tableMain} ${
+              !payload.length || loading ? classes.minHeight : ''
+            }`}
+          >
             <Table aria-label="simple table">
               <TableHeader
                 callBackToSort={(sortConfigurations: SortData) => {
@@ -300,22 +338,36 @@ const DashboardTable: React.FC = () => {
                 ) : loading ? (
                   <TableRow>
                     <TableCell colSpan={6}>
-                      <Loader />
-                      <Typography align="center">
-                        {t(
-                          'analyticsDashboardViews.kubernetesDashboard.table.loading'
-                        )}
-                      </Typography>
+                      <div
+                        className={`${classes.noRecords} ${classes.loading}`}
+                      >
+                        <Loader />
+                        <Typography align="center">
+                          {t(
+                            'analyticsDashboardViews.kubernetesDashboard.table.loading'
+                          )}
+                        </Typography>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : !payload.length ? (
                   <TableRow>
                     <TableCell colSpan={6}>
-                      <Typography align="center">
-                        {t(
-                          'analyticsDashboardViews.kubernetesDashboard.table.noRecords'
-                        )}
-                      </Typography>
+                      <div className={classes.noRecords}>
+                        <img
+                          src="/icons/dashboardUnavailable.svg"
+                          className={classes.unavailableIcon}
+                          alt="Dashboard"
+                        />
+                        <Typography
+                          align="center"
+                          className={classes.noRecordsText}
+                        >
+                          {t(
+                            'analyticsDashboardViews.kubernetesDashboard.table.noRecords'
+                          )}
+                        </Typography>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : payload.length > 0 ? (
@@ -360,6 +412,21 @@ const DashboardTable: React.FC = () => {
             onChangePage={handleChangePage}
             onChangeRowsPerPage={handleChangeRowsPerPage}
             className={classes.tablePagination}
+            SelectProps={{
+              MenuProps: {
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                },
+                transformOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                getContentAnchorEl: null,
+                classes: { paper: classes.menuList },
+              },
+            }}
+            classes={{ menuItem: classes.menuListItem }}
           />
         </section>
       </Paper>
@@ -367,20 +434,10 @@ const DashboardTable: React.FC = () => {
         <Snackbar
           open={isAlertOpen}
           autoHideDuration={3000}
-          onClose={() => {
-            if (success) {
-              refetch();
-            }
-            setIsAlertOpen(false);
-          }}
+          onClose={() => setIsAlertOpen(false)}
         >
           <Alert
-            onClose={() => {
-              if (success) {
-                refetch();
-              }
-              setIsAlertOpen(false);
-            }}
+            onClose={() => setIsAlertOpen(false)}
             severity={success ? 'success' : 'error'}
           >
             {success

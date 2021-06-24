@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
 import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
-import { ButtonFilled, InputField, RadioButton } from 'litmus-ui';
+import { InputField, RadioButton, TextButton } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LIST_DATASOURCE } from '../../../../graphql';
@@ -223,7 +223,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
               />
             </div>
           </div>
-          <ButtonFilled
+          <TextButton
             className={classes.button}
             onClick={() => {
               window.open(
@@ -233,11 +233,12 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
             startIcon={<DocsIcon className={classes.inlineIcon} />}
             endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
             classes={{ label: classes.buttonLabel }}
+            variant="highlight"
           >
             <Typography className={classes.infoValue}>
               {t('analyticsDashboard.dataSourceForm.docsAndSetup')}
             </Typography>
-          </ButtonFilled>
+          </TextButton>
           <div className={classes.horizontalLine} />
           <Typography className={classes.heading}>
             {t('analyticsDashboard.dataSourceForm.endPoint')}

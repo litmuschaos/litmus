@@ -150,13 +150,14 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
   };
 
   return (
-    <div className={classes.button}>
+    <div className={classes.buttons}>
       {navButtonStates.isInfoToggled ? (
         <ButtonFilled
           onClick={() => {
             setNavButtonStates({ ...navButtonStates, isInfoToggled: false });
             switchIsInfoToggled(false);
           }}
+          className={classes.button}
         >
           <img
             src="/icons/infoWhite.svg"
@@ -173,6 +174,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
             setNavButtonStates({ ...navButtonStates, isInfoToggled: true });
             switchIsInfoToggled(true);
           }}
+          className={classes.button}
         >
           <img src="/icons/info.svg" alt="Info icon" className={classes.icon} />
           <Typography className={classes.infoText}>
@@ -190,7 +192,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
                 isOptionsToggled: false,
               });
             }}
-            className={classes.optionsButton}
+            className={classes.button}
           >
             <img
               src="/icons/menu-active.svg"
@@ -207,7 +209,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
                 isOptionsToggled: true,
               });
             }}
-            className={classes.optionsButton}
+            className={classes.button}
           >
             <img
               src="/icons/menu.svg"

@@ -53,8 +53,8 @@ quickActionCard:
   quickSurvey: Take a quick survey
   readDocs: Read the Litmus docs
   readAPIDocs: Read the Litmus Portal API docs
-  addDashboard: Add a Dashboard
-  addDataSource: Add a Data Source
+  addDashboard: Create a dashboard
+  addDataSource: Add a data source
   addAgent: Add an agent
   connectNewAgent: Connect a new agent
   scheduleWorkflow: Schedule a workflow
@@ -221,12 +221,12 @@ analyticsDashboard:
       every2Hours: Every 2 hours
       every1Day: Every 1 day
     chaosTable:
-      tableHead1: Legend
+      tableHead1: Chaos result name
       tableHead2: Workflow
-      tableHead3: Experiment
-      tableHead4: "Target \n ( namespace / pod )"
+      tableHead3: Engine context
+      tableHead4: Target
       tableHead5:
-        title: Result
+        title: Verdict
         infoText: Latest Chaos experiment verdict
       noRecords: No chaos happened during the interval
       showTable: Show Chaos during this interval
@@ -267,11 +267,11 @@ analyticsDashboard:
   kubernetesDashboardTable:
     title: Application Dashboard
     noRecordMessage: No dashboard has been configured
-  workflowDashboard: Workflow Dashboards
+  workflowDashboard: Workflow dashboards
   overviewTabdataSourceTable: Connected Data Sources
-  applicationDashboard: Application Dashboards
+  applicationDashboard: Application dashboards
   applicationDashboards:
-    createHeader: Create a new dashboard
+    createHeader: Create dashboard
     configureHeader: Configure dashboard
     chooseADashboardType:
       header: Select a dashboard type
@@ -392,20 +392,21 @@ analyticsDashboard:
     httpMethod: HTTP Method
   dataSourceTable:
     tableHead1: Status
-    tableHead2: Data Source Name
-    tableHead3: Data Source Type
-    tableHead4: Last Configured
-    addDataSource: Add a Data Source
+    tableHead2: Data source name
+    tableHead3: Data source type
+    tableHead4: Last configured
+    tableHead5: Data source link
+    addDataSource: Add data source
     loading: Loading available data sources
     noRecords: No data source available
     fetchError: Unable to fetch data
   dashboardTable:
-    tableHead1: Dashboard Name
-    tableHead2: Agent Name
-    tableHead3: Dashboard Type
-    tableHead4: Data Source Type
+    tableHead1: Dashboard name
+    tableHead2: Agent name
+    tableHead3: Dashboard type
+    tableHead4: Data Source type
     tableHead5: Last viewed
-    addDashboard: Add a Dashboard
+    createDashboard: Create dashboard
   glowCard:
     title-0: Set it up
     heading-0: Add a Data Source
@@ -421,10 +422,10 @@ analyticsDashboard:
   configureBanner:
     case-0:
       heading: No data source is configured yet for any agent
-      description: To configure your first Kubernetes dashboard you need to connect a data source. Select "Add a data source" to connect.
+      description: To configure your first application dashboard you need to connect a data source. Select "Add a data source" to connect.
     case-1:
-      heading: Data sources has been added, now configure a dashboard
-      description: To configure your first Kubernets dashboard use the connect Data sources of this project
+      heading: Data source(s) has been added, now configure a dashboard
+      description: To configure your first application dashboard use the connect data sources of this project.
   timeText:
     lastRun: Last run
     lastOpened: Last opened
@@ -566,7 +567,7 @@ analyticsDashboardViews:
     form:
       dashboardPanels: Dashboard Panels
     table:
-      seeAnalytics: See Analytics
+      view: View
       configure: Configure
       noRecords: No dashboard available
       loading: Loading available dashboards

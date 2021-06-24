@@ -1,5 +1,6 @@
 import { ApolloError, useMutation } from '@apollo/client';
-import { Typography } from '@material-ui/core';
+import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { ButtonFilled, LightPills, Modal, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
@@ -11,8 +12,7 @@ import {
 import useActions from '../../../../redux/actions';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import { history } from '../../../../redux/configureStore';
-import { ReactComponent as CogWheelIcon } from '../../../../svg/cogwheel.svg';
-import { ReactComponent as BinIcon } from '../../../../svg/delete.svg';
+import { ReactComponent as ExternalLinkIcon } from '../../../../svg/externalLink.svg';
 import {
   getProjectID,
   getProjectRole,
@@ -38,13 +38,22 @@ const TableData: React.FC<TableDataProps> = ({
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const dataSource = useActions(DataSourceActions);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   const [mutate, setMutate] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
+
   // Function to convert UNIX time in format of dddd, DD MMM YYYY, HH:mm
   const formatDate = (date: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();
     const resDate = moment(updated).format('dddd, DD MMM YYYY, HH:mm');
     return resDate;
+  };
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   const [deleteDataSource] = useMutation<boolean, DeleteDataSourceInput>(
@@ -89,51 +98,142 @@ const TableData: React.FC<TableDataProps> = ({
         ) : data.health_status === 'Not Ready' ? (
           <LightPills variant="warning" label={data.health_status} />
         ) : (
-          <LightPills
-            variant="danger"
-            label={data.health_status !== '' ? data.health_status : 'Inactive'}
-          />
+          <LightPills variant="danger" label={data.health_status} />
         )}
       </StyledTableCell>
-      <StyledTableCell className={classes.dataSourceName}>
-        <Typography variant="body2">
-          <strong>{data.ds_name}</strong>
+      <StyledTableCell className={classes.columnDivider}>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '10rem', fontWeight: 500 }}
+        >
+          {data.ds_name}
         </Typography>
       </StyledTableCell>
-      <StyledTableCell className={classes.dataSourceType}>
-        <Typography variant="body2">
-          <strong>{data.ds_type}</strong>
+      <StyledTableCell className={classes.dividerPadding}>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '5rem' }}
+        >
+          <img
+            src="/icons/prometheus.svg"
+            alt="Prometheus"
+            className={classes.inlineIcon}
+          />
+          {data.ds_type}
         </Typography>
       </StyledTableCell>
-      <StyledTableCell className={classes.dataSourceName}>
-        <Typography variant="body2">{formatDate(data.updated_at)}</Typography>
-      </StyledTableCell>
-      <StyledTableCell
-        onClick={() => {
-          dataSource.selectDataSource({
-            selectedDataSourceID: data.ds_id,
-            selectedDataSourceName: data.ds_name,
-          });
-          history.push({
-            pathname: '/analytics/datasource/configure',
-            search: `?projectID=${projectID}&projectRole=${projectRole}`,
-          });
-        }}
-      >
-        <Typography variant="body2" align="center">
-          <CogWheelIcon className={classes.cogWheelIcon} />
-        </Typography>
-        <Typography variant="body2" align="center">
-          Configure
+      <StyledTableCell>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '12.5rem' }}
+        >
+          <img src="/icons/calendarIcon.svg" alt="Calender" />
+          {formatDate(data.updated_at)}
         </Typography>
       </StyledTableCell>
-      <StyledTableCell onClick={() => setOpenModal(true)}>
-        <Typography variant="body2" align="center">
-          <BinIcon className={classes.binIcon} />
-        </Typography>
-        <Typography variant="body2" align="center" className={classes.delete}>
-          Delete
-        </Typography>
+
+      <StyledTableCell>
+        <TextButton
+          className={classes.button}
+          onClick={() => {
+            window.open(data.ds_url);
+          }}
+          endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
+          classes={{ label: classes.buttonLabel }}
+        >
+          <Typography
+            className={classes.tableObjects}
+            style={{
+              maxWidth: '8.5rem',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {data.ds_url}
+          </Typography>
+        </TextButton>
+      </StyledTableCell>
+
+      <StyledTableCell>
+        <IconButton
+          aria-label="more"
+          aria-controls="long-menu"
+          aria-haspopup="true"
+          onClick={handleClick}
+          data-cy="browseDashboardOptions"
+        >
+          <MoreVertIcon className={classes.headerIcon} />
+        </IconButton>
+        <Menu
+          id="long-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          getContentAnchorEl={null}
+          classes={{ paper: classes.menuList }}
+        >
+          <MenuItem
+            value="Configure"
+            onClick={() => {
+              dataSource.selectDataSource({
+                selectedDataSourceID: data.ds_id,
+                selectedDataSourceName: data.ds_name,
+              });
+              history.push({
+                pathname: '/analytics/datasource/configure',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
+            className={classes.menuItem}
+          >
+            <div className={classes.expDiv}>
+              <img
+                src="/icons/cogwheel.svg"
+                alt="Configure"
+                className={classes.btnImg}
+              />
+              <Typography
+                data-cy="configureDashboard"
+                className={classes.btnText}
+              >
+                Configure
+              </Typography>
+            </div>
+          </MenuItem>
+
+          <MenuItem
+            value="Delete"
+            onClick={() => {
+              setOpenModal(true);
+              handleClose();
+            }}
+            className={classes.menuItem}
+          >
+            <div className={classes.expDiv}>
+              <img
+                src="/icons/delete.svg"
+                alt="Delete"
+                className={classes.btnImg}
+              />
+              <Typography
+                data-cy="deleteDashboard"
+                className={`${classes.btnText} ${classes.deleteText}`}
+              >
+                Delete
+              </Typography>
+            </div>
+          </MenuItem>
+        </Menu>
       </StyledTableCell>
       <Modal
         open={openModal}

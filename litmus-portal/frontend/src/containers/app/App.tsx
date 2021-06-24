@@ -236,6 +236,7 @@ const Routes: React.FC = () => {
             to="/analytics"
           />
           <Redirect exact path="/analytics/datasource" to="/analytics" />
+          <Redirect exact path="/analytics/dashboard" to="/analytics" />
           <Redirect exact path="/api-doc" to="/api-doc/index.html" />
           <Redirect to="/404" />
         </Switch>

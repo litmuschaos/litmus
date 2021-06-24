@@ -29,6 +29,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  selectDateFocused: {
+    border: `2px solid ${theme.palette.highlight}`,
+  },
+
   displayDate: {
     width: '100%',
     color: theme.palette.text.primary,
@@ -50,18 +54,21 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(-2, 0, 0, -4.25),
   },
 
+  // select
+  menuList: {
+    boxShadow: '0px 5px 9px rgba(0, 0, 0, 0.1)',
+  },
   menuListItem: {
     background: `${theme.palette.background.paper} !important`,
     fontSize: '0.875rem',
     lineHeight: '150%',
-    height: '1.75rem',
-    width: '11.5rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-
-  menuListItemText: {
-    fontSize: '0.875rem',
+    height: '1.875rem',
+    '&:hover': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
+    '&.Mui-selected': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
   },
 
   checkIcon: {
@@ -132,10 +139,10 @@ export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
       borderColor: theme.palette.border.main,
     },
     '&:hover $notchedOutline': {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.highlight,
     },
     '&$focused $notchedOutline': {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.highlight,
     },
     '& .MuiInputLabel-root': {
       color: `${theme.palette.text.hint} !important`,

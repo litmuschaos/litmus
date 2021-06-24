@@ -2,18 +2,15 @@ import {
   Button,
   FormControl,
   IconButton,
-  InputAdornment,
-  InputBase,
   InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
   Typography,
 } from '@material-ui/core';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import SearchIcon from '@material-ui/icons/Search';
-import { ButtonFilled } from 'litmus-ui';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import { ButtonFilled, Search } from 'litmus-ui';
 import React, { ChangeEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
@@ -53,6 +50,7 @@ interface TableToolBarProps {
   callbackToSetRange: RangeCallBackType;
   callbackToSetDashboardType: DashboardTypeCallBackType;
   callbackToSetAgentName: AgentNameCallBackType;
+  createButtonDisabled: boolean;
 }
 
 interface RangeType {
@@ -70,6 +68,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   callbackToSetDataSourceType,
   callbackToSetDashboardType,
   callbackToSetAgentName,
+  createButtonDisabled,
 }) => {
   const classes = useStyles();
   const outlinedInputClasses = useOutlinedInputStyles();
@@ -125,124 +124,169 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
   return (
     <div className={classes.headerSection}>
-      <InputBase
-        id="input-with-icon-adornment"
-        placeholder="Search"
-        className={classes.search}
-        value={searchToken}
-        onChange={handleSearch}
-        classes={{
-          input: classes.input,
-        }}
-        startAdornment={
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        }
-      />
-
-      <FormControl
-        variant="outlined"
-        className={`${classes.formControl} ${classes.dashboardTypeForm}`}
+      <div className={classes.search}>
+        <Search
+          id="input-with-icon-textfield"
+          placeholder="Search"
+          value={searchToken}
+          onChange={handleSearch}
+        />
+      </div>
+      <div
+        className={classes.headerSection}
+        style={{ justifyContent: 'flex-end' }}
       >
-        <InputLabel className={classes.selectText}> Agent Name </InputLabel>
-        <Select
-          label="Agent Name"
-          value={agentName}
-          onChange={handleAgentNameChange}
-          className={classes.selectText}
-          input={<OutlinedInput classes={outlinedInputClasses} />}
+        <FormControl
+          variant="outlined"
+          className={`${classes.formControl} ${classes.dashboardTypeForm}`}
         >
-          <MenuItem value="All">All</MenuItem>
-          {agentNames.map((agentName: string) => (
-            <MenuItem
-              key={`${agentName}-kubernetesDashboard-Toolbar`}
-              value={agentName}
-            >
-              {agentName}
+          <InputLabel className={classes.selectText}>Agent name</InputLabel>
+          <Select
+            label="Agent name"
+            value={agentName}
+            onChange={handleAgentNameChange}
+            className={classes.selectText}
+            input={<OutlinedInput classes={outlinedInputClasses} />}
+            IconComponent={KeyboardArrowDownIcon}
+            MenuProps={{
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'right',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              getContentAnchorEl: null,
+              classes: { paper: classes.menuList },
+            }}
+          >
+            <MenuItem value="All" className={classes.menuListItem}>
+              All
             </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+            {agentNames.map((availableAgentName: string) => (
+              <MenuItem
+                key={`${availableAgentName}-kubernetesDashboard-Toolbar`}
+                value={availableAgentName}
+                className={classes.menuListItem}
+              >
+                {availableAgentName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <FormControl
-        variant="outlined"
-        className={`${classes.formControl} ${classes.dashboardTypeForm}`}
-      >
-        <InputLabel className={classes.selectText}> Dashboard Type </InputLabel>
-        <Select
-          label="Dashboard Type"
-          value={dashboardType}
-          onChange={handleDashboardTypeChange}
-          className={classes.selectText}
-          input={<OutlinedInput classes={outlinedInputClasses} />}
+        <FormControl
+          variant="outlined"
+          className={`${classes.formControl} ${classes.dashboardTypeForm}`}
         >
-          <MenuItem value="All">All</MenuItem>
-          {dashboardTypes.map((dashboardType: string) => (
-            <MenuItem
-              key={`${dashboardType}-kubernetesDashboard-toolbar`}
-              value={dashboardType}
-            >
-              {dashboardType}
+          <InputLabel className={classes.selectText}>Dashboard type</InputLabel>
+          <Select
+            label="Dashboard type"
+            value={dashboardType}
+            onChange={handleDashboardTypeChange}
+            className={classes.selectText}
+            input={<OutlinedInput classes={outlinedInputClasses} />}
+            IconComponent={KeyboardArrowDownIcon}
+            MenuProps={{
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'right',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              getContentAnchorEl: null,
+              classes: { paper: classes.menuList },
+            }}
+          >
+            <MenuItem value="All" className={classes.menuListItem}>
+              All
             </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+            {dashboardTypes.map((availableDashboardType: string) => (
+              <MenuItem
+                key={`${availableDashboardType}-kubernetesDashboard-toolbar`}
+                value={availableDashboardType}
+                className={classes.menuListItem}
+              >
+                {availableDashboardType}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <FormControl
-        variant="outlined"
-        className={`${classes.formControl} ${classes.dataSourceTypeForm}`}
-      >
-        <InputLabel className={classes.selectText}>
-          {' '}
-          Data Source Type{' '}
-        </InputLabel>
-        <Select
-          label="Data Source Type"
-          value={dataSourceType}
-          onChange={handleDataSourceTypeChange}
-          className={classes.selectText}
-          input={<OutlinedInput classes={outlinedInputClasses} />}
+        <FormControl
+          variant="outlined"
+          className={`${classes.formControl} ${classes.dataSourceTypeForm}`}
         >
-          <MenuItem value="All">All</MenuItem>
-          {dataSourceTypes.map((dataSourceType: string) => (
-            <MenuItem
-              key={`${dataSourceType}-KubernetesDashboard-TableToolbar`}
-              value={dataSourceType}
-            >
-              {dataSourceType}
+          <InputLabel className={classes.selectText}>
+            Data source type
+          </InputLabel>
+          <Select
+            label="Data source type"
+            value={dataSourceType}
+            onChange={handleDataSourceTypeChange}
+            className={classes.selectText}
+            input={<OutlinedInput classes={outlinedInputClasses} />}
+            IconComponent={KeyboardArrowDownIcon}
+            MenuProps={{
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'right',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              getContentAnchorEl: null,
+              classes: { paper: classes.menuList },
+            }}
+          >
+            <MenuItem value="All" className={classes.menuListItem}>
+              All
             </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+            {dataSourceTypes.map((availableDataSourceType: string) => (
+              <MenuItem
+                key={`${availableDataSourceType}-ApplicationDashboards-TableToolbar`}
+                value={availableDataSourceType}
+                className={classes.menuListItem}
+              >
+                {availableDataSourceType}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <Button
-        className={classes.selectDate}
-        onClick={() => setDateRangeSelectorPopoverOpen(true)}
-        ref={dateRangeSelectorRef}
-        aria-label="time range"
-        aria-haspopup="true"
-      >
-        <Typography className={classes.displayDate}>
-          {range.startDate === ' '
-            ? 'Select Period'
-            : `${range.startDate.split(' ')[2]} ${
-                range.startDate.split(' ')[1]
-              } ${range.startDate.split(' ')[3]} - ${
-                range.endDate.split(' ')[2]
-              } ${range.endDate.split(' ')[1]} ${range.endDate.split(' ')[3]}`}
+        <Button
+          className={`${classes.selectDate} ${
+            isDateRangeSelectorPopoverOpen ? classes.selectDateFocused : ''
+          }`}
+          onClick={() => setDateRangeSelectorPopoverOpen(true)}
+          ref={dateRangeSelectorRef}
+          aria-label="time range"
+          aria-haspopup="true"
+        >
+          <Typography className={classes.displayDate}>
+            {range.startDate === ' '
+              ? 'Select period'
+              : `${range.startDate.split(' ')[2]} ${
+                  range.startDate.split(' ')[1]
+                } ${range.startDate.split(' ')[3]} - ${
+                  range.endDate.split(' ')[2]
+                } ${range.endDate.split(' ')[1]} ${
+                  range.endDate.split(' ')[3]
+                }`}
 
-          <IconButton className={classes.rangeSelectorIcon}>
-            {isDateRangeSelectorPopoverOpen ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </Typography>
-      </Button>
-
-      <div className={classes.addButton}>
+            <IconButton className={classes.rangeSelectorIcon}>
+              {isDateRangeSelectorPopoverOpen ? (
+                <KeyboardArrowUpIcon />
+              ) : (
+                <KeyboardArrowDownIcon />
+              )}
+            </IconButton>
+          </Typography>
+        </Button>
         <ButtonFilled
           onClick={() => {
             history.push({
@@ -250,20 +294,26 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
+          className={classes.createButton}
+          disabled={createButtonDisabled}
         >
-          <Typography className={classes.dateRangeDefault}>
-            {t('analyticsDashboard.dashboardTable.addDashboard')}
+          <Typography
+            className={`${classes.buttonText} ${
+              createButtonDisabled ? classes.disabledText : ''
+            }`}
+          >
+            {t('analyticsDashboard.dashboardTable.createDashboard')}
           </Typography>
         </ButtonFilled>
+        <DateRangeSelector
+          anchorEl={dateRangeSelectorRef.current as HTMLElement}
+          isOpen={isDateRangeSelectorPopoverOpen}
+          onClose={() => {
+            setDateRangeSelectorPopoverOpen(false);
+          }}
+          callbackToSetRange={CallbackFromRangeSelector}
+        />
       </div>
-      <DateRangeSelector
-        anchorEl={dateRangeSelectorRef.current as HTMLElement}
-        isOpen={isDateRangeSelectorPopoverOpen}
-        onClose={() => {
-          setDateRangeSelectorPopoverOpen(false);
-        }}
-        callbackToSetRange={CallbackFromRangeSelector}
-      />
     </div>
   );
 };

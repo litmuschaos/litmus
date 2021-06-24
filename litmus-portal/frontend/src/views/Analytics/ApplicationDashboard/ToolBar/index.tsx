@@ -127,7 +127,9 @@ const ToolBar: React.FC = () => {
       <div className={classes.controls}>
         <div ref={dateRangeSelectorRef}>
           <ButtonOutlined
-            className={classes.selectDate}
+            className={`${classes.selectDate} ${
+              isDateRangeSelectorPopoverOpen ? classes.selectDateFocused : ''
+            }`}
             onClick={() => setDateRangeSelectorPopoverOpen(true)}
             aria-label="time range"
             aria-haspopup="true"
@@ -249,6 +251,7 @@ const ToolBar: React.FC = () => {
                   horizontal: 'right',
                 },
                 getContentAnchorEl: null,
+                classes: { paper: classes.menuList },
               }}
             >
               <MenuItem
@@ -256,23 +259,7 @@ const ToolBar: React.FC = () => {
                 value={MAX_REFRESH_RATE}
                 className={classes.menuListItem}
               >
-                <Typography
-                  className={classes.menuListItemText}
-                  style={{
-                    fontWeight: refreshRate === MAX_REFRESH_RATE ? 500 : 400,
-                  }}
-                >
-                  {t('analyticsDashboard.monitoringDashboardPage.refresh.off')}
-                </Typography>
-                {refreshRate === MAX_REFRESH_RATE ? (
-                  <img
-                    src="/icons/check.svg"
-                    alt="check mark"
-                    className={classes.checkIcon}
-                  />
-                ) : (
-                  <></>
-                )}
+                {t('analyticsDashboard.monitoringDashboardPage.refresh.off')}
               </MenuItem>
               {refreshData.map((data: RefreshObjectType) => (
                 <MenuItem
@@ -280,23 +267,7 @@ const ToolBar: React.FC = () => {
                   value={data.value}
                   className={classes.menuListItem}
                 >
-                  <Typography
-                    className={classes.menuListItemText}
-                    style={{
-                      fontWeight: refreshRate === data.value ? 500 : 400,
-                    }}
-                  >
-                    {t(data.label)}
-                  </Typography>
-                  {refreshRate === data.value ? (
-                    <img
-                      src="/icons/check.svg"
-                      alt="check mark"
-                      className={classes.checkIcon}
-                    />
-                  ) : (
-                    <></>
-                  )}
+                  {t(data.label)}
                 </MenuItem>
               ))}
             </Select>

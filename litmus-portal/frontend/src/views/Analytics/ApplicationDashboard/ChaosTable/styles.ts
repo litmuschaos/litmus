@@ -6,10 +6,13 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     flexDirection: 'column',
     overflow: 'hidden',
+    boxShadow:
+      '0px 0.3px 0.9px rgba(0, 0, 0, 0.1), 0px 1.6px 3.6px rgba(0, 0, 0, 0.13)',
+    borderRadius: '3px 3px 0px 0px',
   },
 
   tableMain: {
-    background: theme.palette.cards.header,
+    background: theme.palette.background.paper,
     maxHeight: '30rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
@@ -28,42 +31,47 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  empty: {
+    '& td': {
+      borderBottom: 0,
+    },
+  },
+
   tableBody: {
-    background: theme.palette.cards.header,
+    background: theme.palette.background.paper,
   },
 
   tableHead: {
-    background: theme.palette.cards.header,
+    background: theme.palette.background.paper,
   },
 
   nameHead: {
+    display: 'flex',
     color: theme.palette.text.hint,
-    margin: theme.spacing(2, 0, 1.5),
-    fontSize: '0.875rem',
+    fontSize: '0.75rem',
     lineHeight: '150%',
-    fontWeight: 500,
     letterSpacing: '0.02em',
+    margin: theme.spacing(1, 0),
   },
 
   tableObjects: {
-    textAlign: 'center',
-    paddingLeft: theme.spacing(1),
+    display: 'flex',
+    gap: '0.5rem',
+    textAlign: 'left',
     color: theme.palette.text.primary,
-    height: '1.75rem',
-    marginTop: theme.spacing(2),
-    fontSize: '0.875rem',
-    lineHeight: '130%',
+    fontSize: '0.75rem',
+    letterSpacing: '0.02em',
+    lineHeight: '150%',
+    paddingLeft: theme.spacing(0.5),
+    margin: theme.spacing(1, 0),
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
 
   headSpacing: {
-    paddingLeft: theme.spacing(2.5),
-  },
-
-  nameContent: {
-    color: theme.palette.text.primary,
-    display: 'flex',
-    fontSize: '0.8rem',
-    justifyContent: 'center',
+    minWidth: '5rem',
+    paddingLeft: theme.spacing(2),
   },
 
   checkbox: {
@@ -103,14 +111,28 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
 
-  colorBar: {
-    height: '0.45rem',
-    width: '2.75rem',
-    margin: theme.spacing(0.75, 0, 0, 1.5),
+  colorCircle: {
+    height: '0.5rem',
+    width: '0.5rem',
+    borderRadius: '50%',
+    marginTop: theme.spacing(0.75),
   },
 
-  infoIcon: {
-    margin: theme.spacing(1.75, 0, 0, 0.5),
+  // select
+  menuList: {
+    boxShadow: '0px 5px 9px rgba(0, 0, 0, 0.1)',
+  },
+  menuListItem: {
+    background: `${theme.palette.background.paper} !important`,
+    fontSize: '0.875rem',
+    lineHeight: '150%',
+    height: '1.875rem',
+    '&:hover': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
+    '&.Mui-selected': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
   },
 }));
 

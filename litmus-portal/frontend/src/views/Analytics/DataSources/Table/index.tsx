@@ -46,8 +46,6 @@ interface RangeType {
 interface SortData {
   lastConfigured: { sort: boolean; ascending: boolean };
   name: { sort: boolean; ascending: boolean };
-  status: { sort: boolean; ascending: boolean };
-  dataSourceType: { sort: boolean; ascending: boolean };
 }
 
 interface Filter {
@@ -67,8 +65,6 @@ const DataSourceTable: React.FC = () => {
     sortData: {
       name: { sort: false, ascending: true },
       lastConfigured: { sort: true, ascending: false },
-      status: { sort: false, ascending: true },
-      dataSourceType: { sort: false, ascending: true },
     },
     selectedStatus: 'All',
     searchTokens: [''],
@@ -110,6 +106,9 @@ const DataSourceTable: React.FC = () => {
   const alertStateHandler = (successState: boolean) => {
     setSuccess(successState);
     setIsAlertOpen(true);
+    if (successState) {
+      refetch();
+    }
   };
 
   const [deleteDataSource] = useMutation<boolean, DeleteDataSourceInput>(
@@ -152,13 +151,8 @@ const DataSourceTable: React.FC = () => {
     ? !data.ListDataSource
       ? []
       : data.ListDataSource.filter((ds: ListDataSourceResponse) => {
-          return filter.searchTokens.every(
-            (s: string) =>
-              ds.ds_name.toLowerCase().includes(s) ||
-              (ds.ds_type !== undefined &&
-                ds.ds_type.toLowerCase().includes(s)) ||
-              (ds.health_status !== undefined &&
-                ds.health_status.toLowerCase().includes(s))
+          return filter.searchTokens.every((s: string) =>
+            ds.ds_name.toLowerCase().includes(s)
           );
         })
           .filter((data) => {
@@ -203,21 +197,6 @@ const DataSourceTable: React.FC = () => {
                 ? sortNumAsc(y, x)
                 : sortNumDesc(y, x);
             }
-            if (filter.sortData.status.sort) {
-              const x = a.health_status;
-              const y = b.health_status;
-              return filter.sortData.status.ascending
-                ? sortAlphaAsc(x, y)
-                : sortAlphaDesc(x, y);
-            }
-            if (filter.sortData.dataSourceType.sort) {
-              const x = a.ds_type;
-              const y = b.ds_type;
-
-              return filter.sortData.dataSourceType.ascending
-                ? sortAlphaAsc(x, y)
-                : sortAlphaDesc(x, y);
-            }
             return 0;
           })
     : [];
@@ -243,8 +222,8 @@ const DataSourceTable: React.FC = () => {
                   .filter((s) => s !== ''),
               })
             }
-            dataSourceTypes={getDataSourceType(payload)}
-            statuses={getStatus(payload)}
+            dataSourceTypes={getDataSourceType(data?.ListDataSource ?? [])}
+            statuses={getStatus(data?.ListDataSource ?? [])}
             callbackToSetDataSourceType={(dataSourceType: string) => {
               setFilter({
                 ...filter,
@@ -274,7 +253,11 @@ const DataSourceTable: React.FC = () => {
       </Paper>
       <Paper>
         <section className="table section">
-          <TableContainer className={classes.tableMain}>
+          <TableContainer
+            className={`${classes.tableMain} ${
+              !payload.length || loading ? classes.minHeight : ''
+            }`}
+          >
             <Table aria-label="simple table">
               <TableHeader
                 callBackToSort={(sortConfigurations: SortData) => {
@@ -296,18 +279,32 @@ const DataSourceTable: React.FC = () => {
                 ) : loading ? (
                   <TableRow>
                     <TableCell colSpan={6}>
-                      <Loader />
-                      <Typography align="center">
-                        {t('analyticsDashboard.dataSourceTable.loading')}
-                      </Typography>
+                      <div
+                        className={`${classes.noRecords} ${classes.loading}`}
+                      >
+                        <Loader />
+                        <Typography align="center">
+                          {t('analyticsDashboard.dataSourceTable.loading')}
+                        </Typography>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : !payload.length ? (
                   <TableRow>
                     <TableCell colSpan={6}>
-                      <Typography align="center">
-                        {t('analyticsDashboard.dataSourceTable.noRecords')}
-                      </Typography>
+                      <div className={classes.noRecords}>
+                        <img
+                          src="/icons/dataSourceUnavailable.svg"
+                          className={classes.unavailableIcon}
+                          alt="Data Source"
+                        />
+                        <Typography
+                          align="center"
+                          className={classes.noRecordsText}
+                        >
+                          {t('analyticsDashboard.dataSourceTable.noRecords')}
+                        </Typography>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : payload.length > 0 ? (
@@ -360,6 +357,21 @@ const DataSourceTable: React.FC = () => {
             onChangePage={handleChangePage}
             onChangeRowsPerPage={handleChangeRowsPerPage}
             className={classes.tablePagination}
+            SelectProps={{
+              MenuProps: {
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                },
+                transformOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                getContentAnchorEl: null,
+                classes: { paper: classes.menuList },
+              },
+            }}
+            classes={{ menuItem: classes.menuListItem }}
           />
         </section>
       </Paper>
@@ -367,20 +379,10 @@ const DataSourceTable: React.FC = () => {
         <Snackbar
           open={isAlertOpen}
           autoHideDuration={3000}
-          onClose={() => {
-            if (success) {
-              refetch();
-            }
-            setIsAlertOpen(false);
-          }}
+          onClose={() => setIsAlertOpen(false)}
         >
           <Alert
-            onClose={() => {
-              if (success) {
-                refetch();
-              }
-              setIsAlertOpen(false);
-            }}
+            onClose={() => setIsAlertOpen(false)}
             severity={success ? 'success' : 'error'}
           >
             {success

@@ -34,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 0, 3),
     letterSpacing: '0.1714px',
   },
+  namespaceBox: {
+    display: 'flex',
+    gap: '1rem',
+    margin: theme.spacing(0.5, 0, 1),
+  },
   dashboardMetaDataItem: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -41,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
   infoKey: {
     fontSize: '0.825rem',
-    lineHeight: '0.9375rem',
+    lineHeight: '150%',
     color: theme.palette.highlight,
   },
   infoValue: {
@@ -64,14 +69,11 @@ const useStyles = makeStyles((theme) => ({
     gap: '0.5rem',
   },
   button: {
-    background: 'none',
-    boxShadow: 'none',
     minWidth: 0,
     minHeight: 0,
     padding: 0,
+    width: 'fit-content',
     '&:hover': {
-      background: 'none',
-      boxShadow: 'none',
       cursor: 'pointer !important',
     },
   },
@@ -87,8 +89,19 @@ export const FormGroupGrid = withStyles((theme) =>
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
       maxHeight: '7rem',
-      overflowY: 'scroll',
-      paddingLeft: theme.spacing(1),
+      overflowY: 'auto',
+      paddingLeft: theme.spacing(0.5),
+    },
+  })
+)(FormGroup);
+
+export const FormGroupApplicationsGrid = withStyles((theme) =>
+  createStyles({
+    root: {
+      display: 'grid',
+      maxHeight: '7rem',
+      overflowY: 'auto',
+      paddingLeft: theme.spacing(0.5),
     },
   })
 )(FormGroup);

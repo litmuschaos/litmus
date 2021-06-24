@@ -439,11 +439,13 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             )}
             className={classes.selectText}
           >
-            {dataSourceList.map((dataSource: ListDataSourceResponse) => (
-              <MenuItem key={dataSource.ds_id} value={dataSource.ds_id}>
-                {dataSource.ds_name}
-              </MenuItem>
-            ))}
+            {dataSourceList
+              .filter((dataSource) => dataSource.health_status === 'Active')
+              .map((dataSource: ListDataSourceResponse) => (
+                <MenuItem key={dataSource.ds_id} value={dataSource.ds_id}>
+                  {dataSource.ds_name}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 

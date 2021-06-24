@@ -39,6 +39,21 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
       dbID: '',
     });
 
+  // Function to convert UNIX time in format of dddd, DD MMM YYYY, HH:mm
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('dddd, DD MMM YYYY, HH:mm');
+    return resDate;
+  };
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const [deleteDashboard] = useMutation<boolean, DeleteDashboardInput>(
     DELETE_DASHBOARD,
     {
@@ -52,25 +67,6 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
       },
     }
   );
-
-  // Function to convert UNIX time in format of dddd, DD MMM YYYY, HH:mm
-  const formatDate = (date: string) => {
-    const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format('dddd, DD MMM YYYY, HH:mm');
-    return resDate;
-  };
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
@@ -95,40 +91,66 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
 
   return (
     <>
-      <StyledTableCell className={classes.dashboardName}>
+      <StyledTableCell className={classes.columnDivider}>
         <Typography
-          variant="body2"
-          align="center"
-          className={classes.tableData}
+          className={`${classes.tableObjects} ${classes.dashboardNameCol}`}
+          style={{ maxWidth: '10rem', fontWeight: 500, cursor: 'pointer' }}
+          onClick={() => {
+            onDashboardLoadRoutine().then(() => {
+              history.push({
+                pathname: '/analytics/application-dashboard',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            });
+          }}
         >
-          <strong>{data.db_name}</strong>
+          {data.db_name}
         </Typography>
       </StyledTableCell>
 
-      <StyledTableCell className={classes.tableHeader}>
+      <StyledTableCell className={classes.dividerPadding}>
         <Typography
-          variant="body2"
-          align="center"
-          className={classes.tableData}
+          className={classes.tableObjects}
+          style={{ maxWidth: '5rem' }}
         >
-          <strong>{data.cluster_name}</strong>
+          {data.cluster_name}
         </Typography>
       </StyledTableCell>
 
-      <StyledTableCell className={classes.tableHeader}>
-        <Typography variant="body2" align="center">
-          <strong>{data.db_type_name}</strong>
+      <StyledTableCell>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '7rem' }}
+        >
+          <img
+            src={`/icons/${data.db_type_id}_dashboard.svg`}
+            alt={data.db_type_name}
+            className={classes.inlineTypeIcon}
+          />
+          {data.db_type_name}
         </Typography>
       </StyledTableCell>
 
-      <StyledTableCell className={classes.tableHeader}>
-        <Typography variant="body2" align="center">
-          <strong>{data.ds_type}</strong>
+      <StyledTableCell>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '5rem' }}
+        >
+          <img
+            src="/icons/prometheus.svg"
+            alt="Prometheus"
+            className={classes.inlineIcon}
+          />
+          {data.ds_type}
         </Typography>
       </StyledTableCell>
 
-      <StyledTableCell className={classes.tableHeader}>
-        <Typography variant="body2" align="center">
+      <StyledTableCell>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '12.5rem' }}
+        >
+          <img src="/icons/calendarIcon.svg" alt="Calender" />
           {formatDate(data.updated_at)}
         </Typography>
       </StyledTableCell>
@@ -149,9 +171,19 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           keepMounted
           open={open}
           onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          getContentAnchorEl={null}
+          classes={{ paper: classes.menuList }}
         >
           <MenuItem
-            value="Analysis"
+            value="View"
             onClick={() => {
               onDashboardLoadRoutine().then(() => {
                 history.push({
@@ -164,14 +196,12 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           >
             <div className={classes.expDiv}>
               <img
-                src="/icons/analytics.svg"
-                alt="See Analytics"
+                src="/icons/viewAnalytics.svg"
+                alt="View"
                 className={classes.btnImg}
               />
               <Typography data-cy="openDashboard" className={classes.btnText}>
-                {t(
-                  'analyticsDashboardViews.kubernetesDashboard.table.seeAnalytics'
-                )}
+                {t('analyticsDashboardViews.kubernetesDashboard.table.view')}
               </Typography>
             </div>
           </MenuItem>
@@ -214,6 +244,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 dbID: data.db_id,
               });
               setOpenModal(true);
+              handleClose();
             }}
             className={classes.menuItem}
           >
@@ -223,7 +254,10 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 alt="Delete"
                 className={classes.btnImg}
               />
-              <Typography data-cy="deleteDashboard" className={classes.btnText}>
+              <Typography
+                data-cy="deleteDashboard"
+                className={`${classes.btnText} ${classes.deleteText}`}
+              >
                 Delete
               </Typography>
             </div>
