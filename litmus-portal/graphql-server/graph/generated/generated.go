@@ -734,6 +734,7 @@ type QueryResolver interface {
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	ListProjects(ctx context.Context) ([]*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
+	GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error)
 	GetWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error)
 	GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error)
 	ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error)
@@ -15276,7 +15277,6 @@ func (ec *executionContext) _Query_getHeatmapData(ctx context.Context, field gra
 	fc.Result = res
 	return ec.marshalNHeatmapData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx, field.Selections, res)
 }
-
 
 func (ec *executionContext) _Query_getWorkflowStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
