@@ -1038,19 +1038,19 @@ type TimeFrequency string
 
 const (
 	TimeFrequencyMonthly TimeFrequency = "Monthly"
-	TimeFrequencyWeekly  TimeFrequency = "Weekly"
+	TimeFrequencyDaily   TimeFrequency = "Daily"
 	TimeFrequencyHourly  TimeFrequency = "Hourly"
 )
 
 var AllTimeFrequency = []TimeFrequency{
 	TimeFrequencyMonthly,
-	TimeFrequencyWeekly,
+	TimeFrequencyDaily,
 	TimeFrequencyHourly,
 }
 
 func (e TimeFrequency) IsValid() bool {
 	switch e {
-	case TimeFrequencyMonthly, TimeFrequencyWeekly, TimeFrequencyHourly:
+	case TimeFrequencyMonthly, TimeFrequencyDaily, TimeFrequencyHourly:
 		return true
 	}
 	return false

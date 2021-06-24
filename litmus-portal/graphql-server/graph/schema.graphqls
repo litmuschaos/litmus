@@ -275,7 +275,7 @@ type Query {
     year: Int!
   ): [HeatmapData]! @authorized
 
-  getScheduledWorkflowStats(
+  getWorkflowStats(
     project_id: ID!
     filter: TimeFrequency!
     show_workflow_runs: Boolean!

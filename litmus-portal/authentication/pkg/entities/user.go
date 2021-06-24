@@ -6,21 +6,20 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 //User contains the user information
 type User struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
-	UserName  string             `bson:"username,omitempty" json:"username"`
-	Password  string             `bson:"password,omitempty" json:"password,omitempty"`
-	Email     string             `bson:"email,omitempty" json:"email,omitempty"`
-	Name      string             `bson:"name,omitempty" json:"name,omitempty"`
-	Role      Role               `bson:"role,omitempty" json:"role"`
-	LoggedIn  bool               `bson:"logged_in,omitempty" json:"logged_in,omitempty"`
-	CreatedAt *time.Time         `bson:"created_at,omitempty" json:"created_at,omitempty"`
-	UpdatedAt *time.Time         `bson:"updated_at,omitempty" json:"updated_at,omitempty"`
-	RemovedAt *time.Time         `bson:"removed_at,omitempty" json:"removed_at,omitempty"`
+	ID        string     `bson:"_id,omitempty" json:"_id"`
+	UserName  string     `bson:"username,omitempty" json:"username"`
+	Password  string     `bson:"password,omitempty" json:"password,omitempty"`
+	Email     string     `bson:"email,omitempty" json:"email,omitempty"`
+	Name      string     `bson:"name,omitempty" json:"name,omitempty"`
+	Role      Role       `bson:"role,omitempty" json:"role"`
+	LoggedIn  bool       `bson:"logged_in,omitempty" json:"logged_in,omitempty"`
+	CreatedAt *time.Time `bson:"created_at,omitempty" json:"created_at,omitempty"`
+	UpdatedAt *time.Time `bson:"updated_at,omitempty" json:"updated_at,omitempty"`
+	RemovedAt *time.Time `bson:"removed_at,omitempty" json:"removed_at,omitempty"`
 }
 
 //UserPassword defines structure for password related requests
@@ -52,7 +51,7 @@ func (user *User) GetSignedJWT() (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS512)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["uid"] = user.ID.Hex()
+	claims["uid"] = user.ID
 	claims["role"] = user.Role
 	claims["username"] = user.UserName
 	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
