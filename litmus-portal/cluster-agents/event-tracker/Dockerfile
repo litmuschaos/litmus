@@ -16,13 +16,14 @@ RUN go env
 RUN CGO_ENABLED=0 go build -o /output/event-tracker -v
 
 # DEPLOY STAGE
-FROM alpine:3.12.0
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4
 
 LABEL maintainer="LitmusChaos"
 
 COPY --from=builder /output/event-tracker /
 
-RUN addgroup -S litmus && adduser -S -G litmus 1001
-USER 1001
+ENV USER_UID=1001
 
-CMD ["./event-tracker"]
+ENTRYPOINT ["./event-tracker"]
+
+USER ${USER_UID}

@@ -15,17 +15,18 @@ ENV GOOS=${TARGETOS} \
 RUN go env
 RUN CGO_ENABLED=0 go build -o /output/server -v
 
-## DEPLOY STAGE
-FROM alpine:latest
+# DEPLOY STAGE
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4
 
 LABEL maintainer="LitmusChaos"
 
 COPY --from=builder /output/server /
 COPY --from=builder /gql-server/manifests/. /manifests
 
-RUN addgroup -S litmus && adduser -S -G litmus 1001 
-USER 1001
+ENV USER_UID=1001
 
-CMD ["./server"]
+ENTRYPOINT ["./server"]
+
+USER ${USER_UID}
 
 EXPOSE 8080
