@@ -55,14 +55,22 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(4),
     overflow: 'hidden',
+    display: 'grid',
+    placeContent: 'center',
   },
   heatmapAreaHeading: {
     display: 'flex',
     alignItems: 'center',
+    marginBottom: theme.spacing(5),
   },
-  heatmap: {
-    display: 'grid',
-    placeContent: 'center',
+  formControlParent: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: theme.spacing(0, 0, 3, 0),
+  },
+  formControl: {
+    width: '7.5rem',
   },
   heatmapBorder: {
     minHeight: '20rem',
@@ -75,11 +83,14 @@ const useStyles = makeStyles((theme) => ({
     height: '10rem',
     position: 'relative',
   },
-  formControlParent: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: theme.spacing(0, 0, 3, 0),
+  heatmapLegend:{
+    display:'flex',
+    marginTop: theme.spacing(3.75),
+    float: 'right',
+
+    '& img': {
+      margin: theme.spacing(0, 1, 0, 1),
+    },
   },
   noData: {
     height: '25vh',

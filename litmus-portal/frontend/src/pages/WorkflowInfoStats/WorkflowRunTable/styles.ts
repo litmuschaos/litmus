@@ -3,33 +3,23 @@ import {
   makeStyles,
   TableCell,
   Theme,
-  withStyles,
+  withStyles
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100%',
-    width: '100%',
+    marginTop: theme.spacing(4.75)
   },
 
   analyticsDiv: {
     paddingRight: theme.spacing(3.75),
   },
 
-  tableFix: {
-    width: '100%',
-  },
-
   headerSection: {
-    width: '100%',
     display: 'flex',
-    flexDirection: 'row',
-    alignContent: 'center',
     alignItems: 'center',
-    justifyContent: 'center',
     height: '6rem',
-    borderTop: `1px solid ${theme.palette.border.main}`,
-    backgroundColor: theme.palette.background.paper,
+    // borderTop: `1px solid ${theme.palette.border.main}`,
   },
 
   search: {
@@ -44,18 +34,6 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.background.paper,
     minHeight: '25rem',
-    '&::-webkit-scrollbar': {
-      width: '0.2em',
-    },
-    '&::-webkit-scrollbar-track': {
-      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.primary.main,
-    },
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
   },
 
   tableHead: {
@@ -65,60 +43,15 @@ const useStyles = makeStyles((theme) => ({
 
   testName: {
     borderRight: `1px solid ${theme.palette.border.main}`,
-    paddingLeft: theme.spacing(10),
-  },
-
-  testNameHead: {
-    marginTop: theme.spacing(2.5),
-  },
-
-  testResultHead: {
-    marginTop: theme.spacing(2.5),
-    paddingLeft: theme.spacing(2),
-  },
-
-  tableObjects: {
-    paddingLeft: theme.spacing(3.75),
-  },
-
-  headSpacing: {
-    paddingLeft: theme.spacing(5.5),
   },
 
   nameContent: {
     display: 'flex',
-    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   testWeightPointHead: {
     marginTop: theme.spacing(0.5),
-  },
-
-  nameContentIcons: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-
-  markerIconDown: {
-    color: theme.palette.text.hint,
-    paddingTop: theme.spacing(0.5),
-    margin: 0,
-  },
-
-  markerIconUp: {
-    color: theme.palette.text.hint,
-    paddingTop: theme.spacing(0.5),
-    margin: 0,
-  },
-
-  tableDataStatus: {
-    paddingLeft: theme.spacing(7),
-  },
-
-  reliabiltyData: {
-    width: '8.125rem',
-    paddingLeft: theme.spacing(4),
   },
 
   progressBar: {
@@ -128,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
   paginationArea: {
     width: '100%',
     display: 'flex',
-    flexDirection: 'row',
     alignContent: 'space-between',
     justifyContent: 'space-between',
     height: '4.5rem',
@@ -143,7 +75,6 @@ const useStyles = makeStyles((theme) => ({
 
   toolTipGroup: {
     display: 'flex',
-    flexDirection: 'row',
     alignContent: 'flex-start',
     justifyContent: 'flex-start',
   },

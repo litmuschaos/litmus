@@ -5,14 +5,14 @@ import {
   MenuItem,
   Select,
   Typography,
-  useTheme,
+  useTheme
 } from '@material-ui/core';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
 import {
   ButtonFilled,
   CalendarHeatmap,
-  CalendarHeatmapTooltipProps,
+  CalendarHeatmapTooltipProps
 } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -24,11 +24,11 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import { GET_HEATMAP_DATA, WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
 import {
   HeatmapDataResponse,
-  HeatmapDataVars,
+  HeatmapDataVars
 } from '../../models/graphql/workflowData';
 import {
   ListWorkflowsInput,
-  ScheduledWorkflows,
+  ScheduledWorkflows
 } from '../../models/graphql/workflowListData';
 import timeDifferenceForDate from '../../utils/datesModifier';
 import { getProjectID } from '../../utils/getSearchParams';
@@ -97,7 +97,6 @@ const WorkflowInfoStats: React.FC = () => {
   const [dataCheck, setDataCheck] = useState<boolean>(false);
 
   const [workflowRunDate, setworkflowRunDate] = useState<number>(0);
-  // console.log(heatmapData);
   return (
     <Scaffold>
       <BackButton />
@@ -227,14 +226,13 @@ const WorkflowInfoStats: React.FC = () => {
           <Typography className={classes.sectionHeading}>Analytics</Typography>
           {/* Year selection filter */}
         </div>
-        <div className={classes.heatmap}>
           <div className={classes.heatmapBorder}>
             <div className={classes.formControlParent}>
               <Typography>
                 Total runs till date:{' '}
                 {data?.ListWorkflow.workflows[0].workflow_runs?.length}
               </Typography>
-              <FormControl variant="outlined" focused>
+              <FormControl className={classes.formControl} variant="outlined" focused>
                 <InputLabel />
                 <Select
                   value={year}
@@ -262,7 +260,6 @@ const WorkflowInfoStats: React.FC = () => {
                   valueThreshold={valueThreshold}
                   CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
                   handleBinClick={(bin) => {
-                    // console.log(bin)
                     if (bin.bin.workflowRunDetail.no_of_runs) {
                       setShowStackBar(true);
                       setDataCheck(false);
@@ -276,6 +273,19 @@ const WorkflowInfoStats: React.FC = () => {
                 />
               )}
             </div>
+            {/* Legend */}
+            <div className={classes.heatmapLegend}>
+              <Typography>
+                Resiliency: 
+              </Typography>
+              <Typography className={classes.infoHint}>
+                Less
+              </Typography>
+              <img src='/icons/resiliencyScoreIndicators.svg' alt='score legend' />
+              <Typography className={classes.infoHint}>
+                More
+              </Typography>
+          </div>
           </div>
           {showStackBar && (
             <StackedBarGraph
@@ -290,7 +300,6 @@ const WorkflowInfoStats: React.FC = () => {
               </Center>
             </div>
           )}
-        </div>
       </div>
     </Scaffold>
   );

@@ -38,33 +38,25 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
       <TableRow className={classes.tableHead}>
         <StyledTableCell className={classes.testName}>
           <div className={classes.nameContent}>
-            <div className={classes.testNameHead}>
               <b>{t('analytics.workflowRunDetailsTable.tableHead0')}</b>&nbsp;
-            </div>
           </div>
         </StyledTableCell>
-        <StyledTableCell className={classes.testName}>
+        <StyledTableCell>
           <div className={classes.nameContent}>
-            <div className={classes.testNameHead}>
               <b>{t('analytics.workflowRunDetailsTable.tableHead1')}</b>&nbsp;
-            </div>
           </div>
         </StyledTableCell>
 
-        <StyledTableCell className={classes.headSpacing}>
+        <StyledTableCell>
           <div className={classes.nameContent}>
-            <div className={classes.testResultHead}>
               <b>{t('analytics.workflowRunDetailsTable.tableHead2')}</b>&nbsp;
-            </div>
           </div>
         </StyledTableCell>
 
-        <StyledTableCell className={classes.headSpacing}>
+        <StyledTableCell>
           <div className={classes.nameContent}>
-            <div className={classes.testNameHead}>
               <b>{t('analytics.workflowRunDetailsTable.tableHead3')}</b>&nbsp;
-            </div>
-            <div className={classes.nameContentIcons}>
+            <div>
               <IconButton
                 aria-label="sort run ascending"
                 size="small"
@@ -77,7 +69,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
+                <ExpandLessTwoToneIcon />
               </IconButton>
               <IconButton
                 aria-label="sort run descending"
@@ -91,17 +83,15 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   });
                 }}
               >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
+                <ExpandMoreTwoToneIcon />
               </IconButton>
             </div>
           </div>
         </StyledTableCell>
-        <StyledTableCell className={classes.headSpacing}>
+        <StyledTableCell>
           <div className={classes.nameContent}>
-            <div className={classes.testNameHead}>
               <b>{t('analytics.workflowRunDetailsTable.tableHead4')}</b>&nbsp;
-            </div>
-            <div className={classes.nameContentIcons}>
+            <div>
               <IconButton
                 aria-label="sort run ascending"
                 size="small"
@@ -114,7 +104,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
+                <ExpandLessTwoToneIcon />
               </IconButton>
               <IconButton
                 aria-label="sort run descending"
@@ -128,17 +118,15 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   });
                 }}
               >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
+                <ExpandMoreTwoToneIcon />
               </IconButton>
             </div>
           </div>
         </StyledTableCell>
-        <StyledTableCell className={classes.headSpacing}>
+        <StyledTableCell>
           <div className={classes.nameContent}>
-            <div className={classes.testNameHead}>
               <b>{t('analytics.workflowRunDetailsTable.tableHead5')}</b>&nbsp;
-            </div>
-            <div className={classes.nameContentIcons}>
+            <div>
               <IconButton
                 aria-label="sort run ascending"
                 size="small"
@@ -151,7 +139,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
+                <ExpandLessTwoToneIcon />
               </IconButton>
               <IconButton
                 aria-label="sort run descending"
@@ -165,7 +153,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   });
                 }}
               >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
+                <ExpandMoreTwoToneIcon />
               </IconButton>
             </div>
           </div>

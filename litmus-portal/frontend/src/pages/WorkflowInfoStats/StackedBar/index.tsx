@@ -4,7 +4,7 @@ import {
   BarDateValue,
   LineMetricSeries,
   StackBar,
-  StackBarMetric,
+  StackBarMetric
 } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -13,7 +13,7 @@ import Center from '../../../containers/layouts/Center';
 import { WORKFLOW_DETAILS } from '../../../graphql';
 import {
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataVars
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { STATUS_RUNNING } from '../../ApplicationDashboard/constants';
@@ -60,9 +60,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
       },
     },
     onCompleted: (data) => {
-      console.log(data);
       data.getWorkflowRuns.workflow_runs.map((wfrun) => {
-        console.log(wfrun);
         wfrun.phase !== STATUS_RUNNING &&
           stackBarData.push({
             id: wfrun.workflow_run_id,
@@ -106,10 +104,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     if (date) return resDate;
     return 'Date not available';
   };
-  console.log('click', showTable);
 
-  // console.log('bar data', graphData);
-  // console.log('open', openSeriesData);
   return (
     <div>
       <Typography className={classes.stackbarHeader}>
@@ -122,35 +117,52 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
       <Typography className={classes.stackbarHelperText}>
         Click on a bar to see the details of the workflow run
       </Typography>
+      {/* Border Starts */}
+      <div style={{border: `1px solid ${theme.palette.border.main}`}}>
+        {/* Stackbar parent */}
       <div
         style={{
           width: '64rem',
-          height: '21.68rem',
-          margin: theme.spacing(3, 0),
-          border: `1px solid ${theme.palette.border.main}`,
           padding: theme.spacing(2.5, 3.5, 2.5, 0),
         }}
       >
+        {/* Stackbar Area */}
         {loading && openSeriesData.data.length <= 0 && graphData.length <= 0 ? (
           <Center>
             <Loader />
           </Center>
         ) : (
+          <div style={{
+            width: '62rem',
+            height: '20rem',
+          }}>
           <StackBar
             openSeries={openSeriesData}
             barSeries={graphData}
             unit="%"
             yLabel="Chaos"
             yLabelOffset={60}
-            // initialxAxisDate={1624182897000}
             xAxistimeFormat="HH"
             handleBarClick={(barData: any) => {
               setShowTable(true);
               setWorkflowRunID(barData as string);
-              console.log('click', barData);
             }}
           />
+      </div>
         )}
+      </div>
+      {/* Legend */}
+      <div className={classes.stackbarLegend}>
+        <img src='/icons/failedTestIndicator.svg' alt='Failed legend' />
+          <Typography>
+          Failed test
+          </Typography>
+          <img src='/icons/passedTestIndicator.svg' alt='Passed legend' />
+          <Typography>
+          Passed test
+          </Typography>
+      </div>
+      {/* Border Ends */}
       </div>
       {showTable ? (
         <WorkflowRunTable

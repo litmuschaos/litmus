@@ -1,12 +1,12 @@
 import { useQuery } from '@apollo/client';
 import {
-  Table,
+  Paper, Table,
   TableBody,
   TableCell,
   TableContainer,
   TablePagination,
   TableRow,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import moment from 'moment';
 import { default as React, useState } from 'react';
@@ -19,12 +19,12 @@ import {
   Pagination,
   Workflow,
   WorkflowDataVars,
-  WorkflowRunFilterInput,
+  WorkflowRunFilterInput
 } from '../../../models/graphql/workflowData';
 import {
   ListWorkflowsInput,
   ScheduledWorkflows,
-  WeightageMap,
+  WeightageMap
 } from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { sortNumAsc, sortNumDesc } from '../../../utils/sort';
@@ -193,7 +193,6 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     skip: weightageDetail ? false : true,
     fetchPolicy: 'cache-and-network',
   });
-  console.log('wf', wfRunData);
 
   const payload: WorkFlowTests[] = wfRunData
     ? wfRunData
@@ -287,12 +286,8 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     setPopAnchorEl(event.currentTarget);
   };
 
-  console.log('pay', payload);
   return (
-    <>
-      <div className={classes.root}>
-        <div className={classes.tableFix}>
-          <div>
+      <Paper elevation={2} className={classes.root}>
             <section className="Heading section">
               <TableToolBar
                 popAnchorEl={popAnchorEl}
@@ -340,7 +335,6 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
               <Table aria-label="simple table">
                 <TableHeader
                   callBackToSort={(sortConfigurations: SortData) => {
-                    console.log(sortConfigurations);
                     setFilter({
                       ...filter,
                       sortData: sortConfigurations,
@@ -393,10 +387,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
                 })
               }
             />
-          </div>
-        </div>
-      </div>
-    </>
+      </Paper>
   );
 };
 

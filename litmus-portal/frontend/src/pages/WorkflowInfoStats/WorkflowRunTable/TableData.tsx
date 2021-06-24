@@ -36,12 +36,12 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <strong>{data.test_name}</strong>
         </Typography>
       </StyledTableCell>
-      <StyledTableCell className={classes.testName}>
+      <StyledTableCell>
         <Typography variant="body2">
           <strong>{data.exp_name}</strong>
         </Typography>
       </StyledTableCell>
-      <StyledTableCell className={classes.tableDataStatus}>
+      <StyledTableCell>
         <ExperimentStatus
           status={
             data.test_result !== 'Awaited' && data.test_result !== 'N/A'
@@ -52,7 +52,6 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </StyledTableCell>
 
       <StyledTableCell>
-        <div className={classes.reliabiltyData}>
           <Typography className={classes.reliabilityDataTypography}>
             {data.test_weight} Points
           </Typography>
@@ -63,25 +62,21 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
               isInTable
             />
           </div>
-        </div>
       </StyledTableCell>
 
       <StyledTableCell>
-        <div className={classes.reliabiltyData}>
+        
           <Typography>{data.resulting_points} Points</Typography>
           <div className={classes.progressBar}>
             <LinearProgressBar width={0.2} value={data.resulting_points ?? 0} />
           </div>
-        </div>
       </StyledTableCell>
 
       <StyledTableCell>
-        <Typography variant="body2" className={classes.tableObjects}>
+        <Typography>
           {formatDate(data.last_run)}
         </Typography>
       </StyledTableCell>
-
-      <StyledTableCell />
     </>
   );
 };
