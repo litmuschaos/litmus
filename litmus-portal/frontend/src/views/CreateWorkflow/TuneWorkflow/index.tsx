@@ -272,13 +272,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
    * Index DB Fetching for extracting selected Button and Workflow Details
    */
   const getSelectedWorkflowDetails = () => {
-    localforage.getItem('workflow').then((workflow) =>
+    localforage.getItem('workflow').then((workflow) => {
       setWorkflow({
         name: (workflow as WorkflowDetailsProps).name,
         crd: (workflow as WorkflowDetailsProps).CRDLink,
         description: (workflow as WorkflowDetailsProps).description,
-      })
-    );
+      });
+    });
     localforage.getItem('selectedScheduleOption').then((value) => {
       /**
        * Setting default data when MyHub is selected
@@ -331,7 +331,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   useEffect(() => {
     getSelectedWorkflowDetails();
-  }, []);
+  }, [manifest]);
 
   /**
    * Graphql Query for fetching Engine YAML

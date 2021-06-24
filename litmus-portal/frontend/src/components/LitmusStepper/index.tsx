@@ -1,4 +1,11 @@
-import { Paper, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
+import {
+  Paper,
+  Step,
+  StepLabel,
+  Stepper,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
 import clsx from 'clsx';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
@@ -77,11 +84,23 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
 
       {/* Stepper Actions */}
       <div className={classes.stepperActions}>
-        {activeStep > 0 && (
+        {activeStep === 2 ? (
+          <Tooltip
+            title="All selected Workflow Data will be lost"
+            placement="top"
+            leaveDelay={300}
+          >
+            <div>
+              <ButtonOutlined onClick={handleBack}>
+                <Typography>{t('workflowStepper.back')}</Typography>
+              </ButtonOutlined>
+            </div>
+          </Tooltip>
+        ) : activeStep > 0 ? (
           <ButtonOutlined onClick={handleBack}>
             <Typography>{t('workflowStepper.back')}</Typography>
           </ButtonOutlined>
-        )}
+        ) : null}
         {moreStepperActions}
         <div className={classes.endAction}>
           {activeStep !== steps.length - 1 ? (
