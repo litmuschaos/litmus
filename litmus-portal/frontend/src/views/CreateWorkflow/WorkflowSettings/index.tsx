@@ -118,6 +118,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
             },
           });
         });
+        workflowAction.setWorkflowManifest({ manifest: '' });
       }
       if ((value as ChooseWorkflowRadio).selected === 'B') {
         workflowAction.setWorkflowManifest({ manifest: '' });

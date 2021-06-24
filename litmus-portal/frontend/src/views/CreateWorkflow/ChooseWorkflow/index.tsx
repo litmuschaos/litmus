@@ -50,14 +50,20 @@ const ChooseWorkflow = forwardRef((_, ref) => {
     }
   };
 
+  useEffect(() => {
+    workflowAction.setWorkflowManifest({ manifest: '' });
+  }, []);
+
   function onNext() {
     if (selected === '') {
       alert.changeAlertState(true); // No Workflow Type has been selected and user clicked on Next
       return false;
     }
-    if (id === undefined) {
-      alert.changeAlertState(true);
-      return false;
+    if (selected === 'A' || selected === 'B') {
+      if (id === undefined) {
+        alert.changeAlertState(true);
+        return false;
+      }
     }
     if (selected === 'D' && workflowDetails === '') {
       alert.changeAlertState(true);
@@ -66,13 +72,6 @@ const ChooseWorkflow = forwardRef((_, ref) => {
     alert.changeAlertState(false);
     return true;
   }
-
-  useEffect(() => {
-    /**
-     * Removes the workflow details if already present
-     */
-    localforage.removeItem('workflow');
-  }, []);
 
   const pickedExperiment = (subExpNumber: string) => {
     setSelectedID(subExpNumber);

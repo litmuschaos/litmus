@@ -96,7 +96,7 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
               </ButtonOutlined>
             </div>
           </Tooltip>
-        ) : activeStep > 0 && activeStep !== 2 ? (
+        ) : activeStep > 0 ? (
           <ButtonOutlined onClick={handleBack}>
             <Typography>{t('workflowStepper.back')}</Typography>
           </ButtonOutlined>
