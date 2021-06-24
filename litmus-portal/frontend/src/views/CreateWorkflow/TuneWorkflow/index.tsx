@@ -273,11 +273,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
    */
   const getSelectedWorkflowDetails = () => {
     localforage.getItem('workflow').then((workflow) => {
-      setWorkflow({
-        name: (workflow as WorkflowDetailsProps).name,
-        crd: (workflow as WorkflowDetailsProps).CRDLink,
-        description: (workflow as WorkflowDetailsProps).description,
-      });
+      if (workflow) {
+        setWorkflow({
+          name: (workflow as WorkflowDetailsProps).name,
+          crd: (workflow as WorkflowDetailsProps).CRDLink,
+          description: (workflow as WorkflowDetailsProps).description,
+        });
+      }
     });
     localforage.getItem('selectedScheduleOption').then((value) => {
       /**

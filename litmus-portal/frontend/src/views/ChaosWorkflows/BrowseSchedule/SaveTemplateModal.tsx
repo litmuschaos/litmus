@@ -14,6 +14,7 @@ import useStyles from './styles';
 import { getProjectID } from '../../../utils/getSearchParams';
 import Loader from '../../../components/Loader';
 import { constants } from '../../../constants';
+import { validateWorkflowName } from '../../../utils/validate';
 
 interface SaveTemplateModalProps {
   closeTemplate: () => void;
@@ -89,9 +90,14 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
         label="Name of the template"
         value={templateName}
         data-cy="WorkflowName"
-        helperText=""
         required
-        onChange={(e) => setTemplateName(e.target.value)}
+        onChange={(e) => setTemplateName(e.target.value.toLowerCase())}
+        helperText={
+          validateWorkflowName(templateName)
+            ? t('createWorkflow.chooseWorkflow.validate')
+            : ''
+        }
+        variant={validateWorkflowName(templateName) ? 'error' : 'primary'}
         className={classes.InputFieldTemplate}
       />
       <br />
@@ -133,6 +139,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
               cloneResult.type === constants.success ||
               templateName.trim().length === 0 ||
               templateDesc.trim().length === 0 ||
+              validateWorkflowName(templateName) ||
               !yamlValid
             }
           >
