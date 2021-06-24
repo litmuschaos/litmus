@@ -109,6 +109,8 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [isEditorSaveAlertOpen, setIsEditorSaveAlertOpen] = useState(false);
   const [yamlValid, setYamlValid] = useState(true);
   const [editSequence, setEditSequence] = useState(false);
+  const [isVisualizationComplete, setIsVisualizationComplete] =
+    useState<boolean>(false);
   const [steps, setSteps] = useState<StepType>({});
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
@@ -208,6 +210,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
           setSelectedRadio((value as ChooseWorkflowRadio).selected)
       );
   }, []);
+
+  const handleEditSequenceRender = (state: boolean) => {
+    setIsVisualizationComplete(state);
+  };
 
   /**
    * Default Manifest Template
@@ -782,7 +788,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
           <div className={classes.experimentWrapper}>
             {/* Edit Button */}
             {manifest !== '' && (
-              <ButtonOutlined onClick={() => setEditSequence(true)}>
+              <ButtonOutlined
+                disabled={isVisualizationComplete}
+                onClick={() => setEditSequence(true)}
+              >
                 <img src="./icons/editsequence.svg" alt="Edit Sequence" />{' '}
                 <Width width="0.5rem" />
                 {t('createWorkflow.tuneWorkflow.editSequence')}
@@ -817,6 +826,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
                 <Row>
                   <Width width="40%">
                     <WorkflowPreview
+                      editSequenceLoader={handleEditSequenceRender}
                       SequenceSteps={steps}
                       isCustomWorkflow={isCustomWorkflow}
                     />
@@ -838,7 +848,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
             <Row>
               {/* Argo Workflow Graph */}
               <Width width="30%">
-                <WorkflowPreview isCustomWorkflow={isCustomWorkflow} />
+                <WorkflowPreview
+                  editSequenceLoader={handleEditSequenceRender}
+                  isCustomWorkflow={isCustomWorkflow}
+                />
               </Width>
               {/* Workflow Table */}
               <Width width="70%">

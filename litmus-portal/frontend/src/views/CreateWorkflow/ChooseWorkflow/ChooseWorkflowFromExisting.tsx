@@ -153,6 +153,7 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
                               variables: { data: templateData.template_id },
                             });
                           }}
+                          className={classes.deleteButton}
                         >
                           <img
                             alt="delete"
