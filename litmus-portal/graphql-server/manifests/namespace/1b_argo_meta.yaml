@@ -8,7 +8,7 @@ data:
   config: |
     containerRuntimeExecutor: #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
     executor:
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       resources:
         limits:
           cpu: 0.15
