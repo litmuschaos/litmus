@@ -5268,13 +5268,13 @@ input Pagination {
   limit: Int!
 }
 
-enum WorkflowRunSortingField {
+enum WorkflowSortingField {
   Name
   Time
 }
 
 input WorkflowRunSortInput {
-  field: WorkflowRunSortingField!
+  field: WorkflowSortingField!
   descending: Boolean
 }
 
@@ -5324,10 +5324,6 @@ input ListWorkflowsInput {
   pagination: Pagination
   sort: WorkflowSortInput
   filter: WorkflowFilterInput
-}
-
-enum WorkflowSortingField {
-  Name
 }
 
 input WorkflowSortInput {
@@ -24913,7 +24909,7 @@ func (ec *executionContext) unmarshalInputWorkflowRunSortInput(ctx context.Conte
 		switch k {
 		case "field":
 			var err error
-			it.Field, err = ec.unmarshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx, v)
+			it.Field, err = ec.unmarshalNWorkflowSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortingField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -30636,15 +30632,6 @@ func (ec *executionContext) marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋ
 
 func (ec *executionContext) unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunInput(ctx context.Context, v interface{}) (model.WorkflowRunInput, error) {
 	return ec.unmarshalInputWorkflowRunInput(ctx, v)
-}
-
-func (ec *executionContext) unmarshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx context.Context, v interface{}) (model.WorkflowRunSortingField, error) {
-	var res model.WorkflowRunSortingField
-	return res, res.UnmarshalGQL(v)
-}
-
-func (ec *executionContext) marshalNWorkflowRunSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunSortingField(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRunSortingField) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) unmarshalNWorkflowRunStatsRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunStatsRequest(ctx context.Context, v interface{}) (model.WorkflowRunStatsRequest, error) {

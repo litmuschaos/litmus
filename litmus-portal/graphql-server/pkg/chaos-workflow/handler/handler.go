@@ -54,7 +54,7 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 	return &model.ChaosWorkFlowResponse{
 		WorkflowID:          *input.WorkflowID,
 		CronSyntax:          input.CronSyntax,
-		WorkflowName:        input.WorkflowName,
+		WorkflowName:        input.WorkflowName,	
 		WorkflowDescription: input.WorkflowDescription,
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 	}, nil
@@ -306,7 +306,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	var sortStage bson.D
 
 	switch {
-	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldTime:
+	case input.Sort != nil && input.Sort.Field == model.WorkflowSortingFieldTime:
 		// Sorting based on LastUpdated time
 		if input.Sort.Descending != nil && *input.Sort.Descending {
 			sortStage = bson.D{
@@ -321,7 +321,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 				}},
 			}
 		}
-	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldName:
+	case input.Sort != nil && input.Sort.Field == model.WorkflowSortingFieldName:
 		// Sorting based on WorkflowName time
 		if input.Sort.Descending != nil && *input.Sort.Descending {
 			sortStage = bson.D{
@@ -491,8 +491,25 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 	var sortStage bson.D
 
 	switch {
+
+	case workflowInput.Sort != nil && workflowInput.Sort.Field == model.WorkflowSortingFieldTime:
+		// Sorting based on LastUpdated time
+		if workflowInput.Sort.Descending != nil && *workflowInput.Sort.Descending {
+			sortStage = bson.D{
+				{"$sort", bson.D{
+					{"updated_at", -1},
+				}},
+			}
+		} else {
+			sortStage = bson.D{
+				{"$sort", bson.D{
+					{"updated_at", 1},
+				}},
+			}
+		}
+
 	case workflowInput.Sort != nil && workflowInput.Sort.Field == model.WorkflowSortingFieldName:
-		// Sorting based on WorkflowName time
+		// Sorting based on WorkflowName
 		if workflowInput.Sort.Descending != nil && *workflowInput.Sort.Descending {
 			sortStage = bson.D{
 				{"$sort", bson.D{
