@@ -22,13 +22,13 @@ input Pagination {
   limit: Int!
 }
 
-enum WorkflowRunSortingField {
+enum WorkflowSortingField {
   Name
   Time
 }
 
 input WorkflowRunSortInput {
-  field: WorkflowRunSortingField!
+  field: WorkflowSortingField!
   descending: Boolean
 }
 
@@ -78,10 +78,6 @@ input ListWorkflowsInput {
   pagination: Pagination
   sort: WorkflowSortInput
   filter: WorkflowFilterInput
-}
-
-enum WorkflowSortingField {
-  Name
 }
 
 input WorkflowSortInput {
