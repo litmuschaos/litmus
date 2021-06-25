@@ -24,11 +24,13 @@ interface StepType {
 interface WorkflowPreviewProps {
   isCustomWorkflow: boolean;
   SequenceSteps?: StepType;
+  editSequenceLoader: (state: boolean) => void;
 }
 
 const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
   isCustomWorkflow,
   SequenceSteps,
+  editSequenceLoader,
 }) => {
   let steps: Steps[][] = [];
   const updatedSteps: Steps[][] = [];
@@ -207,6 +209,12 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
       links: [...data.links],
     });
   }, [manifest, SequenceSteps]);
+
+  if (graphData.nodes.length > 0) {
+    editSequenceLoader(false);
+  } else {
+    editSequenceLoader(true);
+  }
 
   return graphData.nodes.length ? (
     <DagreGraph
