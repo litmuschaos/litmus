@@ -59,8 +59,10 @@ const useStyles = makeStyles((theme) => ({
     '& p': {
       fontSize: '0.8125rem',
       fontWeight: 'bold',
+      color: theme.palette.text.hint,
     },
     '& th': {
+      color: theme.palette.text.hint,
       backgroundColor: theme.palette.cards.background,
     },
   },
