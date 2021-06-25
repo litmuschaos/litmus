@@ -189,11 +189,7 @@ const BrowseSchedule: React.FC = () => {
             }
           />
 
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-            focused
-          >
+          <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel className={classes.selectText}>Name</InputLabel>
             <Select
               value={filters.suspended}
@@ -219,12 +215,7 @@ const BrowseSchedule: React.FC = () => {
           </FormControl>
 
           {/* Select Cluster */}
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-            color="primary"
-            focused
-          >
+          <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel className={classes.selectText}>Target Agent</InputLabel>
             <Select
               value={filters.cluster_name}

@@ -192,15 +192,11 @@ const useStyles = makeStyles((theme) => ({
   },
 
   dateRangeDefault: {
-    height: '2rem',
-    textDecoration: 'none',
-    textTransform: 'none',
     padding: theme.spacing(1),
   },
 
   addButton: {
-    marginRight: theme.spacing(3),
-    marginLeft: theme.spacing(1),
+    margin: theme.spacing(0, 2),
   },
 
   icon: {
