@@ -4,7 +4,7 @@ import {
   BarDateValue,
   LineMetricSeries,
   StackBar,
-  StackBarMetric
+  StackBarMetric,
 } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -13,7 +13,7 @@ import Center from '../../../containers/layouts/Center';
 import { WORKFLOW_DETAILS } from '../../../graphql';
 import {
   Workflow,
-  WorkflowDataVars
+  WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { STATUS_RUNNING } from '../../ApplicationDashboard/constants';
@@ -60,37 +60,40 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
       },
     },
     onCompleted: (data) => {
-      data.getWorkflowRuns.workflow_runs.map((wfrun) => {
-        wfrun.phase !== STATUS_RUNNING &&
-          stackBarData.push({
-            id: wfrun.workflow_run_id,
+      if (data.getWorkflowRuns.workflow_runs) {
+        data.getWorkflowRuns.workflow_runs.forEach((wfrun) => {
+          wfrun.phase !== STATUS_RUNNING &&
+            stackBarData.push({
+              id: wfrun.workflow_run_id,
+              date: Number(wfrun.last_updated) * 1000,
+              passPercentage:
+                wfrun.total_experiments &&
+                wfrun.experiments_passed !== undefined &&
+                wfrun.total_experiments > 0
+                  ? (wfrun.experiments_passed * 100) / wfrun.total_experiments
+                  : 0,
+              failPercentage:
+                wfrun.total_experiments &&
+                wfrun.experiments_passed !== undefined &&
+                wfrun.total_experiments > 0
+                  ? ((wfrun.total_experiments - wfrun.experiments_passed) *
+                      100) /
+                    wfrun.total_experiments
+                  : 0,
+              passCount: wfrun.experiments_passed ?? 0,
+              failCount:
+                wfrun.total_experiments &&
+                wfrun.experiments_passed !== undefined &&
+                wfrun.total_experiments > 0
+                  ? wfrun.total_experiments - wfrun.experiments_passed
+                  : 0,
+            });
+          openseries.push({
             date: Number(wfrun.last_updated) * 1000,
-            passPercentage:
-              wfrun.total_experiments &&
-              wfrun.experiments_passed !== undefined &&
-              wfrun.total_experiments > 0
-                ? (wfrun.experiments_passed * 100) / wfrun.total_experiments
-                : 0,
-            failPercentage:
-              wfrun.total_experiments &&
-              wfrun.experiments_passed !== undefined &&
-              wfrun.total_experiments > 0
-                ? ((wfrun.total_experiments - wfrun.experiments_passed) * 100) /
-                  wfrun.total_experiments
-                : 0,
-            passCount: wfrun.experiments_passed ?? 0,
-            failCount:
-              wfrun.total_experiments &&
-              wfrun.experiments_passed !== undefined &&
-              wfrun.total_experiments > 0
-                ? wfrun.total_experiments - wfrun.experiments_passed
-                : 0,
+            value: wfrun.resiliency_score ?? 0,
           });
-        openseries.push({
-          date: Number(wfrun.last_updated) * 1000,
-          value: wfrun.resiliency_score ?? 0,
         });
-      });
+      }
       setOpenSeriesData({ ...openSeriesData, data: openseries });
       setGraphData(stackBarData);
     },
@@ -118,51 +121,51 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
         Click on a bar to see the details of the workflow run
       </Typography>
       {/* Border Starts */}
-      <div style={{border: `1px solid ${theme.palette.border.main}`}}>
+      <div style={{ border: `1px solid ${theme.palette.border.main}` }}>
         {/* Stackbar parent */}
-      <div
-        style={{
-          width: '64rem',
-          padding: theme.spacing(2.5, 3.5, 2.5, 0),
-        }}
-      >
-        {/* Stackbar Area */}
-        {loading && openSeriesData.data.length <= 0 && graphData.length <= 0 ? (
-          <Center>
-            <Loader />
-          </Center>
-        ) : (
-          <div style={{
-            width: '62rem',
-            height: '20rem',
-          }}>
-          <StackBar
-            openSeries={openSeriesData}
-            barSeries={graphData}
-            unit="%"
-            yLabel="Chaos"
-            yLabelOffset={60}
-            xAxistimeFormat="HH"
-            handleBarClick={(barData: any) => {
-              setShowTable(true);
-              setWorkflowRunID(barData as string);
-            }}
-          />
-      </div>
-        )}
-      </div>
-      {/* Legend */}
-      <div className={classes.stackbarLegend}>
-        <img src='/icons/failedTestIndicator.svg' alt='Failed legend' />
-          <Typography>
-          Failed test
-          </Typography>
-          <img src='/icons/passedTestIndicator.svg' alt='Passed legend' />
-          <Typography>
-          Passed test
-          </Typography>
-      </div>
-      {/* Border Ends */}
+        <div
+          style={{
+            width: '64rem',
+            padding: theme.spacing(2.5, 3.5, 2.5, 0),
+          }}
+        >
+          {/* Stackbar Area */}
+          {loading &&
+          openSeriesData.data.length <= 0 &&
+          graphData.length <= 0 ? (
+            <Center>
+              <Loader />
+            </Center>
+          ) : (
+            <div
+              style={{
+                width: '62rem',
+                height: '20rem',
+              }}
+            >
+              <StackBar
+                openSeries={openSeriesData}
+                barSeries={graphData}
+                unit="%"
+                yLabel="Chaos"
+                yLabelOffset={60}
+                xAxistimeFormat="HH"
+                handleBarClick={(barData: any) => {
+                  setShowTable(true);
+                  setWorkflowRunID(barData as string);
+                }}
+              />
+            </div>
+          )}
+        </div>
+        {/* Legend */}
+        <div className={classes.stackbarLegend}>
+          <img src="/icons/failedTestIndicator.svg" alt="Failed legend" />
+          <Typography>Failed test</Typography>
+          <img src="/icons/passedTestIndicator.svg" alt="Passed legend" />
+          <Typography>Passed test</Typography>
+        </div>
+        {/* Border Ends */}
       </div>
       {showTable ? (
         <WorkflowRunTable

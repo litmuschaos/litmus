@@ -1,12 +1,13 @@
 import { useQuery } from '@apollo/client';
 import {
-  Paper, Table,
+  Paper,
+  Table,
   TableBody,
   TableCell,
   TableContainer,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import moment from 'moment';
 import { default as React, useState } from 'react';
@@ -19,12 +20,12 @@ import {
   Pagination,
   Workflow,
   WorkflowDataVars,
-  WorkflowRunFilterInput
+  WorkflowRunFilterInput,
 } from '../../../models/graphql/workflowData';
 import {
   ListWorkflowsInput,
   ScheduledWorkflows,
-  WeightageMap
+  WeightageMap,
 } from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { sortNumAsc, sortNumDesc } from '../../../utils/sort';
@@ -131,7 +132,6 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     variables: {
       workflowInput: { project_id: projectID, workflow_ids: [workflowId] },
     },
-    onCompleted: (data) => {},
   });
 
   const { loading: loadWfRun, error: errorWfRun } = useQuery<
@@ -151,7 +151,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
       },
     },
     onCompleted: (data) => {
-      let workflowTestsArray: WorkFlowTests[] = [];
+      const workflowTestsArray: WorkFlowTests[] = [];
       if (data.getWorkflowRuns.workflow_runs.length > 0) {
         const executionData: ExecutionData = JSON.parse(
           data?.getWorkflowRuns?.workflow_runs[0]?.execution_data
@@ -190,7 +190,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
       }
       setWfRunData(workflowTestsArray);
     },
-    skip: weightageDetail ? false : true,
+    skip: !weightageDetail,
     fetchPolicy: 'cache-and-network',
   });
 
@@ -287,107 +287,102 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
   };
 
   return (
-      <Paper elevation={2} className={classes.root}>
-            <section className="Heading section">
-              <TableToolBar
-                popAnchorEl={popAnchorEl}
-                popOverClick={handlePopOverClick}
-                popOverClose={handlePopOverClose}
-                isOpen={isOpen}
-                searchToken={filter.searchTokens[0]}
-                handleSearch={(
-                  event: React.ChangeEvent<{ value: unknown }> | undefined,
-                  token: string | undefined
-                ) => {
-                  setFilter({
-                    ...filter,
-                    searchTokens: (event !== undefined
-                      ? ((event.target as HTMLInputElement).value as string)
-                      : token || ''
-                    )
-                      .toLowerCase()
-                      .split(' ')
-                      .filter((s) => s !== ''),
-                  });
-                  setPaginationData({ ...paginationData, page: 0 });
-                }}
-                tests={getTests(wfRunData)}
-                testResults={getTestResults(wfRunData)}
-                callbackToSetTest={(testName: string) => {
-                  setFilter({
-                    ...filter,
-                    selectedTest: testName,
-                  });
-                  setPaginationData({ ...paginationData, page: 0 });
-                }}
-                callbackToSetResult={(testResult: string) => {
-                  setFilter({
-                    ...filter,
-                    selectedTestResult: testResult,
-                  });
-                  setPaginationData({ ...paginationData, page: 0 });
-                }}
-                displayDate={displayDate}
-                selectDate={dateChange}
-              />
-            </section>
-            <TableContainer className={classes.tableMain}>
-              <Table aria-label="simple table">
-                <TableHeader
-                  callBackToSort={(sortConfigurations: SortData) => {
-                    setFilter({
-                      ...filter,
-                      sortData: sortConfigurations,
-                    });
-                  }}
-                />
-                <TableBody>
-                  {payload.length ? (
-                    payload.map((data: WorkFlowTests) => {
-                      return (
-                        <TableRow hover tabIndex={-1} key={data.test_id}>
-                          <TableData data={data} />
-                        </TableRow>
-                      );
-                    })
-                  ) : loadWeightage &&
-                    loadWfRun &&
-                    !errorWfRun &&
-                    !errorWeightage ? (
-                    <Center>
-                      <Loader />
-                    </Center>
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6}>
-                        <Typography align="center">
-                          No records available
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {/* Pagination */}
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={payload.length ?? 0}
-              rowsPerPage={paginationData.limit}
-              page={paginationData.page}
-              onChangePage={(_, page) =>
-                setPaginationData({ ...paginationData, page })
-              }
-              onChangeRowsPerPage={(event) =>
-                setPaginationData({
-                  ...paginationData,
-                  page: 0,
-                  limit: parseInt(event.target.value, 10),
-                })
-              }
-            />
-      </Paper>
+    <Paper elevation={2} className={classes.root}>
+      <section className="Heading section">
+        <TableToolBar
+          popAnchorEl={popAnchorEl}
+          popOverClick={handlePopOverClick}
+          popOverClose={handlePopOverClose}
+          isOpen={isOpen}
+          searchToken={filter.searchTokens[0]}
+          handleSearch={(
+            event: React.ChangeEvent<{ value: unknown }> | undefined,
+            token: string | undefined
+          ) => {
+            setFilter({
+              ...filter,
+              searchTokens: (event !== undefined
+                ? ((event.target as HTMLInputElement).value as string)
+                : token || ''
+              )
+                .toLowerCase()
+                .split(' ')
+                .filter((s) => s !== ''),
+            });
+            setPaginationData({ ...paginationData, page: 0 });
+          }}
+          tests={getTests(wfRunData)}
+          testResults={getTestResults(wfRunData)}
+          callbackToSetTest={(testName: string) => {
+            setFilter({
+              ...filter,
+              selectedTest: testName,
+            });
+            setPaginationData({ ...paginationData, page: 0 });
+          }}
+          callbackToSetResult={(testResult: string) => {
+            setFilter({
+              ...filter,
+              selectedTestResult: testResult,
+            });
+            setPaginationData({ ...paginationData, page: 0 });
+          }}
+          displayDate={displayDate}
+          selectDate={dateChange}
+        />
+      </section>
+      <TableContainer className={classes.tableMain}>
+        <Table aria-label="simple table">
+          <TableHeader
+            callBackToSort={(sortConfigurations: SortData) => {
+              setFilter({
+                ...filter,
+                sortData: sortConfigurations,
+              });
+            }}
+          />
+          <TableBody>
+            {payload.length ? (
+              payload.map((data: WorkFlowTests) => {
+                return (
+                  <TableRow hover tabIndex={-1} key={data.test_id}>
+                    <TableData data={data} />
+                  </TableRow>
+                );
+              })
+            ) : loadWeightage && loadWfRun && !errorWfRun && !errorWeightage ? (
+              <Center>
+                <Loader />
+              </Center>
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <Typography align="center">No records available</Typography>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {/* Pagination */}
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={payload.length ?? 0}
+        rowsPerPage={paginationData.limit}
+        page={paginationData.page}
+        onChangePage={(_, page) =>
+          setPaginationData({ ...paginationData, page })
+        }
+        onChangeRowsPerPage={(event) =>
+          setPaginationData({
+            ...paginationData,
+            page: 0,
+            limit: parseInt(event.target.value, 10),
+          })
+        }
+      />
+    </Paper>
   );
 };
 

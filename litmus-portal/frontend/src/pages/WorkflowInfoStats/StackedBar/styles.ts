@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   stackbarHeader: {
     marginTop: theme.spacing(3),
+    fontSize: '1rem',
   },
   date: {
     display: 'flex',
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.border.main,
   },
   stackbarHelperText: {
-    marginTop: theme.spacing(3),
+    margin: theme.spacing(3, 0),
     color: theme.palette.text.hint,
   },
   stackbarLegend:{
