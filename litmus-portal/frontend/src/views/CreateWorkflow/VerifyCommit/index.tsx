@@ -243,11 +243,7 @@ const VerifyCommit = forwardRef(
     isLoading(loading);
 
     const handleMutation = () => {
-      if (
-        workflow.name.length !== 0 &&
-        workflow.description.length !== 0 &&
-        weights.length !== 0
-      ) {
+      if (workflow.name.length !== 0 && weights.length !== 0) {
         const weightData: WeightMap[] = [];
 
         weights.forEach((data) => {

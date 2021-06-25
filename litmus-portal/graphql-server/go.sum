@@ -625,7 +625,7 @@ github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032 h1:Nza
 github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032/go.mod h1:7EO6kbZKeJGKzkchgQepCxywvqNFNvNHW0G+u9923AY=
 github.com/litmuschaos/elves v0.0.0-20201107015738-552d74669e3c/go.mod h1:DsbHGNUq/78NZozWVVI9Q6eBei4I+JjlkkD5aibJ3MQ=
 github.com/litmuschaos/litmus v0.0.0-20210623100610-9204af1e8d30 h1:J5+8Q3Zk+K1zw4r3Ar1rvduyXjBvgSyTvrVDdAR1NbE=
-github.com/litmuschaos/litmus v0.0.0-20210623151234-2dabffa6d2dd h1:hDZ4JDynXpYMpksUELHG3BqDxZUhM+DOMV0UqpN4uB8=
+github.com/litmuschaos/litmus v0.0.0-20210625045545-48c079aa85a1 h1:yQwgVyBQPlQlNskpmggDxbyFYJXagElNaKIZBXNErw4=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=
 github.com/lucas-clemente/aes12 v0.0.0-20171027163421-cd47fb39b79f/go.mod h1:JpH9J1c9oX6otFSgdUHwUBUizmKlrMjxWnIAjff4m04=

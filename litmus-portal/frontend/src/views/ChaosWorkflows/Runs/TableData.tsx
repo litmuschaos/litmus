@@ -317,10 +317,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           >
             <Typography className={classes.boldText}>
               {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
-              {
-                scheduledWorkflowData?.ListWorkflow.workflows[0].weightages
-                  .length
-              }
+              {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages
+                .length ?? 0}
               )
             </Typography>
             <div className={classes.experimentDetails}>
@@ -346,7 +344,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             }}
           >
             <div className={classes.popover}>
-              {scheduledWorkflowData?.ListWorkflow.workflows[0].weightages.map(
+              {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages.map(
                 (weightEntry) => (
                   <div
                     key={weightEntry.experiment_name}

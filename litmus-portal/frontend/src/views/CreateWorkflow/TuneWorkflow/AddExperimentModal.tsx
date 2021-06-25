@@ -84,12 +84,14 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
           {t('createWorkflow.tuneWorkflow.afterSelect')}
         </Typography>
         <br />
-        <Search
-          id="input-with-icon-textfield"
-          placeholder="Search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
+        <div data-cy="addExperimentSearch">
+          <Search
+            id="input-with-icon-textfield"
+            placeholder="Search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </div>
 
         <br />
         <div className={classes.radioList}>

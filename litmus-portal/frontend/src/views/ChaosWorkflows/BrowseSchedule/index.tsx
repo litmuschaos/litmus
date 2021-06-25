@@ -69,7 +69,7 @@ const BrowseSchedule: React.FC = () => {
 
   // State for sorting
   const [sortData, setSortData] = useState<SortInput>({
-    field: 'Name',
+    field: 'Time',
     descending: true,
   });
 
@@ -366,7 +366,7 @@ const BrowseSchedule: React.FC = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={data?.ListWorkflow.totalNoOfWorkflows ?? 0}
+          count={data?.ListWorkflow.total_no_of_workflows ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>

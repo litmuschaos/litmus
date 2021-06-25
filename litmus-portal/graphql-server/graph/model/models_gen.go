@@ -637,8 +637,8 @@ type WorkflowRunInput struct {
 }
 
 type WorkflowRunSortInput struct {
-	Field      WorkflowRunSortingField `json:"field"`
-	Descending *bool                   `json:"descending"`
+	Field      WorkflowSortingField `json:"field"`
+	Descending *bool                `json:"descending"`
 }
 
 type WorkflowRunStatsRequest struct {
@@ -1128,47 +1128,6 @@ func (e UsageSort) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type WorkflowRunSortingField string
-
-const (
-	WorkflowRunSortingFieldName WorkflowRunSortingField = "Name"
-	WorkflowRunSortingFieldTime WorkflowRunSortingField = "Time"
-)
-
-var AllWorkflowRunSortingField = []WorkflowRunSortingField{
-	WorkflowRunSortingFieldName,
-	WorkflowRunSortingFieldTime,
-}
-
-func (e WorkflowRunSortingField) IsValid() bool {
-	switch e {
-	case WorkflowRunSortingFieldName, WorkflowRunSortingFieldTime:
-		return true
-	}
-	return false
-}
-
-func (e WorkflowRunSortingField) String() string {
-	return string(e)
-}
-
-func (e *WorkflowRunSortingField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = WorkflowRunSortingField(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid WorkflowRunSortingField", str)
-	}
-	return nil
-}
-
-func (e WorkflowRunSortingField) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type WorkflowRunStatus string
 
 const (
@@ -1218,15 +1177,17 @@ type WorkflowSortingField string
 
 const (
 	WorkflowSortingFieldName WorkflowSortingField = "Name"
+	WorkflowSortingFieldTime WorkflowSortingField = "Time"
 )
 
 var AllWorkflowSortingField = []WorkflowSortingField{
 	WorkflowSortingFieldName,
+	WorkflowSortingFieldTime,
 }
 
 func (e WorkflowSortingField) IsValid() bool {
 	switch e {
-	case WorkflowSortingFieldName:
+	case WorkflowSortingFieldName, WorkflowSortingFieldTime:
 		return true
 	}
 	return false

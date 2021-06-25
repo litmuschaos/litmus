@@ -29,6 +29,7 @@ import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 import { fetchWorkflowNameFromManifest } from '../../utils/yamlUtils';
 import SetTime from '../../views/CreateWorkflow/ScheduleWorkflow/SetTime';
 import useStyles from '../../views/CreateWorkflow/ScheduleWorkflow/styles';
+import { externalStyles } from './styles';
 
 interface ScheduleSyntax {
   minute: string | undefined;
@@ -180,6 +181,7 @@ const ScheduleWorkflow = () => {
   }, [cronValue]);
 
   const classes = useStyles();
+  const externalClass = externalStyles();
   const { t } = useTranslation();
 
   // Sets individual minutes
@@ -390,7 +392,7 @@ const ScheduleWorkflow = () => {
       <Typography className={classes.title}>
         {t('editSchedule.title')}
       </Typography>
-      <div className={classes.root}>
+      <div className={externalClass.root}>
         <div className={classes.innerContainer}>
           <br />
           {/* Upper segment */}

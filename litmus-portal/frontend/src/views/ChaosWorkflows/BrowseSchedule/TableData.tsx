@@ -172,6 +172,7 @@ const TableData: React.FC<TableDataProps> = ({
         width="60%"
         open={isTemplateModalOpen}
         onClose={handleCloseTemplate}
+        disableBackdropClick
         modalActions={
           <ButtonOutlined onClick={handleCloseTemplate}>
             &#x2715;
@@ -458,15 +459,13 @@ const TableData: React.FC<TableDataProps> = ({
             </div>
           </MenuItem>
           <MenuItem
-            value="Download"
+            value="SaveTemplate"
+            data-cy="saveTemplate"
             onClick={() => handleSaveWorkflowTemplate(data.workflow_manifest)}
           >
             <div className={classes.expDiv}>
               <InsertDriveFileOutlined className={classes.downloadBtn} />
-              <Typography
-                data-cy="downloadManifest"
-                className={classes.downloadText}
-              >
+              <Typography className={classes.downloadText}>
                 {t('chaosWorkflows.browseSchedules.saveTemplate')}
               </Typography>
             </div>

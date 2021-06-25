@@ -589,6 +589,8 @@ export const GET_TEMPLATE_BY_ID = gql`
   query GetManifestTemplate($data: String!) {
     GetTemplateManifestByID(template_id: $data) {
       template_id
+      template_name
+      template_description
       manifest
     }
   }
