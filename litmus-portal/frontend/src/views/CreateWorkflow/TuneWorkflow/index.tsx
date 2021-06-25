@@ -278,16 +278,16 @@ const TuneWorkflow = forwardRef((_, ref) => {
    * Index DB Fetching for extracting selected Button and Workflow Details
    */
   const getSelectedWorkflowDetails = () => {
-    localforage.getItem('workflow').then((workflow) => {
-      if (workflow) {
-        setWorkflow({
-          name: (workflow as WorkflowDetailsProps).name,
-          crd: (workflow as WorkflowDetailsProps).CRDLink,
-          description: (workflow as WorkflowDetailsProps).description,
-        });
-      }
-    });
     localforage.getItem('selectedScheduleOption').then((value) => {
+      localforage.getItem('workflow').then((wfDetails) => {
+        if (wfDetails) {
+          setWorkflow({
+            name: (wfDetails as WorkflowDetailsProps).name,
+            crd: (wfDetails as WorkflowDetailsProps).CRDLink,
+            description: (wfDetails as WorkflowDetailsProps).description,
+          });
+        }
+      });
       /**
        * Setting default data when MyHub is selected
        */
