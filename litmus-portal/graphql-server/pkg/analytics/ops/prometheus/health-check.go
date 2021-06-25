@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 )
@@ -16,23 +17,27 @@ const (
 
 func TSDBHealthCheck(url, datasourceType string) string {
 	dbHealth := "Inactive"
-	dbPingState, dbServerMsg := pingCheck(url)
+	dbPingState, _ := pingCheck(url)
 
 	if dbPingState == "ACTIVE" {
 		dbHealth = "Active"
-	}
 
-	log.Printf(dbServerMsg)
+		if datasourceType == "Prometheus" {
+			prometheusHealth, prometheusHealthMsg := prometheusHealthCheck(url)
+			log.Printf(prometheusHealthMsg)
 
-	if datasourceType == "Prometheus" {
-		prometheusHealth, prometheusHealthMsg := prometheusHealthCheck(url)
-		prometheusReadiness, prometheusReadinessMsg := prometheusReadinessCheck(url)
+			if prometheusHealth == "ACTIVE" {
+				prometheusReadiness, prometheusReadinessMsg := prometheusReadinessCheck(url)
+				log.Printf(prometheusReadinessMsg)
 
-		log.Printf(prometheusHealthMsg)
-		log.Printf(prometheusReadinessMsg)
+				if prometheusReadiness != "ACTIVE" {
+					dbHealth = "Not Ready"
+				}
 
-		if dbHealth == "Active" && (prometheusHealth != "ACTIVE" || prometheusReadiness != "ACTIVE") {
-			dbHealth = "Not Ready"
+			} else {
+				dbHealth = "Not Healthy"
+			}
+
 		}
 	}
 
@@ -40,7 +45,11 @@ func TSDBHealthCheck(url, datasourceType string) string {
 }
 
 func pingCheck(url string) (analytics.STATE, string) {
-	client := http.Client{}
+
+	client := &http.Client{
+		Timeout: time.Second * 5,
+	}
+
 	resp, err := client.Get(url)
 
 	if err != nil {
@@ -55,7 +64,11 @@ func pingCheck(url string) (analytics.STATE, string) {
 }
 
 func prometheusHealthCheck(url string) (analytics.STATE, string) {
-	client := http.Client{}
+
+	client := &http.Client{
+		Timeout: time.Second * 5,
+	}
+
 	resp, err := client.Get(url + "/-/healthy")
 
 	if err != nil {
@@ -74,7 +87,11 @@ func prometheusHealthCheck(url string) (analytics.STATE, string) {
 }
 
 func prometheusReadinessCheck(url string) (analytics.STATE, string) {
-	client := http.Client{}
+
+	client := &http.Client{
+		Timeout: time.Second * 5,
+	}
+
 	resp, err := client.Get(url + "/-/ready")
 
 	if err != nil {
