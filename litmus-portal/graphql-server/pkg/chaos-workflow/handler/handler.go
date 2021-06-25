@@ -54,7 +54,7 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 	return &model.ChaosWorkFlowResponse{
 		WorkflowID:          *input.WorkflowID,
 		CronSyntax:          input.CronSyntax,
-		WorkflowName:        input.WorkflowName,	
+		WorkflowName:        input.WorkflowName,
 		WorkflowDescription: input.WorkflowDescription,
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 	}, nil
