@@ -17,11 +17,10 @@ const (
 
 func TSDBHealthCheck(url, datasourceType string) string {
 	dbHealth := "Inactive"
-	dbPingState, dbServerMsg := pingCheck(url)
+	dbPingState, _ := pingCheck(url)
 
 	if dbPingState == "ACTIVE" {
 		dbHealth = "Active"
-		log.Printf(dbServerMsg)
 
 		if datasourceType == "Prometheus" {
 			prometheusHealth, prometheusHealthMsg := prometheusHealthCheck(url)
