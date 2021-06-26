@@ -28,6 +28,8 @@ import {
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../../../models/graphql/dataSourceDetails';
+import useActions from '../../../../redux/actions';
+import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
 import {
   getProjectID,
@@ -81,6 +83,7 @@ const DashboardTable: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+  const tabs = useActions(TabActions);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [activeDataSourceAvailable, setActiveDataSourceAvailable] =
@@ -228,26 +231,49 @@ const DashboardTable: React.FC = () => {
       {!activeDataSourceAvailable && !loadingDataSources && (
         <blockquote className={classes.warningBlock}>
           <Typography className={classes.warningText} align="left">
-            No data source available. To create an Application dashboard you
-            need to add a data source
+            {dataSourceList?.ListDataSource.length
+              ? `No active data source found for creating an application dashboard.`
+              : `No data source available. To create an Application dashboard you
+            need to add a data source`}
           </Typography>
-          <TextButton
-            onClick={() => {
-              history.push({
-                pathname: '/analytics/datasource/create',
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              });
-            }}
-            variant="highlight"
-            className={classes.addButton}
-          >
-            <Typography
-              className={classes.buttonText}
-              style={{ fontWeight: 500 }}
+          <div className={classes.warningActions}>
+            {dataSourceList?.ListDataSource.length ? (
+              <>
+                <TextButton
+                  onClick={() => tabs.changeAnalyticsDashboardTabs(3)}
+                  variant="highlight"
+                  className={classes.warningButton}
+                >
+                  <Typography
+                    className={classes.buttonText}
+                    style={{ fontWeight: 500 }}
+                  >
+                    Configure an existing data source
+                  </Typography>
+                </TextButton>
+                <Typography className={classes.orText}>or</Typography>
+              </>
+            ) : (
+              <></>
+            )}
+            <TextButton
+              onClick={() =>
+                history.push({
+                  pathname: '/analytics/datasource/create',
+                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                })
+              }
+              variant="highlight"
+              className={classes.warningButton}
             >
-              Add data source
-            </Typography>
-          </TextButton>
+              <Typography
+                className={classes.buttonText}
+                style={{ fontWeight: 500 }}
+              >
+                Add data source
+              </Typography>
+            </TextButton>
+          </div>
         </blockquote>
       )}
       <Paper>

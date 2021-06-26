@@ -80,9 +80,7 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
       >
         <TextButton
           className={classes.button}
-          onClick={() => {
-            setChaosTableOpen(!chaosTableOpen);
-          }}
+          onClick={() => setChaosTableOpen(!chaosTableOpen)}
           variant="highlight"
           startIcon={
             !chaosTableOpen ? (
@@ -94,12 +92,12 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
         >
           <Typography className={classes.chaosHelperText}>
             {!chaosTableOpen
-              ? `${t(
+              ? t(
                   'analyticsDashboard.monitoringDashboardPage.chaosTable.showTable'
-                )}`
-              : `${t(
+                )
+              : t(
                   'analyticsDashboard.monitoringDashboardPage.chaosTable.hideTable'
-                )}`}
+                )}
           </Typography>
         </TextButton>
         <IconButton
@@ -115,9 +113,9 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
       <StyledAccordionDetails className={classes.accordionDetails}>
         <ChaosTable
           chaosList={chaosEventsToBeShown}
-          selectEvents={(selectedEvents: string[]) => {
-            postEventSelectionRoutine(selectedEvents);
-          }}
+          selectEvents={(selectedEvents: string[]) =>
+            postEventSelectionRoutine(selectedEvents)
+          }
         />
       </StyledAccordionDetails>
     </Accordion>

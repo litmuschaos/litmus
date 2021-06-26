@@ -64,20 +64,17 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
   const [mutate, setMutate] = React.useState(false);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
-  const [alertMessage, setAlertMessage] = React.useState('');
   const [createDataSource] = useMutation<
     ListDataSourceResponse,
     CreateDataSourceInput
   >(CREATE_DATASOURCE, {
     onCompleted: () => {
       setMutate(false);
-      setAlertMessage('Successfully connected to the data source');
       setSuccess(true);
       setIsAlertOpen(true);
     },
     onError: () => {
       setMutate(false);
-      setAlertMessage('Error connecting to the data source');
       setSuccess(false);
       setIsAlertOpen(true);
     },
@@ -88,13 +85,11 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
   >(UPDATE_DATASOURCE, {
     onCompleted: () => {
       setMutate(false);
-      setAlertMessage('Successfully updated the data source information');
       setSuccess(true);
       setIsAlertOpen(true);
     },
     onError: () => {
       setMutate(false);
-      setAlertMessage('Error updating the data source information');
       setSuccess(false);
       setIsAlertOpen(true);
     },
@@ -208,8 +203,8 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
               <BackButton />
             </div>
             <Typography className={classes.heading}>
-              {t('analyticsDashboard.dataSourceForm.headingConfigure')} /{' '}
-              {selectedDataSourceName}
+              {t('analyticsDashboard.dataSourceForm.headingConfigure')} /
+              {` ${selectedDataSourceName}`}
             </Typography>
             {dataSourceID ? (
               <ConfigurePrometheus
@@ -238,8 +233,8 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
           )}
           <div className={classes.saveButton}>
             <Typography className={classes.stepText}>
-              {t('analyticsDashboard.dataSourceForm.step')}{' '}
-              <strong>{page}</strong>{' '}
+              {t('analyticsDashboard.dataSourceForm.step')}
+              <strong>{` ${page} `}</strong>
               {t('analyticsDashboard.dataSourceForm.of2')}
             </Typography>
             <ButtonFilled
@@ -261,17 +256,17 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
                 {page === 2
                   ? mutate
                     ? !configure
-                      ? 'Adding'
-                      : 'Updating'
-                    : `${t('analyticsDashboard.dataSourceForm.saveChanges')}`
-                  : `${t('analyticsDashboard.dataSourceForm.next')}`}
+                      ? t('analyticsDashboard.dataSourceForm.adding')
+                      : t('analyticsDashboard.dataSourceForm.updating')
+                    : t('analyticsDashboard.dataSourceForm.saveChanges')
+                  : t('analyticsDashboard.dataSourceForm.next')}
               </Typography>
               {mutate && <Loader size={20} />}
             </ButtonFilled>
           </div>
         </div>
       </div>
-      {isAlertOpen && alertMessage !== '' && (
+      {isAlertOpen && (
         <Snackbar
           open={isAlertOpen}
           autoHideDuration={6000}
@@ -297,7 +292,13 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
             }}
             severity={success ? 'success' : 'error'}
           >
-            {alertMessage}
+            {!configure
+              ? success
+                ? t('analyticsDashboard.dataSourceForm.connectionSuccess')
+                : t('analyticsDashboard.dataSourceForm.connectionError')
+              : success
+              ? t('analyticsDashboard.dataSourceForm.updateSuccess')
+              : t('analyticsDashboard.dataSourceForm.updateError')}
           </Alert>
         </Snackbar>
       )}

@@ -160,14 +160,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
 
   return (
     <div>
-      <Modal
-        open
-        onClose={() => {
-          onClose();
-        }}
-        width="45%"
-        height="fit-content"
-      >
+      <Modal open onClose={() => onClose()} width="45%" height="fit-content">
         <div className={classes.modal}>
           <Typography className={classes.modalHeading} align="left">
             {t(
@@ -186,9 +179,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
           />
           <div className={classes.flexButtons}>
             <TextButton
-              onClick={() => {
-                onClose();
-              }}
+              onClick={() => onClose()}
               className={classes.cancelButton}
             >
               <Typography className={classes.buttonText}>

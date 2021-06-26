@@ -367,6 +367,8 @@ analyticsDashboard:
     of2: of 2
     saveChanges: Save changes
     next: Next
+    adding: Adding
+    updating: Updating
     general: General
     generalInfo: Provide a name and choose the data source type
     name: Name
@@ -390,6 +392,10 @@ analyticsDashboard:
     scrapeInterval: Scrape Interval
     queryTimeOut: Query timeout
     httpMethod: HTTP Method
+    connectionSuccess: Successfully connected to the data source
+    connectionError: Error connecting to the data source
+    updateSuccess: Successfully updated the data source information
+    updateError: Error updating the data source information
   dataSourceTable:
     tableHead1: Status
     tableHead2: Data source name

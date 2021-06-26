@@ -50,8 +50,13 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: '130%',
     fontFeatureSettings: 'pnum on, lnum on',
   },
-  addButton: {
-    padding: theme.spacing(0, 3),
+  warningActions: {
+    display: 'flex',
+    margin: theme.spacing(1.5),
+  },
+  warningButton: {
+    padding: 0,
+    minHeight: 0,
   },
 
   tableMain: {
@@ -316,6 +321,12 @@ const useStyles = makeStyles((theme) => ({
   buttonText: {
     lineHeight: '140%',
     fontSize: '0.875rem',
+  },
+  orText: {
+    lineHeight: '140%',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    padding: theme.spacing(0, 2),
   },
   disabledText: {
     color: theme.palette.text.disabled,

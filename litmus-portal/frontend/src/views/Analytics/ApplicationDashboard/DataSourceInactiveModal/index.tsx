@@ -30,9 +30,7 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
   return (
     <Modal
       open
-      onClose={() => {
-        history.goBack();
-      }}
+      onClose={() => history.goBack()}
       width="60%"
       height="fit-content"
     >
@@ -73,12 +71,12 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
             {t('analyticsDashboard.monitoringDashboardPage.or')}
           </Typography>
           <ButtonOutlined
-            onClick={() => {
+            onClick={() =>
               history.push({
                 pathname: '/analytics/datasource/configure',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              });
-            }}
+              })
+            }
           >
             <img
               src="/icons/disconnected.svg"

@@ -7,8 +7,8 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     overflow: 'hidden',
     boxShadow:
-      '0px 0.3px 0.9px rgba(0, 0, 0, 0.1), 0px 1.6px 3.6px rgba(0, 0, 0, 0.13)',
-    borderRadius: '3px 3px 0px 0px',
+      '0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13)',
+    borderRadius: '3px 3px 0 0',
   },
 
   tableMain: {
@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
 
   // select
   menuList: {
-    boxShadow: '0px 5px 9px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 5px 9px rgba(0, 0, 0, 0.1)',
   },
   menuListItem: {
     background: `${theme.palette.background.paper} !important`,
