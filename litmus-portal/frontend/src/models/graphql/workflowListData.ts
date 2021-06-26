@@ -97,7 +97,7 @@ export interface ListManifestTemplate {
 }
 
 export interface SortInput {
-  field: 'Name';
+  field: 'Name' | 'Time';
   descending?: Boolean;
 }
 
@@ -116,7 +116,7 @@ export interface ListWorkflowsInput {
 }
 
 export interface ListWorkflowsOutput {
-  totalNoOfWorkflows: number;
+  total_no_of_workflows: number;
   workflows: ScheduledWorkflow[];
 }
 

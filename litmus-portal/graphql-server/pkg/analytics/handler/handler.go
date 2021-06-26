@@ -183,39 +183,47 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	if datasource.DsID == nil || *datasource.DsID == "" {
-		return nil, errors.New("Datasource ID is nil or empty")
+		return nil, errors.New("data source ID is nil or empty")
 	}
 
-	query := bson.D{{"ds_id", datasource.DsID}}
+	datasourceStatus := prometheus.TSDBHealthCheck(datasource.DsURL, datasource.DsType)
 
-	update := bson.D{{"$set", bson.D{
-		{"ds_name", datasource.DsName},
-		{"ds_url", datasource.DsURL}, {"access_type", datasource.AccessType},
-		{"auth_type", datasource.AuthType}, {"basic_auth_username", datasource.BasicAuthUsername},
-		{"basic_auth_password", datasource.BasicAuthPassword}, {"scrape_interval", datasource.ScrapeInterval},
-		{"query_timeout", datasource.QueryTimeout}, {"http_method", datasource.HTTPMethod},
-		{"updated_at", timestamp},
-	}}}
+	if datasourceStatus == "Active" {
 
-	err := dbOperationsAnalytics.UpdateDataSource(query, update)
-	if err != nil {
-		return nil, err
+		query := bson.D{{"ds_id", datasource.DsID}}
+
+		update := bson.D{{"$set", bson.D{
+			{"ds_name", datasource.DsName}, {"ds_type", datasource.DsType},
+			{"ds_url", datasource.DsURL}, {"access_type", datasource.AccessType},
+			{"auth_type", datasource.AuthType}, {"basic_auth_username", datasource.BasicAuthUsername},
+			{"basic_auth_password", datasource.BasicAuthPassword}, {"scrape_interval", datasource.ScrapeInterval},
+			{"query_timeout", datasource.QueryTimeout}, {"http_method", datasource.HTTPMethod},
+			{"updated_at", timestamp},
+		}}}
+
+		err := dbOperationsAnalytics.UpdateDataSource(query, update)
+		if err != nil {
+			return nil, err
+		}
+
+		return &model.DSResponse{
+			DsID:              datasource.DsID,
+			DsName:            &datasource.DsName,
+			DsType:            &datasource.DsType,
+			DsURL:             &datasource.DsURL,
+			AccessType:        &datasource.AccessType,
+			AuthType:          &datasource.AuthType,
+			BasicAuthPassword: datasource.BasicAuthPassword,
+			BasicAuthUsername: datasource.BasicAuthUsername,
+			ScrapeInterval:    &datasource.ScrapeInterval,
+			QueryTimeout:      &datasource.QueryTimeout,
+			HTTPMethod:        &datasource.HTTPMethod,
+			UpdatedAt:         &timestamp,
+		}, nil
+
+	} else {
+		return nil, errors.New("data source is inactive")
 	}
-
-	return &model.DSResponse{
-		DsID:              datasource.DsID,
-		DsName:            &datasource.DsName,
-		DsType:            &datasource.DsType,
-		DsURL:             &datasource.DsURL,
-		AccessType:        &datasource.AccessType,
-		AuthType:          &datasource.AuthType,
-		BasicAuthPassword: datasource.BasicAuthPassword,
-		BasicAuthUsername: datasource.BasicAuthUsername,
-		ScrapeInterval:    &datasource.ScrapeInterval,
-		QueryTimeout:      &datasource.QueryTimeout,
-		HTTPMethod:        &datasource.HTTPMethod,
-		UpdatedAt:         &timestamp,
-	}, nil
 }
 
 // UpdateDashBoard function updates the dashboard based on it's ID
@@ -591,12 +599,17 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 		}
 
 	} else if len(dashboards) > 0 {
-		var dbNames []string
-		for _, dashboard := range dashboards {
-			dbNames = append(dbNames, dashboard.DbName)
+
+		var errorString = "failed to delete datasource, dashboard(s) are attached to the datasource: ["
+		for index, dashboard := range dashboards {
+			if index < len(dashboards)-1 {
+				errorString += dashboard.DbName + ","
+			} else {
+				errorString += dashboard.DbName + "]"
+			}
 		}
 
-		return false, fmt.Errorf("failed to delete datasource, dashboard(s) are attached to the datasource: %v", dbNames)
+		return false, errors.New(errorString)
 	}
 
 	updateDSQuery := bson.D{{"ds_id", input.DsID}}
@@ -627,8 +640,25 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 	var newDatasources []*model.DSResponse
 	copier.Copy(&newDatasources, &datasource)
 
+	tsdbHealthCheckMap := make(map[string]string)
+
+	var wg sync.WaitGroup
+	wg.Add(len(newDatasources))
+
 	for _, datasource := range newDatasources {
-		datasource.HealthStatus = prometheus.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
+		datasource := datasource
+		go func(val *model.DSResponse) {
+			defer wg.Done()
+
+			tsdbHealthCheckMap[*datasource.DsID] = prometheus.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
+
+		}(datasource)
+	}
+
+	wg.Wait()
+
+	for _, datasource := range newDatasources {
+		datasource.HealthStatus = tsdbHealthCheckMap[*datasource.DsID]
 	}
 
 	return newDatasources, nil

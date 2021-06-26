@@ -45,7 +45,7 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
     const [workflowList, setWorkflowlist] = useState([]);
 
     // Get all MyHubs with status
-    const { data, loading } = useQuery<HubStatus>(GET_HUB_STATUS, {
+    const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
       variables: { data: selectedProjectID },
       fetchPolicy: 'cache-and-network',
     });
@@ -111,7 +111,21 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
     useEffect(() => {
       if (data?.getHubStatus !== undefined) {
         if (data.getHubStatus.length) {
-          setAvailableHubs([...data.getHubStatus]);
+          const hubDetails: MyHubDetail[] = [];
+          data.getHubStatus.forEach((hub) => {
+            /**
+             * Push only available hub
+             */
+            if (hub.IsAvailable) {
+              hubDetails.push({
+                id: hub.id,
+                HubName: hub.HubName,
+                RepoBranch: hub.RepoBranch,
+                RepoURL: hub.RepoURL,
+              });
+            }
+          });
+          setAvailableHubs(hubDetails);
         }
         data.getHubStatus.forEach((hubData) => {
           if (hubData.HubName.toLowerCase() === 'chaos hub') {
@@ -126,7 +140,7 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
           }
         });
       }
-    }, [loading]);
+    }, [data]);
 
     return (
       <AccordionDetails>

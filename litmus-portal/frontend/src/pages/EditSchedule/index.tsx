@@ -35,7 +35,7 @@ import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { fetchWorkflowNameFromManifest } from '../../utils/yamlUtils';
-import useStyles from './styles';
+import { useStyles } from './styles';
 
 interface URLParams {
   workflowName: string;

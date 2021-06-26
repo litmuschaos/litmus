@@ -1,6 +1,20 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme: Theme) => ({
+export const externalStyles = makeStyles((theme: Theme) => ({
+  root: {
+    background: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    padding: theme.spacing(0, 2),
+    margin: '0 auto',
+    width: '100%',
+    flexDirection: 'column',
+    [theme.breakpoints.up('lg')]: {
+      width: '99%',
+    },
+  },
+}));
+
+export const useStyles = makeStyles((theme: Theme) => ({
   horizontalLine: {
     background: theme.palette.border.main,
   },
@@ -214,4 +228,3 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: theme.spacing(2, 0),
   },
 }));
-export default useStyles;

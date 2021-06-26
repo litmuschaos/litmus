@@ -24,7 +24,10 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
+	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/informers"
+
+	rt "runtime"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -43,6 +46,14 @@ var (
 )
 
 func init() {
+
+	logrus.Info("Go Version: ", rt.Version())
+	logrus.Info("Go OS/Arch: ", rt.GOOS, "/", rt.GOARCH)
+
+	if os.Getenv("IS_CLUSTER_CONFIRMED") == "" || os.Getenv("ACCESS_KEY") == "" || os.Getenv("CLUSTER_ID") == "" || os.Getenv("SERVER_ADDR") == "" || os.Getenv("AGENT_NAMESPACE") == "" {
+		log.Fatal("Some environment variable are not setup")
+	}
+
 	_ = clientgoscheme.AddToScheme(scheme)
 
 	_ = eventtrackerv1.AddToScheme(scheme)
