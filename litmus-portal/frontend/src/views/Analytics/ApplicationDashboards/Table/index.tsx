@@ -240,7 +240,7 @@ const DashboardTable: React.FC = () => {
                 )}
           </Typography>
           <div className={classes.warningActions}>
-            {dataSourceList?.ListDataSource.length ? (
+            {dataSourceList && dataSourceList.ListDataSource.length > 0 && (
               <>
                 <TextButton
                   onClick={() => tabs.changeAnalyticsDashboardTabs(3)}
@@ -260,8 +260,6 @@ const DashboardTable: React.FC = () => {
                   {t('analyticsDashboard.applicationDashboardTable.warning.or')}
                 </Typography>
               </>
-            ) : (
-              <></>
             )}
             <TextButton
               onClick={() =>
