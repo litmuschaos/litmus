@@ -249,8 +249,8 @@ func (r *mutationResolver) UpdateDataSource(ctx context.Context, datasource mode
 	return analyticsHandler.UpdateDataSource(datasource)
 }
 
-func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput) (string, error) {
-	return analyticsHandler.UpdateDashBoard(dashboard)
+func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
+	return analyticsHandler.UpdateDashBoard(dashboard, chaosQueryUpdate)
 }
 
 func (r *mutationResolver) UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error) {

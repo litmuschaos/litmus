@@ -270,7 +270,7 @@ type ComplexityRoot struct {
 		SyncHub                func(childComplexity int, id string) int
 		SyncWorkflow           func(childComplexity int, workflowid string, workflowRunID string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
-		UpdateDashboard        func(childComplexity int, dashboard *model.UpdateDBInput) int
+		UpdateDashboard        func(childComplexity int, dashboard *model.UpdateDBInput, chaosQueryUpdate bool) int
 		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
 		UpdateGitOps           func(childComplexity int, config model.GitConfig) int
 		UpdateImageRegistry    func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
@@ -702,7 +702,7 @@ type MutationResolver interface {
 	CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error)
 	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error)
 	UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error)
-	UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput) (string, error)
+	UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput, chaosQueryUpdate bool) (string, error)
 	UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error)
 	DeleteDashboard(ctx context.Context, dbID *string) (bool, error)
 	DeleteDataSource(ctx context.Context, input model.DeleteDSInput) (bool, error)
@@ -2009,7 +2009,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(*model.UpdateDBInput)), true
+		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(*model.UpdateDBInput), args["chaosQueryUpdate"].(bool)), true
 
 	case "Mutation.updateDataSource":
 		if e.complexity.Mutation.UpdateDataSource == nil {
@@ -5103,7 +5103,7 @@ type Mutation {
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updateDBInput): String! @authorized
+  updateDashboard(dashboard: updateDBInput, chaosQueryUpdate: Boolean!): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
@@ -5890,6 +5890,14 @@ func (ec *executionContext) field_Mutation_updateDashboard_args(ctx context.Cont
 		}
 	}
 	args["dashboard"] = arg0
+	var arg1 bool
+	if tmp, ok := rawArgs["chaosQueryUpdate"]; ok {
+		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["chaosQueryUpdate"] = arg1
 	return args, nil
 }
 
@@ -12451,7 +12459,7 @@ func (ec *executionContext) _Mutation_updateDashboard(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(*model.UpdateDBInput))
+			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(*model.UpdateDBInput), args["chaosQueryUpdate"].(bool))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
