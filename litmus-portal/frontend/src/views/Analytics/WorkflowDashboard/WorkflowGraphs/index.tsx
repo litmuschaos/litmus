@@ -54,7 +54,7 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
   ];
   return (
     <div className={classes.root}>
-      <FormControl variant="outlined" className={classes.formControl} focused>
+      <FormControl variant="outlined" className={classes.formControl}>
         <InputLabel className={classes.selectText} />
         <Select
           value={filters}

@@ -1,4 +1,4 @@
-import { Avatar, Button, Typography } from '@material-ui/core';
+import { Avatar, Typography } from '@material-ui/core';
 import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,9 +37,9 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
   // avatar image source string
   const [avatar, setAvatar] = useState<string>('./avatars/default.svg');
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  // const handleOpen = () => {
+  //   setOpen(true);
+  // };
 
   const handleClose = () => {
     setOpen(false);
@@ -61,9 +61,9 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               className={classes.avatarBackground}
               src={avatar}
             />
-            <Button className={classes.edit} onClick={handleOpen} disabled>
+            {/* <Button className={classes.edit} onClick={handleOpen} disabled>
               {t('settings.userManagementTab.createUser.userDetails.button')}
-            </Button>
+            </Button> */}
             <Modal
               open={open}
               onClose={handleClose}

@@ -11,7 +11,7 @@ import {
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled, LightPills } from 'litmus-ui';
+import { ButtonFilled, OutlinedPills } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import TimePopOver from '../../../components/TimePopOver';
@@ -143,13 +143,13 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const getVariant = (variant: string | undefined) => {
     switch (variant) {
       case 'succeeded':
-        return 'success';
+        return 'succeeded';
       case 'failed':
-        return 'danger';
+        return 'failed';
       case 'running':
-        return 'warning';
+        return 'running';
       default:
-        return undefined;
+        return 'pending';
     }
   };
 
@@ -237,7 +237,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         </Popover>
       </TableCell>
       <TableCell>
-        <LightPills
+        <OutlinedPills
+          size="small"
           variant={getVariant(data.phase?.toLowerCase())}
           label={data.phase ?? ''}
         />

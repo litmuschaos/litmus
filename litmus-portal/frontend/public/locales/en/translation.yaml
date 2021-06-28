@@ -1057,7 +1057,7 @@ createWorkflow:
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
     youCanMoveOn: You can move on !
-    workflowNameValidationMessage: Workflow name can only be alpha numeric and should not contain capital letters
+    workflowNameValidationMessage: Workflow name can only be lowercase characters and alpha numeric
     subjectValidationMessage: Subject can only have alphanumeric characters and - . _ in-between
     test: test
     YAML: YAML

@@ -242,20 +242,20 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         </Typography>
       </Button>
 
-      <div className={classes.addButton}>
-        <ButtonFilled
-          onClick={() => {
-            history.push({
-              pathname: '/analytics/dashboard/create',
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
-        >
-          <Typography className={classes.dateRangeDefault}>
-            {t('analyticsDashboard.dashboardTable.addDashboard')}
-          </Typography>
-        </ButtonFilled>
-      </div>
+      <ButtonFilled
+        className={classes.addButton}
+        size="small"
+        onClick={() => {
+          history.push({
+            pathname: '/analytics/dashboard/create',
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
+        }}
+      >
+        <Typography className={classes.dateRangeDefault}>
+          {t('analyticsDashboard.dashboardTable.addDashboard')}
+        </Typography>
+      </ButtonFilled>
       <DateRangeSelector
         anchorEl={dateRangeSelectorRef.current as HTMLElement}
         isOpen={isDateRangeSelectorPopoverOpen}
