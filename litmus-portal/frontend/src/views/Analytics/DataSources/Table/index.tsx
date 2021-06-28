@@ -455,6 +455,7 @@ const DataSourceTable: React.FC = () => {
               <Typography
                 className={`${classes.drawerBodyText} ${classes.drawerListItem}`}
                 align="left"
+                key={`${name}-dashboard`}
               >
                 {`${index + 1}. ${name}`}
               </Typography>

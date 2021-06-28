@@ -138,7 +138,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
           <FormGroupApplicationsGrid key="application-group">
             {applicationsToBeShown?.map(
               (applicationMetadata: ApplicationMetadata) => (
-                <>
+                <div key={`${applicationMetadata.namespace}-namespace`}>
                   <div className={classes.namespaceBox}>
                     <Typography className={classes.infoKey}>
                       {t(
@@ -151,7 +151,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                   </div>
                   {applicationMetadata.applications.map(
                     (resource: Resource) => (
-                      <>
+                      <div key={`${resource.kind}-resource`}>
                         {resource.names.map((name: string) => (
                           <FormControlLabel
                             control={
@@ -169,10 +169,10 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                             key={`${resource.kind} / ${name}-application-label`}
                           />
                         ))}
-                      </>
+                      </div>
                     )
                   )}
-                </>
+                </div>
               )
             )}
           </FormGroupApplicationsGrid>
