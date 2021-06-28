@@ -6,11 +6,7 @@ import {
   Select,
   Typography,
 } from '@material-ui/core';
-import {
-  ButtonFilled,
-  CalendarHeatmap,
-  CalendarHeatmapTooltipProps,
-} from 'litmus-ui';
+import { CalendarHeatmap, CalendarHeatmapTooltipProps } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
@@ -81,8 +77,17 @@ const WorkflowInfoStats: React.FC = () => {
   );
 
   const presentYear = new Date().getFullYear();
+  const [showTable, setShowTable] = useState<boolean>(false);
 
   const [year, setYear] = useState<number>(presentYear);
+
+  const handleTableOpen = () => {
+    setShowTable(true);
+  };
+
+  const handleTableClose = () => {
+    setShowTable(false);
+  };
 
   // Apollo query to get the heatmap data
   const { data: heatmapData, loading } = useQuery<
@@ -117,9 +122,10 @@ const WorkflowInfoStats: React.FC = () => {
             Here’s the analytics of the selected workflow
           </Typography>
         </div>
-        <div>
+        {/* For later: */}
+        {/* <div>
           <ButtonFilled onClick={() => {}}>PDF</ButtonFilled>
-        </div>
+        </div> */}
       </div>
 
       {/* Information and stats */}
@@ -156,6 +162,7 @@ const WorkflowInfoStats: React.FC = () => {
                     setDataCheck(false);
                     setShowStackBar(false);
                     setworkflowRunDate(0);
+                    handleTableClose();
                   }}
                 >
                   {yearArray.map((selectedYear) => (
@@ -174,14 +181,23 @@ const WorkflowInfoStats: React.FC = () => {
                   calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
                   valueThreshold={valueThreshold}
                   CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
-                  handleBinClick={(bin) => {
-                    if (bin.bin.workflowRunDetail.no_of_runs) {
-                      setShowStackBar(true);
-                      setDataCheck(false);
-                      setworkflowRunDate(bin.bin.workflowRunDetail.date_stamp);
+                  handleBinClick={(bin: any) => {
+                    if (bin) {
+                      if (bin?.bin?.workflowRunDetail.no_of_runs === 0) {
+                        setDataCheck(true);
+                        setShowStackBar(false);
+                        handleTableClose();
+                      } else {
+                        setShowStackBar(true);
+                        handleTableClose();
+                        setworkflowRunDate(
+                          bin.bin.workflowRunDetail.date_stamp
+                        );
+                      }
                     } else {
-                      setDataCheck(true);
                       setShowStackBar(false);
+                      setDataCheck(false);
+                      handleTableClose();
                       setworkflowRunDate(0);
                     }
                   }}
@@ -203,6 +219,9 @@ const WorkflowInfoStats: React.FC = () => {
             <StackedBarGraph
               workflowID={workflowRunId}
               date={workflowRunDate}
+              handleTableOpen={handleTableOpen}
+              handleTableClose={handleTableClose}
+              showTable={showTable}
             />
           )}
           {dataCheck && !showStackBar && (

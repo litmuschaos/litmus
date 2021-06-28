@@ -23,15 +23,20 @@ import useStyles from './styles';
 interface StackedBarGraphProps {
   date: number;
   workflowID: string;
+  handleTableOpen: () => void;
+  handleTableClose: () => void;
+  showTable: boolean;
 }
 const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
   date,
   workflowID,
+  handleTableOpen,
+  handleTableClose,
+  showTable,
 }) => {
   const projectID = getProjectID();
   const classes = useStyles();
   const theme = useTheme();
-  const [showTable, setShowTable] = useState<boolean>(false);
   const [workflowRunID, setWorkflowRunID] = useState<string>('');
 
   const [graphData, setGraphData] = useState<StackBarMetric[]>([]);
@@ -99,6 +104,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     },
     fetchPolicy: 'cache-and-network',
   });
+  console.log('stackBarData: ', stackBarData);
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -149,10 +155,15 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
                 unit="%"
                 yLabel="Chaos"
                 yLabelOffset={60}
-                xAxistimeFormat="HH"
+                xAxistimeFormat="HH:mm"
                 handleBarClick={(barData: any) => {
-                  setShowTable(true);
-                  setWorkflowRunID(barData as string);
+                  if (barData) {
+                    handleTableOpen();
+                    setWorkflowRunID(barData as string);
+                  } else {
+                    handleTableClose();
+                    setWorkflowRunID('');
+                  }
                 }}
               />
             </div>
@@ -167,13 +178,11 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
         </div>
         {/* Border Ends */}
       </div>
-      {showTable ? (
+      {showTable && (
         <WorkflowRunTable
           workflowId={workflowID}
           workflowRunId={workflowRunID}
         />
-      ) : (
-        <></>
       )}
     </div>
   );

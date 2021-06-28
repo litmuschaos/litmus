@@ -84,7 +84,7 @@ const WorkflowDashboardCard: React.FC<WorkflowDashboardCardProps> = ({
               >
                 <AnalyticsIcon />
               </IconButton>
-              <Typography>See Analytics</Typography>
+              <Typography align="center">See Analytics</Typography>
             </div>
           </section>
         </div>
