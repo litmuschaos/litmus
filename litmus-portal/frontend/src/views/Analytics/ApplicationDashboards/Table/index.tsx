@@ -394,10 +394,7 @@ const DashboardTable: React.FC = () => {
                           className={classes.unavailableIcon}
                           alt="Dashboard"
                         />
-                        <Typography
-                          align="center"
-                          className={classes.noRecordsText}
-                        >
+                        <Typography className={classes.noRecordsText}>
                           {t(
                             'analyticsDashboard.applicationDashboardTable.noRecords'
                           )}

@@ -84,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.5rem',
     lineHeight: '150%',
     letterSpacing: '0.1176px',
+    textAlign: 'center',
   },
 
   dataSourceNameHead: {

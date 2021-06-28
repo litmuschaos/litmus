@@ -308,10 +308,7 @@ const DataSourceTable: React.FC = () => {
                           className={classes.unavailableIcon}
                           alt="Data Source"
                         />
-                        <Typography
-                          align="center"
-                          className={classes.noRecordsText}
-                        >
+                        <Typography className={classes.noRecordsText}>
                           {t('analyticsDashboard.dataSourceTable.noRecords')}
                         </Typography>
                       </div>
