@@ -57,6 +57,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   unit,
   className,
   controllerPanelID,
+  selectedApplications,
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
@@ -120,7 +121,8 @@ const PanelContent: React.FC<GraphPanelProps> = ({
           areaGraph,
           prom_queries
             .filter((query) => query.close_area)
-            .map((query) => query.queryid)
+            .map((query) => query.queryid),
+          selectedApplications
         );
         setGraphData(parsedData);
       }

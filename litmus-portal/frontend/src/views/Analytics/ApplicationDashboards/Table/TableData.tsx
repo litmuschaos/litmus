@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, Modal, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,7 @@ import {
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import * as DataSourceActions from '../../../../redux/actions/dataSource';
-import * as TabActions from '../../../../redux/actions/tabs';
 import { history } from '../../../../redux/configureStore';
-import { ReactComponent as CrossMarkIcon } from '../../../../svg/crossmark.svg';
 import {
   getProjectID,
   getProjectRole,
@@ -24,39 +22,22 @@ import useStyles, { StyledTableCell } from './styles';
 
 interface TableDataProps {
   data: ListDashboardResponse;
+  alertStateHandler: (successState: boolean) => void;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data }) => {
+const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const dashboard = useActions(DashboardActions);
   const dataSource = useActions(DataSourceActions);
-  const tabs = useActions(TabActions);
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const [mutate, setMutate] = React.useState(false);
-  const [confirm, setConfirm] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
   const [dashboardSelectedForDeleting, setDashboardSelectedForDeleting] =
     React.useState<DeleteDashboardInput>({
       dbID: '',
     });
-
-  const [deleteDashboard] = useMutation<boolean, DeleteDashboardInput>(
-    DELETE_DASHBOARD,
-    {
-      onCompleted: () => {
-        setSuccess(true);
-        setMutate(false);
-        setOpenModal(true);
-      },
-      onError: () => {
-        setMutate(false);
-        setOpenModal(true);
-      },
-    }
-  );
 
   // Function to convert UNIX time in format of dddd, DD MMM YYYY, HH:mm
   const formatDate = (date: string) => {
@@ -64,18 +45,28 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     const resDate = moment(updated).format('dddd, DD MMM YYYY, HH:mm');
     return resDate;
   };
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
   const open = Boolean(anchorEl);
-
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const [deleteDashboard] = useMutation<boolean, DeleteDashboardInput>(
+    DELETE_DASHBOARD,
+    {
+      onCompleted: () => {
+        setMutate(false);
+        alertStateHandler(true);
+      },
+      onError: () => {
+        setMutate(false);
+        alertStateHandler(false);
+      },
+    }
+  );
 
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
@@ -100,40 +91,65 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
 
   return (
     <>
-      <StyledTableCell className={classes.dashboardName}>
+      <StyledTableCell className={classes.columnDivider}>
         <Typography
-          variant="body2"
-          align="center"
-          className={classes.tableData}
+          className={`${classes.tableObjects} ${classes.dashboardNameCol} ${classes.dashboardNameColData}`}
+          onClick={() => {
+            onDashboardLoadRoutine().then(() => {
+              history.push({
+                pathname: '/analytics/application-dashboard',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            });
+          }}
         >
-          <strong>{data.db_name}</strong>
+          {data.db_name}
         </Typography>
       </StyledTableCell>
 
-      <StyledTableCell className={classes.tableHeader}>
+      <StyledTableCell className={classes.dividerPadding}>
         <Typography
-          variant="body2"
-          align="center"
-          className={classes.tableData}
+          className={classes.tableObjects}
+          style={{ maxWidth: '5rem' }}
         >
-          <strong>{data.cluster_name}</strong>
+          {data.cluster_name}
         </Typography>
       </StyledTableCell>
 
-      <StyledTableCell className={classes.tableHeader}>
-        <Typography variant="body2" align="center">
-          <strong>{data.db_type_name}</strong>
+      <StyledTableCell>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '7rem' }}
+        >
+          <img
+            src={`/icons/${data.db_type_id}_dashboard.svg`}
+            alt={data.db_type_name}
+            className={classes.inlineTypeIcon}
+          />
+          {data.db_type_name}
         </Typography>
       </StyledTableCell>
 
-      <StyledTableCell className={classes.tableHeader}>
-        <Typography variant="body2" align="center">
-          <strong>{data.ds_type}</strong>
+      <StyledTableCell>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '5rem' }}
+        >
+          <img
+            src="/icons/prometheus.svg"
+            alt="Prometheus"
+            className={classes.inlineIcon}
+          />
+          {data.ds_type}
         </Typography>
       </StyledTableCell>
 
-      <StyledTableCell className={classes.tableHeader}>
-        <Typography variant="body2" align="center">
+      <StyledTableCell>
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '12.5rem' }}
+        >
+          <img src="/icons/calendarIcon.svg" alt="Calender" />
           {formatDate(data.updated_at)}
         </Typography>
       </StyledTableCell>
@@ -154,9 +170,19 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           keepMounted
           open={open}
           onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          getContentAnchorEl={null}
+          classes={{ paper: classes.menuList }}
         >
           <MenuItem
-            value="Analysis"
+            value="View"
             onClick={() => {
               onDashboardLoadRoutine().then(() => {
                 history.push({
@@ -169,14 +195,12 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           >
             <div className={classes.expDiv}>
               <img
-                src="/icons/analytics.svg"
-                alt="See Analytics"
+                src="/icons/viewAnalytics.svg"
+                alt="View"
                 className={classes.btnImg}
               />
               <Typography data-cy="openDashboard" className={classes.btnText}>
-                {t(
-                  'analyticsDashboardViews.kubernetesDashboard.table.seeAnalytics'
-                )}
+                {t('analyticsDashboard.applicationDashboardTable.view')}
               </Typography>
             </div>
           </MenuItem>
@@ -205,9 +229,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 data-cy=" configureDashboard"
                 className={classes.btnText}
               >
-                {t(
-                  'analyticsDashboardViews.kubernetesDashboard.table.configure'
-                )}
+                {t('analyticsDashboard.applicationDashboardTable.configure')}
               </Typography>
             </div>
           </MenuItem>
@@ -219,6 +241,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 dbID: data.db_id,
               });
               setOpenModal(true);
+              handleClose();
             }}
             className={classes.menuItem}
           >
@@ -228,175 +251,62 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
                 alt="Delete"
                 className={classes.btnImg}
               />
-              <Typography data-cy="deleteDashboard" className={classes.btnText}>
-                Delete
+              <Typography
+                data-cy="deleteDashboard"
+                className={`${classes.btnText} ${classes.deleteText}`}
+              >
+                {t('analyticsDashboard.applicationDashboardTable.delete')}
               </Typography>
             </div>
           </MenuItem>
         </Menu>
       </StyledTableCell>
-
       <Modal
         open={openModal}
-        onClose={() => {
-          setConfirm(false);
-          setOpenModal(false);
-        }}
-        width="60%"
-        modalActions={
-          <ButtonOutlined
-            className={classes.closeButton}
-            onClick={() => {
-              setConfirm(false);
-              setOpenModal(false);
-            }}
-          >
-            &#x2715;
-          </ButtonOutlined>
-        }
+        onClose={() => setOpenModal(false)}
+        width="45%"
+        height="fit-content"
       >
         <div className={classes.modal}>
-          {confirm === true ? (
-            <Typography align="center">
-              {success === true ? (
-                <img
-                  src="/icons/finish.svg"
-                  alt="success"
-                  className={classes.icon}
-                />
-              ) : (
-                <CrossMarkIcon className={classes.icon} />
-              )}
-            </Typography>
-          ) : (
-            <div />
-          )}
+          <Typography className={classes.modalHeading} align="left">
+            {t(
+              'analyticsDashboard.applicationDashboardTable.modal.removeDashboard'
+            )}
+          </Typography>
 
-          {confirm === true ? (
-            <Typography
-              className={classes.modalHeading}
-              align="center"
-              variant="h3"
+          <Typography className={classes.modalBodyText} align="left">
+            {t(
+              'analyticsDashboard.applicationDashboardTable.modal.removeDashboardConfirmation'
+            )}
+            <b>
+              <i>{` ${data.db_name} `}</i>
+            </b>
+            ?
+          </Typography>
+
+          <div className={classes.flexButtons}>
+            <TextButton
+              onClick={() => setOpenModal(false)}
+              className={classes.cancelButton}
             >
-              {success === true
-                ? `The dashboard is successfully deleted.`
-                : `There was a problem deleting your dashboard.`}
-            </Typography>
-          ) : (
-            <div />
-          )}
-
-          {confirm === true ? (
-            <Typography
-              align="center"
-              variant="body1"
-              className={classes.modalBody}
-            >
-              {success === true ? (
-                <div>
-                  You will see the dashboard deleted in the dashboard table.
-                </div>
-              ) : (
-                <div>
-                  Error encountered while deleting the dashboard. Please try
-                  again.
-                </div>
-              )}
-            </Typography>
-          ) : (
-            <div />
-          )}
-
-          {success === true && confirm === true ? (
+              <Typography className={classes.buttonText}>
+                {t('analyticsDashboard.applicationDashboardTable.modal.cancel')}
+              </Typography>
+            </TextButton>
             <ButtonFilled
-              variant="success"
               onClick={() => {
-                setConfirm(false);
+                setMutate(true);
                 setOpenModal(false);
-                tabs.changeAnalyticsDashboardTabs(2);
-                window.location.reload();
               }}
+              variant="error"
             >
-              <div>Back to Kubernetes Dashboard</div>
+              <Typography
+                className={`${classes.buttonText} ${classes.confirmButtonText}`}
+              >
+                {t('analyticsDashboard.applicationDashboardTable.modal.delete')}
+              </Typography>
             </ButtonFilled>
-          ) : success === false && confirm === true ? (
-            <div className={classes.flexButtons}>
-              <ButtonOutlined
-                className={classes.buttonOutlineWarning}
-                onClick={() => {
-                  setOpenModal(false);
-                  setMutate(true);
-                }}
-                disabled={false}
-              >
-                <div>Try Again</div>
-              </ButtonOutlined>
-
-              <ButtonFilled
-                variant="success"
-                onClick={() => {
-                  setConfirm(false);
-                  setOpenModal(false);
-                  tabs.changeAnalyticsDashboardTabs(2);
-                  window.location.reload();
-                }}
-              >
-                <div>Back to Kubernetes Dashboard</div>
-              </ButtonFilled>
-            </div>
-          ) : (
-            <div>
-              <Typography align="center">
-                <img
-                  src="/icons/delete_large_icon.svg"
-                  alt="delete"
-                  className={classes.icon}
-                />
-              </Typography>
-
-              <Typography
-                className={classes.modalHeading}
-                align="center"
-                variant="h3"
-              >
-                Are you sure to remove this dashboard?
-              </Typography>
-
-              <Typography
-                align="center"
-                variant="body1"
-                className={classes.modalBody}
-              >
-                The following action cannot be reverted.
-              </Typography>
-
-              <div className={classes.flexButtons}>
-                <ButtonOutlined
-                  onClick={() => {
-                    setOpenModal(false);
-                    history.push({
-                      pathname: '/analytics',
-                      search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                    });
-                  }}
-                  disabled={false}
-                >
-                  <div>No</div>
-                </ButtonOutlined>
-
-                <ButtonFilled
-                  variant="error"
-                  onClick={() => {
-                    setConfirm(true);
-                    setOpenModal(false);
-                    setMutate(true);
-                  }}
-                >
-                  <div>Yes</div>
-                </ButtonFilled>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </Modal>
     </>

@@ -128,7 +128,7 @@ const SelectTheMetricsForm: React.FC<SelectTheMetricsFormProps> = ({
                         {panel}
                       </Typography>
                     }
-                    key={`metrics-group-${panelGroup.groupName}-label`}
+                    key={`metric-${panel}-label`}
                   />
                 ))}
               </FormGroup>

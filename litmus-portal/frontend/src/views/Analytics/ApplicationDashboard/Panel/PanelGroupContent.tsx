@@ -14,6 +14,7 @@ interface DashboardPanelGroupContentProps {
   panel_group_name: string;
   panel_group_id: string;
   selectedPanels?: string[];
+  selectedApplications?: string[];
 }
 
 const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
@@ -21,6 +22,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
   panel_group_id,
   panel_group_name,
   selectedPanels,
+  selectedApplications,
 }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState<boolean>(true);
@@ -63,6 +65,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
                   x_axis_down={panel.x_axis_down}
                   unit={panel.unit}
                   controllerPanelID={selectedPanels ? selectedPanels[0] : ''}
+                  selectedApplications={selectedApplications ?? []}
                 />
               ))}
         </AccordionDetails>

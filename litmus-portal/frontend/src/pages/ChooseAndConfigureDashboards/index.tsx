@@ -92,7 +92,13 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
             const promQueries: PromQueryDetails[] = [];
             panel.prom_queries.forEach((promQuery) => {
               promQueries.push({
-                ...promQuery,
+                queryid: promQuery.queryid,
+                prom_query_name: promQuery.prom_query_name,
+                legend: promQuery.legend,
+                resolution: promQuery.resolution,
+                minstep: promQuery.minstep,
+                line: promQuery.line,
+                close_area: promQuery.close_area,
               });
             });
             const panelOption: PanelOption = {
@@ -101,7 +107,11 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
               left_axis: panel.panel_options.left_axis,
             };
             panels.push({
-              ...panel,
+              panel_name: panel.panel_name,
+              y_axis_left: panel.y_axis_left,
+              y_axis_right: panel.y_axis_right,
+              x_axis_down: panel.x_axis_down,
+              unit: panel.unit,
               panel_options: panelOption,
               prom_queries: promQueries,
               panel_id: panel.panel_id,

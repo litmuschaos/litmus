@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   modalHeading: {
-    margin: theme.spacing(3.5, 0, 2.5),
+    margin: theme.spacing(2.5, 0),
     paddingLeft: theme.spacing(6.5),
     fontSize: '1.5rem',
   },
@@ -28,10 +28,6 @@ const useStyles = makeStyles((theme) => ({
 
   modal: {
     padding: theme.spacing(5, 0),
-  },
-
-  closeButton: {
-    borderColor: theme.palette.border.main,
   },
 
   buttonIcon: {

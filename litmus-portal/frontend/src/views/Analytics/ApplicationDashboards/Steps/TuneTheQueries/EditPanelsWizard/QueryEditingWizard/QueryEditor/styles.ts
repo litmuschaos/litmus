@@ -82,6 +82,12 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(3.5),
   },
 
+  configSection: {
+    gap: '2.5rem',
+    width: '98.5%',
+    flexWrap: 'wrap',
+  },
+
   paddedTop: {
     paddingTop: theme.spacing(2.5),
   },

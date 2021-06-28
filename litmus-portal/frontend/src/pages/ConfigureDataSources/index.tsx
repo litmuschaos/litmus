@@ -1,10 +1,12 @@
 import { useMutation } from '@apollo/client';
-import { Typography } from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import { Snackbar, Typography } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
+import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { CREATE_DATASOURCE, UPDATE_DATASOURCE } from '../../graphql/mutations';
 import { DataSourceDetails } from '../../models/dataSourceData';
@@ -14,9 +16,12 @@ import {
 } from '../../models/graphql/dataSourceDetails';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { ReactComponent as CrossMarkIcon } from '../../svg/crossmark.svg';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import { isValidWebUrl, validateTimeInSeconds } from '../../utils/validate';
+import {
+  isValidWebUrl,
+  validateTextEmpty,
+  validateTimeInSeconds,
+} from '../../utils/validate';
 import ConfigurePrometheus from '../../views/Analytics/DataSources/Forms/prometheus';
 import useStyles from './styles';
 
@@ -37,7 +42,6 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
   );
   const projectID = getProjectID();
   const projectRole = getProjectRole();
-  const [open, setOpen] = React.useState(false);
   const [disabled, setDisabled] = React.useState(true);
   const [page, setPage] = React.useState<number>(1);
   const [dataSourceVars, setDataSourceVars] = useState<DataSourceDetails>({
@@ -58,19 +62,21 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
     httpMethod: 'POST',
   });
   const [mutate, setMutate] = React.useState(false);
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [createDataSource] = useMutation<
     ListDataSourceResponse,
     CreateDataSourceInput
   >(CREATE_DATASOURCE, {
     onCompleted: () => {
-      setSuccess(true);
       setMutate(false);
-      setOpen(true);
+      setSuccess(true);
+      setIsAlertOpen(true);
     },
     onError: () => {
       setMutate(false);
-      setOpen(true);
+      setSuccess(false);
+      setIsAlertOpen(true);
     },
   });
   const [updateDataSource] = useMutation<
@@ -78,13 +84,14 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
     CreateDataSourceInput
   >(UPDATE_DATASOURCE, {
     onCompleted: () => {
-      setSuccess(true);
       setMutate(false);
-      setOpen(true);
+      setSuccess(true);
+      setIsAlertOpen(true);
     },
     onError: () => {
       setMutate(false);
-      setOpen(true);
+      setSuccess(false);
+      setIsAlertOpen(true);
     },
   });
 
@@ -160,7 +167,10 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
       dataSourceVars.name === '' ||
       !isValidWebUrl(dataSourceVars.url) ||
       !validateTimeInSeconds(dataSourceVars.queryTimeout) ||
-      !validateTimeInSeconds(dataSourceVars.scrapeInterval)
+      !validateTimeInSeconds(dataSourceVars.scrapeInterval) ||
+      (dataSourceVars.basicAuth &&
+        (validateTextEmpty(dataSourceVars.username) ||
+          validateTextEmpty(dataSourceVars.password)))
     ) {
       setDisabled(true);
     } else {
@@ -193,8 +203,8 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
               <BackButton />
             </div>
             <Typography className={classes.heading}>
-              {t('analyticsDashboard.dataSourceForm.headingConfigure')} /{' '}
-              {selectedDataSourceName}
+              {t('analyticsDashboard.dataSourceForm.headingConfigure')} /
+              {` ${selectedDataSourceName}`}
             </Typography>
             {dataSourceID ? (
               <ConfigurePrometheus
@@ -211,7 +221,9 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
           </div>
         )}
 
-        <div className={classes.buttons}>
+        <div
+          className={`${classes.buttons} ${page === 2 ? '' : classes.flexEnd}`}
+        >
           {page === 2 && (
             <ButtonOutlined onClick={() => setPage(1)} disabled={false}>
               <Typography>
@@ -221,13 +233,16 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
           )}
           <div className={classes.saveButton}>
             <Typography className={classes.stepText}>
-              {t('analyticsDashboard.dataSourceForm.step')}{' '}
-              <strong>{page}</strong>{' '}
+              {t('analyticsDashboard.dataSourceForm.step')}
+              <strong>{` ${page} `}</strong>
               {t('analyticsDashboard.dataSourceForm.of2')}
             </Typography>
             <ButtonFilled
               disabled={
-                page === 1 && dataSourceVars.name === ''
+                (page === 1 &&
+                  (dataSourceVars.name === '' ||
+                    !isValidWebUrl(dataSourceVars.url))) ||
+                mutate
                   ? true
                   : page === 2
                   ? disabled
@@ -237,124 +252,56 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
                 page === 2 && !disabled ? setMutate(true) : setPage(2)
               }
             >
-              <Typography>
+              <Typography className={classes.buttonText}>
                 {page === 2
-                  ? `${t('analyticsDashboard.dataSourceForm.saveChanges')}`
-                  : `${t('analyticsDashboard.dataSourceForm.next')}`}
+                  ? mutate
+                    ? !configure
+                      ? t('analyticsDashboard.dataSourceForm.adding')
+                      : t('analyticsDashboard.dataSourceForm.updating')
+                    : t('analyticsDashboard.dataSourceForm.saveChanges')
+                  : t('analyticsDashboard.dataSourceForm.next')}
               </Typography>
+              {mutate && <Loader size={20} />}
             </ButtonFilled>
           </div>
         </div>
       </div>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        width="60%"
-        modalActions={
-          <ButtonOutlined
-            className={classes.closeButton}
-            onClick={() => setOpen(false)}
-          >
-            &#x2715;
-          </ButtonOutlined>
-        }
-      >
-        <div className={classes.modal}>
-          <Typography align="center">
-            {success === true ? (
-              <img
-                src="/icons/finish.svg"
-                alt="success"
-                className={classes.icon}
-              />
-            ) : (
-              <CrossMarkIcon className={classes.icon} />
-            )}
-          </Typography>
-
-          <Typography
-            className={classes.modalHeading}
-            align="center"
-            variant="h3"
-          >
-            {success === true && configure === false
-              ? `${t(
-                  'analyticsDashboard.dataSourceForm.modalHeadingSuccessAdd'
-                )}`
-              : success === true && configure === true
-              ? `${t(
-                  'analyticsDashboard.dataSourceForm.modalHeadingSuccessConfigure'
-                )}`
-              : `${t('analyticsDashboard.dataSourceForm.modalHeadingFailed')}`}
-          </Typography>
-
-          <Typography
-            align="center"
-            variant="body1"
-            className={classes.modalBody}
-          >
-            {success === true && configure === false ? (
-              <div>
-                {t('analyticsDashboard.dataSourceForm.modalBodySuccessAdd')}
-              </div>
-            ) : success === true && configure === true ? (
-              <div>
-                {t(
-                  'analyticsDashboard.dataSourceForm.modalBodySuccessConfigure'
-                )}
-              </div>
-            ) : (
-              <div>
-                {t('analyticsDashboard.dataSourceForm.modalBodyFailed')}
-              </div>
-            )}
-          </Typography>
-
-          {success === true ? (
-            <ButtonFilled
-              variant="success"
-              onClick={() => {
+      {isAlertOpen && (
+        <Snackbar
+          open={isAlertOpen}
+          autoHideDuration={6000}
+          onClose={() => {
+            setIsAlertOpen(false);
+            if (success) {
+              history.push({
+                pathname: '/analytics',
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }
+          }}
+        >
+          <Alert
+            onClose={() => {
+              setIsAlertOpen(false);
+              if (success) {
                 history.push({
                   pathname: '/analytics',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
-              }}
-            >
-              <div>
-                {t('analyticsDashboard.dataSourceForm.modalActionsBack')}
-              </div>
-            </ButtonFilled>
-          ) : (
-            <div className={classes.flexButtons}>
-              <ButtonOutlined
-                onClick={() => {
-                  setOpen(false);
-                  setMutate(true);
-                }}
-                disabled={false}
-              >
-                <div>
-                  {t('analyticsDashboard.dataSourceForm.modalActionsTryAgain')}
-                </div>
-              </ButtonOutlined>
-
-              <ButtonFilled
-                variant="error"
-                onClick={() => {
-                  history.push({
-                    pathname: '/analytics',
-                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                  });
-                }}
-              >
-                <div>
-                  {t('analyticsDashboard.dataSourceForm.modalActionsBack')}
-                </div>
-              </ButtonFilled>
-            </div>
-          )}
-        </div>
-      </Modal>
+              }
+            }}
+            severity={success ? 'success' : 'error'}
+          >
+            {!configure
+              ? success
+                ? t('analyticsDashboard.dataSourceForm.connectionSuccess')
+                : t('analyticsDashboard.dataSourceForm.connectionError')
+              : success
+              ? t('analyticsDashboard.dataSourceForm.updateSuccess')
+              : t('analyticsDashboard.dataSourceForm.updateError')}
+          </Alert>
+        </Snackbar>
+      )}
     </Scaffold>
   );
 };

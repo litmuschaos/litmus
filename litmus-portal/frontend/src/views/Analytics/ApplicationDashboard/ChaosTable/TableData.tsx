@@ -31,17 +31,21 @@ const TableData: React.FC<TableDataProps> = ({
         />
       </StyledTableCell>
       <StyledTableCell>
-        <div
-          className={classes.colorBar}
-          style={{
-            background: data.legend,
-          }}
-        />
+        <Typography
+          className={classes.tableObjects}
+          style={{ maxWidth: '15rem' }}
+        >
+          <div
+            className={classes.colorCircle}
+            style={{ background: data.legendColor }}
+          />
+          {data.chaosResultName}
+        </Typography>
       </StyledTableCell>
       <StyledTableCell>
         <Typography
           className={classes.tableObjects}
-          style={{ maxWidth: '25rem' }}
+          style={{ maxWidth: '12.5rem' }}
         >
           {data.workflow}
         </Typography>
@@ -49,15 +53,15 @@ const TableData: React.FC<TableDataProps> = ({
       <StyledTableCell>
         <Typography
           className={classes.tableObjects}
-          style={{ maxWidth: '10rem' }}
+          style={{ maxWidth: '7.5rem' }}
         >
-          {data.experiment}
+          {data.engineContext}
         </Typography>
       </StyledTableCell>
       <StyledTableCell>
         <Typography
           className={classes.tableObjects}
-          style={{ maxWidth: '15rem' }}
+          style={{ maxWidth: '7.5rem' }}
         >
           {data.target}
         </Typography>
@@ -65,14 +69,14 @@ const TableData: React.FC<TableDataProps> = ({
       <StyledTableCell>
         <Typography
           className={`${classes.tableObjects} ${
-            data.result === CHAOS_EXPERIMENT_VERDICT_PASS
+            data.verdict === CHAOS_EXPERIMENT_VERDICT_PASS
               ? classes.pass
-              : data.result === CHAOS_EXPERIMENT_VERDICT_FAIL
+              : data.verdict === CHAOS_EXPERIMENT_VERDICT_FAIL
               ? classes.fail
               : classes.awaited
           }`}
         >
-          {data.result}
+          {data.verdict}
         </Typography>
       </StyledTableCell>
     </>
