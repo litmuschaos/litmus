@@ -232,9 +232,12 @@ const DashboardTable: React.FC = () => {
         <blockquote className={classes.warningBlock}>
           <Typography className={classes.warningText} align="left">
             {dataSourceList?.ListDataSource.length
-              ? `No active data source found for creating an application dashboard.`
-              : `No data source available. To create an Application dashboard you
-            need to add a data source`}
+              ? t(
+                  'analyticsDashboard.applicationDashboardTable.warning.noActiveDataSource'
+                )
+              : t(
+                  'analyticsDashboard.applicationDashboardTable.warning.noAvailableDataSource'
+                )}
           </Typography>
           <div className={classes.warningActions}>
             {dataSourceList?.ListDataSource.length ? (
@@ -248,10 +251,14 @@ const DashboardTable: React.FC = () => {
                     className={classes.buttonText}
                     style={{ fontWeight: 500 }}
                   >
-                    Configure an existing data source
+                    {t(
+                      'analyticsDashboard.applicationDashboardTable.warning.configureExisting'
+                    )}
                   </Typography>
                 </TextButton>
-                <Typography className={classes.orText}>or</Typography>
+                <Typography className={classes.orText}>
+                  {t('analyticsDashboard.applicationDashboardTable.warning.or')}
+                </Typography>
               </>
             ) : (
               <></>
@@ -270,7 +277,9 @@ const DashboardTable: React.FC = () => {
                 className={classes.buttonText}
                 style={{ fontWeight: 500 }}
               >
-                Add data source
+                {t(
+                  'analyticsDashboard.applicationDashboardTable.warning.addNew'
+                )}
               </Typography>
             </TextButton>
           </div>
@@ -298,36 +307,36 @@ const DashboardTable: React.FC = () => {
             dataSourceTypes={getDataSourceType(data?.ListDashboard ?? [])}
             dashboardTypes={getDashboardType(data?.ListDashboard ?? [])}
             agentNames={getAgentName(data?.ListDashboard ?? [])}
-            callbackToSetDataSourceType={(dataSourceType: string) => {
+            callbackToSetDataSourceType={(dataSourceType: string) =>
               setFilter({
                 ...filter,
                 selectedDataSourceType: dataSourceType,
-              });
-            }}
-            callbackToSetDashboardType={(dashboardType: string) => {
+              })
+            }
+            callbackToSetDashboardType={(dashboardType: string) =>
               setFilter({
                 ...filter,
                 selectedDashboardType: dashboardType,
-              });
-            }}
-            callbackToSetAgentName={(agentName: string) => {
+              })
+            }
+            callbackToSetAgentName={(agentName: string) =>
               setFilter({
                 ...filter,
                 selectedAgentName: agentName,
-              });
-            }}
+              })
+            }
             callbackToSetRange={(
               selectedStartDate: string,
               selectedEndDate: string
-            ) => {
+            ) =>
               setFilter({
                 ...filter,
                 range: {
                   startDate: selectedStartDate,
                   endDate: selectedEndDate,
                 },
-              });
-            }}
+              })
+            }
             createButtonDisabled={
               !activeDataSourceAvailable && !loadingDataSources
             }
@@ -343,12 +352,12 @@ const DashboardTable: React.FC = () => {
           >
             <Table aria-label="simple table">
               <TableHeader
-                callBackToSort={(sortConfigurations: SortData) => {
+                callBackToSort={(sortConfigurations: SortData) =>
                   setFilter({
                     ...filter,
                     sortData: sortConfigurations,
-                  });
-                }}
+                  })
+                }
               />
               <TableBody>
                 {error ? (
@@ -356,7 +365,7 @@ const DashboardTable: React.FC = () => {
                     <TableCell colSpan={6}>
                       <Typography align="center">
                         {t(
-                          'analyticsDashboardViews.kubernetesDashboard.table.error'
+                          'analyticsDashboard.applicationDashboardTable.error'
                         )}
                       </Typography>
                     </TableCell>
@@ -370,7 +379,7 @@ const DashboardTable: React.FC = () => {
                         <Loader />
                         <Typography align="center">
                           {t(
-                            'analyticsDashboardViews.kubernetesDashboard.table.loading'
+                            'analyticsDashboard.applicationDashboardTable.loading'
                           )}
                         </Typography>
                       </div>
@@ -390,7 +399,7 @@ const DashboardTable: React.FC = () => {
                           className={classes.noRecordsText}
                         >
                           {t(
-                            'analyticsDashboardViews.kubernetesDashboard.table.noRecords'
+                            'analyticsDashboard.applicationDashboardTable.noRecords'
                           )}
                         </Typography>
                       </div>
@@ -420,7 +429,7 @@ const DashboardTable: React.FC = () => {
                     <TableCell colSpan={6}>
                       <Typography align="center">
                         {t(
-                          'analyticsDashboardViews.kubernetesDashboard.table.noRecords'
+                          'analyticsDashboard.applicationDashboardTable.noRecords'
                         )}
                       </Typography>
                     </TableCell>
@@ -467,8 +476,10 @@ const DashboardTable: React.FC = () => {
             severity={success ? 'success' : 'error'}
           >
             {success
-              ? 'Successfully deleted the dashboard'
-              : 'Error while deleting the dashboard'}
+              ? t(
+                  'analyticsDashboard.applicationDashboardTable.deletionSuccess'
+                )
+              : t('analyticsDashboard.applicationDashboardTable.deletionError')}
           </Alert>
         </Snackbar>
       )}

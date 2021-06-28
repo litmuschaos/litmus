@@ -471,8 +471,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
             </Typography>
 
             <div
-              className={`${classes.flex} ${classes.paddedTop}`}
-              style={{ gap: '2.5rem', width: '98.5%', flexWrap: 'wrap' }}
+              className={`${classes.flex} ${classes.paddedTop} ${classes.configSection}`}
             >
               <div className={classes.flex}>
                 <InputField

@@ -15,31 +15,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
 
-  headerSection: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignContent: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    overflowX: 'auto',
-    height: '6rem',
-    backgroundColor: theme.palette.background.paper,
-  },
-
-  tableRow: {
-    height: '4.5rem',
-  },
-
-  search: {
-    marginLeft: theme.spacing(6),
-  },
-
   warningBlock: {
     margin: theme.spacing(0, 0, 4),
     padding: theme.spacing(0.5, 3),
     borderLeft: `5px solid ${theme.palette.warning.main}`,
-    borderRadius: '5px 0px 0px 5px',
+    borderRadius: '5px 0 0 5px',
     background: theme.palette.warning.light,
     display: 'flex',
     justifyContent: 'space-between',
@@ -79,6 +59,26 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  tableRow: {
+    height: '4.5rem',
+  },
+
+  headerSection: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    overflowX: 'auto',
+    height: '6rem',
+    backgroundColor: theme.palette.background.paper,
+  },
+
+  search: {
+    marginLeft: theme.spacing(6),
+  },
+
   minHeight: {
     height: '20rem',
     minHeight: '20rem',
@@ -110,30 +110,12 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: '0.1176px',
   },
 
-  tableHead: {
-    opacity: 0.7,
-    color: theme.palette.text.primary,
-  },
-
-  dashboardName: {
-    borderRight: `1px solid ${theme.palette.border.main}`,
-    minWidth: '10rem',
-    paddingLeft: theme.spacing(5),
-  },
-
-  tableHeader: {
-    minWidth: '12rem',
-  },
-
-  dashboardType: {
-    marginTop: theme.spacing(2.5),
-  },
-
   dashboardNameHead: {
     marginTop: theme.spacing(2.5),
     fontWeight: 500,
     fontSize: '0.75rem',
     lineHeight: '150%',
+    color: theme.palette.text.hint,
   },
 
   dashboardNameHeadWithoutSort: {
@@ -142,6 +124,12 @@ const useStyles = makeStyles((theme) => ({
 
   dashboardNameCol: {
     paddingLeft: theme.spacing(4),
+  },
+
+  dashboardNameColData: {
+    maxWidth: '10rem',
+    fontWeight: 500,
+    cursor: 'pointer',
   },
 
   headSpacing: {
@@ -160,20 +148,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
 
-  markerIconDown: {
+  markerIcon: {
     color: theme.palette.text.hint,
     paddingTop: theme.spacing(0.5),
     margin: 0,
-  },
-
-  markerIconUp: {
-    color: theme.palette.text.hint,
-    paddingTop: theme.spacing(0.5),
-    margin: 0,
-  },
-
-  tableData: {
-    paddingRight: theme.spacing(2),
   },
 
   options: {
@@ -197,7 +175,7 @@ const useStyles = makeStyles((theme) => ({
     height: '2.75rem',
     minWidth: '9rem',
     border: `0.1px solid ${theme.palette.border.main}`,
-    borderRadius: 4,
+    borderRadius: '0.25rem',
     marginRight: theme.spacing(1.5),
     textTransform: 'none',
     '&:hover': {
@@ -264,8 +242,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   createButton: {
-    marginRight: theme.spacing(3),
-    marginLeft: theme.spacing(1),
+    margin: theme.spacing(0, 3, 0, 1),
     padding: theme.spacing(0, 2.5),
   },
 
@@ -342,7 +319,7 @@ const useStyles = makeStyles((theme) => ({
 
   // select
   menuList: {
-    boxShadow: '0px 5px 9px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 5px 9px rgba(0, 0, 0, 0.1)',
   },
   menuListItem: {
     background: `${theme.palette.background.paper} !important`,

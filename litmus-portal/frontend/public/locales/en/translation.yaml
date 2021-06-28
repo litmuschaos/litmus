@@ -200,6 +200,7 @@ analyticsDashboard:
       subHeading1: Dashboard Configuration Details
       subHeading2: Selected Applications
       subHeading3: Selected Metrics
+      infoKeyNamespace: Namespace
       metaData1: Name
       metaData2: Type
       metaData3: DataSource
@@ -264,12 +265,39 @@ analyticsDashboard:
   workflowScheduleTable:
     title: Workflow Schedules
     noRecordMessage: No workflow has been schedule
-  kubernetesDashboardTable:
-    title: Application Dashboard
-    noRecordMessage: No dashboard has been configured
   workflowDashboard: Workflow dashboards
   overviewTabdataSourceTable: Connected Data Sources
   applicationDashboard: Application dashboards
+  applicationDashboardTable:
+    warning:
+      noActiveDataSource: No active data source found for creating an application dashboard.
+      noAvailableDataSource: No data source available. To create an Application dashboard you need to add a data source.
+      configureExisting: Configure an existing data source
+      addNew: Add data source
+      or: or
+    deletionSuccess: Successfully deleted the dashboard
+    deletionError: Error while deleting the dashboard
+    search: Search
+    selectPeriod: Select period
+    all: All
+    tableHead1: Dashboard name
+    tableHead2: Agent name
+    tableHead3: Dashboard type
+    tableHead4: Data source type
+    tableHead5: Last viewed
+    createDashboard: Create dashboard
+    title: Application Dashboard
+    view: View
+    configure: Configure
+    delete: Delete
+    noRecords: No dashboard available
+    loading: Loading available dashboards
+    error: Unable to fetch data
+    modal:
+      removeDashboard: Remove dashboard ?
+      removeDashboardConfirmation: Are you sure you want to remove the dashboard
+      cancel: Cancel
+      delete: Delete
   applicationDashboards:
     createHeader: Create dashboard
     configureHeader: Configure dashboard
@@ -288,7 +316,11 @@ analyticsDashboard:
       form:
         name: Name
         agent: Agent
+        noActiveAgent: No active agent found
+        agentInactive: Agent is inactive
         dataSource: Data source
+        noActiveDataSource: No active data source found
+        dataSourceInactive: Data source is inactive
         dashboardType: Dashboard type
         applications: Applications
         selectNamespaces: Select namespaces
@@ -333,6 +365,14 @@ analyticsDashboard:
       lineGraph: Line graph
       resolution: Resolution
       resolutionInfo: Resolution
+      removeMetric: Remove metric ?
+      removeMetricConfirmation: Are you sure you want to remove the metric panel
+      under: under
+      cancel: Cancel
+      delete: Delete
+      discardChangesConfirmation: Are you sure to discard changes for the metric panel
+      discardChangesInfo: The selected metric panel will be reverted back to the previous version
+      yesProceed: Yes, Proceed
     stepper:
       steps:
         step1: Choose a dashboard type
@@ -397,6 +437,17 @@ analyticsDashboard:
     updateSuccess: Successfully updated the data source information
     updateError: Error updating the data source information
   dataSourceTable:
+    search: Search
+    selectPeriod: Select period
+    all: All
+    warning:
+      text: Unexpected bad things will happen if you don’t read this!
+      info: The data source seems to be connected to following Application dashboards. Dashboards will be unable to show metrics if the data source is deleted.
+      connectedDashboards: Connected Dashboards :
+      showLess: Show Less Dashboards
+      dashboards: Dashboards
+    deletionSuccess: Successfully deleted the data source
+    deletionError: Error while deleting the data source
     tableHead1: Status
     tableHead2: Data source name
     tableHead3: Data source type
@@ -406,13 +457,14 @@ analyticsDashboard:
     loading: Loading available data sources
     noRecords: No data source available
     fetchError: Unable to fetch data
-  dashboardTable:
-    tableHead1: Dashboard name
-    tableHead2: Agent name
-    tableHead3: Dashboard type
-    tableHead4: Data Source type
-    tableHead5: Last viewed
-    createDashboard: Create dashboard
+    configure: Configure
+    delete: Delete
+    modal:
+      removeDataSource: Remove data source ?
+      removeDataSourceConfirmation: Are you sure you want to remove the data source
+      cancel: Cancel
+      delete: Delete
+      forceDelete: Force Delete
   glowCard:
     title-0: Set it up
     heading-0: Add a Data Source
@@ -567,17 +619,6 @@ chaosWorkflows:
       showTheWorkflow: Show the workflow
       showTheAnalytics: Show the analytics
       na: NA
-
-analyticsDashboardViews:
-  kubernetesDashboard:
-    form:
-      dashboardPanels: Dashboard Panels
-    table:
-      view: View
-      configure: Configure
-      noRecords: No dashboard available
-      loading: Loading available dashboards
-      error: Unable to fetch data
 
 settings:
   accountsTab:

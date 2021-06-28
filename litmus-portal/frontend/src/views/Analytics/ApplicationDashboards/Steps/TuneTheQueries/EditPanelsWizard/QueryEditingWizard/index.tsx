@@ -410,15 +410,21 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
       >
         <div className={classes.modal}>
           <Typography className={classes.modalHeading} align="left">
-            <b>Remove metric ?</b>
+            <b>
+              {t(
+                'analyticsDashboard.applicationDashboards.tuneTheQueries.removeMetric'
+              )}
+            </b>
           </Typography>
 
           <Typography className={classes.modalBodyText} align="left">
-            Are you sure you want to remove the metric panel
+            {t(
+              'analyticsDashboard.applicationDashboards.tuneTheQueries.removeMetricConfirmation'
+            )}
             <b>
               <i>{` ${panelInfo.panel_name} `}</i>
             </b>
-            under
+            {t('analyticsDashboard.applicationDashboards.tuneTheQueries.under')}
             <b>
               <i>{` ${panelInfo.panel_group_name} `}</i>
             </b>
@@ -430,7 +436,11 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               onClick={() => setDeletePanelModalOpen(false)}
               className={classes.cancelButton}
             >
-              <Typography className={classes.buttonText}>Cancel</Typography>
+              <Typography className={classes.buttonText}>
+                {t(
+                  'analyticsDashboard.applicationDashboards.tuneTheQueries.cancel'
+                )}
+              </Typography>
             </TextButton>
             <ButtonFilled
               onClick={() => handleDeletePanel(index)}
@@ -439,7 +449,9 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               <Typography
                 className={`${classes.buttonText} ${classes.confirmButtonText}`}
               >
-                Delete
+                {t(
+                  'analyticsDashboard.applicationDashboards.tuneTheQueries.delete'
+                )}
               </Typography>
             </ButtonFilled>
           </div>
@@ -454,11 +466,13 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
       >
         <div className={classes.modal}>
           <Typography className={classes.modalHeading} align="left">
-            Are you sure to discard changes for the metric panel
+            {t(
+              'analyticsDashboard.applicationDashboards.tuneTheQueries.discardChangesConfirmation'
+            )}
             <b>
               <i>{` ${panelInfo.panel_name} `}</i>
             </b>
-            under
+            {t('analyticsDashboard.applicationDashboards.tuneTheQueries.under')}
             <b>
               <i>{` ${panelInfo.panel_group_name} `}</i>
             </b>
@@ -466,8 +480,9 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
           </Typography>
 
           <Typography className={classes.modalBodyText} align="left">
-            The selected metric panel will be reverted back to the previous
-            version
+            {t(
+              'analyticsDashboard.applicationDashboards.tuneTheQueries.discardChangesInfo'
+            )}
           </Typography>
 
           <div className={classes.flexButtons}>
@@ -475,7 +490,11 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               onClick={() => setDiscardChangesModalOpen(false)}
               className={classes.cancelButton}
             >
-              <Typography className={classes.buttonText}>Cancel</Typography>
+              <Typography className={classes.buttonText}>
+                {t(
+                  'analyticsDashboard.applicationDashboards.tuneTheQueries.cancel'
+                )}
+              </Typography>
             </TextButton>
             <ButtonFilled
               onClick={() => handleDiscardChanges(index)}
@@ -484,7 +503,9 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               <Typography
                 className={`${classes.buttonText} ${classes.confirmButtonText}`}
               >
-                Yes, Proceed
+                {t(
+                  'analyticsDashboard.applicationDashboards.tuneTheQueries.yesProceed'
+                )}
               </Typography>
             </ButtonFilled>
           </div>

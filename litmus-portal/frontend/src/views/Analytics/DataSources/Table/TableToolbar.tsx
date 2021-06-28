@@ -107,7 +107,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       <div className={classes.search}>
         <Search
           id="input-with-icon-textfield"
-          placeholder="Search"
+          placeholder={t('analyticsDashboard.dataSourceTable.search')}
           value={searchToken}
           onChange={handleSearch}
         />
@@ -120,9 +120,11 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           variant="outlined"
           className={`${classes.formControl} ${classes.dataSourceStatusForm}`}
         >
-          <InputLabel className={classes.selectText}>Status</InputLabel>
+          <InputLabel className={classes.selectText}>
+            {t('analyticsDashboard.dataSourceTable.tableHead1')}
+          </InputLabel>
           <Select
-            label="Status"
+            label={t('analyticsDashboard.dataSourceTable.tableHead1')}
             value={status}
             onChange={handleStatusChange}
             className={classes.selectText}
@@ -142,7 +144,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
             }}
           >
             <MenuItem value="All" className={classes.menuListItem}>
-              All
+              {t('analyticsDashboard.dataSourceTable.all')}
             </MenuItem>
             {statuses.map((availableStatus: string) => (
               <MenuItem
@@ -161,10 +163,10 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           className={`${classes.formControl} ${classes.dataSourceNameForm}`}
         >
           <InputLabel className={classes.selectText}>
-            Data source type
+            {t('analyticsDashboard.dataSourceTable.tableHead3')}
           </InputLabel>
           <Select
-            label="Data source type"
+            label={t('analyticsDashboard.dataSourceTable.tableHead3')}
             value={dataSourceType}
             onChange={handleDataSourceTypeChange}
             className={classes.selectText}
@@ -184,7 +186,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
             }}
           >
             <MenuItem value="All" className={classes.menuListItem}>
-              All
+              {t('analyticsDashboard.dataSourceTable.all')}
             </MenuItem>
             {dataSourceTypes.map((availableDataSourceType: string) => (
               <MenuItem
@@ -209,7 +211,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <Typography className={classes.displayDate}>
             {range.startDate === ' '
-              ? 'Select period'
+              ? t('analyticsDashboard.dataSourceTable.selectPeriod')
               : `${range.startDate.split(' ')[2]} ${
                   range.startDate.split(' ')[1]
                 } ${range.startDate.split(' ')[3]} - ${
@@ -228,12 +230,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           </Typography>
         </Button>
         <ButtonFilled
-          onClick={() => {
+          onClick={() =>
             history.push({
               pathname: '/analytics/datasource/create',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
+            })
+          }
           className={classes.addButton}
         >
           <Typography className={classes.buttonText}>
@@ -243,9 +245,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         <DateRangeSelector
           anchorEl={dateRangeSelectorRef.current as HTMLElement}
           isOpen={isDateRangeSelectorPopoverOpen}
-          onClose={() => {
-            setDateRangeSelectorPopoverOpen(false);
-          }}
+          onClose={() => setDateRangeSelectorPopoverOpen(false)}
           callbackToSetRange={CallbackFromRangeSelector}
         />
       </div>

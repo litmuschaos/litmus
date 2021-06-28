@@ -35,20 +35,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(6),
   },
 
-  binIcon: {
-    width: '1.5rem',
-    height: '1.5rem',
-  },
-
-  cogWheelIcon: {
-    width: '1.5rem',
-    height: '1.5rem',
-  },
-
-  delete: {
-    color: theme.palette.error.dark,
-  },
-
   tableMain: {
     marginTop: theme.spacing(4.25),
     height: '29.75rem',
@@ -100,26 +86,12 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: '0.1176px',
   },
 
-  tableHead: {
-    opacity: 0.7,
-    color: theme.palette.text.primary,
-  },
-
-  dataSourceName: {
-    borderRight: `1px solid ${theme.palette.border.main}`,
-    width: '12rem',
-  },
-
-  dataSourceType: {
-    paddingLeft: theme.spacing(10.5),
-    width: '10rem',
-  },
-
   dataSourceNameHead: {
     marginTop: theme.spacing(2.5),
     fontWeight: 500,
     fontSize: '0.75rem',
     lineHeight: '150%',
+    color: theme.palette.text.hint,
   },
 
   dataSourceNameHeadWithoutSort: {
@@ -147,13 +119,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
 
-  markerIconDown: {
-    color: theme.palette.text.hint,
-    paddingTop: theme.spacing(0.5),
-    margin: 0,
-  },
-
-  markerIconUp: {
+  markerIcon: {
     color: theme.palette.text.hint,
     paddingTop: theme.spacing(0.5),
     margin: 0,
@@ -181,7 +147,7 @@ const useStyles = makeStyles((theme) => ({
     height: '2.75rem',
     minWidth: '9rem',
     border: `0.1px solid ${theme.palette.border.main}`,
-    borderRadius: 4,
+    borderRadius: '0.25rem',
     marginRight: theme.spacing(1.5),
     textTransform: 'none',
     '&:hover': {
@@ -210,6 +176,18 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     fontSize: '0.75rem',
     lineHeight: '150%',
+  },
+
+  dataSourceNameColData: {
+    maxWidth: '10rem',
+    fontWeight: 500,
+  },
+
+  dataSourceUrlColData: {
+    maxWidth: '8.5rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
 
   inlineIcon: {
@@ -261,8 +239,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   addButton: {
-    marginRight: theme.spacing(3),
-    marginLeft: theme.spacing(1),
+    margin: theme.spacing(0, 3, 0, 1),
     padding: theme.spacing(0, 2.5),
   },
 
@@ -369,7 +346,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(5, 0),
     padding: theme.spacing(0.5, 3),
     borderLeft: `5px solid ${theme.palette.warning.main}`,
-    borderRadius: '5px 0px 0px 5px',
+    borderRadius: '5px 0 0 5px',
     background: theme.palette.warning.light,
   },
   warningText: {
@@ -393,7 +370,7 @@ const useStyles = makeStyles((theme) => ({
 
   // select
   menuList: {
-    boxShadow: '0px 5px 9px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 5px 9px rgba(0, 0, 0, 0.1)',
   },
   menuListItem: {
     background: `${theme.palette.background.paper} !important`,

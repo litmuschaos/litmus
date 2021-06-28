@@ -93,8 +93,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
     <>
       <StyledTableCell className={classes.columnDivider}>
         <Typography
-          className={`${classes.tableObjects} ${classes.dashboardNameCol}`}
-          style={{ maxWidth: '10rem', fontWeight: 500, cursor: 'pointer' }}
+          className={`${classes.tableObjects} ${classes.dashboardNameCol} ${classes.dashboardNameColData}`}
           onClick={() => {
             onDashboardLoadRoutine().then(() => {
               history.push({
@@ -201,7 +200,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 className={classes.btnImg}
               />
               <Typography data-cy="openDashboard" className={classes.btnText}>
-                {t('analyticsDashboardViews.kubernetesDashboard.table.view')}
+                {t('analyticsDashboard.applicationDashboardTable.view')}
               </Typography>
             </div>
           </MenuItem>
@@ -230,9 +229,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 data-cy=" configureDashboard"
                 className={classes.btnText}
               >
-                {t(
-                  'analyticsDashboardViews.kubernetesDashboard.table.configure'
-                )}
+                {t('analyticsDashboard.applicationDashboardTable.configure')}
               </Typography>
             </div>
           </MenuItem>
@@ -258,7 +255,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 data-cy="deleteDashboard"
                 className={`${classes.btnText} ${classes.deleteText}`}
               >
-                Delete
+                {t('analyticsDashboard.applicationDashboardTable.delete')}
               </Typography>
             </div>
           </MenuItem>
@@ -272,11 +269,15 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
       >
         <div className={classes.modal}>
           <Typography className={classes.modalHeading} align="left">
-            Remove dashboard ?
+            {t(
+              'analyticsDashboard.applicationDashboardTable.modal.removeDashboard'
+            )}
           </Typography>
 
           <Typography className={classes.modalBodyText} align="left">
-            Are you sure you want to remove the dashboard
+            {t(
+              'analyticsDashboard.applicationDashboardTable.modal.removeDashboardConfirmation'
+            )}
             <b>
               <i>{` ${data.db_name} `}</i>
             </b>
@@ -288,7 +289,9 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
               onClick={() => setOpenModal(false)}
               className={classes.cancelButton}
             >
-              <Typography className={classes.buttonText}>Cancel</Typography>
+              <Typography className={classes.buttonText}>
+                {t('analyticsDashboard.applicationDashboardTable.modal.cancel')}
+              </Typography>
             </TextButton>
             <ButtonFilled
               onClick={() => {
@@ -300,7 +303,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
               <Typography
                 className={`${classes.buttonText} ${classes.confirmButtonText}`}
               >
-                Delete
+                {t('analyticsDashboard.applicationDashboardTable.modal.delete')}
               </Typography>
             </ButtonFilled>
           </div>

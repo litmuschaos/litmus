@@ -264,7 +264,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
               data-cy="optionsConfigureDashboard"
               className={classes.btnText}
             >
-              {t('analyticsDashboardViews.kubernetesDashboard.table.configure')}
+              {t('analyticsDashboard.applicationDashboardTable.configure')}
             </Typography>
           </div>
         </MenuItem>

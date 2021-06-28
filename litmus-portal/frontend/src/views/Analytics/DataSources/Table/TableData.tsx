@@ -4,6 +4,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { ButtonFilled, LightPills, Modal, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DELETE_DATASOURCE } from '../../../../graphql';
 import {
   DeleteDataSourceInput,
@@ -35,6 +36,7 @@ const TableData: React.FC<TableDataProps> = ({
   alertStateHandler,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const dataSource = useActions(DataSourceActions);
@@ -103,8 +105,7 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell className={classes.columnDivider}>
         <Typography
-          className={classes.tableObjects}
-          style={{ maxWidth: '10rem', fontWeight: 500 }}
+          className={`${classes.tableObjects} ${classes.dataSourceNameColData}`}
         >
           {data.ds_name}
         </Typography>
@@ -135,20 +136,12 @@ const TableData: React.FC<TableDataProps> = ({
       <StyledTableCell>
         <TextButton
           className={classes.button}
-          onClick={() => {
-            window.open(data.ds_url);
-          }}
+          onClick={() => window.open(data.ds_url)}
           endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
           classes={{ label: classes.buttonLabel }}
         >
           <Typography
-            className={classes.tableObjects}
-            style={{
-              maxWidth: '8.5rem',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
+            className={`${classes.tableObjects} ${classes.dataSourceUrlColData}`}
           >
             {data.ds_url}
           </Typography>
@@ -161,7 +154,7 @@ const TableData: React.FC<TableDataProps> = ({
           aria-controls="long-menu"
           aria-haspopup="true"
           onClick={handleClick}
-          data-cy="browseDashboardOptions"
+          data-cy="browseDataSourceOptions"
         >
           <MoreVertIcon className={classes.headerIcon} />
         </IconButton>
@@ -206,7 +199,7 @@ const TableData: React.FC<TableDataProps> = ({
                 data-cy="configureDashboard"
                 className={classes.btnText}
               >
-                Configure
+                {t('analyticsDashboard.dataSourceTable.configure')}
               </Typography>
             </div>
           </MenuItem>
@@ -229,7 +222,7 @@ const TableData: React.FC<TableDataProps> = ({
                 data-cy="deleteDashboard"
                 className={`${classes.btnText} ${classes.deleteText}`}
               >
-                Delete
+                {t('analyticsDashboard.dataSourceTable.delete')}
               </Typography>
             </div>
           </MenuItem>
@@ -243,11 +236,13 @@ const TableData: React.FC<TableDataProps> = ({
       >
         <div className={classes.modal}>
           <Typography className={classes.modalHeading} align="left">
-            Remove data source ?
+            {t('analyticsDashboard.dataSourceTable.modal.removeDataSource')}
           </Typography>
 
           <Typography className={classes.modalBodyText} align="left">
-            Are you sure you want to remove the data source
+            {t(
+              'analyticsDashboard.dataSourceTable.modal.removeDataSourceConfirmation'
+            )}
             <b>
               <i>{` ${data.ds_name} `}</i>
             </b>
@@ -261,7 +256,9 @@ const TableData: React.FC<TableDataProps> = ({
               onClick={() => setOpenModal(false)}
               className={classes.cancelButton}
             >
-              <Typography className={classes.buttonText}>Cancel</Typography>
+              <Typography className={classes.buttonText}>
+                {t('analyticsDashboard.dataSourceTable.modal.cancel')}
+              </Typography>
             </TextButton>
             <ButtonFilled
               onClick={() => {
@@ -273,7 +270,7 @@ const TableData: React.FC<TableDataProps> = ({
               <Typography
                 className={`${classes.buttonText} ${classes.confirmButtonText}`}
               >
-                Delete
+                {t('analyticsDashboard.dataSourceTable.modal.delete')}
               </Typography>
             </ButtonFilled>
           </div>

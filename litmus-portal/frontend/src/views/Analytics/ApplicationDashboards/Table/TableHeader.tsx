@@ -33,7 +33,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
 
   return (
     <TableHead>
-      <TableRow className={classes.tableHead}>
+      <TableRow>
         <StyledTableCell
           className={`${classes.headSpacing} ${classes.columnDivider}`}
         >
@@ -41,7 +41,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
             <Typography
               className={`${classes.dashboardNameHead} ${classes.dashboardNameCol}`}
             >
-              {t('analyticsDashboard.dashboardTable.tableHead1')}
+              {t('analyticsDashboard.applicationDashboardTable.tableHead1')}
             </Typography>
             <div className={classes.nameContentIcons}>
               <IconButton
@@ -55,7 +55,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
+                <ExpandLessTwoToneIcon className={classes.markerIcon} />
               </IconButton>
               <IconButton
                 aria-label="sort name descending"
@@ -68,7 +68,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
+                <ExpandMoreTwoToneIcon className={classes.markerIcon} />
               </IconButton>
             </div>
           </div>
@@ -79,27 +79,27 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
           <Typography
             className={`${classes.dashboardNameHead} ${classes.dashboardNameHeadWithoutSort}`}
           >
-            {t('analyticsDashboard.dashboardTable.tableHead2')}
+            {t('analyticsDashboard.applicationDashboardTable.tableHead2')}
           </Typography>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
           <Typography
             className={`${classes.dashboardNameHead} ${classes.dashboardNameHeadWithoutSort}`}
           >
-            {t('analyticsDashboard.dashboardTable.tableHead3')}
+            {t('analyticsDashboard.applicationDashboardTable.tableHead3')}
           </Typography>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
           <Typography
             className={`${classes.dashboardNameHead} ${classes.dashboardNameHeadWithoutSort}`}
           >
-            {t('analyticsDashboard.dashboardTable.tableHead4')}
+            {t('analyticsDashboard.applicationDashboardTable.tableHead4')}
           </Typography>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
             <Typography className={classes.dashboardNameHead}>
-              {t('analyticsDashboard.dashboardTable.tableHead5')}
+              {t('analyticsDashboard.applicationDashboardTable.tableHead5')}
             </Typography>
             <div className={classes.nameContentIcons}>
               <IconButton
@@ -113,7 +113,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
+                <ExpandLessTwoToneIcon className={classes.markerIcon} />
               </IconButton>
               <IconButton
                 aria-label="sort last viewed descending"
@@ -126,7 +126,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
+                <ExpandMoreTwoToneIcon className={classes.markerIcon} />
               </IconButton>
             </div>
           </div>

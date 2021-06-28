@@ -106,9 +106,9 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
             </Typography>
             <TextButton
               className={classes.button}
-              onClick={() => {
-                window.open(dashboardConfigurationDetails.dataSourceURL);
-              }}
+              onClick={() =>
+                window.open(dashboardConfigurationDetails.dataSourceURL)
+              }
               startIcon={<PrometheusIcon className={classes.inlineIcon} />}
               endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
               classes={{ label: classes.buttonLabel }}
@@ -141,7 +141,9 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 <>
                   <div className={classes.namespaceBox}>
                     <Typography className={classes.infoKey}>
-                      Namespace
+                      {t(
+                        'analyticsDashboard.monitoringDashboardPage.infoDropdown.infoKeyNamespace'
+                      )}
                     </Typography>
                     <Typography className={classes.infoValue}>
                       {applicationMetadata.namespace}

@@ -225,11 +225,11 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
           </div>
           <TextButton
             className={classes.button}
-            onClick={() => {
+            onClick={() =>
               window.open(
                 'https://github.com/litmuschaos/litmus/tree/master/monitoring#model-1-optional-prometheus-scrape-config-model'
-              );
-            }}
+              )
+            }
             startIcon={<DocsIcon className={classes.inlineIcon} />}
             endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
             classes={{ label: classes.buttonLabel }}

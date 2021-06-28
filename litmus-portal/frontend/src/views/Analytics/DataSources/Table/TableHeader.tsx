@@ -33,7 +33,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
 
   return (
     <TableHead>
-      <TableRow className={classes.tableHead}>
+      <TableRow>
         <StyledTableCell className={classes.headSpacing}>
           <Typography
             className={`${classes.dataSourceNameHead} ${classes.dataSourceStatusHeadWithoutSort}`}
@@ -61,7 +61,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
+                <ExpandLessTwoToneIcon className={classes.markerIcon} />
               </IconButton>
               <IconButton
                 aria-label="sort name descending"
@@ -74,7 +74,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
+                <ExpandMoreTwoToneIcon className={classes.markerIcon} />
               </IconButton>
             </div>
           </div>
@@ -115,7 +115,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
+                <ExpandLessTwoToneIcon className={classes.markerIcon} />
               </IconButton>
               <IconButton
                 aria-label="sort last configured descending"
@@ -128,7 +128,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
                   })
                 }
               >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
+                <ExpandMoreTwoToneIcon className={classes.markerIcon} />
               </IconButton>
             </div>
           </div>

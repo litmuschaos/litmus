@@ -37,9 +37,7 @@ const TableData: React.FC<TableDataProps> = ({
         >
           <div
             className={classes.colorCircle}
-            style={{
-              background: data.legendColor,
-            }}
+            style={{ background: data.legendColor }}
           />
           {data.chaosResultName}
         </Typography>

@@ -462,7 +462,9 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
           </Select>
           {!activeAgents.length && !loading ? (
             <Typography className={classes.formErrorText}>
-              No active agents found
+              {t(
+                'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.noActiveAgent'
+              )}
             </Typography>
           ) : !(agentList?.getCluster ?? []).filter((cluster) => {
               return (
@@ -473,7 +475,9 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
               );
             }).length ? (
             <Typography className={classes.formErrorText}>
-              Agent is inactive
+              {t(
+                'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.agentInactive'
+              )}
             </Typography>
           ) : (
             <></>
@@ -516,7 +520,9 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
           </Select>
           {!activeDataSources.length ? (
             <Typography className={classes.formErrorText}>
-              No active data sources found
+              {t(
+                'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.noActiveDataSource'
+              )}
             </Typography>
           ) : !dataSourceList.filter((dataSource) => {
               return (
@@ -525,7 +531,9 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
               );
             }).length ? (
             <Typography className={classes.formErrorText}>
-              Data source is inactive
+              {t(
+                'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.dataSourceInactive'
+              )}
             </Typography>
           ) : (
             <></>

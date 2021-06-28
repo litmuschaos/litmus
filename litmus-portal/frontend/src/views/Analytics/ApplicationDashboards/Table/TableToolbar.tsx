@@ -127,7 +127,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       <div className={classes.search}>
         <Search
           id="input-with-icon-textfield"
-          placeholder="Search"
+          placeholder={t('analyticsDashboard.applicationDashboardTable.search')}
           value={searchToken}
           onChange={handleSearch}
         />
@@ -140,9 +140,11 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           variant="outlined"
           className={`${classes.formControl} ${classes.dashboardTypeForm}`}
         >
-          <InputLabel className={classes.selectText}>Agent name</InputLabel>
+          <InputLabel className={classes.selectText}>
+            {t('analyticsDashboard.applicationDashboardTable.tableHead2')}
+          </InputLabel>
           <Select
-            label="Agent name"
+            label={t('analyticsDashboard.applicationDashboardTable.tableHead2')}
             value={agentName}
             onChange={handleAgentNameChange}
             className={classes.selectText}
@@ -162,7 +164,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
             }}
           >
             <MenuItem value="All" className={classes.menuListItem}>
-              All
+              {t('analyticsDashboard.applicationDashboardTable.all')}
             </MenuItem>
             {agentNames.map((availableAgentName: string) => (
               <MenuItem
@@ -180,9 +182,11 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           variant="outlined"
           className={`${classes.formControl} ${classes.dashboardTypeForm}`}
         >
-          <InputLabel className={classes.selectText}>Dashboard type</InputLabel>
+          <InputLabel className={classes.selectText}>
+            {t('analyticsDashboard.applicationDashboardTable.tableHead3')}
+          </InputLabel>
           <Select
-            label="Dashboard type"
+            label={t('analyticsDashboard.applicationDashboardTable.tableHead3')}
             value={dashboardType}
             onChange={handleDashboardTypeChange}
             className={classes.selectText}
@@ -202,7 +206,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
             }}
           >
             <MenuItem value="All" className={classes.menuListItem}>
-              All
+              {t('analyticsDashboard.applicationDashboardTable.all')}
             </MenuItem>
             {dashboardTypes.map((availableDashboardType: string) => (
               <MenuItem
@@ -221,10 +225,10 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           className={`${classes.formControl} ${classes.dataSourceTypeForm}`}
         >
           <InputLabel className={classes.selectText}>
-            Data source type
+            {t('analyticsDashboard.applicationDashboardTable.tableHead4')}
           </InputLabel>
           <Select
-            label="Data source type"
+            label={t('analyticsDashboard.applicationDashboardTable.tableHead4')}
             value={dataSourceType}
             onChange={handleDataSourceTypeChange}
             className={classes.selectText}
@@ -244,7 +248,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
             }}
           >
             <MenuItem value="All" className={classes.menuListItem}>
-              All
+              {t('analyticsDashboard.applicationDashboardTable.all')}
             </MenuItem>
             {dataSourceTypes.map((availableDataSourceType: string) => (
               <MenuItem
@@ -269,7 +273,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         >
           <Typography className={classes.displayDate}>
             {range.startDate === ' '
-              ? 'Select period'
+              ? t('analyticsDashboard.applicationDashboardTable.selectPeriod')
               : `${range.startDate.split(' ')[2]} ${
                   range.startDate.split(' ')[1]
                 } ${range.startDate.split(' ')[3]} - ${
@@ -288,12 +292,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           </Typography>
         </Button>
         <ButtonFilled
-          onClick={() => {
+          onClick={() =>
             history.push({
               pathname: '/analytics/dashboard/create',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
+            })
+          }
           className={classes.createButton}
           disabled={createButtonDisabled}
         >
@@ -302,7 +306,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
               createButtonDisabled ? classes.disabledText : ''
             }`}
           >
-            {t('analyticsDashboard.dashboardTable.createDashboard')}
+            {t('analyticsDashboard.applicationDashboardTable.createDashboard')}
           </Typography>
         </ButtonFilled>
         <DateRangeSelector

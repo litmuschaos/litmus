@@ -56,6 +56,12 @@ interface Filter {
   searchTokens: string[];
 }
 
+interface ForceDeleteVars {
+  connectedDashboards: string[];
+  dsID: string;
+  dsName: string;
+}
+
 const DataSourceTable: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -76,11 +82,13 @@ const DataSourceTable: React.FC = () => {
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [drawerState, setDrawerState] = React.useState(false);
   const [showAllDashboards, setShowAllDashboards] = React.useState(false);
-  const [connectedDashboards, setConnectedDashboards] = React.useState<
-    string[]
-  >([]);
-  const [dsIDToDelete, setDsIDToDelete] = React.useState<string>('');
-  const [dsNameToDelete, setDsNameToDelete] = React.useState<string>('');
+  const [forceDeleteVars, setForceDeleteVars] = React.useState<ForceDeleteVars>(
+    {
+      connectedDashboards: [],
+      dsID: '',
+      dsName: '',
+    }
+  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -120,9 +128,11 @@ const DataSourceTable: React.FC = () => {
   );
 
   const cleanDrawerState = () => {
-    setDsIDToDelete('');
-    setDsNameToDelete('');
-    setConnectedDashboards([]);
+    setForceDeleteVars({
+      connectedDashboards: [],
+      dsID: '',
+      dsName: '',
+    });
     setShowAllDashboards(false);
     setDrawerState(false);
   };
@@ -224,30 +234,30 @@ const DataSourceTable: React.FC = () => {
             }
             dataSourceTypes={getDataSourceType(data?.ListDataSource ?? [])}
             statuses={getStatus(data?.ListDataSource ?? [])}
-            callbackToSetDataSourceType={(dataSourceType: string) => {
+            callbackToSetDataSourceType={(dataSourceType: string) =>
               setFilter({
                 ...filter,
                 selectedDataSourceType: dataSourceType,
-              });
-            }}
-            callbackToSetStatus={(status: string) => {
+              })
+            }
+            callbackToSetStatus={(status: string) =>
               setFilter({
                 ...filter,
                 selectedStatus: status,
-              });
-            }}
+              })
+            }
             callbackToSetRange={(
               selectedStartDate: string,
               selectedEndDate: string
-            ) => {
+            ) =>
               setFilter({
                 ...filter,
                 range: {
                   startDate: selectedStartDate,
                   endDate: selectedEndDate,
                 },
-              });
-            }}
+              })
+            }
           />
         </section>
       </Paper>
@@ -260,12 +270,12 @@ const DataSourceTable: React.FC = () => {
           >
             <Table aria-label="simple table">
               <TableHeader
-                callBackToSort={(sortConfigurations: SortData) => {
+                callBackToSort={(sortConfigurations: SortData) =>
                   setFilter({
                     ...filter,
                     sortData: sortConfigurations,
-                  });
-                }}
+                  })
+                }
               />
               <TableBody>
                 {error ? (
@@ -326,9 +336,11 @@ const DataSourceTable: React.FC = () => {
                               ds_name,
                               dashboards
                             ) => {
-                              setDsIDToDelete(ds_id);
-                              setDsNameToDelete(ds_name);
-                              setConnectedDashboards(dashboards);
+                              setForceDeleteVars({
+                                connectedDashboards: dashboards,
+                                dsID: ds_id,
+                                dsName: ds_name,
+                              });
                               setDrawerState(true);
                             }}
                             alertStateHandler={alertStateHandler}
@@ -386,8 +398,8 @@ const DataSourceTable: React.FC = () => {
             severity={success ? 'success' : 'error'}
           >
             {success
-              ? 'Successfully deleted the data source'
-              : 'Error while deleting the data source'}
+              ? t('analyticsDashboard.dataSourceTable.deletionSuccess')
+              : t('analyticsDashboard.dataSourceTable.deletionError')}
           </Alert>
         </Snackbar>
       )}
@@ -406,9 +418,9 @@ const DataSourceTable: React.FC = () => {
         <div className={classes.drawerContent}>
           <div className={classes.flexContainer}>
             <Typography className={classes.drawerHeading} align="left">
-              Delete
+              {t('analyticsDashboard.dataSourceTable.delete')}
               <b>
-                <i>{` ${dsNameToDelete} `}</i>
+                <i>{` ${forceDeleteVars.dsName} `}</i>
               </b>
             </Typography>
             <ButtonOutlined
@@ -420,25 +432,25 @@ const DataSourceTable: React.FC = () => {
           </div>
           <blockquote className={classes.warningBlock}>
             <Typography className={classes.warningText} align="left">
-              Unexpected bad things will happen if you don’t read this!
+              {t('analyticsDashboard.dataSourceTable.warning.text')}
             </Typography>
           </blockquote>
           <Typography className={classes.drawerBodyText} align="left">
-            The data source seems to be connected to following Application
-            Dashboards. Dashboards will be unable to show metrics if data source
-            is deleted.
+            {t('analyticsDashboard.dataSourceTable.warning.info')}
           </Typography>
           <Typography
             className={classes.drawerBodyText}
             style={{ fontWeight: 500 }}
             align="left"
           >
-            Connected Dashboards :
+            {t(
+              'analyticsDashboard.dataSourceTable.warning.connectedDashboards'
+            )}
           </Typography>
           <div className={classes.dashboardsList}>
             {(showAllDashboards
-              ? connectedDashboards
-              : connectedDashboards.slice(0, 3)
+              ? forceDeleteVars.connectedDashboards
+              : forceDeleteVars.connectedDashboards.slice(0, 3)
             ).map((name: string, index: number) => (
               <Typography
                 className={`${classes.drawerBodyText} ${classes.drawerListItem}`}
@@ -448,7 +460,7 @@ const DataSourceTable: React.FC = () => {
               </Typography>
             ))}
           </div>
-          {connectedDashboards.length - 3 >= 1 && (
+          {forceDeleteVars.connectedDashboards.length - 3 >= 1 && (
             <TextButton
               onClick={() => setShowAllDashboards(!showAllDashboards)}
               className={classes.cancelButton}
@@ -456,8 +468,10 @@ const DataSourceTable: React.FC = () => {
             >
               <Typography className={classes.buttonText}>
                 {showAllDashboards
-                  ? `Show Less Dashboards`
-                  : `+${connectedDashboards.length - 3} Dashboards`}
+                  ? t('analyticsDashboard.dataSourceTable.warning.showLess')
+                  : `+${forceDeleteVars.connectedDashboards.length - 3} ${t(
+                      'analyticsDashboard.dataSourceTable.warning.dashboards'
+                    )}`}
               </Typography>
             </TextButton>
           )}
@@ -466,14 +480,16 @@ const DataSourceTable: React.FC = () => {
               onClick={() => cleanDrawerState()}
               className={classes.cancelButton}
             >
-              <Typography className={classes.buttonText}>Cancel</Typography>
+              <Typography className={classes.buttonText}>
+                {t('analyticsDashboard.dataSourceTable.modal.cancel')}
+              </Typography>
             </TextButton>
             <ButtonFilled
               onClick={() => {
                 deleteDataSource({
                   variables: {
                     deleteDSInput: {
-                      ds_id: dsIDToDelete,
+                      ds_id: forceDeleteVars.dsID,
                       force_delete: true,
                     },
                   },
@@ -485,7 +501,7 @@ const DataSourceTable: React.FC = () => {
               <Typography
                 className={`${classes.buttonText} ${classes.confirmButtonText}`}
               >
-                Force Delete
+                {t('analyticsDashboard.dataSourceTable.modal.forceDelete')}
               </Typography>
             </ButtonFilled>
           </div>
