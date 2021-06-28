@@ -18,7 +18,6 @@ import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import YamlEditor from '../../../components/YamlEditor/Editor';
-import { constants } from '../../../constants';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
@@ -298,16 +297,21 @@ const TuneWorkflow = forwardRef((_, ref) => {
             (value as WorkflowDetailsProps).CRDLink !== '' &&
             manifest === ''
           )
-            getPredefinedExperimentYaml({
-              variables: {
-                experimentInput: {
-                  ProjectID: selectedProjectID,
-                  ChartName: '',
-                  ExperimentName: (value as WorkflowDetailsProps).CRDLink,
-                  HubName: constants.chaosHub,
-                  FileType: '',
+            /**
+             * Get Pre-defined experiment YAML of the selected hub
+             */
+            localforage.getItem('selectedHub').then((hub) => {
+              getPredefinedExperimentYaml({
+                variables: {
+                  experimentInput: {
+                    ProjectID: selectedProjectID,
+                    ChartName: '',
+                    ExperimentName: (value as WorkflowDetailsProps).CRDLink,
+                    HubName: hub as string,
+                    FileType: '',
+                  },
                 },
-              },
+              });
             });
         });
       }
