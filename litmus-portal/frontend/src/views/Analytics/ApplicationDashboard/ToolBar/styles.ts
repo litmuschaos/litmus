@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 
   // select
   menuList: {
-    boxShadow: '0px 5px 9px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 5px 9px rgba(0, 0, 0, 0.1)',
   },
   menuListItem: {
     background: `${theme.palette.background.paper} !important`,

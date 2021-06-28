@@ -28,7 +28,7 @@ import ace from 'ace-builds';
   background: rgba(31, 0, 230, 0.15)\
   }\
   .lp-code-bright.ace_multiselect .ace_selection.ace_start {\
-  box-shadow: 0 0 3px 0px #272822;\
+  box-shadow: 0 0 3px 0 #272822;\
   }\
   .lp-code-bright .ace_marker-layer .ace_step {\
   background: rgb(102, 82, 0)\

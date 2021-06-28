@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     border: '1px',
     borderRadius: '3px',
     boxShadow:
-      '0px 0.3px 0.9px rgba(0, 0, 0, 0.1), 0px 1.6px 3.6px rgba(0, 0, 0, 0.13)',
+      '0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13)',
     padding: theme.spacing(4, 3.125, 6),
   },
 
