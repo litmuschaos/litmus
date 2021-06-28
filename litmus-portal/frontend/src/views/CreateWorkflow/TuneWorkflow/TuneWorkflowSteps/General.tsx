@@ -39,21 +39,8 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
     ) {
       return engineYAML.metadata.labels.context;
     }
-    /**
-     * Split the experiments according to - in their names
-     * For index 0 to n-1 concat the experiment words with _
-     * For final index do not concat the _
-     * Adding Namespace to the front of the concatenated Exp Name
-     * to form the context
-     * */
 
-    experimentName.split('-').map((name, i) => {
-      if (i < experimentName.split('-').length - 1)
-        context = `${context + name}_`;
-      else context += name;
-      return null;
-    });
-    context = `${namespace}_${context}`;
+    context = `${experimentName}_${namespace}`;
     return context;
   };
 
