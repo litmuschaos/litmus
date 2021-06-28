@@ -375,7 +375,7 @@ const UsageTable = () => {
                       {project.Workflows.Runs}
                     </TableCell>
                     <TableCell align="center">
-                      {project.Workflows.Runs}
+                      {project.Workflows.ExpRuns}
                     </TableCell>
                     <TableCell align="center">
                       {project.Members.Total}

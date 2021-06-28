@@ -9,16 +9,16 @@ import {
   Select,
   Typography,
 } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import SearchIcon from '@material-ui/icons/Search';
 import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '@material-ui/core/styles';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface HeaderSectionProps {
@@ -97,12 +97,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         />
 
         {/* Select Workflow */}
-        <FormControl
-          variant="outlined"
-          className={classes.formControl}
-          color="primary"
-          focused
-        >
+        <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel className={classes.selectText}>
             {t('workflowCluster.header.status')}
           </InputLabel>
@@ -128,12 +123,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         </FormControl>
 
         {/* Select Cluster */}
-        <FormControl
-          variant="outlined"
-          className={classes.formControl}
-          color="primary"
-          focused
-        >
+        <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel className={classes.selectText}>
             {t('workflowCluster.header.target')}
           </InputLabel>
@@ -154,16 +144,15 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             </MenuItem>
           </Select>
         </FormControl>
-        <div className={classes.dateBtn}>
-          <ButtonOutlined disabled={false} onClick={popOverClick}>
-            <Typography className={classes.displayDate}>
-              {displayDate}
-              <IconButton className={classes.iconButton}>
-                {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
-              </IconButton>
-            </Typography>
-          </ButtonOutlined>
-        </div>
+
+        <ButtonOutlined className={classes.selectRange} onClick={popOverClick}>
+          <Typography className={classes.displayDate}>
+            {displayDate}
+            <IconButton className={classes.iconButton}>
+              {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </Typography>
+        </ButtonOutlined>
         <Popover
           open={isOpen}
           anchorEl={popAnchorEl}

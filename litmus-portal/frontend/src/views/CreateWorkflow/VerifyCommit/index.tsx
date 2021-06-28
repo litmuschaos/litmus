@@ -105,14 +105,14 @@ const VerifyCommit = forwardRef(
             crd: (workflow as WorkflowDetailsProps).CRDLink,
           });
           setSubject(
-            `${(workflow as WorkflowDetailsProps).name}-${
+            `${(workflow as WorkflowDetailsProps).name}_${
               workflowData.namespace
             }`
           );
           const parsedManifest = YAML.parse(manifest);
           delete parsedManifest.metadata.generateName;
           parsedManifest.metadata['labels'] = {
-            subject: `${(workflow as WorkflowDetailsProps).name}-${
+            subject: `${(workflow as WorkflowDetailsProps).name}_${
               workflowData.namespace
             }`,
           };
