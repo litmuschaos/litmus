@@ -48,10 +48,6 @@ const StyledTab = withStyles((theme) =>
     wrapper: {
       flexDirection: 'row-reverse',
     },
-    labelContainer: {
-      width: 'auto',
-      padding: 0,
-    },
   })
 )((props: StyledTabProps) => <Tab {...props} />);
 

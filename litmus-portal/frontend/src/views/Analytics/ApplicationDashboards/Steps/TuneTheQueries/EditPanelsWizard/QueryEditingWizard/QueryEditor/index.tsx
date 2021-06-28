@@ -355,7 +355,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
 
               <AutocompleteChipInput
                 value={selectedValuesForLabel}
-                onChange={(event, value, reason) => {
+                onChange={(event, value) => {
                   const selectedValues: Array<Option> = value as Array<Option>;
                   const existingLabelValuesList: QueryLabelValue[] =
                     localQuery.labels_and_values_list ?? [];
@@ -386,6 +386,11 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   getSelectedValuesForLabel(selectedLabel ?? '');
                   setUpdate(true);
                 }}
+                getOptionSelected={(option) =>
+                  selectedValuesForLabel
+                    .map((selections) => selections.name)
+                    .includes(option.name)
+                }
                 options={getAvailableValues(selectedLabel ?? '')}
                 label={t(
                   'analyticsDashboard.applicationDashboards.tuneTheQueries.values'
@@ -466,8 +471,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
             </Typography>
 
             <div
-              className={`${classes.flex} ${classes.paddedTop}`}
-              style={{ gap: '2.5rem', width: '98.5%', flexWrap: 'wrap' }}
+              className={`${classes.flex} ${classes.paddedTop} ${classes.configSection}`}
             >
               <div className={classes.flex}>
                 <InputField
@@ -564,21 +568,10 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                     )}
                   </InputLabel>
                   <Select
-                    value={
-                      localQuery.line
-                        ? t(
-                            'analyticsDashboard.applicationDashboards.tuneTheQueries.lineGraph'
-                          )
-                        : t(
-                            'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'
-                          )
-                    }
+                    value={localQuery.line ? 'Line graph' : 'Area graph'}
                     onChange={(event) => {
                       const line =
-                        (event.target.value as string) ===
-                        t(
-                          'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'
-                        );
+                        (event.target.value as string) === 'Line graph';
                       setLocalQuery({
                         ...localQuery,
                         line,
@@ -595,9 +588,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                       key={`${t(
                         'analyticsDashboard.applicationDashboards.tuneTheQueries.lineGraph'
                       )}`}
-                      value={t(
-                        'analyticsDashboard.applicationDashboards.tuneTheQueries.lineGraph'
-                      )}
+                      value="Line graph"
                     >
                       {t(
                         'analyticsDashboard.applicationDashboards.tuneTheQueries.lineGraph'
@@ -607,9 +598,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                       key={`${t(
                         'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'
                       )}`}
-                      value={t(
-                        'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'
-                      )}
+                      value="Area graph"
                     >
                       {t(
                         'analyticsDashboard.applicationDashboards.tuneTheQueries.areaGraph'

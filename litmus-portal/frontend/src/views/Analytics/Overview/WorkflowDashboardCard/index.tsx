@@ -1,8 +1,11 @@
 import { IconButton, Typography } from '@material-ui/core';
 import React from 'react';
 import { WorkflowRun } from '../../../../models/graphql/workflowData';
+import useActions from '../../../../redux/actions';
+import * as NodeSelectionActions from '../../../../redux/actions/nodeSelection';
 import { history } from '../../../../redux/configureStore';
 import { ReactComponent as AnalyticsIcon } from '../../../../svg/analytics.svg';
+import { ReactComponent as WorkflowRunIcon } from '../../../../svg/workflowRun.svg';
 import timeDifferenceForDate from '../../../../utils/datesModifier';
 import {
   getProjectID,
@@ -25,9 +28,9 @@ const WorkflowDashboardCard: React.FC<WorkflowDashboardCardProps> = ({
   data,
 }) => {
   const classes = useStyles();
-
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+  const nodeSelection = useActions(NodeSelectionActions);
 
   function getStatusVariant(phase: string) {
     switch (phase) {
@@ -76,6 +79,23 @@ const WorkflowDashboardCard: React.FC<WorkflowDashboardCardProps> = ({
             <div className={classes.cardActions}>
               <IconButton
                 onClick={() => {
+                  nodeSelection.selectNode({
+                    pod_name: '',
+                  });
+                  if (data.phase?.toLowerCase() !== 'notavailable')
+                    history.push({
+                      pathname: `/workflows/${data.workflow_run_id}`,
+                      search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                    });
+                }}
+              >
+                <WorkflowRunIcon />
+              </IconButton>
+              <Typography align="center">See workflow run</Typography>
+            </div>
+            <div className={classes.cardActions}>
+              <IconButton
+                onClick={() => {
                   history.push({
                     pathname: `/workflows/analytics/${data.workflow_id}`,
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
@@ -84,7 +104,7 @@ const WorkflowDashboardCard: React.FC<WorkflowDashboardCardProps> = ({
               >
                 <AnalyticsIcon />
               </IconButton>
-              <Typography>See Analytics</Typography>
+              <Typography align="center">See analytics</Typography>
             </div>
           </section>
         </div>

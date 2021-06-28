@@ -2,7 +2,7 @@
 import { useMutation } from '@apollo/client';
 import { Snackbar, Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { ButtonFilled, ButtonOutlined, InputField, Modal } from 'litmus-ui';
+import { ButtonFilled, InputField, Modal, TextButton } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuidv4 } from 'uuid';
@@ -160,24 +160,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
 
   return (
     <div>
-      <Modal
-        open
-        onClose={() => {
-          onClose();
-        }}
-        modalActions={
-          <ButtonOutlined
-            className={classes.closeButton}
-            onClick={() => {
-              onClose();
-            }}
-          >
-            &#x2715;
-          </ButtonOutlined>
-        }
-        width="45%"
-        height="fit-content"
-      >
+      <Modal open onClose={() => onClose()} width="45%" height="fit-content">
         <div className={classes.modal}>
           <Typography className={classes.modalHeading} align="left">
             {t(
@@ -195,10 +178,8 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
             value={cloneName}
           />
           <div className={classes.flexButtons}>
-            <ButtonOutlined
-              onClick={() => {
-                onClose();
-              }}
+            <TextButton
+              onClick={() => onClose()}
               className={classes.cancelButton}
             >
               <Typography className={classes.buttonText}>
@@ -206,7 +187,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
                   'analyticsDashboard.monitoringDashboardPage.dashboardCloneModal.cancel'
                 )}
               </Typography>
-            </ButtonOutlined>
+            </TextButton>
             <ButtonFilled onClick={() => handleCreateMutation()}>
               <Typography
                 className={`${classes.buttonText} ${classes.okButtonText}`}

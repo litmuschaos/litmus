@@ -38,13 +38,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1.5),
     background: theme.palette.cards.header,
   },
-  discardButton: {
-    background: theme.palette.error.main,
-    '&:hover': {
-      background: theme.palette.error.main,
-      cursor: 'pointer',
-    },
-  },
   flexBetween: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -78,6 +71,40 @@ const useStyles = makeStyles((theme) => ({
   },
   header: {
     padding: theme.spacing(1, 2, 4),
+  },
+
+  // modal
+  modalHeading: {
+    fontSize: '1.5rem',
+    lineHeight: '130%',
+    fontFeatureSettings: 'pnum on, lnum on',
+    margin: theme.spacing(2.5, 0, 4.5),
+    padding: theme.spacing(0, 6.5),
+  },
+  modalBodyText: {
+    fontSize: '1rem',
+    lineHeight: '130%',
+    padding: theme.spacing(0, 6.5),
+  },
+  flexButtons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(5.5, 6.5, 0, 0),
+  },
+  modal: {
+    padding: theme.spacing(5, 0),
+  },
+  buttonText: {
+    lineHeight: '140%',
+    fontSize: '0.875rem',
+  },
+  confirmButtonText: {
+    color: theme.palette.text.secondary,
+    padding: theme.spacing(0, 3),
+  },
+  cancelButton: {
+    marginRight: theme.spacing(1.5),
+    padding: theme.spacing(0, 3),
   },
 }));
 

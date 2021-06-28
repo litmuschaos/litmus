@@ -4,7 +4,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import { ButtonFilled } from 'litmus-ui';
+import { TextButton } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
@@ -78,11 +78,10 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
         className={classes.accordionSummary}
         key={`chaos-table-${dashboardKey}`}
       >
-        <ButtonFilled
+        <TextButton
           className={classes.button}
-          onClick={() => {
-            setChaosTableOpen(!chaosTableOpen);
-          }}
+          onClick={() => setChaosTableOpen(!chaosTableOpen)}
+          variant="highlight"
           startIcon={
             !chaosTableOpen ? (
               <ArrowDropDownIcon className={classes.tableDropIcon} />
@@ -93,14 +92,14 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
         >
           <Typography className={classes.chaosHelperText}>
             {!chaosTableOpen
-              ? `${t(
+              ? t(
                   'analyticsDashboard.monitoringDashboardPage.chaosTable.showTable'
-                )}`
-              : `${t(
+                )
+              : t(
                   'analyticsDashboard.monitoringDashboardPage.chaosTable.hideTable'
-                )}`}
+                )}
           </Typography>
-        </ButtonFilled>
+        </TextButton>
         <IconButton
           aria-label="edit chaos query"
           aria-haspopup="true"
@@ -114,9 +113,9 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
       <StyledAccordionDetails className={classes.accordionDetails}>
         <ChaosTable
           chaosList={chaosEventsToBeShown}
-          selectEvents={(selectedEvents: string[]) => {
-            postEventSelectionRoutine(selectedEvents);
-          }}
+          selectEvents={(selectedEvents: string[]) =>
+            postEventSelectionRoutine(selectedEvents)
+          }
         />
       </StyledAccordionDetails>
     </Accordion>
