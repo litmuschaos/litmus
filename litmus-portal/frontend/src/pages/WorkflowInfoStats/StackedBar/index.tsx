@@ -67,7 +67,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     onCompleted: (data) => {
       if (data.getWorkflowRuns.workflow_runs) {
         data.getWorkflowRuns.workflow_runs.forEach((wfrun) => {
-          wfrun.phase !== STATUS_RUNNING &&
+          if (wfrun.phase !== STATUS_RUNNING) {
             stackBarData.push({
               id: wfrun.workflow_run_id,
               date: Number(wfrun.last_updated) * 1000,
@@ -93,10 +93,11 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
                   ? wfrun.total_experiments - wfrun.experiments_passed
                   : 0,
             });
-          openseries.push({
-            date: Number(wfrun.last_updated) * 1000,
-            value: wfrun.resiliency_score ?? 0,
-          });
+            openseries.push({
+              date: Number(wfrun.last_updated) * 1000,
+              value: wfrun.resiliency_score ?? 0,
+            });
+          }
         });
       }
       setOpenSeriesData({ ...openSeriesData, data: openseries });

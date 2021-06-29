@@ -60,6 +60,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3.75),
     float: 'right',
 
+    '& p:first-child': {
+      marginRight: theme.spacing(1),
+    },
+
     '& img': {
       margin: theme.spacing(0, 1, 0, 1),
     },
