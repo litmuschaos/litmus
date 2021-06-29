@@ -1257,18 +1257,26 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 	return &result, nil
 }
 
+// GetHeatMapData returns the data for calendar heatmap
 func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.HeatmapData, error) {
+
+	// Start and end timestamp of the given year
 	start := time.Date(year, time.January, 1, 0, 00, 00, 0, time.Local)
 	startTimeStamp := time.Date(year, time.January, 1, 0, 00, 00, 0, time.Local).Unix()
 	endTimeStamp := time.Date(year, time.December, 31, 23, 59, 59, 1e9-1, time.Local).Unix()
 	startDay := (int)(time.Unix(startTimeStamp, 0).Weekday())
 	endDay := (int)(time.Unix(endTimeStamp, 0).Weekday())
+
 	var noOfDays int
+
+	// To determine if the year is leap year or not
 	if time.Unix(endTimeStamp, 0).YearDay() == 366 {
 		noOfDays = 366
 	} else {
 		noOfDays = 365
 	}
+
+	// Declaring and initializing array for storing workflow runs in a year
 	wfRunsInYear := make([]model.WorkflowRunsData, 0, noOfDays)
 	for i := 0; i < noOfDays; i += 1 {
 		var y model.WorkflowRunsData
@@ -1278,18 +1286,22 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 		y.WorkflowRunDetail = &x
 		wfRunsInYear = append(wfRunsInYear, y)
 	}
+
 	var pipeline mongo.Pipeline
+
 	// Match with projectID
 	matchProjectIDStage := bson.D{
 		{"$match", bson.D{
 			{"project_id", project_id},
 		}},
 	}
+	// Match with workflow id
 	matchWfIDStage := bson.D{
 		{"$match", bson.D{
 			{"workflow_id", workflow_id},
 		}},
 	}
+
 	pipeline = append(pipeline, matchProjectIDStage, matchWfIDStage)
 	includeAllFromWorkflow := bson.D{
 		{"workflow_id", 1},
@@ -1307,6 +1319,7 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 		{"cluster_type", 1},
 		{"isRemoved", 1},
 	}
+	// Filter the workflow runs that have run in the given year
 	filterWfRunDateStage := bson.D{
 		{"$project", append(includeAllFromWorkflow,
 			bson.E{Key: "workflow_runs", Value: bson.D{
@@ -1325,18 +1338,25 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 		)},
 	}
 	pipeline = append(pipeline, filterWfRunDateStage)
+
 	// Call aggregation on pipeline
 	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
 	var chaosWorkflowRuns []dbSchemaWorkflow.ChaosWorkFlowInput
+
+	// Result array
 	result := make([]*model.HeatmapData, 0, noOfDays)
 	if err = workflowsCursor.All(context.Background(), &chaosWorkflowRuns); err != nil {
 		fmt.Println(err)
 		return result, nil
 	}
+
+	// WorkflowRuns stores the workflow runs retrieved from database
 	var WorkflowRuns []*dbSchemaWorkflow.ChaosWorkflowRun
 	for _, workflow := range chaosWorkflowRuns {
 		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
 	}
+
+	// Iterates through WorkflowRuns to group the data for each day
 	for _, workflowRun := range WorkflowRuns {
 		i, err := strconv.ParseInt(workflowRun.LastUpdated, 10, 64)
 		if err != nil {
@@ -1348,11 +1368,15 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 			x := 0.0
 			wfRunsInYear[lastUpdated.YearDay()-1].Value = &x
 		}
+
+		// To calculate avg resiliency score and number of runs for each day
 		avgRSTemp := (*wfRunsInYear[lastUpdated.YearDay()-1].Value) * (float64(wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns))
 		wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns += 1
 		wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.DateStamp = date
 		*wfRunsInYear[lastUpdated.YearDay()-1].Value = (avgRSTemp + *workflowRun.ResiliencyScore) / (float64(wfRunsInYear[lastUpdated.YearDay()-1].WorkflowRunDetail.NoOfRuns))
 	}
+
+	// Appending and prepending -1 for the week days that are not in the given year
 	for i := startDay; i > 0; i -= 1 {
 		x := -1.0
 		wfRunsInYear = append([]model.WorkflowRunsData{{Value: &x, WorkflowRunDetail: nil}}, wfRunsInYear...)
@@ -1361,8 +1385,11 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 		y := -1.0
 		wfRunsInYear = append(wfRunsInYear, model.WorkflowRunsData{Value: &y, WorkflowRunDetail: nil})
 	}
+
 	day := 0
 	week := 1
+
+	// Bucketing the daywise data into weeks and appending it to resulting array
 	for i := 0; i < 53; i += 1 {
 		var x []*model.WorkflowRunsData
 		for j := 0; j < 7; j += 1 {
