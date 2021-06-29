@@ -85,7 +85,7 @@ jobs:
   tests:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
     needs: [docker-build-image]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout litmus-E2E Repository
         uses: actions/checkout@v2
@@ -129,7 +129,9 @@ jobs:
           kubectl apply -f cluster-k8s-manifest.yml
           kubectl get pods -n litmus
           kubectl get deployments -o wide -n litmus
-          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
+          source ./litmus-e2e/litmus/utils.sh
+          verify_all_components frontend,server litmus
+          wait_for_pods litmus 720
 
       - name: Getting the ENV variables for using while testing
         run: |
@@ -150,6 +152,15 @@ jobs:
           env: true
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
+
+      - name: Verifying Execution Plane components
+        if: always()
+        run: |
+          source ./litmus-e2e/litmus/utils.sh
+          verify_all_components ${COMPONENTS} litmus
+          wait_for_pods litmus 720
+        env:
+          COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
 
       - name: Post Authentication Tests
         if: startsWith(github.event.comment.body, '/run-e2e')
