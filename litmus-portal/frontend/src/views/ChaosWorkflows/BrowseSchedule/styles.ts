@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
   selectText: {
     height: '2.5rem',
+    color: theme.palette.text.primary,
     padding: theme.spacing(0.5),
   },
 

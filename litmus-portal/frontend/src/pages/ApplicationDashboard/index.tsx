@@ -28,6 +28,7 @@ import * as DashboardActions from '../../redux/actions/dashboards';
 import * as DataSourceActions from '../../redux/actions/dataSource';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
+import ChaosAccordion from '../../views/Analytics/ApplicationDashboard/ChaosAccordion';
 import DataSourceInactiveModal from '../../views/Analytics/ApplicationDashboard/DataSourceInactiveModal';
 import InfoDropdown from '../../views/Analytics/ApplicationDashboard/InfoDropdown';
 import DashboardPanelGroup from '../../views/Analytics/ApplicationDashboard/Panel/DashboardPanelGroup';
@@ -82,6 +83,9 @@ const DashboardPage: React.FC = () => {
   };
   const [isInfoOpen, setIsInfoOpen] = React.useState<Boolean>(false);
   const [selectedPanels, setSelectedPanels] = React.useState<string[]>([]);
+  const [selectedApplications, setSelectedApplications] = React.useState<
+    string[]
+  >([]);
 
   // Apollo query to get the dashboards data
   const { data: dashboards } = useQuery<DashboardList, ListDashboardVars>(
@@ -100,6 +104,8 @@ const DashboardPage: React.FC = () => {
       fetchPolicy: 'no-cache',
     }
   );
+
+  const postEventSelectionRoutine = (selectedEvents: string[]) => {};
 
   useEffect(() => {
     if (dashboards && dashboards.ListDashboard.length) {
@@ -296,18 +302,21 @@ const DashboardPage: React.FC = () => {
               dashboardConfigurationDetails={{
                 name: selectedDashboardInformation.name,
                 typeID: selectedDashboardInformation.typeID,
+                typeName: selectedDashboardInformation.typeName,
                 dataSourceName: selectedDataSource.selectedDataSourceName,
                 dataSourceURL: selectedDataSource.selectedDataSourceURL,
                 agentName: selectedDashboardInformation.agentName,
               }}
               metricsToBeShown={selectedDashboardInformation.panelNameAndIDList}
-              applicationsToBeShown={[]}
-              postPanelSelectionRoutine={(selectedPanelList: string[]) => {
-                setSelectedPanels(selectedPanelList);
-              }}
+              applicationsToBeShown={
+                selectedDashboardInformation.applicationMetadataMap
+              }
+              postPanelSelectionRoutine={(selectedPanelList: string[]) =>
+                setSelectedPanels(selectedPanelList)
+              }
               postApplicationSelectionRoutine={(
                 selectedApplicationList: string[]
-              ) => {}}
+              ) => setSelectedApplications(selectedApplicationList)}
             />
           )}
           <ToolBar />
@@ -315,13 +324,13 @@ const DashboardPage: React.FC = () => {
             className={classes.analyticsDiv}
             key={selectedDashboardInformation.dashboardKey}
           >
-            {/* <div className={classes.chaosTableSection}>
+            <div className={classes.chaosTableSection}>
               <ChaosAccordion
                 dashboardKey={selectedDashboardInformation.dashboardKey}
-                chaosEventsToBeShown={prometheusQueryData?.chaosEventsToBeShown}
+                chaosEventsToBeShown={[]}
                 postEventSelectionRoutine={postEventSelectionRoutine}
               />
-            </div> */}
+            </div>
             {selectedDashboardInformation.metaData[0] &&
               selectedDashboardInformation.metaData[0].panel_groups.length >
                 0 &&
@@ -337,6 +346,7 @@ const DashboardPage: React.FC = () => {
                       panel_group_name={panelGroup.panel_group_name}
                       panels={panelGroup.panels}
                       selectedPanels={selectedPanels}
+                      selectedApplications={selectedApplications}
                     />
                   </div>
                 )

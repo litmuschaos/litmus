@@ -54,7 +54,7 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
   ];
   return (
     <div className={classes.root}>
-      <FormControl variant="outlined" className={classes.formControl} focused>
+      <FormControl variant="outlined" className={classes.formControl}>
         <InputLabel className={classes.selectText} />
         <Select
           value={filters}
@@ -70,7 +70,7 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
       </FormControl>
       <div className={classes.graphs}>
         <ScheduleAndRunStats filter={filters} />
-        <Paper className={classes.radialChartContainer}>
+        <Paper elevation={0} className={classes.radialChartContainer}>
           <RadialChart
             radialData={graphData}
             legendTableHeight={150}

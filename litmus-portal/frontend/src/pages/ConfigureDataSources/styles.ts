@@ -49,6 +49,10 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(7.5),
   },
 
+  flexEnd: {
+    justifyContent: 'flex-end',
+  },
+
   saveButton: {
     display: 'flex',
   },
@@ -64,6 +68,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+  },
+
+  buttonText: {
+    paddingRight: theme.spacing(1),
   },
 }));
 

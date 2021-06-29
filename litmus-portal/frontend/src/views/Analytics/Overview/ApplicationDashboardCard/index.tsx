@@ -183,7 +183,7 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
               >
                 <AnalyticsIcon />
               </IconButton>
-              <Typography>Analytics</Typography>
+              <Typography align="center">View</Typography>
             </div>
             <div className={classes.cardActions}>
               <IconButton
@@ -200,13 +200,13 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
               >
                 <CogwheelIcon />
               </IconButton>
-              <Typography>Configure</Typography>
+              <Typography align="center">Configure</Typography>
             </div>
             <div className={classes.cardActions}>
               <IconButton onClick={() => downloadJSON()}>
                 <DownloadIcon />
               </IconButton>
-              <Typography>JSON</Typography>
+              <Typography align="center">JSON</Typography>
             </div>
           </section>
         </div>

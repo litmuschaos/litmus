@@ -41,6 +41,10 @@ const useStyles = makeStyles((theme) => ({
     height: '3.25rem',
   },
 
+  formErrorText: {
+    color: theme.palette.error.main,
+  },
+
   namespaceSelect: {
     width: '41.5rem',
     margin: theme.spacing(3.5, 1),

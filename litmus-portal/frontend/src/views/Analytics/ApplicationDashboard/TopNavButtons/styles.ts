@@ -5,10 +5,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0, 1),
     width: '1rem',
   },
-  button: {
+  buttons: {
     position: 'relative',
     display: 'flex',
     justifyContent: 'space-between',
+    gap: '1rem',
   },
   infoText: {
     paddingRight: theme.spacing(1.5),
@@ -17,17 +18,17 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0, 1),
     width: '1.25rem',
   },
-  optionsButton: {
-    marginLeft: theme.spacing(2),
+  button: {
     minWidth: 0,
+    padding: theme.spacing(1.5, 1),
   },
 
   // Menu option with icon
   menuList: {
-    marginLeft: theme.spacing(-1),
+    marginLeft: theme.spacing(-3),
   },
   menuItem: {
-    width: '11.5rem',
+    width: '9.5rem',
     height: '2.5rem',
   },
   expDiv: {

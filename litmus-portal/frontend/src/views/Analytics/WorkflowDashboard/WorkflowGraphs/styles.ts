@@ -19,10 +19,12 @@ const useStyles = makeStyles((theme) => ({
   radialChartContainer: {
     width: '22rem',
     borderRadius: '0.1875rem',
-    marginBottom: theme.spacing(3.125),
+    padding: theme.spacing(1.25, 4.125, 1.25, 4.125),
+    filter: `drop-shadow(0px 0.3px 0.9px rgba(0, 0, 0, 0.1)) drop-shadow(0px 1.6px 3.6px rgba(0, 0, 0, 0.13))`,
   },
   selectText: {
     height: '2.5rem',
+    color: theme.palette.text.primary,
     padding: theme.spacing(0.5),
   },
   formControl: {

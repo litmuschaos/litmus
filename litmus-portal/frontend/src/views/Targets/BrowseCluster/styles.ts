@@ -32,18 +32,20 @@ const useStyles = makeStyles((theme) => ({
   },
   selectText: {
     height: '2.5rem',
+    color: theme.palette.text.primary,
     padding: theme.spacing(0.5),
   },
-  selectDate: {
+  selectRange: {
     display: 'flex',
     flexDirection: 'row',
     height: '2.5rem',
     minWidth: '9rem',
-    border: '1.7px solid',
-    borderRadius: '2rem',
-    borderColor: theme.palette.secondary.main,
+    borderColor: theme.palette.border.main,
     marginRight: theme.spacing(3.75),
     textTransform: 'none',
+    '&:focus': {
+      borderColor: theme.palette.primary.main,
+    },
   },
   displayDate: {
     marginLeft: theme.spacing(1),
@@ -197,9 +199,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2.5),
     justifyContent: 'space-between',
     gap: '1rem',
-  },
-  dateBtn: {
-    marginRight: theme.spacing(2.5),
   },
   w7: { width: '7rem' },
   // delete user

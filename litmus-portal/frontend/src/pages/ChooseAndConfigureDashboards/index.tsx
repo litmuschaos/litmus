@@ -9,7 +9,7 @@ import {
   DashboardDetails,
   PanelDetails,
   PanelGroupDetails,
-  PromQueryDetails,
+  PromQueryDetails
 } from '../../models/dashboardsData';
 import {
   ApplicationMetadata,
@@ -21,12 +21,12 @@ import {
   PanelOption,
   PanelResponse,
   Resource,
-  updatePanelGroupInput,
+  updatePanelGroupInput
 } from '../../models/graphql/dashboardsDetails';
 import {
   DataSourceList,
   ListDataSourceResponse,
-  ListDataSourceVars,
+  ListDataSourceVars
 } from '../../models/graphql/dataSourceDetails';
 import useActions from '../../redux/actions';
 import * as AlertActions from '../../redux/actions/alert';
@@ -84,16 +84,41 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
     applicationMetadataMap: [],
   });
 
-  const getExistingPanelGroups = (panelGroupsInput: PanelGroupResponse[]) => {
-    const panelGroups: PanelGroupDetails[] = [];
-    if (panelGroupsInput?.length) {
-      panelGroupsInput.forEach((panelGroup: PanelGroupResponse) => {
-        const panels: PanelDetails[] = [];
-        panelGroup.panels.forEach((panel: PanelResponse) => {
-          const promQueries: PromQueryDetails[] = [];
-          panel.prom_queries.forEach((promQuery) => {
-            promQueries.push({
-              ...promQuery,
+    const getExistingPanelGroups = (panelGroupsInput: PanelGroupResponse[]) => {
+      const panelGroups: PanelGroupDetails[] = [];
+      if (panelGroupsInput?.length) {
+        panelGroupsInput.forEach((panelGroup: PanelGroupResponse) => {
+          const panels: PanelDetails[] = [];
+          panelGroup.panels.forEach((panel: PanelResponse) => {
+            const promQueries: PromQueryDetails[] = [];
+            panel.prom_queries.forEach((promQuery) => {
+              promQueries.push({
+                queryid: promQuery.queryid,
+                prom_query_name: promQuery.prom_query_name,
+                legend: promQuery.legend,
+                resolution: promQuery.resolution,
+                minstep: promQuery.minstep,
+                line: promQuery.line,
+                close_area: promQuery.close_area,
+              });
+            });
+            const panelOption: PanelOption = {
+              points: panel.panel_options.points,
+              grids: panel.panel_options.grids,
+              left_axis: panel.panel_options.left_axis,
+            };
+            panels.push({
+              panel_name: panel.panel_name,
+              y_axis_left: panel.y_axis_left,
+              y_axis_right: panel.y_axis_right,
+              x_axis_down: panel.x_axis_down,
+              unit: panel.unit,
+              panel_options: panelOption,
+              prom_queries: promQueries,
+              panel_id: panel.panel_id,
+              created_at: panel.created_at,
+              panel_group_id: panelGroup.panel_group_id,
+              panel_group_name: panelGroup.panel_group_name,
             });
           });
           const panelOption: PanelOption = {

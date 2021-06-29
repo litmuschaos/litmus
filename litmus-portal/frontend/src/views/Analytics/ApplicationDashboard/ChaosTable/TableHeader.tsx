@@ -32,53 +32,42 @@ const TableHeader: React.FC<TableHeaderProps> = ({
           />
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <div className={classes.nameHead}>
-              {t(
-                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead1'
-              )}
-            </div>
+          <div className={classes.nameHead}>
+            {t(
+              'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead1'
+            )}
           </div>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <div className={classes.nameHead}>
-              {t(
-                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead2'
-              )}
-            </div>
+          <div className={classes.nameHead}>
+            {t(
+              'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead2'
+            )}
           </div>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <div className={classes.nameHead}>
-              {t(
-                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead3'
-              )}
-            </div>
+          <div className={classes.nameHead}>
+            {t(
+              'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead3'
+            )}
           </div>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <div className={classes.nameHead}>
-              {t(
-                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead4'
-              )}
-            </div>
+          <div className={classes.nameHead}>
+            {t(
+              'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead4'
+            )}
           </div>
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <div className={classes.nameHead}>
-              {t(
-                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5.title'
-              )}
-            </div>
+          <div className={classes.nameHead}>
+            {t(
+              'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5.title'
+            )}
             <InfoTooltip
               value={t(
                 'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5.infoText'
               )}
-              className={classes.infoIcon}
             />
           </div>
         </StyledTableCell>

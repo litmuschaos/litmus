@@ -77,7 +77,11 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
       <div>
         <section className="table section">
           <Paper className={classes.tableBody}>
-            <TableContainer className={classes.tableMain}>
+            <TableContainer
+              className={`${classes.tableMain} ${
+                !chaosList.length ? classes.empty : ''
+              }`}
+            >
               <Table aria-label="simple table">
                 <TableHeader
                   onSelectAllClick={handleSelectAllClick}
@@ -120,9 +124,9 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                       <TableCell colSpan={6}>
                         <div className={classes.noRecords}>
                           <img
-                            src="/icons/cloudIcon.svg"
+                            src="/icons/dashboardUnavailable.svg"
                             className={classes.cloudIcon}
-                            alt="Chaos cloud"
+                            alt="Chaos event unavailable"
                           />
                           <Typography
                             align="center"
@@ -153,6 +157,21 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                 page={page}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
+                SelectProps={{
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'right',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'right',
+                    },
+                    getContentAnchorEl: null,
+                    classes: { paper: classes.menuList },
+                  },
+                }}
+                classes={{ menuItem: classes.menuListItem }}
               />
             )}
           </Paper>

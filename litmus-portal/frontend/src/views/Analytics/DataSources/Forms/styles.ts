@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     border: '1px',
     borderRadius: '3px',
     boxShadow:
-      '0px 0.3px 0.9px rgba(0, 0, 0, 0.1), 0px 1.6px 3.6px rgba(0, 0, 0, 0.13)',
+      '0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13)',
     padding: theme.spacing(4, 3.125, 6),
   },
 
@@ -63,20 +63,24 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inlineIcon: {
-    margin: theme.spacing(0.5, 1, 0, 0),
-    width: '1rem',
-    height: '1rem',
+    margin: theme.spacing(0.25, 0),
+    width: '1.25rem',
+    height: '1.25rem',
   },
 
-  linkIcon: {
-    margin: theme.spacing(0, 0, 0.45, 0.75),
-    width: '1rem',
-    height: '1rem',
-  },
-
-  iconWithTextDiv: {
-    display: 'flex',
+  button: {
+    minWidth: 0,
+    minHeight: 0,
+    padding: 0,
     margin: theme.spacing(1.5, 0, 0, 2),
+    '&:hover': {
+      cursor: 'pointer !important',
+    },
+  },
+
+  buttonLabel: {
+    justifyContent: 'flex-start',
+    marginLeft: theme.spacing(0.5),
   },
 
   infoValue: {

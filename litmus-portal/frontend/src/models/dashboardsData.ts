@@ -84,6 +84,7 @@ export interface DashboardDetails {
 export interface DashboardConfigurationDetails {
   name: string;
   typeID: string;
+  typeName: string;
   dataSourceName: string;
   dataSourceURL: string;
   agentName: string;
@@ -97,10 +98,12 @@ export interface PanelNameAndID {
 export interface GraphPanelProps extends PanelResponse {
   className?: string;
   controllerPanelID?: string;
+  selectedApplications?: string[];
 }
 
 export interface GraphPanelGroupProps extends PanelGroupResponse {
   selectedPanels?: string[];
+  selectedApplications?: string[];
 }
 
 export interface ParsedPrometheusData {
@@ -108,34 +111,15 @@ export interface ParsedPrometheusData {
   closedAreaData: Array<GraphMetric>;
   chaosData: Array<GraphMetric>;
 }
-export interface RunWiseChaosMetrics {
-  runIndex: number;
-  runID: string;
-  lastUpdatedTimeStamp: number;
-  probeSuccessPercentage: string;
-  experimentStatus: string;
-  experimentVerdict: string;
-  resilienceScore: string;
-  workflowStatus: string;
-}
 
-export interface WorkflowAndExperimentMetaDataMap {
-  workflowID: string;
-  workflowName: string;
-  experimentName: string;
-  targetApp: string;
-  targetNamespace: string;
-  runWiseChaosMetrics: RunWiseChaosMetrics[];
-}
 export interface ChaosEventDetails {
   id: string;
-  legend: string;
+  legendColor: string;
+  chaosResultName: string;
   workflow: string;
-  experiment: string;
+  engineContext: string;
   target: string;
-  result: string;
-  chaosMetrics: WorkflowAndExperimentMetaDataMap;
-  showOnTable: Boolean;
+  verdict: string;
 }
 
 export interface SelectedDashboardInformation {

@@ -8,5 +8,5 @@ data:
   config: |
     containerRuntimeExecutor: #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
     executor:
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
     instanceID: #{CLUSTER_ID}

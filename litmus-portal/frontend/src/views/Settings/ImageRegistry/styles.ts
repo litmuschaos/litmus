@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(3.125),
     border: `1px solid ${theme.palette.border.main}`,
     borderRadius: 3,
+    backgroundColor: theme.palette.background.paper,
   },
   radio: {
     color: theme.palette.primary.main,

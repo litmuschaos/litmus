@@ -7,6 +7,7 @@ import {
   QueryLabelValue,
 } from '../models/dashboardsData';
 import {
+  metricsTimeStampValue,
   PrometheusResponse,
   promQueryInput,
 } from '../models/graphql/prometheus';
@@ -69,7 +70,8 @@ export const DataParserForPrometheus = (
   prometheusData: PrometheusResponse,
   lineGraph: string[],
   areaGraph: string[],
-  closedAreaQueryIDs: string[]
+  closedAreaQueryIDs: string[],
+  selectedApplications?: string[]
 ) => {
   const parsedPrometheusData: ParsedPrometheusData = {
     seriesData: [],
@@ -98,11 +100,28 @@ export const DataParserForPrometheus = (
   prometheusData.GetPromQuery.metricsResponse?.forEach(
     (queryResponse, mainIndex) => {
       if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
+        let { legends } = queryResponse;
+        let { tsvs } = queryResponse;
+        if (selectedApplications && selectedApplications.length) {
+          const newLegends: string[] = [];
+          const newTsvs: metricsTimeStampValue[][] = [];
+          queryResponse.legends.forEach((legend, index) => {
+            const filteredApps: string[] = selectedApplications.filter((app) =>
+              legend.includes(app)
+            );
+            if (filteredApps.length) {
+              newLegends.push(legend);
+              newTsvs.push(queryResponse.tsvs[index]);
+            }
+          });
+          legends = newLegends;
+          tsvs = newTsvs;
+        }
         if (closedAreaQueryIDs.includes(queryResponse.queryid)) {
           parsedPrometheusData.closedAreaData.push(
-            ...queryResponse.legends.map((elem, index) => ({
+            ...legends.map((elem, index) => ({
               metricName: elem,
-              data: queryResponse.tsvs[index].map((dataPoint) => ({
+              data: tsvs[index].map((dataPoint) => ({
                 ...dataPoint,
               })),
               baseColor:
@@ -113,9 +132,9 @@ export const DataParserForPrometheus = (
           );
         } else {
           parsedPrometheusData.seriesData.push(
-            ...queryResponse.legends.map((elem, index) => ({
+            ...legends.map((elem, index) => ({
               metricName: elem,
-              data: queryResponse.tsvs[index].map((dataPoint) => ({
+              data: tsvs[index].map((dataPoint) => ({
                 ...dataPoint,
               })),
               baseColor:

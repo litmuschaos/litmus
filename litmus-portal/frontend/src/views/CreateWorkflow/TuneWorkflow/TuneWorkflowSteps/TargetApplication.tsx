@@ -35,6 +35,7 @@ import {
 } from '../../../../models/graphql/createWorkflowData';
 import { KUBE_OBJ } from '../../../../graphql';
 import { constants } from '../../../../constants';
+import { gvrData } from './data';
 
 interface AppInfoData {
   namespace: string;
@@ -102,34 +103,6 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
     resource: '',
   });
   const [appLabel, setAppLabel] = useState<string[]>([]);
-
-  /**
-   *
-   * Variable required for Menu List
-   */
-  const applicationKind: string[] = [
-    constants.deployment,
-    constants.statefulset,
-    constants.daemonset,
-    constants.deploymentconfig,
-    constants.rollout,
-  ];
-  /**
-   * Function to filter the lables according to the namespace provided
-   */
-  const handleLabelChange = () => {
-    const applabel: string[] = [];
-    if (appinfoData !== undefined) {
-      appinfoData.forEach((appinfo) => {
-        if (appinfo.namespace === targetApp.appns) {
-          appinfo.appLabel.forEach((label) => applabel.push(label));
-        }
-      });
-    }
-    return applabel.length > 0
-      ? setAppLabel(applabel)
-      : setAppLabel(['No resource available']);
-  };
 
   /**
    * Function for handling AnnotationCheck toggle button
@@ -204,35 +177,41 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
         },
       },
     },
-    onSubscriptionComplete: () => {
-      handleLabelChange();
-    },
     fetchPolicy: 'network-only',
   });
 
   /**
-   * This useEffect is used to populate the namespace and
-   * all the labels present in that particular namespace.
+   * UseEffect to filter the labels according to the namespace provided
    */
   useEffect(() => {
     if (data !== undefined) {
       const appinfo: AppInfoData[] = [];
       try {
+        /**
+         * Parse the kubeObject data
+         */
         const kubeData: KubeObjData[] = JSON.parse(data.getKubeObject.kube_obj);
         kubeData.forEach((obj: KubeObjData) => {
-          const applabel: string[] = [];
+          const applabels: string[] = [];
           if (obj.data != null) {
             obj.data.forEach((objData: KubeObjResource) => {
               if (objData.labels != null) {
+                /**
+                 * Get the labels from the key value pairs
+                 * example - app=mongo
+                 */
                 Object.entries(objData.labels).map(([key, value]) =>
-                  applabel.push(`${key}=${value}`)
+                  applabels.push(`${key}=${value}`)
                 );
               }
             });
           }
+          /**
+           * Push these labels corresponding to their namespaces
+           */
           appinfo.push({
             namespace: obj.namespace,
-            appLabel: applabel,
+            appLabel: applabels,
           });
         });
       } catch (err) {
@@ -243,51 +222,38 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
         });
       }
       setAppInfoData(appinfo);
-    }
-  }, [data]);
 
+      /**
+       * Filter the labels according to their namespace
+       */
+      if (appinfoData !== undefined) {
+        const filteredAppLabel: string[] = [];
+        appinfo.forEach((appinfos) => {
+          if (appinfos.namespace === targetApp.appns) {
+            appinfos.appLabel.forEach((label) => filteredAppLabel.push(label));
+          }
+        });
+        if (filteredAppLabel.length > 0) {
+          setAppLabel(filteredAppLabel);
+        } else {
+          setAppLabel(['No resource available']);
+        }
+      }
+    }
+  }, [data, targetApp.appns]);
   /**
    * This useEffect is called on the first render to fetch the
    * kubeObj data and populate it in the AutoComplete textfields
    */
   useEffect(() => {
-    if (targetApp.appkind === constants.deployment) {
-      setGVRObj({
-        group: constants.apps,
-        version: constants.v1,
-        resource: constants.deployments,
-      });
-    } else if (targetApp.appkind === constants.statefulset) {
-      setGVRObj({
-        group: constants.apps,
-        version: constants.v1,
-        resource: constants.statefulsets,
-      });
-    } else if (targetApp.appkind === constants.daemonset) {
-      setGVRObj({
-        group: constants.apps,
-        version: constants.v1,
-        resource: constants.daemonsets,
-      });
-    } else if (targetApp.appkind === constants.deploymentconfig) {
-      setGVRObj({
-        group: constants.openshift,
-        version: constants.v1,
-        resource: constants.deploymentconfigs,
-      });
-    } else if (targetApp.appkind === constants.rollout) {
-      setGVRObj({
-        group: constants.argoproj,
-        version: constants.v1alpha1,
-        resource: constants.rollouts,
-      });
-    } else {
-      setGVRObj({
-        group: '',
-        version: '',
-        resource: '',
-      });
-    }
+    gvrData.forEach((gvr) => {
+      if (gvr.resource === targetApp.appkind)
+        setGVRObj({
+          group: gvr.group,
+          version: gvr.version,
+          resource: `${gvr.resource}s`,
+        });
+    });
   }, []);
 
   return (
@@ -374,7 +340,6 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
                     ...targetApp,
                     appns: v,
                   });
-                  handleLabelChange();
                 }}
                 renderInput={(params) => (
                   <InputField
@@ -421,54 +386,23 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
                       ...targetApp,
                       appkind: event.target.value as string,
                     });
-                    handleLabelChange();
-                    if (event.target.value === constants.deployment) {
-                      setGVRObj({
-                        group: constants.apps,
-                        version: constants.v1,
-                        resource: constants.deployments,
-                      });
-                    } else if (event.target.value === constants.statefulset) {
-                      setGVRObj({
-                        group: constants.apps,
-                        version: constants.v1,
-                        resource: constants.statefulsets,
-                      });
-                    } else if (event.target.value === constants.daemonset) {
-                      setGVRObj({
-                        group: constants.apps,
-                        version: constants.v1,
-                        resource: constants.daemonsets,
-                      });
-                    } else if (
-                      event.target.value === constants.deploymentconfig
-                    ) {
-                      setGVRObj({
-                        group: constants.openshift,
-                        version: constants.v1,
-                        resource: constants.deploymentconfigs,
-                      });
-                    } else if (event.target.value === constants.rollout) {
-                      setGVRObj({
-                        group: constants.argoproj,
-                        version: constants.v1alpha1,
-                        resource: constants.rollouts,
-                      });
-                    } else {
-                      setGVRObj({
-                        group: '',
-                        version: '',
-                        resource: '',
-                      });
-                    }
+                    gvrData.forEach((gvr) => {
+                      if (gvr.resource === (event.target.value as string)) {
+                        setGVRObj({
+                          group: gvr.group,
+                          version: gvr.version,
+                          resource: `${gvr.resource}s`,
+                        });
+                      }
+                    });
                   }}
                   label={constants.appKind}
                 >
                   <MenuItem aria-label="None" value="" />
-                  {applicationKind.map((kind) => {
+                  {gvrData.map((gvr) => {
                     return (
-                      <MenuItem key={kind} value={kind}>
-                        {kind}
+                      <MenuItem key={gvr.resource} value={gvr.resource}>
+                        {gvr.resource}
                       </MenuItem>
                     );
                   })}
