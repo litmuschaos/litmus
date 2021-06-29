@@ -721,6 +721,14 @@ type CreateDBInput struct {
 	RefreshRate               string                 `json:"refresh_rate"`
 }
 
+type DataVars struct {
+	URL             string `json:"url"`
+	Start           string `json:"start"`
+	End             string `json:"end"`
+	RelativeTime    int    `json:"relative_time"`
+	RefreshInterval int    `json:"refresh_interval"`
+}
+
 type DeleteDSInput struct {
 	ForceDelete bool   `json:"force_delete"`
 	DsID        string `json:"ds_id"`

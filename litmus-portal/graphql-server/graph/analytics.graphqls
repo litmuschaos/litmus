@@ -140,6 +140,14 @@ input promQueryInput {
   minstep: Int!
 }
 
+input dataVars {
+  url: String!
+  start: String!
+  end: String!
+  relative_time: Int!
+  refresh_interval: Int!
+}
+
 type metricsPromResponse {
   queryid: String!
   legends: [String]

@@ -568,6 +568,23 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequ
 	return kubeObjData, nil
 }
 
+func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dataVariables model.DataVars) (<-chan *model.PromResponse, error) {
+	log.Println("Dashboard view created")
+	dashboardData := make(chan *model.PromResponse)
+	viewID := uuid.New()
+	data_store.Store.Mutex.Lock()
+	data_store.Store.DashboardData[viewID.String()] = dashboardData
+	data_store.Store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		log.Println("Closed dashboard view")
+		close(dashboardData)
+		delete(data_store.Store.DashboardData, viewID.String())
+	}()
+	go analyticsHandler.DashboardViewer(viewID.String(), promQueries, dataVariables, *data_store.Store)
+	return dashboardData, nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

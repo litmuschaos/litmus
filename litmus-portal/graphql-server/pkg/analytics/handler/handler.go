@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/google/uuid"
@@ -735,6 +736,75 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 	}
 
 	return &newPromResponse, nil
+}
+
+func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVariables model.DataVars, r store.StateData) {
+	if viewChan, ok := r.DashboardData[viewID]; ok {
+
+		var queryType string
+
+		if dataVariables.Start != "" && dataVariables.End != "" {
+			queryType = "fixed"
+		} else if dataVariables.RelativeTime != 0 && dataVariables.RefreshInterval != 0 {
+			queryType = "relative"
+		} else {
+			queryType = "invalid"
+		}
+
+		switch queryType {
+
+		case "fixed":
+			dsDetails := &model.DsDetails{
+				URL:   dataVariables.URL,
+				Start: dataVariables.Start,
+				End:   dataVariables.End,
+			}
+
+			newPromInput := &model.PromInput{
+				Queries:   promQueries,
+				DsDetails: dsDetails,
+			}
+
+			newPromResponse, err := GetPromQuery(newPromInput)
+			if err != nil {
+				log.Printf("Error during data source query of the dashboard view: %v\n", viewID)
+			}
+
+			viewChan <- newPromResponse
+			close(viewChan)
+
+		case "relative":
+			for {
+				currentTime := time.Now().Unix()
+				startTime := strconv.FormatInt(currentTime-int64(dataVariables.RelativeTime), 10)
+				endTime := strconv.FormatInt(currentTime, 10)
+
+				dsDetails := &model.DsDetails{
+					URL:   dataVariables.URL,
+					Start: startTime,
+					End:   endTime,
+				}
+
+				newPromInput := &model.PromInput{
+					Queries:   promQueries,
+					DsDetails: dsDetails,
+				}
+
+				newPromResponse, err := GetPromQuery(newPromInput)
+				if err != nil {
+					log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+				}
+
+				viewChan <- newPromResponse
+
+				time.Sleep(time.Duration(int64(dataVariables.RefreshInterval)) * time.Second)
+			}
+
+		case "invalid":
+			log.Printf("Wrong parameters for the dashboard view: %v\n", viewID)
+			close(viewChan)
+		}
+	}
 }
 
 func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.PromSeriesResponse, error) {

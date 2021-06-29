@@ -429,6 +429,7 @@ type ComplexityRoot struct {
 		ClusterEventListener  func(childComplexity int, projectID string) int
 		GetKubeObject         func(childComplexity int, kubeObjectRequest model.KubeObjectRequest) int
 		GetPodLog             func(childComplexity int, podDetails model.PodLogRequest) int
+		ViewDashboard         func(childComplexity int, promQueries []*model.PromQueryInput, dataVariables model.DataVars) int
 		WorkflowEventListener func(childComplexity int, projectID string) int
 	}
 
@@ -746,6 +747,7 @@ type SubscriptionResolver interface {
 	GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error)
 	ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error)
 	GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error)
+	ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dataVariables model.DataVars) (<-chan *model.PromResponse, error)
 }
 
 type executableSchema struct {
@@ -3024,6 +3026,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.GetPodLog(childComplexity, args["podDetails"].(model.PodLogRequest)), true
 
+	case "Subscription.viewDashboard":
+		if e.complexity.Subscription.ViewDashboard == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_viewDashboard_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.ViewDashboard(childComplexity, args["promQueries"].([]*model.PromQueryInput), args["dataVariables"].(model.DataVars)), true
+
 	case "Subscription.workflowEventListener":
 		if e.complexity.Subscription.WorkflowEventListener == nil {
 			break
@@ -4309,6 +4323,14 @@ input promQueryInput {
   minstep: Int!
 }
 
+input dataVars {
+  url: String!
+  start: String!
+  end: String!
+  relative_time: Int!
+  refresh_interval: Int!
+}
+
 type metricsPromResponse {
   queryid: String!
   legends: [String]
@@ -5146,6 +5168,8 @@ type Subscription {
 
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
     @authorized
+
+  viewDashboard(promQueries: [promQueryInput!]!, dataVariables: dataVars!): promResponse! @authorized
 }
 `, BuiltIn: false},
 	{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
@@ -6496,6 +6520,28 @@ func (ec *executionContext) field_Subscription_getPodLog_args(ctx context.Contex
 		}
 	}
 	args["podDetails"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_viewDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*model.PromQueryInput
+	if tmp, ok := rawArgs["promQueries"]; ok {
+		arg0, err = ec.unmarshalNpromQueryInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["promQueries"] = arg0
+	var arg1 model.DataVars
+	if tmp, ok := rawArgs["dataVariables"]; ok {
+		arg1, err = ec.unmarshalNdataVars2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDataVars(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dataVariables"] = arg1
 	return args, nil
 }
 
@@ -17614,6 +17660,77 @@ func (ec *executionContext) _Subscription_getKubeObject(ctx context.Context, fie
 	}
 }
 
+func (ec *executionContext) _Subscription_viewDashboard(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Subscription",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Subscription_viewDashboard_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Subscription().ViewDashboard(rctx, args["promQueries"].([]*model.PromQueryInput), args["dataVariables"].(model.DataVars))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(<-chan *model.PromResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PromResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *model.PromResponse)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNpromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponse(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
 func (ec *executionContext) _TotalCount_Projects(ctx context.Context, field graphql.CollectedField, obj *model.TotalCount) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -25101,6 +25218,48 @@ func (ec *executionContext) unmarshalInputcreateDBInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputdataVars(ctx context.Context, obj interface{}) (model.DataVars, error) {
+	var it model.DataVars
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "url":
+			var err error
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "start":
+			var err error
+			it.Start, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "end":
+			var err error
+			it.End, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "relative_time":
+			var err error
+			it.RelativeTime, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "refresh_interval":
+			var err error
+			it.RefreshInterval, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputdeleteDSInput(ctx context.Context, obj interface{}) (model.DeleteDSInput, error) {
 	var it model.DeleteDSInput
 	var asMap = obj.(map[string]interface{})
@@ -27896,6 +28055,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_clusterConnect(ctx, fields[0])
 	case "getKubeObject":
 		return ec._Subscription_getKubeObject(ctx, fields[0])
+	case "viewDashboard":
+		return ec._Subscription_viewDashboard(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -30960,6 +31121,10 @@ func (ec *executionContext) marshalNclusterRegResponse2ᚖgithubᚗcomᚋlitmusc
 	return ec._clusterRegResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNdataVars2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDataVars(ctx context.Context, v interface{}) (model.DataVars, error) {
+	return ec.unmarshalInputdataVars(ctx, v)
+}
+
 func (ec *executionContext) unmarshalNdeleteDSInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDeleteDSInput(ctx context.Context, v interface{}) (model.DeleteDSInput, error) {
 	return ec.unmarshalInputdeleteDSInput(ctx, v)
 }
@@ -31049,6 +31214,38 @@ func (ec *executionContext) marshalNpanelGroupResponse2ᚕᚖgithubᚗcomᚋlitm
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) unmarshalNpromQueryInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInput(ctx context.Context, v interface{}) (model.PromQueryInput, error) {
+	return ec.unmarshalInputpromQueryInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNpromQueryInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInputᚄ(ctx context.Context, v interface{}) ([]*model.PromQueryInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.PromQueryInput, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNpromQueryInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNpromQueryInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInput(ctx context.Context, v interface{}) (*model.PromQueryInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNpromQueryInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInput(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) marshalNpromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponse(ctx context.Context, sel ast.SelectionSet, v model.PromResponse) graphql.Marshaler {
