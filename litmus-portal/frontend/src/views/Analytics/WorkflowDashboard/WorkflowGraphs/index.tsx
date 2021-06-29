@@ -70,7 +70,7 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
       </FormControl>
       <div className={classes.graphs}>
         <ScheduleAndRunStats filter={filters} />
-        <Paper className={classes.radialChartContainer}>
+        <Paper elevation={0} className={classes.radialChartContainer}>
           <RadialChart
             radialData={graphData}
             legendTableHeight={150}

@@ -69,7 +69,7 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
   }
 
   return (
-    <Paper className={classes.workflowGraphs}>
+    <Paper elevation={0} className={classes.workflowGraphs}>
       <Tabs
         value={activeTab}
         onChange={handleChange}
