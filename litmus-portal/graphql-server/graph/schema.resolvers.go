@@ -578,8 +578,9 @@ func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []
 	go func() {
 		<-ctx.Done()
 		log.Println("Closed dashboard view")
-		close(dashboardData)
-		delete(data_store.Store.DashboardData, viewID.String())
+		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
+			delete(data_store.Store.DashboardData, viewID.String())
+		}
 	}()
 	go analyticsHandler.DashboardViewer(viewID.String(), promQueries, dataVariables, *data_store.Store)
 	return dashboardData, nil

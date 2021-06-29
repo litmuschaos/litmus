@@ -768,10 +768,11 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVar
 			newPromResponse, err := GetPromQuery(newPromInput)
 			if err != nil {
 				log.Printf("Error during data source query of the dashboard view: %v\n", viewID)
+			} else {
+				viewChan <- newPromResponse
 			}
-
-			viewChan <- newPromResponse
 			close(viewChan)
+			delete(r.DashboardData, viewID)
 
 		case "relative":
 			for {
@@ -793,16 +794,19 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVar
 				newPromResponse, err := GetPromQuery(newPromInput)
 				if err != nil {
 					log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+					break
+				} else {
+					viewChan <- newPromResponse
+					time.Sleep(time.Duration(int64(dataVariables.RefreshInterval)) * time.Second)
 				}
-
-				viewChan <- newPromResponse
-
-				time.Sleep(time.Duration(int64(dataVariables.RefreshInterval)) * time.Second)
 			}
+			close(viewChan)
+			delete(r.DashboardData, viewID)
 
 		case "invalid":
 			log.Printf("Wrong parameters for the dashboard view: %v\n", viewID)
 			close(viewChan)
+			delete(r.DashboardData, viewID)
 		}
 	}
 }
