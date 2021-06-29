@@ -11,7 +11,7 @@ import {
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled, LightPills } from 'litmus-ui';
+import { ButtonFilled, OutlinedPills } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import TimePopOver from '../../../components/TimePopOver';
@@ -143,13 +143,13 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const getVariant = (variant: string | undefined) => {
     switch (variant) {
       case 'succeeded':
-        return 'success';
+        return 'succeeded';
       case 'failed':
-        return 'danger';
+        return 'failed';
       case 'running':
-        return 'warning';
+        return 'running';
       default:
-        return undefined;
+        return 'pending';
     }
   };
 
@@ -237,7 +237,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         </Popover>
       </TableCell>
       <TableCell>
-        <LightPills
+        <OutlinedPills
+          size="small"
           variant={getVariant(data.phase?.toLowerCase())}
           label={data.phase ?? ''}
         />
@@ -315,10 +316,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           >
             <Typography className={classes.boldText}>
               {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
-              {
-                scheduledWorkflowData?.ListWorkflow.workflows[0].weightages
-                  .length
-              }
+              {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages
+                .length ?? 0}
               )
             </Typography>
             <div className={classes.experimentDetails}>
@@ -344,7 +343,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             }}
           >
             <div className={classes.popover}>
-              {scheduledWorkflowData?.ListWorkflow.workflows[0].weightages.map(
+              {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages.map(
                 (weightEntry) => (
                   <div
                     key={weightEntry.experiment_name}

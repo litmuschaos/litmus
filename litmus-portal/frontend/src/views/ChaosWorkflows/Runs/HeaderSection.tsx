@@ -100,7 +100,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         />
 
         {/* Select Workflow */}
-        <FormControl variant="outlined" className={classes.formControl} focused>
+        <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel className={classes.selectText}>
             Workflow Status
           </InputLabel>
@@ -118,7 +118,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         </FormControl>
 
         {/* Select Cluster */}
-        <FormControl variant="outlined" className={classes.formControl} focused>
+        <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel className={classes.selectText}>Target Cluster</InputLabel>
           <Select
             value={clusterValue}

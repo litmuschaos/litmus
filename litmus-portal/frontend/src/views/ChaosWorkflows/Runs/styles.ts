@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 
   selectText: {
     height: '2.5rem',
+    color: theme.palette.text.primary,
     padding: theme.spacing(0.5),
   },
 
@@ -44,10 +45,11 @@ const useStyles = makeStyles((theme) => ({
     height: '2.5rem',
     minWidth: '9rem',
     border: '0.125rem solid',
-    borderRadius: 4,
-    borderColor: theme.palette.primary.main,
     marginRight: theme.spacing(3.75),
     textTransform: 'none',
+    '&:focus': {
+      borderColor: theme.palette.primary.main,
+    },
   },
   displayDate: {
     marginLeft: theme.spacing(1),
@@ -78,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     '& th': {
       fontWeight: 'bold',
       fontSize: '0.8125rem',
-      color: theme.palette.text.disabled,
+      color: theme.palette.text.hint,
       backgroundColor: theme.palette.cards.background,
     },
   },

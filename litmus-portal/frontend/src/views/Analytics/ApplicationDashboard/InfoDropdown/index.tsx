@@ -1,5 +1,5 @@
-import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
+import { FormControlLabel, Typography } from '@material-ui/core';
+import { TextButton } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckBox } from '../../../../components/CheckBox';
@@ -7,12 +7,18 @@ import {
   DashboardConfigurationDetails,
   PanelNameAndID,
 } from '../../../../models/dashboardsData';
-import useStyles from './styles';
+import {
+  ApplicationMetadata,
+  Resource,
+} from '../../../../models/graphql/dashboardsDetails';
+import { ReactComponent as ExternalLinkIcon } from '../../../../svg/externalLink.svg';
+import { ReactComponent as PrometheusIcon } from '../../../../svg/prometheus.svg';
+import useStyles, { FormGroupApplicationsGrid, FormGroupGrid } from './styles';
 
 interface InfoDropdownProps {
   dashboardConfigurationDetails: DashboardConfigurationDetails;
   metricsToBeShown: PanelNameAndID[];
-  applicationsToBeShown: string[];
+  applicationsToBeShown: ApplicationMetadata[];
   postPanelSelectionRoutine: (selectedPanelList: string[]) => void;
   postApplicationSelectionRoutine: (selectedApplicationList: string[]) => void;
 }
@@ -29,7 +35,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
 
   const [selectedApplications, setSelectedApplications] = React.useState<
     string[]
-  >(applicationsToBeShown);
+  >([]);
 
   const [selectedMetrics, setSelectedMetrics] = React.useState<string[]>(
     metricsToBeShown.map((metric) => metric.id)
@@ -88,7 +94,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 className={classes.inlineIcon}
               />
               <Typography className={classes.infoValue}>
-                {dashboardConfigurationDetails.typeID}
+                {dashboardConfigurationDetails.typeName}
               </Typography>
             </div>
           </div>
@@ -98,27 +104,19 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'analyticsDashboard.monitoringDashboardPage.infoDropdown.metaData3'
               )}
             </Typography>
-            <div className={classes.iconWithTextDiv}>
-              <img
-                src="/icons/prometheus.svg"
-                alt="data source Icon"
-                className={classes.inlineIcon}
-              />
+            <TextButton
+              className={classes.button}
+              onClick={() =>
+                window.open(dashboardConfigurationDetails.dataSourceURL)
+              }
+              startIcon={<PrometheusIcon className={classes.inlineIcon} />}
+              endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
+              classes={{ label: classes.buttonLabel }}
+            >
               <Typography className={classes.infoValue}>
                 {dashboardConfigurationDetails.dataSourceName}
               </Typography>
-              <Icon
-                onClick={() => {
-                  window.open(dashboardConfigurationDetails.dataSourceURL);
-                }}
-              >
-                <img
-                  src="/icons/externalLink.svg"
-                  alt="external link"
-                  className={classes.linkIcon}
-                />
-              </Icon>
-            </div>
+            </TextButton>
           </div>
           <div className={classes.dashboardMetaDataItem}>
             <Typography className={classes.infoKey}>
@@ -137,27 +135,47 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               'analyticsDashboard.monitoringDashboardPage.infoDropdown.subHeading2'
             )}
           </Typography>
-          <div className={classes.checkBoxesContainer}>
-            <FormGroup key="application-group">
-              {applicationsToBeShown.map((application: string) => (
-                <FormControlLabel
-                  control={
-                    <CheckBox
-                      checked={selectedApplications.includes(application)}
-                      onChange={() => handleApplicationSelect(application)}
-                      name={application}
-                    />
-                  }
-                  label={
-                    <Typography className={classes.formControlLabel}>
-                      {application}
+          <FormGroupApplicationsGrid key="application-group">
+            {applicationsToBeShown?.map(
+              (applicationMetadata: ApplicationMetadata) => (
+                <div key={`${applicationMetadata.namespace}-namespace`}>
+                  <div className={classes.namespaceBox}>
+                    <Typography className={classes.infoKey}>
+                      {t(
+                        'analyticsDashboard.monitoringDashboardPage.infoDropdown.infoKeyNamespace'
+                      )}
                     </Typography>
-                  }
-                  key={`${application}-application-label`}
-                />
-              ))}
-            </FormGroup>
-          </div>
+                    <Typography className={classes.infoValue}>
+                      {applicationMetadata.namespace}
+                    </Typography>
+                  </div>
+                  {applicationMetadata.applications.map(
+                    (resource: Resource) => (
+                      <div key={`${resource.kind}-resource`}>
+                        {resource.names.map((name: string) => (
+                          <FormControlLabel
+                            control={
+                              <CheckBox
+                                checked={selectedApplications.includes(name)}
+                                onChange={() => handleApplicationSelect(name)}
+                                name={name}
+                              />
+                            }
+                            label={
+                              <Typography className={classes.formControlLabel}>
+                                {`${resource.kind} / ${name}`}
+                              </Typography>
+                            }
+                            key={`${resource.kind} / ${name}-application-label`}
+                          />
+                        ))}
+                      </div>
+                    )
+                  )}
+                </div>
+              )
+            )}
+          </FormGroupApplicationsGrid>
         </div>
         <div className={classes.infoSectionElement}>
           <Typography className={classes.sectionHeader}>
@@ -165,27 +183,25 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               'analyticsDashboard.monitoringDashboardPage.infoDropdown.subHeading3'
             )}
           </Typography>
-          <div className={classes.checkBoxesContainer}>
-            <FormGroup key="metric-group">
-              {metricsToBeShown.map((metric: PanelNameAndID) => (
-                <FormControlLabel
-                  control={
-                    <CheckBox
-                      checked={selectedMetrics.includes(metric.id)}
-                      onChange={() => handleMetricSelect(metric.id)}
-                      name={metric.name}
-                    />
-                  }
-                  label={
-                    <Typography className={classes.formControlLabel}>
-                      {metric.name}
-                    </Typography>
-                  }
-                  key={`${metric}-metric-label`}
-                />
-              ))}
-            </FormGroup>
-          </div>
+          <FormGroupGrid key="metric-group">
+            {metricsToBeShown.map((metric: PanelNameAndID) => (
+              <FormControlLabel
+                control={
+                  <CheckBox
+                    checked={selectedMetrics.includes(metric.id)}
+                    onChange={() => handleMetricSelect(metric.id)}
+                    name={metric.name}
+                  />
+                }
+                label={
+                  <Typography className={classes.formControlLabel}>
+                    {metric.name}
+                  </Typography>
+                }
+                key={`${metric}-metric-label`}
+              />
+            ))}
+          </FormGroupGrid>
         </div>
       </div>
     </div>

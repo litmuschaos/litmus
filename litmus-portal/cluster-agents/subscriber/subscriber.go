@@ -25,7 +25,6 @@ var (
 		"IS_CLUSTER_CONFIRMED": os.Getenv("IS_CLUSTER_CONFIRMED"),
 		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
 		"COMPONENTS":           os.Getenv("COMPONENTS"),
-		"START_TIME":           os.Getenv("START_TIME"),
 		"AGENT_NAMESPACE":      os.Getenv("AGENT_NAMESPACE"),
 	}
 
@@ -35,6 +34,15 @@ var (
 func init() {
 	logrus.Info("Go Version: ", runtime.Version())
 	logrus.Info("Go OS/Arch: ", runtime.GOOS, "/", runtime.GOARCH)
+
+	for _, env := range clusterData {
+		if env == "" {
+			logrus.Fatal("Some environment variable are not setup")
+		}
+	}
+
+	// Retrieving START_TIME
+	clusterData["START_TIME"] = os.Getenv("START_TIME")
 
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()

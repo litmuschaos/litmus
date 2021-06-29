@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -163,6 +162,16 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		pipeline = append(pipeline, matchWfIdStage)
 	}
 
+	// Filtering out the workflows that are deleted/removed
+	matchWfIsRemovedStage := bson.D{
+		{"$match", bson.D{
+			{"isRemoved", bson.D{
+				{"$eq", false},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, matchWfIsRemovedStage)
+
 	includeAllFromWorkflow := bson.D{
 		{"workflow_id", 1},
 		{"workflow_name", 1},
@@ -297,7 +306,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	var sortStage bson.D
 
 	switch {
-	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldTime:
+	case input.Sort != nil && input.Sort.Field == model.WorkflowSortingFieldTime:
 		// Sorting based on LastUpdated time
 		if input.Sort.Descending != nil && *input.Sort.Descending {
 			sortStage = bson.D{
@@ -312,7 +321,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 				}},
 			}
 		}
-	case input.Sort != nil && input.Sort.Field == model.WorkflowRunSortingFieldName:
+	case input.Sort != nil && input.Sort.Field == model.WorkflowSortingFieldName:
 		// Sorting based on WorkflowName time
 		if input.Sort.Descending != nil && *input.Sort.Descending {
 			sortStage = bson.D{
@@ -374,7 +383,6 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	var workflows []dbSchemaWorkflow.AggregatedWorkflowRuns
 
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-		fmt.Println(err)
 		return &model.GetWorkflowsOutput{
 			TotalNoOfWorkflowRuns: 0,
 			WorkflowRuns:          result,
@@ -483,8 +491,25 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 	var sortStage bson.D
 
 	switch {
+
+	case workflowInput.Sort != nil && workflowInput.Sort.Field == model.WorkflowSortingFieldTime:
+		// Sorting based on LastUpdated time
+		if workflowInput.Sort.Descending != nil && *workflowInput.Sort.Descending {
+			sortStage = bson.D{
+				{"$sort", bson.D{
+					{"updated_at", -1},
+				}},
+			}
+		} else {
+			sortStage = bson.D{
+				{"$sort", bson.D{
+					{"updated_at", 1},
+				}},
+			}
+		}
+
 	case workflowInput.Sort != nil && workflowInput.Sort.Field == model.WorkflowSortingFieldName:
-		// Sorting based on WorkflowName time
+		// Sorting based on WorkflowName
 		if workflowInput.Sort.Descending != nil && *workflowInput.Sort.Descending {
 			sortStage = bson.D{
 				{"$sort", bson.D{

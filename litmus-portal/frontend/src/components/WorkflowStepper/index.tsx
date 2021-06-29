@@ -1,3 +1,4 @@
+import { Tooltip } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
@@ -145,6 +146,26 @@ const WorkflowStepper = () => {
               Finish
             </ButtonFilled>
           )
+        ) : activeStep === 2 ? (
+          <div className={classes.headerButtonWrapper} aria-label="buttons">
+            <Tooltip
+              title="All selected Workflow Data will be lost"
+              placement="top"
+              leaveDelay={300}
+            >
+              <div>
+                <ButtonOutlined
+                  className={classes.btn}
+                  onClick={() => handleBack()}
+                >
+                  Back
+                </ButtonOutlined>
+              </div>
+            </Tooltip>
+            <ButtonFilled className={classes.btn} onClick={() => handleNext()}>
+              Next
+            </ButtonFilled>
+          </div>
         ) : (
           // Apply headerButtonWrapper style for top button's div
           <div className={classes.headerButtonWrapper} aria-label="buttons">

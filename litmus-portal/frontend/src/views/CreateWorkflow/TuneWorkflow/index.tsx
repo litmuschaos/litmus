@@ -18,7 +18,6 @@ import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import YamlEditor from '../../../components/YamlEditor/Editor';
-import { constants } from '../../../constants';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
@@ -109,6 +108,8 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [isEditorSaveAlertOpen, setIsEditorSaveAlertOpen] = useState(false);
   const [yamlValid, setYamlValid] = useState(true);
   const [editSequence, setEditSequence] = useState(false);
+  const [isVisualizationComplete, setIsVisualizationComplete] =
+    useState<boolean>(false);
   const [steps, setSteps] = useState<StepType>({});
   const [workflow, setWorkflow] = useState<WorkflowProps>({
     name: '',
@@ -209,6 +210,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
       );
   }, []);
 
+  const handleEditSequenceRender = (state: boolean) => {
+    setIsVisualizationComplete(state);
+  };
+
   /**
    * Default Manifest Template
    */
@@ -272,14 +277,16 @@ const TuneWorkflow = forwardRef((_, ref) => {
    * Index DB Fetching for extracting selected Button and Workflow Details
    */
   const getSelectedWorkflowDetails = () => {
-    localforage.getItem('workflow').then((workflow) =>
-      setWorkflow({
-        name: (workflow as WorkflowDetailsProps).name,
-        crd: (workflow as WorkflowDetailsProps).CRDLink,
-        description: (workflow as WorkflowDetailsProps).description,
-      })
-    );
     localforage.getItem('selectedScheduleOption').then((value) => {
+      localforage.getItem('workflow').then((wfDetails) => {
+        if (wfDetails) {
+          setWorkflow({
+            name: (wfDetails as WorkflowDetailsProps).name,
+            crd: (wfDetails as WorkflowDetailsProps).CRDLink,
+            description: (wfDetails as WorkflowDetailsProps).description,
+          });
+        }
+      });
       /**
        * Setting default data when MyHub is selected
        */
@@ -290,16 +297,21 @@ const TuneWorkflow = forwardRef((_, ref) => {
             (value as WorkflowDetailsProps).CRDLink !== '' &&
             manifest === ''
           )
-            getPredefinedExperimentYaml({
-              variables: {
-                experimentInput: {
-                  ProjectID: selectedProjectID,
-                  ChartName: '',
-                  ExperimentName: (value as WorkflowDetailsProps).CRDLink,
-                  HubName: constants.chaosHub,
-                  FileType: '',
+            /**
+             * Get Pre-defined experiment YAML of the selected hub
+             */
+            localforage.getItem('selectedHub').then((hub) => {
+              getPredefinedExperimentYaml({
+                variables: {
+                  experimentInput: {
+                    ProjectID: selectedProjectID,
+                    ChartName: '',
+                    ExperimentName: (value as WorkflowDetailsProps).CRDLink,
+                    HubName: hub as string,
+                    FileType: '',
+                  },
                 },
-              },
+              });
             });
         });
       }
@@ -331,7 +343,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   useEffect(() => {
     getSelectedWorkflowDetails();
-  }, []);
+  }, [manifest]);
 
   /**
    * Graphql Query for fetching Engine YAML
@@ -782,7 +794,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
           <div className={classes.experimentWrapper}>
             {/* Edit Button */}
             {manifest !== '' && (
-              <ButtonOutlined onClick={() => setEditSequence(true)}>
+              <ButtonOutlined
+                disabled={isVisualizationComplete}
+                onClick={() => setEditSequence(true)}
+              >
                 <img src="./icons/editsequence.svg" alt="Edit Sequence" />{' '}
                 <Width width="0.5rem" />
                 {t('createWorkflow.tuneWorkflow.editSequence')}
@@ -817,6 +832,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
                 <Row>
                   <Width width="40%">
                     <WorkflowPreview
+                      editSequenceLoader={handleEditSequenceRender}
                       SequenceSteps={steps}
                       isCustomWorkflow={isCustomWorkflow}
                     />
@@ -838,7 +854,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
             <Row>
               {/* Argo Workflow Graph */}
               <Width width="30%">
-                <WorkflowPreview isCustomWorkflow={isCustomWorkflow} />
+                <WorkflowPreview
+                  editSequenceLoader={handleEditSequenceRender}
+                  isCustomWorkflow={isCustomWorkflow}
+                />
               </Width>
               {/* Workflow Table */}
               <Width width="70%">

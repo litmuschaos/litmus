@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
 
     '&:hover': {
       transform: `translateY(-10px)`,
-      boxShadow: `0px 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 6.4px 14.4px rgba(0, 0, 0, 0.13)`,
+      boxShadow: `0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13)`,
       borderRadius: '0.1875rem',
     },
   },

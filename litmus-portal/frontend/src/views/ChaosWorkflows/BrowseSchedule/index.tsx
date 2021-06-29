@@ -69,7 +69,7 @@ const BrowseSchedule: React.FC = () => {
 
   // State for sorting
   const [sortData, setSortData] = useState<SortInput>({
-    field: 'Name',
+    field: 'Time',
     descending: true,
   });
 
@@ -189,11 +189,7 @@ const BrowseSchedule: React.FC = () => {
             }
           />
 
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-            focused
-          >
+          <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel className={classes.selectText}>Name</InputLabel>
             <Select
               value={filters.suspended}
@@ -219,12 +215,7 @@ const BrowseSchedule: React.FC = () => {
           </FormControl>
 
           {/* Select Cluster */}
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-            color="primary"
-            focused
-          >
+          <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel className={classes.selectText}>Target Agent</InputLabel>
             <Select
               value={filters.cluster_name}
@@ -366,7 +357,7 @@ const BrowseSchedule: React.FC = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={data?.ListWorkflow.totalNoOfWorkflows ?? 0}
+          count={data?.ListWorkflow.total_no_of_workflows ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>
