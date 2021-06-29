@@ -100,7 +100,7 @@ func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, error) {
 
-	projects, err := dbOperationsProject.GetProjectsByUserID(ctx, userID)
+	projects, err := dbOperationsProject.GetProjectsByUserID(ctx, userID, false)
 	if err != nil {
 		return nil, err
 	}

@@ -48,6 +48,7 @@ type Member struct {
 	Role       model.MemberRole `bson:"role"`
 	Invitation Invitation       `bson:"invitation"`
 	JoinedAt   string           `bson:"joined_at"`
+	DisabledAt string           `bson:"disabled_at"`
 }
 
 // GetOutputMember takes a Member struct as input and returns the graphQL model equivalent
@@ -61,6 +62,7 @@ func (member *Member) GetOutputMember() *model.Member {
 		Role:       member.Role,
 		Invitation: string(member.Invitation),
 		JoinedAt:   member.JoinedAt,
+		DisabledAt: member.DisabledAt,
 	}
 }
 
@@ -79,15 +81,4 @@ const (
 
 	//ExitedProject is the state when the user has exited the project
 	ExitedProject Invitation = "Exited"
-)
-
-// Filter: different types of filter for graphs
-type Filter string
-
-const (
-	Monthly Filter = "Monthly"
-
-	Weekly Filter = "Weekly"
-
-	Hourly Filter = "Hourly"
 )

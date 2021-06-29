@@ -215,6 +215,7 @@ type ComplexityRoot struct {
 	}
 
 	Member struct {
+		DisabledAt func(childComplexity int) int
 		Email      func(childComplexity int) int
 		Invitation func(childComplexity int) int
 		JoinedAt   func(childComplexity int) int
@@ -278,6 +279,7 @@ type ComplexityRoot struct {
 		UpdatePanel            func(childComplexity int, panelInput []*model.Panel) int
 		UpdateProjectName      func(childComplexity int, projectID string, projectName string) int
 		UpdateUser             func(childComplexity int, user model.UpdateUserInput) int
+		UpdateUserState        func(childComplexity int, username string, isDisable bool) int
 		UserClusterReg         func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
@@ -448,12 +450,12 @@ type ComplexityRoot struct {
 	User struct {
 		CompanyName     func(childComplexity int) int
 		CreatedAt       func(childComplexity int) int
+		DisabledAt      func(childComplexity int) int
 		Email           func(childComplexity int) int
 		ID              func(childComplexity int) int
 		IsEmailVerified func(childComplexity int) int
 		Name            func(childComplexity int) int
 		Projects        func(childComplexity int) int
-		RemovedAt       func(childComplexity int) int
 		Role            func(childComplexity int) int
 		State           func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
@@ -670,6 +672,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error)
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
+	UpdateUserState(ctx context.Context, username string, isDisable bool) (string, error)
 	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
@@ -1512,6 +1515,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ManifestTemplate.TemplateName(childComplexity), true
 
+	case "Member.disabled_at":
+		if e.complexity.Member.DisabledAt == nil {
+			break
+		}
+
+		return e.complexity.Member.DisabledAt(childComplexity), true
+
 	case "Member.email":
 		if e.complexity.Member.Email == nil {
 			break
@@ -2094,6 +2104,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["user"].(model.UpdateUserInput)), true
+
+	case "Mutation.updateUserState":
+		if e.complexity.Mutation.UpdateUserState == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateUserState_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateUserState(childComplexity, args["username"].(string), args["isDisable"].(bool)), true
 
 	case "Mutation.userClusterReg":
 		if e.complexity.Mutation.UserClusterReg == nil {
@@ -3099,6 +3121,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.CreatedAt(childComplexity), true
 
+	case "User.disabled_at":
+		if e.complexity.User.DisabledAt == nil {
+			break
+		}
+
+		return e.complexity.User.DisabledAt(childComplexity), true
+
 	case "User.email":
 		if e.complexity.User.Email == nil {
 			break
@@ -3133,13 +3162,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Projects(childComplexity), true
-
-	case "User.removed_at":
-		if e.complexity.User.RemovedAt == nil {
-			break
-		}
-
-		return e.complexity.User.RemovedAt(childComplexity), true
 
 	case "User.role":
 		if e.complexity.User.Role == nil {
@@ -4167,7 +4189,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
   ds_id: String
   ds_name: String!
   ds_type: String!
@@ -4459,7 +4481,7 @@ type WorkflowRunStatsResponse {
   workflow_run_succeeded_percentage: Float!
   workflow_run_failed_percentage: Float!
 }`, BuiltIn: false},
-	{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -4486,7 +4508,7 @@ type ImageRegistryResponse {
     is_removed: Boolean
 }
 `, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -4660,7 +4682,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -4678,6 +4700,7 @@ type Member {
   role: MemberRole!
   invitation: String!
   joined_at: String!
+  disabled_at: String!
 }
 
 input MemberInput {
@@ -4692,7 +4715,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -4945,6 +4968,8 @@ input KubeGVRRequest {
   resource: String!
 }
 
+
+
 type Query {
   getWorkflowRuns(
     workflowRunsInput: GetWorkflowRunsInput!
@@ -5019,9 +5044,13 @@ type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
+  # Used to create a user
   createUser(user: CreateUserInput!): User! @authorized
 
-  #It is used to create a project
+  # Used to disbale a user
+  updateUserState(username: String!, isDisable: Boolean!): String! @authorized
+
+  # It is used to create a project
   createProject(projectName: String!): Project! @authorized
 
   updateUser(user: UpdateUserInput!): String! @authorized
@@ -5148,7 +5177,7 @@ type Subscription {
     @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
+	&ast.Source{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
     Schedules : Int!
     Runs      : Int!
     ExpRuns   : Int!
@@ -5213,7 +5242,7 @@ input UsageQuery{
     Sort: UsageSortInput
     SearchProject: String
 }`, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -5225,7 +5254,7 @@ input UsageQuery{
   state: String
   created_at: String!
   updated_at: String!
-  removed_at: String!
+  disabled_at: String!
 }
 
 input CreateUserInput {
@@ -5242,9 +5271,8 @@ input UpdateUserInput {
   name: String
   email: String
   company_name: String
-}
-`, BuiltIn: false},
-	{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
+}`, BuiltIn: false},
+	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
   Running
@@ -6006,6 +6034,28 @@ func (ec *executionContext) field_Mutation_updateProjectName_args(ctx context.Co
 		}
 	}
 	args["projectName"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateUserState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["username"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["username"] = arg0
+	var arg1 bool
+	if tmp, ok := rawArgs["isDisable"]; ok {
+		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["isDisable"] = arg1
 	return args, nil
 }
 
@@ -10315,6 +10365,40 @@ func (ec *executionContext) _Member_joined_at(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Member_disabled_at(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Member",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DisabledAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MemberStat_Owner(ctx context.Context, field graphql.CollectedField, obj *model.MemberStat) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -10605,6 +10689,67 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateUserState(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateUserState_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateUserState(rctx, args["username"].(string), args["isDisable"].(bool))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -18200,7 +18345,7 @@ func (ec *executionContext) _User_updated_at(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_removed_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_disabled_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -18217,7 +18362,7 @@ func (ec *executionContext) _User_removed_at(ctx context.Context, field graphql.
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.RemovedAt, nil
+		return obj.DisabledAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26548,6 +26693,11 @@ func (ec *executionContext) _Member(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "disabled_at":
+			out.Values[i] = ec._Member_disabled_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26650,6 +26800,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createUser":
 			out.Values[i] = ec._Mutation_createUser(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateUserState":
+			out.Values[i] = ec._Mutation_updateUserState(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28020,8 +28175,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "removed_at":
-			out.Values[i] = ec._User_removed_at(ctx, field, obj)
+		case "disabled_at":
+			out.Values[i] = ec._User_disabled_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

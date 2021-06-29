@@ -40,6 +40,16 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUser
 	return usermanagement.CreateUser(ctx, user)
 }
 
+func (r *mutationResolver) UpdateUserState(ctx context.Context, username string, isDisable bool) (string, error) {
+	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
+	userName := claims["username"].(string)
+	if userName != "admin" {
+		return "Unauthorized", errors.New("Unauthorized ")
+	}
+
+	return usermanagement.UpdateUserState(ctx, username, isDisable)
+}
+
 func (r *mutationResolver) CreateProject(ctx context.Context, projectName string) (*model.Project, error) {
 	//fetching all the user's details from jwt token
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)

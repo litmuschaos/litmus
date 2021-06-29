@@ -122,7 +122,7 @@ export const GET_USER = gql`
       company_name
       updated_at
       created_at
-      removed_at
+      disabled_at
       is_email_verified
       state
       role

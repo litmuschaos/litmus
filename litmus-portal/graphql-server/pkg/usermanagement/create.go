@@ -20,7 +20,7 @@ const (
 )
 
 // CreateUser checks if the user with the given username is already present in the database
-// if not it creates a new user and puts in the DB
+// if not, it creates a new user and inserts in the DB
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
 	outputUser, err := GetUser(ctx, user.Username)
@@ -48,6 +48,27 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 
 	outputUser = newUser.GetOutputUser()
 	return outputUser, nil
+}
+
+// UpdateUserState
+func UpdateUserState(ctx context.Context, username string, isDisable bool) (string, error) {
+	// Checking if admin is being removed
+	if username == "admin" {
+		return "Cannot Update Admin's State", errors.New("cannot update admin's state")
+	}
+	disabledAt := time.Now().Format(time.RFC1123Z)
+	if isDisable != true {
+		disabledAt = ""
+	}
+	dbUser := &dbSchemaUserManagement.User{
+		Username:   username,
+		DisabledAt: disabledAt,
+	}
+	err := dbOperationsUserManagement.UpdateUserState(ctx, *dbUser)
+	if err != nil {
+		return "Error Updating User's State", err
+	}
+	return "user's state updated successfully", nil
 }
 
 // GetUser queries the user collection for a user with a given username,
@@ -100,5 +121,5 @@ func UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	if err != nil {
 		return "Updating user aborted", err
 	}
-	return "Update Successful", err
+	return "Update Successful", nil
 }

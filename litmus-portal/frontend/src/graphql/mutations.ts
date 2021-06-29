@@ -33,7 +33,7 @@ export const CREATE_USER = gql`
       username
       created_at
       updated_at
-      removed_at
+      disabled_at
     }
   }
 `;

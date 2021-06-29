@@ -14,7 +14,7 @@ type User struct {
 	State           *string `bson:"state"`
 	CreatedAt       string  `bson:"created_at"`
 	UpdatedAt       string  `bson:"updated_at"`
-	RemovedAt       string  `bson:"removed_at"`
+	DisabledAt      string  `bson:"disabled_at"`
 }
 
 // GetOutputUser takes a User struct as input and returns the graphQL model equivalent
@@ -31,7 +31,7 @@ func (user User) GetOutputUser() *model.User {
 		State:           user.State,
 		CreatedAt:       user.CreatedAt,
 		UpdatedAt:       user.UpdatedAt,
-		RemovedAt:       user.RemovedAt,
+		DisabledAt:      user.DisabledAt,
 	}
 
 }

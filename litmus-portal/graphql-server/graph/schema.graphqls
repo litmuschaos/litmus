@@ -251,6 +251,8 @@ input KubeGVRRequest {
   resource: String!
 }
 
+
+
 type Query {
   getWorkflowRuns(
     workflowRunsInput: GetWorkflowRunsInput!
@@ -325,9 +327,13 @@ type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
+  # Used to create a user
   createUser(user: CreateUserInput!): User! @authorized
 
-  #It is used to create a project
+  # Used to disbale a user
+  updateUserState(username: String!, isDisable: Boolean!): String! @authorized
+
+  # It is used to create a project
   createProject(projectName: String!): Project! @authorized
 
   updateUser(user: UpdateUserInput!): String! @authorized
