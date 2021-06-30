@@ -53,7 +53,7 @@ func UpdateUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		userResponse, err := service.UpdateUser(&userRequest)
+		userResponse, err := service.UpdateUser(c, &userRequest)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 		}
