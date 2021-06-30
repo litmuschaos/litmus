@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
@@ -18,7 +17,7 @@ type Repository interface {
 	FindUser(user *entities.User) (*entities.User, error)
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
-	UpdateUser(c *gin.Context, 	user *entities.User) (*entities.User, error)
+	UpdateUser(c *gin.Context, user *entities.User) (*entities.User, error)
 	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
 }
