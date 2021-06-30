@@ -28,6 +28,8 @@ import {
   Workflow,
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
+import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import { ApplicationDashboardCard } from './ApplicationDashboardCard';
@@ -39,7 +41,7 @@ const Overview: React.FC = () => {
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const { t } = useTranslation();
-
+  const tabs = useActions(TabActions);
   let dataSource = false;
   let workflowDashboardCount = 0;
   let applicationDashboardCount = 0;
@@ -154,6 +156,7 @@ const Overview: React.FC = () => {
           <TextButton
             variant="highlight"
             onClick={() => {
+              tabs.changeHubTabs(0);
               history.push({
                 pathname: '/myhub/Chaos%20Hub',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,

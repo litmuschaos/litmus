@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import {
   IconButton,
   Paper,
@@ -14,7 +14,7 @@ import {
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Search } from 'litmus-ui';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import { GLOBAL_PROJECT_DATA } from '../../../graphql';
@@ -45,28 +45,33 @@ const UsageTable = () => {
     Descending: false,
   });
   const [search, setSearch] = useState<string>('');
-  const { data, loading } = useQuery(GLOBAL_PROJECT_DATA, {
-    variables: {
-      query: {
-        DateRange: {
-          start_date: Math.trunc(
-            new Date(
-              new Date().getFullYear(),
-              new Date().getMonth(),
-              1
-            ).getTime() / 1000
-          ).toString(),
-          end_date: Math.trunc(new Date().getTime() / 1000).toString(),
+
+  const [usageQuery, { loading, data }] = useLazyQuery(GLOBAL_PROJECT_DATA, {});
+
+  useEffect(() => {
+    usageQuery({
+      variables: {
+        query: {
+          DateRange: {
+            start_date: Math.trunc(
+              new Date(
+                new Date().getFullYear(),
+                new Date().getMonth(),
+                1
+              ).getTime() / 1000
+            ).toString(),
+            end_date: Math.trunc(new Date().getTime() / 1000).toString(),
+          },
+          Pagination: {
+            page: paginationData.page,
+            limit: paginationData.limit,
+          },
+          SearchProject: search,
+          Sort: sortData,
         },
-        Pagination: {
-          page: paginationData.page,
-          limit: paginationData.limit,
-        },
-        SearchProject: search,
-        Sort: sortData,
       },
-    },
-  });
+    });
+  }, [paginationData, search, sortData]);
 
   return (
     <div className={classes.table}>

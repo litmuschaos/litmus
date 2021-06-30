@@ -27,3 +27,10 @@ export function changeAnalyticsDashboardTabs(tabNumber: number): TabAction {
     payload: tabNumber,
   };
 }
+
+export function changeHubTabs(tabNumber: number): TabAction {
+  return {
+    type: TabActions.CHANGE_HUB_TABS,
+    payload: tabNumber,
+  };
+}
