@@ -86,13 +86,30 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		authenticatedUser, err := service.FindUser(&userRequest)
+
+		// Checking if user exists
+		user, err := service.FindUser(userRequest.UserName)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
+			return
+		}
+
+		// Checking if user is removed
+		if user.RemovedAt != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserRemoved], presenter.CreateErrorResponse(utils.ErrUserRemoved))
+			return
+		}
+
+		// Validating password
+		err = service.CheckPasswordHash(user.Password, userRequest.Password)
 		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
-		token, err := authenticatedUser.GetSignedJWT()
+
+		token, err := user.GetSignedJWT()
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -180,6 +197,61 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 		}
 		c.JSON(200, gin.H{
 			"message": "password has been reset successfully",
+		})
+	}
+}
+
+func UpdateUserState(service user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var adminUser entities.User
+		adminUser.UserName = c.MustGet("username").(string)
+		adminUser.ID = c.MustGet("uid").(string)
+		var request entities.UpdateUserState
+		err := c.BindJSON(&request)
+		if err != nil {
+			log.Info(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
+		// Checking if loggedIn user is admin
+		err = service.IsAdministrator(&adminUser)
+		if err != nil {
+			log.Info(err)
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			return
+		}
+
+		// Checking if user exists
+		user, err := service.FindUser(request.Username)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
+			return
+		}
+
+		// Checking if updated user is admin
+		if user.Role == entities.RoleAdmin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUpdatingAdmin], presenter.CreateErrorResponse(utils.ErrUpdatingAdmin))
+			return
+		}
+
+		if request.IsDisable == true {
+			// Checking if user is already removed
+			if user.RemovedAt != nil {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyRemoved], presenter.CreateErrorResponse(utils.ErrUserAlreadyRemoved))
+				return
+			}
+		}
+
+		err = service.UpdateUserState(request.Username, request.IsDisable)
+		if err != nil {
+			log.Info(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{
+			"message": "user's state updated successfully",
 		})
 	}
 }

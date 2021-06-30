@@ -12,6 +12,11 @@ var (
 	ErrStrictPasswordPolicyViolation AppError = errors.New("password_policy_violation")
 	ErrUnauthorised                  AppError = errors.New("unauthorised")
 	ErrUserExists                    AppError = errors.New("user_exists")
+	ErrUserNotFound                  AppError = errors.New("user does not exists")
+	ErrWrongPassword                 AppError = errors.New("password doesn't match")
+	ErrUpdatingAdmin                 AppError = errors.New("cannot update admin")
+	ErrUserRemoved                   AppError = errors.New("your account has been disabled")
+	ErrUserAlreadyRemoved            AppError = errors.New("user already disabled")
 )
 
 //ErrorStatusCodes holds the http status codes for every AppError
@@ -22,6 +27,10 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrUnauthorised:                  401,
 	ErrUserExists:                    401,
 	ErrStrictPasswordPolicyViolation: 401,
+	ErrUserNotFound:                  400,
+	ErrUpdatingAdmin:                 400,
+	ErrUserRemoved:                   400,
+	ErrUserAlreadyRemoved:            400,
 }
 
 //ErrorDescriptions holds detailed error description for every AppError
