@@ -4294,7 +4294,7 @@ input resource {
 
 input updateDBInput {
   db_id: String!
-  ds_id: String!
+  ds_id: String
   db_name: String
   db_type_name: String
   db_type_id: String
@@ -25916,7 +25916,7 @@ func (ec *executionContext) unmarshalInputupdateDBInput(ctx context.Context, obj
 			}
 		case "ds_id":
 			var err error
-			it.DsID, err = ec.unmarshalNString2string(ctx, v)
+			it.DsID, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}

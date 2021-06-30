@@ -231,8 +231,8 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
-	if dashboard.DbID == "" || dashboard.DsID == "" {
-		return "could not find the dashboard or the connected data source", errors.New("dashBoard ID or data source ID is nil or empty")
+	if dashboard.DbID == "" {
+		return "could not find the dashboard", errors.New("dashBoard ID is nil or empty")
 	}
 
 	query := bson.D{

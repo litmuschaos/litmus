@@ -923,7 +923,7 @@ type SubData struct {
 
 type UpdateDBInput struct {
 	DbID                      string                   `json:"db_id"`
-	DsID                      string                   `json:"ds_id"`
+	DsID                      *string                  `json:"ds_id"`
 	DbName                    *string                  `json:"db_name"`
 	DbTypeName                *string                  `json:"db_type_name"`
 	DbTypeID                  *string                  `json:"db_type_id"`

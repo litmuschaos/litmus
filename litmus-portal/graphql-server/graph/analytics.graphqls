@@ -60,7 +60,7 @@ input resource {
 
 input updateDBInput {
   db_id: String!
-  ds_id: String!
+  ds_id: String
   db_name: String
   db_type_name: String
   db_type_id: String
