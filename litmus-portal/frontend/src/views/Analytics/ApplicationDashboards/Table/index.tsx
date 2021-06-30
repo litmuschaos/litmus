@@ -190,8 +190,8 @@ const DashboardTable: React.FC = () => {
               const x = parseInt(a.updated_at, 10);
               const y = parseInt(b.updated_at, 10);
               return filter.sortData.lastViewed.ascending
-                ? sortNumAsc(y, x)
-                : sortNumDesc(y, x);
+                ? sortNumAsc(x, y)
+                : sortNumDesc(x, y);
             }
             return 0;
           })
