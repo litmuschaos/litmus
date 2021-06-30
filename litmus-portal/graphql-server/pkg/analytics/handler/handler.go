@@ -721,14 +721,26 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 					metrics = append(metrics, response.(*model.MetricsPromResponse))
 					cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 					if cacheError != nil {
-						log.Printf("Adding cache: %v\n", cacheError)
+						errorStr := fmt.Sprintf("%v", cacheError)
+						if strings.Contains(errorStr, "already exists") {
+							cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
+							if cacheError != nil {
+								log.Printf("Error while caching: %v\n", cacheError)
+							}
+						}
 					}
 				} else {
 					if strings.Contains(val.Queryid, "chaos-event") {
 						annotations = append(annotations, response.(*model.AnnotationsPromResponse))
 						cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 						if cacheError != nil {
-							log.Printf("Adding cache: %v\n", cacheError)
+							errorStr := fmt.Sprintf("%v", cacheError)
+							if strings.Contains(errorStr, "already exists") {
+								cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
+								if cacheError != nil {
+									log.Printf("Error while caching: %v\n", cacheError)
+								}
+							}
 						}
 					} else if strings.Contains(val.Queryid, "chaos-verdict") {
 						patchEventWithVerdict = true
@@ -797,7 +809,13 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 				eventCacheKey := annotation.Queryid + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 				cacheError := utils.AddCache(AnalyticsCache, eventCacheKey, annotations[annotationIndex])
 				if cacheError != nil {
-					log.Printf("Adding cache: %v\n", cacheError)
+					errorStr := fmt.Sprintf("%v", cacheError)
+					if strings.Contains(errorStr, "already exists") {
+						cacheError = utils.UpdateCache(AnalyticsCache, eventCacheKey, annotations[annotationIndex])
+						if cacheError != nil {
+							log.Printf("Error while caching: %v\n", cacheError)
+						}
+					}
 				}
 			}
 		}
@@ -902,7 +920,13 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 
 		cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 		if cacheError != nil {
-			log.Printf("Adding cache: %v\n", cacheError)
+			errorStr := fmt.Sprintf("%v", cacheError)
+			if strings.Contains(errorStr, "already exists") {
+				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
+				if cacheError != nil {
+					log.Printf("Error while caching: %v\n", cacheError)
+				}
+			}
 		}
 
 		newPromSeriesResponse = response
@@ -930,7 +954,13 @@ func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListR
 
 		cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 		if cacheError != nil {
-			log.Printf("Adding cache: %v\n", cacheError)
+			errorStr := fmt.Sprintf("%v", cacheError)
+			if strings.Contains(errorStr, "already exists") {
+				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
+				if cacheError != nil {
+					log.Printf("Error while caching: %v\n", cacheError)
+				}
+			}
 		}
 
 		newPromSeriesListResponse = response
