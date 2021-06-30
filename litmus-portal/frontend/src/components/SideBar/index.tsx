@@ -171,7 +171,7 @@ const SideBar: React.FC = () => {
             <UsageIcon />
           </CustomisedListItem>
         )}
-        <hr id="quickActions" />
+        <hr className={classes.quickActions} />
         <CustomisedListItem
           key="litmusDocs"
           handleClick={() => {
