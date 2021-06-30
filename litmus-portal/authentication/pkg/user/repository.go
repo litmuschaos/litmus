@@ -92,7 +92,6 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 //UpdateUser updates user details in the database
 func (r repository) UpdateUser(c *gin.Context, user *entities.User) (*entities.User, error) {
 	uid := c.MustGet("uid").(string)
-	fmt.Println(uid)
 	if user.Password != "" {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
 		if err != nil {
