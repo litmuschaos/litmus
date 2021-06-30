@@ -777,6 +777,8 @@ type ListDashboardResponse struct {
 	ClusterName               *string                        `json:"cluster_name"`
 	DsName                    *string                        `json:"ds_name"`
 	DsType                    *string                        `json:"ds_type"`
+	DsURL                     *string                        `json:"ds_url"`
+	DsHealthStatus            *string                        `json:"ds_health_status"`
 	PanelGroups               []*PanelGroupResponse          `json:"panel_groups"`
 	EndTime                   string                         `json:"end_time"`
 	StartTime                 string                         `json:"start_time"`

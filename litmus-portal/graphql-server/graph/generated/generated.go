@@ -584,9 +584,11 @@ type ComplexityRoot struct {
 		DbName                    func(childComplexity int) int
 		DbTypeID                  func(childComplexity int) int
 		DbTypeName                func(childComplexity int) int
+		DsHealthStatus            func(childComplexity int) int
 		DsID                      func(childComplexity int) int
 		DsName                    func(childComplexity int) int
 		DsType                    func(childComplexity int) int
+		DsURL                     func(childComplexity int) int
 		EndTime                   func(childComplexity int) int
 		PanelGroups               func(childComplexity int) int
 		ProjectID                 func(childComplexity int) int
@@ -3792,6 +3794,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ListDashboardResponse.DbTypeName(childComplexity), true
 
+	case "listDashboardResponse.ds_health_status":
+		if e.complexity.ListDashboardResponse.DsHealthStatus == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardResponse.DsHealthStatus(childComplexity), true
+
 	case "listDashboardResponse.ds_id":
 		if e.complexity.ListDashboardResponse.DsID == nil {
 			break
@@ -3812,6 +3821,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListDashboardResponse.DsType(childComplexity), true
+
+	case "listDashboardResponse.ds_url":
+		if e.complexity.ListDashboardResponse.DsURL == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardResponse.DsURL(childComplexity), true
 
 	case "listDashboardResponse.end_time":
 		if e.complexity.ListDashboardResponse.EndTime == nil {
@@ -4431,6 +4447,8 @@ type listDashboardResponse {
   cluster_name: String
   ds_name: String
   ds_type: String
+  ds_url: String
+  ds_health_status: String
   panel_groups: [panelGroupResponse]!
   end_time: String!
   start_time: String!
@@ -22323,6 +22341,68 @@ func (ec *executionContext) _listDashboardResponse_ds_type(ctx context.Context, 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _listDashboardResponse_ds_url(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DsURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _listDashboardResponse_ds_health_status(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DsHealthStatus, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _listDashboardResponse_panel_groups(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -29241,6 +29321,10 @@ func (ec *executionContext) _listDashboardResponse(ctx context.Context, sel ast.
 			out.Values[i] = ec._listDashboardResponse_ds_name(ctx, field, obj)
 		case "ds_type":
 			out.Values[i] = ec._listDashboardResponse_ds_type(ctx, field, obj)
+		case "ds_url":
+			out.Values[i] = ec._listDashboardResponse_ds_url(ctx, field, obj)
+		case "ds_health_status":
+			out.Values[i] = ec._listDashboardResponse_ds_health_status(ctx, field, obj)
 		case "panel_groups":
 			out.Values[i] = ec._listDashboardResponse_panel_groups(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

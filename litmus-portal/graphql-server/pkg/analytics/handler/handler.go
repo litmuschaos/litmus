@@ -658,15 +658,16 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 		go func(val *model.DSResponse) {
 			defer wg.Done()
 
-			tsdbHealthCheckMap[*datasource.DsID] = prometheus.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
-
+			if _, ok := tsdbHealthCheckMap[*datasource.DsURL]; !ok {
+				tsdbHealthCheckMap[*datasource.DsURL] = prometheus.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
+			}
 		}(datasource)
 	}
 
 	wg.Wait()
 
 	for _, datasource := range newDatasources {
-		datasource.HealthStatus = tsdbHealthCheckMap[*datasource.DsID]
+		datasource.HealthStatus = tsdbHealthCheckMap[*datasource.DsURL]
 	}
 
 	return newDatasources, nil
@@ -973,7 +974,7 @@ func QueryListDashboard(projectID string, clusterID *string) ([]*model.ListDashb
 
 	var query bson.D
 
-	if clusterID == nil {
+	if clusterID == nil || *clusterID == "" {
 		query = bson.D{
 			{"project_id", projectID},
 			{"is_removed", false},
@@ -997,6 +998,8 @@ func QueryListDashboard(projectID string, clusterID *string) ([]*model.ListDashb
 		return nil, err
 	}
 
+	dataSourceHealthCheckMap := make(map[string]string)
+
 	for _, dashboard := range newListDashboard {
 		datasource, err := dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
 		if err != nil {
@@ -1005,6 +1008,18 @@ func QueryListDashboard(projectID string, clusterID *string) ([]*model.ListDashb
 
 		dashboard.DsType = &datasource.DsType
 		dashboard.DsName = &datasource.DsName
+
+		if clusterID != nil && *clusterID != "" {
+			dashboard.DsURL = &datasource.DsURL
+
+			if healthStatus, ok := dataSourceHealthCheckMap[*dashboard.DsURL]; ok {
+				dashboard.DsHealthStatus = &healthStatus
+			} else {
+				datasourceStatus := prometheus.TSDBHealthCheck(datasource.DsURL, datasource.DsType)
+				dashboard.DsHealthStatus = &datasourceStatus
+				dataSourceHealthCheckMap[*dashboard.DsURL] = datasourceStatus
+			}
+		}
 
 		cluster, err := dbOperationsCluster.GetCluster(dashboard.ClusterID)
 		if err != nil {

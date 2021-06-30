@@ -213,6 +213,8 @@ type listDashboardResponse {
   cluster_name: String
   ds_name: String
   ds_type: String
+  ds_url: String
+  ds_health_status: String
   panel_groups: [panelGroupResponse]!
   end_time: String!
   start_time: String!
