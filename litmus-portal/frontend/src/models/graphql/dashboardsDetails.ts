@@ -90,7 +90,7 @@ export interface updatePanelGroupInput {
 export interface UpdateDashboardInput {
   updateDBInput: {
     db_id: string;
-    ds_id: string;
+    ds_id?: string;
     db_name?: string;
     db_type_id?: string;
     db_type_name?: string;
