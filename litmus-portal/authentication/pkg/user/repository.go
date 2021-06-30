@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
 
@@ -17,7 +16,7 @@ type Repository interface {
 	FindUser(user *entities.User) (*entities.User, error)
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
-	UpdateUser(c *gin.Context, user *entities.User) (*entities.User, error)
+	UpdateUser(user *entities.User) (*entities.User, error)
 	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
 }
@@ -89,8 +88,7 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 }
 
 //UpdateUser updates user details in the database
-func (r repository) UpdateUser(c *gin.Context, user *entities.User) (*entities.User, error) {
-	uid := c.MustGet("uid").(string)
+func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
 	if user.Password != "" {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
 		if err != nil {
@@ -99,7 +97,7 @@ func (r repository) UpdateUser(c *gin.Context, user *entities.User) (*entities.U
 		user.Password = string(hashedPassword)
 	}
 	data, _ := toDoc(user)
-	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": uid}, bson.M{"$set": data})
+	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/gin-gonic/gin"
 	"litmus/litmus-portal/authentication/pkg/entities"
 )
 
@@ -10,7 +9,7 @@ type Service interface {
 	FindUser(user *entities.User) (*entities.User, error)
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
-	UpdateUser(c *gin.Context, user *entities.User) (*entities.User, error)
+	UpdateUser(user *entities.User) (*entities.User, error)
 	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
 }
@@ -35,8 +34,8 @@ func (s service) CreateUser(user *entities.User) (*entities.User, error) {
 }
 
 //UpdateUser updates user details in the database
-func (s service) UpdateUser(c *gin.Context, user *entities.User) (*entities.User, error) {
-	return s.repository.UpdateUser(c, user)
+func (s service) UpdateUser(user *entities.User) (*entities.User, error) {
+	return s.repository.UpdateUser(user)
 }
 
 //GetUsers fetches all the users from the database

@@ -46,14 +46,16 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 }
 func UpdateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		uid := c.MustGet("uid").(string)
 		var userRequest entities.User
+		userRequest.ID = uid
 		err := c.BindJSON(&userRequest)
 		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		userResponse, err := service.UpdateUser(c, &userRequest)
+		userResponse, err := service.UpdateUser(&userRequest)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 		}
