@@ -270,7 +270,7 @@ type ComplexityRoot struct {
 		SyncHub                func(childComplexity int, id string) int
 		SyncWorkflow           func(childComplexity int, workflowid string, workflowRunID string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
-		UpdateDashboard        func(childComplexity int, dashboard *model.UpdateDBInput, chaosQueryUpdate bool) int
+		UpdateDashboard        func(childComplexity int, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
 		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
 		UpdateGitOps           func(childComplexity int, config model.GitConfig) int
 		UpdateImageRegistry    func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
@@ -376,7 +376,7 @@ type ComplexityRoot struct {
 		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
 		GetWorkflowStats            func(childComplexity int, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) int
 		GetYAMLData                 func(childComplexity int, experimentInput model.ExperimentInput) int
-		ListDashboard               func(childComplexity int, projectID string) int
+		ListDashboard               func(childComplexity int, projectID string, clusterID *string) int
 		ListDataSource              func(childComplexity int, projectID string) int
 		ListImageRegistry           func(childComplexity int, projectID string) int
 		ListManifestTemplate        func(childComplexity int, projectID string) int
@@ -710,7 +710,7 @@ type MutationResolver interface {
 	CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error)
 	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error)
 	UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error)
-	UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput, chaosQueryUpdate bool) (string, error)
+	UpdateDashboard(ctx context.Context, dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error)
 	UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error)
 	DeleteDashboard(ctx context.Context, dbID *string) (bool, error)
 	DeleteDataSource(ctx context.Context, input model.DeleteDSInput) (bool, error)
@@ -740,7 +740,7 @@ type QueryResolver interface {
 	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
 	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
 	GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error)
-	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardResponse, error)
+	ListDashboard(ctx context.Context, projectID string, clusterID *string) ([]*model.ListDashboardResponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
 	GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error)
@@ -2018,7 +2018,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(*model.UpdateDBInput), args["chaosQueryUpdate"].(bool)), true
+		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(model.UpdateDBInput), args["chaosQueryUpdate"].(bool)), true
 
 	case "Mutation.updateDataSource":
 		if e.complexity.Mutation.UpdateDataSource == nil {
@@ -2706,7 +2706,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListDashboard(childComplexity, args["project_id"].(string)), true
+		return e.complexity.Query.ListDashboard(childComplexity, args["project_id"].(string), args["cluster_id"].(*string)), true
 
 	case "Query.ListDataSource":
 		if e.complexity.Query.ListDataSource == nil {
@@ -4279,18 +4279,18 @@ input resource {
 input updateDBInput {
   db_id: String!
   ds_id: String!
-  db_name: String!
-  db_type_name: String!
-  db_type_id: String!
+  db_name: String
+  db_type_name: String
+  db_type_id: String
   db_information: String
-  chaos_event_query_template: String!
-  chaos_verdict_query_template: String!
+  chaos_event_query_template: String
+  chaos_verdict_query_template: String
   application_metadata_map: [applicationMetadata]
-  panel_groups: [updatePanelGroupInput]!
-  end_time: String!
-  start_time: String!
-  cluster_id: ID!
-  refresh_rate: String!
+  panel_groups: [updatePanelGroupInput]
+  end_time: String
+  start_time: String
+  cluster_id: ID
+  refresh_rate: String
 }
 
 input updatePanelGroupInput {
@@ -5058,7 +5058,7 @@ type Query {
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
-  ListDashboard(project_id: String!): [listDashboardResponse] @authorized
+  ListDashboard(project_id: String!, cluster_id: String): [listDashboardResponse] @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -5167,7 +5167,7 @@ type Mutation {
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updateDBInput, chaosQueryUpdate: Boolean!): String! @authorized
+  updateDashboard(dashboard: updateDBInput!, chaosQueryUpdate: Boolean!): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
@@ -5948,9 +5948,9 @@ func (ec *executionContext) field_Mutation_updateChaosWorkflow_args(ctx context.
 func (ec *executionContext) field_Mutation_updateDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.UpdateDBInput
+	var arg0 model.UpdateDBInput
 	if tmp, ok := rawArgs["dashboard"]; ok {
-		arg0, err = ec.unmarshalOupdateDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, tmp)
+		arg0, err = ec.unmarshalNupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6236,6 +6236,14 @@ func (ec *executionContext) field_Query_ListDashboard_args(ctx context.Context, 
 		}
 	}
 	args["project_id"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["cluster_id"]; ok {
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cluster_id"] = arg1
 	return args, nil
 }
 
@@ -12547,7 +12555,7 @@ func (ec *executionContext) _Mutation_updateDashboard(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(*model.UpdateDBInput), args["chaosQueryUpdate"].(bool))
+			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(model.UpdateDBInput), args["chaosQueryUpdate"].(bool))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -15919,7 +15927,7 @@ func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListDashboard(rctx, args["project_id"].(string))
+			return ec.resolvers.Query().ListDashboard(rctx, args["project_id"].(string), args["cluster_id"].(*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -25834,19 +25842,19 @@ func (ec *executionContext) unmarshalInputupdateDBInput(ctx context.Context, obj
 			}
 		case "db_name":
 			var err error
-			it.DbName, err = ec.unmarshalNString2string(ctx, v)
+			it.DbName, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "db_type_name":
 			var err error
-			it.DbTypeName, err = ec.unmarshalNString2string(ctx, v)
+			it.DbTypeName, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "db_type_id":
 			var err error
-			it.DbTypeID, err = ec.unmarshalNString2string(ctx, v)
+			it.DbTypeID, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25858,13 +25866,13 @@ func (ec *executionContext) unmarshalInputupdateDBInput(ctx context.Context, obj
 			}
 		case "chaos_event_query_template":
 			var err error
-			it.ChaosEventQueryTemplate, err = ec.unmarshalNString2string(ctx, v)
+			it.ChaosEventQueryTemplate, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "chaos_verdict_query_template":
 			var err error
-			it.ChaosVerdictQueryTemplate, err = ec.unmarshalNString2string(ctx, v)
+			it.ChaosVerdictQueryTemplate, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25876,31 +25884,31 @@ func (ec *executionContext) unmarshalInputupdateDBInput(ctx context.Context, obj
 			}
 		case "panel_groups":
 			var err error
-			it.PanelGroups, err = ec.unmarshalNupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, v)
+			it.PanelGroups, err = ec.unmarshalOupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "end_time":
 			var err error
-			it.EndTime, err = ec.unmarshalNString2string(ctx, v)
+			it.EndTime, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "start_time":
 			var err error
-			it.StartTime, err = ec.unmarshalNString2string(ctx, v)
+			it.StartTime, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "cluster_id":
 			var err error
-			it.ClusterID, err = ec.unmarshalNID2string(ctx, v)
+			it.ClusterID, err = ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "refresh_rate":
 			var err error
-			it.RefreshRate, err = ec.unmarshalNString2string(ctx, v)
+			it.RefreshRate, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -31478,24 +31486,8 @@ func (ec *executionContext) marshalNpromSeriesResponse2ᚖgithubᚗcomᚋlitmusc
 	return ec._promSeriesResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) ([]*model.UpdatePanelGroupInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*model.UpdatePanelGroupInput, len(vSlice))
-	for i := range vSlice {
-		res[i], err = ec.unmarshalOupdatePanelGroupInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
+func (ec *executionContext) unmarshalNupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {
+	return ec.unmarshalInputupdateDBInput(ctx, v)
 }
 
 func (ec *executionContext) marshalNweightages2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v model.Weightages) graphql.Marshaler {
@@ -33278,20 +33270,28 @@ func (ec *executionContext) marshalOsubData2ᚖgithubᚗcomᚋlitmuschaosᚋlitm
 	return ec._subData(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {
-	return ec.unmarshalInputupdateDBInput(ctx, v)
-}
-
-func (ec *executionContext) unmarshalOupdateDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (*model.UpdateDBInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, v)
-	return &res, err
-}
-
 func (ec *executionContext) unmarshalOupdatePanelGroupInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) (model.UpdatePanelGroupInput, error) {
 	return ec.unmarshalInputupdatePanelGroupInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) ([]*model.UpdatePanelGroupInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.UpdatePanelGroupInput, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOupdatePanelGroupInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalOupdatePanelGroupInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) (*model.UpdatePanelGroupInput, error) {

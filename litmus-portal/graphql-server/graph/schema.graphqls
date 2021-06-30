@@ -300,7 +300,7 @@ type Query {
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
-  ListDashboard(project_id: String!): [listDashboardResponse] @authorized
+  ListDashboard(project_id: String!, cluster_id: String): [listDashboardResponse] @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -409,7 +409,7 @@ type Mutation {
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updateDBInput, chaosQueryUpdate: Boolean!): String! @authorized
+  updateDashboard(dashboard: updateDBInput!, chaosQueryUpdate: Boolean!): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 

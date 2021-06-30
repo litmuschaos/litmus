@@ -249,7 +249,7 @@ func (r *mutationResolver) UpdateDataSource(ctx context.Context, datasource mode
 	return analyticsHandler.UpdateDataSource(datasource)
 }
 
-func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
+func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
 	return analyticsHandler.UpdateDashBoard(dashboard, chaosQueryUpdate)
 }
 
@@ -413,8 +413,8 @@ func (r *queryResolver) GetPromSeriesList(ctx context.Context, dsDetails *model.
 	return analyticsHandler.GetSeriesList(dsDetails)
 }
 
-func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardResponse, error) {
-	return analyticsHandler.QueryListDashboard(projectID)
+func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clusterID *string) ([]*model.ListDashboardResponse, error) {
+	return analyticsHandler.QueryListDashboard(projectID, clusterID)
 }
 
 func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {

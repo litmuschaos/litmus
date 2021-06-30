@@ -922,18 +922,18 @@ type SubData struct {
 type UpdateDBInput struct {
 	DbID                      string                   `json:"db_id"`
 	DsID                      string                   `json:"ds_id"`
-	DbName                    string                   `json:"db_name"`
-	DbTypeName                string                   `json:"db_type_name"`
-	DbTypeID                  string                   `json:"db_type_id"`
+	DbName                    *string                  `json:"db_name"`
+	DbTypeName                *string                  `json:"db_type_name"`
+	DbTypeID                  *string                  `json:"db_type_id"`
 	DbInformation             *string                  `json:"db_information"`
-	ChaosEventQueryTemplate   string                   `json:"chaos_event_query_template"`
-	ChaosVerdictQueryTemplate string                   `json:"chaos_verdict_query_template"`
+	ChaosEventQueryTemplate   *string                  `json:"chaos_event_query_template"`
+	ChaosVerdictQueryTemplate *string                  `json:"chaos_verdict_query_template"`
 	ApplicationMetadataMap    []*ApplicationMetadata   `json:"application_metadata_map"`
 	PanelGroups               []*UpdatePanelGroupInput `json:"panel_groups"`
-	EndTime                   string                   `json:"end_time"`
-	StartTime                 string                   `json:"start_time"`
-	ClusterID                 string                   `json:"cluster_id"`
-	RefreshRate               string                   `json:"refresh_rate"`
+	EndTime                   *string                  `json:"end_time"`
+	StartTime                 *string                  `json:"start_time"`
+	ClusterID                 *string                  `json:"cluster_id"`
+	RefreshRate               *string                  `json:"refresh_rate"`
 }
 
 type UpdatePanelGroupInput struct {

@@ -228,7 +228,7 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 }
 
 // UpdateDashBoard function updates the dashboard based on it's ID
-func UpdateDashBoard(dashboard *model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
+func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	if dashboard.DbID == "" || dashboard.DsID == "" {
@@ -438,13 +438,12 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput, chaosQueryUpdate bool) (str
 			}
 		}
 
-		update = bson.D{{"$set", bson.D{{"ds_id", dashboard.DsID},
-			{"db_name", dashboard.DbName}, {"db_type_id", dashboard.DbTypeID},
-			{"db_type_name", dashboard.DbTypeName}, {"db_information", dashboard.DbInformation},
-			{"chaos_event_query_template", dashboard.ChaosEventQueryTemplate}, {"chaos_verdict_query_template", dashboard.ChaosEventQueryTemplate},
-			{"cluster_id", dashboard.ClusterID}, {"application_metadata_map", newApplicationMetadataMap},
-			{"end_time", dashboard.EndTime}, {"start_time", dashboard.StartTime},
-			{"refresh_rate", dashboard.RefreshRate}, {"panel_groups", newPanelGroups}, {"updated_at", timestamp}}}}
+		update = bson.D{{"$set", bson.D{{"ds_id", dashboard.DsID}, {"db_name", dashboard.DbName},
+			{"db_type_id", dashboard.DbTypeID}, {"db_type_name", dashboard.DbTypeName},
+			{"db_information", dashboard.DbInformation}, {"cluster_id", dashboard.ClusterID},
+			{"application_metadata_map", newApplicationMetadataMap}, {"end_time", dashboard.EndTime},
+			{"start_time", dashboard.StartTime}, {"refresh_rate", dashboard.RefreshRate},
+			{"panel_groups", newPanelGroups}, {"updated_at", timestamp}}}}
 	} else {
 		update = bson.D{{"$set", bson.D{
 			{"chaos_event_query_template", dashboard.ChaosEventQueryTemplate}, {"chaos_verdict_query_template", dashboard.ChaosEventQueryTemplate},
@@ -970,10 +969,21 @@ func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListR
 }
 
 // QueryListDashboard lists all the dashboards present in a project using the projectID
-func QueryListDashboard(projectID string) ([]*model.ListDashboardResponse, error) {
-	query := bson.D{
-		{"project_id", projectID},
-		{"is_removed", false},
+func QueryListDashboard(projectID string, clusterID *string) ([]*model.ListDashboardResponse, error) {
+
+	var query bson.D
+
+	if clusterID == nil {
+		query = bson.D{
+			{"project_id", projectID},
+			{"is_removed", false},
+		}
+	} else {
+		query = bson.D{
+			{"project_id", projectID},
+			{"cluster_id", clusterID},
+			{"is_removed", false},
+		}
 	}
 
 	dashboards, err := dbOperationsAnalytics.ListDashboard(query)
