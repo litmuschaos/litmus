@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client';
 import {
   FormControl,
   InputLabel,
@@ -8,50 +9,51 @@ import {
 } from '@material-ui/core';
 import { RadialChart, RadialChartMetric } from 'litmus-ui';
 import React, { useState } from 'react';
+import { GET_WORKFLOW_RUNS_STATS } from '../../../../graphql';
 import {
-  ExecutionData,
-  ScheduledWorkflows,
-} from '../../../../models/graphql/workflowListData';
+  WorkflowRunStatsRequest,
+  WorkflowRunStatsResponse,
+} from '../../../../models/graphql/workflowData';
 import { Filter } from '../../../../models/graphql/workflowStats';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import ScheduleAndRunStats from './ScheduleAndRunStats';
 import useStyles from './styles';
 
-interface WorkflowGraphsProps {
-  data: ScheduledWorkflows | undefined;
-}
-
-const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
+const WorkflowGraphs: React.FC = () => {
   const classes = useStyles();
 
-  let completed = 0;
-  let running = 0;
-  let failed = 0;
+  const projectID = getProjectID();
 
-  /* eslint-disable no-unused-expressions */
-  data?.ListWorkflow.workflows.map((datarow) =>
-    datarow.workflow_runs?.map((runs) => {
-      if (
-        (JSON.parse(runs.execution_data) as ExecutionData).phase === 'Succeeded'
-      )
-        completed++;
-      else if (
-        (JSON.parse(runs.execution_data) as ExecutionData).phase === 'Running'
-      )
-        running++;
-      else if (
-        (JSON.parse(runs.execution_data) as ExecutionData).phase === 'Failed'
-      )
-        failed++;
-    })
+  const { data } = useQuery<WorkflowRunStatsResponse, WorkflowRunStatsRequest>(
+    GET_WORKFLOW_RUNS_STATS,
+    {
+      variables: {
+        workflowRunStatsRequest: {
+          project_id: projectID,
+        },
+      },
+      fetchPolicy: 'cache-and-network',
+    }
   );
-
   // States for filters
   const [filters, setFilters] = useState<Filter>(Filter.Monthly);
 
   const graphData: RadialChartMetric[] = [
-    { value: completed, label: 'Completed', baseColor: '#00CC9A' },
-    { value: running, label: 'Running', baseColor: '#5252F6' },
-    { value: failed, label: 'Failed', baseColor: '#CA2C2C' },
+    {
+      value: data?.getWorkflowRunStats.succeeded_workflow_runs ?? 0,
+      label: 'Completed',
+      baseColor: '#00CC9A',
+    },
+    {
+      value: data?.getWorkflowRunStats.running_workflow_runs ?? 0,
+      label: 'Running',
+      baseColor: '#5252F6',
+    },
+    {
+      value: data?.getWorkflowRunStats.failed_workflow_runs ?? 0,
+      label: 'Failed',
+      baseColor: '#CA2C2C',
+    },
   ];
   return (
     <div className={classes.root}>

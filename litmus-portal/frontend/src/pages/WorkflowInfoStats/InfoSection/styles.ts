@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   infoStatsSection: {
     backgroundColor: theme.palette.cards.header,
     padding: theme.spacing(2.5, 3.25),
-    marginBottom: theme.spacing(5.125),
+    // marginBottom: theme.spacing(5.125),
   },
   infoStats: {
     backgroundColor: theme.palette.background.paper,
@@ -25,10 +25,10 @@ const useStyles = makeStyles((theme) => ({
     '& div': {
       padding: theme.spacing(1),
     },
-    // Regularity info stat section fix for smaller screens
-    '& div:last-child': {
-      width: '20rem',
-    },
+  },
+  // Regularity info stat section fix for smaller screens
+  regularity: {
+    width: '20rem',
   },
   infoHeader: {
     fontWeight: 500,
@@ -36,6 +36,14 @@ const useStyles = makeStyles((theme) => ({
   },
   infoHint: {
     color: theme.palette.text.hint,
+  },
+  button: {
+    backgroundColor: '#E5E7F1',
+    width: '100%',
+    border: 'none',
+  },
+  icon: {
+    marginRight: theme.spacing(0.875),
   },
 }));
 

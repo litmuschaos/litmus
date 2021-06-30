@@ -1,11 +1,13 @@
 import { Typography } from '@material-ui/core';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
-import React from 'react';
+import { ButtonOutlined } from 'litmus-ui';
+import React, { useState } from 'react';
 import YAML from 'yaml';
 import { ScheduledWorkflows } from '../../../models/graphql/workflowListData';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import useStyles from './styles';
+import WorkflowStats from './WorkflowStats';
 
 interface InfoSectionProps {
   data: ScheduledWorkflows;
@@ -14,7 +16,7 @@ interface InfoSectionProps {
 const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
   const classes = useStyles();
 
-  console.log(data);
+  const [showMore, setShowMore] = useState<boolean>(false);
 
   return (
     <section>
@@ -111,7 +113,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
             </Typography>
           </div>
           {/* Column 4 */}
-          <div>
+          <div className={classes.regularity}>
             <Typography className={classes.infoHeader}>Regularity :</Typography>
             {data.ListWorkflow.workflows[0].cronSyntax === '' ? (
               <Typography>Non cron workflow</Typography>
@@ -125,9 +127,43 @@ const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
               )
             )}
           </div>
-          {/* Column end */}
         </div>
+        {showMore ? (
+          <WorkflowStats
+            workflowID={data.ListWorkflow.workflows[0].workflow_id}
+            isCron={data.ListWorkflow.workflows[0].cronSyntax !== ''}
+            noOfWorkflowRuns={
+              data.ListWorkflow.workflows[0].workflow_runs?.length ?? 0
+            }
+          />
+        ) : (
+          <></>
+        )}
       </div>
+      <ButtonOutlined
+        className={classes.button}
+        onClick={() => setShowMore(!showMore)}
+      >
+        {showMore ? (
+          <>
+            <img
+              src="../../icons/hide.svg"
+              alt="hide"
+              className={classes.icon}
+            />
+            Hide Statistics
+          </>
+        ) : (
+          <>
+            <img
+              src="../../icons/show.svg"
+              alt="show"
+              className={classes.icon}
+            />
+            Show Statistics
+          </>
+        )}
+      </ButtonOutlined>
     </section>
   );
 };

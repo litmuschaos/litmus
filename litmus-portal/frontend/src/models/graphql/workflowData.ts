@@ -141,3 +141,30 @@ export interface HeatMapData {
 export interface HeatmapDataResponse {
   getHeatmapData: WeekData[];
 }
+
+export interface WorkflowRunStatsResponse {
+  getWorkflowRunStats: {
+    total_workflow_runs: number;
+    succeeded_workflow_runs: number;
+    failed_workflow_runs: number;
+    running_workflow_runs: number;
+    workflow_run_succeeded_percentage: number;
+    workflow_run_failed_percentage: number;
+    average_resiliency_score: number;
+    passed_percentage: number;
+    failed_percentage: number;
+    total_experiments: number;
+    experiments_passed: number;
+    experiments_failed: number;
+    experiments_awaited: number;
+    experiments_stopped: number;
+    experiments_na: number;
+  };
+}
+
+export interface WorkflowRunStatsRequest {
+  workflowRunStatsRequest: {
+    project_id: string;
+    workflow_ids?: string[];
+  };
+}

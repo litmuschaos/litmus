@@ -135,6 +135,30 @@ export const WORKFLOW_LIST_DETAILS_FOR_MANIFEST = gql`
   }
 `;
 
+export const GET_WORKFLOW_RUNS_STATS = gql`
+  query getWorkflowRunStats(
+    $workflowRunStatsRequest: WorkflowRunStatsRequest!
+  ) {
+    getWorkflowRunStats(workflowRunStatsRequest: $workflowRunStatsRequest) {
+      total_workflow_runs
+      succeeded_workflow_runs
+      failed_workflow_runs
+      running_workflow_runs
+      workflow_run_succeeded_percentage
+      workflow_run_failed_percentage
+      average_resiliency_score
+      passed_percentage
+      failed_percentage
+      total_experiments
+      experiments_passed
+      experiments_failed
+      experiments_awaited
+      experiments_stopped
+      experiments_na
+    }
+  }
+`;
+
 export const GET_USER = gql`
   query getUser($username: String!) {
     getUser(username: $username) {
