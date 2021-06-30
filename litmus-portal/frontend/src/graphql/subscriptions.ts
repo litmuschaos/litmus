@@ -48,3 +48,34 @@ export const KUBE_OBJ = gql`
     }
   }
 `;
+
+export const VIEW_DASHBOARD = gql`
+  subscription viewDashboard(
+    $prometheusQueries: [promQueryInput!]!
+    $dataVarMap: dataVars!
+  ) {
+    viewDashboard(promQueries: $prometheusQueries, dataVariables: $dataVarMap) {
+      metricsResponse {
+        queryid
+        legends
+        tsvs {
+          date
+          value
+        }
+      }
+      annotationsResponse {
+        queryid
+        legends
+        tsvs {
+          date
+          value
+        }
+        subDataArray {
+          date
+          subDataName
+          value
+        }
+      }
+    }
+  }
+`;

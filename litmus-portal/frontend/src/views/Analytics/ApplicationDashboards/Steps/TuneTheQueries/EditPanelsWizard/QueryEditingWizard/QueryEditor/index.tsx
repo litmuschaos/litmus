@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
+import DoneIcon from '@material-ui/icons/Done';
 import { Autocomplete } from '@material-ui/lab';
 import { AutocompleteChipInput, InputField } from 'litmus-ui';
 import moment from 'moment';
@@ -45,6 +46,7 @@ import PrometheusQueryEditor from './PrometheusQueryBox';
 import useStyles from './styles';
 
 interface QueryEditorProps {
+  numberOfQueries: number;
   index: number;
   promQuery: PromQueryDetails;
   selectedApps: ApplicationMetadata[];
@@ -63,6 +65,7 @@ interface Option {
 const resolutions: string[] = ['1/1', '1/2', '1/3', '1/4', '1/5', '1/10'];
 
 const QueryEditor: React.FC<QueryEditorProps> = ({
+  numberOfQueries,
   index,
   promQuery,
   selectedApps,
@@ -78,7 +81,6 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
   const [selectedValuesForLabel, setSelectedValuesForLabel] = React.useState<
     Array<Option>
   >([]);
-
   const [selectedLabel, setSelectedLabel] = React.useState<string>('');
   const [update, setUpdate] = React.useState<boolean>(false);
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
@@ -93,6 +95,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
       : promQuery.prom_query_name.split('{')[0],
     labels_and_values_list: getLabelsAndValues(promQuery.prom_query_name),
   });
+  const [copying, setCopying] = React.useState<boolean>(false);
   const [queryVisible, setQueryVisible] = React.useState<boolean>(true);
 
   const [getLabelValues, { data: labelValueData }] = useLazyQuery<
@@ -206,14 +209,22 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
     return completionOptions;
   };
 
+  const fallbackCopyTextToClipboard = (text: string) => {
+    // eslint-disable-next-line no-alert
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', text);
+  };
+
   const copyTextToClipboard = (text: string) => {
     if (!navigator.clipboard) {
-      console.error('Oops Could not copy text: ');
+      fallbackCopyTextToClipboard(text);
       return;
     }
+    setCopying(true);
     navigator.clipboard
       .writeText(text)
       .catch((err) => console.error('Async: Could not copy text: ', err));
+
+    setTimeout(() => setCopying(false), 3000);
   };
 
   return (
@@ -249,31 +260,41 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
             <div className={classes.flex}>
               <IconButton
                 className={classes.iconButton}
-                onClick={() => copyTextToClipboard(localQuery.prom_query_name)}
+                onClick={() =>
+                  copyTextToClipboard(`${localQuery.prom_query_name}`)
+                }
+                aria-label="copyQuery"
               >
-                <CopyQuery className={classes.icon} />
-              </IconButton>
-
-              <IconButton
-                className={classes.iconButton}
-                onClick={() => {
-                  setQueryVisible(!queryVisible);
-                  handleShowAndHideQuery(index);
-                }}
-              >
-                {queryVisible ? (
-                  <QueryVisible className={classes.icon} />
+                {!copying ? (
+                  <CopyQuery className={classes.icon} />
                 ) : (
-                  <QueryHidden className={classes.icon} />
+                  <DoneIcon className={classes.icon} />
                 )}
               </IconButton>
 
-              <IconButton
-                className={classes.iconButton}
-                onClick={() => handleDeleteQuery(index)}
-              >
-                <DeleteQuery className={classes.icon} />
-              </IconButton>
+              {numberOfQueries > 1 && (
+                <>
+                  <IconButton
+                    className={classes.iconButton}
+                    onClick={() => {
+                      setQueryVisible(!queryVisible);
+                      handleShowAndHideQuery(index);
+                    }}
+                  >
+                    {queryVisible ? (
+                      <QueryVisible className={classes.icon} />
+                    ) : (
+                      <QueryHidden className={classes.icon} />
+                    )}
+                  </IconButton>
+                  <IconButton
+                    className={classes.iconButton}
+                    onClick={() => handleDeleteQuery(index)}
+                  >
+                    <DeleteQuery className={classes.icon} />
+                  </IconButton>
+                </>
+              )}
             </div>
           </div>
         </AccordionSummary>

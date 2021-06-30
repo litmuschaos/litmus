@@ -45,8 +45,8 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
         <StyledTableCell
           className={`${classes.headSpacing} ${classes.columnDivider}`}
         >
-          <div className={classes.nameContent}>
-            <Typography className={classes.dataSourceNameHead}>
+          <div style={{ display: 'flex' }}>
+            <Typography className={`${classes.dataSourceNameHead}`}>
               {t('analyticsDashboard.dataSourceTable.tableHead2')}
             </Typography>
             <div className={classes.nameContentIcons}>
@@ -99,7 +99,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
         </StyledTableCell>
 
         <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
+          <div style={{ display: 'flex' }}>
             <Typography className={classes.dataSourceNameHead}>
               {t('analyticsDashboard.dataSourceTable.tableHead5')}
             </Typography>

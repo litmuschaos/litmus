@@ -26,7 +26,11 @@ import {
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../../../models/graphql/dataSourceDetails';
-import { getProjectID } from '../../../../utils/getSearchParams';
+import { history } from '../../../../redux/configureStore';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -50,7 +54,6 @@ interface SortData {
 
 interface Filter {
   range: RangeType;
-  selectedDataSourceType: string;
   sortData: SortData;
   selectedStatus: string;
   searchTokens: string[];
@@ -65,9 +68,10 @@ interface ForceDeleteVars {
 const DataSourceTable: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
-    selectedDataSourceType: 'All',
     sortData: {
       name: { sort: false, ascending: true },
       lastConfigured: { sort: true, ascending: false },
@@ -77,7 +81,6 @@ const DataSourceTable: React.FC = () => {
   });
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const projectID = getProjectID();
   const [success, setSuccess] = React.useState(false);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [drawerState, setDrawerState] = React.useState(false);
@@ -137,16 +140,6 @@ const DataSourceTable: React.FC = () => {
     setDrawerState(false);
   };
 
-  const getDataSourceType = (searchingData: ListDataSourceResponse[]) => {
-    const uniqueList: string[] = [];
-    searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.ds_type)) {
-        uniqueList.push(data.ds_type);
-      }
-    });
-    return uniqueList;
-  };
-
   const getStatus = (searchingData: ListDataSourceResponse[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
@@ -165,11 +158,6 @@ const DataSourceTable: React.FC = () => {
             ds.ds_name.toLowerCase().includes(s)
           );
         })
-          .filter((data) => {
-            return filter.selectedDataSourceType === 'All'
-              ? true
-              : data.ds_type === filter.selectedDataSourceType;
-          })
           .filter((data) => {
             return filter.selectedStatus === 'All'
               ? true
@@ -213,6 +201,24 @@ const DataSourceTable: React.FC = () => {
 
   return (
     <div className={classes.root}>
+      <div className={classes.tabHeaderFlex}>
+        <Typography className={classes.tabHeaderText}>
+          {t('analyticsDashboard.dataSourceTable.dataSources')}
+        </Typography>
+        <ButtonFilled
+          onClick={() =>
+            history.push({
+              pathname: '/analytics/datasource/create',
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            })
+          }
+          className={classes.addButton}
+        >
+          <Typography className={classes.buttonText}>
+            {t('analyticsDashboard.dataSourceTable.addDataSource')}
+          </Typography>
+        </ButtonFilled>
+      </div>
       <Paper>
         <section className="Heading section">
           <TableToolBar
@@ -232,14 +238,7 @@ const DataSourceTable: React.FC = () => {
                   .filter((s) => s !== ''),
               })
             }
-            dataSourceTypes={getDataSourceType(data?.ListDataSource ?? [])}
             statuses={getStatus(data?.ListDataSource ?? [])}
-            callbackToSetDataSourceType={(dataSourceType: string) =>
-              setFilter({
-                ...filter,
-                selectedDataSourceType: dataSourceType,
-              })
-            }
             callbackToSetStatus={(status: string) =>
               setFilter({
                 ...filter,

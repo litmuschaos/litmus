@@ -91,19 +91,20 @@ export interface UpdateDashboardInput {
   updateDBInput: {
     db_id: string;
     ds_id: string;
-    db_name: string;
-    db_type_id: string;
-    db_type_name: string;
-    db_information: string;
-    chaos_event_query_template: string;
-    chaos_verdict_query_template: string;
-    application_metadata_map: ApplicationMetadata[];
-    end_time: string;
-    start_time: string;
-    cluster_id: string;
-    refresh_rate: string;
-    panel_groups: updatePanelGroupInput[];
+    db_name?: string;
+    db_type_id?: string;
+    db_type_name?: string;
+    db_information?: string;
+    chaos_event_query_template?: string;
+    chaos_verdict_query_template?: string;
+    application_metadata_map?: ApplicationMetadata[];
+    end_time?: string;
+    start_time?: string;
+    cluster_id?: string;
+    refresh_rate?: string;
+    panel_groups?: updatePanelGroupInput[];
   };
+  chaosQueryUpdate: boolean;
 }
 
 export interface DeleteDashboardInput {
@@ -127,11 +128,13 @@ export interface ApplicationMetadataResponse {
 export interface ListDashboardResponse {
   db_id: string;
   ds_id: string;
-  ds_type: string;
   db_name: string;
   db_type: string;
   cluster_name: string;
   ds_name: string;
+  ds_type: string;
+  ds_url: string;
+  ds_health_status: string;
   db_type_id: string;
   db_type_name: string;
   db_information: string;
@@ -150,6 +153,7 @@ export interface ListDashboardResponse {
 
 export interface ListDashboardVars {
   projectID: string;
+  clusterID?: string;
 }
 
 export interface DashboardList {

@@ -66,6 +66,7 @@ const TuneTheQueries = forwardRef(
     const onDashboardLoadRoutine = async (dbID: string) => {
       dashboard.selectDashboard({
         selectedDashboardID: dbID,
+        selectedAgentID: dashboardVars.agentID ?? '',
         refreshRate: 0,
       });
       dataSource.selectDataSource({
@@ -240,9 +241,6 @@ const TuneTheQueries = forwardRef(
         db_type_id: dashboardVars.dashboardTypeID ?? '',
         db_type_name: dashboardVars.dashboardTypeName ?? '',
         db_information: dashboardVars.information ?? '',
-        chaos_event_query_template: dashboardVars.chaosEventQueryTemplate ?? '',
-        chaos_verdict_query_template:
-          dashboardVars.chaosVerdictQueryTemplate ?? '',
         application_metadata_map: dashboardVars.applicationMetadataMap ?? [],
         panel_groups: getPanelGroups(),
         end_time: `${Math.round(new Date().getTime() / 1000)}`,
@@ -253,7 +251,7 @@ const TuneTheQueries = forwardRef(
         cluster_id: dashboardVars.agentID ?? '',
       };
       updateDashboard({
-        variables: { updateDBInput: dashboardInput },
+        variables: { updateDBInput: dashboardInput, chaosQueryUpdate: false },
       });
     };
 

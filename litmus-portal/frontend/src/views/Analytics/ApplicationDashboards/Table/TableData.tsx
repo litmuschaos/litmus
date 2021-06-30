@@ -71,6 +71,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
+      selectedAgentID: data.cluster_id,
       refreshRate: 0,
     });
     dataSource.selectDataSource({
@@ -147,7 +148,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
       <StyledTableCell>
         <Typography
           className={classes.tableObjects}
-          style={{ maxWidth: '12.5rem' }}
+          style={{ maxWidth: '13.5rem' }}
         >
           <img src="/icons/calendarIcon.svg" alt="Calender" />
           {formatDate(data.updated_at)}
@@ -193,7 +194,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div style={{ display: 'flex' }}>
               <img
                 src="/icons/viewAnalytics.svg"
                 alt="View"
@@ -219,7 +220,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div style={{ display: 'flex' }}>
               <img
                 src="/icons/cogwheel.svg"
                 alt="Configure"
@@ -245,7 +246,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div style={{ display: 'flex' }}>
               <img
                 src="/icons/delete.svg"
                 alt="Delete"

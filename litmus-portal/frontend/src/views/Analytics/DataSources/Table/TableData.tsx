@@ -105,7 +105,8 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell className={classes.columnDivider}>
         <Typography
-          className={`${classes.tableObjects} ${classes.dataSourceNameColData}`}
+          className={`${classes.tableObjects} ${classes.dataSourceNameCol}`}
+          style={{ fontWeight: 500 }}
         >
           {data.ds_name}
         </Typography>
@@ -126,7 +127,7 @@ const TableData: React.FC<TableDataProps> = ({
       <StyledTableCell>
         <Typography
           className={classes.tableObjects}
-          style={{ maxWidth: '12.5rem' }}
+          style={{ maxWidth: '13.5rem' }}
         >
           <img src="/icons/calendarIcon.svg" alt="Calender" />
           {formatDate(data.updated_at)}
@@ -189,7 +190,7 @@ const TableData: React.FC<TableDataProps> = ({
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div style={{ display: 'flex' }}>
               <img
                 src="/icons/cogwheel.svg"
                 alt="Configure"
@@ -212,7 +213,7 @@ const TableData: React.FC<TableDataProps> = ({
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div style={{ display: 'flex' }}>
               <img
                 src="/icons/delete.svg"
                 alt="Delete"

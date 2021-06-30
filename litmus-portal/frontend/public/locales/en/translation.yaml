@@ -280,12 +280,13 @@ analyticsDashboard:
     search: Search
     selectPeriod: Select period
     all: All
-    tableHead1: Dashboard name
+    tableHead1: Name
     tableHead2: Agent name
     tableHead3: Dashboard type
     tableHead4: Data source type
     tableHead5: Last viewed
     createDashboard: Create dashboard
+    dashboards: Dashboards
     title: Application Dashboard
     view: View
     configure: Configure
@@ -449,11 +450,12 @@ analyticsDashboard:
     deletionSuccess: Successfully deleted the data source
     deletionError: Error while deleting the data source
     tableHead1: Status
-    tableHead2: Data source name
-    tableHead3: Data source type
+    tableHead2: Name
+    tableHead3: Type
     tableHead4: Last configured
-    tableHead5: Data source link
+    tableHead5: Link
     addDataSource: Add data source
+    dataSources: Data sources
     loading: Loading available data sources
     noRecords: No data source available
     fetchError: Unable to fetch data

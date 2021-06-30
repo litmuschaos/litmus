@@ -49,7 +49,7 @@ interface PrometheusQueryDataInterface {
   firstLoad: Boolean;
 }
 
-const PanelContent: React.FC<GraphPanelProps> = ({
+const DashboardPanel: React.FC<GraphPanelProps> = ({
   panel_id,
   panel_name,
   prom_queries,
@@ -397,4 +397,4 @@ const PanelContent: React.FC<GraphPanelProps> = ({
     </div>
   );
 };
-export default PanelContent;
+export default DashboardPanel;

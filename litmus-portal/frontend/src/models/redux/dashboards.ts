@@ -52,6 +52,7 @@ export interface RangeType {
 export interface DashboardData {
   dashboardJSON: any;
   selectedDashboardID: string;
+  selectedAgentID: string;
   activePanelID: string;
   refreshRate: number;
   range: RangeType;

@@ -501,6 +501,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
             key={`tab-panel-${panel.panel_name}`}
           >
             <QueryEditingWizard
+              numberOfPanels={dashboardDetails.selectedPanels?.length ?? 0}
               panelVars={panel}
               selectedApps={dashboardVars.applicationMetadataMap ?? []}
               seriesList={seriesList}

@@ -3,21 +3,14 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import React from 'react';
 import { Accordion } from '../../../../components/Accordion';
+import { GraphPanelGroupProps } from '../../../../models/dashboardsData';
 import { PanelResponse } from '../../../../models/graphql/dashboardsDetails';
 import { ReactComponent as ExpandAccordion } from '../../../../svg/expandAccordion.svg';
 import { ReactComponent as ShrinkAccordion } from '../../../../svg/shrinkAccordion.svg';
-import GraphPanel from './GraphPanel';
+import DashboardPanel from './Panel';
 import useStyles from './styles';
 
-interface DashboardPanelGroupContentProps {
-  panels: PanelResponse[];
-  panel_group_name: string;
-  panel_group_id: string;
-  selectedPanels?: string[];
-  selectedApplications?: string[];
-}
-
-const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
+const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
   panels,
   panel_group_id,
   panel_group_name,
@@ -52,7 +45,7 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
                   selectedPanels && selectedPanels.includes(panel.panel_id)
               )
               .map((panel: PanelResponse) => (
-                <GraphPanel
+                <DashboardPanel
                   key={panel.panel_id}
                   data-cy="dashboardPanel"
                   panel_id={panel.panel_id}
@@ -74,4 +67,4 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
   );
 };
 
-export default DashboardPanelGroupContent;
+export default DashboardPanelGroup;

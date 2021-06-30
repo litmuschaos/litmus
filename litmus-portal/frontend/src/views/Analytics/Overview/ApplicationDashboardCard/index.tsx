@@ -46,6 +46,7 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
+      selectedAgentID: data.cluster_id,
       refreshRate: 0,
     });
     dataSource.selectDataSource({

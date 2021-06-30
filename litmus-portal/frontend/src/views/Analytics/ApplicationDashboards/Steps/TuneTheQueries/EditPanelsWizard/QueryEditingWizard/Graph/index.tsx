@@ -75,7 +75,7 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
         showGrid={panelVars.panel_options.grids}
         showPoints={panelVars.panel_options.points}
         showLegendTable
-        showTips={false}
+        showTips
         unit={panelVars.unit}
         yLabel={panelVars.y_axis_left}
         yLabelOffset={55}

@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { TextButton } from 'litmus-ui';
+import { ButtonFilled, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +58,6 @@ interface SortData {
 
 interface Filter {
   range: RangeType;
-  selectedDataSourceType: string;
   selectedDashboardType: string;
   sortData: SortData;
   selectedAgentName: string;
@@ -70,7 +69,6 @@ const DashboardTable: React.FC = () => {
   const { t } = useTranslation();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
-    selectedDataSourceType: 'All',
     selectedDashboardType: 'All',
     sortData: {
       name: { sort: false, ascending: true },
@@ -126,16 +124,6 @@ const DashboardTable: React.FC = () => {
     setPage(0);
   };
 
-  const getDataSourceType = (searchingData: ListDashboardResponse[]) => {
-    const uniqueList: string[] = [];
-    searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.ds_type)) {
-        uniqueList.push(data.ds_type);
-      }
-    });
-    return uniqueList;
-  };
-
   const getDashboardType = (searchingData: ListDashboardResponse[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
@@ -164,11 +152,6 @@ const DashboardTable: React.FC = () => {
             db.db_name.toLowerCase().includes(s)
           );
         })
-          .filter((data) => {
-            return filter.selectedDataSourceType === 'All'
-              ? true
-              : data.ds_type === filter.selectedDataSourceType;
-          })
           .filter((data) => {
             return filter.selectedDashboardType === 'All'
               ? true
@@ -228,6 +211,35 @@ const DashboardTable: React.FC = () => {
 
   return (
     <div className={classes.root}>
+      <div className={classes.tabHeaderFlex}>
+        <Typography className={classes.tabHeaderText}>
+          {t('analyticsDashboard.applicationDashboardTable.dashboards')}
+        </Typography>
+        <ButtonFilled
+          onClick={() =>
+            history.push({
+              pathname: '/analytics/dashboard/create',
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            })
+          }
+          className={classes.createButton}
+          disabled={
+            loadingDataSources ||
+            (!activeDataSourceAvailable && !loadingDataSources)
+          }
+        >
+          <Typography
+            className={`${classes.buttonText} ${
+              loadingDataSources ||
+              (!activeDataSourceAvailable && !loadingDataSources)
+                ? classes.disabledText
+                : ''
+            }`}
+          >
+            {t('analyticsDashboard.applicationDashboardTable.createDashboard')}
+          </Typography>
+        </ButtonFilled>
+      </div>
       {!activeDataSourceAvailable && !loadingDataSources && (
         <blockquote className={classes.warningBlock}>
           <Typography className={classes.warningText} align="left">
@@ -302,15 +314,8 @@ const DashboardTable: React.FC = () => {
                   .filter((s) => s !== ''),
               })
             }
-            dataSourceTypes={getDataSourceType(data?.ListDashboard ?? [])}
             dashboardTypes={getDashboardType(data?.ListDashboard ?? [])}
             agentNames={getAgentName(data?.ListDashboard ?? [])}
-            callbackToSetDataSourceType={(dataSourceType: string) =>
-              setFilter({
-                ...filter,
-                selectedDataSourceType: dataSourceType,
-              })
-            }
             callbackToSetDashboardType={(dashboardType: string) =>
               setFilter({
                 ...filter,
@@ -334,9 +339,6 @@ const DashboardTable: React.FC = () => {
                   endDate: selectedEndDate,
                 },
               })
-            }
-            createButtonDisabled={
-              !activeDataSourceAvailable && !loadingDataSources
             }
           />
         </section>

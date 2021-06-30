@@ -14,6 +14,32 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2.5),
   },
 
+  center: {
+    padding: '25%',
+  },
+
+  loading: {
+    textAlign: 'center',
+    marginTop: theme.spacing(2),
+    color: theme.palette.text.hint,
+    fontSize: '1.25rem',
+  },
+
+  error: {
+    textAlign: 'center',
+    color: theme.palette.error.main,
+    fontSize: '1rem',
+  },
+
+  flexButtons: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+
+  flexButton: {
+    margin: theme.spacing(3, 2, 0),
+  },
+
   controlsDiv: {
     display: 'flex',
     justifyContent: 'space-between',
