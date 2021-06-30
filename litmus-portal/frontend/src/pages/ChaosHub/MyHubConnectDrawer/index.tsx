@@ -15,12 +15,14 @@ import BackButton from '../../../components/Button/BackButton';
 import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
+import { constants } from '../../../constants';
 import {
   ADD_MY_HUB,
   GENERATE_SSH,
   SAVE_MY_HUB,
   UPDATE_MY_HUB,
 } from '../../../graphql/mutations';
+import { GET_HUB_STATUS } from '../../../graphql/queries';
 import {
   CreateMyHub,
   MyHubData,
@@ -28,15 +30,13 @@ import {
   SSHKey,
   SSHKeys,
 } from '../../../models/graphql/user';
+import { HubStatus } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import {
   isValidWebUrl,
   validateStartEmptySpacing,
 } from '../../../utils/validate';
 import useStyles from './styles';
-import { constants } from '../../../constants';
-import { HubStatus } from '../../../models/redux/myhub';
-import { GET_HUB_STATUS } from '../../../graphql/queries';
 
 interface GitHub {
   HubName: string;
@@ -373,7 +373,6 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
   return (
     <Drawer
       className={classes.drawer}
-      variant="persistent"
       anchor="right"
       open={drawerState}
       classes={{
