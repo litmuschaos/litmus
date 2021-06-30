@@ -4,6 +4,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Typography,
 } from '@material-ui/core';
 import { RadialChart, RadialChartMetric } from 'litmus-ui';
 import React, { useState } from 'react';
@@ -71,12 +72,17 @@ const WorkflowGraphs: React.FC<WorkflowGraphsProps> = ({ data }) => {
       <div className={classes.graphs}>
         <ScheduleAndRunStats filter={filters} />
         <Paper elevation={0} className={classes.radialChartContainer}>
-          <RadialChart
-            radialData={graphData}
-            legendTableHeight={150}
-            heading="Workflows"
-            showCenterHeading
-          />
+          <Typography className={classes.radialChartContainerHeading}>
+            Workflow Run stats
+          </Typography>
+          <div style={{ width: '18rem', height: '23rem' }}>
+            <RadialChart
+              radialData={graphData}
+              legendTableHeight={105}
+              heading="Workflows"
+              showCenterHeading
+            />
+          </div>
         </Paper>
       </div>
     </div>
