@@ -33,7 +33,8 @@ import {
 import { ReactComponent as ExpandAccordion } from '../../../../../../../../svg/expandQueryAccordion.svg';
 import { ReactComponent as CopyQuery } from '../../../../../../../../svg/queryCopy.svg';
 import { ReactComponent as DeleteQuery } from '../../../../../../../../svg/queryDelete.svg';
-import { ReactComponent as ShowHideQuery } from '../../../../../../../../svg/queryHide.svg';
+import { ReactComponent as QueryHidden } from '../../../../../../../../svg/queryHidden.svg';
+import { ReactComponent as QueryVisible } from '../../../../../../../../svg/queryVisible.svg';
 import { ReactComponent as ShrinkAccordion } from '../../../../../../../../svg/shrinkQueryAccordion.svg';
 import {
   getLabelsAndValues,
@@ -92,6 +93,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
       : promQuery.prom_query_name.split('{')[0],
     labels_and_values_list: getLabelsAndValues(promQuery.prom_query_name),
   });
+  const [queryVisible, setQueryVisible] = React.useState<boolean>(true);
 
   const [getLabelValues, { data: labelValueData }] = useLazyQuery<
     PrometheusSeriesResponse,
@@ -247,9 +249,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
             <div className={classes.flex}>
               <IconButton
                 className={classes.iconButton}
-                onClick={() => {
-                  copyTextToClipboard(localQuery.prom_query_name);
-                }}
+                onClick={() => copyTextToClipboard(localQuery.prom_query_name)}
               >
                 <CopyQuery className={classes.icon} />
               </IconButton>
@@ -257,17 +257,20 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
               <IconButton
                 className={classes.iconButton}
                 onClick={() => {
+                  setQueryVisible(!queryVisible);
                   handleShowAndHideQuery(index);
                 }}
               >
-                <ShowHideQuery className={classes.icon} />
+                {queryVisible ? (
+                  <QueryVisible className={classes.icon} />
+                ) : (
+                  <QueryHidden className={classes.icon} />
+                )}
               </IconButton>
 
               <IconButton
                 className={classes.iconButton}
-                onClick={() => {
-                  handleDeleteQuery(index);
-                }}
+                onClick={() => handleDeleteQuery(index)}
               >
                 <DeleteQuery className={classes.icon} />
               </IconButton>

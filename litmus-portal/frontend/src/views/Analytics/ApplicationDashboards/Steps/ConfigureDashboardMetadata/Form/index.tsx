@@ -473,7 +473,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
                 cluster.is_cluster_confirmed &&
                 cluster.is_registered
               );
-            }).length ? (
+            }).length && agentList?.getCluster.length ? (
             <Typography className={classes.formErrorText}>
               {t(
                 'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.agentInactive'

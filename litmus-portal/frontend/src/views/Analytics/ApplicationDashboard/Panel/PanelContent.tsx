@@ -54,6 +54,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   panel_name,
   prom_queries,
   y_axis_left,
+  panel_options,
   unit,
   className,
   controllerPanelID,
@@ -360,10 +361,11 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               openSeries={graphData.seriesData}
               closedSeries={graphData.closedAreaData}
               eventSeries={graphData.chaosData}
-              showPoints={false}
+              showGrid={panel_options.grids}
+              showPoints={panel_options.points}
               showLegendTable
               showEventTable
-              showTips={false}
+              showTips
               showEventMarkers
               marginLeftEventTable={10}
               unit={unit}
@@ -380,10 +382,11 @@ const PanelContent: React.FC<GraphPanelProps> = ({
           openSeries={graphData.seriesData}
           closedSeries={graphData.closedAreaData}
           eventSeries={graphData.chaosData}
-          showPoints={false}
+          showGrid={panel_options.grids}
+          showPoints={panel_options.points}
           showEventTable={viewEventMetric}
           showLegendTable
-          showTips={false}
+          showTips
           showEventMarkers
           unit={unit}
           yLabel={y_axis_left}

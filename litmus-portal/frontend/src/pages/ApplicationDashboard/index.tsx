@@ -72,12 +72,9 @@ const DashboardPage: React.FC = () => {
   const [dataSourceStatus, setDataSourceStatus] =
     React.useState<string>('ACTIVE');
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleClose = () => setAnchorEl(null);
   const [isInfoOpen, setIsInfoOpen] = React.useState<Boolean>(false);
   const [selectedPanels, setSelectedPanels] = React.useState<string[]>([]);
   const [selectedApplications, setSelectedApplications] = React.useState<
@@ -285,9 +282,9 @@ const DashboardPage: React.FC = () => {
 
             <TopNavButtons
               isInfoToggledState={isInfoOpen}
-              switchIsInfoToggled={(toggleState: Boolean) => {
-                setIsInfoOpen(toggleState);
-              }}
+              switchIsInfoToggled={(toggleState: Boolean) =>
+                setIsInfoOpen(toggleState)
+              }
               dashboardData={selectedDashboardInformation}
               dashboardTypeID={selectedDashboardInformation.typeID}
             />

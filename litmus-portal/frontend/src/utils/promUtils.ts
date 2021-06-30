@@ -43,25 +43,27 @@ export const getPromQueryInput = (
   });
   if (withEvents) {
     promQueries.push({
-      queryid: 'chaos-interval',
-      query: 'litmuschaos_awaited_experiments{job="chaos-exporter"}',
-      legend: '{{chaosengine_name}}',
+      queryid: 'chaos-event',
+      query:
+        'litmuschaos_awaited_experiments{job="chaos-exporter", chaos_injection_time!=""}',
+      legend: '{{chaosresult_name}}',
       resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
         timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
           ? 1
           : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
     });
-    // promQueries.push({
-    //   queryid: 'chaos-verdict',
-    //   query: 'litmuschaos_experiment_verdict{job="chaos-exporter"}',
-    //   legend: '{{chaosengine_name}}',
-    //   resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
-    //   minstep:
-    //     timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
-    //       ? 1
-    //       : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
-    // });
+    promQueries.push({
+      queryid: 'chaos-verdict',
+      query:
+        'litmuschaos_experiment_verdict{job="chaos-exporter", chaos_injection_time!=""}',
+      legend: '{{chaosresult_name}}',
+      resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+      minstep:
+        timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
+          ? 1
+          : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+    });
   }
   return promQueries;
 };
