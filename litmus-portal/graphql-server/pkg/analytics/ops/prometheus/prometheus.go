@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/prometheus/client_golang/api"
 	apiV1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	md "github.com/prometheus/common/model"
@@ -71,25 +72,42 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 		log.Printf("Unsupported result format: %s", value.Type().String())
 	}
 
+	chaosEventLabels := map[string]string{
+		"workflow_name":       "Workflow",
+		"chaosengine_context": "Engine context",
+	}
+
+	chaosVerdictLabels := map[string]string{
+		"workflow_name":            "Workflow",
+		"chaosengine_context":      "Engine context",
+		"app_namespace":            "App namespace",
+		"app_label":                "App label",
+		"app_kind":                 "App kind",
+		"chaosresult_verdict":      "Experiment verdict",
+		"probe_success_percentage": "Probe success percentage",
+	}
+
 	var (
-		newMetrics         analytics.MetricsResponse
-		newAnnotations     analytics.AnnotationsResponse
-		newMetricsTSVs     [][]*analytics.MetricsTimeStampValue
-		newAnnotationsTSVs [][]*analytics.AnnotationsTimeStampValue
+		newMetrics         model.MetricsPromResponse
+		newAnnotations     model.AnnotationsPromResponse
+		newMetricsTSVs     [][]*model.MetricsTimeStampValue
+		newAnnotationsTSVs [][]*model.AnnotationsTimeStampValue
 		newLegends         []*string
+		newSubDataArray    [][]*model.SubData
 	)
 
 	for _, v := range data {
 
 		var (
-			tempMetricsTSV     []*analytics.MetricsTimeStampValue
-			tempAnnotationsTSV []*analytics.AnnotationsTimeStampValue
+			tempMetricsTSV     []*model.MetricsTimeStampValue
+			tempAnnotationsTSV []*model.AnnotationsTimeStampValue
 			tempLegends        []*string
+			tempSubDataArray   []*model.SubData
 		)
 
 		if queryType == "metrics" {
 			for _, value := range v.Values {
-				temp := &analytics.MetricsTimeStampValue{
+				temp := &model.MetricsTimeStampValue{
 					Date:  func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: float64(value.Timestamp), false: 0}[float64(value.Timestamp) >= 0.0]),
 					Value: func(val float64) *float64 { return &val }(map[bool]float64{true: float64(value.Value), false: 0.0}[float64(value.Value) >= 0.0]),
 				}
@@ -99,7 +117,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 			newMetricsTSVs = append(newMetricsTSVs, tempMetricsTSV)
 		} else {
 			for _, value := range v.Values {
-				temp := &analytics.AnnotationsTimeStampValue{
+				temp := &model.AnnotationsTimeStampValue{
 					Date:  func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: float64(value.Timestamp), false: 0}[float64(value.Timestamp) >= 0.0]),
 					Value: func(val int) *int { return &val }(map[bool]int{true: int(value.Value), false: 0}[int(value.Value) >= 0]),
 				}
@@ -112,6 +130,36 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 		if prom.Legend == nil || *prom.Legend == "" {
 			tempLegends = append(tempLegends, func(str string) *string { return &str }(fmt.Sprint(v.Metric.String())))
 		} else {
+			if strings.Contains(prom.Queryid, "chaos-event") || strings.Contains(prom.Queryid, "chaos-verdict") {
+				var checkMap map[string]string
+
+				if strings.Contains(prom.Queryid, "chaos-event") {
+					checkMap = chaosEventLabels
+				} else if strings.Contains(prom.Queryid, "chaos-verdict") {
+					checkMap = chaosVerdictLabels
+				}
+
+				var baseString = utils.Split(v.Metric.String(), "{", "}")
+				var keyValueMap = utils.GetKeyValueMapFromQuotedString(baseString)
+
+				var timeStamp, errorString = strconv.ParseFloat(keyValueMap["chaos_injection_time"], 64)
+				if errorString != nil {
+					log.Printf("Error parsing chaos injection time: %v\n", errorString)
+				} else {
+					for key, value := range keyValueMap {
+						if nameVal, ok := checkMap[key]; ok {
+							tempSubData := &model.SubData{
+								Date:        func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: timeStamp, false: 0}[timeStamp >= 0.0]),
+								Value:       value,
+								SubDataName: nameVal,
+							}
+							tempSubDataArray = append(tempSubDataArray, tempSubData)
+						}
+					}
+					newSubDataArray = append(newSubDataArray, tempSubDataArray)
+				}
+			}
+
 			r, _ := regexp.Compile(`\{{(.*?)\}}`)
 			elements := r.FindAllString(*prom.Legend, -1)
 
@@ -153,6 +201,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 		newAnnotations.Tsvs = newAnnotationsTSVs
 		newAnnotations.Queryid = prom.Queryid
 		newAnnotations.Legends = newLegends
+		newAnnotations.SubDataArray = newSubDataArray
 
 		var resp model.AnnotationsPromResponse
 		if len(newLegends) != 0 {
@@ -194,8 +243,8 @@ func LabelNamesAndValues(prom analytics.PromSeries) (*model.PromSeriesResponse, 
 	}
 
 	var (
-		newResponse    analytics.PromSeriesResponse
-		newLabelValues []*analytics.LabelValue
+		newResponse    model.PromSeriesResponse
+		newLabelValues []*model.LabelValue
 	)
 
 	if len(labelNames) >= 1 {
@@ -205,17 +254,17 @@ func LabelNamesAndValues(prom analytics.PromSeries) (*model.PromSeriesResponse, 
 			if index != 0 {
 				go func(index int, label string) {
 					defer wg.Done()
-					var newValues []*analytics.Option
+					var newValues []*model.Option
 					values, _, err := client.LabelValues(context.TODO(), label, matcher, start, end)
 					if err != nil {
 						return
 					}
 
 					for _, value := range values {
-						newValues = append(newValues, func(str string) *analytics.Option { return &analytics.Option{Name: str} }(fmt.Sprint(value)))
+						newValues = append(newValues, func(str string) *model.Option { return &model.Option{Name: str} }(fmt.Sprint(value)))
 					}
 
-					tempLabelValues := &analytics.LabelValue{
+					tempLabelValues := &model.LabelValue{
 						Label:  label,
 						Values: newValues,
 					}
@@ -261,7 +310,7 @@ func SeriesList(prom analytics.PromDSDetails) (*model.PromSeriesListResponse, er
 	var (
 		matcher     []string
 		newValues   []*string
-		newResponse analytics.PromSeriesListResponse
+		newResponse model.PromSeriesListResponse
 	)
 
 	labelValues, _, err := client.LabelValues(context.TODO(), "__name__", matcher, start, end)

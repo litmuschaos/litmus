@@ -536,9 +536,10 @@ type ComplexityRoot struct {
 	}
 
 	AnnotationsPromResponse struct {
-		Legends func(childComplexity int) int
-		Queryid func(childComplexity int) int
-		Tsvs    func(childComplexity int) int
+		Legends      func(childComplexity int) int
+		Queryid      func(childComplexity int) int
+		SubDataArray func(childComplexity int) int
+		Tsvs         func(childComplexity int) int
 	}
 
 	AnnotationsTimeStampValue struct {
@@ -660,6 +661,12 @@ type ComplexityRoot struct {
 	ResourceResponse struct {
 		Kind  func(childComplexity int) int
 		Names func(childComplexity int) int
+	}
+
+	SubData struct {
+		Date        func(childComplexity int) int
+		SubDataName func(childComplexity int) int
+		Value       func(childComplexity int) int
 	}
 
 	Weightages struct {
@@ -3589,6 +3596,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AnnotationsPromResponse.Queryid(childComplexity), true
 
+	case "annotationsPromResponse.subDataArray":
+		if e.complexity.AnnotationsPromResponse.SubDataArray == nil {
+			break
+		}
+
+		return e.complexity.AnnotationsPromResponse.SubDataArray(childComplexity), true
+
 	case "annotationsPromResponse.tsvs":
 		if e.complexity.AnnotationsPromResponse.Tsvs == nil {
 			break
@@ -4086,6 +4100,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceResponse.Names(childComplexity), true
 
+	case "subData.date":
+		if e.complexity.SubData.Date == nil {
+			break
+		}
+
+		return e.complexity.SubData.Date(childComplexity), true
+
+	case "subData.subDataName":
+		if e.complexity.SubData.SubDataName == nil {
+			break
+		}
+
+		return e.complexity.SubData.SubDataName(childComplexity), true
+
+	case "subData.value":
+		if e.complexity.SubData.Value == nil {
+			break
+		}
+
+		return e.complexity.SubData.Value(childComplexity), true
+
 	case "weightages.experiment_name":
 		if e.complexity.Weightages.ExperimentName == nil {
 			break
@@ -4342,10 +4377,17 @@ type metricsTimeStampValue {
   value: Float
 }
 
+type subData {
+  date: Float
+  value: String!
+  subDataName: String!
+}
+
 type annotationsPromResponse {
   queryid: String!
   legends: [String]
   tsvs: [[annotationsTimeStampValue]]
+  subDataArray: [[subData]]
 }
 
 type annotationsTimeStampValue {
@@ -21360,6 +21402,37 @@ func (ec *executionContext) _annotationsPromResponse_tsvs(ctx context.Context, f
 	return ec.marshalOannotationsTimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _annotationsPromResponse_subDataArray(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "annotationsPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SubDataArray, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([][]*model.SubData)
+	fc.Result = res
+	return ec.marshalOsubData2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _annotationsTimeStampValue_date(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsTimeStampValue) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -23612,6 +23685,105 @@ func (ec *executionContext) _resourceResponse_names(ctx context.Context, field g
 	res := resTmp.([]*string)
 	fc.Result = res
 	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _subData_date(ctx context.Context, field graphql.CollectedField, obj *model.SubData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "subData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Date, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _subData_value(ctx context.Context, field graphql.CollectedField, obj *model.SubData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "subData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _subData_subDataName(ctx context.Context, field graphql.CollectedField, obj *model.SubData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "subData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SubDataName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _weightages_experiment_name(ctx context.Context, field graphql.CollectedField, obj *model.Weightages) (ret graphql.Marshaler) {
@@ -28828,6 +29000,8 @@ func (ec *executionContext) _annotationsPromResponse(ctx context.Context, sel as
 			out.Values[i] = ec._annotationsPromResponse_legends(ctx, field, obj)
 		case "tsvs":
 			out.Values[i] = ec._annotationsPromResponse_tsvs(ctx, field, obj)
+		case "subDataArray":
+			out.Values[i] = ec._annotationsPromResponse_subDataArray(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -29426,6 +29600,40 @@ func (ec *executionContext) _resourceResponse(ctx context.Context, sel ast.Selec
 			}
 		case "names":
 			out.Values[i] = ec._resourceResponse_names(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var subDataImplementors = []string{"subData"}
+
+func (ec *executionContext) _subData(ctx context.Context, sel ast.SelectionSet, obj *model.SubData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("subData")
+		case "date":
+			out.Values[i] = ec._subData_date(ctx, field, obj)
+		case "value":
+			out.Values[i] = ec._subData_value(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "subDataName":
+			out.Values[i] = ec._subData_subDataName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -32977,6 +33185,97 @@ func (ec *executionContext) marshalOresourceResponse2ᚖgithubᚗcomᚋlitmuscha
 		return graphql.Null
 	}
 	return ec._resourceResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOsubData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx context.Context, sel ast.SelectionSet, v model.SubData) graphql.Marshaler {
+	return ec._subData(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOsubData2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx context.Context, sel ast.SelectionSet, v [][]*model.SubData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOsubData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOsubData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx context.Context, sel ast.SelectionSet, v []*model.SubData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOsubData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOsubData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx context.Context, sel ast.SelectionSet, v *model.SubData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._subData(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {

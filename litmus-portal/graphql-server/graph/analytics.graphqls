@@ -159,10 +159,17 @@ type metricsTimeStampValue {
   value: Float
 }
 
+type subData {
+  date: Float
+  value: String!
+  subDataName: String!
+}
+
 type annotationsPromResponse {
   queryid: String!
   legends: [String]
   tsvs: [[annotationsTimeStampValue]]
+  subDataArray: [[subData]]
 }
 
 type annotationsTimeStampValue {

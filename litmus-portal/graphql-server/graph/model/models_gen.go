@@ -678,9 +678,10 @@ type WorkflowStats struct {
 }
 
 type AnnotationsPromResponse struct {
-	Queryid string                         `json:"queryid"`
-	Legends []*string                      `json:"legends"`
-	Tsvs    [][]*AnnotationsTimeStampValue `json:"tsvs"`
+	Queryid      string                         `json:"queryid"`
+	Legends      []*string                      `json:"legends"`
+	Tsvs         [][]*AnnotationsTimeStampValue `json:"tsvs"`
+	SubDataArray [][]*SubData                   `json:"subDataArray"`
 }
 
 type AnnotationsTimeStampValue struct {
@@ -910,6 +911,12 @@ type Resource struct {
 type ResourceResponse struct {
 	Kind  string    `json:"kind"`
 	Names []*string `json:"names"`
+}
+
+type SubData struct {
+	Date        *float64 `json:"date"`
+	Value       string   `json:"value"`
+	SubDataName string   `json:"subDataName"`
 }
 
 type UpdateDBInput struct {

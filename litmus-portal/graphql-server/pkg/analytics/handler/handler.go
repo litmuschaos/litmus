@@ -675,11 +675,13 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 
 func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 	var (
-		metrics     []*model.MetricsPromResponse
-		annotations []*model.AnnotationsPromResponse
+		metrics               []*model.MetricsPromResponse
+		annotations           []*model.AnnotationsPromResponse
+		wg                    sync.WaitGroup
+		verdictResponse       *model.AnnotationsPromResponse
+		patchEventWithVerdict bool
 	)
 
-	var wg sync.WaitGroup
 	wg.Add(len(promInput.Queries))
 	for _, v := range promInput.Queries {
 		go func(val *model.PromQueryInput) {
@@ -697,38 +699,109 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 			cacheKey := val.Query + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 
 			queryType := "metrics"
-			if strings.Contains(val.Queryid, "chaos-interval") || strings.Contains(val.Queryid, "chaos-verdict") {
+			if strings.Contains(val.Queryid, "chaos-event") || strings.Contains(val.Queryid, "chaos-verdict") {
 				queryType = "annotation"
+				cacheKey = val.Queryid + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 			}
 
 			if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
 				if queryType == "metrics" {
 					metrics = append(metrics, obj.(*model.MetricsPromResponse))
 				} else {
-					annotations = append(annotations, obj.(*model.AnnotationsPromResponse))
+					if strings.Contains(val.Queryid, "chaos-event") {
+						annotations = append(annotations, obj.(*model.AnnotationsPromResponse))
+					}
 				}
 			} else {
 				response, err := prometheus.Query(newPromQuery, queryType)
-
 				if err != nil {
 					return
 				}
-
-				cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
-				if cacheError != nil {
-					log.Printf("Adding cache: %v\n", cacheError)
-				}
-
 				if queryType == "metrics" {
 					metrics = append(metrics, response.(*model.MetricsPromResponse))
+					cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
+					if cacheError != nil {
+						log.Printf("Adding cache: %v\n", cacheError)
+					}
 				} else {
-					annotations = append(annotations, response.(*model.AnnotationsPromResponse))
+					if strings.Contains(val.Queryid, "chaos-event") {
+						annotations = append(annotations, response.(*model.AnnotationsPromResponse))
+						cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
+						if cacheError != nil {
+							log.Printf("Adding cache: %v\n", cacheError)
+						}
+					} else if strings.Contains(val.Queryid, "chaos-verdict") {
+						patchEventWithVerdict = true
+						verdictResponse = response.(*model.AnnotationsPromResponse)
+					}
 				}
 			}
 		}(v)
 	}
 
 	wg.Wait()
+
+	if patchEventWithVerdict == true {
+		var existingAnnotations []*model.AnnotationsPromResponse
+		err := copier.Copy(&existingAnnotations, &annotations)
+		if err != nil {
+			log.Printf("Error parsing existing annotations  %v\n", err)
+		}
+
+		for annotationIndex, annotation := range existingAnnotations {
+			var existingAnnotation model.AnnotationsPromResponse
+			err := copier.Copy(&existingAnnotation, &annotation)
+			if err != nil {
+				log.Printf("Error parsing existing annotation  %v\n", err)
+			}
+			if strings.Contains(existingAnnotation.Queryid, "chaos-event") {
+
+				var newAnnotation model.AnnotationsPromResponse
+				err := copier.Copy(&newAnnotation, &verdictResponse)
+				if err != nil {
+					log.Printf("Error parsing new annotation  %v\n", err)
+				}
+
+				for verdictLegendIndex, verdictLegend := range newAnnotation.Legends {
+					verdictLegendName := func(str *string) string { return *str }(verdictLegend)
+
+					for eventLegendIndex, eventLegend := range existingAnnotation.Legends {
+						eventLegendName := func(str *string) string { return *str }(eventLegend)
+
+						if verdictLegendName == eventLegendName {
+							var newVerdictSubData []*model.SubData
+
+							for _, verdictSubData := range verdictResponse.SubDataArray[verdictLegendIndex] {
+								verdictSubDataDate := func(date *float64) float64 { return *date }(verdictSubData.Date)
+								var subDataFound = false
+
+								for eventSubDataIndex, eventSubData := range annotation.SubDataArray[eventLegendIndex] {
+									if eventSubData != nil {
+										eventSubDataDate := func(date *float64) float64 { return *date }(eventSubData.Date)
+
+										if eventSubDataDate == verdictSubDataDate && eventSubData.SubDataName == verdictSubData.SubDataName {
+											subDataFound = true
+											annotations[annotationIndex].SubDataArray[eventLegendIndex][eventSubDataIndex].Value = verdictSubData.Value
+										}
+									}
+								}
+
+								if !subDataFound {
+									newVerdictSubData = append(newVerdictSubData, verdictSubData)
+								}
+							}
+							annotations[annotationIndex].SubDataArray[eventLegendIndex] = append(annotations[annotationIndex].SubDataArray[eventLegendIndex], newVerdictSubData...)
+						}
+					}
+				}
+				eventCacheKey := annotation.Queryid + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
+				cacheError := utils.AddCache(AnalyticsCache, eventCacheKey, annotations[annotationIndex])
+				if cacheError != nil {
+					log.Printf("Adding cache: %v\n", cacheError)
+				}
+			}
+		}
+	}
 
 	newPromResponse := model.PromResponse{
 		MetricsResponse:     metrics,
