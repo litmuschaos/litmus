@@ -300,7 +300,7 @@ type Query {
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
-  ListDashboard(project_id: String!, cluster_id: String): [listDashboardResponse] @authorized
+  ListDashboard(project_id: String!, cluster_id: String, db_id: String): [listDashboardResponse] @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized

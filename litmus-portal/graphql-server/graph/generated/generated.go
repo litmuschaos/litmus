@@ -376,7 +376,7 @@ type ComplexityRoot struct {
 		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
 		GetWorkflowStats            func(childComplexity int, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) int
 		GetYAMLData                 func(childComplexity int, experimentInput model.ExperimentInput) int
-		ListDashboard               func(childComplexity int, projectID string, clusterID *string) int
+		ListDashboard               func(childComplexity int, projectID string, clusterID *string, dbID *string) int
 		ListDataSource              func(childComplexity int, projectID string) int
 		ListImageRegistry           func(childComplexity int, projectID string) int
 		ListManifestTemplate        func(childComplexity int, projectID string) int
@@ -742,7 +742,7 @@ type QueryResolver interface {
 	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
 	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
 	GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error)
-	ListDashboard(ctx context.Context, projectID string, clusterID *string) ([]*model.ListDashboardResponse, error)
+	ListDashboard(ctx context.Context, projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
 	GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error)
@@ -2708,7 +2708,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListDashboard(childComplexity, args["project_id"].(string), args["cluster_id"].(*string)), true
+		return e.complexity.Query.ListDashboard(childComplexity, args["project_id"].(string), args["cluster_id"].(*string), args["db_id"].(*string)), true
 
 	case "Query.ListDataSource":
 		if e.complexity.Query.ListDataSource == nil {
@@ -5076,7 +5076,7 @@ type Query {
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
-  ListDashboard(project_id: String!, cluster_id: String): [listDashboardResponse] @authorized
+  ListDashboard(project_id: String!, cluster_id: String, db_id: String): [listDashboardResponse] @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -6262,6 +6262,14 @@ func (ec *executionContext) field_Query_ListDashboard_args(ctx context.Context, 
 		}
 	}
 	args["cluster_id"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["db_id"]; ok {
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["db_id"] = arg2
 	return args, nil
 }
 
@@ -15945,7 +15953,7 @@ func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListDashboard(rctx, args["project_id"].(string), args["cluster_id"].(*string))
+			return ec.resolvers.Query().ListDashboard(rctx, args["project_id"].(string), args["cluster_id"].(*string), args["db_id"].(*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {

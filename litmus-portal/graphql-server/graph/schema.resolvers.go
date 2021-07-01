@@ -413,8 +413,8 @@ func (r *queryResolver) GetPromSeriesList(ctx context.Context, dsDetails *model.
 	return analyticsHandler.GetSeriesList(dsDetails)
 }
 
-func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clusterID *string) ([]*model.ListDashboardResponse, error) {
-	return analyticsHandler.QueryListDashboard(projectID, clusterID)
+func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error) {
+	return analyticsHandler.QueryListDashboard(projectID, clusterID, dbID)
 }
 
 func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {

@@ -970,14 +970,25 @@ func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListR
 }
 
 // QueryListDashboard lists all the dashboards present in a project using the projectID
-func QueryListDashboard(projectID string, clusterID *string) ([]*model.ListDashboardResponse, error) {
+func QueryListDashboard(projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error) {
 
-	var query bson.D
+	var (
+		query bson.D
+		wg    sync.WaitGroup
+	)
 
 	if clusterID == nil || *clusterID == "" {
-		query = bson.D{
-			{"project_id", projectID},
-			{"is_removed", false},
+		if dbID != nil && *dbID != "" {
+			query = bson.D{
+				{"project_id", projectID},
+				{"db_id", dbID},
+				{"is_removed", false},
+			}
+		} else {
+			query = bson.D{
+				{"project_id", projectID},
+				{"is_removed", false},
+			}
 		}
 	} else {
 		query = bson.D{
@@ -998,28 +1009,68 @@ func QueryListDashboard(projectID string, clusterID *string) ([]*model.ListDashb
 		return nil, err
 	}
 
+	dataSourceMap := make(map[string]*dbSchemaAnalytics.DataSource)
 	dataSourceHealthCheckMap := make(map[string]string)
 
-	for _, dashboard := range newListDashboard {
-		datasource, err := dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
-		if err != nil {
-			return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
-		}
+	if clusterID != nil && *clusterID != "" {
+		wg.Add(len(newListDashboard))
 
-		dashboard.DsType = &datasource.DsType
-		dashboard.DsName = &datasource.DsName
+		for _, dashboard := range newListDashboard {
+			if _, ok := dataSourceMap[dashboard.DsID]; !ok {
+				datasource, err := dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
+				if err != nil {
+					return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
+				}
+				dataSourceMap[dashboard.DsID] = datasource
 
-		if clusterID != nil && *clusterID != "" {
-			dashboard.DsURL = &datasource.DsURL
+				go func(val *dbSchemaAnalytics.DataSource) {
+					defer wg.Done()
 
-			if healthStatus, ok := dataSourceHealthCheckMap[*dashboard.DsURL]; ok {
-				dashboard.DsHealthStatus = &healthStatus
+					if _, ok := dataSourceHealthCheckMap[val.DsID]; !ok {
+						dataSourceStatus := prometheus.TSDBHealthCheck(datasource.DsURL, datasource.DsType)
+						dataSourceHealthCheckMap[val.DsID] = dataSourceStatus
+					} else {
+						return
+					}
+				}(datasource)
 			} else {
-				datasourceStatus := prometheus.TSDBHealthCheck(datasource.DsURL, datasource.DsType)
-				dashboard.DsHealthStatus = &datasourceStatus
-				dataSourceHealthCheckMap[*dashboard.DsURL] = datasourceStatus
+				wg.Done()
 			}
 		}
+
+		wg.Wait()
+	}
+
+	for _, dashboard := range newListDashboard {
+
+		var datasource *dbSchemaAnalytics.DataSource
+
+		if clusterID != nil && *clusterID != "" {
+			if dataSourceInfo, ok := dataSourceMap[dashboard.DsID]; ok {
+				datasource = dataSourceInfo
+			} else {
+				return nil, fmt.Errorf("error on querying from datasource collection\n")
+			}
+			if dataSourceHealthStatus, ok := dataSourceHealthCheckMap[dashboard.DsID]; ok {
+				dashboard.DsHealthStatus = &dataSourceHealthStatus
+			} else {
+				return nil, fmt.Errorf("error while checking data source health status\n")
+			}
+		} else {
+			if dataSourceInfo, ok := dataSourceMap[dashboard.DsID]; !ok {
+				datasource, err = dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
+				if err != nil {
+					return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
+				}
+				dataSourceMap[dashboard.DsID] = datasource
+			} else {
+				datasource = dataSourceInfo
+			}
+		}
+
+		dashboard.DsURL = &datasource.DsURL
+		dashboard.DsType = &datasource.DsType
+		dashboard.DsName = &datasource.DsName
 
 		cluster, err := dbOperationsCluster.GetCluster(dashboard.ClusterID)
 		if err != nil {
