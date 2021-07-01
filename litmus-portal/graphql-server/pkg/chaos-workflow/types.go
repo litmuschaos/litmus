@@ -42,6 +42,7 @@ type Node struct {
 // ChaosData is the data we get from chaos exporter
 type ChaosData struct {
 	EngineUID              string                  `json:"engineUID"`
+	EngineContext          string                  `json:"engine_context"`
 	EngineName             string                  `json:"engineName"`
 	Namespace              string                  `json:"namespace"`
 	ExperimentName         string                  `json:"experimentName"`

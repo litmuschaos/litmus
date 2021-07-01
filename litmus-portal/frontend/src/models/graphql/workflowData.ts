@@ -2,6 +2,7 @@ import { WeekData } from 'litmus-ui';
 
 export interface ChaosData {
   engineName: string;
+  engineContext: string;
   engineUID: string;
   experimentName: string;
   experimentPod: string;

@@ -33,6 +33,7 @@ type Node struct {
 // chaos data
 type ChaosData struct {
 	EngineUID              string                `json:"engineUID"`
+	EngineContext          string                `json:"engineContext"`
 	EngineName             string                `json:"engineName"`
 	Namespace              string                `json:"namespace"`
 	ExperimentName         string                `json:"experimentName"`
