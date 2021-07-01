@@ -367,7 +367,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               showPoints={false}
               showLegendTable
               showEventTable
-              showTips={false}
+              showTips
               showEventMarkers
               marginLeftEventTable={10}
               unit={unit}
