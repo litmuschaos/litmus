@@ -2,6 +2,7 @@
 import { useQuery } from '@apollo/client';
 import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { BrushPostitionProps } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
@@ -78,6 +79,10 @@ const DashboardPage: React.FC = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [centralBrushPosition, setCentralBrushPosition] =
+    React.useState<BrushPostitionProps>();
+  const [centralAllowGraphUpdate, setCentralAllowGraphUpdate] =
+    React.useState(true);
   const [isInfoOpen, setIsInfoOpen] = React.useState<Boolean>(false);
   const [selectedPanels, setSelectedPanels] = React.useState<string[]>([]);
   const [selectedApplications, setSelectedApplications] = React.useState<
@@ -337,6 +342,14 @@ const DashboardPage: React.FC = () => {
                   >
                     <DashboardPanelGroup
                       key={`${panelGroup.panel_group_id}-dashboardPage-component`}
+                      centralAllowGraphUpdate={centralAllowGraphUpdate}
+                      handleCentralAllowGraphUpdate={(value: boolean) =>
+                        setCentralAllowGraphUpdate(value)
+                      }
+                      centralBrushPosition={centralBrushPosition}
+                      handleCentralBrushPosition={(
+                        newBrushPosition: BrushPostitionProps
+                      ) => setCentralBrushPosition(newBrushPosition)}
                       panel_group_id={panelGroup.panel_group_id}
                       panel_group_name={panelGroup.panel_group_name}
                       panels={panelGroup.panels}
