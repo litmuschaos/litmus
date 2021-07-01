@@ -34,12 +34,10 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const projectRole = getProjectRole();
   const [mutate, setMutate] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
-  const [
-    dashboardSelectedForDeleting,
-    setDashboardSelectedForDeleting,
-  ] = React.useState<DeleteDashboardInput>({
-    dbID: '',
-  });
+  const [dashboardSelectedForDeleting, setDashboardSelectedForDeleting] =
+    React.useState<DeleteDashboardInput>({
+      dbID: '',
+    });
 
   // Function to convert UNIX time in format of dddd, DD MMM YYYY, HH:mm
   const formatDate = (date: string) => {

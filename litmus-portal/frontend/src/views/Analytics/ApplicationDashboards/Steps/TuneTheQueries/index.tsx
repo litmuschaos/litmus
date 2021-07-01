@@ -58,12 +58,10 @@ const TuneTheQueries = forwardRef(
     const dataSource = useActions(DataSourceActions);
     const [proceed, setProceed] = React.useState<boolean>(false);
 
-    const [
-      updatedDashboardDetails,
-      setUpdatedDashboardDetails,
-    ] = useState<DashboardDetails>({
-      selectedPanels: [],
-    });
+    const [updatedDashboardDetails, setUpdatedDashboardDetails] =
+      useState<DashboardDetails>({
+        selectedPanels: [],
+      });
 
     const onDashboardLoadRoutine = async (dbID: string) => {
       dashboard.selectDashboard({

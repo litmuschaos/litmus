@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0),
     color: theme.palette.text.hint,
   },
-  stackbarLegend:{
+  stackbarLegend: {
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'row-reverse',

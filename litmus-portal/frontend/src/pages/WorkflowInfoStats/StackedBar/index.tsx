@@ -105,7 +105,6 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     },
     fetchPolicy: 'cache-and-network',
   });
-  console.log('stackBarData: ', stackBarData);
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -150,9 +149,6 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
                 height: '20rem',
               }}
             >
-              {console.log('close1', graphData)}
-              {console.log('close2', openSeriesData.data)}
-              {console.log('close3', loading)}
               <StackBar
                 openSeries={openSeriesData}
                 barSeries={graphData}

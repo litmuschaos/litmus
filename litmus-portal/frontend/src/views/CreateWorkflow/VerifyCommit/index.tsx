@@ -225,20 +225,18 @@ const VerifyCommit = forwardRef(
     }, [modified]);
 
     // Create Workflow Mutation
-    const [
-      createChaosWorkFlow,
-      { loading, error: workflowError },
-    ] = useMutation<CreateWorkflowResponse, CreateWorkFlowInput>(
-      CREATE_WORKFLOW,
-      {
-        onError: () => {
-          setErrorModal(true);
-        },
-        onCompleted: () => {
-          setFinishModalOpen(true);
-        },
-      }
-    );
+    const [createChaosWorkFlow, { loading, error: workflowError }] =
+      useMutation<CreateWorkflowResponse, CreateWorkFlowInput>(
+        CREATE_WORKFLOW,
+        {
+          onError: () => {
+            setErrorModal(true);
+          },
+          onCompleted: () => {
+            setFinishModalOpen(true);
+          },
+        }
+      );
 
     isLoading(loading);
 

@@ -150,7 +150,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         variant="outlined"
         className={`${classes.formControl} ${classes.testResultForm}`}
       >
-        <InputLabel className={classes.selectText}> Test Result </InputLabel>
+        <InputLabel className={classes.selectText}>Context</InputLabel>
         <Select
           label="Context"
           value={contextName}

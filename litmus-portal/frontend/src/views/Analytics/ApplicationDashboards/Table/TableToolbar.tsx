@@ -83,10 +83,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
     startDate: ' ',
     endDate: ' ',
   });
-  const [
-    isDateRangeSelectorPopoverOpen,
-    setDateRangeSelectorPopoverOpen,
-  ] = useState(false);
+  const [isDateRangeSelectorPopoverOpen, setDateRangeSelectorPopoverOpen] =
+    useState(false);
 
   const handleDataSourceTypeChange = (
     event: React.ChangeEvent<{ value: unknown }>

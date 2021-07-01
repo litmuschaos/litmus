@@ -8,25 +8,31 @@ const useStyles = makeStyles((theme) => ({
 
   topDiv: {
     display: 'flex',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     flexWrap: 'wrap',
   },
 
   containerBlock: {
     height: '17.5rem',
-    width: '25.06rem',
+    width: '25rem',
     borderRadius: '0.1875rem',
-    padding: theme.spacing(3.6, 2.8, 6.7, 4.0),
     marginBottom: theme.spacing(1),
+    display: 'grid',
+    placeContent: 'center',
+  },
+
+  cardHeader: {
+    height: '100%',
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(3.125),
   },
 
   cardText: {
-    display: 'flex',
-    justifyContent: 'space-between',
     color: theme.palette.text.primary,
     fontWeight: 500,
     fontSize: '1rem',
-    marginBottom: theme.spacing(3.125),
   },
 
   dropDown: {
@@ -42,8 +48,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   radialProgressChart: {
-    height: '9rem',
+    height: '10rem',
     width: '20rem',
+    paddingTop: theme.spacing(1.5),
   },
 
   passedFailedBar: {
@@ -55,8 +62,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.hint,
     fontWeight: 400,
     fontSize: '1rem',
-    marginTop: theme.spacing(3.125),
-    marginLeft: theme.spacing(5.5),
+    textAlign: 'center',
   },
 
   cardBottomText1: {
@@ -64,12 +70,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 400,
     fontSize: '1rem',
     marginTop: theme.spacing(6.5),
-  },
-
-  button: {
-    backgroundColor: '#E5E7F1',
-    width: '100%',
-    border: 'none',
   },
 
   icon: {

@@ -55,9 +55,8 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
 
   const [clusterData, setClusterData] = useState<Cluster[]>([]);
   const [search, setSearch] = useState<string | null>(null);
-  const [currentlySelectedAgent, setCurrentlySelectedAgent] = useState<string>(
-    ''
-  );
+  const [currentlySelectedAgent, setCurrentlySelectedAgent] =
+    useState<string>('');
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 

@@ -348,12 +348,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
   /**
    * Graphql Query for fetching Engine YAML
    */
-  const [
-    getEngineYaml,
-    { data: engineData, loading: engineDataLoading },
-  ] = useLazyQuery(GET_ENGINE_YAML, {
-    fetchPolicy: 'network-only',
-  });
+  const [getEngineYaml, { data: engineData, loading: engineDataLoading }] =
+    useLazyQuery(GET_ENGINE_YAML, {
+      fetchPolicy: 'network-only',
+    });
 
   /**
    * Graphql Query for fetching Experiment YAML

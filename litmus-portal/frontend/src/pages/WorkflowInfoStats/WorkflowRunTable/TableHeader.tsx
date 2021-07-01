@@ -38,24 +38,24 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
       <TableRow className={classes.tableHead}>
         <StyledTableCell className={classes.testName}>
           <div className={classes.nameContent}>
-              <b>{t('analytics.workflowRunDetailsTable.tableHead0')}</b>&nbsp;
+            <b>{t('analytics.workflowRunDetailsTable.tableHead0')}</b>&nbsp;
           </div>
         </StyledTableCell>
         <StyledTableCell>
           <div className={classes.nameContent}>
-              <b>{t('analytics.workflowRunDetailsTable.tableHead1')}</b>&nbsp;
-          </div>
-        </StyledTableCell>
-
-        <StyledTableCell>
-          <div className={classes.nameContent}>
-              <b>{t('analytics.workflowRunDetailsTable.tableHead2')}</b>&nbsp;
+            <b>{t('analytics.workflowRunDetailsTable.tableHead1')}</b>&nbsp;
           </div>
         </StyledTableCell>
 
         <StyledTableCell>
           <div className={classes.nameContent}>
-              <b>{t('analytics.workflowRunDetailsTable.tableHead3')}</b>&nbsp;
+            <b>{t('analytics.workflowRunDetailsTable.tableHead2')}</b>&nbsp;
+          </div>
+        </StyledTableCell>
+
+        <StyledTableCell>
+          <div className={classes.nameContent}>
+            <b>{t('analytics.workflowRunDetailsTable.tableHead3')}</b>&nbsp;
             <div>
               <IconButton
                 aria-label="sort run ascending"
@@ -90,7 +90,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
         </StyledTableCell>
         <StyledTableCell>
           <div className={classes.nameContent}>
-              <b>{t('analytics.workflowRunDetailsTable.tableHead4')}</b>&nbsp;
+            <b>{t('analytics.workflowRunDetailsTable.tableHead4')}</b>&nbsp;
             <div>
               <IconButton
                 aria-label="sort run ascending"
@@ -125,7 +125,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ callBackToSort }) => {
         </StyledTableCell>
         <StyledTableCell>
           <div className={classes.nameContent}>
-              <b>{t('analytics.workflowRunDetailsTable.tableHead5')}</b>&nbsp;
+            <b>{t('analytics.workflowRunDetailsTable.tableHead5')}</b>&nbsp;
             <div>
               <IconButton
                 aria-label="sort run ascending"

@@ -87,10 +87,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   /**
    * State variables for warning popover
    */
-  const [
-    popWarningAnchorEl,
-    setWarningPopAnchorEl,
-  ] = React.useState<null | HTMLElement>(null);
+  const [popWarningAnchorEl, setWarningPopAnchorEl] =
+    React.useState<null | HTMLElement>(null);
   const isWarningOpen = Boolean(popWarningAnchorEl);
   const idWarning = isWarningOpen ? 'simple-popover' : undefined;
   const handleWarningPopOverClose = () => {

@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { MenuItem, Paper, Select } from '@material-ui/core';
+import { MenuItem, Paper, Select, Typography } from '@material-ui/core';
 import {
   getValueColor,
   PassFailBar,
@@ -50,7 +50,6 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
     },
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      console.log(data);
       setGraphData([
         {
           value: showWorkflowStats
@@ -87,7 +86,6 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
       setIsSingleRun(true);
     }
   }, []);
-  console.log('avg res', data?.getWorkflowRunStats.average_resiliency_score);
   const progressGraphData = {
     value: data?.getWorkflowRunStats.average_resiliency_score ?? 0,
     label: 'Avg Resiliency Score',
@@ -106,9 +104,9 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
       ) : (
         <div className={classes.topDiv}>
           <Paper className={classes.containerBlock}>
-            <div className={classes.cardText}>
+            <Typography className={classes.cardText}>
               {isSingleRun ? 'Experiment Statistics' : 'Workflow Statistics'}
-            </div>
+            </Typography>
             <div className={classes.radialChart}>
               <RadialChart
                 radialData={graphData}
@@ -119,9 +117,9 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             </div>
           </Paper>
           <Paper className={classes.containerBlock}>
-            <div className={classes.cardText}>
+            <Typography className={classes.cardText}>
               {isSingleRun ? 'Resilience Score' : 'Average Resilience Score'}
-            </div>
+            </Typography>
             <div className={classes.radialProgressChart}>
               <RadialProgressChart
                 radialData={progressGraphData}
@@ -133,16 +131,20 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                 iconTop="3.5rem"
               />
             </div>
-            <div className={classes.cardBottomText}>
+            <Typography className={classes.cardBottomText}>
               {isSingleRun
                 ? 'Based on experiment results'
                 : 'Based on workflow results'}
-            </div>
+            </Typography>
           </Paper>
           <Paper className={classes.containerBlock}>
-            <div className={classes.cardText}>
-              {showWorkflowStats ? 'Succeeded vs Failed ' : 'Passed vs Failed '}
-              {!isSingleRun ? (
+            <div className={classes.cardHeader}>
+              <Typography className={classes.cardText}>
+                {showWorkflowStats
+                  ? 'Succeeded vs Failed '
+                  : 'Passed vs Failed '}
+              </Typography>
+              {!isSingleRun && (
                 <Select
                   id="demo-simple-select"
                   value={showWorkflowStats ? 0 : 1}
@@ -152,8 +154,6 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                   <MenuItem value={0}>Workflow Runs</MenuItem>
                   <MenuItem value={1}>Experiments</MenuItem>
                 </Select>
-              ) : (
-                <></>
               )}
             </div>
             <div className={classes.passedFailedBar}>
@@ -172,11 +172,11 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                 }
               />
             </div>
-            <div className={classes.cardBottomText1}>
+            <Typography className={classes.cardBottomText1}>
               {showWorkflowStats
                 ? 'Statistics taken from all workflow results'
                 : 'Statistics taken from all experiments results'}
-            </div>
+            </Typography>
           </Paper>
         </div>
       )}

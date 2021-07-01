@@ -3,12 +3,12 @@ import {
   makeStyles,
   TableCell,
   Theme,
-  withStyles
+  withStyles,
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop: theme.spacing(4.75)
+    marginTop: theme.spacing(4.75),
   },
 
   analyticsDiv: {
@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     height: '6rem',
-    // borderTop: `1px solid ${theme.palette.border.main}`,
   },
 
   search: {
@@ -37,12 +36,15 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableHead: {
-    opacity: 0.7,
     color: theme.palette.text.primary,
   },
 
   testName: {
     borderRight: `1px solid ${theme.palette.border.main}`,
+  },
+
+  context: {
+    color: theme.palette.text.hint,
   },
 
   nameContent: {

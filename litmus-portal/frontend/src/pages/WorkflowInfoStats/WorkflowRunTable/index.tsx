@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import moment from 'moment';
-import { default as React, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
@@ -179,6 +179,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
             const weightageMap: WeightageMap[] = weightageDetail
               ? weightageDetail?.ListWorkflow.workflows[0]?.weightages
               : [];
+            /* eslint-disable no-loop-func */
             weightageMap.forEach((weightage) => {
               if (weightage.experiment_name === node.name) {
                 workflowTestsArray.push({
@@ -229,6 +230,11 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
           return filter.selectedTestResult === 'All'
             ? true
             : data.test_result === filter.selectedTestResult;
+        })
+        ?.filter((data) => {
+          return filter.context === 'All'
+            ? true
+            : data.context === filter.context;
         })
         ?.sort((a: WorkFlowTests, b: WorkFlowTests) => {
           // Sorting based on unique fields
