@@ -151,6 +151,7 @@ const MyHub: React.FC = () => {
             <ButtonFilled
               onClick={() => setDrawerState(true)}
               className={classes.connectNewHub}
+              data-cy="myHubConnectButton"
             >
               {t('myhub.mainPage.connect')}
             </ButtonFilled>
@@ -196,6 +197,7 @@ const MyHub: React.FC = () => {
                     &#x2715;
                   </ButtonOutlined>
                 }
+                data-cy="deleteHubModal"
               >
                 <div className={classes.modalDiv}>
                   <img src="/icons/red-cross.svg" alt="disconnect" />
@@ -231,6 +233,7 @@ const MyHub: React.FC = () => {
       />
       {/* SnackBar to display success/failure alerts */}
       <Snackbar
+        data-cy="myHubAlert"
         open={displayResult}
         autoHideDuration={6000}
         onClose={() => {

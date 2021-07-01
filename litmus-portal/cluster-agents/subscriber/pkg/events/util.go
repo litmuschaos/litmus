@@ -36,6 +36,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	cd.ProbeSuccessPercentage = "0"
 	cd.FailStep = ""
 	cd.EngineUID = string(crd.ObjectMeta.UID)
+	cd.EngineContext = string(crd.Labels["context"])
 
 	if strings.ToLower(string(crd.Status.EngineStatus)) == "stopped" {
 		cd.ExperimentVerdict = "Fail"
