@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.primary.main,
     backgroundColor: 'transparent !important',
     cursor: 'pointer',
-    marginBottom: 20,
+    marginBottom: theme.spacing(2.5),
   },
   actionsContainer: {
     marginBottom: theme.spacing(2),
