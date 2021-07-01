@@ -4,6 +4,7 @@ import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
@@ -37,6 +38,7 @@ import useStyles from './styles';
 
 const DashboardPage: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const dataSource = useActions(DataSourceActions);
   const dashboard = useActions(DashboardActions);
   // get ProjectID
@@ -176,15 +178,14 @@ const DashboardPage: React.FC = () => {
           <div className={classes.center}>
             <Loader />
             <Typography className={classes.loading}>
-              Loading application dashboard ...
+              {t('analyticsDashboard.monitoringDashboardPage.loadingText')}
             </Typography>
           </div>
         ) : errorFetchingDashboards ? (
           <div className={classes.center}>
             <Typography className={classes.error}>
-              Error while loading the application dashboard
+              {t('analyticsDashboard.monitoringDashboardPage.errorText')}
             </Typography>
-
             <div className={classes.flexButtons}>
               <ButtonOutlined
                 onClick={() => {
@@ -194,15 +195,18 @@ const DashboardPage: React.FC = () => {
                 className={classes.flexButton}
                 variant="highlight"
               >
-                <Typography>Try again</Typography>
+                <Typography>
+                  {t('analyticsDashboard.monitoringDashboardPage.tryAgain')}
+                </Typography>
               </ButtonOutlined>
-
               <ButtonFilled
                 onClick={() => history.goBack()}
                 className={classes.flexButton}
                 variant="error"
               >
-                <Typography>Go back</Typography>
+                <Typography>
+                  {t('analyticsDashboard.monitoringDashboardPage.goBack')}
+                </Typography>
               </ButtonFilled>
             </div>
           </div>

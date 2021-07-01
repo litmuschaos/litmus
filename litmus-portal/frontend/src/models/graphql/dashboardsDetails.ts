@@ -154,6 +154,7 @@ export interface ListDashboardResponse {
 export interface ListDashboardVars {
   projectID: string;
   clusterID?: string;
+  dbID?: string;
 }
 
 export interface DashboardList {

@@ -45,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.error.main,
   },
 
+  formHelperText: {
+    color: theme.palette.text.hint,
+  },
+
   namespaceSelect: {
     width: '41.5rem',
     margin: theme.spacing(3.5, 1),

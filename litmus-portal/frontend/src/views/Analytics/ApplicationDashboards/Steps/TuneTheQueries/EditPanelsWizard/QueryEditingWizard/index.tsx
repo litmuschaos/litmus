@@ -191,6 +191,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
             options={panelGroupsList}
             getOptionLabel={(option: Option) => option.name}
             style={{ width: '10.3rem' }}
+            value={{ name: panelInfo.panel_group_name ?? '' }}
             renderInput={(params) => (
               <TextField {...params} variant="standard" size="small" />
             )}

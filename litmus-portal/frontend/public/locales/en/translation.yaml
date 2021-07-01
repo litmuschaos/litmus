@@ -187,6 +187,10 @@ analyticsDashboard:
   heading: Analytics
   overview: Overview
   monitoringDashboardPage:
+    loadingText: Loading application dashboard ...
+    errorText: Error while loading the application dashboard
+    tryAgain: Try again
+    goBack: Go back
     dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
     dataSourceIs: Data source is
     reConfigureDashboard: Re-configure dashboard
@@ -290,6 +294,7 @@ analyticsDashboard:
     title: Application Dashboard
     view: View
     configure: Configure
+    json: JSON
     delete: Delete
     noRecords: No dashboard available
     loading: Loading available dashboards
@@ -300,6 +305,10 @@ analyticsDashboard:
       cancel: Cancel
       delete: Delete
   applicationDashboards:
+    loadingDashboard: Loading dashboard configuration ...
+    loadingDataSources: Loading available data sources ...
+    errorFetchingDashboard: Error loading dashboard configuration
+    errorFetchingDataSources: Error loading data sources
     createHeader: Create dashboard
     configureHeader: Configure dashboard
     chooseADashboardType:
@@ -319,6 +328,8 @@ analyticsDashboard:
         agent: Agent
         noActiveAgent: No active agent found
         agentInactive: Agent is inactive
+        fetchingAgents: Loading agents ...
+        errorFetchingAgents: Error loading agents
         dataSource: Data source
         noActiveDataSource: No active data source found
         dataSourceInactive: Data source is inactive
