@@ -569,15 +569,15 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequ
 }
 
 func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dataVariables model.DataVars) (<-chan *model.PromResponse, error) {
-	log.Println("Dashboard view created")
 	dashboardData := make(chan *model.PromResponse)
 	viewID := uuid.New()
+	log.Printf("Dashboard view %v created\n", viewID.String())
 	data_store.Store.Mutex.Lock()
 	data_store.Store.DashboardData[viewID.String()] = dashboardData
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		log.Println("Closed dashboard view")
+		log.Printf("Closed dashboard view %v\n", viewID.String())
 		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
 			delete(data_store.Store.DashboardData, viewID.String())
 		}
