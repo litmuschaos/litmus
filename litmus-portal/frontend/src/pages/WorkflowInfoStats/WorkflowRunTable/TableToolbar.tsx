@@ -27,8 +27,8 @@ interface TestResultCallBackType {
   (testResult: string): void;
 }
 
-interface RangeCallBackType {
-  (selectedStartDate: string, selectedEndDate: string): void;
+interface HandleContextType {
+  (contextName: string): void;
 }
 
 interface TableToolBarProps {
@@ -41,7 +41,9 @@ interface TableToolBarProps {
   ) => void;
   tests: string[];
   testResults: string[];
+  context: string[];
   callbackToSetTest: TestCallBackType;
+  handleContextFilter: (contextName: string) => void;
   selectDate: (selectFromDate: string, selectToDate: string) => void;
   displayDate: string;
   callbackToSetResult: TestResultCallBackType;
@@ -63,8 +65,10 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   searchToken,
   tests,
   testResults,
+  context,
   callbackToSetTest,
   callbackToSetResult,
+  handleContextFilter,
   selectDate,
   displayDate,
   popOverClose,
@@ -78,13 +82,16 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   const outlinedInputClasses = useOutlinedInputStyles();
   const [test, setTest] = React.useState<String>('All');
   const [testResult, setTestResult] = React.useState<String>('All');
-
-  const [isDateRangeSelectorPopoverOpen, setDateRangeSelectorPopoverOpen] =
-    useState(false);
+  const [contextName, setContextName] = React.useState<String>('All');
 
   const handleTestChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setTest(event.target.value as String);
     callbackToSetTest(event.target.value as string);
+  };
+
+  const handleContext = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setContextName(event.target.value as String);
+    handleContextFilter(event.target.value as string);
   };
 
   const handleTestResultChange = (
@@ -139,7 +146,29 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           ))}
         </Select>
       </FormControl>
-
+      <FormControl
+        variant="outlined"
+        className={`${classes.formControl} ${classes.testResultForm}`}
+      >
+        <InputLabel className={classes.selectText}> Test Result </InputLabel>
+        <Select
+          label="Context"
+          value={contextName}
+          onChange={handleContext}
+          className={classes.selectText}
+          input={<OutlinedInput classes={outlinedInputClasses} />}
+        >
+          <MenuItem value="All">All</MenuItem>
+          {context.map((contextName: string) => (
+            <MenuItem
+              key={`${contextName}-litmusDashboard-workflowRunDetails`}
+              value={contextName}
+            >
+              {contextName}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <FormControl
         variant="outlined"
         className={`${classes.formControl} ${classes.testForm}`}

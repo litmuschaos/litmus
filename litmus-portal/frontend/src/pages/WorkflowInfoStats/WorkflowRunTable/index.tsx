@@ -44,6 +44,7 @@ interface Filter {
   selectedTest: string;
   sortData: SortData;
   selectedTestResult: string;
+  context: string;
   searchTokens: string[];
 }
 
@@ -96,6 +97,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
       testWeight: { sort: false, ascending: true },
     },
     selectedTestResult: 'All',
+    context: 'All',
     searchTokens: [''],
   });
 
@@ -124,6 +126,17 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     });
     return uniqueList;
   };
+
+  const getContexts = (searchingData: WorkFlowTests[]) => {
+    const uniqueList: string[] = [];
+    searchingData.forEach((data) => {
+      if (!uniqueList.includes(data.context)) {
+        uniqueList.push(data.context);
+      }
+    });
+    return uniqueList;
+  };
+
   // Apollo query to get the scheduled workflow data
   const {
     data: weightageDetail,
@@ -315,6 +328,14 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
           }}
           tests={getTests(wfRunData)}
           testResults={getTestResults(wfRunData)}
+          context={getContexts(wfRunData)}
+          handleContextFilter={(contextName: string) => {
+            setFilter({
+              ...filter,
+              context: contextName,
+            });
+            setPaginationData({ ...paginationData, page: 0 });
+          }}
           callbackToSetTest={(testName: string) => {
             setFilter({
               ...filter,

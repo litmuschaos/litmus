@@ -29,15 +29,17 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     const resDate = moment(updated).format('DD MMM  HH:mm');
     return resDate;
   };
-
+  console.log(data.context);
   return (
     <>
       <StyledTableCell className={classes.testName}>
         <Typography variant="body2">
           <strong>{data.test_name}</strong>
         </Typography>
-        {data?.context !== '' ?? (
+        {data?.context !== '' ? (
           <Typography variant="body2">context: {data.context}</Typography>
+        ) : (
+          <></>
         )}
       </StyledTableCell>
       <StyledTableCell>
