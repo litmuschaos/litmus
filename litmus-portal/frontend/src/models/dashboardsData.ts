@@ -1,4 +1,4 @@
-import { GraphMetric } from 'litmus-ui';
+import { BrushPostitionProps, GraphMetric } from 'litmus-ui';
 import {
   ApplicationMetadata,
   ListDashboardResponse,
@@ -99,11 +99,19 @@ export interface GraphPanelProps extends PanelResponse {
   className?: string;
   controllerPanelID?: string;
   selectedApplications?: string[];
+  centralBrushPosition?: BrushPostitionProps;
+  handleCentralBrushPosition: (newBrushPosition: BrushPostitionProps) => void;
+  centralAllowGraphUpdate: boolean;
+  handleCentralAllowGraphUpdate: (value: boolean) => void;
 }
 
 export interface GraphPanelGroupProps extends PanelGroupResponse {
   selectedPanels?: string[];
   selectedApplications?: string[];
+  centralBrushPosition?: BrushPostitionProps;
+  handleCentralBrushPosition: (newBrushPosition: BrushPostitionProps) => void;
+  centralAllowGraphUpdate: boolean;
+  handleCentralAllowGraphUpdate: (value: boolean) => void;
 }
 
 export interface ParsedPrometheusData {
