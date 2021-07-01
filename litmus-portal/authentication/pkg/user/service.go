@@ -1,6 +1,8 @@
 package user
 
-import "litmus/litmus-portal/authentication/pkg/entities"
+import (
+	"litmus/litmus-portal/authentication/pkg/entities"
+)
 
 //Service creates a service for user authentication operations
 type Service interface {
