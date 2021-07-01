@@ -776,11 +776,13 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 
 				for verdictLegendIndex, verdictLegend := range newAnnotation.Legends {
 					verdictLegendName := func(str *string) string { return *str }(verdictLegend)
+					var eventFound = false
 
 					for eventLegendIndex, eventLegend := range existingAnnotation.Legends {
 						eventLegendName := func(str *string) string { return *str }(eventLegend)
 
 						if verdictLegendName == eventLegendName {
+							eventFound = true
 							var newVerdictSubData []*model.SubData
 
 							for _, verdictSubData := range verdictResponse.SubDataArray[verdictLegendIndex] {
@@ -804,6 +806,12 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 							}
 							annotations[annotationIndex].SubDataArray[eventLegendIndex] = append(annotations[annotationIndex].SubDataArray[eventLegendIndex], newVerdictSubData...)
 						}
+					}
+
+					if !eventFound {
+						annotations[annotationIndex].Legends = append(annotations[annotationIndex].Legends, verdictLegend)
+						annotations[annotationIndex].SubDataArray = append(annotations[annotationIndex].SubDataArray, verdictResponse.SubDataArray[verdictLegendIndex])
+						annotations[annotationIndex].Tsvs = append(annotations[annotationIndex].Tsvs, nil)
 					}
 				}
 				eventCacheKey := annotation.Queryid + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL

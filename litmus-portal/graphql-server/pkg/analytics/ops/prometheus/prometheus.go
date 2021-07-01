@@ -141,10 +141,14 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 				var baseString = utils.Split(v.Metric.String(), "{", "}")
 				var keyValueMap = utils.GetKeyValueMapFromQuotedString(baseString)
-
-				var timeStamp, errorString = strconv.ParseFloat(keyValueMap["chaos_injection_time"], 64)
-				if errorString != nil {
-					log.Printf("Error parsing chaos injection time: %v\n", errorString)
+				var timeStamp float64
+				if keyValueMap["chaos_injection_time"] != "" {
+					timeStamp, err = strconv.ParseFloat(keyValueMap["chaos_injection_time"], 64)
+				} else {
+					timeStamp = 0
+				}
+				if err != nil {
+					log.Printf("Error parsing chaos injection time: %v\n", err)
 				} else {
 					for key, value := range keyValueMap {
 						if nameVal, ok := checkMap[key]; ok {
