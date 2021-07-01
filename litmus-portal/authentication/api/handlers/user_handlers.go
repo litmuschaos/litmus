@@ -46,15 +46,15 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 }
 func UpdateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uid := c.MustGet("uid").(string)
 		var userRequest entities.User
-		userRequest.ID = uid
 		err := c.BindJSON(&userRequest)
 		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		uid := c.MustGet("uid").(string)
+		userRequest.ID = uid
 		userResponse, err := service.UpdateUser(&userRequest)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -111,15 +111,15 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 
 func UpdatePassword(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.MustGet("username").(string)
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
-		userPasswordRequest.Username = username
 		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		username := c.MustGet("username").(string)
+		userPasswordRequest.Username = username
 		if utils.StrictPasswordPolicy {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
@@ -145,10 +145,6 @@ func UpdatePassword(service user.Service) gin.HandlerFunc {
 
 func ResetPassword(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uid := c.MustGet("uid").(string)
-		var adminUser entities.User
-		adminUser.UserName = c.MustGet("username").(string)
-		adminUser.ID = uid
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
 		if err != nil {
@@ -156,6 +152,10 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		uid := c.MustGet("uid").(string)
+		var adminUser entities.User
+		adminUser.UserName = c.MustGet("username").(string)
+		adminUser.ID = uid
 		if utils.StrictPasswordPolicy {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
