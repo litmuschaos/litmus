@@ -137,8 +137,8 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
           }}
         >
           {/* Stackbar Area */}
-          {loading &&
-          openSeriesData.data.length <= 0 &&
+          {loading ||
+          openSeriesData.data.length <= 0 ||
           graphData.length <= 0 ? (
             <Center>
               <Loader />
@@ -150,6 +150,9 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
                 height: '20rem',
               }}
             >
+              {console.log('close1', graphData)}
+              {console.log('close2', openSeriesData.data)}
+              {console.log('close3', loading)}
               <StackBar
                 openSeries={openSeriesData}
                 barSeries={graphData}

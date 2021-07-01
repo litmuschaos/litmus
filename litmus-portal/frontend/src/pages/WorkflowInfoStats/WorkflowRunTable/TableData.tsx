@@ -14,6 +14,7 @@ interface WorkFlowTests {
   test_weight: number;
   resulting_points: number;
   last_run: string;
+  context: string;
 }
 interface TableDataProps {
   data: WorkFlowTests;
@@ -35,6 +36,9 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         <Typography variant="body2">
           <strong>{data.test_name}</strong>
         </Typography>
+        {data?.context !== '' ?? (
+          <Typography variant="body2">context: {data.context}</Typography>
+        )}
       </StyledTableCell>
       <StyledTableCell>
         <Typography variant="body2">
@@ -52,30 +56,27 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </StyledTableCell>
 
       <StyledTableCell>
-          <Typography className={classes.reliabilityDataTypography}>
-            {data.test_weight} Points
-          </Typography>
-          <div className={classes.progressBar}>
-            <AnalyticsLinearProgressBar
-              value={data.test_weight ?? 0}
-              maxValue={10}
-              isInTable
-            />
-          </div>
-      </StyledTableCell>
-
-      <StyledTableCell>
-        
-          <Typography>{data.resulting_points} Points</Typography>
-          <div className={classes.progressBar}>
-            <LinearProgressBar width={0.2} value={data.resulting_points ?? 0} />
-          </div>
-      </StyledTableCell>
-
-      <StyledTableCell>
-        <Typography>
-          {formatDate(data.last_run)}
+        <Typography className={classes.reliabilityDataTypography}>
+          {data.test_weight} Points
         </Typography>
+        <div className={classes.progressBar}>
+          <AnalyticsLinearProgressBar
+            value={data.test_weight ?? 0}
+            maxValue={10}
+            isInTable
+          />
+        </div>
+      </StyledTableCell>
+
+      <StyledTableCell>
+        <Typography>{data.resulting_points} Points</Typography>
+        <div className={classes.progressBar}>
+          <LinearProgressBar width={0.2} value={data.resulting_points ?? 0} />
+        </div>
+      </StyledTableCell>
+
+      <StyledTableCell>
+        <Typography>{formatDate(data.last_run)}</Typography>
       </StyledTableCell>
     </>
   );

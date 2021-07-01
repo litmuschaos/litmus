@@ -52,6 +52,7 @@ interface WorkFlowTests {
   test_name: string;
   exp_name: string;
   test_result: string;
+  context: string;
   test_weight: number;
   resulting_points: number;
   last_run: string;
@@ -181,6 +182,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
                         100
                       : 0,
                   last_run: chaosData.lastUpdatedAt,
+                  context: chaosData.engineContext,
                 });
               }
             });

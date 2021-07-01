@@ -29,4 +29,5 @@ export const resilienceScoreColourMap = {
   70: '#9BE9A8',
   80: '#40C463',
   90: '#109B67',
+  100: '#109B67',
 };
