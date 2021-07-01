@@ -55,6 +55,7 @@ type ComplexityRoot struct {
 	}
 
 	AgentStat struct {
+		Active  func(childComplexity int) int
 		Cluster func(childComplexity int) int
 		Ns      func(childComplexity int) int
 		Total   func(childComplexity int) int
@@ -790,6 +791,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActionPayload.RequestType(childComplexity), true
+
+	case "AgentStat.Active":
+		if e.complexity.AgentStat.Active == nil {
+			break
+		}
+
+		return e.complexity.AgentStat.Active(childComplexity), true
 
 	case "AgentStat.Cluster":
 		if e.complexity.AgentStat.Cluster == nil {
@@ -4167,7 +4175,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
   ds_id: String
   ds_name: String!
   ds_type: String!
@@ -4459,7 +4467,7 @@ type WorkflowRunStatsResponse {
   workflow_run_succeeded_percentage: Float!
   workflow_run_failed_percentage: Float!
 }`, BuiltIn: false},
-	{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -4486,7 +4494,7 @@ type ImageRegistryResponse {
     is_removed: Boolean
 }
 `, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -4660,7 +4668,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -4692,7 +4700,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -5148,7 +5156,7 @@ type Subscription {
     @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
+	&ast.Source{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
     Schedules : Int!
     Runs      : Int!
     ExpRuns   : Int!
@@ -5158,6 +5166,7 @@ type AgentStat{
     Ns      : Int!
     Cluster : Int!
     Total   : Int!
+    Active  : Int!
 }
 
 type Owner {
@@ -5213,7 +5222,7 @@ input UsageQuery{
     Sort: UsageSortInput
     SearchProject: String
 }`, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -5244,7 +5253,7 @@ input UpdateUserInput {
   company_name: String
 }
 `, BuiltIn: false},
-	{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
+	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
   Running
@@ -6760,6 +6769,40 @@ func (ec *executionContext) _AgentStat_Total(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AgentStat_Active(ctx context.Context, field graphql.CollectedField, obj *model.AgentStat) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "AgentStat",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Active, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -25691,6 +25734,11 @@ func (ec *executionContext) _AgentStat(ctx context.Context, sel ast.SelectionSet
 			}
 		case "Total":
 			out.Values[i] = ec._AgentStat_Total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Active":
+			out.Values[i] = ec._AgentStat_Active(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
