@@ -9,6 +9,7 @@ type AgentStat struct {
 	Ns      int `bson:"ns"`
 	Cluster int `bson:"cluster"`
 	Total   int `bson:"total"`
+	Active  int `bson:"active"`
 }
 type Owner struct {
 	UserId   string `bson:"user_id"`
