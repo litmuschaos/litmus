@@ -1,9 +1,5 @@
 package analytics
 
-import (
-	dbSchemaAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
-)
-
 type STATE string
 
 type PromDSDetails struct {
@@ -24,9 +20,4 @@ type PromQuery struct {
 type PromSeries struct {
 	Series    string
 	DSdetails *PromDSDetails
-}
-
-type DataSourceInfo struct {
-	HealthStatus string
-	DataSource   *dbSchemaAnalytics.DataSource
 }
