@@ -67,7 +67,7 @@ const WorkflowInfoStats: React.FC = () => {
     }
   );
 
-  let workflowRunID;
+  let workflowRunID = '';
 
   if (data?.ListWorkflow.workflows[0].workflow_runs) {
     workflowRunID =
@@ -233,7 +233,7 @@ const WorkflowInfoStats: React.FC = () => {
       ) : (
         <WorkflowRunTable
           workflowId={workflowRunId}
-          workflowRunId={workflowRunID ?? ''}
+          workflowRunId={workflowRunID}
         />
       )}
     </Scaffold>
