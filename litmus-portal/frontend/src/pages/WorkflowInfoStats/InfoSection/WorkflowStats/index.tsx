@@ -1,5 +1,11 @@
 import { useQuery } from '@apollo/client';
-import { MenuItem, Paper, Select, Typography } from '@material-ui/core';
+import {
+  MenuItem,
+  Paper,
+  Select,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
 import {
   getValueColor,
   PassFailBar,
@@ -8,6 +14,7 @@ import {
   RadialProgressChart,
 } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
+import { resilienceScoreColourMap } from '../../../../colors/graphColors';
 import Loader from '../../../../components/Loader';
 import Center from '../../../../containers/layouts/Center';
 import { GET_WORKFLOW_RUNS_STATS } from '../../../../graphql/queries';
@@ -15,7 +22,6 @@ import {
   WorkflowRunStatsRequest,
   WorkflowRunStatsResponse,
 } from '../../../../models/graphql/workflowData';
-import { resilienceScoreColourMap } from '../../../../models/graphql/workflowStats';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -31,13 +37,14 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
 }) => {
   const classes = useStyles();
 
+  const theme = useTheme();
+
   const projectID = getProjectID();
 
   const [showWorkflowStats, setShowWorkflowStats] = useState<boolean>(true);
 
   const [isSingleRun, setIsSingleRun] = useState<boolean>(false);
-  // let graphData: RadialChartMetric[] = [];
-  const [graphData, setGraphData] = useState<RadialChartMetric[]>([]);
+
   const { data, loading } = useQuery<
     WorkflowRunStatsResponse,
     WorkflowRunStatsRequest
@@ -48,37 +55,8 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
         workflow_ids: [workflowID],
       },
     },
-    fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      setGraphData([
-        {
-          value: showWorkflowStats
-            ? data?.getWorkflowRunStats.succeeded_workflow_runs ?? 0
-            : data?.getWorkflowRunStats.experiments_passed ?? 0,
-          label: 'Completed',
-          baseColor: '#00CC9A',
-        },
-        {
-          value: showWorkflowStats
-            ? data?.getWorkflowRunStats.running_workflow_runs ?? 0
-            : data?.getWorkflowRunStats.experiments_awaited ?? 0,
-          label: 'Running',
-          baseColor: '#5252F6',
-        },
-        {
-          value: showWorkflowStats
-            ? data?.getWorkflowRunStats.failed_workflow_runs ?? 0
-            : data?.getWorkflowRunStats.experiments_failed ?? 0,
-          label: 'Failed',
-          baseColor: '#CA2C2C',
-        },
-      ]);
-    },
+    fetchPolicy: 'cache-and-network',
   });
-
-  const handleStatsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setShowWorkflowStats((event.target.value as number) !== 1);
-  };
 
   useEffect(() => {
     if (!isCron && noOfWorkflowRuns === 1) {
@@ -86,6 +64,50 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
       setIsSingleRun(true);
     }
   }, []);
+
+  const graphData: RadialChartMetric[] = [
+    {
+      value: isSingleRun
+        ? data?.getWorkflowRunStats.experiments_passed ?? 0
+        : data?.getWorkflowRunStats.succeeded_workflow_runs ?? 0,
+      label: isSingleRun ? 'Passed' : 'Completed',
+      baseColor: theme.palette.status.experiment.completed,
+    },
+    {
+      value: isSingleRun
+        ? data?.getWorkflowRunStats.experiments_failed ?? 0
+        : data?.getWorkflowRunStats.failed_workflow_runs ?? 0,
+      label: 'Failed',
+      baseColor: theme.palette.status.experiment.failed,
+    },
+    {
+      value: isSingleRun
+        ? data?.getWorkflowRunStats.experiments_awaited ?? 0
+        : data?.getWorkflowRunStats.running_workflow_runs ?? 0,
+      label: isSingleRun ? 'Awaited' : 'Running',
+      baseColor: theme.palette.status.workflow.running,
+    },
+  ];
+
+  if (isSingleRun) {
+    graphData.push(
+      {
+        value: data?.getWorkflowRunStats.experiments_stopped ?? 0,
+        label: 'Stopped',
+        baseColor: theme.palette.status.experiment.error,
+      },
+      {
+        value: data?.getWorkflowRunStats.experiments_na ?? 0,
+        label: 'NA',
+        baseColor: theme.palette.status.experiment.omitted,
+      }
+    );
+  }
+
+  const handleStatsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setShowWorkflowStats((event.target.value as number) !== 1);
+  };
+
   const progressGraphData = {
     value: data?.getWorkflowRunStats.average_resiliency_score ?? 0,
     label: 'Avg Resiliency Score',
@@ -109,6 +131,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             </Typography>
             <div className={classes.radialChart}>
               <RadialChart
+                legendTableHeight={isSingleRun ? 160 : NaN}
                 radialData={graphData}
                 heading={isSingleRun ? 'Experiments' : 'Workflows'}
                 showCenterHeading

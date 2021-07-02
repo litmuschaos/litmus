@@ -6,6 +6,7 @@ import {
   Paper,
   Select,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import { RadialChart, RadialChartMetric } from 'litmus-ui';
 import React, { useState } from 'react';
@@ -21,6 +22,8 @@ import useStyles from './styles';
 
 const WorkflowGraphs: React.FC = () => {
   const classes = useStyles();
+
+  const theme = useTheme();
 
   const projectID = getProjectID();
 
@@ -42,17 +45,17 @@ const WorkflowGraphs: React.FC = () => {
     {
       value: data?.getWorkflowRunStats.succeeded_workflow_runs ?? 0,
       label: 'Completed',
-      baseColor: '#00CC9A',
-    },
-    {
-      value: data?.getWorkflowRunStats.running_workflow_runs ?? 0,
-      label: 'Running',
-      baseColor: '#5252F6',
+      baseColor: theme.palette.status.workflow.completed,
     },
     {
       value: data?.getWorkflowRunStats.failed_workflow_runs ?? 0,
       label: 'Failed',
-      baseColor: '#CA2C2C',
+      baseColor: theme.palette.status.workflow.failed,
+    },
+    {
+      value: data?.getWorkflowRunStats.running_workflow_runs ?? 0,
+      label: 'Running',
+      baseColor: theme.palette.status.workflow.running,
     },
   ];
   return (

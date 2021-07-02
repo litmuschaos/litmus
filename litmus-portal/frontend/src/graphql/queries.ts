@@ -25,14 +25,21 @@ export const WORKFLOW_DETAILS = gql`
     getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
       total_no_of_workflow_runs
       workflow_runs {
-        workflow_id
-        workflow_name
         workflow_run_id
+        workflow_id
         cluster_name
         last_updated
+        project_id
+        cluster_id
+        workflow_name
+        cluster_type
         phase
         resiliency_score
         experiments_passed
+        experiments_failed
+        experiments_awaited
+        experiments_stopped
+        experiments_na
         total_experiments
         isRemoved
       }

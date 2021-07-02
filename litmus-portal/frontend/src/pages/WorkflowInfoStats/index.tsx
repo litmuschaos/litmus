@@ -56,8 +56,6 @@ const WorkflowInfoStats: React.FC = () => {
   // TODO: This is actually workflowID NOT run ID, fix in app.tsx
   const { workflowRunId }: URLParams = useParams();
 
-  const [workflowRunIDState, setWorkflowRunIDState] = useState<string>('');
-
   // Apollo query to get the scheduled workflow data
   const { data } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
     WORKFLOW_LIST_DETAILS,
@@ -66,15 +64,15 @@ const WorkflowInfoStats: React.FC = () => {
         workflowInput: { project_id: projectID, workflow_ids: [workflowRunId] },
       },
       fetchPolicy: 'cache-and-network',
-      onCompleted: (data) => {
-        if (data.ListWorkflow.workflows[0].workflow_runs) {
-          setWorkflowRunIDState(
-            data.ListWorkflow.workflows[0].workflow_runs[0].workflow_run_id
-          );
-        }
-      },
     }
   );
+
+  let workflowRunID;
+
+  if (data?.ListWorkflow.workflows[0].workflow_runs) {
+    workflowRunID =
+      data?.ListWorkflow?.workflows[0].workflow_runs[0].workflow_run_id;
+  }
 
   const presentYear = new Date().getFullYear();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -235,7 +233,7 @@ const WorkflowInfoStats: React.FC = () => {
       ) : (
         <WorkflowRunTable
           workflowId={workflowRunId}
-          workflowRunId={workflowRunIDState}
+          workflowRunId={workflowRunID ?? ''}
         />
       )}
     </Scaffold>

@@ -1,11 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { Typography, useTheme } from '@material-ui/core';
-import {
-  BarDateValue,
-  LineMetricSeries,
-  StackBar,
-  StackBarMetric,
-} from 'litmus-ui';
+import { LineMetricSeries, StackBar, StackBarMetric } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
 import Loader from '../../../components/Loader';
@@ -39,72 +34,64 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
   const theme = useTheme();
   const [workflowRunID, setWorkflowRunID] = useState<string>('');
 
-  const [graphData, setGraphData] = useState<StackBarMetric[]>([]);
   const stackBarData: Array<StackBarMetric> = [];
-  const [openSeriesData, setOpenSeriesData] = useState<LineMetricSeries>({
-    metricName: 'probe',
+
+  const openSeries: LineMetricSeries = {
+    metricName: 'Resiliency Score',
     data: [],
     baseColor: '#5469D4',
-  });
-  const openseries: Array<BarDateValue> = [];
+  };
 
-  const { loading } = useQuery<Workflow, WorkflowDataVars>(WORKFLOW_DETAILS, {
-    variables: {
-      workflowRunsInput: {
-        project_id: projectID,
-        workflow_ids: [workflowID],
-        sort: {
-          field: 'Time',
-        },
-        filter: {
-          date_range: {
-            start_date: moment.unix(date).startOf('day').unix().toString(),
-            end_date: moment.unix(date).endOf('day').unix().toString(),
+  const { data, loading } = useQuery<Workflow, WorkflowDataVars>(
+    WORKFLOW_DETAILS,
+    {
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+          workflow_ids: [workflowID],
+          sort: {
+            field: 'Time',
+          },
+          filter: {
+            date_range: {
+              start_date: moment.unix(date).startOf('day').unix().toString(),
+              end_date: moment.unix(date).endOf('day').unix().toString(),
+            },
           },
         },
       },
-    },
-    onCompleted: (data) => {
-      if (data.getWorkflowRuns.workflow_runs) {
-        data.getWorkflowRuns.workflow_runs.forEach((wfrun) => {
-          if (wfrun.phase !== STATUS_RUNNING) {
-            stackBarData.push({
-              id: wfrun.workflow_run_id,
-              date: Number(wfrun.last_updated) * 1000,
-              passPercentage:
-                wfrun.total_experiments &&
-                wfrun.experiments_passed !== undefined &&
-                wfrun.total_experiments > 0
-                  ? (wfrun.experiments_passed * 100) / wfrun.total_experiments
-                  : 0,
-              failPercentage:
-                wfrun.total_experiments &&
-                wfrun.experiments_passed !== undefined &&
-                wfrun.total_experiments > 0
-                  ? ((wfrun.total_experiments - wfrun.experiments_passed) *
-                      100) /
-                    wfrun.total_experiments
-                  : 0,
-              passCount: wfrun.experiments_passed ?? 0,
-              failCount:
-                wfrun.total_experiments &&
-                wfrun.experiments_passed !== undefined &&
-                wfrun.total_experiments > 0
-                  ? wfrun.total_experiments - wfrun.experiments_passed
-                  : 0,
-            });
-            openseries.push({
-              date: Number(wfrun.last_updated) * 1000,
-              value: wfrun.resiliency_score ?? 0,
-            });
-          }
+      fetchPolicy: 'cache-and-network',
+    }
+  );
+
+  if (data?.getWorkflowRuns.workflow_runs) {
+    data.getWorkflowRuns.workflow_runs.forEach((wfrun) => {
+      if (wfrun.phase !== STATUS_RUNNING) {
+        stackBarData.push({
+          id: wfrun.workflow_run_id,
+          date: Number(wfrun.last_updated) * 1000,
+          passPercentage:
+            wfrun.total_experiments &&
+            wfrun.experiments_passed &&
+            wfrun.total_experiments > 0
+              ? (wfrun.experiments_passed * 100) / wfrun.total_experiments
+              : 0,
+          failPercentage:
+            wfrun.total_experiments &&
+            !wfrun.experiments_failed &&
+            wfrun.total_experiments > 0
+              ? (wfrun.experiments_failed * 100) / wfrun.total_experiments
+              : 0,
+          passCount: wfrun.experiments_passed ?? 0,
+          failCount: wfrun.experiments_failed ?? 0,
+        });
+        openSeries.data.push({
+          date: Number(wfrun.last_updated) * 1000,
+          value: wfrun.resiliency_score ?? 0,
         });
       }
-      setOpenSeriesData({ ...openSeriesData, data: openseries });
-      setGraphData(stackBarData);
-    },
-    fetchPolicy: 'cache-and-network',
-  });
+    });
+  }
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -137,8 +124,8 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
         >
           {/* Stackbar Area */}
           {loading ||
-          openSeriesData.data.length <= 0 ||
-          graphData.length <= 0 ? (
+          openSeries.data.length <= 0 ||
+          stackBarData.length <= 0 ? (
             <Center>
               <Loader />
             </Center>
@@ -150,8 +137,8 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
               }}
             >
               <StackBar
-                openSeries={openSeriesData}
-                barSeries={graphData}
+                openSeries={openSeries}
+                barSeries={stackBarData}
                 unit="%"
                 yLabel="Chaos"
                 yLabelOffset={60}

@@ -47,19 +47,23 @@ export interface ExecutionData {
 }
 
 export interface WorkflowRun {
+  workflow_run_id: string;
+  workflow_id: string;
   cluster_name: string;
-  execution_data: string;
   last_updated: string;
   project_id: string;
-  workflow_id: string;
-  workflow_name: string;
-  workflow_run_id: string;
-  cluster_type: string;
   cluster_id: string;
+  workflow_name: string;
+  cluster_type: String;
   phase: string;
-  resiliency_score?: number;
-  experiments_passed?: number;
-  total_experiments?: number;
+  resiliency_score: number;
+  experiments_passed: number;
+  experiments_failed: number;
+  experiments_awaited: number;
+  experiments_stopped: number;
+  experiments_na: number;
+  total_experiments: number;
+  execution_data: string;
   isRemoved: boolean;
 }
 
