@@ -205,16 +205,17 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 
 func UpdateUserState(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var adminUser entities.User
-		adminUser.UserName = c.MustGet("username").(string)
-		adminUser.ID = c.MustGet("uid").(string)
-		var request entities.UpdateUserState
-		err := c.BindJSON(&request)
+		var userRequest entities.UpdateUserState
+		err := c.BindJSON(&userRequest)
 		if err != nil {
 			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+
+		var adminUser entities.User
+		adminUser.UserName = c.MustGet("username").(string)
+		adminUser.ID = c.MustGet("uid").(string)
 
 		// Checking if loggedIn user is admin
 		err = service.IsAdministrator(&adminUser)
@@ -225,7 +226,7 @@ func UpdateUserState(service user.Service) gin.HandlerFunc {
 		}
 
 		// Checking if user exists
-		user, err := service.FindUser(request.Username)
+		user, err := service.FindUser(userRequest.Username)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
@@ -238,7 +239,7 @@ func UpdateUserState(service user.Service) gin.HandlerFunc {
 			return
 		}
 
-		if request.IsDisable == true {
+		if userRequest.IsDisable == true {
 			// Checking if user is already removed
 			if user.RemovedAt != nil {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyRemoved], presenter.CreateErrorResponse(utils.ErrUserAlreadyRemoved))
@@ -246,7 +247,7 @@ func UpdateUserState(service user.Service) gin.HandlerFunc {
 			}
 		}
 
-		err = service.UpdateUserState(request.Username, request.IsDisable)
+		err = service.UpdateUserState(userRequest.Username, userRequest.IsDisable)
 		if err != nil {
 			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
