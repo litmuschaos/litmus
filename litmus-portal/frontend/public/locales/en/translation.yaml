@@ -25,7 +25,6 @@ getStarted:
 
 sidebar:
   title: Litmus
-  version: 'Version: 1.13'
 
 header:
   projectDropdown:
@@ -1041,7 +1040,7 @@ createWorkflow:
       envHeading: Tune the environment variables of the experiment
       showMoreEnv: Show more environment variables
       showLessEnv: Show less environment variables
-      key: Key Turnables
+      key: Key Tunables
       addKey: Add a key-value pair
       finish: Finish
     addProbe:
