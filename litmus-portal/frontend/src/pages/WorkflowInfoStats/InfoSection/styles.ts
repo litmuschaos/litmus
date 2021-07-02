@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
   infoStatsSection: {
     backgroundColor: theme.palette.cards.header,
     padding: theme.spacing(2.5, 3.25),
-    // marginBottom: theme.spacing(5.125),
   },
   infoStats: {
     backgroundColor: theme.palette.background.paper,

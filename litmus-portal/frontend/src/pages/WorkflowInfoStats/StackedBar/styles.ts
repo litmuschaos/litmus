@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(10),
     color: theme.palette.border.main,
   },
+  stackbarParent: {
+    width: '64rem',
+    padding: theme.spacing(2.5, 3.5, 2.5, 0),
+  },
   stackbarHelperText: {
     margin: theme.spacing(3, 0),
     color: theme.palette.text.hint,

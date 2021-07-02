@@ -33,7 +33,6 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
   const classes = useStyles();
   const theme = useTheme();
   const [workflowRunID, setWorkflowRunID] = useState<string>('');
-
   const stackBarData: Array<StackBarMetric> = [];
 
   const openSeries: LineMetricSeries = {
@@ -116,12 +115,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
       {/* Border Starts */}
       <div style={{ border: `1px solid ${theme.palette.border.main}` }}>
         {/* Stackbar parent */}
-        <div
-          style={{
-            width: '64rem',
-            padding: theme.spacing(2.5, 3.5, 2.5, 0),
-          }}
-        >
+        <div className={classes.stackbarParent}>
           {/* Stackbar Area */}
           {loading ||
           openSeries.data.length <= 0 ||
@@ -140,7 +134,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
                 openSeries={openSeries}
                 barSeries={stackBarData}
                 unit="%"
-                yLabel="Chaos"
+                yLabel="Resiliency Score in %"
                 yLabelOffset={60}
                 xAxistimeFormat="HH:mm"
                 handleBarClick={(barData: any) => {
