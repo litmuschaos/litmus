@@ -51,14 +51,10 @@ interface TargetApplicationData {
 }
 
 interface TargetApplicationProp {
-  engineIndex: number;
   gotoStep: (page: number) => void;
 }
 
-const TargetApplication: React.FC<TargetApplicationProp> = ({
-  engineIndex,
-  gotoStep,
-}) => {
+const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   const { t } = useTranslation();
   /**
    * State Variables to manage theme changes
@@ -152,9 +148,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
       ];
     }
     engineManifest.spec.jobCleanUpPolicy = targetApp.jobCleanUpPolicy;
-    const mainManifest = YAML.parse(manifest.manifest);
-    mainManifest.spec.templates[engineIndex].inputs.artifacts[0].raw.data =
-      YAML.stringify(engineManifest);
+
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(engineManifest),
     });

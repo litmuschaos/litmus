@@ -25,7 +25,6 @@ getStarted:
 
 sidebar:
   title: Litmus
-  version: "Version: 1.13"
 
 header:
   projectDropdown:
@@ -34,7 +33,7 @@ header:
     otherProjects: Other Projects
     noProjectsOther: You are not part of any projects not owned by you
   profileDropdown:
-    signedIn: "Signed in as:"
+    signedIn: 'Signed in as:'
     emailUnset: Email not set
     emailSet: Set up your email
     switchProject: Please switch to a project you own to access settings
@@ -89,7 +88,7 @@ workflowStepper:
   back: Back
 
 editor:
-  status: "YAML Status:"
+  status: 'YAML Status:'
 
 ######################################
 ############    Pages    #############
@@ -107,14 +106,14 @@ login:
   tooltipText: You need to contact your admin to reset your password.
 
 schedule:
-  heading: "Schedule a workflow"
-  headingDesc: "Click on test to see detailed log of your workflow"
-  headingText: "Schedule details:"
-  description: "Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you."
-  save: "Save Changes"
+  heading: 'Schedule a workflow'
+  headingDesc: 'Click on test to see detailed log of your workflow'
+  headingText: 'Schedule details:'
+  description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
+  save: 'Save Changes'
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: "Choose the minutes, hours, or days when you want to start workflow"
+  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
   scheduleSpecificTime: Schedule at a specific time
   scheduleFuture: Select date and time to start workflow in future
   scheduleRecurring: Recurring Schedule
@@ -122,7 +121,7 @@ schedule:
   after: After
   at: at
   At: At
-  scheduleOn: "On"
+  scheduleOn: 'On'
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new workflow on this project.
   contact: Contact portal administrator to upgrade your permission.
@@ -143,11 +142,11 @@ editSchedule:
   successfullyCreated: is successfully created
 
 community:
-  title: "Community"
-  heading: "Litmus Insights"
-  headingDesc: "Stats for the Litmus community"
-  analyticDesc: "Periodic growth of Litmus"
-  statsHeading: "Litmus users around the world:"
+  title: 'Community'
+  heading: 'Litmus Insights'
+  headingDesc: 'Stats for the Litmus community'
+  analyticDesc: 'Periodic growth of Litmus'
+  statsHeading: 'Litmus users around the world:'
   litmusChaos: Litmuschaos
   follow: Follow
 
@@ -158,8 +157,8 @@ analytics:
   comingSoon: Analytics Coming Soon !
   waitingMessage: Waiting for workflow to start running !
   chaosCompleteWaitingMessage: Waiting for chaos experiment to finish !
-  highestScore: "Highest Score:"
-  lowestScore: "Lowest Score:"
+  highestScore: 'Highest Score:'
+  lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
   targetCluster: Target cluster
@@ -454,7 +453,7 @@ analyticsDashboard:
     warning:
       text: Unexpected bad things will happen if you don’t read this!
       info: The data source seems to be connected to following Application dashboards. Dashboards will be unable to show metrics if the data source is deleted.
-      connectedDashboards: "Connected Dashboards :"
+      connectedDashboards: 'Connected Dashboards :'
       showLess: Show Less Dashboards
       dashboards: Dashboards
     deletionSuccess: Successfully deleted the data source
@@ -559,8 +558,8 @@ homeViews:
     recentWorkflowRuns:
       workflowRunCard:
         cardTitle: Browse workflow
-        resilienceRate: "Overall resilience rate:"
-        lastRun: "Last Run:"
+        resilienceRate: 'Overall resilience rate:'
+        lastRun: 'Last Run:'
         showAnalytics: Show the analytics
         downloadManifest: Download manifest
       heading: Recent Workflow runs
@@ -603,7 +602,7 @@ chaosWorkflows:
     disableSchedule: Disable Schedule
     enableSchedule: Enable Schedule
     saveTemplate: Save Template
-    updateEngine: "Note: Make sure to update the chaos engine names"
+    updateEngine: 'Note: Make sure to update the chaos engine names'
     saveChanges: Save Changes
     savedSuccessfully: Successfully saved template.
     cancel: Cancel
@@ -625,8 +624,8 @@ chaosWorkflows:
     sync: Sync Workflow
     terminate: Terminate Workflow
     tableData:
-      overallRR: "Overall RR : "
-      experimentsPassed: "Experiments Passed : "
+      overallRR: 'Overall RR : '
+      experimentsPassed: 'Experiments Passed : '
       showExperiments: Show Experiments
       showTheWorkflow: Show the workflow
       showTheAnalytics: Show the analytics
@@ -815,7 +814,7 @@ settings:
     disconnect: Are you sure you want to disconnect?
     save: Save Locally
     repo: Git Repository
-    desc: "* Any existing or active workflows saved locally will not be synced into the git repository"
+    desc: '* Any existing or active workflows saved locally will not be synced into the git repository'
     connect: Connect
     branch: Branch
     URL: Git URL
@@ -830,11 +829,11 @@ settings:
     headingDesc: Your image registry for the workflow manifest
     defaultValues: Use the default values
     defaultText: All YAML files use these default values provided by Litmus. The values cannot be changed.
-    registry: "Registry : "
-    repo: "Repository : "
-    repoType: "Registry Type : "
-    dockerio: "docker.io"
-    litmus: "litmuschaos"
+    registry: 'Registry : '
+    repo: 'Repository : '
+    repoType: 'Registry Type : '
+    dockerio: 'docker.io'
+    litmus: 'litmuschaos'
     public: Public
     private: Private
     defaultReg: Use Default Registry
@@ -866,12 +865,12 @@ workflowDetailsView:
     Completed: Completed
     runTime:
       runTimeHeader: Run Time
-      startTime: "Start Time :"
-      endTime: "End Time :"
+      startTime: 'Start Time :'
+      endTime: 'End Time :'
     targets:
       targetsHeader: Target
-      cluster: "Cluster :"
-      namespace: "Workflow Namespace :"
+      cluster: 'Cluster :'
+      namespace: 'Workflow Namespace :'
   workflowNodeInfo:
     name: Name
     type: Type
@@ -926,8 +925,8 @@ createWorkflow:
     revertSchedule: Revert Schedule
     noTemplates: No template available.
     addTemplate: You can add a template from the scheduled workflows table.
-    trueValue: "True"
-    falseValue: "False"
+    trueValue: 'True'
+    falseValue: 'False'
     table:
       head1: Sequence
       head2: Name
@@ -1022,8 +1021,8 @@ createWorkflow:
       myHubInfo: Experiment details
       annotationInfo: Provide target application details where you want to induce the chaos.
       annotation: Annotation Check
-      true: "True"
-      false: "False"
+      true: 'True'
+      false: 'False'
       annotationDesc: The target application does not have an annotation “Chaos=true”. Ideally, you cannot run this experiment unless the annotation is patched to the application. However, this service account has the privileges to disable the enforcement of annotation checks. Mark the annotation as false to proceed.
       appkind: appKind
       deployment: Deployment
@@ -1032,7 +1031,7 @@ createWorkflow:
       deploymentconfig: Deploymentconfig
       rollout: Rollout
       nodeselector: NodeSelector
-      selector: "kubernetes.io/hostname :"
+      selector: 'kubernetes.io/hostname :'
       nsError: Namespace not available
       labelError: Label not available in the resource or namespace
       deleteExp: Delete the experiment
@@ -1046,8 +1045,15 @@ createWorkflow:
       showDetails: Show Details
       showProp: Show Properties
       addProbe: Please add probes to see the data
-      addNewProbe: "+ Add a new Probe"
+      addNewProbe: '+ Add a new Probe'
       back: Back
+      finish: Finish
+    env:
+      envHeading: Tune the environment variables of the experiment
+      showMoreEnv: Show more environment variables
+      showLessEnv: Show less environment variables
+      key: Key Tunables
+      addKey: Add a key-value pair
       finish: Finish
     addProbe:
       heading: Add
@@ -1228,7 +1234,7 @@ browseTemplate:
 #########################################
 
 internetIssues:
-  fetchData: "Fetching the data..."
+  fetchData: 'Fetching the data...'
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
@@ -1238,14 +1244,14 @@ myhub:
   title: MyHubs
   connectTarget: Connect the target
   viewMyHub: View My Hub
-  error: "[Error: could not connect]"
+  error: '[Error: could not connect]'
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
   edit: Edit Hub
   refresh: Refresh Hub
   disconnect: Disconnect Hub
-  lastSync: "Last synced at:"
+  lastSync: 'Last synced at:'
   mainPage:
     header: ChaosHubs
     github: github.com/
@@ -1273,9 +1279,9 @@ myhub:
     chaosCharts: Chaos-charts
     noPredefinedExp: No predefined workflows available with information in this Hub
     noExp: No experiments found
-    lastSynced: "Last synced at: "
-    repoLink: "Repository Link: "
-    repoBranch: "Repository Branch: "
+    lastSynced: 'Last synced at: '
+    repoLink: 'Repository Link: '
+    repoBranch: 'Repository Branch: '
   connectHubPage:
     connectHub: Connect a new chaos hub
     editHub: Edit hub configuration
@@ -1293,7 +1299,7 @@ myhub:
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
-    sshAlert: "*Make sure to provide the SSH link of the Git Repository"
+    sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
     updateHub: Update the MyHub with correct details from the MyHubs section
     cancel: Cancel

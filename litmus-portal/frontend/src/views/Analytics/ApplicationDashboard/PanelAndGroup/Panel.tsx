@@ -33,6 +33,10 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
   unit,
   className,
   selectedApplications,
+  centralBrushPosition,
+  handleCentralBrushPosition,
+  centralAllowGraphUpdate,
+  handleCentralAllowGraphUpdate,
   metricDataForPanel,
   chaosData,
 }) => {
@@ -194,6 +198,10 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
       </div>
       <div className={classes.singleGraph}>
         <LineAreaGraph
+          centralAllowGraphUpdate={centralAllowGraphUpdate}
+          handleCentralAllowGraphUpdate={handleCentralAllowGraphUpdate}
+          centralBrushPosition={centralBrushPosition}
+          handleCentralBrushPosition={handleCentralBrushPosition}
           legendTableHeight={120}
           openSeries={graphData.seriesData}
           closedSeries={graphData.closedAreaData}
@@ -207,7 +215,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
           unit={unit}
           yLabel={y_axis_left}
           yLabelOffset={55}
-          margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
+          margin={{ left: 75, right: 20, top: 20, bottom: 30 }}
         />
       </div>
     </div>

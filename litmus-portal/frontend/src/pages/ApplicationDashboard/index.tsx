@@ -8,7 +8,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import { BrushPostitionProps, ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -106,6 +106,10 @@ const DashboardPage: React.FC = () => {
   const handleClick = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
+  const [centralBrushPosition, setCentralBrushPosition] =
+    React.useState<BrushPostitionProps>();
+  const [centralAllowGraphUpdate, setCentralAllowGraphUpdate] =
+    React.useState(true);
   const [isInfoOpen, setIsInfoOpen] = React.useState<Boolean>(false);
   const [isLoading, setIsLoading] = React.useState<Boolean>(true);
   const [selectedPanels, setSelectedPanels] = React.useState<string[]>([]);
@@ -496,6 +500,14 @@ const DashboardPage: React.FC = () => {
                     >
                       <DashboardPanelGroup
                         key={`${panelGroup.panel_group_id}-dashboardPage-component`}
+                        centralAllowGraphUpdate={centralAllowGraphUpdate}
+                        handleCentralAllowGraphUpdate={(value: boolean) =>
+                          setCentralAllowGraphUpdate(value)
+                        }
+                        centralBrushPosition={centralBrushPosition}
+                        handleCentralBrushPosition={(
+                          newBrushPosition: BrushPostitionProps
+                        ) => setCentralBrushPosition(newBrushPosition)}
                         panel_group_id={panelGroup.panel_group_id}
                         panel_group_name={panelGroup.panel_group_name}
                         panels={panelGroup.panels}

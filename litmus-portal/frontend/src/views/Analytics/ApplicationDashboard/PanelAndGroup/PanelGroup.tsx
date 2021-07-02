@@ -18,6 +18,10 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
   panel_group_name,
   selectedPanels,
   selectedApplications,
+  centralBrushPosition,
+  handleCentralBrushPosition,
+  centralAllowGraphUpdate,
+  handleCentralAllowGraphUpdate,
   metricDataForGroup,
   chaosData,
 }) => {
@@ -63,6 +67,10 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
                   key={panel.panel_id}
                   data-cy="dashboardPanel"
                   panel_id={panel.panel_id}
+                  centralAllowGraphUpdate={centralAllowGraphUpdate}
+                  handleCentralAllowGraphUpdate={handleCentralAllowGraphUpdate}
+                  centralBrushPosition={centralBrushPosition}
+                  handleCentralBrushPosition={handleCentralBrushPosition}
                   created_at={panel.created_at}
                   panel_name={panel.panel_name}
                   panel_options={panel.panel_options}

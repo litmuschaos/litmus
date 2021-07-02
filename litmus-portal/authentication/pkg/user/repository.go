@@ -73,6 +73,9 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 	user.ID = uuid.Must(uuid.NewRandom()).String()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
+	if err != nil {
+		return nil, err
+	}
 	user.Password = string(hashedPassword)
 	_, err = r.Collection.InsertOne(context.Background(), user)
 	if err != nil {
@@ -86,6 +89,13 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 
 //UpdateUser updates user details in the database
 func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
+	if user.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
+		if err != nil {
+			return nil, err
+		}
+		user.Password = string(hashedPassword)
+	}
 	data, _ := toDoc(user)
 	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
 	if err != nil {
