@@ -202,6 +202,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         </Typography>
       </Button>
       <Popover
+        className={classes.popOver}
         open={isOpen}
         anchorEl={popAnchorEl}
         onClose={popOverClose}
@@ -212,9 +213,6 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         transformOrigin={{
           vertical: 'top',
           horizontal: 'center',
-        }}
-        style={{
-          marginTop: 10,
         }}
       >
         <DateRangePicker

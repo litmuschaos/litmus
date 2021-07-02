@@ -128,7 +128,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
             )}
           </div>
         </div>
-        {showMore ? (
+        {showMore && (
           <WorkflowStats
             workflowID={data.ListWorkflow.workflows[0].workflow_id}
             isCron={data.ListWorkflow.workflows[0].cronSyntax !== ''}
@@ -136,8 +136,6 @@ const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
               data.ListWorkflow.workflows[0].workflow_runs?.length ?? 0
             }
           />
-        ) : (
-          <></>
         )}
       </div>
       <ButtonOutlined

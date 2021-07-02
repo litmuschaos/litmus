@@ -35,6 +35,10 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '25rem',
   },
 
+  popOver: {
+    marginTop: theme.spacing(1.25),
+  },
+
   tableHead: {
     color: theme.palette.text.primary,
   },
@@ -164,8 +168,6 @@ export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
     },
     height: '2.5rem',
   },
-  focused: {},
-  notchedOutline: {},
 }));
 
 export const StyledTableCell = withStyles((theme: Theme) =>
