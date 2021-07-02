@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { IconButton, Typography } from '@material-ui/core';
 import React from 'react';
 import {
@@ -94,7 +93,7 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
 
     const applicationMetadataMap: ApplicationMetadata[] = [];
 
-    data.application_metadata_map?.forEach((applicationMetadata) => {
+    data.application_metadata_map.forEach((applicationMetadata) => {
       const applications: Resource[] = [];
 
       applicationMetadata.applications.forEach((application) => {

@@ -410,7 +410,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             onClick={() => {
               if (data.phase?.toLowerCase() !== 'notavailable')
                 history.push({
-                  pathname: `/workflows/analytics/${data.workflow_id}`,
+                  pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
             }}
