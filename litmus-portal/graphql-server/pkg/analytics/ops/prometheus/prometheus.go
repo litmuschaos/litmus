@@ -105,27 +105,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 			tempSubDataArray   []*model.SubData
 		)
 
-		if queryType == "metrics" {
-			for _, value := range v.Values {
-				temp := &model.MetricsTimeStampValue{
-					Date:  func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: float64(value.Timestamp), false: 0}[float64(value.Timestamp) >= 0.0]),
-					Value: func(val float64) *float64 { return &val }(map[bool]float64{true: float64(value.Value), false: 0.0}[float64(value.Value) >= 0.0]),
-				}
-
-				tempMetricsTSV = append(tempMetricsTSV, temp)
-			}
-			newMetricsTSVs = append(newMetricsTSVs, tempMetricsTSV)
-		} else {
-			for _, value := range v.Values {
-				temp := &model.AnnotationsTimeStampValue{
-					Date:  func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: float64(value.Timestamp), false: 0}[float64(value.Timestamp) >= 0.0]),
-					Value: func(val int) *int { return &val }(map[bool]int{true: int(value.Value), false: 0}[int(value.Value) >= 0]),
-				}
-
-				tempAnnotationsTSV = append(tempAnnotationsTSV, temp)
-			}
-			newAnnotationsTSVs = append(newAnnotationsTSVs, tempAnnotationsTSV)
-		}
+		eventValid := false
 
 		if prom.Legend == nil || *prom.Legend == "" {
 			tempLegends = append(tempLegends, func(str string) *string { return &str }(fmt.Sprint(v.Metric.String())))
@@ -144,6 +124,10 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 				var timeStamp float64
 				if keyValueMap["chaos_injection_time"] != "" {
 					timeStamp, err = strconv.ParseFloat(keyValueMap["chaos_injection_time"], 64)
+					timeStampInteger := int64(timeStamp)
+					if strings.Contains(prom.Queryid, "chaos-event") && timeStampInteger >= startTime && timeStampInteger <= endTime {
+						eventValid = true
+					}
 				} else {
 					timeStamp = 0
 				}
@@ -160,7 +144,13 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 							tempSubDataArray = append(tempSubDataArray, tempSubData)
 						}
 					}
-					newSubDataArray = append(newSubDataArray, tempSubDataArray)
+					if strings.Contains(prom.Queryid, "chaos-event") {
+						if eventValid {
+							newSubDataArray = append(newSubDataArray, tempSubDataArray)
+						}
+					} else {
+						newSubDataArray = append(newSubDataArray, tempSubDataArray)
+					}
 				}
 			}
 
@@ -183,7 +173,43 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 			tempLegends = append(tempLegends, func(str string) *string { return &str }(fmt.Sprint(filterResponse)))
 		}
-		newLegends = append(newLegends, tempLegends...)
+
+		if strings.Contains(prom.Queryid, "chaos-event") {
+			if eventValid {
+				newLegends = append(newLegends, tempLegends...)
+			}
+		} else {
+			newLegends = append(newLegends, tempLegends...)
+		}
+
+		if queryType == "metrics" {
+			for _, value := range v.Values {
+				temp := &model.MetricsTimeStampValue{
+					Date:  func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: float64(value.Timestamp), false: 0}[float64(value.Timestamp) >= 0.0]),
+					Value: func(val float64) *float64 { return &val }(map[bool]float64{true: float64(value.Value), false: 0.0}[float64(value.Value) >= 0.0]),
+				}
+
+				tempMetricsTSV = append(tempMetricsTSV, temp)
+			}
+			newMetricsTSVs = append(newMetricsTSVs, tempMetricsTSV)
+		} else {
+			for _, value := range v.Values {
+				temp := &model.AnnotationsTimeStampValue{
+					Date:  func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: float64(value.Timestamp), false: 0}[float64(value.Timestamp) >= 0.0]),
+					Value: func(val int) *int { return &val }(map[bool]int{true: int(value.Value), false: 0}[int(value.Value) >= 0]),
+				}
+
+				tempAnnotationsTSV = append(tempAnnotationsTSV, temp)
+			}
+
+			if strings.Contains(prom.Queryid, "chaos-event") {
+				if eventValid {
+					newAnnotationsTSVs = append(newAnnotationsTSVs, tempAnnotationsTSV)
+				}
+			} else {
+				newAnnotationsTSVs = append(newAnnotationsTSVs, tempAnnotationsTSV)
+			}
+		}
 	}
 
 	if queryType == "metrics" {
@@ -208,11 +234,9 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 		newAnnotations.SubDataArray = newSubDataArray
 
 		var resp model.AnnotationsPromResponse
-		if len(newLegends) != 0 {
-			err := copier.Copy(&resp, &newAnnotations)
-			if err != nil {
-				return &model.AnnotationsPromResponse{}, err
-			}
+		err := copier.Copy(&resp, &newAnnotations)
+		if err != nil {
+			return &model.AnnotationsPromResponse{}, err
 		}
 
 		return &resp, nil

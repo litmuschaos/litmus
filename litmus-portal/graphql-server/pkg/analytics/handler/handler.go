@@ -766,8 +766,8 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 			if err != nil {
 				log.Printf("Error parsing existing annotation  %v\n", err)
 			}
-			if strings.Contains(existingAnnotation.Queryid, "chaos-event") {
 
+			if strings.Contains(existingAnnotation.Queryid, "chaos-event") {
 				var newAnnotation model.AnnotationsPromResponse
 				err := copier.Copy(&newAnnotation, &verdictResponse)
 				if err != nil {
@@ -809,11 +809,22 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 					}
 
 					if !eventFound {
-						annotations[annotationIndex].Legends = append(annotations[annotationIndex].Legends, verdictLegend)
-						annotations[annotationIndex].SubDataArray = append(annotations[annotationIndex].SubDataArray, verdictResponse.SubDataArray[verdictLegendIndex])
-						annotations[annotationIndex].Tsvs = append(annotations[annotationIndex].Tsvs, nil)
+						verdictValid := false
+
+						for _, tsv := range verdictResponse.Tsvs[verdictLegendIndex] {
+							if !verdictValid && func(val *int) int { return *val }(tsv.Value) == 1 {
+								verdictValid = true
+							}
+						}
+
+						if verdictValid {
+							annotations[annotationIndex].Legends = append(annotations[annotationIndex].Legends, verdictLegend)
+							annotations[annotationIndex].SubDataArray = append(annotations[annotationIndex].SubDataArray, verdictResponse.SubDataArray[verdictLegendIndex])
+							annotations[annotationIndex].Tsvs = append(annotations[annotationIndex].Tsvs, nil)
+						}
 					}
 				}
+
 				eventCacheKey := annotation.Queryid + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 				cacheError := utils.AddCache(AnalyticsCache, eventCacheKey, annotations[annotationIndex])
 				if cacheError != nil {
@@ -840,12 +851,18 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVariables model.DataVars, r store.StateData) {
 	if viewChan, ok := r.DashboardData[viewID]; ok {
 
+		currentTime := time.Now().Unix()
+		startTime := strconv.FormatInt(currentTime-int64(dataVariables.RelativeTime), 10)
+		endTime := strconv.FormatInt(currentTime, 10)
+
 		var queryType string
 
 		if dataVariables.Start != "" && dataVariables.End != "" {
 			queryType = "fixed"
-		} else if dataVariables.RelativeTime != 0 && dataVariables.RefreshInterval != 0 {
+		} else if dataVariables.RefreshInterval != 0 {
 			queryType = "relative"
+		} else if dataVariables.RefreshInterval == 0 {
+			queryType = "relatively-fixed"
 		} else {
 			queryType = "invalid"
 		}
@@ -870,15 +887,9 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVar
 			} else {
 				viewChan <- newPromResponse
 			}
-			close(viewChan)
-			delete(r.DashboardData, viewID)
 
 		case "relative":
 			for {
-				currentTime := time.Now().Unix()
-				startTime := strconv.FormatInt(currentTime-int64(dataVariables.RelativeTime), 10)
-				endTime := strconv.FormatInt(currentTime, 10)
-
 				dsDetails := &model.DsDetails{
 					URL:   dataVariables.URL,
 					Start: startTime,
@@ -897,16 +908,37 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVar
 				} else {
 					viewChan <- newPromResponse
 					time.Sleep(time.Duration(int64(dataVariables.RefreshInterval)) * time.Second)
+					currentTime = time.Now().Unix()
+					startTime = strconv.FormatInt(currentTime-int64(dataVariables.RelativeTime), 10)
+					endTime = strconv.FormatInt(currentTime, 10)
 				}
 			}
-			close(viewChan)
-			delete(r.DashboardData, viewID)
+
+		case "relatively-fixed":
+			dsDetails := &model.DsDetails{
+				URL:   dataVariables.URL,
+				Start: startTime,
+				End:   endTime,
+			}
+
+			newPromInput := &model.PromInput{
+				Queries:   promQueries,
+				DsDetails: dsDetails,
+			}
+
+			newPromResponse, err := GetPromQuery(newPromInput)
+			if err != nil {
+				log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+			} else {
+				viewChan <- newPromResponse
+			}
 
 		case "invalid":
 			log.Printf("Wrong parameters for the dashboard view: %v\n", viewID)
-			close(viewChan)
-			delete(r.DashboardData, viewID)
 		}
+
+		close(viewChan)
+		delete(r.DashboardData, viewID)
 	}
 }
 
