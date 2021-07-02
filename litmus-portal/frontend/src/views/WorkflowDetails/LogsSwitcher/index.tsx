@@ -87,7 +87,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
           chaos_namespace: '',
         });
     }
-  }, [workflow_data]);
+  }, [workflow_data, pod_name]);
 
   const [chaosResult, setChaosResult] = useState('');
 
