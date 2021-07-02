@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useQuery } from '@apollo/client';
-import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
+import { useQuery, useSubscription } from '@apollo/client';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React, { useEffect } from 'react';
@@ -9,9 +15,12 @@ import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
-import { LIST_DASHBOARD } from '../../graphql';
+import { LIST_DASHBOARD, VIEW_DASHBOARD } from '../../graphql';
 import {
   PanelNameAndID,
+  ParsedChaosEventPrometheusData,
+  QueryMapForPanelGroup,
+  RangeType,
   SelectedDashboardInformation,
 } from '../../models/dashboardsData';
 import {
@@ -21,42 +30,54 @@ import {
   PanelGroupResponse,
   PanelResponse,
 } from '../../models/graphql/dashboardsDetails';
-import useActions from '../../redux/actions';
-import * as DashboardActions from '../../redux/actions/dashboards';
-import * as DataSourceActions from '../../redux/actions/dataSource';
+import {
+  ViewDashboard,
+  ViewDashboardInput,
+} from '../../models/graphql/prometheus';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
+import {
+  ChaosEventDataParserForPrometheus,
+  generatePromQueries,
+} from '../../utils/promUtils';
 import ChaosAccordion from '../../views/Analytics/ApplicationDashboard/ChaosAccordion';
 import DataSourceInactiveModal from '../../views/Analytics/ApplicationDashboard/DataSourceInactiveModal';
 import InfoDropdown from '../../views/Analytics/ApplicationDashboard/InfoDropdown';
 import DashboardPanelGroup from '../../views/Analytics/ApplicationDashboard/PanelAndGroup/PanelGroup';
 import ToolBar from '../../views/Analytics/ApplicationDashboard/ToolBar';
 import TopNavButtons from '../../views/Analytics/ApplicationDashboard/TopNavButtons';
-import { ACTIVE } from './constants';
+import {
+  ACTIVE,
+  DEFAULT_REFRESH_RATE,
+  DEFAULT_RELATIVE_TIME_RANGE,
+  MAX_REFRESH_RATE,
+  PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
+} from './constants';
 import useStyles from './styles';
 
+interface PromData {
+  chaosEventData: ParsedChaosEventPrometheusData;
+  panelGroupQueryMap: QueryMapForPanelGroup[];
+}
+
 const DashboardPage: React.FC = () => {
+  const { palette } = useTheme();
   const classes = useStyles();
   const { t } = useTranslation();
-  const dataSource = useActions(DataSourceActions);
-  const dashboard = useActions(DashboardActions);
-  // get ProjectID
+  const areaGraph: string[] = palette.graph.area;
   const projectID = getProjectID();
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
-  const selectedDataSource = useSelector(
-    (state: RootState) => state.selectDataSource
-  );
 
   const [selectedDashboardInformation, setSelectedDashboardInformation] =
     React.useState<SelectedDashboardInformation>({
-      id: selectedDashboard.selectedDashboardID ?? '',
+      id: selectedDashboard.selectedDashboardID,
       name: '',
       typeName: '',
       typeID: '',
-      agentID: selectedDashboard.selectedAgentID ?? '',
+      agentID: selectedDashboard.selectedAgentID,
       agentName: '',
       urlToIcon: '',
       information: '',
@@ -64,13 +85,23 @@ const DashboardPage: React.FC = () => {
       chaosVerdictQueryTemplate: '',
       applicationMetadataMap: [],
       dashboardListForAgent: [],
-      metaData: [],
+      metaData: undefined,
       dashboardKey: 'Default',
       panelNameAndIDList: [],
+      dataSourceURL: '',
+      dataSourceID: '',
+      dataSourceName: '',
+      promQueries: [],
+      range: {
+        startDate: '',
+        endDate: '',
+      },
+      relativeTime: DEFAULT_RELATIVE_TIME_RANGE,
+      refreshInterval: DEFAULT_REFRESH_RATE,
     });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [dataSourceStatus, setDataSourceStatus] =
-    React.useState<string>('ACTIVE');
+    React.useState<string>(ACTIVE);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(event.currentTarget);
@@ -81,8 +112,15 @@ const DashboardPage: React.FC = () => {
   const [selectedApplications, setSelectedApplications] = React.useState<
     string[]
   >([]);
+  const [reFetch, setReFetch] = React.useState<Boolean>(false);
+  const [promData, setPromData] = React.useState<PromData>({
+    chaosEventData: {
+      chaosData: [],
+      chaosEventDetails: [],
+    },
+    panelGroupQueryMap: [],
+  });
 
-  // Apollo query to get the dashboards data
   const {
     data: dashboards,
     loading: loadingDashboards,
@@ -91,8 +129,11 @@ const DashboardPage: React.FC = () => {
   } = useQuery<DashboardList, ListDashboardVars>(LIST_DASHBOARD, {
     variables: {
       projectID,
-      clusterID: selectedDashboard.selectedAgentID ?? '',
+      clusterID: selectedDashboard.selectedAgentID,
     },
+    skip:
+      selectedDashboard.selectedDashboardID === '' ||
+      selectedDashboard.selectedAgentID === '',
     fetchPolicy: 'no-cache',
     onCompleted: () => {
       setIsLoading(false);
@@ -101,6 +142,75 @@ const DashboardPage: React.FC = () => {
       setIsLoading(false);
     },
     notifyOnNetworkStatusChange: true,
+  });
+
+  const { error: errorFetchingDashboardQueries } = useSubscription<
+    ViewDashboard,
+    ViewDashboardInput
+  >(VIEW_DASHBOARD, {
+    variables: {
+      prometheusQueries: selectedDashboardInformation.promQueries,
+      dataVarMap: {
+        url: selectedDashboardInformation.dataSourceURL,
+        start: selectedDashboardInformation.range.startDate,
+        end: selectedDashboardInformation.range.endDate,
+        relative_time: selectedDashboardInformation.relativeTime,
+        refresh_interval: selectedDashboardInformation.refreshInterval,
+      },
+    },
+    skip:
+      loadingDashboards ||
+      errorFetchingDashboards !== undefined ||
+      selectedDashboardInformation.promQueries.length === 0 ||
+      selectedDashboardInformation.dataSourceURL === '' ||
+      (selectedDashboardInformation.range.startDate === '' &&
+        selectedDashboardInformation.range.endDate === '' &&
+        selectedDashboardInformation.refreshInterval === 0),
+    shouldResubscribe: () => {
+      if (reFetch) {
+        setReFetch(false);
+        return true;
+      }
+      return false;
+    },
+    fetchPolicy: 'no-cache',
+    onSubscriptionData: (subscriptionUpdate) => {
+      const prometheusResponse =
+        subscriptionUpdate.subscriptionData.data?.viewDashboard;
+      const metricDataFromPrometheus =
+        prometheusResponse?.metricsResponse ?? [];
+      const mappedData: QueryMapForPanelGroup[] = [];
+      if (
+        selectedDashboardInformation.metaData &&
+        selectedDashboardInformation.metaData.panel_groups.length > 0
+      ) {
+        selectedDashboardInformation.metaData.panel_groups.forEach(
+          (panelGroup, index) => {
+            mappedData.push({
+              panelGroupID: panelGroup.panel_group_id,
+              metricDataForGroup: [],
+            });
+            panelGroup.panels.forEach((panel) => {
+              const queryIDs = panel.prom_queries.map((query) => query.queryid);
+              const metricDataForPanel = metricDataFromPrometheus.filter(
+                (data) => queryIDs.includes(data.queryid)
+              );
+              mappedData[index].metricDataForGroup.push({
+                panelID: panel.panel_id,
+                metricDataForPanel,
+              });
+            });
+          }
+        );
+      }
+      setPromData({
+        chaosEventData: ChaosEventDataParserForPrometheus(
+          prometheusResponse?.annotationsResponse ?? [],
+          areaGraph
+        ),
+        panelGroupQueryMap: mappedData,
+      });
+    },
   });
 
   const postEventSelectionRoutine = (selectedEvents: string[]) => {};
@@ -136,7 +246,7 @@ const DashboardPage: React.FC = () => {
             dashboardListForAgent: selectedDashboard
               ? dashboards.ListDashboard
               : [],
-            metaData: [selectedDashboard],
+            metaData: selectedDashboard,
             dashboardKey: selectedDashboardInformation.id,
             panelNameAndIDList: selectedPanelNameAndIDList,
             name: selectedDashboard.db_name,
@@ -150,29 +260,49 @@ const DashboardPage: React.FC = () => {
             chaosVerdictQueryTemplate:
               selectedDashboard.chaos_verdict_query_template,
             applicationMetadataMap: selectedDashboard.application_metadata_map,
+            dataSourceURL: selectedDashboard.ds_url,
+            dataSourceID: selectedDashboard.ds_id,
+            dataSourceName: selectedDashboard.ds_name,
+            promQueries: generatePromQueries(
+              selectedDashboardInformation.range,
+              selectedDashboard.panel_groups,
+              selectedDashboard.chaos_event_query_template,
+              selectedDashboard.chaos_verdict_query_template
+            ),
           });
           setSelectedPanels(
             selectedPanelNameAndIDList.map((panel: PanelNameAndID) => panel.id)
           );
           setSelectedApplications([]);
-          dashboard.selectDashboard({
-            refreshRate: 0,
-          });
-          dataSource.selectDataSource({
-            selectedDataSourceURL: selectedDashboard.ds_url,
-            selectedDataSourceID: selectedDashboard.ds_id,
-            selectedDataSourceName: selectedDashboard.ds_name,
-          });
           if (selectedDashboard.ds_health_status !== ACTIVE) {
             setDataSourceStatus(selectedDashboard.ds_health_status);
           }
         }
+        setReFetch(true);
       }
     }
   }, [dashboards, selectedDashboardInformation.id]);
 
+  useEffect(() => {
+    if (
+      errorFetchingDashboardQueries &&
+      errorFetchingDashboardQueries.message ===
+        PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED
+    ) {
+      if (selectedDashboardInformation.refreshInterval !== MAX_REFRESH_RATE) {
+        setSelectedDashboardInformation({
+          ...selectedDashboardInformation,
+          refreshInterval: MAX_REFRESH_RATE,
+        });
+      }
+    }
+  }, [errorFetchingDashboardQueries]);
+
   return (
     <Scaffold>
+      {errorFetchingDashboards ||
+        selectedDashboard.selectedDashboardID === '' ||
+        (selectedDashboard.selectedAgentID === '' && <BackButton />)}
       <div className={classes.rootContainer}>
         {isLoading || loadingDashboards ? (
           <div className={classes.center}>
@@ -217,12 +347,12 @@ const DashboardPage: React.FC = () => {
             </div>
 
             <div className={classes.controlsDiv}>
-              <Typography variant="h4" className={classes.weightedFont}>
+              <Typography variant="h4" style={{ fontWeight: 500 }}>
                 {selectedDashboardInformation.agentName} /{' '}
                 <Typography
                   variant="h4"
                   display="inline"
-                  className={classes.italic}
+                  style={{ fontStyle: 'italic' }}
                 >
                   {selectedDashboardInformation.name}
                 </Typography>
@@ -244,6 +374,16 @@ const DashboardPage: React.FC = () => {
                   keepMounted
                   open={open}
                   onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  getContentAnchorEl={null}
+                  classes={{ paper: classes.menuList }}
                 >
                   {selectedDashboardInformation.dashboardListForAgent.map(
                     (data: ListDashboardResponse) => {
@@ -255,35 +395,15 @@ const DashboardPage: React.FC = () => {
                             setSelectedDashboardInformation({
                               ...selectedDashboardInformation,
                               id: data.db_id,
-                              name: data.db_name,
-                              typeName: data.db_type_name,
-                              typeID: data.db_type_id,
-                              urlToIcon: `/icons/${data.db_type_id}_dashboard.svg`,
-                              information: data.db_information,
-                              chaosEventQueryTemplate:
-                                data.chaos_event_query_template,
-                              chaosVerdictQueryTemplate:
-                                data.chaos_verdict_query_template,
-                              applicationMetadataMap:
-                                data.application_metadata_map,
-                            });
-                            dataSource.selectDataSource({
-                              selectedDataSourceURL: '',
-                              selectedDataSourceID: '',
-                              selectedDataSourceName: '',
                             });
                             setAnchorEl(null);
                           }}
-                          className={
-                            data.db_id === selectedDashboardInformation.id
-                              ? classes.menuItemSelected
-                              : classes.menuItem
-                          }
+                          className={classes.menuItem}
                         >
-                          <div className={classes.expDiv}>
+                          <div style={{ display: 'flex' }}>
                             <Typography
                               data-cy="switchDashboard"
-                              className={`${classes.btnText} ${classes.italic}`}
+                              className={classes.btnText}
                               variant="h5"
                             >
                               {data.db_name}
@@ -311,8 +431,8 @@ const DashboardPage: React.FC = () => {
                   name: selectedDashboardInformation.name,
                   typeID: selectedDashboardInformation.typeID,
                   typeName: selectedDashboardInformation.typeName,
-                  dataSourceName: selectedDataSource.selectedDataSourceName,
-                  dataSourceURL: selectedDataSource.selectedDataSourceURL,
+                  dataSourceName: selectedDashboardInformation.dataSourceName,
+                  dataSourceURL: selectedDashboardInformation.dataSourceURL,
                   agentName: selectedDashboardInformation.agentName,
                 }}
                 metricsToBeShown={
@@ -329,7 +449,30 @@ const DashboardPage: React.FC = () => {
                 ) => setSelectedApplications(selectedApplicationList)}
               />
             )}
-            <ToolBar />
+            <ToolBar
+              refreshInterval={selectedDashboardInformation.refreshInterval}
+              handleRangeChange={(range: RangeType) => {
+                setSelectedDashboardInformation({
+                  ...selectedDashboardInformation,
+                  range,
+                  promQueries: generatePromQueries(
+                    range,
+                    selectedDashboardInformation.metaData?.panel_groups ?? [],
+                    selectedDashboardInformation.chaosEventQueryTemplate,
+                    selectedDashboardInformation.chaosVerdictQueryTemplate
+                  ),
+                });
+                setReFetch(true);
+              }}
+              handleRefreshRateChange={(refreshRate: number) => {
+                setSelectedDashboardInformation({
+                  ...selectedDashboardInformation,
+                  refreshInterval: refreshRate,
+                });
+                setReFetch(true);
+              }}
+              handleForceUpdate={() => setReFetch(true)}
+            />
             <div
               className={classes.analyticsDiv}
               key={selectedDashboardInformation.dashboardKey}
@@ -337,15 +480,16 @@ const DashboardPage: React.FC = () => {
               <div className={classes.chaosTableSection}>
                 <ChaosAccordion
                   dashboardKey={selectedDashboardInformation.dashboardKey}
-                  chaosEventsToBeShown={[]}
+                  chaosEventsToBeShown={
+                    promData.chaosEventData.chaosEventDetails
+                  }
                   postEventSelectionRoutine={postEventSelectionRoutine}
                 />
               </div>
-              {selectedDashboardInformation.metaData[0] &&
-                selectedDashboardInformation.metaData[0].panel_groups.length >
-                  0 &&
-                selectedDashboardInformation.metaData[0].panel_groups.map(
-                  (panelGroup: PanelGroupResponse) => (
+              {selectedDashboardInformation.metaData &&
+                selectedDashboardInformation.metaData.panel_groups.length > 0 &&
+                selectedDashboardInformation.metaData.panel_groups.map(
+                  (panelGroup: PanelGroupResponse, index) => (
                     <div
                       key={`${panelGroup.panel_group_id}-dashboardPage-div`}
                       data-cy="dashboardPanelGroup"
@@ -357,6 +501,13 @@ const DashboardPage: React.FC = () => {
                         panels={panelGroup.panels}
                         selectedPanels={selectedPanels}
                         selectedApplications={selectedApplications}
+                        metricDataForGroup={
+                          promData.panelGroupQueryMap[index]
+                            ? promData.panelGroupQueryMap[index]
+                                .metricDataForGroup
+                            : []
+                        }
+                        chaosData={promData.chaosEventData.chaosData}
                       />
                     </div>
                   )
@@ -365,13 +516,11 @@ const DashboardPage: React.FC = () => {
           </div>
         )}
       </div>
-      {dataSourceStatus !== 'ACTIVE' ? (
+      {dataSourceStatus !== ACTIVE && (
         <DataSourceInactiveModal
           dataSourceStatus={dataSourceStatus}
           dashboardID={selectedDashboardInformation.id}
         />
-      ) : (
-        <div />
       )}
     </Scaffold>
   );

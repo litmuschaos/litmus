@@ -211,7 +211,7 @@ analyticsDashboard:
       metaData4: Agent
     rangeSelector:
       to: to
-      selectPeriod: Select Period
+      last30Mins: Last 30 mins
     refresh:
       heading: Refresh
       off: Off
@@ -229,8 +229,7 @@ analyticsDashboard:
       tableHead1: Chaos result name
       tableHead2: Workflow
       tableHead3: Engine context
-      tableHead4: Target
-      tableHead5:
+      tableHead4:
         title: Verdict
         infoText: Latest Chaos experiment verdict
       noRecords: No chaos happened during the interval

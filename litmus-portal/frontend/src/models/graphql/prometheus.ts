@@ -27,10 +27,17 @@ export interface metricsPromResponse {
   tsvs: metricsTimeStampValue[][];
 }
 
+export interface subData {
+  date: number;
+  value: string;
+  subDataName: string;
+}
+
 export interface annotationsPromResponse {
   queryid: string;
   legends: string[];
   tsvs: annotationsTimeStampValue[][];
+  subDataArray: subData[][];
 }
 
 export interface promResponse {
@@ -87,4 +94,21 @@ export interface PrometheusSeriesListQueryVars {
 
 export interface PrometheusSeriesListResponse {
   GetPromSeriesList: promSeriesListResponse;
+}
+
+export interface ViewDashboard {
+  viewDashboard: promResponse;
+}
+
+export interface dataVars {
+  url: string;
+  start: string;
+  end: string;
+  relative_time: number;
+  refresh_interval: number;
+}
+
+export interface ViewDashboardInput {
+  prometheusQueries: promQueryInput[];
+  dataVarMap: dataVars;
 }

@@ -18,12 +18,11 @@ import {
   Resource,
 } from '../../../../models/graphql/dashboardsDetails';
 import {
-  DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+  DEFAULT_REFRESH_RATE,
   DEFAULT_RELATIVE_TIME_RANGE,
 } from '../../../../pages/ApplicationDashboard/constants';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
-import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import { validateTextEmpty } from '../../../../utils/validate';
 import useStyles from './styles';
@@ -39,10 +38,8 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  // get ProjectID
   const projectID = getProjectID();
   const dashboard = useActions(DashboardActions);
-  const dataSource = useActions(DataSourceActions);
   const [cloneName, setCloneName] = React.useState<string>(
     `Copy of ${dashboardData.name}`
   );
@@ -52,12 +49,6 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
     dashboard.selectDashboard({
       selectedDashboardID: dbID,
       selectedAgentID: dashboardData.agentID,
-      refreshRate: 0,
-    });
-    dataSource.selectDataSource({
-      selectedDataSourceURL: '',
-      selectedDataSourceID: '',
-      selectedDataSourceName: '',
     });
     return true;
   };
@@ -78,7 +69,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
 
   const getPanelGroups = () => {
     const panelGroups: PanelGroup[] = [];
-    dashboardData.metaData[0].panel_groups.forEach((panelGroup) => {
+    dashboardData.metaData?.panel_groups.forEach((panelGroup) => {
       const selectedPanels: Panel[] = [];
       panelGroup.panels.forEach((panel) => {
         const queries: PromQuery[] = [];
@@ -137,7 +128,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
 
   const handleCreateMutation = () => {
     const dashboardInput = {
-      ds_id: dashboardData.metaData[0].ds_id,
+      ds_id: dashboardData.metaData?.ds_id,
       db_name: cloneName,
       db_type_id: dashboardData.typeID,
       db_type_name: dashboardData.typeName,
@@ -152,7 +143,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
       }`,
       project_id: projectID,
       cluster_id: dashboardData.agentID,
-      refresh_rate: DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+      refresh_rate: `${DEFAULT_REFRESH_RATE}`,
     };
     createDashboard({
       variables: { createDBInput: dashboardInput },

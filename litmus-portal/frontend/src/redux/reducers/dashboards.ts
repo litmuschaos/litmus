@@ -10,12 +10,6 @@ const initialState: DashboardData = {
   selectedDashboardID: '',
   selectedAgentID: '',
   activePanelID: '',
-  refreshRate: 0,
-  range: {
-    startDate: '',
-    endDate: '',
-  },
-  forceUpdate: false,
   dashboardJSON: {},
 };
 

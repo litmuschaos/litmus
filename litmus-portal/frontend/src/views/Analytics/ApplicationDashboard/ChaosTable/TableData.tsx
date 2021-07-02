@@ -27,6 +27,7 @@ const TableData: React.FC<TableDataProps> = ({
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
         <CheckBox
           checked={itemSelectionStatus}
+          disabled={data.injectionFailed}
           inputProps={{ 'aria-labelledby': labelIdentifier }}
         />
       </StyledTableCell>
@@ -56,14 +57,6 @@ const TableData: React.FC<TableDataProps> = ({
           style={{ maxWidth: '7.5rem' }}
         >
           {data.engineContext}
-        </Typography>
-      </StyledTableCell>
-      <StyledTableCell>
-        <Typography
-          className={classes.tableObjects}
-          style={{ maxWidth: '7.5rem' }}
-        >
-          {data.target}
         </Typography>
       </StyledTableCell>
       <StyledTableCell>

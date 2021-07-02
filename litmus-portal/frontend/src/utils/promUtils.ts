@@ -2,17 +2,23 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-param-reassign */
 import {
-  ParsedPrometheusData,
+  ParsedChaosEventPrometheusData,
+  ParsedMetricPrometheusData,
   PromQueryDetails,
   QueryLabelValue,
+  RangeType,
 } from '../models/dashboardsData';
+import { PanelGroupResponse } from '../models/graphql/dashboardsDetails';
 import {
+  annotationsPromResponse,
+  metricsPromResponse,
   metricsTimeStampValue,
-  PrometheusResponse,
   promQueryInput,
+  subData,
 } from '../models/graphql/prometheus';
 import {
   DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+  DEFAULT_RELATIVE_TIME_RANGE,
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
 } from '../pages/ApplicationDashboard/constants';
 
@@ -21,7 +27,9 @@ const labelMatchOperators = ['==', '!=', '<=', '<', '>=', '>', '=~', '!~', '='];
 export const getPromQueryInput = (
   prom_queries: PromQueryDetails[],
   timeRangeDiff: number,
-  withEvents: Boolean
+  withEvents: boolean,
+  eventQueryTemplate?: string,
+  verdictQueryTemplate?: string
 ) => {
   const promQueries: promQueryInput[] = [];
   prom_queries.forEach((query: PromQueryDetails) => {
@@ -31,124 +39,177 @@ export const getPromQueryInput = (
       legend: query.legend,
       resolution: query.resolution,
       minstep:
-        Math.floor(timeRangeDiff / parseInt(query.minstep, 10)) *
-          prom_queries.length <
+        Math.ceil(timeRangeDiff / parseInt(query.minstep, 10)) <
         PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
           ? parseInt(query.minstep, 10)
-          : Math.floor(
-              (timeRangeDiff * prom_queries.length) /
-                (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)
-            ),
+          : Math.ceil(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
     });
   });
-  if (withEvents) {
+  if (withEvents && eventQueryTemplate && verdictQueryTemplate) {
     promQueries.push({
       queryid: 'chaos-event',
-      query:
-        'litmuschaos_awaited_experiments{job="chaos-exporter", chaos_injection_time!=""}',
+      query: eventQueryTemplate, // litmuschaos_awaited_experiments{job="chaos-exporter", chaos_injection_time!=""}
       legend: '{{chaosresult_name}}',
       resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
         timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
           ? 1
-          : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+          : Math.ceil(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
     });
     promQueries.push({
       queryid: 'chaos-verdict',
-      query:
-        'litmuschaos_experiment_verdict{job="chaos-exporter", chaos_injection_time!=""}',
+      query: verdictQueryTemplate, // litmuschaos_experiment_verdict{job="chaos-exporter"}
       legend: '{{chaosresult_name}}',
       resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
         timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
           ? 1
-          : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+          : Math.ceil(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
     });
   }
   return promQueries;
 };
 
-export const DataParserForPrometheus = (
-  prometheusData: PrometheusResponse,
+export const generatePromQueries = (
+  range: RangeType,
+  dashboardMetaPanelGroups: PanelGroupResponse[],
+  chaosEventQueryTemplate: string,
+  chaosVerdictQueryTemplate: string
+) => {
+  const timeRangeDiff: number =
+    range.startDate !== ''
+      ? parseInt(range.endDate, 10) - parseInt(range.startDate, 10)
+      : DEFAULT_RELATIVE_TIME_RANGE;
+  const promQueries: promQueryInput[] = getPromQueryInput(
+    dashboardMetaPanelGroups
+      .flatMap((panelGroup) => panelGroup.panels)
+      .flatMap((panel) => panel.prom_queries),
+    timeRangeDiff,
+    true,
+    chaosEventQueryTemplate,
+    chaosVerdictQueryTemplate
+  );
+  return promQueries;
+};
+
+export const getValueFromSubDataArray = (array: subData[], key: string) => {
+  let value = '';
+  array.forEach((element) => {
+    if (element.subDataName === key) {
+      value = element.value;
+    }
+  });
+  return value;
+};
+
+export const ChaosEventDataParserForPrometheus = (
+  chaosEventData: annotationsPromResponse[],
+  areaGraph: string[]
+) => {
+  const parsedPrometheusData: ParsedChaosEventPrometheusData = {
+    chaosEventDetails: [],
+    chaosData: [],
+  };
+  chaosEventData.forEach((queryResponse, mainIndex) => {
+    if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
+      queryResponse.legends.forEach((elem, index) => {
+        const baseColor =
+          areaGraph[
+            (mainIndex + (index % areaGraph.length)) % areaGraph.length
+          ];
+        if (queryResponse.tsvs[index]) {
+          parsedPrometheusData.chaosData.push({
+            metricName: elem,
+            data: queryResponse.tsvs[index].map((dataPoint) => ({
+              ...dataPoint,
+            })),
+            baseColor,
+            subData: queryResponse.subDataArray[index],
+          });
+        }
+        parsedPrometheusData.chaosEventDetails.push({
+          id: elem,
+          legendColor: baseColor,
+          chaosResultName: elem,
+          workflow: getValueFromSubDataArray(
+            queryResponse.subDataArray[index],
+            'Workflow'
+          ),
+          engineContext: getValueFromSubDataArray(
+            queryResponse.subDataArray[index],
+            'Engine context'
+          ),
+          verdict: getValueFromSubDataArray(
+            queryResponse.subDataArray[index],
+            'Experiment verdict'
+          ),
+          injectionFailed: !queryResponse.tsvs[index],
+        });
+      });
+    }
+  });
+  return parsedPrometheusData;
+};
+
+export const MetricDataParserForPrometheus = (
+  metricData: metricsPromResponse[],
   lineGraph: string[],
   areaGraph: string[],
   closedAreaQueryIDs: string[],
   selectedApplications?: string[]
 ) => {
-  const parsedPrometheusData: ParsedPrometheusData = {
+  const parsedPrometheusData: ParsedMetricPrometheusData = {
     seriesData: [],
     closedAreaData: [],
-    chaosData: [],
   };
-  prometheusData.GetPromQuery.annotationsResponse?.forEach(
-    (queryResponse, mainIndex) => {
-      if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
-        parsedPrometheusData.chaosData.push(
-          ...queryResponse.legends.map((elem, index) => ({
+  metricData.forEach((queryResponse, mainIndex) => {
+    if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
+      let { legends } = queryResponse;
+      let { tsvs } = queryResponse;
+      if (selectedApplications && selectedApplications.length) {
+        const newLegends: string[] = [];
+        const newTsvs: metricsTimeStampValue[][] = [];
+        queryResponse.legends.forEach((legend, index) => {
+          const filteredApps: string[] = selectedApplications.filter((app) =>
+            legend.includes(app)
+          );
+          if (filteredApps.length) {
+            newLegends.push(legend);
+            newTsvs.push(queryResponse.tsvs[index]);
+          }
+        });
+        legends = newLegends;
+        tsvs = newTsvs;
+      }
+      if (closedAreaQueryIDs.includes(queryResponse.queryid)) {
+        parsedPrometheusData.closedAreaData.push(
+          ...legends.map((elem, index) => ({
             metricName: elem,
-            data: queryResponse.tsvs[index].map((dataPoint) => ({
+            data: tsvs[index].map((dataPoint) => ({
               ...dataPoint,
             })),
             baseColor:
               areaGraph[
                 (mainIndex + (index % areaGraph.length)) % areaGraph.length
               ],
-            subData: [],
+          }))
+        );
+      } else {
+        parsedPrometheusData.seriesData.push(
+          ...legends.map((elem, index) => ({
+            metricName: elem,
+            data: tsvs[index].map((dataPoint) => ({
+              ...dataPoint,
+            })),
+            baseColor:
+              lineGraph[
+                (mainIndex + (index % lineGraph.length)) % lineGraph.length
+              ],
           }))
         );
       }
     }
-  );
-  prometheusData.GetPromQuery.metricsResponse?.forEach(
-    (queryResponse, mainIndex) => {
-      if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
-        let { legends } = queryResponse;
-        let { tsvs } = queryResponse;
-        if (selectedApplications && selectedApplications.length) {
-          const newLegends: string[] = [];
-          const newTsvs: metricsTimeStampValue[][] = [];
-          queryResponse.legends.forEach((legend, index) => {
-            const filteredApps: string[] = selectedApplications.filter((app) =>
-              legend.includes(app)
-            );
-            if (filteredApps.length) {
-              newLegends.push(legend);
-              newTsvs.push(queryResponse.tsvs[index]);
-            }
-          });
-          legends = newLegends;
-          tsvs = newTsvs;
-        }
-        if (closedAreaQueryIDs.includes(queryResponse.queryid)) {
-          parsedPrometheusData.closedAreaData.push(
-            ...legends.map((elem, index) => ({
-              metricName: elem,
-              data: tsvs[index].map((dataPoint) => ({
-                ...dataPoint,
-              })),
-              baseColor:
-                areaGraph[
-                  (mainIndex + (index % areaGraph.length)) % areaGraph.length
-                ],
-            }))
-          );
-        } else {
-          parsedPrometheusData.seriesData.push(
-            ...legends.map((elem, index) => ({
-              metricName: elem,
-              data: tsvs[index].map((dataPoint) => ({
-                ...dataPoint,
-              })),
-              baseColor:
-                lineGraph[
-                  (mainIndex + (index % lineGraph.length)) % lineGraph.length
-                ],
-            }))
-          );
-        }
-      }
-    }
-  );
+  });
   return parsedPrometheusData;
 };
 

@@ -121,7 +121,7 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                       })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6}>
+                      <TableCell colSpan={5}>
                         <div className={classes.noRecords}>
                           <img
                             src="/icons/dashboardUnavailable.svg"
@@ -142,7 +142,7 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                   )}
                   {chaosList.length > 0 && emptyRows > 0 && (
                     <TableRow style={{ height: 75 * emptyRows }}>
-                      <TableCell colSpan={6} />
+                      <TableCell colSpan={5} />
                     </TableRow>
                   )}
                 </TableBody>

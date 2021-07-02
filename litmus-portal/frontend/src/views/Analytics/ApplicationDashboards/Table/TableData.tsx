@@ -23,7 +23,6 @@ import {
 } from '../../../../models/graphql/dashboardsDetails';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
-import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import { history } from '../../../../redux/configureStore';
 import {
   getProjectID,
@@ -40,7 +39,6 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const dashboard = useActions(DashboardActions);
-  const dataSource = useActions(DataSourceActions);
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const [mutate, setMutate] = React.useState(false);
@@ -49,13 +47,6 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
     React.useState<DeleteDashboardInput>({
       dbID: '',
     });
-
-  // Function to convert UNIX time in format of dddd, DD MMM YYYY, HH:mm
-  const formatDate = (date: string) => {
-    const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format('dddd, DD MMM YYYY, HH:mm');
-    return resDate;
-  };
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -63,6 +54,12 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('dddd, DD MMM YYYY, HH:mm');
+    return resDate;
   };
 
   const [deleteDashboard] = useMutation<boolean, DeleteDashboardInput>(
@@ -83,12 +80,6 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
       selectedAgentID: data.cluster_id,
-      refreshRate: 0,
-    });
-    dataSource.selectDataSource({
-      selectedDataSourceURL: '',
-      selectedDataSourceID: '',
-      selectedDataSourceName: '',
     });
     return true;
   };

@@ -44,19 +44,11 @@ export interface ApplicationDashboard {
   panelGroups: PanelGroup[];
 }
 
-export interface RangeType {
-  startDate: string;
-  endDate: string;
-}
-
 export interface DashboardData {
   dashboardJSON: any;
   selectedDashboardID: string;
   selectedAgentID: string;
   activePanelID: string;
-  refreshRate: number;
-  range: RangeType;
-  forceUpdate: Boolean;
 }
 
 export enum DashboardSelectionActions {

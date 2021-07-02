@@ -12,18 +12,9 @@ import { ButtonOutlined } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
-import {
-  DEFAULT_REFRESH_RATE,
-  DEFAULT_TOLERANCE_LIMIT,
-  MAX_REFRESH_RATE,
-  MINIMUM_TOLERANCE_LIMIT,
-} from '../../../../pages/ApplicationDashboard/constants';
+import { RangeType } from '../../../../models/dashboardsData';
 import refreshData from '../../../../pages/ApplicationDashboard/refreshData';
-import useActions from '../../../../redux/actions';
-import * as DashboardActions from '../../../../redux/actions/dashboards';
-import { RootState } from '../../../../redux/reducers';
 import useStyles, { useOutlinedInputStyles } from './styles';
 
 interface RefreshObjectType {
@@ -31,92 +22,62 @@ interface RefreshObjectType {
   value: number;
 }
 
-const ToolBar: React.FC = () => {
+interface ToolBarProps {
+  refreshInterval: number;
+  handleRangeChange: (range: RangeType) => void;
+  handleRefreshRateChange: (refreshRate: number) => void;
+  handleForceUpdate: () => void;
+}
+
+const ToolBar: React.FC<ToolBarProps> = ({
+  refreshInterval,
+  handleRangeChange,
+  handleRefreshRateChange,
+  handleForceUpdate,
+}) => {
   const classes = useStyles();
   const outlinedInputClasses = useOutlinedInputStyles();
   const { t } = useTranslation();
-  const dashboard = useActions(DashboardActions);
-  const selectedDashboard = useSelector(
-    (state: RootState) => state.selectDashboard
-  );
-
   const dateRangeSelectorRef = React.useRef<HTMLDivElement>(null);
   const [isDateRangeSelectorPopoverOpen, setDateRangeSelectorPopoverOpen] =
     React.useState(false);
-  const [refreshRate, setRefreshRate] = React.useState<number>(
-    selectedDashboard.refreshRate ? selectedDashboard.refreshRate : 0
-  );
+  const [range, setRange] = React.useState<RangeType>({
+    startDate: '',
+    endDate: '',
+  });
+  const [refreshRate, setRefreshRate] = React.useState<number>(refreshInterval);
   const [openRefresh, setOpenRefresh] = React.useState(false);
-  const handleCloseRefresh = () => {
-    setOpenRefresh(false);
-  };
-
-  const handleOpenRefresh = () => {
-    setOpenRefresh(true);
-  };
-
-  const clearTimeOuts = async () => {
-    let id = window.setTimeout(() => {}, 0);
-    while (id--) {
-      window.clearTimeout(id);
-    }
-
-    return Promise.resolve(id === 0);
-  };
+  const handleCloseRefresh = () => setOpenRefresh(false);
+  const handleOpenRefresh = () => setOpenRefresh(true);
 
   const CallbackFromRangeSelector = (
     selectedStartDate: string,
     selectedEndDate: string
   ) => {
-    const startDateFormatted: string = moment(selectedStartDate).format();
-    const endDateFormatted: string = moment(selectedEndDate)
-      .add(23, 'hours')
-      .add(59, 'minutes')
-      .add(59, 'seconds')
-      .format();
-    dashboard.selectDashboard({
-      range: { startDate: startDateFormatted, endDate: endDateFormatted },
+    const startDateFormatted: string = `${
+      new Date(moment(selectedStartDate).format()).getTime() / 1000
+    }`;
+    const endDateFormatted: string = `${
+      new Date(
+        moment(selectedEndDate)
+          .add(23, 'hours')
+          .add(59, 'minutes')
+          .add(59, 'seconds')
+          .format()
+      ).getTime() / 1000
+    }`;
+    setRange({ startDate: startDateFormatted, endDate: endDateFormatted });
+    handleRangeChange({
+      startDate: startDateFormatted,
+      endDate: endDateFormatted,
     });
-    const endDate: number =
-      new Date(moment(endDateFormatted).format()).getTime() / 1000;
-    const now: number = Math.round(new Date().getTime() / 1000);
-    const diff: number = Math.abs(now - endDate);
-    const maxLim: number =
-      (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 !== 0
-        ? (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 +
-          MINIMUM_TOLERANCE_LIMIT
-        : DEFAULT_TOLERANCE_LIMIT;
-    if (
-      !(diff >= 0 && diff <= maxLim) &&
-      selectedDashboard.refreshRate !== MAX_REFRESH_RATE
-    ) {
-      clearTimeOuts().then(() => {
-        setRefreshRate(MAX_REFRESH_RATE);
-      });
-    }
   };
 
-  const getRefreshRateStatus = () => {
-    if (selectedDashboard.range) {
-      const endDate: number =
-        new Date(moment(selectedDashboard.range.endDate).format()).getTime() /
-        1000;
-      const now: number = Math.round(new Date().getTime() / 1000);
-      const diff: number = Math.abs(now - endDate);
-      const maxLim: number =
-        (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 !== 0
-          ? (selectedDashboard.refreshRate ?? DEFAULT_REFRESH_RATE) / 1000 +
-            MINIMUM_TOLERANCE_LIMIT
-          : DEFAULT_TOLERANCE_LIMIT;
-      if (!(diff >= 0 && diff <= maxLim)) {
-        // A non relative time range has been selected.
-        // Refresh rate switch is not acknowledged and it's state is locked (Off).
-        // Select a relative time range or select a different refresh rate to unlock again.
-        return true;
-      }
-    }
-    // For relative time ranges.
-    return false;
+  const refreshRateChangeHandler = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    setRefreshRate(event.target.value as number);
+    handleRefreshRateChange(event.target.value as number);
   };
 
   return (
@@ -138,37 +99,19 @@ const ToolBar: React.FC = () => {
               <IconButton className={classes.rangeSelectorClockIcon}>
                 <WatchLaterRoundedIcon />
               </IconButton>
-              {!selectedDashboard.range ||
-              selectedDashboard.range.startDate === ' '
+              {range.startDate === ''
                 ? `${t(
-                    'analyticsDashboard.monitoringDashboardPage.rangeSelector.selectPeriod'
+                    'analyticsDashboard.monitoringDashboardPage.rangeSelector.last30Mins'
                   )}`
-                : `${selectedDashboard.range.startDate.split('-')[0]}-${
-                    selectedDashboard.range.startDate.split('-')[1]
-                  }-${selectedDashboard.range.startDate.substring(
-                    selectedDashboard.range.startDate.lastIndexOf('-') + 1,
-                    selectedDashboard.range.startDate.lastIndexOf('T')
-                  )} 
-                    
-                  ${selectedDashboard.range.startDate.substring(
-                    selectedDashboard.range.startDate.lastIndexOf('T') + 1,
-                    selectedDashboard.range.startDate.lastIndexOf('+')
-                  )} 
+                : `${moment
+                    .unix(Number(range.startDate))
+                    .format('YYYY-MM-DD HH:mm:SS')} 
                     ${t(
                       'analyticsDashboard.monitoringDashboardPage.rangeSelector.to'
-                    )}
-                   ${selectedDashboard.range.endDate.split('-')[0]}-${
-                    selectedDashboard.range.endDate.split('-')[1]
-                  }-${selectedDashboard.range.endDate.substring(
-                    selectedDashboard.range.endDate.lastIndexOf('-') + 1,
-                    selectedDashboard.range.endDate.lastIndexOf('T')
-                  )} 
-                    
-                  ${selectedDashboard.range.endDate.substring(
-                    selectedDashboard.range.endDate.lastIndexOf('T') + 1,
-                    selectedDashboard.range.endDate.lastIndexOf('+')
-                  )}`}
-
+                    )} 
+                   ${moment
+                     .unix(Number(range.endDate))
+                     .format('YYYY-MM-DD HH:mm:SS')}`}
               <IconButton className={classes.rangeSelectorIcon}>
                 <KeyboardArrowDownIcon />
               </IconButton>
@@ -178,22 +121,14 @@ const ToolBar: React.FC = () => {
         <DateRangeSelector
           anchorEl={dateRangeSelectorRef.current}
           isOpen={isDateRangeSelectorPopoverOpen}
-          onClose={() => {
-            setDateRangeSelectorPopoverOpen(false);
-          }}
+          onClose={() => setDateRangeSelectorPopoverOpen(false)}
           callbackToSetRange={CallbackFromRangeSelector}
           className={classes.rangeSelectorPopover}
         />
 
         <div className={classes.refreshDiv}>
           <ButtonOutlined
-            onClick={() => {
-              clearTimeOuts().then(() => {
-                dashboard.selectDashboard({
-                  forceUpdate: true,
-                });
-              });
-            }}
+            onClick={() => handleForceUpdate()}
             className={classes.refreshButton}
           >
             <img
@@ -207,31 +142,12 @@ const ToolBar: React.FC = () => {
               labelId="refresh-controlled-open-select-label"
               id="refresh-controlled-open-select"
               open={openRefresh}
-              disabled={getRefreshRateStatus()}
               onClose={handleCloseRefresh}
               onOpen={handleOpenRefresh}
               native={false}
               displayEmpty
-              value={refreshRate !== 0 ? refreshRate : null}
-              onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                // When viewing data for non-relative time range, refresh should be Off ideally.
-                // UI can auto detect if it is not Off and switches it to Off.
-                // Now the user can try to view the non-relative time range data again.
-                if (selectedDashboard.refreshRate !== MAX_REFRESH_RATE) {
-                  dashboard.selectDashboard({
-                    refreshRate: event.target.value as number,
-                  });
-                  setRefreshRate(event.target.value as number);
-                } else {
-                  dashboard.selectDashboard({
-                    refreshRate: event.target.value as number,
-                  });
-                  setRefreshRate(event.target.value as number);
-                  dashboard.selectDashboard({
-                    forceUpdate: true,
-                  });
-                }
-              }}
+              value={refreshRate}
+              onChange={refreshRateChangeHandler}
               input={<OutlinedInput classes={outlinedInputClasses} />}
               renderValue={() => (
                 <div>
@@ -254,13 +170,6 @@ const ToolBar: React.FC = () => {
                 classes: { paper: classes.menuList },
               }}
             >
-              <MenuItem
-                key="Off-refresh-option"
-                value={MAX_REFRESH_RATE}
-                className={classes.menuListItem}
-              >
-                {t('analyticsDashboard.monitoringDashboardPage.refresh.off')}
-              </MenuItem>
               {refreshData.map((data: RefreshObjectType) => (
                 <MenuItem
                   key={`${data.label}-refresh-option`}

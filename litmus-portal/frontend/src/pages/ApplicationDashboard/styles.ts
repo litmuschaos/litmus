@@ -46,10 +46,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(4.5),
   },
 
-  italic: {
-    fontStyle: 'italic',
-  },
-
   analyticsDiv: {
     padding: theme.spacing(1, 0, 2),
     backgroundColor: theme.palette.background.paper,
@@ -72,72 +68,25 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
   },
 
-  weightedFont: {
-    fontWeight: 500,
+  // Menu
+  menuList: {
+    boxShadow: '0 5px 9px rgba(0, 0, 0, 0.1)',
   },
-
-  // Menu option
   menuItem: {
     minWidth: '10rem',
     height: '2.5rem',
-  },
-
-  menuItemSelected: {
-    background: theme.palette.primary.light,
-    color: theme.palette.secondary.contrastText,
+    background: `${theme.palette.background.paper} !important`,
     '&:hover': {
-      background: theme.palette.primary.light,
+      background: `${theme.palette.cards.highlight} !important`,
     },
-    minWidth: '10rem',
-    height: '2.5rem',
-  },
-
-  expDiv: {
-    display: 'flex',
+    '&.Mui-selected': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
   },
 
   btnText: {
     fontWeight: 500,
-  },
-
-  formControl: {
-    width: '9rem',
-    marginLeft: theme.spacing(1.5),
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(3.75),
-    },
-    '& .MuiSelect-outlined': {
-      padding: '0.925rem',
-      '&:focus': {
-        borderColor: theme.palette.primary.main,
-      },
-      '& .MuiInputLabel-root': {
-        color: `${theme.palette.text.hint} !important`,
-        marginTop: `${theme.spacing(2)} !important`,
-      },
-    },
-  },
-
-  inputLabel: {
-    color: theme.palette.text.hint,
-    marginTop: theme.spacing(-1),
-    '&.MuiInputLabel-shrink': {
-      marginTop: theme.spacing(1),
-    },
-  },
-
-  menuListItem: {
-    color: theme.palette.text.hint,
-    height: '2.4rem',
-  },
-
-  menuListItemSelected: {
-    height: '2.4rem',
-    background: `${theme.palette.primary.light} !important`,
-    color: theme.palette.secondary.contrastText,
-    '&:hover': {
-      background: `${theme.palette.primary.light} !important`,
-    },
+    fontStyle: 'italic',
   },
 
   chaosTableSection: {

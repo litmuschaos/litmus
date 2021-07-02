@@ -55,18 +55,11 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <StyledTableCell className={classes.headSpacing}>
           <div className={classes.nameHead}>
             {t(
-              'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead4'
-            )}
-          </div>
-        </StyledTableCell>
-        <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameHead}>
-            {t(
-              'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5.title'
+              'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead4.title'
             )}
             <InfoTooltip
               value={t(
-                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead5.infoText'
+                'analyticsDashboard.monitoringDashboardPage.chaosTable.tableHead4.infoText'
               )}
             />
           </div>

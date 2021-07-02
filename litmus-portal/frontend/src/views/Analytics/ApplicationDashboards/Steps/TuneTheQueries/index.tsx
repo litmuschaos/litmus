@@ -17,13 +17,12 @@ import {
   updatePanelGroupInput,
 } from '../../../../../models/graphql/dashboardsDetails';
 import {
-  DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+  DEFAULT_REFRESH_RATE,
   DEFAULT_RELATIVE_TIME_RANGE,
 } from '../../../../../pages/ApplicationDashboard/constants';
 import useActions from '../../../../../redux/actions';
 import * as AlertActions from '../../../../../redux/actions/alert';
 import * as DashboardActions from '../../../../../redux/actions/dashboards';
-import * as DataSourceActions from '../../../../../redux/actions/dataSource';
 import { history } from '../../../../../redux/configureStore';
 import {
   getProjectID,
@@ -55,7 +54,6 @@ const TuneTheQueries = forwardRef(
     const projectRole = getProjectRole();
     const alert = useActions(AlertActions);
     const dashboard = useActions(DashboardActions);
-    const dataSource = useActions(DataSourceActions);
     const [proceed, setProceed] = React.useState<boolean>(false);
 
     const [updatedDashboardDetails, setUpdatedDashboardDetails] =
@@ -67,12 +65,6 @@ const TuneTheQueries = forwardRef(
       dashboard.selectDashboard({
         selectedDashboardID: dbID,
         selectedAgentID: dashboardVars.agentID ?? '',
-        refreshRate: 0,
-      });
-      dataSource.selectDataSource({
-        selectedDataSourceURL: '',
-        selectedDataSourceID: '',
-        selectedDataSourceName: '',
       });
       return true;
     };
@@ -225,7 +217,7 @@ const TuneTheQueries = forwardRef(
         }`,
         project_id: projectID,
         cluster_id: dashboardVars.agentID ?? '',
-        refresh_rate: DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+        refresh_rate: `${DEFAULT_REFRESH_RATE}`,
       };
       createDashboard({
         variables: { createDBInput: dashboardInput },
@@ -247,7 +239,7 @@ const TuneTheQueries = forwardRef(
         start_time: `${
           Math.round(new Date().getTime() / 1000) - DEFAULT_RELATIVE_TIME_RANGE
         }`,
-        refresh_rate: DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+        refresh_rate: `${DEFAULT_REFRESH_RATE}`,
         cluster_id: dashboardVars.agentID ?? '',
       };
       updateDashboard({
