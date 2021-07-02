@@ -8,6 +8,7 @@ import { ButtonOutlined } from 'litmus-ui';
 import General from '../TuneWorkflowSteps/General';
 import SteadyState from '../TuneWorkflowSteps/SteadyState';
 import TargetApplication from '../TuneWorkflowSteps/TargetApplication';
+import EnvironmentVariables from '../TuneWorkflowSteps/EnvironmentVariables';
 import useStyles from './styles';
 
 interface ConfigurationStepperProps {
@@ -29,12 +30,12 @@ function getStepContent(
     case 0:
       return <General isCustom={isCustom} gotoStep={gotoStep} />;
     case 1:
-      return (
-        <TargetApplication engineIndex={engineIndex} gotoStep={gotoStep} />
-      );
+      return <TargetApplication gotoStep={gotoStep} />;
     case 2:
+      return <SteadyState gotoStep={gotoStep} />;
+    case 3:
       return (
-        <SteadyState
+        <EnvironmentVariables
           engineIndex={engineIndex}
           gotoStep={gotoStep}
           closeStepper={closeStepper}
@@ -60,6 +61,7 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
     'General',
     'Target Application',
     'Define the steady state for this application',
+    'Tune Experiment',
   ];
 
   const gotoStep = (page: number) => {
