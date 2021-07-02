@@ -10,6 +10,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(1),
     marginRight: theme.spacing(1),
   },
+  showMoreBtn: {
+    display: 'flex',
+    color: theme.palette.primary.main,
+    backgroundColor: 'transparent !important',
+    cursor: 'pointer',
+    marginBottom: theme.spacing(2.5),
+  },
   actionsContainer: {
     marginBottom: theme.spacing(2),
   },
@@ -20,7 +27,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     border: 'none !important',
     color: theme.palette.primary.main,
   },
-
+  keyText: {
+    fontSize: '1rem',
+  },
+  addKeyInput: {
+    marginRight: theme.spacing(2.25),
+  },
   // General Component
   generalContainer: {
     display: 'flex',
@@ -33,6 +45,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     maxWidth: '25rem',
   },
+
+  addKeyValue: {
+    backgroundColor: 'transparent !important',
+    color: theme.palette.primary.main,
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(2.25),
+  },
+
   annotation: {
     fontSize: '0.875rem',
     margin: theme.spacing(0.6, 2, 0, 0),
