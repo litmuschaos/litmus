@@ -9,7 +9,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
-import { ReactComponent as AnalyticsIcon } from '../../svg/analytics.svg';
+import { ReactComponent as AnalyticsIcon } from '../../svg/analytics-sidebar.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
