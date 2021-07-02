@@ -36,10 +36,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerList: {
     marginTop: theme.spacing(8.375),
-    '& #quickActions': {
-      width: '80%',
-      border: `1px solid ${theme.palette.border.main}`,
-    },
+  },
+  quickActions: {
+    width: '80%',
+    border: `1px solid ${theme.palette.border.main}`,
   },
   versionlogo: {
     width: '1.25rem',

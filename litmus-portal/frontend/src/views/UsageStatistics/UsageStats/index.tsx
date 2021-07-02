@@ -1,5 +1,5 @@
-import { useQuery } from '@apollo/client';
-import React from 'react';
+import { useLazyQuery } from '@apollo/client';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import { GET_GLOBAL_STATS } from '../../../graphql';
@@ -9,22 +9,26 @@ import useStyles from './styles';
 const UsageStats = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { data, loading } = useQuery(GET_GLOBAL_STATS, {
-    variables: {
-      query: {
-        DateRange: {
-          start_date: Math.trunc(
-            new Date(
-              new Date().getFullYear(),
-              new Date().getMonth(),
-              1
-            ).getTime() / 1000
-          ).toString(),
-          end_date: Math.trunc(new Date().getTime() / 1000).toString(),
+  const [usageQuery, { loading, data }] = useLazyQuery(GET_GLOBAL_STATS);
+
+  useEffect(() => {
+    usageQuery({
+      variables: {
+        query: {
+          DateRange: {
+            start_date: Math.trunc(
+              new Date(
+                new Date().getFullYear(),
+                new Date().getMonth(),
+                1
+              ).getTime() / 1000
+            ).toString(),
+            end_date: Math.trunc(new Date().getTime() / 1000).toString(),
+          },
         },
       },
-    },
-  });
+    });
+  }, []);
 
   return (
     <div className={classes.cardDiv}>

@@ -141,6 +141,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             <TextButton
               variant="highlight"
               onClick={() => {
+                tabs.changeHubTabs(0);
                 history.push({
                   pathname: '/myhub/Chaos%20Hub',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,

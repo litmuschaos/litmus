@@ -19,6 +19,7 @@ type AgentStat struct {
 	Ns      int `json:"Ns"`
 	Cluster int `json:"Cluster"`
 	Total   int `json:"Total"`
+	Active  int `json:"Active"`
 }
 
 type Annotation struct {

@@ -55,6 +55,7 @@ type ComplexityRoot struct {
 	}
 
 	AgentStat struct {
+		Active  func(childComplexity int) int
 		Cluster func(childComplexity int) int
 		Ns      func(childComplexity int) int
 		Total   func(childComplexity int) int
@@ -793,6 +794,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActionPayload.RequestType(childComplexity), true
+
+	case "AgentStat.Active":
+		if e.complexity.AgentStat.Active == nil {
+			break
+		}
+
+		return e.complexity.AgentStat.Active(childComplexity), true
 
 	case "AgentStat.Cluster":
 		if e.complexity.AgentStat.Cluster == nil {
@@ -5187,6 +5195,7 @@ type AgentStat{
     Ns      : Int!
     Cluster : Int!
     Total   : Int!
+    Active  : Int!
 }
 
 type Owner {
@@ -6810,6 +6819,40 @@ func (ec *executionContext) _AgentStat_Total(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AgentStat_Active(ctx context.Context, field graphql.CollectedField, obj *model.AgentStat) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "AgentStat",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Active, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -25836,6 +25879,11 @@ func (ec *executionContext) _AgentStat(ctx context.Context, sel ast.SelectionSet
 			}
 		case "Total":
 			out.Values[i] = ec._AgentStat_Total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Active":
+			out.Values[i] = ec._AgentStat_Active(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

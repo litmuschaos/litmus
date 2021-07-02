@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(3.125),
     border: `1px solid ${theme.palette.border.main}`,
     borderRadius: 3,
+    backgroundColor: theme.palette.background.paper,
   },
   locallyText: {
     fontSize: '1.25rem',
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(2.5),
     display: 'flex',
     borderRadius: 3,
+    backgroundColor: theme.palette.background.paper,
   },
   infoText: {
     maxWidth: '25rem',
