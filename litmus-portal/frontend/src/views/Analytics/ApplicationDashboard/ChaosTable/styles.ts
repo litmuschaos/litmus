@@ -26,15 +26,25 @@ const useStyles = makeStyles((theme) => ({
     '&:not(:last-child)': {
       borderBottom: 0,
     },
-    '& td': {
+    '& tr': {
       borderBottom: `1px solid ${theme.palette.border.main}`,
+      '& td': {
+        borderBottom: 0,
+      },
     },
   },
 
   empty: {
-    '& td': {
+    '& tr': {
       borderBottom: 0,
+      '& td': {
+        borderBottom: 0,
+      },
     },
+  },
+
+  disabledRow: {
+    background: theme.palette.disabledBackground,
   },
 
   tableBody: {
@@ -54,9 +64,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0),
   },
 
+  verdictText: {
+    marginTop: theme.spacing(0.5),
+  },
+
   tableObjects: {
-    display: 'flex',
-    gap: '0.5rem',
     textAlign: 'left',
     color: theme.palette.text.primary,
     fontSize: '0.75rem',
@@ -67,6 +79,11 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+  },
+
+  flexObject: {
+    display: 'flex',
+    gap: '0.5rem',
   },
 
   headSpacing: {
@@ -115,7 +132,7 @@ const useStyles = makeStyles((theme) => ({
     height: '0.5rem',
     width: '0.5rem',
     borderRadius: '50%',
-    marginTop: theme.spacing(0.75),
+    margin: 'auto 0',
   },
 
   // select

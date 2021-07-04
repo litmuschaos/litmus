@@ -4,6 +4,6 @@ export const CHAOS_EXPERIMENT_VERDICT_PASS: string = 'Pass';
 export const CHAOS_EXPERIMENT_VERDICT_FAIL: string = 'Fail';
 export const PROMETHEUS_QUERY_RESOLUTION_LIMIT: number = 11000;
 export const MAX_REFRESH_RATE: number = 0;
-export const DEFAULT_REFRESH_RATE: number = 10;
+export const DEFAULT_REFRESH_RATE: number = 15;
 export const ACTIVE: string = 'Active';
 export const DEFAULT_RELATIVE_TIME_RANGE: number = 1800;

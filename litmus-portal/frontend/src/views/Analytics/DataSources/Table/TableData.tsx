@@ -5,6 +5,7 @@ import { ButtonFilled, LightPills, Modal, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import TextPopOver from '../../../../components/TextPopOver';
 import { DELETE_DATASOURCE } from '../../../../graphql';
 import {
   DeleteDataSourceInput,
@@ -113,7 +114,7 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell className={classes.dividerPadding}>
         <Typography
-          className={classes.tableObjects}
+          className={`${classes.tableObjects} ${classes.flexObject}`}
           style={{ maxWidth: '5rem' }}
         >
           <img
@@ -126,7 +127,7 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell>
         <Typography
-          className={classes.tableObjects}
+          className={`${classes.tableObjects} ${classes.flexObject}`}
           style={{ maxWidth: '13.5rem' }}
         >
           <img src="/icons/calendarIcon.svg" alt="Calender" />
@@ -141,11 +142,10 @@ const TableData: React.FC<TableDataProps> = ({
           endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
           classes={{ label: classes.buttonLabel }}
         >
-          <Typography
+          <TextPopOver
+            text={data.ds_url}
             className={`${classes.tableObjects} ${classes.dataSourceUrlColData}`}
-          >
-            {data.ds_url}
-          </Typography>
+          />
         </TextButton>
       </StyledTableCell>
 

@@ -79,7 +79,7 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
         unit={panelVars.unit}
         yLabel={panelVars.y_axis_left}
         yLabelOffset={55}
-        margin={{ left: 80, right: 20, top: 20, bottom: 10 }}
+        margin={{ left: 80, right: 20, top: 20, bottom: 30 }}
       />
     </div>
   );

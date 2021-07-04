@@ -14,6 +14,10 @@ export default [
     value: 10,
   },
   {
+    label: 'analyticsDashboard.monitoringDashboardPage.refresh.every15Seconds',
+    value: 15,
+  },
+  {
     label: 'analyticsDashboard.monitoringDashboardPage.refresh.every30Seconds',
     value: 30,
   },

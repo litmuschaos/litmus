@@ -191,7 +191,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
               unit={unit}
               yLabel={y_axis_left}
               yLabelOffset={55}
-              margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
+              margin={{ left: 75, right: 20, top: 20, bottom: 30 }}
             />
           </div>
         </Modal>

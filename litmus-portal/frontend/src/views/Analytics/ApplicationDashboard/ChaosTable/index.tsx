@@ -43,7 +43,9 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = chaosList.map((n: ChaosEventDetails) => n.id);
+      const newSelecteds = chaosList
+        .filter((chaos) => !chaos.injectionFailed)
+        .map((n: ChaosEventDetails) => n.id);
       setSelected(newSelecteds);
       selectEvents(newSelecteds);
       return;
@@ -52,24 +54,26 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
     selectEvents([]);
   };
 
-  const handleClick = (name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: string[] = [];
+  const handleClick = (name: string, injectionFailed: boolean) => {
+    if (!injectionFailed) {
+      const selectedIndex = selected.indexOf(name);
+      let newSelected: string[] = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+      if (selectedIndex === -1) {
+        newSelected = newSelected.concat(selected, name);
+      } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
+      } else if (selectedIndex === selected.length - 1) {
+        newSelected = newSelected.concat(selected.slice(0, -1));
+      } else if (selectedIndex > 0) {
+        newSelected = newSelected.concat(
+          selected.slice(0, selectedIndex),
+          selected.slice(selectedIndex + 1)
+        );
+      }
+      setSelected(newSelected);
+      selectEvents(newSelected);
     }
-    setSelected(newSelected);
-    selectEvents(newSelected);
   };
 
   return (
@@ -86,7 +90,9 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                 <TableHeader
                   onSelectAllClick={handleSelectAllClick}
                   numSelected={selected.length}
-                  rowCount={chaosList.length}
+                  rowCount={
+                    chaosList.filter((chaos) => !chaos.injectionFailed).length
+                  }
                 />
                 <TableBody>
                   {chaosList.length ? (
@@ -101,15 +107,18 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                         const labelId = `enhanced-table-checkbox-${index}`;
                         return (
                           <TableRow
-                            hover
-                            onClick={() => {
-                              handleClick(data.id);
-                            }}
+                            hover={!data.injectionFailed}
+                            onClick={() =>
+                              handleClick(data.id, data.injectionFailed)
+                            }
                             role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
                             key={data.id}
-                            selected={isItemSelected}
+                            selected={isItemSelected && !data.injectionFailed}
+                            className={
+                              data.injectionFailed ? classes.disabledRow : ''
+                            }
                           >
                             <TableData
                               data={data}

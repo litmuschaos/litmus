@@ -168,9 +168,12 @@ const useStyles = makeStyles((theme) => ({
     width: '5rem',
   },
 
-  tableObjects: {
+  flexObject: {
     display: 'flex',
     gap: '0.5rem',
+  },
+
+  tableObjects: {
     textAlign: 'left',
     color: theme.palette.text.primary,
     fontSize: '0.75rem',
