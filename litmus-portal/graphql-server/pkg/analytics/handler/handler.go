@@ -788,19 +788,17 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 							for _, verdictSubData := range verdictResponse.SubDataArray[verdictLegendIndex] {
 								verdictSubDataDate := func(date *float64) float64 { return *date }(verdictSubData.Date)
 								var subDataFound = false
-
 								for eventSubDataIndex, eventSubData := range annotation.SubDataArray[eventLegendIndex] {
 									if eventSubData != nil {
 										eventSubDataDate := func(date *float64) float64 { return *date }(eventSubData.Date)
-
-										if eventSubDataDate == verdictSubDataDate && eventSubData.SubDataName == verdictSubData.SubDataName {
+										if eventSubData.SubDataName == verdictSubData.SubDataName && eventSubDataDate == verdictSubDataDate {
 											subDataFound = true
 											annotations[annotationIndex].SubDataArray[eventLegendIndex][eventSubDataIndex].Value = verdictSubData.Value
 										}
 									}
 								}
 
-								if !subDataFound {
+								if !subDataFound && verdictSubDataDate > 0 {
 									newVerdictSubData = append(newVerdictSubData, verdictSubData)
 								}
 							}

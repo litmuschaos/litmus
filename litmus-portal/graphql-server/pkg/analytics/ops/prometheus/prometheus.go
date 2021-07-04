@@ -137,7 +137,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 					for key, value := range keyValueMap {
 						if nameVal, ok := checkMap[key]; ok {
 							tempSubData := &model.SubData{
-								Date:        func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: timeStamp, false: 0}[timeStamp >= 0.0]),
+								Date:        func(timestamp float64) *float64 { return &timestamp }(map[bool]float64{true: timeStamp * 1000, false: 0}[timeStamp >= 0.0]),
 								Value:       value,
 								SubDataName: nameVal,
 							}
