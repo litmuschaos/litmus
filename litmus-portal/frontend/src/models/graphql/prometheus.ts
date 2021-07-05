@@ -96,10 +96,6 @@ export interface PrometheusSeriesListResponse {
   GetPromSeriesList: promSeriesListResponse;
 }
 
-export interface ViewDashboard {
-  viewDashboard: promResponse;
-}
-
 export interface dataVars {
   url: string;
   start: string;
@@ -108,7 +104,37 @@ export interface dataVars {
   refresh_interval: number;
 }
 
+export interface queryMapForPanel {
+  panelID: string;
+  queryIDs: string[];
+}
+
+export interface queryMapForPanelGroup {
+  panelGroupID: string;
+  panelQueryMap: queryMapForPanel[];
+}
+
 export interface ViewDashboardInput {
   prometheusQueries: promQueryInput[];
+  queryMap: queryMapForPanelGroup[];
   dataVarMap: dataVars;
+}
+
+export interface metricDataForPanel {
+  panelID: string;
+  PanelMetricsResponse: metricsPromResponse[];
+}
+
+export interface metricDataForPanelGroup {
+  panelGroupID: string;
+  panelGroupMetricsResponse: metricDataForPanel[];
+}
+
+export interface dashboardPromResponse {
+  dashboardMetricsResponse: metricDataForPanelGroup[];
+  annotationsResponse: annotationsPromResponse[];
+}
+
+export interface ViewDashboard {
+  viewDashboard: dashboardPromResponse;
 }

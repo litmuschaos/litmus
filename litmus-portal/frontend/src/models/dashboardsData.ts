@@ -10,7 +10,7 @@ import {
   PromQuery,
   updatePanelGroupInput,
 } from './graphql/dashboardsDetails';
-import { metricsPromResponse, promQueryInput } from './graphql/prometheus';
+import { promQueryInput } from './graphql/prometheus';
 
 export interface PanelGroupMap {
   groupName: string;
@@ -98,7 +98,7 @@ export interface PanelNameAndID {
 
 export interface QueryMapForPanel {
   panelID: string;
-  metricDataForPanel: metricsPromResponse[];
+  metricDataForPanel: ParsedMetricPrometheusData;
 }
 
 export interface QueryMapForPanelGroup {
@@ -108,8 +108,7 @@ export interface QueryMapForPanelGroup {
 
 export interface GraphPanelProps extends PanelResponse {
   className?: string;
-  selectedApplications?: string[];
-  metricDataForPanel?: metricsPromResponse[];
+  metricDataForPanel?: ParsedMetricPrometheusData;
   chaosData?: Array<GraphMetric>;
   centralBrushPosition?: BrushPostitionProps;
   handleCentralBrushPosition: (newBrushPosition: BrushPostitionProps) => void;
@@ -119,7 +118,6 @@ export interface GraphPanelProps extends PanelResponse {
 
 export interface GraphPanelGroupProps extends PanelGroupResponse {
   selectedPanels?: string[];
-  selectedApplications?: string[];
   metricDataForGroup?: QueryMapForPanel[];
   chaosData?: Array<GraphMetric>;
   centralBrushPosition?: BrushPostitionProps;
@@ -167,6 +165,7 @@ export interface SelectedDashboardInformation {
   applicationMetadataMap: ApplicationMetadata[];
   dashboardListForAgent: ListDashboardResponse[];
   metaData: ListDashboardResponse | undefined;
+  closedAreaQueryIDs: string[];
   dashboardKey: string;
   panelNameAndIDList: PanelNameAndID[];
   dataSourceURL: string;

@@ -6,6 +6,7 @@ import TextPopOver from '../../../../components/TextPopOver';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
 import {
   CHAOS_EXPERIMENT_VERDICT_FAIL,
+  CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT,
   CHAOS_EXPERIMENT_VERDICT_PASS,
 } from '../../../../pages/ApplicationDashboard/constants';
 import useStyles from './styles';
@@ -67,10 +68,12 @@ const TableData: React.FC<TableDataProps> = ({
               ? classes.pass
               : data.verdict === CHAOS_EXPERIMENT_VERDICT_FAIL
               ? classes.fail
+              : data.verdict === CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT
+              ? classes.failedToInject
               : classes.awaited
           }`}
         >
-          {!data.injectionFailed ? data.verdict : 'Failed to Inject'}
+          {data.verdict}
         </Typography>
       </StyledTableCell>
     </>

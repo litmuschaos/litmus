@@ -57,12 +57,14 @@ const StyledAccordionDetails = withStyles((theme) => ({
 
 interface ChaosAccordionProps {
   dashboardKey: string;
+  isLoading: boolean;
   chaosEventsToBeShown: ChaosEventDetails[];
-  postEventSelectionRoutine: (selectedEvents: string[]) => void;
+  postEventSelectionRoutine: (selectedEventNames: string[]) => void;
 }
 
 const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
   dashboardKey,
+  isLoading,
   chaosEventsToBeShown,
   postEventSelectionRoutine,
 }) => {
@@ -112,6 +114,7 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
       </AccordionSummary>
       <StyledAccordionDetails className={classes.accordionDetails}>
         <ChaosTable
+          isLoading={isLoading}
           chaosList={chaosEventsToBeShown}
           selectEvents={(selectedEvents: string[]) =>
             postEventSelectionRoutine(selectedEvents)

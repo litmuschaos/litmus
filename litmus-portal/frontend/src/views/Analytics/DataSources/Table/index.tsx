@@ -226,7 +226,7 @@ const DataSourceTable: React.FC = () => {
             handleSearch={(
               event: React.ChangeEvent<{ value: unknown }> | undefined,
               token: string | undefined
-            ) =>
+            ) => {
               setFilter({
                 ...filter,
                 searchTokens: (event !== undefined
@@ -236,27 +236,30 @@ const DataSourceTable: React.FC = () => {
                   .toLowerCase()
                   .split(' ')
                   .filter((s) => s !== ''),
-              })
-            }
+              });
+              setPage(0);
+            }}
             statuses={getStatus(data?.ListDataSource ?? [])}
-            callbackToSetStatus={(status: string) =>
+            callbackToSetStatus={(status: string) => {
               setFilter({
                 ...filter,
                 selectedStatus: status,
-              })
-            }
+              });
+              setPage(0);
+            }}
             callbackToSetRange={(
               selectedStartDate: string,
               selectedEndDate: string
-            ) =>
+            ) => {
               setFilter({
                 ...filter,
                 range: {
                   startDate: selectedStartDate,
                   endDate: selectedEndDate,
                 },
-              })
-            }
+              });
+              setPage(0);
+            }}
           />
         </section>
       </Paper>

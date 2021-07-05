@@ -39,7 +39,9 @@ import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
 import {
   ChaosEventDataParserForPrometheus,
+  DashboardMetricDataParserForPrometheus,
   generatePromQueries,
+  getDashboardQueryMap,
 } from '../../utils/promUtils';
 import ChaosAccordion from '../../views/Analytics/ApplicationDashboard/ChaosAccordion';
 import DataSourceInactiveModal from '../../views/Analytics/ApplicationDashboard/DataSourceInactiveModal';
@@ -65,6 +67,7 @@ const DashboardPage: React.FC = () => {
   const { palette } = useTheme();
   const classes = useStyles();
   const { t } = useTranslation();
+  const lineGraph: string[] = palette.graph.line;
   const areaGraph: string[] = palette.graph.area;
   const projectID = getProjectID();
   const selectedDashboard = useSelector(
@@ -86,6 +89,7 @@ const DashboardPage: React.FC = () => {
       applicationMetadataMap: [],
       dashboardListForAgent: [],
       metaData: undefined,
+      closedAreaQueryIDs: [],
       dashboardKey: 'Default',
       panelNameAndIDList: [],
       dataSourceURL: '',
@@ -111,12 +115,14 @@ const DashboardPage: React.FC = () => {
   const [centralAllowGraphUpdate, setCentralAllowGraphUpdate] =
     React.useState(true);
   const [isInfoOpen, setIsInfoOpen] = React.useState<Boolean>(false);
-  const [isLoading, setIsLoading] = React.useState<Boolean>(true);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [selectedPanels, setSelectedPanels] = React.useState<string[]>([]);
   const [selectedApplications, setSelectedApplications] = React.useState<
     string[]
   >([]);
-  const [reFetch, setReFetch] = React.useState<Boolean>(false);
+  const [selectedEvents, setSelectedEvents] = React.useState<string[]>([]);
+  const [reFetch, setReFetch] = React.useState<boolean>(false);
+  const [reFetching, setReFetching] = React.useState<boolean>(false);
   const [promData, setPromData] = React.useState<PromData>({
     chaosEventData: {
       chaosData: [],
@@ -148,12 +154,16 @@ const DashboardPage: React.FC = () => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const { error: errorFetchingDashboardQueries } = useSubscription<
-    ViewDashboard,
-    ViewDashboardInput
-  >(VIEW_DASHBOARD, {
+  const {
+    data: dashboardQueries,
+    loading: loadingDashboardQueries,
+    error: errorFetchingDashboardQueries,
+  } = useSubscription<ViewDashboard, ViewDashboardInput>(VIEW_DASHBOARD, {
     variables: {
       prometheusQueries: selectedDashboardInformation.promQueries,
+      queryMap: getDashboardQueryMap(
+        selectedDashboardInformation.metaData?.panel_groups ?? []
+      ),
       dataVarMap: {
         url: selectedDashboardInformation.dataSourceURL,
         start: selectedDashboardInformation.range.startDate,
@@ -166,12 +176,14 @@ const DashboardPage: React.FC = () => {
       loadingDashboards ||
       errorFetchingDashboards !== undefined ||
       selectedDashboardInformation.promQueries.length === 0 ||
+      selectedDashboardInformation.metaData?.panel_groups.length === 0 ||
       selectedDashboardInformation.dataSourceURL === '' ||
       (selectedDashboardInformation.range.startDate === '' &&
         selectedDashboardInformation.range.endDate === '' &&
         selectedDashboardInformation.refreshInterval === 0),
     shouldResubscribe: () => {
       if (reFetch) {
+        setReFetching(true);
         setReFetch(false);
         return true;
       }
@@ -179,45 +191,27 @@ const DashboardPage: React.FC = () => {
     },
     fetchPolicy: 'no-cache',
     onSubscriptionData: (subscriptionUpdate) => {
-      const prometheusResponse =
-        subscriptionUpdate.subscriptionData.data?.viewDashboard;
-      const metricDataFromPrometheus =
-        prometheusResponse?.metricsResponse ?? [];
-      const mappedData: QueryMapForPanelGroup[] = [];
-      if (
-        selectedDashboardInformation.metaData &&
-        selectedDashboardInformation.metaData.panel_groups.length > 0
-      ) {
-        selectedDashboardInformation.metaData.panel_groups.forEach(
-          (panelGroup, index) => {
-            mappedData.push({
-              panelGroupID: panelGroup.panel_group_id,
-              metricDataForGroup: [],
-            });
-            panelGroup.panels.forEach((panel) => {
-              const queryIDs = panel.prom_queries.map((query) => query.queryid);
-              const metricDataForPanel = metricDataFromPrometheus.filter(
-                (data) => queryIDs.includes(data.queryid)
-              );
-              mappedData[index].metricDataForGroup.push({
-                panelID: panel.panel_id,
-                metricDataForPanel,
-              });
-            });
-          }
-        );
-      }
       setPromData({
         chaosEventData: ChaosEventDataParserForPrometheus(
-          prometheusResponse?.annotationsResponse ?? [],
-          areaGraph
+          subscriptionUpdate.subscriptionData.data?.viewDashboard
+            ?.annotationsResponse ?? [],
+          areaGraph,
+          selectedEvents
         ),
-        panelGroupQueryMap: mappedData,
+        panelGroupQueryMap: DashboardMetricDataParserForPrometheus(
+          subscriptionUpdate.subscriptionData.data?.viewDashboard
+            ?.dashboardMetricsResponse ?? [],
+          lineGraph,
+          areaGraph,
+          selectedDashboardInformation.closedAreaQueryIDs,
+          selectedApplications
+        ),
       });
+      if (reFetching) {
+        setReFetching(false);
+      }
     },
   });
-
-  const postEventSelectionRoutine = (selectedEvents: string[]) => {};
 
   useEffect(() => {
     if (
@@ -251,6 +245,11 @@ const DashboardPage: React.FC = () => {
               ? dashboards.ListDashboard
               : [],
             metaData: selectedDashboard,
+            closedAreaQueryIDs: selectedDashboard.panel_groups
+              .flatMap((panelGroup) => panelGroup.panels)
+              .flatMap((panel) => panel.prom_queries)
+              .filter((query) => query.close_area)
+              .map((query) => query.queryid),
             dashboardKey: selectedDashboardInformation.id,
             panelNameAndIDList: selectedPanelNameAndIDList,
             name: selectedDashboard.db_name,
@@ -278,6 +277,14 @@ const DashboardPage: React.FC = () => {
             selectedPanelNameAndIDList.map((panel: PanelNameAndID) => panel.id)
           );
           setSelectedApplications([]);
+          setSelectedEvents([]);
+          setPromData({
+            chaosEventData: {
+              chaosData: [],
+              chaosEventDetails: [],
+            },
+            panelGroupQueryMap: [],
+          });
           if (selectedDashboard.ds_health_status !== ACTIVE) {
             setDataSourceStatus(selectedDashboard.ds_health_status);
           }
@@ -286,6 +293,41 @@ const DashboardPage: React.FC = () => {
       }
     }
   }, [dashboards, selectedDashboardInformation.id]);
+
+  useEffect(() => {
+    if (
+      (dashboardQueries?.viewDashboard?.dashboardMetricsResponse ?? []).length >
+        0 &&
+      selectedApplications.length > 0
+    ) {
+      setPromData({
+        ...promData,
+        panelGroupQueryMap: DashboardMetricDataParserForPrometheus(
+          dashboardQueries?.viewDashboard?.dashboardMetricsResponse ?? [],
+          lineGraph,
+          areaGraph,
+          selectedDashboardInformation.closedAreaQueryIDs,
+          selectedApplications
+        ),
+      });
+    }
+  }, [selectedApplications]);
+
+  useEffect(() => {
+    if (
+      (dashboardQueries?.viewDashboard?.annotationsResponse ?? []).length > 0 &&
+      selectedEvents.length > 0
+    ) {
+      setPromData({
+        ...promData,
+        chaosEventData: ChaosEventDataParserForPrometheus(
+          dashboardQueries?.viewDashboard?.annotationsResponse ?? [],
+          areaGraph,
+          selectedEvents
+        ),
+      });
+    }
+  }, [selectedEvents]);
 
   useEffect(() => {
     if (
@@ -304,10 +346,10 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Scaffold>
-      {errorFetchingDashboards ||
-        selectedDashboard.selectedDashboardID === '' ||
-        (selectedDashboard.selectedAgentID === '' && <BackButton />)}
       <div className={classes.rootContainer}>
+        {errorFetchingDashboards ||
+          selectedDashboard.selectedDashboardID === '' ||
+          (selectedDashboard.selectedAgentID === '' && <BackButton />)}
         {isLoading || loadingDashboards ? (
           <div className={classes.center}>
             <Loader />
@@ -352,7 +394,7 @@ const DashboardPage: React.FC = () => {
 
             <div className={classes.controlsDiv}>
               <Typography variant="h4" style={{ fontWeight: 500 }}>
-                {selectedDashboardInformation.agentName} /{' '}
+                {`${selectedDashboardInformation.agentName} / `}
                 <Typography
                   variant="h4"
                   display="inline"
@@ -395,6 +437,9 @@ const DashboardPage: React.FC = () => {
                         <MenuItem
                           key={`${data.db_id}-monitoringDashboard`}
                           value={data.db_id}
+                          selected={
+                            data.db_id === selectedDashboardInformation.id
+                          }
                           onClick={() => {
                             setSelectedDashboardInformation({
                               ...selectedDashboardInformation,
@@ -466,6 +511,7 @@ const DashboardPage: React.FC = () => {
                     selectedDashboardInformation.chaosVerdictQueryTemplate
                   ),
                 });
+                setSelectedEvents([]);
                 setReFetch(true);
               }}
               handleRefreshRateChange={(refreshRate: number) => {
@@ -484,13 +530,31 @@ const DashboardPage: React.FC = () => {
               <div className={classes.chaosTableSection}>
                 <ChaosAccordion
                   dashboardKey={selectedDashboardInformation.dashboardKey}
+                  isLoading={loadingDashboardQueries || reFetching}
                   chaosEventsToBeShown={
                     promData.chaosEventData.chaosEventDetails
                   }
-                  postEventSelectionRoutine={postEventSelectionRoutine}
+                  postEventSelectionRoutine={(selectedEventNames: string[]) =>
+                    setSelectedEvents(selectedEventNames)
+                  }
                 />
               </div>
-              {selectedDashboardInformation.metaData &&
+              {(loadingDashboardQueries ||
+                promData.panelGroupQueryMap.length === 0 ||
+                reFetching) && (
+                <div className={classes.center}>
+                  <Loader />
+                  <Typography className={classes.loading}>
+                    {t(
+                      'analyticsDashboard.monitoringDashboardPage.metricsLoadingText'
+                    )}
+                  </Typography>
+                </div>
+              )}
+              {!loadingDashboardQueries &&
+                promData.panelGroupQueryMap.length > 0 &&
+                !reFetching &&
+                selectedDashboardInformation.metaData &&
                 selectedDashboardInformation.metaData.panel_groups.length > 0 &&
                 selectedDashboardInformation.metaData.panel_groups.map(
                   (panelGroup: PanelGroupResponse, index) => (
@@ -512,7 +576,6 @@ const DashboardPage: React.FC = () => {
                         panel_group_name={panelGroup.panel_group_name}
                         panels={panelGroup.panels}
                         selectedPanels={selectedPanels}
-                        selectedApplications={selectedApplications}
                         metricDataForGroup={
                           promData.panelGroupQueryMap[index]
                             ? promData.panelGroupQueryMap[index]

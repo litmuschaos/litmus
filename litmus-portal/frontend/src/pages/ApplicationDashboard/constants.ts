@@ -2,6 +2,7 @@ export const PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED: string = `bad_data
 export const DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION: string = '1/2';
 export const CHAOS_EXPERIMENT_VERDICT_PASS: string = 'Pass';
 export const CHAOS_EXPERIMENT_VERDICT_FAIL: string = 'Fail';
+export const CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT: string = `Failed to Inject`;
 export const PROMETHEUS_QUERY_RESOLUTION_LIMIT: number = 11000;
 export const MAX_REFRESH_RATE: number = 0;
 export const DEFAULT_REFRESH_RATE: number = 15;

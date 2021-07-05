@@ -4,9 +4,11 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import React from 'react';
 import { Accordion } from '../../../../components/Accordion';
-import { GraphPanelGroupProps } from '../../../../models/dashboardsData';
+import {
+  GraphPanelGroupProps,
+  ParsedMetricPrometheusData,
+} from '../../../../models/dashboardsData';
 import { PanelResponse } from '../../../../models/graphql/dashboardsDetails';
-import { metricsPromResponse } from '../../../../models/graphql/prometheus';
 import { ReactComponent as ExpandAccordion } from '../../../../svg/expandAccordion.svg';
 import { ReactComponent as ShrinkAccordion } from '../../../../svg/shrinkAccordion.svg';
 import DashboardPanel from './Panel';
@@ -17,7 +19,6 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
   panel_group_id,
   panel_group_name,
   selectedPanels,
-  selectedApplications,
   centralBrushPosition,
   handleCentralBrushPosition,
   centralAllowGraphUpdate,
@@ -28,14 +29,17 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
   const classes = useStyles();
   const [open, setOpen] = React.useState<boolean>(true);
 
-  const getPanelMetrics = (panelID: string) => {
-    let filteredMetrics: metricsPromResponse[] = [];
+  const getPanelMetricsData = (panelID: string) => {
+    let filteredMetricsData: ParsedMetricPrometheusData = {
+      seriesData: [],
+      closedAreaData: [],
+    };
     metricDataForGroup?.forEach((panelMetrics) => {
       if (panelMetrics.panelID === panelID) {
-        filteredMetrics = panelMetrics.metricDataForPanel;
+        filteredMetricsData = panelMetrics.metricDataForPanel;
       }
     });
-    return filteredMetrics;
+    return filteredMetricsData;
   };
 
   return (
@@ -74,13 +78,12 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
                   created_at={panel.created_at}
                   panel_name={panel.panel_name}
                   panel_options={panel.panel_options}
-                  prom_queries={panel.prom_queries}
                   y_axis_left={panel.y_axis_left}
                   y_axis_right={panel.y_axis_right}
                   x_axis_down={panel.x_axis_down}
                   unit={panel.unit}
-                  selectedApplications={selectedApplications ?? []}
-                  metricDataForPanel={getPanelMetrics(panel.panel_id)}
+                  prom_queries={panel.prom_queries}
+                  metricDataForPanel={getPanelMetricsData(panel.panel_id)}
                   chaosData={chaosData}
                 />
               ))}

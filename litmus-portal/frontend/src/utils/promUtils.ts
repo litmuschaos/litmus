@@ -6,23 +6,46 @@ import {
   ParsedMetricPrometheusData,
   PromQueryDetails,
   QueryLabelValue,
+  QueryMapForPanelGroup,
   RangeType,
 } from '../models/dashboardsData';
 import { PanelGroupResponse } from '../models/graphql/dashboardsDetails';
 import {
   annotationsPromResponse,
+  metricDataForPanelGroup,
   metricsPromResponse,
   metricsTimeStampValue,
   promQueryInput,
+  queryMapForPanel,
+  queryMapForPanelGroup,
   subData,
 } from '../models/graphql/prometheus';
 import {
+  CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT,
   DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
   DEFAULT_RELATIVE_TIME_RANGE,
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
 } from '../pages/ApplicationDashboard/constants';
 
 const labelMatchOperators = ['==', '!=', '<=', '<', '>=', '>', '=~', '!~', '='];
+
+export const getDashboardQueryMap = (panelGroups: PanelGroupResponse[]) => {
+  const queryMapPanelGroup: queryMapForPanelGroup[] = [];
+  panelGroups.forEach((panelGroup) => {
+    const queryMapPanel: queryMapForPanel[] = [];
+    panelGroup.panels.forEach((panel) => {
+      queryMapPanel.push({
+        panelID: panel.panel_id,
+        queryIDs: panel.prom_queries.map((query) => query.queryid),
+      });
+    });
+    queryMapPanelGroup.push({
+      panelGroupID: panelGroup.panel_group_id,
+      panelQueryMap: queryMapPanel,
+    });
+  });
+  return queryMapPanelGroup;
+};
 
 export const getPromQueryInput = (
   prom_queries: PromQueryDetails[],
@@ -92,65 +115,6 @@ export const generatePromQueries = (
   return promQueries;
 };
 
-export const getValueFromSubDataArray = (array: subData[], key: string) => {
-  let value = '';
-  array.forEach((element) => {
-    if (element.subDataName === key) {
-      value = element.value;
-    }
-  });
-  return value;
-};
-
-export const ChaosEventDataParserForPrometheus = (
-  chaosEventData: annotationsPromResponse[],
-  areaGraph: string[]
-) => {
-  const parsedPrometheusData: ParsedChaosEventPrometheusData = {
-    chaosEventDetails: [],
-    chaosData: [],
-  };
-  chaosEventData.forEach((queryResponse, mainIndex) => {
-    if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
-      queryResponse.legends.forEach((elem, index) => {
-        const baseColor =
-          areaGraph[
-            (mainIndex + (index % areaGraph.length)) % areaGraph.length
-          ];
-        if (queryResponse.tsvs[index]) {
-          parsedPrometheusData.chaosData.push({
-            metricName: elem,
-            data: queryResponse.tsvs[index].map((dataPoint) => ({
-              ...dataPoint,
-            })),
-            baseColor,
-            subData: queryResponse.subDataArray[index],
-          });
-        }
-        parsedPrometheusData.chaosEventDetails.push({
-          id: elem,
-          legendColor: baseColor,
-          chaosResultName: elem,
-          workflow: getValueFromSubDataArray(
-            queryResponse.subDataArray[index],
-            'Workflow'
-          ),
-          engineContext: getValueFromSubDataArray(
-            queryResponse.subDataArray[index],
-            'Engine context'
-          ),
-          verdict: getValueFromSubDataArray(
-            queryResponse.subDataArray[index],
-            'Experiment verdict'
-          ),
-          injectionFailed: !queryResponse.tsvs[index],
-        });
-      });
-    }
-  });
-  return parsedPrometheusData;
-};
-
 export const MetricDataParserForPrometheus = (
   metricData: metricsPromResponse[],
   lineGraph: string[],
@@ -211,6 +175,101 @@ export const MetricDataParserForPrometheus = (
     }
   });
   return parsedPrometheusData;
+};
+
+export const getValueFromSubDataArray = (array: subData[], key: string) => {
+  let value = 'N/A';
+  array.forEach((element) => {
+    if (element.subDataName === key) {
+      value = element.value;
+    }
+  });
+  return value;
+};
+
+export const ChaosEventDataParserForPrometheus = (
+  chaosEventData: annotationsPromResponse[],
+  areaGraph: string[],
+  selectedEvents: string[]
+) => {
+  const selectAll = selectedEvents.length === 0;
+  const parsedPrometheusData: ParsedChaosEventPrometheusData = {
+    chaosEventDetails: [],
+    chaosData: [],
+  };
+  chaosEventData.forEach((queryResponse, mainIndex) => {
+    if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
+      queryResponse.legends.forEach((elem, index) => {
+        const baseColor =
+          areaGraph[
+            (mainIndex + (index % areaGraph.length)) % areaGraph.length
+          ];
+        if (
+          queryResponse.tsvs[index] &&
+          (selectAll || selectedEvents.includes(elem))
+        ) {
+          parsedPrometheusData.chaosData.push({
+            metricName: elem,
+            data: queryResponse.tsvs[index].map((dataPoint) => ({
+              ...dataPoint,
+            })),
+            baseColor,
+            subData: queryResponse.subDataArray[index],
+          });
+        }
+        parsedPrometheusData.chaosEventDetails.push({
+          id: elem,
+          legendColor: baseColor,
+          chaosResultName: elem,
+          workflow: getValueFromSubDataArray(
+            queryResponse.subDataArray[index],
+            'Workflow'
+          ),
+          engineContext: getValueFromSubDataArray(
+            queryResponse.subDataArray[index],
+            'Engine context'
+          ),
+          verdict: queryResponse.tsvs[index]
+            ? getValueFromSubDataArray(
+                queryResponse.subDataArray[index],
+                'Experiment verdict'
+              )
+            : CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT,
+          injectionFailed: !queryResponse.tsvs[index],
+        });
+      });
+    }
+  });
+  return parsedPrometheusData;
+};
+
+export const DashboardMetricDataParserForPrometheus = (
+  metricData: metricDataForPanelGroup[],
+  lineGraph: string[],
+  areaGraph: string[],
+  closedAreaQueryIDs: string[],
+  selectedApplications?: string[]
+) => {
+  const mappedData: QueryMapForPanelGroup[] = [];
+  metricData.forEach((panelGroupData, panelGroupIndex) => {
+    mappedData.push({
+      panelGroupID: panelGroupData.panelGroupID,
+      metricDataForGroup: [],
+    });
+    panelGroupData.panelGroupMetricsResponse.forEach((panelData) => {
+      mappedData[panelGroupIndex].metricDataForGroup.push({
+        panelID: panelData.panelID,
+        metricDataForPanel: MetricDataParserForPrometheus(
+          panelData.PanelMetricsResponse,
+          lineGraph,
+          areaGraph,
+          closedAreaQueryIDs,
+          selectedApplications
+        ),
+      });
+    });
+  });
+  return mappedData;
 };
 
 export const replaceBetween = (

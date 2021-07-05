@@ -10,17 +10,31 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import Loader from '../../../../components/Loader';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
 import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
+import TableToolBar from './TableToolbar';
 
 interface ChaosTableProps {
+  isLoading: boolean;
   chaosList: ChaosEventDetails[];
   selectEvents: (selectedEvents: string[]) => void;
 }
 
-const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
+interface Filter {
+  selectedWorkflow: string;
+  selectedContext: string;
+  selectedVerdict: string;
+  searchTokens: string[];
+}
+
+const ChaosTable: React.FC<ChaosTableProps> = ({
+  isLoading,
+  chaosList,
+  selectEvents,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [page, setPage] = React.useState(0);
@@ -29,6 +43,12 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, chaosList.length - page * rowsPerPage);
+  const [filter, setFilter] = React.useState<Filter>({
+    selectedWorkflow: 'All',
+    selectedContext: 'All',
+    selectedVerdict: 'All',
+    searchTokens: [''],
+  });
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -76,14 +96,95 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
     }
   };
 
+  const payload: ChaosEventDetails[] = chaosList
+    .filter((chaosEvent: ChaosEventDetails) => {
+      return filter.searchTokens.every((s: string) =>
+        chaosEvent.chaosResultName.toLowerCase().includes(s)
+      );
+    })
+    .filter((data) => {
+      return filter.selectedWorkflow === 'All'
+        ? true
+        : data.workflow === filter.selectedWorkflow;
+    })
+    .filter((data) => {
+      return filter.selectedContext === 'All'
+        ? true
+        : data.engineContext === filter.selectedContext;
+    })
+    .filter((data) => {
+      return filter.selectedVerdict === 'All'
+        ? true
+        : data.verdict === filter.selectedVerdict;
+    });
+
   return (
     <div className={classes.root} id="chaos">
       <div>
         <section className="table section">
           <Paper className={classes.tableBody}>
+            <TableToolBar
+              searchToken={filter.searchTokens[0]}
+              handleSearch={(
+                event: React.ChangeEvent<{ value: unknown }> | undefined,
+                token: string | undefined
+              ) => {
+                setFilter({
+                  ...filter,
+                  searchTokens: (event !== undefined
+                    ? ((event.target as HTMLInputElement).value as string)
+                    : token || ''
+                  )
+                    .toLowerCase()
+                    .split(' ')
+                    .filter((s) => s !== ''),
+                });
+                setPage(0);
+              }}
+              workflows={[
+                ...Array.from(
+                  new Set(chaosList.map((chaosEvent) => chaosEvent.workflow))
+                ),
+              ]}
+              contexts={[
+                ...Array.from(
+                  new Set(
+                    chaosList
+                      .map((chaosEvent) => chaosEvent.engineContext)
+                      .filter((context) => context !== '')
+                  )
+                ),
+              ]}
+              verdicts={[
+                ...Array.from(
+                  new Set(chaosList.map((chaosEvent) => chaosEvent.verdict))
+                ),
+              ]}
+              callbackToSetWorkflow={(workflow: string) => {
+                setFilter({
+                  ...filter,
+                  selectedWorkflow: workflow,
+                });
+                setPage(0);
+              }}
+              callbackToSetContext={(context: string) => {
+                setFilter({
+                  ...filter,
+                  selectedContext: context,
+                });
+                setPage(0);
+              }}
+              callbackToSetVerdict={(verdict: string) => {
+                setFilter({
+                  ...filter,
+                  selectedVerdict: verdict,
+                });
+                setPage(0);
+              }}
+            />
             <TableContainer
               className={`${classes.tableMain} ${
-                !chaosList.length ? classes.empty : ''
+                isLoading || !chaosList.length ? classes.empty : ''
               }`}
             >
               <Table aria-label="simple table">
@@ -95,8 +196,8 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                   }
                 />
                 <TableBody>
-                  {chaosList.length ? (
-                    chaosList
+                  {!isLoading && chaosList.length ? (
+                    payload
                       .slice(0)
                       .slice(
                         page * rowsPerPage,
@@ -116,9 +217,6 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                             tabIndex={-1}
                             key={data.id}
                             selected={isItemSelected && !data.injectionFailed}
-                            className={
-                              data.injectionFailed ? classes.disabledRow : ''
-                            }
                           >
                             <TableData
                               data={data}
@@ -128,6 +226,21 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                           </TableRow>
                         );
                       })
+                  ) : isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={5}>
+                        <div
+                          className={`${classes.noRecords} ${classes.loading}`}
+                        >
+                          <Loader />
+                          <Typography align="center">
+                            {t(
+                              'analyticsDashboard.monitoringDashboardPage.chaosTable.loading'
+                            )}
+                          </Typography>
+                        </div>
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     <TableRow>
                       <TableCell colSpan={5}>
@@ -149,7 +262,7 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                       </TableCell>
                     </TableRow>
                   )}
-                  {chaosList.length > 0 && emptyRows > 0 && (
+                  {!isLoading && chaosList.length > 0 && emptyRows > 0 && (
                     <TableRow style={{ height: 75 * emptyRows }}>
                       <TableCell colSpan={5} />
                     </TableRow>
@@ -157,11 +270,11 @@ const ChaosTable: React.FC<ChaosTableProps> = ({ chaosList, selectEvents }) => {
                 </TableBody>
               </Table>
             </TableContainer>
-            {chaosList.length > 0 && (
+            {!isLoading && chaosList.length > 0 && (
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 component="div"
-                count={chaosList.length}
+                count={payload.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}

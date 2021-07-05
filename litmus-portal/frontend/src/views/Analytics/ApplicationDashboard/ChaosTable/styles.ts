@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Theme } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableMain: {
+    borderTop: `1px solid ${theme.palette.border.main}`,
     background: theme.palette.background.paper,
     maxHeight: '30rem',
     '&::-webkit-scrollbar': {
@@ -41,10 +42,6 @@ const useStyles = makeStyles((theme) => ({
         borderBottom: 0,
       },
     },
-  },
-
-  disabledRow: {
-    background: theme.palette.disabledBackground,
   },
 
   tableBody: {
@@ -102,6 +99,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
 
+  loading: {
+    flexDirection: 'column',
+    paddingBottom: theme.spacing(7.5),
+  },
+
   cloudIcon: {
     height: '5rem',
     width: '5rem',
@@ -123,6 +125,11 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
 
+  failedToInject: {
+    color: theme.palette.warning.main,
+    marginRight: theme.spacing(1),
+  },
+
   awaited: {
     color: theme.palette.text.hint,
     marginRight: theme.spacing(1),
@@ -133,6 +140,34 @@ const useStyles = makeStyles((theme) => ({
     width: '0.5rem',
     borderRadius: '50%',
     margin: 'auto 0',
+  },
+
+  headerSection: {
+    width: '100%',
+    display: 'flex',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    overflowX: 'auto',
+    height: '6rem',
+    backgroundColor: theme.palette.background.paper,
+  },
+  search: {
+    marginLeft: theme.spacing(8.5),
+  },
+  selectText: {
+    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(0.4),
+  },
+  // Form Select Properties
+  formControl: {
+    margin: theme.spacing(0.5, 2.5, 0.5, 0.5),
+    height: '2.6rem',
+    minWidth: '9rem',
+  },
+  verdictForm: {
+    marginRight: theme.spacing(3.5),
   },
 
   // select
@@ -151,6 +186,23 @@ const useStyles = makeStyles((theme) => ({
       background: `${theme.palette.cards.highlight} !important`,
     },
   },
+}));
+
+export const useOutlinedInputStyles = makeStyles((theme: Theme) => ({
+  root: {
+    '& $notchedOutline': {
+      borderColor: theme.palette.border.main,
+    },
+    '&:hover $notchedOutline': {
+      borderColor: theme.palette.highlight,
+    },
+    '&$focused $notchedOutline': {
+      borderColor: theme.palette.highlight,
+    },
+    height: '2.75rem',
+  },
+  focused: {},
+  notchedOutline: {},
 }));
 
 export default useStyles;

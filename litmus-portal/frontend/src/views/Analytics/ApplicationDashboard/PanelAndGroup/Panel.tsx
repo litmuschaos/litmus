@@ -1,14 +1,10 @@
 import { IconButton, Typography } from '@material-ui/core';
-import useTheme from '@material-ui/core/styles/useTheme';
 import { ButtonOutlined, LineAreaGraph, Modal } from 'litmus-ui';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { ToolTip } from '../../../../components/ToolTip';
-import {
-  GraphPanelProps,
-  ParsedMetricPrometheusData,
-} from '../../../../models/dashboardsData';
+import { GraphPanelProps } from '../../../../models/dashboardsData';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { history } from '../../../../redux/configureStore';
@@ -21,18 +17,15 @@ import {
   getProjectID,
   getProjectRole,
 } from '../../../../utils/getSearchParams';
-import { MetricDataParserForPrometheus } from '../../../../utils/promUtils';
 import useStyles from './styles';
 
 const DashboardPanel: React.FC<GraphPanelProps> = ({
   panel_id,
   panel_name,
-  prom_queries,
   y_axis_left,
   panel_options,
   unit,
   className,
-  selectedApplications,
   centralBrushPosition,
   handleCentralBrushPosition,
   centralAllowGraphUpdate,
@@ -40,10 +33,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
   metricDataForPanel,
   chaosData,
 }) => {
-  const { palette } = useTheme();
   const classes = useStyles();
-  const lineGraph: string[] = palette.graph.line;
-  const areaGraph: string[] = palette.graph.area;
   const { t } = useTranslation();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
@@ -51,51 +41,8 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
-  const closedAreaQueryIDs = prom_queries
-    .filter((query) => query.close_area)
-    .map((query) => query.queryid);
   const [popOut, setPopOut] = useState(false);
   const [viewEventMetric, setViewEventMetric] = useState(false);
-  const [graphData, setGraphData] = React.useState<ParsedMetricPrometheusData>({
-    seriesData: [],
-    closedAreaData: [],
-  });
-
-  useEffect(
-    () => () => {
-      if (metricDataForPanel && metricDataForPanel.length > 0) {
-        setGraphData(
-          MetricDataParserForPrometheus(
-            metricDataForPanel,
-            lineGraph,
-            areaGraph,
-            closedAreaQueryIDs,
-            selectedApplications
-          )
-        );
-      }
-    },
-    [metricDataForPanel]
-  );
-
-  useEffect(() => {
-    if (
-      metricDataForPanel &&
-      metricDataForPanel.length > 0 &&
-      selectedApplications &&
-      selectedApplications.length > 0
-    ) {
-      setGraphData(
-        MetricDataParserForPrometheus(
-          metricDataForPanel,
-          lineGraph,
-          areaGraph,
-          closedAreaQueryIDs,
-          selectedApplications
-        )
-      );
-    }
-  }, [selectedApplications]);
 
   return (
     <div
@@ -178,8 +125,8 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
             <Typography className={classes.title}>{panel_name}</Typography>
             <LineAreaGraph
               legendTableHeight={120}
-              openSeries={graphData.seriesData}
-              closedSeries={graphData.closedAreaData}
+              openSeries={metricDataForPanel?.seriesData}
+              closedSeries={metricDataForPanel?.closedAreaData}
               eventSeries={chaosData}
               showGrid={panel_options.grids}
               showPoints={panel_options.points}
@@ -203,8 +150,8 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
           centralBrushPosition={centralBrushPosition}
           handleCentralBrushPosition={handleCentralBrushPosition}
           legendTableHeight={120}
-          openSeries={graphData.seriesData}
-          closedSeries={graphData.closedAreaData}
+          openSeries={metricDataForPanel?.seriesData}
+          closedSeries={metricDataForPanel?.closedAreaData}
           eventSeries={chaosData}
           showGrid={panel_options.grids}
           showPoints={panel_options.points}

@@ -24,12 +24,14 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     <TableHead>
       <TableRow className={classes.tableHead}>
         <StyledTableCell padding="checkbox" className={classes.checkbox}>
-          <CheckBox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all desserts' }}
-          />
+          {rowCount > 0 && (
+            <CheckBox
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{ 'aria-label': 'select all desserts' }}
+            />
+          )}
         </StyledTableCell>
         <StyledTableCell className={classes.headSpacing}>
           <div className={classes.nameHead}>

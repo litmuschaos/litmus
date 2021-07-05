@@ -302,7 +302,7 @@ const DashboardTable: React.FC = () => {
             handleSearch={(
               event: React.ChangeEvent<{ value: unknown }> | undefined,
               token: string | undefined
-            ) =>
+            ) => {
               setFilter({
                 ...filter,
                 searchTokens: (event !== undefined
@@ -312,34 +312,38 @@ const DashboardTable: React.FC = () => {
                   .toLowerCase()
                   .split(' ')
                   .filter((s) => s !== ''),
-              })
-            }
+              });
+              setPage(0);
+            }}
             dashboardTypes={getDashboardType(data?.ListDashboard ?? [])}
             agentNames={getAgentName(data?.ListDashboard ?? [])}
-            callbackToSetDashboardType={(dashboardType: string) =>
+            callbackToSetDashboardType={(dashboardType: string) => {
               setFilter({
                 ...filter,
                 selectedDashboardType: dashboardType,
-              })
-            }
-            callbackToSetAgentName={(agentName: string) =>
+              });
+              setPage(0);
+            }}
+            callbackToSetAgentName={(agentName: string) => {
               setFilter({
                 ...filter,
                 selectedAgentName: agentName,
-              })
-            }
+              });
+              setPage(0);
+            }}
             callbackToSetRange={(
               selectedStartDate: string,
               selectedEndDate: string
-            ) =>
+            ) => {
               setFilter({
                 ...filter,
                 range: {
                   startDate: selectedStartDate,
                   endDate: selectedEndDate,
                 },
-              })
-            }
+              });
+              setPage(0);
+            }}
           />
         </section>
       </Paper>

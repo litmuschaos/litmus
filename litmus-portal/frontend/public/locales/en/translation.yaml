@@ -188,6 +188,7 @@ analyticsDashboard:
   overview: Overview
   monitoringDashboardPage:
     loadingText: Loading application dashboard ...
+    metricsLoadingText: Fetching metrics ...
     errorText: Error while loading the application dashboard
     tryAgain: Try again
     goBack: Go back
@@ -236,6 +237,9 @@ analyticsDashboard:
       noRecords: No chaos happened during the interval
       showTable: Show Chaos during this interval
       hideTable: Hide Chaos during this interval
+      search: Search
+      all: All
+      loading: Fetching chaos injection details ...
     dashboardCloneModal:
       heading: Clone the application dashboard
       cancel: Cancel
