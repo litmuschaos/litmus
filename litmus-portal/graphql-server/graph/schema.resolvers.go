@@ -425,6 +425,10 @@ func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]
 	return analyticsHandler.QueryListDashboard(projectID)
 }
 
+func (r *queryResolver) PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error) {
+	return analyticsHandler.GetPortalDashboardData(projectID, hubName)
+}
+
 func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
 	return gitOpsHandler.GetGitOpsDetailsHandler(ctx, projectID)
 }

@@ -437,6 +437,11 @@ type PodLogResponse struct {
 	Log           string `json:"log"`
 }
 
+type PortalDashboardData struct {
+	Name          string `json:"name"`
+	DashboardData string `json:"dashboard_data"`
+}
+
 type Project struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`

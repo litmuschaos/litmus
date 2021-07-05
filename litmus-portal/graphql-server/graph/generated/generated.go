@@ -340,6 +340,11 @@ type ComplexityRoot struct {
 		WorkflowRunID func(childComplexity int) int
 	}
 
+	PortalDashboardData struct {
+		DashboardData func(childComplexity int) int
+		Name          func(childComplexity int) int
+	}
+
 	Project struct {
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
@@ -388,6 +393,7 @@ type ComplexityRoot struct {
 		ListManifestTemplate        func(childComplexity int, projectID string) int
 		ListProjects                func(childComplexity int) int
 		ListWorkflow                func(childComplexity int, workflowInput model.ListWorkflowsInput) int
+		PortalDashboardData         func(childComplexity int, projectID string, hubName string) int
 		UsageQuery                  func(childComplexity int, query model.UsageQuery) int
 		Users                       func(childComplexity int) int
 	}
@@ -750,6 +756,7 @@ type QueryResolver interface {
 	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
 	GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error)
 	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardResponse, error)
+	PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
 	GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error)
@@ -2411,6 +2418,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PodLogResponse.WorkflowRunID(childComplexity), true
 
+	case "PortalDashboardData.dashboard_data":
+		if e.complexity.PortalDashboardData.DashboardData == nil {
+			break
+		}
+
+		return e.complexity.PortalDashboardData.DashboardData(childComplexity), true
+
+	case "PortalDashboardData.name":
+		if e.complexity.PortalDashboardData.Name == nil {
+			break
+		}
+
+		return e.complexity.PortalDashboardData.Name(childComplexity), true
+
 	case "Project.created_at":
 		if e.complexity.Project.CreatedAt == nil {
 			break
@@ -2796,6 +2817,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListWorkflow(childComplexity, args["workflowInput"].(model.ListWorkflowsInput)), true
+
+	case "Query.PortalDashboardData":
+		if e.complexity.Query.PortalDashboardData == nil {
+			break
+		}
+
+		args, err := ec.field_Query_PortalDashboardData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PortalDashboardData(childComplexity, args["project_id"].(string), args["hub_name"].(string)), true
 
 	case "Query.UsageQuery":
 		if e.complexity.Query.UsageQuery == nil {
@@ -4543,7 +4576,11 @@ type WorkflowRunStatsResponse {
   workflow_run_succeeded_percentage: Float!
   workflow_run_failed_percentage: Float!
 }
-`, BuiltIn: false},
+
+type PortalDashboardData {
+    name: String!
+    dashboard_data: String!
+}`, BuiltIn: false},
 	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     image_registry_name: String!
     image_repo_name: String!
@@ -5087,6 +5124,8 @@ type Query {
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
   ListDashboard(project_id: String!): [listDashboardResponse] @authorized
+
+  PortalDashboardData (project_id: String!, hub_name: String!) : [PortalDashboardData!]! @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -6311,6 +6350,28 @@ func (ec *executionContext) field_Query_ListWorkflow_args(ctx context.Context, r
 		}
 	}
 	args["workflowInput"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_PortalDashboardData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["project_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["project_id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["hub_name"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["hub_name"] = arg1
 	return args, nil
 }
 
@@ -14465,6 +14526,74 @@ func (ec *executionContext) _PodLogResponse_log(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PortalDashboardData_name(ctx context.Context, field graphql.CollectedField, obj *model.PortalDashboardData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PortalDashboardData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortalDashboardData_dashboard_data(ctx context.Context, field graphql.CollectedField, obj *model.PortalDashboardData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PortalDashboardData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DashboardData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Project_id(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16106,6 +16235,67 @@ func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field grap
 	res := resTmp.([]*model.ListDashboardResponse)
 	fc.Result = res
 	return ec.marshalOlistDashboardResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_PortalDashboardData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_PortalDashboardData_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().PortalDashboardData(rctx, args["project_id"].(string), args["hub_name"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.PortalDashboardData); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PortalDashboardData`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.PortalDashboardData)
+	fc.Result = res
+	return ec.marshalNPortalDashboardData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardDataᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getGitOpsDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -27555,6 +27745,38 @@ func (ec *executionContext) _PodLogResponse(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var portalDashboardDataImplementors = []string{"PortalDashboardData"}
+
+func (ec *executionContext) _PortalDashboardData(ctx context.Context, sel ast.SelectionSet, obj *model.PortalDashboardData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, portalDashboardDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PortalDashboardData")
+		case "name":
+			out.Values[i] = ec._PortalDashboardData_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "dashboard_data":
+			out.Values[i] = ec._PortalDashboardData_dashboard_data(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var projectImplementors = []string{"Project"}
 
 func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, obj *model.Project) graphql.Marshaler {
@@ -27987,6 +28209,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_ListDashboard(ctx, field)
+				return res
+			})
+		case "PortalDashboardData":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_PortalDashboardData(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "getGitOpsDetails":
@@ -30763,6 +30999,57 @@ func (ec *executionContext) marshalNPodLogResponse2ᚖgithubᚗcomᚋlitmuschaos
 		return graphql.Null
 	}
 	return ec._PodLogResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPortalDashboardData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardData(ctx context.Context, sel ast.SelectionSet, v model.PortalDashboardData) graphql.Marshaler {
+	return ec._PortalDashboardData(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPortalDashboardData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardDataᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PortalDashboardData) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPortalDashboardData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNPortalDashboardData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardData(ctx context.Context, sel ast.SelectionSet, v *model.PortalDashboardData) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PortalDashboardData(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNProject2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v model.Project) graphql.Marshaler {

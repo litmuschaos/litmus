@@ -303,3 +303,8 @@ type WorkflowRunStatsResponse {
   workflow_run_succeeded_percentage: Float!
   workflow_run_failed_percentage: Float!
 }
+
+type PortalDashboardData {
+    name: String!
+    dashboard_data: String!
+}
