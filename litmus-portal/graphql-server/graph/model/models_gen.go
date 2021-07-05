@@ -737,6 +737,11 @@ type CreateDBInput struct {
 	RefreshRate               string                 `json:"refresh_rate"`
 }
 
+type DashboardPromResponse struct {
+	DashboardMetricsResponse []*MetricDataForPanelGroup `json:"dashboardMetricsResponse"`
+	AnnotationsResponse      []*AnnotationsPromResponse `json:"annotationsResponse"`
+}
+
 type DataVars struct {
 	URL             string `json:"url"`
 	Start           string `json:"start"`
@@ -802,6 +807,16 @@ type ListDashboardResponse struct {
 	ClusterID                 string                         `json:"cluster_id"`
 	CreatedAt                 *string                        `json:"created_at"`
 	UpdatedAt                 *string                        `json:"updated_at"`
+}
+
+type MetricDataForPanel struct {
+	PanelID              string                 `json:"panelID"`
+	PanelMetricsResponse []*MetricsPromResponse `json:"PanelMetricsResponse"`
+}
+
+type MetricDataForPanelGroup struct {
+	PanelGroupID              string                `json:"panelGroupID"`
+	PanelGroupMetricsResponse []*MetricDataForPanel `json:"panelGroupMetricsResponse"`
 }
 
 type MetricsPromResponse struct {
@@ -918,6 +933,16 @@ type PromSeriesListResponse struct {
 type PromSeriesResponse struct {
 	Series      string        `json:"series"`
 	LabelValues []*LabelValue `json:"labelValues"`
+}
+
+type QueryMapForPanel struct {
+	PanelID  string   `json:"panelID"`
+	QueryIDs []string `json:"queryIDs"`
+}
+
+type QueryMapForPanelGroup struct {
+	PanelGroupID  string              `json:"panelGroupID"`
+	PanelQueryMap []*QueryMapForPanel `json:"panelQueryMap"`
 }
 
 type Resource struct {

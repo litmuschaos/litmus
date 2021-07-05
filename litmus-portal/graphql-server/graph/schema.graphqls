@@ -460,5 +460,5 @@ type Subscription {
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 
-  viewDashboard(promQueries: [promQueryInput!]!, dataVariables: dataVars!): promResponse!
+  viewDashboard(promQueries: [promQueryInput!]!, dashboardQueryMap: [queryMapForPanelGroup!]!, dataVariables: dataVars!): dashboardPromResponse!
 }

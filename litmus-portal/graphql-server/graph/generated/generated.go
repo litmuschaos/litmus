@@ -435,7 +435,7 @@ type ComplexityRoot struct {
 		ClusterEventListener  func(childComplexity int, projectID string) int
 		GetKubeObject         func(childComplexity int, kubeObjectRequest model.KubeObjectRequest) int
 		GetPodLog             func(childComplexity int, podDetails model.PodLogRequest) int
-		ViewDashboard         func(childComplexity int, promQueries []*model.PromQueryInput, dataVariables model.DataVars) int
+		ViewDashboard         func(childComplexity int, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) int
 		WorkflowEventListener func(childComplexity int, projectID string) int
 	}
 
@@ -574,6 +574,11 @@ type ComplexityRoot struct {
 		Token       func(childComplexity int) int
 	}
 
+	DashboardPromResponse struct {
+		AnnotationsResponse      func(childComplexity int) int
+		DashboardMetricsResponse func(childComplexity int) int
+	}
+
 	ImageRegistry struct {
 		EnableRegistry    func(childComplexity int) int
 		ImageRegistryName func(childComplexity int) int
@@ -611,6 +616,16 @@ type ComplexityRoot struct {
 		RefreshRate               func(childComplexity int) int
 		StartTime                 func(childComplexity int) int
 		UpdatedAt                 func(childComplexity int) int
+	}
+
+	MetricDataForPanel struct {
+		PanelID              func(childComplexity int) int
+		PanelMetricsResponse func(childComplexity int) int
+	}
+
+	MetricDataForPanelGroup struct {
+		PanelGroupID              func(childComplexity int) int
+		PanelGroupMetricsResponse func(childComplexity int) int
 	}
 
 	MetricsPromResponse struct {
@@ -773,7 +788,7 @@ type SubscriptionResolver interface {
 	GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error)
 	ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error)
 	GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error)
-	ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dataVariables model.DataVars) (<-chan *model.PromResponse, error)
+	ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error)
 }
 
 type executableSchema struct {
@@ -3088,7 +3103,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.ViewDashboard(childComplexity, args["promQueries"].([]*model.PromQueryInput), args["dataVariables"].(model.DataVars)), true
+		return e.complexity.Subscription.ViewDashboard(childComplexity, args["promQueries"].([]*model.PromQueryInput), args["dashboardQueryMap"].([]*model.QueryMapForPanelGroup), args["dataVariables"].(model.DataVars)), true
 
 	case "Subscription.workflowEventListener":
 		if e.complexity.Subscription.WorkflowEventListener == nil {
@@ -3732,6 +3747,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClusterRegResponse.Token(childComplexity), true
 
+	case "dashboardPromResponse.annotationsResponse":
+		if e.complexity.DashboardPromResponse.AnnotationsResponse == nil {
+			break
+		}
+
+		return e.complexity.DashboardPromResponse.AnnotationsResponse(childComplexity), true
+
+	case "dashboardPromResponse.dashboardMetricsResponse":
+		if e.complexity.DashboardPromResponse.DashboardMetricsResponse == nil {
+			break
+		}
+
+		return e.complexity.DashboardPromResponse.DashboardMetricsResponse(childComplexity), true
+
 	case "imageRegistry.enable_registry":
 		if e.complexity.ImageRegistry.EnableRegistry == nil {
 			break
@@ -3941,6 +3970,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListDashboardResponse.UpdatedAt(childComplexity), true
+
+	case "metricDataForPanel.panelID":
+		if e.complexity.MetricDataForPanel.PanelID == nil {
+			break
+		}
+
+		return e.complexity.MetricDataForPanel.PanelID(childComplexity), true
+
+	case "metricDataForPanel.PanelMetricsResponse":
+		if e.complexity.MetricDataForPanel.PanelMetricsResponse == nil {
+			break
+		}
+
+		return e.complexity.MetricDataForPanel.PanelMetricsResponse(childComplexity), true
+
+	case "metricDataForPanelGroup.panelGroupID":
+		if e.complexity.MetricDataForPanelGroup.PanelGroupID == nil {
+			break
+		}
+
+		return e.complexity.MetricDataForPanelGroup.PanelGroupID(childComplexity), true
+
+	case "metricDataForPanelGroup.panelGroupMetricsResponse":
+		if e.complexity.MetricDataForPanelGroup.PanelGroupMetricsResponse == nil {
+			break
+		}
+
+		return e.complexity.MetricDataForPanelGroup.PanelGroupMetricsResponse(childComplexity), true
 
 	case "metricsPromResponse.legends":
 		if e.complexity.MetricsPromResponse.Legends == nil {
@@ -4445,6 +4502,16 @@ input promQueryInput {
   minstep: Int!
 }
 
+input queryMapForPanel {
+  panelID: String!
+  queryIDs: [String!]!
+}
+
+input queryMapForPanelGroup {
+  panelGroupID: String!
+  panelQueryMap: [queryMapForPanel!]!
+}
+
 input dataVars {
   url: String!
   start: String!
@@ -4484,6 +4551,21 @@ type annotationsTimeStampValue {
 
 type promResponse {
   metricsResponse: [metricsPromResponse]
+  annotationsResponse: [annotationsPromResponse]
+}
+
+type metricDataForPanel {
+  panelID: String!
+  PanelMetricsResponse: [metricsPromResponse]
+}
+
+type metricDataForPanelGroup {
+  panelGroupID: String!
+  panelGroupMetricsResponse: [metricDataForPanel]
+}
+
+type dashboardPromResponse {
+  dashboardMetricsResponse: [metricDataForPanelGroup]
   annotationsResponse: [annotationsPromResponse]
 }
 
@@ -5321,7 +5403,7 @@ type Subscription {
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 
-  viewDashboard(promQueries: [promQueryInput!]!, dataVariables: dataVars!): promResponse!
+  viewDashboard(promQueries: [promQueryInput!]!, dashboardQueryMap: [queryMapForPanelGroup!]!, dataVariables: dataVars!): dashboardPromResponse!
 }
 `, BuiltIn: false},
 	{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
@@ -6733,14 +6815,22 @@ func (ec *executionContext) field_Subscription_viewDashboard_args(ctx context.Co
 		}
 	}
 	args["promQueries"] = arg0
-	var arg1 model.DataVars
-	if tmp, ok := rawArgs["dataVariables"]; ok {
-		arg1, err = ec.unmarshalNdataVars2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDataVars(ctx, tmp)
+	var arg1 []*model.QueryMapForPanelGroup
+	if tmp, ok := rawArgs["dashboardQueryMap"]; ok {
+		arg1, err = ec.unmarshalNqueryMapForPanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroupᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["dataVariables"] = arg1
+	args["dashboardQueryMap"] = arg1
+	var arg2 model.DataVars
+	if tmp, ok := rawArgs["dataVariables"]; ok {
+		arg2, err = ec.unmarshalNdataVars2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDataVars(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dataVariables"] = arg2
 	return args, nil
 }
 
@@ -18012,7 +18102,7 @@ func (ec *executionContext) _Subscription_viewDashboard(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ViewDashboard(rctx, args["promQueries"].([]*model.PromQueryInput), args["dataVariables"].(model.DataVars))
+		return ec.resolvers.Subscription().ViewDashboard(rctx, args["promQueries"].([]*model.PromQueryInput), args["dashboardQueryMap"].([]*model.QueryMapForPanelGroup), args["dataVariables"].(model.DataVars))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18025,7 +18115,7 @@ func (ec *executionContext) _Subscription_viewDashboard(ctx context.Context, fie
 		return nil
 	}
 	return func() graphql.Marshaler {
-		res, ok := <-resTmp.(<-chan *model.PromResponse)
+		res, ok := <-resTmp.(<-chan *model.DashboardPromResponse)
 		if !ok {
 			return nil
 		}
@@ -18033,7 +18123,7 @@ func (ec *executionContext) _Subscription_viewDashboard(ctx context.Context, fie
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNpromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponse(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNdashboardPromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDashboardPromResponse(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -22078,6 +22168,68 @@ func (ec *executionContext) _clusterRegResponse_cluster_name(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _dashboardPromResponse_dashboardMetricsResponse(ctx context.Context, field graphql.CollectedField, obj *model.DashboardPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "dashboardPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DashboardMetricsResponse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MetricDataForPanelGroup)
+	fc.Result = res
+	return ec.marshalOmetricDataForPanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _dashboardPromResponse_annotationsResponse(ctx context.Context, field graphql.CollectedField, obj *model.DashboardPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "dashboardPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AnnotationsResponse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.AnnotationsPromResponse)
+	fc.Result = res
+	return ec.marshalOannotationsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _imageRegistry_image_registry_name(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistry) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -23057,6 +23209,136 @@ func (ec *executionContext) _listDashboardResponse_updated_at(ctx context.Contex
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricDataForPanel_panelID(ctx context.Context, field graphql.CollectedField, obj *model.MetricDataForPanel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricDataForPanel",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricDataForPanel_PanelMetricsResponse(ctx context.Context, field graphql.CollectedField, obj *model.MetricDataForPanel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricDataForPanel",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelMetricsResponse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MetricsPromResponse)
+	fc.Result = res
+	return ec.marshalOmetricsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricDataForPanelGroup_panelGroupID(ctx context.Context, field graphql.CollectedField, obj *model.MetricDataForPanelGroup) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricDataForPanelGroup",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelGroupID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricDataForPanelGroup_panelGroupMetricsResponse(ctx context.Context, field graphql.CollectedField, obj *model.MetricDataForPanelGroup) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricDataForPanelGroup",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelGroupMetricsResponse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MetricDataForPanel)
+	fc.Result = res
+	return ec.marshalOmetricDataForPanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _metricsPromResponse_queryid(ctx context.Context, field graphql.CollectedField, obj *model.MetricsPromResponse) (ret graphql.Marshaler) {
@@ -26259,6 +26541,54 @@ func (ec *executionContext) unmarshalInputpromSeriesInput(ctx context.Context, o
 		case "ds_details":
 			var err error
 			it.DsDetails, err = ec.unmarshalNdsDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDsDetails(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputqueryMapForPanel(ctx context.Context, obj interface{}) (model.QueryMapForPanel, error) {
+	var it model.QueryMapForPanel
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "panelID":
+			var err error
+			it.PanelID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "queryIDs":
+			var err error
+			it.QueryIDs, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputqueryMapForPanelGroup(ctx context.Context, obj interface{}) (model.QueryMapForPanelGroup, error) {
+	var it model.QueryMapForPanelGroup
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "panelGroupID":
+			var err error
+			it.PanelGroupID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "panelQueryMap":
+			var err error
+			it.PanelQueryMap, err = ec.unmarshalNqueryMapForPanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29687,6 +30017,32 @@ func (ec *executionContext) _clusterRegResponse(ctx context.Context, sel ast.Sel
 	return out
 }
 
+var dashboardPromResponseImplementors = []string{"dashboardPromResponse"}
+
+func (ec *executionContext) _dashboardPromResponse(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardPromResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardPromResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("dashboardPromResponse")
+		case "dashboardMetricsResponse":
+			out.Values[i] = ec._dashboardPromResponse_dashboardMetricsResponse(ctx, field, obj)
+		case "annotationsResponse":
+			out.Values[i] = ec._dashboardPromResponse_annotationsResponse(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var imageRegistryImplementors = []string{"imageRegistry"}
 
 func (ec *executionContext) _imageRegistry(ctx context.Context, sel ast.SelectionSet, obj *model.ImageRegistry) graphql.Marshaler {
@@ -29853,6 +30209,64 @@ func (ec *executionContext) _listDashboardResponse(ctx context.Context, sel ast.
 			out.Values[i] = ec._listDashboardResponse_created_at(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._listDashboardResponse_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var metricDataForPanelImplementors = []string{"metricDataForPanel"}
+
+func (ec *executionContext) _metricDataForPanel(ctx context.Context, sel ast.SelectionSet, obj *model.MetricDataForPanel) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metricDataForPanelImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("metricDataForPanel")
+		case "panelID":
+			out.Values[i] = ec._metricDataForPanel_panelID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "PanelMetricsResponse":
+			out.Values[i] = ec._metricDataForPanel_PanelMetricsResponse(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var metricDataForPanelGroupImplementors = []string{"metricDataForPanelGroup"}
+
+func (ec *executionContext) _metricDataForPanelGroup(ctx context.Context, sel ast.SelectionSet, obj *model.MetricDataForPanelGroup) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metricDataForPanelGroupImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("metricDataForPanelGroup")
+		case "panelGroupID":
+			out.Values[i] = ec._metricDataForPanelGroup_panelGroupID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "panelGroupMetricsResponse":
+			out.Values[i] = ec._metricDataForPanelGroup_panelGroupMetricsResponse(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -31969,6 +32383,20 @@ func (ec *executionContext) marshalNclusterRegResponse2ᚖgithubᚗcomᚋlitmusc
 	return ec._clusterRegResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNdashboardPromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDashboardPromResponse(ctx context.Context, sel ast.SelectionSet, v model.DashboardPromResponse) graphql.Marshaler {
+	return ec._dashboardPromResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNdashboardPromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDashboardPromResponse(ctx context.Context, sel ast.SelectionSet, v *model.DashboardPromResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._dashboardPromResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNdataVars2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDataVars(ctx context.Context, v interface{}) (model.DataVars, error) {
 	return ec.unmarshalInputdataVars(ctx, v)
 }
@@ -32136,6 +32564,70 @@ func (ec *executionContext) marshalNpromSeriesResponse2ᚖgithubᚗcomᚋlitmusc
 		return graphql.Null
 	}
 	return ec._promSeriesResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx context.Context, v interface{}) (model.QueryMapForPanel, error) {
+	return ec.unmarshalInputqueryMapForPanel(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelᚄ(ctx context.Context, v interface{}) ([]*model.QueryMapForPanel, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.QueryMapForPanel, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNqueryMapForPanel2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanel2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx context.Context, v interface{}) (*model.QueryMapForPanel, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNqueryMapForPanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanelGroup2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroup(ctx context.Context, v interface{}) (model.QueryMapForPanelGroup, error) {
+	return ec.unmarshalInputqueryMapForPanelGroup(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroupᚄ(ctx context.Context, v interface{}) ([]*model.QueryMapForPanelGroup, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.QueryMapForPanelGroup, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNqueryMapForPanelGroup2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroup(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanelGroup2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroup(ctx context.Context, v interface{}) (*model.QueryMapForPanelGroup, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNqueryMapForPanelGroup2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroup(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) unmarshalNupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {
@@ -33318,6 +33810,108 @@ func (ec *executionContext) marshalOlistDashboardResponse2ᚖgithubᚗcomᚋlitm
 		return graphql.Null
 	}
 	return ec._listDashboardResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOmetricDataForPanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx context.Context, sel ast.SelectionSet, v model.MetricDataForPanel) graphql.Marshaler {
+	return ec._metricDataForPanel(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOmetricDataForPanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDataForPanel) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOmetricDataForPanel2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOmetricDataForPanel2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx context.Context, sel ast.SelectionSet, v *model.MetricDataForPanel) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._metricDataForPanel(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOmetricDataForPanelGroup2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx context.Context, sel ast.SelectionSet, v model.MetricDataForPanelGroup) graphql.Marshaler {
+	return ec._metricDataForPanelGroup(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOmetricDataForPanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDataForPanelGroup) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOmetricDataForPanelGroup2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOmetricDataForPanelGroup2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx context.Context, sel ast.SelectionSet, v *model.MetricDataForPanelGroup) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._metricDataForPanelGroup(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOmetricsPromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx context.Context, sel ast.SelectionSet, v model.MetricsPromResponse) graphql.Marshaler {

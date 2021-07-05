@@ -140,6 +140,16 @@ input promQueryInput {
   minstep: Int!
 }
 
+input queryMapForPanel {
+  panelID: String!
+  queryIDs: [String!]!
+}
+
+input queryMapForPanelGroup {
+  panelGroupID: String!
+  panelQueryMap: [queryMapForPanel!]!
+}
+
 input dataVars {
   url: String!
   start: String!
@@ -179,6 +189,21 @@ type annotationsTimeStampValue {
 
 type promResponse {
   metricsResponse: [metricsPromResponse]
+  annotationsResponse: [annotationsPromResponse]
+}
+
+type metricDataForPanel {
+  panelID: String!
+  PanelMetricsResponse: [metricsPromResponse]
+}
+
+type metricDataForPanelGroup {
+  panelGroupID: String!
+  panelGroupMetricsResponse: [metricDataForPanel]
+}
+
+type dashboardPromResponse {
+  dashboardMetricsResponse: [metricDataForPanelGroup]
   annotationsResponse: [annotationsPromResponse]
 }
 

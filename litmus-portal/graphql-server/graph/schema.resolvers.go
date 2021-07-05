@@ -410,7 +410,8 @@ func (r *queryResolver) ListDataSource(ctx context.Context, projectID string) ([
 }
 
 func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error) {
-	return analyticsHandler.GetPromQuery(query)
+	promResponseData, _, err := analyticsHandler.GetPromQuery(query)
+	return promResponseData, err
 }
 
 func (r *queryResolver) GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
@@ -576,8 +577,8 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequ
 	return kubeObjData, nil
 }
 
-func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dataVariables model.DataVars) (<-chan *model.PromResponse, error) {
-	dashboardData := make(chan *model.PromResponse)
+func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error) {
+	dashboardData := make(chan *model.DashboardPromResponse)
 	viewID := uuid.New()
 	log.Printf("Dashboard view %v created\n", viewID.String())
 	data_store.Store.Mutex.Lock()
@@ -590,7 +591,7 @@ func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []
 			delete(data_store.Store.DashboardData, viewID.String())
 		}
 	}()
-	go analyticsHandler.DashboardViewer(viewID.String(), promQueries, dataVariables, *data_store.Store)
+	go analyticsHandler.DashboardViewer(viewID.String(), promQueries, dashboardQueryMap, dataVariables, *data_store.Store)
 	return dashboardData, nil
 }
 

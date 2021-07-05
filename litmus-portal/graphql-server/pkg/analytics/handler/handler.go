@@ -645,42 +645,53 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 		return nil, err
 	}
 
-	var newDatasources []*model.DSResponse
-	copier.Copy(&newDatasources, &datasource)
+	var (
+		newDataSources []*model.DSResponse
+		wg             sync.WaitGroup
+	)
+	err = copier.Copy(&newDataSources, &datasource)
+	if err != nil {
+		return nil, err
+	}
 
 	tsdbHealthCheckMap := make(map[string]string)
 
-	var wg sync.WaitGroup
-	wg.Add(len(newDatasources))
+	var mutex = &sync.Mutex{}
+	wg.Add(len(newDataSources))
 
-	for _, datasource := range newDatasources {
+	for _, datasource := range newDataSources {
 		datasource := datasource
 		go func(val *model.DSResponse) {
 			defer wg.Done()
 
 			if _, ok := tsdbHealthCheckMap[*datasource.DsURL]; !ok {
+				mutex.Lock()
 				tsdbHealthCheckMap[*datasource.DsURL] = prometheus.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
+				mutex.Unlock()
 			}
 		}(datasource)
 	}
 
 	wg.Wait()
 
-	for _, datasource := range newDatasources {
+	for _, datasource := range newDataSources {
 		datasource.HealthStatus = tsdbHealthCheckMap[*datasource.DsURL]
 	}
 
-	return newDatasources, nil
+	return newDataSources, nil
 }
 
-func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
+func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*model.MetricsPromResponse, error) {
 	var (
-		metrics               []*model.MetricsPromResponse
-		annotations           []*model.AnnotationsPromResponse
-		wg                    sync.WaitGroup
-		verdictResponse       *model.AnnotationsPromResponse
-		patchEventWithVerdict bool
+		metrics         []*model.MetricsPromResponse
+		annotations     []*model.AnnotationsPromResponse
+		wg              sync.WaitGroup
+		verdictResponse *model.AnnotationsPromResponse
 	)
+
+	patchEventWithVerdict := false
+	queryResponseMap := make(map[string]*model.MetricsPromResponse)
+	var mutex = &sync.Mutex{}
 
 	wg.Add(len(promInput.Queries))
 	for _, v := range promInput.Queries {
@@ -707,6 +718,9 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 			if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
 				if queryType == "metrics" {
 					metrics = append(metrics, obj.(*model.MetricsPromResponse))
+					mutex.Lock()
+					queryResponseMap[val.Queryid] = obj.(*model.MetricsPromResponse)
+					mutex.Unlock()
 				} else {
 					if strings.Contains(val.Queryid, "chaos-event") {
 						annotations = append(annotations, obj.(*model.AnnotationsPromResponse))
@@ -719,6 +733,9 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 				}
 				if queryType == "metrics" {
 					metrics = append(metrics, response.(*model.MetricsPromResponse))
+					mutex.Lock()
+					queryResponseMap[val.Queryid] = response.(*model.MetricsPromResponse)
+					mutex.Unlock()
 					cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 					if cacheError != nil {
 						errorStr := fmt.Sprintf("%v", cacheError)
@@ -808,7 +825,6 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 
 					if !eventFound {
 						verdictValid := false
-
 						for _, tsv := range verdictResponse.Tsvs[verdictLegendIndex] {
 							if !verdictValid && func(val *int) int { return *val }(tsv.Value) == 1 {
 								verdictValid = true
@@ -843,10 +859,10 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 		AnnotationsResponse: annotations,
 	}
 
-	return &newPromResponse, nil
+	return &newPromResponse, queryResponseMap, nil
 }
 
-func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVariables model.DataVars, r store.StateData) {
+func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars, r store.StateData) {
 	if viewChan, ok := r.DashboardData[viewID]; ok {
 
 		currentTime := time.Now().Unix()
@@ -879,11 +895,43 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVar
 				DsDetails: dsDetails,
 			}
 
-			newPromResponse, err := GetPromQuery(newPromInput)
+			newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
 			if err != nil {
 				log.Printf("Error during data source query of the dashboard view: %v\n", viewID)
 			} else {
-				viewChan <- newPromResponse
+				var dashboardMetrics []*model.MetricDataForPanelGroup
+
+				for _, panelGroupQueryMap := range dashboardQueryMap {
+					var panelGroupMetrics []*model.MetricDataForPanel
+					for _, panelQueryMap := range panelGroupQueryMap.PanelQueryMap {
+						var panelQueries []*model.MetricsPromResponse
+						for _, queryID := range panelQueryMap.QueryIDs {
+							panelQueries = append(panelQueries, queryResponseMap[queryID])
+						}
+						panelMetricsData := &model.MetricDataForPanel{
+							PanelID:              panelQueryMap.PanelID,
+							PanelMetricsResponse: panelQueries,
+						}
+						panelGroupMetrics = append(panelGroupMetrics, panelMetricsData)
+					}
+					panelGroupMetricsData := &model.MetricDataForPanelGroup{
+						PanelGroupID:              panelGroupQueryMap.PanelGroupID,
+						PanelGroupMetricsResponse: panelGroupMetrics,
+					}
+					dashboardMetrics = append(dashboardMetrics, panelGroupMetricsData)
+				}
+
+				var promResponse model.PromResponse
+				err = copier.Copy(&promResponse, &newPromResponse)
+				if err != nil {
+					log.Printf("Error parsing annotations  %v\n", err)
+				}
+				dashboardResponse := &model.DashboardPromResponse{
+					DashboardMetricsResponse: dashboardMetrics,
+					AnnotationsResponse:      promResponse.AnnotationsResponse,
+				}
+
+				viewChan <- dashboardResponse
 			}
 
 		case "relative":
@@ -899,16 +947,52 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVar
 					DsDetails: dsDetails,
 				}
 
-				newPromResponse, err := GetPromQuery(newPromInput)
+				newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
 				if err != nil {
 					log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 					break
 				} else {
-					viewChan <- newPromResponse
+					var dashboardMetrics []*model.MetricDataForPanelGroup
+
+					for _, panelGroupQueryMap := range dashboardQueryMap {
+						var panelGroupMetrics []*model.MetricDataForPanel
+						for _, panelQueryMap := range panelGroupQueryMap.PanelQueryMap {
+							var panelQueries []*model.MetricsPromResponse
+							for _, queryID := range panelQueryMap.QueryIDs {
+								panelQueries = append(panelQueries, queryResponseMap[queryID])
+							}
+							panelMetricsData := &model.MetricDataForPanel{
+								PanelID:              panelQueryMap.PanelID,
+								PanelMetricsResponse: panelQueries,
+							}
+							panelGroupMetrics = append(panelGroupMetrics, panelMetricsData)
+						}
+						panelGroupMetricsData := &model.MetricDataForPanelGroup{
+							PanelGroupID:              panelGroupQueryMap.PanelGroupID,
+							PanelGroupMetricsResponse: panelGroupMetrics,
+						}
+						dashboardMetrics = append(dashboardMetrics, panelGroupMetricsData)
+					}
+
+					var promResponse model.PromResponse
+					err = copier.Copy(&promResponse, &newPromResponse)
+					if err != nil {
+						log.Printf("Error parsing annotations  %v\n", err)
+					}
+					dashboardResponse := &model.DashboardPromResponse{
+						DashboardMetricsResponse: dashboardMetrics,
+						AnnotationsResponse:      promResponse.AnnotationsResponse,
+					}
+
+					viewChan <- dashboardResponse
 					time.Sleep(time.Duration(int64(dataVariables.RefreshInterval)) * time.Second)
 					currentTime = time.Now().Unix()
 					startTime = strconv.FormatInt(currentTime-int64(dataVariables.RelativeTime), 10)
 					endTime = strconv.FormatInt(currentTime, 10)
+				}
+
+				if _, ok := r.DashboardData[viewID]; !ok {
+					break
 				}
 			}
 
@@ -924,11 +1008,43 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dataVar
 				DsDetails: dsDetails,
 			}
 
-			newPromResponse, err := GetPromQuery(newPromInput)
+			newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
 			if err != nil {
 				log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 			} else {
-				viewChan <- newPromResponse
+				var dashboardMetrics []*model.MetricDataForPanelGroup
+
+				for _, panelGroupQueryMap := range dashboardQueryMap {
+					var panelGroupMetrics []*model.MetricDataForPanel
+					for _, panelQueryMap := range panelGroupQueryMap.PanelQueryMap {
+						var panelQueries []*model.MetricsPromResponse
+						for _, queryID := range panelQueryMap.QueryIDs {
+							panelQueries = append(panelQueries, queryResponseMap[queryID])
+						}
+						panelMetricsData := &model.MetricDataForPanel{
+							PanelID:              panelQueryMap.PanelID,
+							PanelMetricsResponse: panelQueries,
+						}
+						panelGroupMetrics = append(panelGroupMetrics, panelMetricsData)
+					}
+					panelGroupMetricsData := &model.MetricDataForPanelGroup{
+						PanelGroupID:              panelGroupQueryMap.PanelGroupID,
+						PanelGroupMetricsResponse: panelGroupMetrics,
+					}
+					dashboardMetrics = append(dashboardMetrics, panelGroupMetricsData)
+				}
+
+				var promResponse model.PromResponse
+				err = copier.Copy(&promResponse, &newPromResponse)
+				if err != nil {
+					log.Printf("Error parsing annotations  %v\n", err)
+				}
+				dashboardResponse := &model.DashboardPromResponse{
+					DashboardMetricsResponse: dashboardMetrics,
+					AnnotationsResponse:      promResponse.AnnotationsResponse,
+				}
+
+				viewChan <- dashboardResponse
 			}
 
 		case "invalid":
@@ -1051,6 +1167,7 @@ func QueryListDashboard(projectID string, clusterID *string, dbID *string) ([]*m
 	dataSourceHealthCheckMap := make(map[string]string)
 
 	if clusterID != nil && *clusterID != "" {
+		var mutex = &sync.Mutex{}
 		wg.Add(len(newListDashboard))
 
 		for _, dashboard := range newListDashboard {
@@ -1060,13 +1177,14 @@ func QueryListDashboard(projectID string, clusterID *string, dbID *string) ([]*m
 					return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
 				}
 				dataSourceMap[dashboard.DsID] = datasource
-
 				go func(val *dbSchemaAnalytics.DataSource) {
 					defer wg.Done()
 
 					if _, ok := dataSourceHealthCheckMap[val.DsID]; !ok {
 						dataSourceStatus := prometheus.TSDBHealthCheck(datasource.DsURL, datasource.DsType)
+						mutex.Lock()
 						dataSourceHealthCheckMap[val.DsID] = dataSourceStatus
+						mutex.Unlock()
 					} else {
 						return
 					}

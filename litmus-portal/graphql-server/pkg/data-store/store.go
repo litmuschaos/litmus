@@ -13,7 +13,7 @@ type StateData struct {
 	WorkflowEventPublish map[string][]chan *model.WorkflowRun
 	WorkflowLog          map[string]chan *model.PodLogResponse
 	KubeObjectData       map[string]chan *model.KubeObjectResponse
-	DashboardData        map[string]chan *model.PromResponse
+	DashboardData        map[string]chan *model.DashboardPromResponse
 	Mutex                *sync.Mutex
 }
 
@@ -24,7 +24,7 @@ func NewStore() *StateData {
 		WorkflowEventPublish: make(map[string][]chan *model.WorkflowRun),
 		WorkflowLog:          make(map[string]chan *model.PodLogResponse),
 		KubeObjectData:       make(map[string]chan *model.KubeObjectResponse),
-		DashboardData:        make(map[string]chan *model.PromResponse),
+		DashboardData:        make(map[string]chan *model.DashboardPromResponse),
 		Mutex:                &sync.Mutex{},
 	}
 }
