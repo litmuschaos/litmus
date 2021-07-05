@@ -52,6 +52,12 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 		SSHPrivateKey: myhub.SSHPrivateKey,
 	}
 
+	// Cloning the repository at a path from myhub link structure.
+	err = myHubOps.GitClone(cloneHub)
+	if err != nil {
+		return nil, err
+	}
+
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
 	newHub := &dbSchemaMyHub.MyHub{
@@ -71,12 +77,6 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 		CreatedAt:     strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:     strconv.FormatInt(time.Now().Unix(), 10),
 		LastSyncedAt:  strconv.FormatInt(time.Now().Unix(), 10),
-	}
-
-	// Cloning the repository at a path from myhub link structure.
-	err = myHubOps.GitClone(cloneHub)
-	if err != nil {
-		return nil, err
 	}
 
 	// Adding the new hub into database with the given username.
