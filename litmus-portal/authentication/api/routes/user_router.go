@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//UserRouter creates all the required routes for user authentications purposes.
+// UserRouter creates all the required routes for user authentications purposes.
 func UserRouter(router *gin.Engine, service user.Service) {
 	router.POST("/login", handlers.LoginUser(service))
 	router.Use(middleware.JwtMiddleware())
@@ -17,4 +17,5 @@ func UserRouter(router *gin.Engine, service user.Service) {
 	router.POST("/create", handlers.CreateUser(service))
 	router.POST("/update/details", handlers.UpdateUser(service))
 	router.GET("/users", handlers.FetchUsers(service))
+	router.POST("/updatestate", handlers.UpdateUserState(service))
 }

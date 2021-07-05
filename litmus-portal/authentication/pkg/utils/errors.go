@@ -2,7 +2,7 @@ package utils
 
 import "errors"
 
-//AppError defines general error's throughout the system
+// AppError defines general error's throughout the system
 type AppError error
 
 var (
@@ -10,26 +10,35 @@ var (
 	ErrServerError                   AppError = errors.New("server_error")
 	ErrInvalidRequest                AppError = errors.New("invalid_request")
 	ErrStrictPasswordPolicyViolation AppError = errors.New("password_policy_violation")
-	ErrUnauthorised                  AppError = errors.New("unauthorised")
+	ErrUnauthorized                  AppError = errors.New("unauthorized")
 	ErrUserExists                    AppError = errors.New("user_exists")
+	ErrUserNotFound                  AppError = errors.New("user does not exists")
+	ErrWrongPassword                 AppError = errors.New("password doesn't match")
+	ErrUpdatingAdmin                 AppError = errors.New("cannot remove admin")
+	ErrUserRemoved                   AppError = errors.New("your account has been disabled")
+	ErrUserAlreadyRemoved            AppError = errors.New("user already removed")
 )
 
-//ErrorStatusCodes holds the http status codes for every AppError
+// ErrorStatusCodes holds the http status codes for every AppError
 var ErrorStatusCodes = map[AppError]int{
 	ErrInvalidRequest:                400,
 	ErrInvalidCredentials:            401,
 	ErrServerError:                   500,
-	ErrUnauthorised:                  401,
+	ErrUnauthorized:                  401,
 	ErrUserExists:                    401,
 	ErrStrictPasswordPolicyViolation: 401,
+	ErrUserNotFound:                  400,
+	ErrUpdatingAdmin:                 400,
+	ErrUserRemoved:                   400,
+	ErrUserAlreadyRemoved:            400,
 }
 
-//ErrorDescriptions holds detailed error description for every AppError
+// ErrorDescriptions holds detailed error description for every AppError
 var ErrorDescriptions = map[AppError]string{
 	ErrServerError:                   "The authorization server encountered an unexpected condition that prevented it from fulfilling the request",
 	ErrInvalidCredentials:            "Invalid Credentials",
 	ErrInvalidRequest:                "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed",
-	ErrUnauthorised:                  "The user does not have requested authorisation to access this resource",
+	ErrUnauthorized:                  "The user does not have requested authorization to access this resource",
 	ErrUserExists:                    "This username is already assigned to another user",
 	ErrStrictPasswordPolicyViolation: "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character",
 }
