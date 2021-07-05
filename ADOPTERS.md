@@ -15,6 +15,7 @@ Please send PRs to add or remove organizations/users.
 |[AkriData](https://www.akridata.com/)|Pod Chaos Experiments in AWS & Azure|[Our Story](adopters/organizations/akridata.md)|
 |[Raspbernetes](https://github.com/raspbernetes)|Resilience of OpenEBS & other apps on ARM64 based clusters|[Our Story](adopters/organizations/raspbernetes.md)|
 |[Kublr](https://kublr.com/)|Identify the weak spots and components prone to failures under stress|[Our Story](adopters/organizations/kublr.md)|
+|[KubeSphere](https://kubesphere.io/)|Chaos Engineering|To Be Added|
 |[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
 |[RedHat](https://www.redhat.com/en)|[RedHat Openshift Virtualization Maturity](https://www.youtube.com/watch?v=VITGHJ47gx8&list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&index=7)|[Our Story](adopters/organizations/redhat.md)|
 |[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
