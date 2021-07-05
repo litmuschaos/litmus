@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   graphContainer: {
     width: '900px',
     height: '320px',
+    margin: theme.spacing(2.5, 0, 0, -6.25),
   },
 }));
 export default useStyles;

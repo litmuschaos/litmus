@@ -270,6 +270,13 @@ type Query {
 
   users: [User!]! @authorized
 
+  # Query to fetch workflow data for heatmap
+  getHeatmapData(
+    project_id: String!
+    workflow_id: String!
+    year: Int!
+  ): [HeatmapData]! @authorized
+
   getWorkflowStats(
     project_id: ID!
     filter: TimeFrequency!
