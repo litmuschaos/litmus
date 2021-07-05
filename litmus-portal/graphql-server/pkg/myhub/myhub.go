@@ -73,15 +73,16 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 		LastSyncedAt:  strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
+	// Cloning the repository at a path from myhub link structure.
+	err = myHubOps.GitClone(cloneHub)
+	if err != nil {
+		return nil, err
+	}
+
 	// Adding the new hub into database with the given username.
 	err = dbOperationsMyHub.CreateMyHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
-		return nil, err
-	}
-	// Cloning the repository at a path from myhub link structure.
-	err = myHubOps.GitClone(cloneHub)
-	if err != nil {
 		return nil, err
 	}
 
