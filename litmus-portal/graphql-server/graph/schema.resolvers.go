@@ -426,6 +426,8 @@ func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]
 }
 
 func (r *queryResolver) PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error) {
+	err := authorization.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor, model.MemberRoleViewer}, usermanagement.AcceptedInvitation)
+	if err != nil { return nil, err }
 	return analyticsHandler.GetPortalDashboardData(projectID, hubName)
 }
 
