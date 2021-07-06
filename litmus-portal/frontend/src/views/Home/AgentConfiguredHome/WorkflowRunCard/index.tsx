@@ -132,4 +132,4 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
   );
 };
 
-export { WorkflowRunCard };
+export default WorkflowRunCard;

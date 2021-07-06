@@ -8,6 +8,7 @@ import {
   Search,
 } from 'litmus-ui';
 import React, {
+  lazy,
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -16,7 +17,6 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import { AgentDeployModal } from '../../../components/AgentDeployModal';
 import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
@@ -32,6 +32,10 @@ import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 import Loader from '../../../components/Loader';
+
+const AgentDeployModal = lazy(
+  () => import('../../../components/AgentDeployModal')
+);
 
 interface Cluster {
   cluster_name: string;

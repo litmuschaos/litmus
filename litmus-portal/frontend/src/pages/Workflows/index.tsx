@@ -2,7 +2,7 @@ import { AppBar, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import { ButtonFilled } from 'litmus-ui';
-import React from 'react';
+import React, { lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { StyledTab, TabPanel } from '../../components/Tabs';
@@ -14,9 +14,13 @@ import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
-import BrowseWorkflow from '../../views/ChaosWorkflows/Runs';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import useStyles from './styles';
+
+const BrowseSchedule = lazy(
+  () => import('../../views/ChaosWorkflows/BrowseSchedule')
+);
+const BrowseWorkflow = lazy(() => import('../../views/ChaosWorkflows/Runs'));
 
 const Workflows = () => {
   const classes = useStyles();
@@ -79,10 +83,14 @@ const Workflows = () => {
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
-        <BrowseWorkflow />
+        <SuspenseLoader style={{ height: '100%' }}>
+          <BrowseWorkflow />
+        </SuspenseLoader>
       </TabPanel>
       <TabPanel value={workflowTabValue} index={1}>
-        <BrowseSchedule />
+        <SuspenseLoader style={{ height: '100%' }}>
+          <BrowseSchedule />
+        </SuspenseLoader>
       </TabPanel>
     </Scaffold>
   );

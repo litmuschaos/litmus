@@ -1,6 +1,6 @@
 import { Paper, Tabs, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
-import React from 'react';
+import React, { lazy } from 'react';
 import { useSelector } from 'react-redux';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -9,12 +9,18 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import { getUserRole } from '../../utils/auth';
-import AccountSettings from '../../views/Settings/AccountsTab/AccountSettings';
-import GitOpsTab from '../../views/Settings/GitOpsTab';
-import ImageRegistry from '../../views/Settings/ImageRegistry';
-import TeamingTab from '../../views/Settings/TeamingTab/Team';
-import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import useStyles from './styles';
+
+const AccountSettings = lazy(
+  () => import('../../views/Settings/AccountsTab/AccountSettings')
+);
+const GitOpsTab = lazy(() => import('../../views/Settings/GitOpsTab'));
+const ImageRegistry = lazy(() => import('../../views/Settings/ImageRegistry'));
+const TeamingTab = lazy(() => import('../../views/Settings/TeamingTab/Team'));
+const UserManagement = lazy(
+  () => import('../../views/Settings/UserManagementTab/UserManagement')
+);
 
 // tabProps returns 'id' and 'aria-control' props of Tab
 function tabProps(index: any) {
@@ -77,16 +83,22 @@ const Settings: React.FC = () => {
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
-        <AccountSettings />
+        <SuspenseLoader style={{ height: '100%' }}>
+          <AccountSettings />
+        </SuspenseLoader>
       </TabPanel>
       <div data-cy="teamTabPanel">
         <TabPanel value={settingsTabValue} index={1}>
-          <TeamingTab />
+          <SuspenseLoader style={{ height: '100%' }}>
+            <TeamingTab />
+          </SuspenseLoader>
         </TabPanel>
       </div>
       {role === UserRole.admin && (
         <TabPanel value={settingsTabValue} index={2}>
-          <UserManagement />
+          <SuspenseLoader style={{ height: '100%' }}>
+            <UserManagement />
+          </SuspenseLoader>
         </TabPanel>
       )}
       <div data-cy="GitOpsPanel">
@@ -94,7 +106,9 @@ const Settings: React.FC = () => {
           value={settingsTabValue}
           index={role === UserRole.admin ? 3 : 2}
         >
-          <GitOpsTab />
+          <SuspenseLoader style={{ height: '100%' }}>
+            <GitOpsTab />
+          </SuspenseLoader>
         </TabPanel>
       </div>
       <div data-cy="ImageRegistry">
@@ -102,7 +116,9 @@ const Settings: React.FC = () => {
           value={settingsTabValue}
           index={role === UserRole.admin ? 4 : 3}
         >
-          <ImageRegistry />
+          <SuspenseLoader style={{ height: '100%' }}>
+            <ImageRegistry />
+          </SuspenseLoader>
         </TabPanel>
       </div>
     </Scaffold>
