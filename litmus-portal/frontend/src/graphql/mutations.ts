@@ -38,6 +38,12 @@ export const CREATE_USER = gql`
   }
 `;
 
+export const UPDATE_USER_STATE = gql`
+  mutation updateUserState($username: String!, $isDisable: Boolean!) {
+    updateUserState(username: $username, isDisable: $isDisable)
+  }
+`;
+
 export const CREATE_PROJECT = gql`
   mutation createProject($projectName: String!) {
     createProject(projectName: $projectName) {

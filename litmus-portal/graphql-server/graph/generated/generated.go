@@ -5053,8 +5053,6 @@ input KubeGVRRequest {
   resource: String!
 }
 
-
-
 type Query {
   getWorkflowRuns(
     workflowRunsInput: GetWorkflowRunsInput!
@@ -5085,7 +5083,9 @@ type Query {
     show_workflow_runs: Boolean!
   ): [WorkflowStats]! @authorized
 
-  getWorkflowRunStats(workflowRunStatsRequest: WorkflowRunStatsRequest!): WorkflowRunStatsResponse! @authorized
+  getWorkflowRunStats(
+    workflowRunStatsRequest: WorkflowRunStatsRequest!
+  ): WorkflowRunStatsResponse! @authorized
 
   ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
     @authorized
@@ -5129,7 +5129,7 @@ type Query {
     project_id: String!
   ): ImageRegistryResponse! @authorized
 
-  UsageQuery(query:UsageQuery!): UsageData! @authorized
+  UsageQuery(query: UsageQuery!): UsageData! @authorized
 }
 
 type Mutation {
@@ -5139,7 +5139,7 @@ type Mutation {
   # Used to create a user
   createUser(user: CreateUserInput!): User! @authorized
 
-  # Used to disbale a user
+  # Used to disable a user
   updateUserState(username: String!, isDisable: Boolean!): String! @authorized
 
   # It is used to create a project

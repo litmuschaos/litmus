@@ -5,14 +5,10 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ACCEPT_INVITE,
-  ALL_USERS,
   DECLINE_INVITE,
   LIST_PROJECTS,
 } from '../../../../../graphql';
-import {
-  MemberInvitation,
-  UserInvite,
-} from '../../../../../models/graphql/invite';
+import { MemberInvitation } from '../../../../../models/graphql/invite';
 import { Projects } from '../../../../../models/graphql/user';
 import { getUserId } from '../../../../../utils/auth';
 import { userInitials } from '../../../../../utils/userInitials';
@@ -31,8 +27,7 @@ const ReceivedInvitations: React.FC = () => {
   const { t } = useTranslation();
   // for response data
   const [rows, setRows] = useState<ReceivedInvitation[]>([]);
-  const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
 
   // stores the user whose invitation is accepted/declined
   const [acceptDecline, setAcceptDecline] = useState<string>('');
@@ -54,7 +49,7 @@ const ReceivedInvitations: React.FC = () => {
     refetchQueries: [{ query: LIST_PROJECTS }],
   });
 
-  const { data } = useQuery<Projects>(LIST_PROJECTS, {
+  const { data, loading } = useQuery<Projects>(LIST_PROJECTS, {
     fetchPolicy: 'cache-and-network',
   });
 
@@ -90,13 +85,13 @@ const ReceivedInvitations: React.FC = () => {
     setRows([...users]);
   }, [data]);
 
-  useQuery(ALL_USERS, {
-    onCompleted: (data) => {
-      setAllUsers([...data.users]);
-      setLoading(false);
-    },
-  });
-
+  // useQuery(ALL_USERS, {
+  //   onCompleted: (data) => {
+  //     setAllUsers([...data.users]);
+  //     setLoading(false);
+  //   },
+  // });
+  // console.log(rows);
   return (
     <div data-cy="receivedInvitationModal">
       {!loading ? (
@@ -111,19 +106,11 @@ const ReceivedInvitations: React.FC = () => {
                     className={classes.avatarBackground}
                     style={{ alignContent: 'right' }}
                   >
-                    {userInitials(
-                      allUsers.filter((data) => {
-                        return row.user_id === data.id;
-                      })[0].username
-                    )}
+                    {userInitials(row.user_name)}
                   </Avatar>
                   <div>
                     <Typography className={classes.name}>
-                      {
-                        allUsers.filter((data) => {
-                          return row.user_id === data.id;
-                        })[0].username
-                      }
+                      {row.user_name}
                     </Typography>
                     <Typography className={classes.email}>
                       {t(

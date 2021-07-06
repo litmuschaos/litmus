@@ -88,12 +88,21 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, member model.Memb
 		return nil, err
 	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	return project.SendInvitation(ctx, member)
 }
 
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.PendingInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -103,7 +112,11 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.Me
 
 func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.PendingInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -113,7 +126,11 @@ func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.M
 
 func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -123,7 +140,11 @@ func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.Me
 
 func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -133,7 +154,6 @@ func (r *mutationResolver) LeaveProject(ctx context.Context, member model.Member
 
 func (r *mutationResolver) UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
-
 	if err != nil {
 		return "Unsuccessful", err
 	}

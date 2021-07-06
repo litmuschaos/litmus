@@ -62,7 +62,8 @@ const AcceptedInvitations: React.FC = () => {
         if (
           member.user_id === userID &&
           member.role !== 'Owner' &&
-          member.invitation === 'Accepted'
+          member.invitation === 'Accepted' &&
+          project.removed_at === ''
         ) {
           otherProject.push({
             projectDetails: project,

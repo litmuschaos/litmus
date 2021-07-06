@@ -252,6 +252,8 @@ export const ALL_USERS = gql`
       name
       username
       email
+      created_at
+      disabled_at
     }
   }
 `;
@@ -394,6 +396,7 @@ export const LIST_PROJECTS = gql`
         role
         invitation
         joined_at
+        disabled_at
       }
       state
       created_at

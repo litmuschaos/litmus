@@ -18,6 +18,7 @@ const LoginPage: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [isError, setIsError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [authData, setAuthData] = useState<authData>({
     username: '',
@@ -37,28 +38,33 @@ const LoginPage: React.FC = () => {
       body: JSON.stringify(authData),
     })
       .then((response) => {
+        console.log(response);
         if (response.status !== responseCode) {
           setIsError(true);
           setIsLoading(false);
         } else {
           setIsError(false);
+          setErrorMsg('');
         }
         return response.json();
       })
       .then((data) => {
         if ('error' in data) {
-          console.error(data);
+          console.error('line 53', data.error);
+          setErrorMsg(data.error);
         } else {
+          setErrorMsg('');
           setUserDetails(data.access_token);
           setIsLoading(false);
           window.location.assign('/getStarted');
         }
       })
       .catch((err) => {
-        console.error(err);
+        console.log('line 62', err);
+        setErrorMsg(err.error);
       });
   };
-
+  console.log('error', errorMsg);
   return (
     <div className={classes.rootContainer}>
       <Center>
@@ -106,7 +112,7 @@ const LoginPage: React.FC = () => {
                 type="password"
                 required
                 value={authData.password}
-                helperText={isError ? t('login.wrongCredentials') : ''}
+                helperText={isError ? errorMsg : ''}
                 filled
                 onChange={(e) =>
                   setAuthData({

@@ -23,7 +23,7 @@ import (
 	"github.com/rs/cors"
 )
 
-const defaultPort = "8080"
+const defaultPort = "3001"
 
 func init() {
 	log.Printf("Go Version: %s", runtime.Version())

@@ -94,7 +94,10 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 // GetUsers queries the list of all the users from the DB and returns it in the appropriate format
 func GetUsers(ctx context.Context) ([]*model.User, error) {
 
-	users, err := dbOperationsUserManagement.GetUsers(ctx, bson.D{})
+	users, err := dbOperationsUserManagement.GetUsers(ctx,
+		bson.D{
+			{"disabled_at", ""},
+		})
 	if err != nil {
 		return nil, err
 	}

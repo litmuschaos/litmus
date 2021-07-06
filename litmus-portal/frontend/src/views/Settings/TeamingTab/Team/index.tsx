@@ -152,15 +152,10 @@ const TeamingTab: React.FC = () => {
   const acceptedFilteredData = !loading
     ? accepted &&
       accepted
-        .filter((dataRow: Member) => {
-          return allUsers
-            .filter((data) => {
-              return dataRow.user_id === data.id;
-            })[0]
-            .username.toLowerCase()
-            .includes(filters.search.toLowerCase());
-        })
-        .filter((dataRow: Member) => {
+        ?.filter((dataRow) =>
+          dataRow.user_name.toLowerCase().includes(filters.search.toLowerCase())
+        )
+        ?.filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
           if (filters.role === 'Editor') return dataRow.role === 'Editor';
           if (filters.role === 'Viewer') return dataRow.role === 'Viewer';
@@ -171,14 +166,9 @@ const TeamingTab: React.FC = () => {
   const notAcceptedFilteredData = !loading
     ? notAccepted &&
       notAccepted
-        .filter((dataRow: Member) => {
-          return allUsers
-            .filter((data) => {
-              return dataRow.user_id === data.id;
-            })[0]
-            .username.toLowerCase()
-            .includes(filters.search.toLowerCase());
-        })
+        ?.filter((dataRow) =>
+          dataRow.user_name.toLowerCase().includes(filters.search.toLowerCase())
+        )
         .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
           if (filters.role === 'Editor') return dataRow.role === 'Editor';
