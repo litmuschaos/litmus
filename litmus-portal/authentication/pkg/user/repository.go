@@ -4,6 +4,7 @@ import (
 	"context"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
+	"time"
 
 	uuid "github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,35 +14,46 @@ import (
 
 //Repository holds the mongo database implementation of the Service
 type Repository interface {
-	FindUser(user *entities.User) (*entities.User, error)
+	FindUser(username string) (*entities.User, error)
+	CheckPasswordHash(hash, password string) error
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.User) (*entities.User, error)
 	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
+	UpdateUserState(username string, isDeactivate bool) error
 }
 
 type repository struct {
 	Collection *mongo.Collection
 }
 
-//FindUser helps to authenticate the user
-func (r repository) FindUser(user *entities.User) (*entities.User, error) {
+// FindUser finds and returns a user if it exists
+func (r repository) FindUser(username string) (*entities.User, error) {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
-		"username": user.UserName,
+		"username": username,
 	}).Decode(&result)
+
 	if findOneErr != nil {
 		return nil, findOneErr
 	}
-	err := bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(user.Password))
-	if err != nil {
-		return nil, err
-	}
-	return result.SanitizedUser(), nil
+
+	return &result, nil
 }
 
-//UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to true
+// CheckPasswordHash checks password hash and password from user input
+func (r repository) CheckPasswordHash(hash, password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+
+	if err != nil {
+		return utils.ErrWrongPassword
+	}
+
+	return nil
+}
+
+// UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to true
 func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
 	var result = entities.User{}
 	result.UserName = userPassword.Username
@@ -69,7 +81,7 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 	return nil
 }
 
-//CreateUser creates a new user in the database
+// CreateUser creates a new user in the database
 func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 	user.ID = uuid.Must(uuid.NewRandom()).String()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
@@ -87,7 +99,7 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 	return user.SanitizedUser(), nil
 }
 
-//UpdateUser updates user details in the database
+// UpdateUser updates user details in the database
 func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
 	if user.Password != "" {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
@@ -105,7 +117,7 @@ func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
 	return user.SanitizedUser(), nil
 }
 
-//GetUsers fetches all the users from the database
+// GetUsers fetches all the users from the database
 func (r repository) GetUsers() (*[]entities.User, error) {
 	var Users []entities.User
 	cursor, err := r.Collection.Find(context.Background(), bson.M{})
@@ -120,7 +132,7 @@ func (r repository) GetUsers() (*[]entities.User, error) {
 	return &Users, nil
 }
 
-//IsAdministrator verifies if the passed user is an administrator
+// IsAdministrator verifies if the passed user is an administrator
 func (r repository) IsAdministrator(user *entities.User) error {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
@@ -136,7 +148,27 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	return nil
 }
 
-//NewRepo creates a new instance of this repository
+// UpdateUserState updates the deactivated_at state of the user
+func (r repository) UpdateUserState(username string, isDeactivate bool) error {
+	var err error
+	if isDeactivate {
+		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
+			"deactivated_at": time.Now(),
+		}})
+	} else {
+		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
+			"deactivated_at": nil,
+		}})
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// NewRepo creates a new instance of this repository
 func NewRepo(collection *mongo.Collection) Repository {
 	return &repository{
 		Collection: collection,
