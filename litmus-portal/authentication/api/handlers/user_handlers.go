@@ -97,9 +97,9 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 			return
 		}
 
-		// Checking if user is removed
-		if user.RemovedAt != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserRemoved], presenter.CreateErrorResponse(utils.ErrUserRemoved))
+		// Checking if user is deactivated
+		if user.DeactivatedAt != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserDeactivated], presenter.CreateErrorResponse(utils.ErrUserDeactivated))
 			return
 		}
 
@@ -239,15 +239,15 @@ func UpdateUserState(service user.Service) gin.HandlerFunc {
 			return
 		}
 
-		// Checking if user is already removed
-		if userRequest.IsDisable {
-			if user.RemovedAt != nil {
-				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyRemoved], presenter.CreateErrorResponse(utils.ErrUserAlreadyRemoved))
+		// Checking if user is already deactivated
+		if userRequest.IsDeactivate {
+			if user.DeactivatedAt != nil {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyDeactivated], presenter.CreateErrorResponse(utils.ErrUserAlreadyDeactivated))
 				return
 			}
 		}
 
-		err = service.UpdateUserState(userRequest.Username, userRequest.IsDisable)
+		err = service.UpdateUserState(userRequest.Username, userRequest.IsDeactivate)
 		if err != nil {
 			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))

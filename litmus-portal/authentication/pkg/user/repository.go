@@ -21,7 +21,7 @@ type Repository interface {
 	UpdateUser(user *entities.User) (*entities.User, error)
 	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
-	UpdateUserState(username string, isDisable bool) error
+	UpdateUserState(username string, isDeactivate bool) error
 }
 
 type repository struct {
@@ -148,16 +148,16 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	return nil
 }
 
-// UpdateUserState updates the removed_at state of the user
-func (r repository) UpdateUserState(username string, isDisable bool) error {
+// UpdateUserState updates the deactivated_at state of the user
+func (r repository) UpdateUserState(username string, isDeactivate bool) error {
 	var err error
-	if isDisable == true {
+	if isDeactivate {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
-			"removed_at": time.Now(),
+			"deactivated_at": time.Now(),
 		}})
 	} else {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
-			"removed_at": nil,
+			"deactivated_at": nil,
 		}})
 	}
 

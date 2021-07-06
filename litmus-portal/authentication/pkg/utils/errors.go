@@ -15,8 +15,8 @@ var (
 	ErrUserNotFound                  AppError = errors.New("user does not exists")
 	ErrWrongPassword                 AppError = errors.New("password doesn't match")
 	ErrUpdatingAdmin                 AppError = errors.New("cannot remove admin")
-	ErrUserRemoved                   AppError = errors.New("your account has been disabled")
-	ErrUserAlreadyRemoved            AppError = errors.New("user already removed")
+	ErrUserDeactivated               AppError = errors.New("your account has been deactivated")
+	ErrUserAlreadyDeactivated        AppError = errors.New("user already deactivated")
 )
 
 // ErrorStatusCodes holds the http status codes for every AppError
@@ -29,8 +29,8 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrStrictPasswordPolicyViolation: 401,
 	ErrUserNotFound:                  400,
 	ErrUpdatingAdmin:                 400,
-	ErrUserRemoved:                   400,
-	ErrUserAlreadyRemoved:            400,
+	ErrUserDeactivated:               400,
+	ErrUserAlreadyDeactivated:        400,
 }
 
 // ErrorDescriptions holds detailed error description for every AppError
