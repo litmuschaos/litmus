@@ -123,12 +123,15 @@ func (r *mutationResolver) LeaveProject(ctx context.Context, member model.Member
 
 func (r *mutationResolver) UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
-
 	if err != nil {
 		return "Unsuccessful", err
 	}
 
-	return project.UpdateProjectName(ctx, projectID, projectName)
+	//fetching all the user's details from jwt token
+	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
+	userUID := claims["uid"].(string)
+
+	return project.UpdateProjectName(ctx, projectID, projectName, userUID)
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
