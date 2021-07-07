@@ -17,5 +17,5 @@ func UserRouter(router *gin.Engine, service user.Service) {
 	router.POST("/create", handlers.CreateUser(service))
 	router.POST("/update/details", handlers.UpdateUser(service))
 	router.GET("/users", handlers.FetchUsers(service))
-	router.POST("/updatestatus", handlers.UpdateUserState(service))
+	router.POST("/updatestate", handlers.UpdateUserState(service))
 }

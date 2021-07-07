@@ -13,7 +13,7 @@ type Service interface {
 	UpdateUser(user *entities.User) (*entities.User, error)
 	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
-	UpdateUserState(username string, isDisable bool) error
+	UpdateUserState(username string, isDeactivate bool) error
 }
 
 type service struct {
@@ -55,9 +55,9 @@ func (s service) IsAdministrator(user *entities.User) error {
 	return s.repository.IsAdministrator(user)
 }
 
-// RemoveUser updates removed_at state of the user
-func (s service) UpdateUserState(username string, isDisable bool) error {
-	return s.repository.UpdateUserState(username, isDisable)
+// UpdateUserState updates deactivated_at state of the user
+func (s service) UpdateUserState(username string, isDeactivate bool) error {
+	return s.repository.UpdateUserState(username, isDeactivate)
 }
 
 // NewService creates a new instance of this service

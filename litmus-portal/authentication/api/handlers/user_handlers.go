@@ -15,7 +15,7 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
 		if entities.Role(userRole) != entities.RoleAdmin {
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
 		var userRequest entities.User
@@ -97,9 +97,9 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 			return
 		}
 
-		// Checking if user is removed
-		if user.RemovedAt != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserRemoved], presenter.CreateErrorResponse(utils.ErrUserRemoved))
+		// Checking if user is deactivated
+		if user.DeactivatedAt != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserDeactivated], presenter.CreateErrorResponse(utils.ErrUserDeactivated))
 			return
 		}
 
@@ -188,7 +188,7 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 		err = service.IsAdministrator(&adminUser)
 		if err != nil {
 			log.Info(err)
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
 		err = service.UpdatePassword(&userPasswordRequest, false)
@@ -221,7 +221,7 @@ func UpdateUserState(service user.Service) gin.HandlerFunc {
 		err = service.IsAdministrator(&adminUser)
 		if err != nil {
 			log.Info(err)
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
 
@@ -239,15 +239,15 @@ func UpdateUserState(service user.Service) gin.HandlerFunc {
 			return
 		}
 
-		if userRequest.IsDisable == true {
-			// Checking if user is already removed
-			if user.RemovedAt != nil {
-				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyRemoved], presenter.CreateErrorResponse(utils.ErrUserAlreadyRemoved))
+		// Checking if user is already deactivated
+		if userRequest.IsDeactivate {
+			if user.DeactivatedAt != nil {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyDeactivated], presenter.CreateErrorResponse(utils.ErrUserAlreadyDeactivated))
 				return
 			}
 		}
 
-		err = service.UpdateUserState(userRequest.Username, userRequest.IsDisable)
+		err = service.UpdateUserState(userRequest.Username, userRequest.IsDeactivate)
 		if err != nil {
 			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))

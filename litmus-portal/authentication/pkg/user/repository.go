@@ -2,13 +2,14 @@ package user
 
 import (
 	"context"
+	"litmus/litmus-portal/authentication/pkg/entities"
+	"litmus/litmus-portal/authentication/pkg/utils"
+	"time"
+
 	uuid "github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/utils"
-	"time"
 )
 
 //Repository holds the mongo database implementation of the Service
@@ -20,19 +21,20 @@ type Repository interface {
 	UpdateUser(user *entities.User) (*entities.User, error)
 	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
-	UpdateUserState(username string, isDisable bool) error
+	UpdateUserState(username string, isDeactivate bool) error
 }
 
 type repository struct {
 	Collection *mongo.Collection
 }
 
-// FindUser helps to authenticate the user
+// FindUser finds and returns a user if it exists
 func (r repository) FindUser(username string) (*entities.User, error) {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
 		"username": username,
 	}).Decode(&result)
+
 	if findOneErr != nil {
 		return nil, findOneErr
 	}
@@ -42,9 +44,11 @@ func (r repository) FindUser(username string) (*entities.User, error) {
 // CheckPasswordHash checks password hash and password from user input
 func (r repository) CheckPasswordHash(hash, password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+
 	if err != nil {
 		return utils.ErrWrongPassword
 	}
+
 	return nil
 }
 
@@ -143,21 +147,23 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	return nil
 }
 
-// RemoveUser updates the removed_at state of the user
-func (r repository) UpdateUserState(username string, isDisable bool) error {
+// UpdateUserState updates the deactivated_at state of the user
+func (r repository) UpdateUserState(username string, isDeactivate bool) error {
 	var err error
-	if isDisable == true {
+	if isDeactivate {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
-			"removed_at": time.Now(),
+			"deactivated_at": time.Now(),
 		}})
 	} else {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
-			"removed_at": nil,
+			"deactivated_at": nil,
 		}})
 	}
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
