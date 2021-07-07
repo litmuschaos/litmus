@@ -112,18 +112,12 @@ const ProjectDropdownItems: React.FC = () => {
 
     projects.map((project) => {
       return project.members.forEach((member: Member) => {
-        if (
-          member.user_id === userID &&
-          member.role === 'Owner' &&
-          member.disabled_at === ''
-        ) {
+        if (member.user_id === userID && member.role === 'Owner') {
           projectOwner.push(project);
         } else if (
           member.user_id === userID &&
           member.role !== 'Owner' &&
-          member.invitation === 'Accepted' &&
-          member.disabled_at === '' &&
-          project.removed_at === ''
+          member.invitation === 'Accepted'
         ) {
           projectOther.push({
             projectDetails: project,

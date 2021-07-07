@@ -22,7 +22,7 @@ func ValidateRole(ctx context.Context, projectID string, requiredRoles []model.M
 		{"members", bson.D{
 			{"$elemMatch", bson.D{
 				{"user_id", uid},
-				{"disabled_at", ""},
+				{"deactivated_at", ""},
 				{"role", bson.D{
 					{"$in", requiredRoles},
 				}},
@@ -40,15 +40,15 @@ func ValidateRole(ctx context.Context, projectID string, requiredRoles []model.M
 	return nil
 }
 
-// ValidateUserStatus checks if the user with given uid is disabled or not
+// ValidateUserStatus checks if the user with given uid is deactivated or not
 func ValidateUserStatus(ctx context.Context, uid string) error {
 	user, err := dbOperationsUserManagement.GetUserByUserID(ctx, uid)
 	if err != nil {
 		return err
 	}
 
-	if user.DisabledAt != "" {
-		return errors.New("User has been disabled")
+	if user.DeactivatedAt != "" {
+		return errors.New("user has been deactivated")
 	}
 
 	return nil

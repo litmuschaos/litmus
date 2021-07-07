@@ -6,7 +6,7 @@ export interface Member {
   name: string;
   email: string;
   joined_at: string;
-  disabled_at: string;
+  deactivated_at: string;
 }
 
 export interface Project {
@@ -73,13 +73,13 @@ export interface UserData {
   logged_in: boolean;
   created_at: string;
   updated_at: string;
-  removed_at: string;
+  deactivated_at: string;
   state: string;
 }
 
 export interface UpdateUserStateInput {
   username: string;
-  isDisable: boolean;
+  isDeactivate: boolean;
 }
 
 export interface SSHKey {

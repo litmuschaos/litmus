@@ -16,7 +16,7 @@ type Member {
   role: MemberRole!
   invitation: String!
   joined_at: String!
-  disabled_at: String!
+  deactivated_at: String!
 }
 
 input MemberInput {

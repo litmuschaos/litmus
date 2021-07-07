@@ -5,6 +5,7 @@ import {
   Menu,
   MenuItem,
   TableCell,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 import { ButtonFilled, LightPills } from 'litmus-ui';
@@ -82,22 +83,35 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
   });
   return (
     <>
-      <TableCell className={classes.firstTC} component="th" scope="row">
+      <TableCell
+        className={`${classes.firstTC} ${
+          row.deactivated_at ? classes.dark : ''
+        }`}
+        component="th"
+        scope="row"
+      >
         <div className={classes.firstCol}>
           <Avatar
             data-cy="avatar"
             alt="User"
-            className={classes.avatarBackground}
+            className={`${
+              row.deactivated_at ? classes.darkBg : classes.avatarBackground
+            } `}
           >
             {userInitials(memberDetails ? memberDetails.username : '')}
           </Avatar>
           {memberDetails ? memberDetails.username : ''}
         </div>
       </TableCell>
-      <TableCell className={classes.otherTC}>
+      <TableCell
+        className={`${classes.otherTC} ${
+          row.deactivated_at ? classes.dark : ''
+        }`}
+      >
         <div className={classes.dropDown}>
           {role}
           <IconButton
+            disabled={row.deactivated_at ? true : false}
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
@@ -170,7 +184,11 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
           </Menu>
         </div>
       </TableCell>
-      <TableCell className={classes.otherTC}>
+      <TableCell
+        className={`${classes.otherTC} ${
+          row.deactivated_at ? classes.dark : ''
+        }`}
+      >
         {memberDetails ? memberDetails.email : ''}
       </TableCell>
       <TableCell className={classes.otherTC}>
@@ -190,22 +208,34 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
                 <img alt="delete" src="./icons/deleteBox.svg" height="45" />
               </IconButton>
             )}
-          <ButtonFilled
-            disabled={false}
-            onClick={() => {
-              SendInvite({
-                variables: {
-                  member: {
-                    project_id: projectID,
-                    user_id: row.user_id,
-                    role,
-                  },
-                },
-              });
+          <Tooltip
+            classes={{
+              tooltip: classes.tooltip,
             }}
+            disableHoverListener={row.deactivated_at ? false : true}
+            disableFocusListener
+            placement="bottom"
+            title="User has been deactivated"
           >
-            {t('settings.teamingTab.invitation.sentInvitation.resend')}
-          </ButtonFilled>
+            <div>
+              <ButtonFilled
+                disabled={row.deactivated_at ? true : false}
+                onClick={() => {
+                  SendInvite({
+                    variables: {
+                      member: {
+                        project_id: projectID,
+                        user_id: row.user_id,
+                        role,
+                      },
+                    },
+                  });
+                }}
+              >
+                {t('settings.teamingTab.invitation.sentInvitation.resend')}
+              </ButtonFilled>
+            </div>
+          </Tooltip>
         </div>
       </TableCell>
       {open && (

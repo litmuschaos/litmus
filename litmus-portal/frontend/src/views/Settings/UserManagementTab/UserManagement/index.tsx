@@ -24,7 +24,7 @@ import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import config from '../../../../config';
-import { UserRole } from '../../../../models/graphql/user';
+import { UserData } from '../../../../models/graphql/user';
 import { getToken } from '../../../../utils/auth';
 import CreateUser from '../CreateUser';
 import EditUser from '../EditUser';
@@ -43,18 +43,6 @@ const StyledTableCell = withStyles((theme: Theme) =>
     },
   })
 )(TableCell);
-
-interface UserData {
-  _id: string;
-  username: string;
-  email: string;
-  name: string;
-  logged_in: boolean;
-  created_at: string;
-  updated_at: string;
-  removed_at: string;
-  state: string;
-}
 
 interface FilterOptions {
   search: string;
@@ -105,14 +93,13 @@ const UserManagement: React.FC = () => {
   }, [showDiv]);
 
   const filteredData = rows
-    ?.filter((dataRow) => dataRow.username !== UserRole.admin)
     ?.filter((dataRow) =>
       dataRow.username.toLowerCase().includes(filters.search.toLowerCase())
     )
     .filter((datarow) => {
       if (filters.status === 'all') return true;
-      if (filters.status === 'signedin') return datarow.logged_in === true;
-      return datarow.logged_in === false;
+      if (filters.status === 'deactivated') return datarow.deactivated_at;
+      return !datarow.deactivated_at;
     });
 
   const [currRow, setCurrRow] = React.useState<UserData>();
@@ -206,14 +193,14 @@ const UserManagement: React.FC = () => {
                           <MenuItem value="all">
                             {t('settings.userManagementTab.label.options.all')}
                           </MenuItem>
-                          <MenuItem value="signedout">
+                          <MenuItem value="deactivated">
                             {t(
-                              'settings.userManagementTab.label.options.notSignedIn'
+                              'settings.userManagementTab.label.options.deactivated'
                             )}
                           </MenuItem>
-                          <MenuItem value="signedin">
+                          <MenuItem value="active">
                             {t(
-                              'settings.userManagementTab.label.options.signedIn'
+                              'settings.userManagementTab.label.options.active'
                             )}
                           </MenuItem>
                         </Select>
@@ -239,18 +226,28 @@ const UserManagement: React.FC = () => {
                       <TableHead>
                         <TableRow className={classes.TR}>
                           <StyledTableCell className={classes.styledTC}>
-                            {t('settings.userManagementTab.tableCell.status')}
+                            <Typography className={classes.tableHeader}>
+                              {t(
+                                'settings.userManagementTab.tableCell.username'
+                              )}
+                            </Typography>
                           </StyledTableCell>
                           <StyledTableCell>
-                            {t('settings.userManagementTab.tableCell.username')}
+                            <Typography className={classes.tableHeader}>
+                              {t('settings.userManagementTab.tableCell.name')}
+                            </Typography>
                           </StyledTableCell>
                           <StyledTableCell>
-                            {t('settings.userManagementTab.tableCell.email')}
+                            <Typography className={classes.tableHeader}>
+                              {t('settings.userManagementTab.tableCell.email')}
+                            </Typography>
                           </StyledTableCell>
                           <StyledTableCell>
-                            {t(
-                              'settings.userManagementTab.tableCell.userCreated'
-                            )}
+                            <Typography className={classes.tableHeader}>
+                              {t(
+                                'settings.userManagementTab.tableCell.userCreated'
+                              )}
+                            </Typography>
                           </StyledTableCell>
                           <StyledTableCell />
                           <TableHead />

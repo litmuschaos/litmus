@@ -51,24 +51,24 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 }
 
 // UpdateUserState
-func UpdateUserState(ctx context.Context, username string, isDisable bool) (string, error) {
+func UpdateUserState(ctx context.Context, username string, isDeactivate bool) (string, error) {
 	// Checking if admin is being removed
 	if username == "admin" {
-		return "Cannot Update Admin's State", errors.New("cannot update admin's state")
+		return "Cannot update admin's state", errors.New("cannot update admin's state")
 	}
-	disabledAt := time.Now().Format(time.RFC1123Z)
-	if isDisable != true {
-		disabledAt = ""
+	deactivatedAt := time.Now().Format(time.RFC1123Z)
+	if isDeactivate != true {
+		deactivatedAt = ""
 	}
 	dbUser := &dbSchemaUserManagement.User{
-		Username:   username,
-		DisabledAt: disabledAt,
+		Username:      username,
+		DeactivatedAt: deactivatedAt,
 	}
 	err := dbOperationsUserManagement.UpdateUserState(ctx, *dbUser)
 	if err != nil {
-		return "Error Updating User's State", err
+		return "Error updating user's state", err
 	}
-	return "user's state updated successfully", nil
+	return "User's state updated successfully", nil
 }
 
 // GetUser queries the user collection for a user with a given username,
@@ -96,7 +96,7 @@ func GetUsers(ctx context.Context) ([]*model.User, error) {
 
 	users, err := dbOperationsUserManagement.GetUsers(ctx,
 		bson.D{
-			{"disabled_at", ""},
+			{"deactivated_at", ""},
 		})
 	if err != nil {
 		return nil, err

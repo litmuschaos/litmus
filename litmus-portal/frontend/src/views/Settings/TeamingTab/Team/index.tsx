@@ -22,7 +22,6 @@ import {
   LIST_PROJECTS,
   UPDATE_PROJECT_NAME,
 } from '../../../../graphql';
-import { UserInvite } from '../../../../models/graphql/invite';
 import {
   Member,
   Project,
@@ -95,7 +94,7 @@ const TeamingTab: React.FC = () => {
   const [accepted, setAccepted] = useState<Member[]>([]);
   const [notAccepted, setNotAccepted] = useState<Member[]>([]);
 
-  const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
+  // const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
 
   const [activeTab, setActiveTab] = useState<number>(0);
 
@@ -108,13 +107,9 @@ const TeamingTab: React.FC = () => {
     ProjectDetailVars
   >(GET_PROJECT, {
     variables: { projectID },
-    fetchPolicy: 'cache-and-network',
-  });
-
-  const { refetch: refetchAllUsers } = useQuery(ALL_USERS, {
-    skip: !dataB,
     onCompleted: (data) => {
-      setAllUsers([...data.users]);
+      // setAllUsers([...data.users]);
+      console.log(data);
       setLoading(false);
       const memberList = dataB?.getProject.members ?? [];
       const acceptedUsers: Member[] = [];
@@ -133,6 +128,12 @@ const TeamingTab: React.FC = () => {
       setAccepted([...acceptedUsers]);
       setNotAccepted([...notAcceptedUsers]);
     },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  const { refetch: refetchAllUsers } = useQuery(ALL_USERS, {
+    skip: !dataB,
+
     fetchPolicy: 'cache-and-network',
   });
 

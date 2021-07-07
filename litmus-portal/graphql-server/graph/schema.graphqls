@@ -338,7 +338,8 @@ type Mutation {
   createUser(user: CreateUserInput!): User! @authorized
 
   # Used to disable a user
-  updateUserState(username: String!, isDisable: Boolean!): String! @authorized
+  updateUserState(username: String!, isDeactivate: Boolean!): String!
+    @authorized
 
   # It is used to create a project
   createProject(projectName: String!): Project! @authorized

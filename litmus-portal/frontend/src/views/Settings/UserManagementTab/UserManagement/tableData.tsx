@@ -5,10 +5,10 @@ import {
   MenuItem,
   TableCell,
   TableRow,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { LightPills } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +17,7 @@ import { UPDATE_USER_STATE } from '../../../../graphql';
 import {
   UpdateUserStateInput,
   UserData,
+  UserRole,
 } from '../../../../models/graphql/user';
 import { getToken } from '../../../../utils/auth';
 import useStyles from './styles';
@@ -56,7 +57,7 @@ const TableData: React.FC<TableDataProps> = ({
 
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
-    fetch(`${config.auth.url}/updatestatus`, {
+    fetch(`${config.auth.url}/updatestate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -64,24 +65,22 @@ const TableData: React.FC<TableDataProps> = ({
       },
       body: JSON.stringify({
         username: row?.username,
-        is_disable: row?.removed_at ? false : true,
+        is_deactivate: row?.deactivated_at ? false : true,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          // isError.current = true;
         } else {
           UpdateUserState({
             variables: {
               username: row?.username,
-              isDisable: row?.removed_at ? false : true,
+              isDeactivate: row?.deactivated_at ? false : true,
             },
           });
         }
       })
       .catch((err) => {
-        // isError.current = true;
         console.error(err);
       });
   };
@@ -90,23 +89,35 @@ const TableData: React.FC<TableDataProps> = ({
     <TableRow data-cy="userTableRow" key={row.name} className={classes.TR}>
       <TableCell className={classes.firstTC} component="th" scope="row">
         <div className={classes.firstCol}>
-          {row.logged_in ? (
-            <LightPills
-              variant="success"
-              label={t('settings.userManagementTab.label.options.signedIn')}
-            />
-          ) : (
-            <LightPills
-              variant="danger"
-              label={t('settings.userManagementTab.label.options.notSignedIn')}
-            />
-          )}
-          {row.name}
+          <Tooltip
+            classes={{
+              tooltip: classes.tooltip,
+            }}
+            disableFocusListener
+            placement="bottom"
+            title={row.deactivated_at ? 'Deactivated' : 'Active'}
+          >
+            {!row.deactivated_at ? (
+              <svg viewBox="0 0 5 5">
+                <circle className={classes.statusActive} />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 5 5">
+                <circle className={classes.statusDeactivated} />
+              </svg>
+            )}
+          </Tooltip>
+
+          <Typography>{row.username}</Typography>
         </div>
       </TableCell>
 
-      <TableCell className={classes.otherTC}>{row.username}</TableCell>
-      <TableCell className={classes.otherTC}>{row.email}</TableCell>
+      <TableCell className={classes.otherTC}>
+        <Typography>{row.name ? row.name : '--'}</Typography>
+      </TableCell>
+      <TableCell className={classes.otherTC}>
+        <Typography>{row.email ? row.email : '--'}</Typography>
+      </TableCell>
       <TableCell className={classes.otherTC}>
         <div className={classes.dateDiv}>
           <img
@@ -114,62 +125,66 @@ const TableData: React.FC<TableDataProps> = ({
             src="./icons/calendarIcon.svg"
             alt="calendar"
           />
-          {formatDate(row.created_at)}
+          <Typography>{formatDate(row.created_at)}</Typography>
         </div>
       </TableCell>
       <TableCell className={classes.lastTC} key={row.username}>
-        <IconButton
-          data-cy="editUser"
-          aria-label="more"
-          aria-controls="long-menu"
-          aria-haspopup="true"
-          onClick={(event) => {
-            handleCurrRow(row);
-            setAnchorEl(event.currentTarget);
-          }}
-          className={classes.optionBtn}
-        >
-          <MoreVertIcon />
-        </IconButton>
-        <Menu
-          keepMounted
-          open={Boolean(anchorEl)}
-          id="long-menu"
-          anchorEl={anchorEl}
-          onClose={handleClose}
-        >
-          <MenuItem
-            data-cy="editProfile"
-            onClick={() => {
-              handleEditDiv();
-              setAnchorEl(null);
-            }}
-          >
-            <IconButton disabled>
-              <img alt="delete" src="./icons/Edit.svg" />
+        {row.username !== UserRole.admin && (
+          <>
+            <IconButton
+              data-cy="editUser"
+              aria-label="more"
+              aria-controls="long-menu"
+              aria-haspopup="true"
+              onClick={(event) => {
+                handleCurrRow(row);
+                setAnchorEl(event.currentTarget);
+              }}
+              className={classes.optionBtn}
+            >
+              <MoreVertIcon />
             </IconButton>
-            {t('settings.userManagementTab.editProfile')}
-          </MenuItem>
+            <Menu
+              keepMounted
+              open={Boolean(anchorEl)}
+              id="long-menu"
+              anchorEl={anchorEl}
+              onClose={handleClose}
+            >
+              <MenuItem
+                data-cy="editProfile"
+                onClick={() => {
+                  handleEditDiv();
+                  setAnchorEl(null);
+                }}
+              >
+                <IconButton disabled>
+                  <img alt="delete" src="./icons/Edit.svg" />
+                </IconButton>
+                {t('settings.userManagementTab.editProfile')}
+              </MenuItem>
 
-          <MenuItem
-            value="delete"
-            onClick={() => {
-              if (row.removed_at) {
-                setDisableUser(false);
-              } else {
-                setDisableUser(true);
-              }
-              handleSubmit();
-            }}
-          >
-            <IconButton>
-              <img alt="delete" src="./icons/bin.svg" />
-            </IconButton>
-            <Typography>
-              {row.removed_at ? 'Enable User' : 'Disable User'}
-            </Typography>
-          </MenuItem>
-        </Menu>
+              <MenuItem
+                value="delete"
+                onClick={() => {
+                  if (row.deactivated_at) {
+                    setDisableUser(false);
+                  } else {
+                    setDisableUser(true);
+                  }
+                  handleSubmit();
+                }}
+              >
+                <IconButton>
+                  <img alt="delete" src="./icons/bin.svg" />
+                </IconButton>
+                <Typography>
+                  {row.deactivated_at ? 'Enable User' : 'Disable User'}
+                </Typography>
+              </MenuItem>
+            </Menu>
+          </>
+        )}
       </TableCell>
     </TableRow>
   );

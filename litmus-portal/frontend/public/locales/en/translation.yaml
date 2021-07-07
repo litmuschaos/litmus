@@ -744,10 +744,10 @@ settings:
       userStatus: User Status
       options:
         all: All
-        signedIn: Signed in
-        notSignedIn: Not Signed in
+        active: Active
+        deactivated: Deactivated
     tableCell:
-      status: Status
+      name: Name
       username: Username
       email: Email
       userCreated: User Created

@@ -2,12 +2,13 @@ package usermanagement
 
 import (
 	"context"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	"log"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
 
 // CreateUser inserts a new user to the database
@@ -49,7 +50,7 @@ func UpdateUserState(ctx context.Context, user User) error {
 
 	update := bson.D{
 		{"$set", bson.D{
-			{"disabled_at", user.DisabledAt},
+			{"deactivated_at", user.DeactivatedAt},
 		}},
 	}
 	_, err := mongodb.Operator.Update(ctx, mongodb.UserCollection, filter, update)
@@ -68,7 +69,7 @@ func UpdateUserState(ctx context.Context, user User) error {
 	filter = bson.D{{}}
 	update = bson.D{
 		{"$set", bson.D{
-			{"members.$[elem].disabled_at", user.DisabledAt},
+			{"members.$[elem].deactivated_at", user.DeactivatedAt},
 		}},
 	}
 
@@ -78,11 +79,10 @@ func UpdateUserState(ctx context.Context, user User) error {
 		return err
 	}
 
-
 	// Updating state of project where owner is disabled
 	projects, err := project.GetProjectsByUserID(ctx, user.Username, true)
 	if err != nil {
-		return  err
+		return err
 	}
 
 	for _, val := range projects {
@@ -91,7 +91,7 @@ func UpdateUserState(ctx context.Context, user User) error {
 		}
 		update = bson.D{
 			{"$set", bson.D{
-				{"removed_at", user.DisabledAt},
+				{"removed_at", user.DeactivatedAt},
 			}},
 		}
 
@@ -101,8 +101,6 @@ func UpdateUserState(ctx context.Context, user User) error {
 			return err
 		}
 	}
-
-
 
 	return nil
 }

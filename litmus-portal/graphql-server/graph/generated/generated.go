@@ -220,14 +220,14 @@ type ComplexityRoot struct {
 	}
 
 	Member struct {
-		DisabledAt func(childComplexity int) int
-		Email      func(childComplexity int) int
-		Invitation func(childComplexity int) int
-		JoinedAt   func(childComplexity int) int
-		Name       func(childComplexity int) int
-		Role       func(childComplexity int) int
-		UserID     func(childComplexity int) int
-		UserName   func(childComplexity int) int
+		DeactivatedAt func(childComplexity int) int
+		Email         func(childComplexity int) int
+		Invitation    func(childComplexity int) int
+		JoinedAt      func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Role          func(childComplexity int) int
+		UserID        func(childComplexity int) int
+		UserName      func(childComplexity int) int
 	}
 
 	MemberStat struct {
@@ -284,7 +284,7 @@ type ComplexityRoot struct {
 		UpdatePanel            func(childComplexity int, panelInput []*model.Panel) int
 		UpdateProjectName      func(childComplexity int, projectID string, projectName string) int
 		UpdateUser             func(childComplexity int, user model.UpdateUserInput) int
-		UpdateUserState        func(childComplexity int, username string, isDisable bool) int
+		UpdateUserState        func(childComplexity int, username string, isDeactivate bool) int
 		UserClusterReg         func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
@@ -456,7 +456,7 @@ type ComplexityRoot struct {
 	User struct {
 		CompanyName     func(childComplexity int) int
 		CreatedAt       func(childComplexity int) int
-		DisabledAt      func(childComplexity int) int
+		DeactivatedAt   func(childComplexity int) int
 		Email           func(childComplexity int) int
 		ID              func(childComplexity int) int
 		IsEmailVerified func(childComplexity int) int
@@ -688,7 +688,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error)
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
-	UpdateUserState(ctx context.Context, username string, isDisable bool) (string, error)
+	UpdateUserState(ctx context.Context, username string, isDeactivate bool) (string, error)
 	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
@@ -1546,12 +1546,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ManifestTemplate.TemplateName(childComplexity), true
 
-	case "Member.disabled_at":
-		if e.complexity.Member.DisabledAt == nil {
+	case "Member.deactivated_at":
+		if e.complexity.Member.DeactivatedAt == nil {
 			break
 		}
 
-		return e.complexity.Member.DisabledAt(childComplexity), true
+		return e.complexity.Member.DeactivatedAt(childComplexity), true
 
 	case "Member.email":
 		if e.complexity.Member.Email == nil {
@@ -2146,7 +2146,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUserState(childComplexity, args["username"].(string), args["isDisable"].(bool)), true
+		return e.complexity.Mutation.UpdateUserState(childComplexity, args["username"].(string), args["isDeactivate"].(bool)), true
 
 	case "Mutation.userClusterReg":
 		if e.complexity.Mutation.UserClusterReg == nil {
@@ -3164,12 +3164,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.CreatedAt(childComplexity), true
 
-	case "User.disabled_at":
-		if e.complexity.User.DisabledAt == nil {
+	case "User.deactivated_at":
+		if e.complexity.User.DeactivatedAt == nil {
 			break
 		}
 
-		return e.complexity.User.DisabledAt(childComplexity), true
+		return e.complexity.User.DeactivatedAt(childComplexity), true
 
 	case "User.email":
 		if e.complexity.User.Email == nil {
@@ -4785,7 +4785,7 @@ type Member {
   role: MemberRole!
   invitation: String!
   joined_at: String!
-  disabled_at: String!
+  deactivated_at: String!
 }
 
 input MemberInput {
@@ -5140,7 +5140,8 @@ type Mutation {
   createUser(user: CreateUserInput!): User! @authorized
 
   # Used to disable a user
-  updateUserState(username: String!, isDisable: Boolean!): String! @authorized
+  updateUserState(username: String!, isDeactivate: Boolean!): String!
+    @authorized
 
   # It is used to create a project
   createProject(projectName: String!): Project! @authorized
@@ -5347,7 +5348,7 @@ input UsageQuery{
   state: String
   created_at: String!
   updated_at: String!
-  disabled_at: String!
+  deactivated_at: String!
 }
 
 input CreateUserInput {
@@ -5364,7 +5365,8 @@ input UpdateUserInput {
   name: String
   email: String
   company_name: String
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
@@ -6142,13 +6144,13 @@ func (ec *executionContext) field_Mutation_updateUserState_args(ctx context.Cont
 	}
 	args["username"] = arg0
 	var arg1 bool
-	if tmp, ok := rawArgs["isDisable"]; ok {
+	if tmp, ok := rawArgs["isDeactivate"]; ok {
 		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["isDisable"] = arg1
+	args["isDeactivate"] = arg1
 	return args, nil
 }
 
@@ -10556,7 +10558,7 @@ func (ec *executionContext) _Member_joined_at(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Member_disabled_at(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
+func (ec *executionContext) _Member_deactivated_at(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10573,7 +10575,7 @@ func (ec *executionContext) _Member_disabled_at(ctx context.Context, field graph
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.DisabledAt, nil
+		return obj.DeactivatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10907,7 +10909,7 @@ func (ec *executionContext) _Mutation_updateUserState(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateUserState(rctx, args["username"].(string), args["isDisable"].(bool))
+			return ec.resolvers.Mutation().UpdateUserState(rctx, args["username"].(string), args["isDeactivate"].(bool))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -18597,7 +18599,7 @@ func (ec *executionContext) _User_updated_at(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_disabled_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_deactivated_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -18614,7 +18616,7 @@ func (ec *executionContext) _User_disabled_at(ctx context.Context, field graphql
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.DisabledAt, nil
+		return obj.DeactivatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27107,8 +27109,8 @@ func (ec *executionContext) _Member(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "disabled_at":
-			out.Values[i] = ec._Member_disabled_at(ctx, field, obj)
+		case "deactivated_at":
+			out.Values[i] = ec._Member_deactivated_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28603,8 +28605,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "disabled_at":
-			out.Values[i] = ec._User_disabled_at(ctx, field, obj)
+		case "deactivated_at":
+			out.Values[i] = ec._User_deactivated_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

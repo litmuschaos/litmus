@@ -33,14 +33,14 @@ export const CREATE_USER = gql`
       username
       created_at
       updated_at
-      disabled_at
+      deactivated_at
     }
   }
 `;
 
 export const UPDATE_USER_STATE = gql`
-  mutation updateUserState($username: String!, $isDisable: Boolean!) {
-    updateUserState(username: $username, isDisable: $isDisable)
+  mutation updateUserState($username: String!, $isDeactivate: Boolean!) {
+    updateUserState(username: $username, isDeactivate: $isDeactivate)
   }
 `;
 
