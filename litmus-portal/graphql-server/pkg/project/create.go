@@ -34,6 +34,21 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 		return nil, err
 	}
 
+	if projectName == "" {
+		return nil, errors.New("project name can't be empty")
+	}
+
+	//checking duplicate projectname
+	filter := bson.D{{"name", projectName}}
+	projects, err := dbOperationsProject.GetProjects(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(projects) > 0 {
+		return nil, errors.New("project with name: " + projectName + " already exists.")
+	}
+
 	uuid := uuid.New()
 	newProject := &dbSchemaProject.Project{
 		ID:   uuid.String(),
