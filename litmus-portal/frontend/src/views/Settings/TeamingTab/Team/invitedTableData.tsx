@@ -111,7 +111,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
         <div className={classes.dropDown}>
           {role}
           <IconButton
-            disabled={row.deactivated_at ? true : false}
+            disabled={!!row.deactivated_at}
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
@@ -212,14 +212,14 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             classes={{
               tooltip: classes.tooltip,
             }}
-            disableHoverListener={row.deactivated_at ? false : true}
+            disableHoverListener={!row.deactivated_at}
             disableFocusListener
             placement="bottom"
             title="User has been deactivated"
           >
             <div>
               <ButtonFilled
-                disabled={row.deactivated_at ? true : false}
+                disabled={!!row.deactivated_at}
                 onClick={() => {
                   SendInvite({
                     variables: {

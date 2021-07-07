@@ -65,7 +65,7 @@ const TableData: React.FC<TableDataProps> = ({
       },
       body: JSON.stringify({
         username: row?.username,
-        is_deactivate: row?.deactivated_at ? false : true,
+        is_deactivate: !row?.deactivated_at,
       }),
     })
       .then((response) => response.json())
@@ -75,7 +75,7 @@ const TableData: React.FC<TableDataProps> = ({
           UpdateUserState({
             variables: {
               username: row?.username,
-              isDeactivate: row?.deactivated_at ? false : true,
+              isDeactivate: !row?.deactivated_at,
             },
           });
         }
