@@ -289,50 +289,56 @@ export const updateManifestImage = (
   parsedYaml: any,
   registryData: ImageRegistryInfo
 ) => {
-  if (parsedYaml.spec !== undefined) {
-    if (parsedYaml.kind.toLowerCase() === 'workflow') {
-      if (registryData.image_registry_type.toLocaleLowerCase() === 'private') {
-        parsedYaml.spec['imagePullSecrets'] = [
-          {
-            name: registryData.secret_name,
-          },
-        ];
-      }
-      parsedYaml.spec.templates.forEach((template: any) => {
-        if (template.container) {
-          if (registryData.image_repo_name !== constants.litmus) {
-            const imageData = template.container.image.split('/');
-            const imageName = imageData[imageData.length - 1];
-            template.container.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
-          } else {
-            const imageData = template.container.image.split('/');
-            const imageName = imageData[imageData.length - 1];
-            template.container.image = `${constants.litmus}/${imageName}`;
-          }
+  if (registryData.update_registry) {
+    if (parsedYaml.spec !== undefined) {
+      if (parsedYaml.kind.toLowerCase() === 'workflow') {
+        if (
+          registryData.image_registry_type.toLocaleLowerCase() === 'private'
+        ) {
+          parsedYaml.spec['imagePullSecrets'] = [
+            {
+              name: registryData.secret_name,
+            },
+          ];
         }
-      });
-    }
-    if (parsedYaml.kind.toLowerCase() === 'cronworkflow') {
-      if (registryData.image_registry_type.toLocaleLowerCase() === 'private') {
-        parsedYaml.spec.workflowSpec['imagePullSecrets'] = [
-          {
-            name: registryData.secret_name,
-          },
-        ];
-      }
-      parsedYaml.spec.workflowSpec.templates.forEach((template: any) => {
-        if (template.container) {
-          if (registryData.image_repo_name !== constants.litmus) {
-            const imageData = template.container.image.split('/');
-            const imageName = imageData[imageData.length - 1];
-            template.container.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
-          } else {
-            const imageData = template.container.image.split('/');
-            const imageName = imageData[imageData.length - 1];
-            template.container.image = `${constants.litmus}/${imageName}`;
+        parsedYaml.spec.templates.forEach((template: any) => {
+          if (template.container) {
+            if (registryData.image_repo_name !== constants.litmus) {
+              const imageData = template.container.image.split('/');
+              const imageName = imageData[imageData.length - 1];
+              template.container.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
+            } else {
+              const imageData = template.container.image.split('/');
+              const imageName = imageData[imageData.length - 1];
+              template.container.image = `${constants.litmus}/${imageName}`;
+            }
           }
+        });
+      }
+      if (parsedYaml.kind.toLowerCase() === 'cronworkflow') {
+        if (
+          registryData.image_registry_type.toLocaleLowerCase() === 'private'
+        ) {
+          parsedYaml.spec.workflowSpec['imagePullSecrets'] = [
+            {
+              name: registryData.secret_name,
+            },
+          ];
         }
-      });
+        parsedYaml.spec.workflowSpec.templates.forEach((template: any) => {
+          if (template.container) {
+            if (registryData.image_repo_name !== constants.litmus) {
+              const imageData = template.container.image.split('/');
+              const imageName = imageData[imageData.length - 1];
+              template.container.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
+            } else {
+              const imageData = template.container.image.split('/');
+              const imageName = imageData[imageData.length - 1];
+              template.container.image = `${constants.litmus}/${imageName}`;
+            }
+          }
+        });
+      }
     }
   }
   return YAML.stringify(parsedYaml);

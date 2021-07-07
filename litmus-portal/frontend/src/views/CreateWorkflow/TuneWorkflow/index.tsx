@@ -183,14 +183,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     onCompleted: (data) => {
       const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
+
       const updatedManifestImage = updateManifestImage(
         parsedYAML,
         imageRegistryData
       );
-      const updatedManifest = updateNamespace(
-        YAML.parse(updatedManifestImage),
-        namespace
-      );
+      const updatedManifest = updateNamespace(updatedManifestImage, namespace);
 
       workflowAction.setWorkflowManifest({
         manifest: YAML.stringify(updatedManifest),
