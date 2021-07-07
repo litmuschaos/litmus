@@ -103,13 +103,18 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
   const handleK8s = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (e.target.name === 'operation' || e.target.name === 'data') {
+    if (e.target.name === 'operation') {
       setProbeData({
         ...probeData,
         'k8sProbe/inputs': {
           ...probeData['k8sProbe/inputs'],
           [e.target.name]: e.target.value,
         },
+      });
+    } else if (e.target.name === 'data') {
+      setProbeData({
+        ...probeData,
+        [e.target.name]: e.target.value,
       });
     } else {
       setProbeData({
@@ -518,7 +523,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               }}
             >
               {k8sOperation.map((k8sData) => {
-                return <MenuItem value={k8sData}>{k8sData}</MenuItem>;
+                return (
+                  <MenuItem key={k8sData} value={k8sData}>
+                    {k8sData}
+                  </MenuItem>
+                );
               })}
             </Select>
           </div>

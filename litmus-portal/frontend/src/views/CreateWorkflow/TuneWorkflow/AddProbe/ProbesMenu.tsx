@@ -40,7 +40,11 @@ const ProbesMenu: React.FC<ProbesMenuProps> = ({
         }}
       >
         {valueList.map((compData) => {
-          return <MenuItem value={compData}>{compData}</MenuItem>;
+          return (
+            <MenuItem key={compData} value={compData}>
+              {compData}
+            </MenuItem>
+          );
         })}
       </Select>
     </div>
