@@ -37,8 +37,15 @@ interface TableDataProps {
   row: Member;
   index: number;
   showModal: () => void;
+  modalOpen: boolean;
+  handleModalOpen: () => void;
 }
-const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
+const InvitedTableData: React.FC<TableDataProps> = ({
+  row,
+  showModal,
+  modalOpen,
+  handleModalOpen,
+}) => {
   const classes = useStyles();
   const projectID = getProjectID();
 
@@ -204,7 +211,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
         <div className={classes.lastCell}>
           {row.invitation !== InvitationStatus.exited &&
             row.invitation !== InvitationStatus.declined && (
-              <IconButton onClick={() => setOpen(true)}>
+              <IconButton onClick={handleModalOpen}>
                 <img alt="delete" src="./icons/deleteBox.svg" height="45" />
               </IconButton>
             )}
@@ -238,12 +245,10 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
           </Tooltip>
         </div>
       </TableCell>
-      {open && (
+      {modalOpen && (
         <RemoveMemberModal
-          open={open}
-          handleClose={() => {
-            setOpen(false);
-          }}
+          open={modalOpen}
+          handleClose={showModal}
           row={row}
           showModal={showModal}
           isRemove={false}

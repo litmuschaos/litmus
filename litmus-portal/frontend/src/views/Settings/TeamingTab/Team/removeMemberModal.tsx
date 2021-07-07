@@ -4,7 +4,7 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
-import { GET_PROJECT, REMOVE_INVITATION } from '../../../../graphql';
+import { ALL_USERS, GET_PROJECT, REMOVE_INVITATION } from '../../../../graphql';
 import { MemberInvitation } from '../../../../models/graphql/invite';
 import { Member } from '../../../../models/graphql/user';
 import { getProjectID } from '../../../../utils/getSearchParams';
@@ -36,11 +36,15 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
       onCompleted: () => {
         showModal();
         handleClose();
+        window.location.reload();
       },
       refetchQueries: [
         {
           query: GET_PROJECT,
           variables: { projectID },
+        },
+        {
+          query: ALL_USERS,
         },
       ],
     }

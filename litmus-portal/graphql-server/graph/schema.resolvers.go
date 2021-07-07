@@ -130,11 +130,6 @@ func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.Me
 		return "Unsuccessful", err
 	}
 
-	err = authorization.ValidateUserStatus(ctx, member.UserID)
-	if err != nil {
-		return "Unsuccessful", err
-	}
-
 	return project.RemoveInvitation(ctx, member)
 }
 
@@ -360,6 +355,12 @@ func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*mode
 func (r *queryResolver) ListProjects(ctx context.Context) ([]*model.Project, error) {
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	userUID := claims["uid"].(string)
+
+	err := authorization.ValidateUserStatus(ctx, userUID)
+	if err != nil {
+		return nil, err
+	}
+
 	return project.GetProjectsByUserID(ctx, userUID)
 }
 

@@ -102,10 +102,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
           }`}
           key={row.user_id}
         >
-          <IconButton
-            onClick={() => setOpen(true)}
-            disabled={!!row.deactivated_at}
-          >
+          <IconButton onClick={() => setOpen(true)}>
             <img alt="delete" src="./icons/removeMember.svg" height="50" />
           </IconButton>
         </TableCell>

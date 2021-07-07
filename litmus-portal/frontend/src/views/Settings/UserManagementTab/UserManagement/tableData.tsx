@@ -175,8 +175,15 @@ const TableData: React.FC<TableDataProps> = ({
                   handleSubmit();
                 }}
               >
-                <IconButton>
-                  <img alt="delete" src="./icons/bin.svg" />
+                <IconButton disabled>
+                  <img
+                    alt="update state"
+                    src={
+                      row.deactivated_at
+                        ? './icons/UserEnable.svg'
+                        : './icons/UserDisable.svg'
+                    }
+                  />
                 </IconButton>
                 <Typography>
                   {row.deactivated_at ? 'Enable User' : 'Disable User'}

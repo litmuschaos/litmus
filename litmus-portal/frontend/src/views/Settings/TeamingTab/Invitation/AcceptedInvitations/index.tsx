@@ -33,8 +33,8 @@ const AcceptedInvitations: React.FC = () => {
         setProjects(dataProject?.listProjects);
       }
     },
+    fetchPolicy: 'cache-and-network',
   });
-  // const userData = useSelector((state: RootState) => state.userData);
   const projectID = getProjectID();
 
   // stores the user who has left the project
@@ -62,8 +62,7 @@ const AcceptedInvitations: React.FC = () => {
         if (
           member.user_id === userID &&
           member.role !== 'Owner' &&
-          member.invitation === 'Accepted' &&
-          project.removed_at === ''
+          member.invitation === 'Accepted'
         ) {
           otherProject.push({
             projectDetails: project,

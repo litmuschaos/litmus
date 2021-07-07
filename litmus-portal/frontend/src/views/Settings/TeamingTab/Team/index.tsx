@@ -17,7 +17,6 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Center from '../../../../containers/layouts/Center';
 import {
-  ALL_USERS,
   GET_PROJECT,
   LIST_PROJECTS,
   UPDATE_PROJECT_NAME,
@@ -94,8 +93,6 @@ const TeamingTab: React.FC = () => {
   const [accepted, setAccepted] = useState<Member[]>([]);
   const [notAccepted, setNotAccepted] = useState<Member[]>([]);
 
-  // const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
-
   const [activeTab, setActiveTab] = useState<number>(0);
 
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
@@ -107,9 +104,7 @@ const TeamingTab: React.FC = () => {
     ProjectDetailVars
   >(GET_PROJECT, {
     variables: { projectID },
-    onCompleted: (data) => {
-      // setAllUsers([...data.users]);
-      console.log(data);
+    onCompleted: () => {
       setLoading(false);
       const memberList = dataB?.getProject.members ?? [];
       const acceptedUsers: Member[] = [];
@@ -131,11 +126,10 @@ const TeamingTab: React.FC = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  const { refetch: refetchAllUsers } = useQuery(ALL_USERS, {
-    skip: !dataB,
-
-    fetchPolicy: 'cache-and-network',
-  });
+  // const { refetch: refetchAllUsers } = useQuery(ALL_USERS, {
+  //   skip: !dataB,
+  //   fetchPolicy: 'cache-and-network',
+  // });
 
   // State for pagination
   const [paginationData, setPaginationData] = useState<PaginationData>({
@@ -184,7 +178,7 @@ const TeamingTab: React.FC = () => {
 
   function showModal() {
     refetchGetProject();
-    refetchAllUsers();
+    // refetchAllUsers();
   }
 
   const [projectOwnerCount, setProjectOwnerCount] = useState<number>(0);
@@ -365,7 +359,6 @@ const TeamingTab: React.FC = () => {
                     <InviteNew
                       showModal={() => {
                         showModal();
-
                         setInviteNewOpen(false);
                       }}
                       handleOpen={() => setInviteNewOpen(true)}
