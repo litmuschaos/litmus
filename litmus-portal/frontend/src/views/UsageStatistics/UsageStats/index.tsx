@@ -6,7 +6,12 @@ import { GET_GLOBAL_STATS } from '../../../graphql';
 import Card from './Cards';
 import useStyles from './styles';
 
-const UsageStats = () => {
+interface TimeRange {
+  start_time: string;
+  end_time: string;
+}
+
+const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [usageQuery, { loading, data }] = useLazyQuery(GET_GLOBAL_STATS);
@@ -16,19 +21,13 @@ const UsageStats = () => {
       variables: {
         query: {
           DateRange: {
-            start_date: Math.trunc(
-              new Date(
-                new Date().getFullYear(),
-                new Date().getMonth(),
-                1
-              ).getTime() / 1000
-            ).toString(),
-            end_date: Math.trunc(new Date().getTime() / 1000).toString(),
+            start_date: start_time,
+            end_date: end_time,
           },
         },
       },
     });
-  }, []);
+  }, [start_time, end_time]);
 
   return (
     <div className={classes.cardDiv}>

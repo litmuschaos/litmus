@@ -630,7 +630,7 @@ const WorkflowComparisonTable = () => {
 
   return (
     <div className={classes.root} id="analytics">
-      <WorkflowGraphs data={data} />
+      {compare !== true && <WorkflowGraphs />}
       <div className={classes.analyticsDiv}>
         <Typography className={classes.heading}>
           <strong>

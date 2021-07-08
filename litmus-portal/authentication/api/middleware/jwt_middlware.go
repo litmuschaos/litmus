@@ -16,7 +16,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		const BearerSchema = "Bearer "
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
 		tokenString := authHeader[len(BearerSchema):]
@@ -29,7 +29,7 @@ func JwtMiddleware() gin.HandlerFunc {
 			c.Next()
 		} else {
 			logrus.Info(err)
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
 	}

@@ -58,6 +58,10 @@ const PanelContent: React.FC<GraphPanelProps> = ({
   className,
   controllerPanelID,
   selectedApplications,
+  centralBrushPosition,
+  handleCentralBrushPosition,
+  centralAllowGraphUpdate,
+  handleCentralAllowGraphUpdate,
 }) => {
   const { palette } = useTheme();
   const classes = useStyles();
@@ -363,7 +367,7 @@ const PanelContent: React.FC<GraphPanelProps> = ({
               showPoints={false}
               showLegendTable
               showEventTable
-              showTips={false}
+              showTips
               showEventMarkers
               marginLeftEventTable={10}
               unit={unit}
@@ -376,6 +380,10 @@ const PanelContent: React.FC<GraphPanelProps> = ({
       </div>
       <div className={classes.singleGraph}>
         <LineAreaGraph
+          centralAllowGraphUpdate={centralAllowGraphUpdate}
+          handleCentralAllowGraphUpdate={handleCentralAllowGraphUpdate}
+          centralBrushPosition={centralBrushPosition}
+          handleCentralBrushPosition={handleCentralBrushPosition}
           legendTableHeight={120}
           openSeries={graphData.seriesData}
           closedSeries={graphData.closedAreaData}
@@ -383,12 +391,12 @@ const PanelContent: React.FC<GraphPanelProps> = ({
           showPoints={false}
           showEventTable={viewEventMetric}
           showLegendTable
-          showTips={false}
+          showTips
           showEventMarkers
           unit={unit}
           yLabel={y_axis_left}
           yLabelOffset={55}
-          margin={{ left: 75, right: 20, top: 20, bottom: 10 }}
+          margin={{ left: 75, right: 20, top: 20, bottom: 30 }}
         />
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { Typography } from '@material-ui/core';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
+import { BrushPostitionProps } from 'litmus-ui';
 import React from 'react';
 import { Accordion } from '../../../../components/Accordion';
 import { PanelResponse } from '../../../../models/graphql/dashboardsDetails';
@@ -15,6 +16,10 @@ interface DashboardPanelGroupContentProps {
   panel_group_id: string;
   selectedPanels?: string[];
   selectedApplications?: string[];
+  centralBrushPosition?: BrushPostitionProps;
+  handleCentralBrushPosition: (newBrushPosition: BrushPostitionProps) => void;
+  centralAllowGraphUpdate: boolean;
+  handleCentralAllowGraphUpdate: (value: boolean) => void;
 }
 
 const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
@@ -23,6 +28,10 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
   panel_group_name,
   selectedPanels,
   selectedApplications,
+  centralBrushPosition,
+  handleCentralBrushPosition,
+  centralAllowGraphUpdate,
+  handleCentralAllowGraphUpdate,
 }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState<boolean>(true);
@@ -56,6 +65,10 @@ const DashboardPanelGroupContent: React.FC<DashboardPanelGroupContentProps> = ({
                   key={panel.panel_id}
                   data-cy="dashboardPanel"
                   panel_id={panel.panel_id}
+                  centralAllowGraphUpdate={centralAllowGraphUpdate}
+                  handleCentralAllowGraphUpdate={handleCentralAllowGraphUpdate}
+                  centralBrushPosition={centralBrushPosition}
+                  handleCentralBrushPosition={handleCentralBrushPosition}
                   created_at={panel.created_at}
                   panel_name={panel.panel_name}
                   panel_options={panel.panel_options}

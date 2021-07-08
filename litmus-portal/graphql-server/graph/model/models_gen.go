@@ -19,6 +19,7 @@ type AgentStat struct {
 	Ns      int `json:"Ns"`
 	Cluster int `json:"Cluster"`
 	Total   int `json:"Total"`
+	Active  int `json:"Active"`
 }
 
 type Annotation struct {
@@ -257,6 +258,10 @@ type GitConfigResponse struct {
 	UserName      *string   `json:"UserName"`
 	Password      *string   `json:"Password"`
 	SSHPrivateKey *string   `json:"SSHPrivateKey"`
+}
+
+type HeatmapData struct {
+	Bins []*WorkflowRunsData `json:"bins"`
 }
 
 type ImageRegistryResponse struct {
@@ -610,6 +615,11 @@ type WorkflowRun struct {
 	IsRemoved          *bool    `json:"isRemoved"`
 }
 
+type WorkflowRunDetails struct {
+	NoOfRuns  int     `json:"no_of_runs"`
+	DateStamp float64 `json:"date_stamp"`
+}
+
 type WorkflowRunFilterInput struct {
 	WorkflowName   *string            `json:"workflow_name"`
 	ClusterName    *string            `json:"cluster_name"`
@@ -659,6 +669,11 @@ type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
 	LastUpdated   string `json:"last_updated"`
+}
+
+type WorkflowRunsData struct {
+	Value             *float64            `json:"value"`
+	WorkflowRunDetail *WorkflowRunDetails `json:"workflowRunDetail"`
 }
 
 type WorkflowSortInput struct {

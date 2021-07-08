@@ -15,12 +15,20 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
+    gap: theme.spacing(2.5),
   },
   radialChartContainer: {
-    width: '22rem',
+    width: '24rem',
     borderRadius: '0.1875rem',
     padding: theme.spacing(1.25, 4.125, 1.25, 4.125),
     filter: `drop-shadow(0px 0.3px 0.9px rgba(0, 0, 0, 0.1)) drop-shadow(0px 1.6px 3.6px rgba(0, 0, 0, 0.13))`,
+    display: 'grid',
+    placeContent: 'center',
+  },
+  radialChartContainerHeading: {
+    fontWeight: 500,
+    fontSize: '1rem',
+    margin: theme.spacing(1.875, 0),
   },
   selectText: {
     height: '2.5rem',
