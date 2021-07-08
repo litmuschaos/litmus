@@ -204,7 +204,10 @@ const WorkflowDetails: React.FC = () => {
               </Tabs>
             </AppBar>
             <TabPanel value={workflowDetailsTabValue} index={0}>
-              <div className={classes.graphView}>
+              <div
+                className={classes.graphView}
+                data-cy="dagreGraphWorkflowLevel"
+              >
                 {/* Argo Workflow DAG Graph */}
                 <ArgoWorkflow
                   nodes={

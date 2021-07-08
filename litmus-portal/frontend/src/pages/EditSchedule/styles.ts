@@ -227,4 +227,33 @@ export const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 'bold',
     margin: theme.spacing(2, 0),
   },
+
+  // Editor
+  editorWrapper: {
+    marginBottom: theme.spacing(-4),
+  },
+  flex: {
+    display: 'flex',
+  },
+  additional: {
+    width: '95%',
+    margin: '0rem auto',
+    justifyContent: 'space-between',
+  },
+  name: {
+    margin: theme.spacing(1, 0, 2, 2),
+    fontWeight: 'bold',
+  },
+  editorTopBtn: {
+    padding: '0.4rem',
+    fontSize: '0.8rem',
+  },
+  editorCloseBtn: {
+    width: '0.5rem',
+    borderColor: theme.palette.disabledBackground,
+    color: theme.palette.text.disabled,
+    minWidth: '2rem',
+    padding: '0.2rem',
+    fontSize: '1rem',
+  },
 }));
