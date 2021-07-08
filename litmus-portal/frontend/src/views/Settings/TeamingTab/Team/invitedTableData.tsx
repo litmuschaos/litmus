@@ -50,7 +50,6 @@ const InvitedTableData: React.FC<TableDataProps> = ({
   const projectID = getProjectID();
 
   const { t } = useTranslation();
-  const [open, setOpen] = useState<boolean>(false);
   const [role, setRole] = useState<string>(row.role);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClose = () => {

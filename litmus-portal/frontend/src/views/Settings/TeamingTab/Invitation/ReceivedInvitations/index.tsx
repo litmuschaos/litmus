@@ -25,9 +25,9 @@ interface ReceivedInvitation {
 const ReceivedInvitations: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+
   // for response data
   const [rows, setRows] = useState<ReceivedInvitation[]>([]);
-  // const [allUsers, setAllUsers] = useState<UserInvite[]>([]);
 
   // stores the user whose invitation is accepted/declined
   const [acceptDecline, setAcceptDecline] = useState<string>('');
@@ -85,13 +85,6 @@ const ReceivedInvitations: React.FC = () => {
     setRows([...users]);
   }, [data]);
 
-  // useQuery(ALL_USERS, {
-  //   onCompleted: (data) => {
-  //     setAllUsers([...data.users]);
-  //     setLoading(false);
-  //   },
-  // });
-  // console.log(rows);
   return (
     <div data-cy="receivedInvitationModal">
       {!loading ? (

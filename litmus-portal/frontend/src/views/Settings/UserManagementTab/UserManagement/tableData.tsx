@@ -41,7 +41,6 @@ const TableData: React.FC<TableDataProps> = ({
   };
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [disableUser, setDisableUser] = React.useState<boolean>(false);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -71,6 +70,7 @@ const TableData: React.FC<TableDataProps> = ({
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
+          console.error(data);
         } else {
           UpdateUserState({
             variables: {
@@ -167,11 +167,6 @@ const TableData: React.FC<TableDataProps> = ({
               <MenuItem
                 value="delete"
                 onClick={() => {
-                  if (row.deactivated_at) {
-                    setDisableUser(false);
-                  } else {
-                    setDisableUser(true);
-                  }
                   handleSubmit();
                 }}
               >

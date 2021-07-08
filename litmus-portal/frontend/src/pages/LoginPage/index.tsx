@@ -38,7 +38,6 @@ const LoginPage: React.FC = () => {
       body: JSON.stringify(authData),
     })
       .then((response) => {
-        console.log(response);
         if (response.status !== responseCode) {
           setIsError(true);
           setIsLoading(false);
@@ -50,7 +49,6 @@ const LoginPage: React.FC = () => {
       })
       .then((data) => {
         if ('error' in data) {
-          console.error('line 53', data.error);
           setErrorMsg(data.error);
         } else {
           setErrorMsg('');
@@ -60,11 +58,9 @@ const LoginPage: React.FC = () => {
         }
       })
       .catch((err) => {
-        console.log('line 62', err);
         setErrorMsg(err.error);
       });
   };
-  console.log('error', errorMsg);
   return (
     <div className={classes.rootContainer}>
       <Center>

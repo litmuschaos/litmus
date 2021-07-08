@@ -43,7 +43,6 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
       });
     },
   });
-  console.log(row.deactivated_at);
   return (
     <>
       <TableCell

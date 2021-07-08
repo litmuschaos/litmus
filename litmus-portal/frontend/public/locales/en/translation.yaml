@@ -3,7 +3,8 @@ getStarted:
   button:
     continue: Next
     back: Back
-    finish: Finish
+    finish: Change Password
+    skip: Skip for now
     step: Step
     of: of
   project:

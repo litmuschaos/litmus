@@ -3,7 +3,7 @@ import { Box, Paper, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LIST_PROJECTS } from '../../../../graphql';
-import { Member, Project, Projects } from '../../../../models/graphql/user';
+import { Member, Projects } from '../../../../models/graphql/user';
 import { getUserId } from '../../../../utils/auth';
 import AcceptedInvitations from './AcceptedInvitations';
 import ReceivedInvitations from './ReceivedInvitations';
@@ -53,15 +53,14 @@ const Invitation: React.FC = () => {
 
   const [projectOtherCount, setProjectOtherCount] = useState<number>(0);
   const [invitationsCount, setInvitationCount] = useState<number>(0);
-  const [projects, setProjects] = useState<Project[]>([]);
+
   const { data: dataProject, refetch } = useQuery<Projects>(LIST_PROJECTS, {
     onCompleted: () => {
       if (dataProject?.listProjects) {
-        setProjects(dataProject?.listProjects);
         let otherCount = 0;
         let inviteCount = 0;
-        dataProject?.listProjects.map((project) => {
-          return project.members.forEach((member: Member) => {
+        dataProject.listProjects.forEach((project) => {
+          project.members.forEach((member: Member) => {
             if (member.user_id === userID && member.invitation === 'Pending') {
               inviteCount++;
             } else if (
