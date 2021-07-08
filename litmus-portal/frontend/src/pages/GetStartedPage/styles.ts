@@ -55,7 +55,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(1.875),
     background: theme.palette.primary.light,
     color: theme.palette.text.secondary,
-    // maxWidth: '8rem',
     '&:disabled': {
       PointerEvents: 'none',
       background: theme.palette.primary.light,

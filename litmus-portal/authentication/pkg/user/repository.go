@@ -88,6 +88,7 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 		return nil, err
 	}
 	user.Password = string(hashedPassword)
+	*user.CreatedAt = time.Now()
 	_, err = r.Collection.InsertOne(context.Background(), user)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {

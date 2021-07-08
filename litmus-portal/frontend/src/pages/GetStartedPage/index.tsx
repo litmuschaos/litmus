@@ -209,7 +209,7 @@ const GetStarted: React.FC = () => {
                 <TextButton
                   className={classes.skipButton}
                   title="Skip for now"
-                  // variant="highlight"
+                  variant="highlight"
                   onClick={() => {
                     setIsLoading(true);
                     getUserInfo();
