@@ -159,7 +159,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     try {
       const podLogs = JSON.parse(logs);
       return (
-        <div>
+        <div data-cy="LogsWindow">
           <div>
             {workflow !== undefined &&
             JSON.parse(workflow?.execution_data).nodes[pod_name].type ===
@@ -245,7 +245,12 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
         <TabPanel value={selectedTab} index={1} style={{ height: '100%' }}>
           <div className={classes.logs}>
             <div style={{ whiteSpace: 'pre-wrap' }}>
-              <Typography className={classes.text}>{chaosResult}</Typography>
+              <Typography
+                data-cy="ChaosResultTypography"
+                className={classes.text}
+              >
+                {chaosResult}
+              </Typography>
             </div>
           </div>
         </TabPanel>

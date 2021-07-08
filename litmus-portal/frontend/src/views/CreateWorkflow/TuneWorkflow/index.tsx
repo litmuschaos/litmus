@@ -795,6 +795,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
             {/* Edit Button */}
             {manifest !== '' && (
               <ButtonOutlined
+                data-cy="EditSequenceButton"
                 disabled={isVisualizationComplete}
                 onClick={() => setEditSequence(true)}
               >

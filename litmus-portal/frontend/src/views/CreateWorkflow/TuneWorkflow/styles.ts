@@ -82,7 +82,6 @@ const useStyles = makeStyles((theme) => ({
 
   // Table
   table: {
-    minWidth: '40rem',
     minHeight: '23rem',
   },
   revertChaos: {
