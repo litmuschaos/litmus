@@ -58,12 +58,13 @@ func validatedAdminSetup(service user.Service) {
 			log.Fatalf("Config %s has not been set", configName)
 		}
 	}
-	adminUser := &entities.User{
+
+	adminUser := entities.User{
 		UserName: utils.AdminName,
 		Password: utils.AdminPassword,
 		Role:     entities.RoleAdmin,
 	}
-	_, err := service.CreateUser(adminUser)
+	_, err := service.CreateUser(&adminUser)
 	if err == utils.ErrUserExists {
 		log.Println("Admin already exists in the database, not creating a new admin")
 	}
