@@ -92,4 +92,4 @@ const AgentDeployModal: React.FC<AgentDeployModalProps> = ({ handleClose }) => {
   );
 };
 
-export { AgentDeployModal };
+export default AgentDeployModal;

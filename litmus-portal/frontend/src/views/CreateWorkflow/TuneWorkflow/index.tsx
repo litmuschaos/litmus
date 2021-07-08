@@ -4,6 +4,7 @@ import { Alert } from '@material-ui/lab';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
+  lazy,
   Dispatch,
   forwardRef,
   SetStateAction,
@@ -17,7 +18,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
-import YamlEditor from '../../../components/YamlEditor/Editor';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
@@ -43,11 +43,13 @@ import {
   updateManifestImage,
   updateNamespace,
 } from '../../../utils/yamlUtils';
-import AddExperimentModal from './AddExperimentModal';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
-import WorkflowSequence from './WorkflowSequence';
 import WorkflowTable from './WorkflowTable';
+
+const AddExperimentModal = lazy(() => import('./AddExperimentModal'));
+const WorkflowSequence = lazy(() => import('./WorkflowSequence'));
+const YamlEditor = lazy(() => import('../../../components/YamlEditor/Editor'));
 
 interface WorkflowProps {
   name: string;

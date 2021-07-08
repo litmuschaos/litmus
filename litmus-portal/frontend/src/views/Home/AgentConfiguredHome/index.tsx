@@ -2,9 +2,8 @@ import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { ButtonFilled, ButtonOutlined, Modal, TextButton } from 'litmus-ui';
-import React, { useState } from 'react';
+import React, { lazy, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AgentDeployModal } from '../../../components/AgentDeployModal';
 import Loader from '../../../components/Loader';
 import { MainInfoContainer } from '../../../components/MainInfoContainer';
 import { OverviewContainer } from '../../../components/OverviewContainer';
@@ -20,9 +19,13 @@ import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
-import { ProjectInfoContainer } from '../ProjectInfoContainer';
 import useStyles from './styles';
-import { WorkflowRunCard } from './WorkflowRunCard';
+
+const WorkflowRunCard = lazy(() => import('./WorkflowRunCard'));
+const ProjectInfoContainer = lazy(() => import('../ProjectInfoContainer'));
+const AgentDeployModal = lazy(
+  () => import('../../../components/AgentDeployModal')
+);
 
 interface AgentConfiguredHomeProps {
   agentCount: number;
@@ -197,4 +200,4 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   );
 };
 
-export { AgentConfiguredHome };
+export default AgentConfiguredHome;
