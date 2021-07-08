@@ -126,11 +126,6 @@ const TeamingTab: React.FC = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  // const { refetch: refetchAllUsers } = useQuery(ALL_USERS, {
-  //   skip: !dataB,
-  //   fetchPolicy: 'cache-and-network',
-  // });
-
   // State for pagination
   const [paginationData, setPaginationData] = useState<PaginationData>({
     pageNo: 0,
@@ -178,7 +173,6 @@ const TeamingTab: React.FC = () => {
 
   function showModal() {
     refetchGetProject();
-    // refetchAllUsers();
   }
 
   const [projectOwnerCount, setProjectOwnerCount] = useState<number>(0);

@@ -108,7 +108,7 @@ func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
 		user.Password = string(hashedPassword)
 	}
 	data, _ := toDoc(user)
-	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"username": user.UserName}, bson.M{"$set": data})
+	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
 	if err != nil {
 		return nil, err
 	}

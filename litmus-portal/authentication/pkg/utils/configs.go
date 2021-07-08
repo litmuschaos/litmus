@@ -15,7 +15,7 @@ var (
 	JWTExpiryDuration      = getEnvAsInt("JWT_EXPIRY_MINS", 1440)
 	StrictPasswordPolicy   = getEnvAsBool("STRICT_PASSWORD_POLICY", false)
 	DBName                 = "auth"
-	Port                   = ":3002"
+	Port                   = ":3000"
 	CollectionName         = "usercredentials"
 	UsernameField          = "username"
 	PasswordEncryptionCost = 15

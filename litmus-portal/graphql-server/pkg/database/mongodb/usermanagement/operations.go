@@ -41,7 +41,7 @@ func GetUserByUserName(ctx context.Context, username string) (*User, error) {
 	return user, err
 }
 
-// DeactivateUser updates the details of user in both user and project DB collections
+// DeactivateUser updates the details of user in both user and project collections
 func UpdateUserState(ctx context.Context, user User) error {
 	// Disabling user in user collection
 	filter := bson.D{
