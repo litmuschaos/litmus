@@ -55,6 +55,7 @@ func CreateDateMap(updatedAt string, filter model.TimeFrequency, statsMap map[st
 	return nil
 }
 
+// PatchChaosEventWithVerdict takes annotations with chaos events, chaos verdict prometheus response, prometheus queries and cache object to patch and update chaos events with chaos verdict
 func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, verdictResponse *model.AnnotationsPromResponse, promInput *model.PromInput, AnalyticsCache *cache.Cache) []*model.AnnotationsPromResponse {
 	var existingAnnotations []*model.AnnotationsPromResponse
 	err := copier.Copy(&existingAnnotations, &annotations)
@@ -96,7 +97,7 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 							duplicateEventsFound = true
 							if _, ok := duplicateEventIndices[eventLegendIndex]; !ok {
 								duplicateEventIndices[eventLegendIndex] = duplicateEventOffset
-								duplicateEventOffset += 1
+								duplicateEventOffset++
 							}
 						}
 						eventFound = true
@@ -179,6 +180,7 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 	return annotations
 }
 
+// MapMetricsToDashboard takes dashboard query map, prometheus response and query response map for mapping metrics to the panels for a dashboard
 func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, newPromResponse *model.PromResponse, queryResponseMap map[string]*model.MetricsPromResponse) *model.DashboardPromResponse {
 	var dashboardMetrics []*model.MetricDataForPanelGroup
 

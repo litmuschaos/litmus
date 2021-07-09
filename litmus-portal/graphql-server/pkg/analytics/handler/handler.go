@@ -681,6 +681,7 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 	return newDataSources, nil
 }
 
+// GetPromQuery takes prometheus queries and returns response for annotations and metrics with a query map
 func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*model.MetricsPromResponse, error) {
 	var (
 		metrics         []*model.MetricsPromResponse
@@ -782,6 +783,7 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*
 	return &newPromResponse, queryResponseMap, nil
 }
 
+// DashboardViewer takes a dashboard view id, prometheus queries, dashboard query map and data variables to query prometheus and send data periodically to the subscribed client
 func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars, r store.StateData) {
 	if viewChan, ok := r.DashboardData[viewID]; ok {
 
@@ -1035,12 +1037,12 @@ func QueryListDashboard(projectID string, clusterID *string, dbID *string) ([]*m
 			if dataSourceInfo, ok := dataSourceMap[dashboard.DsID]; ok {
 				datasource = dataSourceInfo
 			} else {
-				return nil, fmt.Errorf("error on querying from datasource collection\n")
+				return nil, fmt.Errorf("error on querying from datasource collection")
 			}
 			if dataSourceHealthStatus, ok := dataSourceHealthCheckMap[dashboard.DsID]; ok {
 				dashboard.DsHealthStatus = &dataSourceHealthStatus
 			} else {
-				return nil, fmt.Errorf("error while checking data source health status\n")
+				return nil, fmt.Errorf("error while checking data source health status")
 			}
 		} else {
 			if dataSourceInfo, ok := dataSourceMap[dashboard.DsID]; !ok {
