@@ -260,11 +260,9 @@ const DashboardPage: React.FC = () => {
           );
           setSelectedDashboardInformation({
             ...selectedDashboardInformation,
-            dashboardListForAgent: selectedDashboard
-              ? dashboards.ListDashboard
-              : [],
+            dashboardListForAgent: dashboards.ListDashboard,
             metaData: selectedDashboard,
-            closedAreaQueryIDs: selectedDashboard.panel_groups
+            closedAreaQueryIDs: (selectedDashboard.panel_groups ?? [])
               .flatMap((panelGroup) => panelGroup.panels)
               .flatMap((panel) => panel.prom_queries)
               .filter((query) => query.close_area)

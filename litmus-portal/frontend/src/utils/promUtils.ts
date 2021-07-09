@@ -62,7 +62,7 @@ export const getDashboardQueryMap = (panelGroups: PanelGroupResponse[]) => {
 };
 
 const getNormalizedMinStep = (timeRangeDiff: number) => {
-  let minStep = DEFAULT_TSDB_SCRAPE_INTERVAL;
+  let minStep: number;
   const timeIndex = timeInSeconds.indexOf(timeRangeDiff);
   if (timeIndex !== -1) {
     minStep = allowedMinSteps[timeIndex];

@@ -27,7 +27,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
           {rowCount > 0 && (
             <CheckBox
               indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={rowCount > 0 && numSelected === rowCount}
+              checked={numSelected === rowCount}
               onChange={onSelectAllClick}
               inputProps={{ 'aria-label': 'select all desserts' }}
             />
