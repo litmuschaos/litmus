@@ -129,7 +129,7 @@ rules:
   resources: ["rollouts"]
   verbs: ["get","list"]
 - apiGroups: [""]
-  resources: ["pods","pods/exec","configmaps","events","services"]
+  resources: ["pods","pods/exec","pods/log","pods/eviction","configmaps","events","services"]
   verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
 - apiGroups: ["litmuschaos.io"]
   resources: ["chaosengines","chaosexperiments","chaosresults"]

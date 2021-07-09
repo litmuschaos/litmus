@@ -1,12 +1,13 @@
 import { useQuery } from '@apollo/client';
 import { AppBar, Typography, useTheme } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs/Tabs';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
 import {
@@ -32,11 +33,17 @@ import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
-import NodeLogsModal from '../../views/WorkflowDetails/LogsModal';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
-import NodeTable from '../../views/WorkflowDetails/WorkflowTable';
 import useStyles from './styles';
+
+const NodeLogsModal = lazy(
+  () => import('../../views/WorkflowDetails/LogsModal')
+);
+
+const NodeTable = lazy(
+  () => import('../../views/WorkflowDetails/WorkflowTable')
+);
 
 interface URLParams {
   workflowRunId: string;
@@ -204,7 +211,10 @@ const WorkflowDetails: React.FC = () => {
               </Tabs>
             </AppBar>
             <TabPanel value={workflowDetailsTabValue} index={0}>
-              <div className={classes.graphView}>
+              <div
+                className={classes.graphView}
+                data-cy="dagreGraphWorkflowLevel"
+              >
                 {/* Argo Workflow DAG Graph */}
                 <ArgoWorkflow
                   nodes={
@@ -213,70 +223,76 @@ const WorkflowDetails: React.FC = () => {
                   }
                   setIsInfoToggled={setIsInfoToggled}
                 />
-                {/* Workflow Details and Experiment Logs */}
-                {isInfoToggled ? (
-                  <div>
-                    {pod_name !==
-                    JSON.parse(workflowRun.execution_data).nodes[
-                      Object.keys(
-                        JSON.parse(workflowRun.execution_data as string).nodes
-                      )[0]
-                    ].name ? (
-                      /* Node details and Logs */
-                      <WorkflowNodeInfo
-                        manifest={
-                          workflowSchedulesDetails?.workflow_manifest as string
-                        }
-                        setIsInfoToggled={setIsInfoToggled}
-                        cluster_id={workflowRun.cluster_id}
-                        workflow_run_id={workflowRun.workflow_run_id}
-                        data={
-                          JSON.parse(
-                            workflowRun.execution_data
-                          ) as ExecutionData
-                        }
-                      />
-                    ) : (
-                      /* Workflow Details */
-                      <WorkflowInfo
-                        tab={1}
-                        setIsInfoToggled={setIsInfoToggled}
-                        cluster_name={workflowRun.cluster_name}
-                        data={
-                          JSON.parse(
-                            workflowRun.execution_data
-                          ) as ExecutionData
-                        }
-                        resiliency_score={workflowRun.resiliency_score}
-                      />
-                    )}
-                  </div>
-                ) : null}
+                <SuspenseLoader style={{ height: '100%' }}>
+                  {/* Workflow Details and Experiment Logs */}
+                  {isInfoToggled ? (
+                    <div>
+                      {pod_name !==
+                      JSON.parse(workflowRun.execution_data).nodes[
+                        Object.keys(
+                          JSON.parse(workflowRun.execution_data as string).nodes
+                        )[0]
+                      ].name ? (
+                        /* Node details and Logs */
+                        <WorkflowNodeInfo
+                          manifest={
+                            workflowSchedulesDetails?.workflow_manifest as string
+                          }
+                          setIsInfoToggled={setIsInfoToggled}
+                          cluster_id={workflowRun.cluster_id}
+                          workflow_run_id={workflowRun.workflow_run_id}
+                          data={
+                            JSON.parse(
+                              workflowRun.execution_data
+                            ) as ExecutionData
+                          }
+                        />
+                      ) : (
+                        /* Workflow Details */
+                        <WorkflowInfo
+                          tab={1}
+                          setIsInfoToggled={setIsInfoToggled}
+                          cluster_name={workflowRun.cluster_name}
+                          data={
+                            JSON.parse(
+                              workflowRun.execution_data
+                            ) as ExecutionData
+                          }
+                          resiliency_score={workflowRun.resiliency_score}
+                        />
+                      )}
+                    </div>
+                  ) : null}
+                </SuspenseLoader>
               </div>
             </TabPanel>
             <TabPanel value={workflowDetailsTabValue} index={1}>
-              {/* Workflow Info */}
-              <WorkflowInfo
-                tab={2}
-                cluster_name={workflowRun.cluster_name}
-                data={JSON.parse(workflowRun.execution_data) as ExecutionData}
-                resiliency_score={workflowRun.resiliency_score}
-              />
-              {/* Table for all Node details */}
-              <NodeTable
-                manifest={workflowSchedulesDetails?.workflow_manifest as string}
-                data={JSON.parse(workflowRun.execution_data) as ExecutionData}
-                handleClose={() => setLogsModalOpen(true)}
-              />
-              {/* Modal for viewing logs of a node */}
-              <NodeLogsModal
-                logsOpen={logsModalOpen}
-                handleClose={() => setLogsModalOpen(false)}
-                cluster_id={workflowRun.cluster_id}
-                workflow_run_id={workflowRun.workflow_run_id}
-                data={JSON.parse(workflowRun.execution_data) as ExecutionData}
-                workflow_name={workflowRun.workflow_name}
-              />
+              <SuspenseLoader style={{ height: '100%' }}>
+                {/* Workflow Info */}
+                <WorkflowInfo
+                  tab={2}
+                  cluster_name={workflowRun.cluster_name}
+                  data={JSON.parse(workflowRun.execution_data) as ExecutionData}
+                  resiliency_score={workflowRun.resiliency_score}
+                />
+                {/* Table for all Node details */}
+                <NodeTable
+                  manifest={
+                    workflowSchedulesDetails?.workflow_manifest as string
+                  }
+                  data={JSON.parse(workflowRun.execution_data) as ExecutionData}
+                  handleClose={() => setLogsModalOpen(true)}
+                />
+                {/* Modal for viewing logs of a node */}
+                <NodeLogsModal
+                  logsOpen={logsModalOpen}
+                  handleClose={() => setLogsModalOpen(false)}
+                  cluster_id={workflowRun.cluster_id}
+                  workflow_run_id={workflowRun.workflow_run_id}
+                  data={JSON.parse(workflowRun.execution_data) as ExecutionData}
+                  workflow_name={workflowRun.workflow_name}
+                />
+              </SuspenseLoader>
             </TabPanel>
           </div>
         ) : error ? (

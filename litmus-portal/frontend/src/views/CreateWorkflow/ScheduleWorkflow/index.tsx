@@ -471,6 +471,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                   <div className={classes.innerRecurring}>
                     <FormControl component="fieldset">
                       <RadioGroup
+                        data-cy="RecurringSchedule"
                         aria-label="instanceDef"
                         name="instanceDef"
                         value={valueDef}

@@ -1,5 +1,5 @@
 This is the list of organizations and users that publicly shared details of how they are using LitmusChaos for running chaos experiments. 
-Please send PRs to add or remove organizations/users.
+Please send PRs to add or remove organizations/users. Or You can add a comment in the issue [#2191](https://github.com/litmuschaos/litmus/issues/2191)
 
 | Organization | Usecase | Details |
 | :---         | :---    | :---    |
@@ -20,8 +20,9 @@ Please send PRs to add or remove organizations/users.
 |[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
 |[Kitopi](https://www.kitopi.com/)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/kitopi.md)|
 |[AnutaNetworks](https://www.anutanetworks.com/)|Chaos Engineering as part of SRE practices in QA environments |[Our Story](adopters/organizations/anutanetworks.md)|
-|[Lenskart](https://www.lenskart.com/)|Chaos Engineering for better Resiliency | [Our Story](adopters/organizations/lenskart.md)
-|[Halodoc](https://www.halodoc.com/)|Resiliency Validation of Kubernetes Workloads and Infra on AWS |[Our Story](adopters/organizations/halodoc.md)
+|[Lenskart](https://www.lenskart.com/)|Chaos Engineering for better Resiliency | [Our Story](adopters/organizations/lenskart.md)|
+|[Halodoc](https://www.halodoc.com/)|Resiliency Validation of Kubernetes Workloads and Infra on AWS |[Our Story](adopters/organizations/halodoc.md)|
+|[KubeSphere](https://kubesphere.io/)|Chaos Engineering|To Be Added|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
@@ -31,3 +32,4 @@ Please send PRs to add or remove organizations/users.
 | [Bhaumik Shah](https://github.com/Bhaumik1802)|Use LitmusChaos for Kafka Resiliency on Dev/Staging|[My Story](adopters/users/Bhaumik_Shah.md)|
 | [Jayadeep KM](https://github.com/kmjayadeep)|Ensure reliability of microservices|[My Story](adopters/users/Jayadeep_KM.md)|
 | [Shantanu Deshpande](https://github.com/ishantanu)|Chaos Engineering Practice as SRE|[My Story](adopters/users/Shantanu_Deshpande.md)|
+| [Omar Hanafi](https://github.com/oHanafi)|Performance Anomaly Detection in Cloud and Containerized Applications|Coming Soon!|
