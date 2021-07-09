@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-loop-func */
-import { useQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import {
   IconButton,
   Paper,
@@ -22,7 +22,15 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
-import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
+import {
+  WORKFLOW_LIST_DETAILS,
+  WORKFLOW_RUN_DETAILS,
+} from '../../../../graphql/queries';
+import {
+  Workflow,
+  WorkflowDataVars,
+  WorkflowRun,
+} from '../../../../models/graphql/workflowData';
 import {
   ExecutionData,
   ListWorkflowsInput,
@@ -125,6 +133,8 @@ const WorkflowComparisonTable = () => {
   const [totalValidWorkflowRunsCount, setTotalValidWorkflowRunsCount] =
     React.useState<number>(0);
 
+  const [selectedWorkflowID, setSelectedWorkflowID] = useState('');
+
   const projectID = getProjectID();
 
   // Apollo query to get the scheduled workflow data
@@ -134,6 +144,18 @@ const WorkflowComparisonTable = () => {
   >(WORKFLOW_LIST_DETAILS, {
     variables: { workflowInput: { project_id: projectID } },
     fetchPolicy: 'cache-and-network',
+  });
+
+  const [getWorkflowRun, { data: workflowRunsData }] = useLazyQuery<
+    Workflow,
+    WorkflowDataVars
+  >(WORKFLOW_RUN_DETAILS, {
+    variables: {
+      workflowRunsInput: {
+        project_id: projectID,
+        workflow_ids: [selectedWorkflowID],
+      },
+    },
   });
 
   const getClusters = (searchingData: ScheduledWorkflow[]) => {
@@ -233,130 +255,106 @@ const WorkflowComparisonTable = () => {
     const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
     const timeSeriesArray: DatedResilienceScore[][] = [];
     selected.forEach((workflow) => {
-      const workflowData = data?.ListWorkflow.workflows.filter(function match(
-        wkf
-      ) {
-        return wkf.workflow_id === workflow;
-      });
-      const runs = workflowData ? workflowData[0].workflow_runs : [];
+      // const workflowData = data?.ListWorkflow.workflows.filter(function match(
+      //   wkf
+      // ) {
+      //   return wkf.workflow_id === workflow;
+      // });
+      setSelectedWorkflowID(workflow);
+      getWorkflowRun();
+      const runs = workflowRunsData?.getWorkflowRuns.workflow_runs;
       const workflowTimeSeriesData: DatedResilienceScore[] = [];
       let isWorkflowValid: boolean = false;
-      try {
-        runs?.forEach((data) => {
-          try {
-            const executionData: ExecutionData = JSON.parse(
-              data.execution_data
-            );
-            const { nodes } = executionData;
-            const experimentTestResultsArrayPerWorkflowRun: number[] = [];
-            let totalExperimentsPassed: number = 0;
-            let weightsSum: number = 0;
-            const testDetails: TestDetails = {
-              testNames: [],
-              testWeights: [],
-              testResults: [],
-            };
-            let isValid: boolean = false;
-            for (const key of Object.keys(nodes)) {
-              const node = nodes[key];
-              if (node.chaosData) {
-                const { chaosData } = node;
-                if (
-                  chaosData.experimentVerdict === 'Pass' ||
-                  chaosData.experimentVerdict === 'Fail'
-                ) {
-                  const weightageMap: WeightageMap[] = workflowData
-                    ? workflowData[0].weightages
-                    : [];
-                  weightageMap.forEach((weightage) => {
-                    if (
-                      weightage.experiment_name === chaosData.experimentName
-                    ) {
-                      if (chaosData.experimentVerdict === 'Pass') {
-                        experimentTestResultsArrayPerWorkflowRun.push(
-                          (weightage.weightage *
-                            parseInt(chaosData.probeSuccessPercentage, 10)) /
-                            100
-                        );
-                        totalExperimentsPassed += 1;
-                      }
-                      if (chaosData.experimentVerdict === 'Fail') {
-                        experimentTestResultsArrayPerWorkflowRun.push(0);
-                      }
-                      if (
-                        chaosData.experimentVerdict === 'Pass' ||
-                        chaosData.experimentVerdict === 'Fail'
-                      ) {
-                        weightsSum += weightage.weightage;
-                        testDetails.testNames.push(weightage.experiment_name);
-                        testDetails.testWeights.push(weightage.weightage);
-                        testDetails.testResults.push(
-                          chaosData.experimentVerdict
-                        );
-                        isValid = true;
-                        isWorkflowValid = true;
-                      }
+      runs?.forEach((data: WorkflowRun) => {
+        try {
+          const executionData: ExecutionData = JSON.parse(data.execution_data);
+          const { nodes } = executionData;
+          const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+          let totalExperimentsPassed: number = 0;
+          let weightsSum: number = 0;
+          const testDetails: TestDetails = {
+            testNames: [],
+            testWeights: [],
+            testResults: [],
+          };
+          let isValid: boolean = false;
+          for (const key of Object.keys(nodes)) {
+            const node = nodes[key];
+            if (node.chaosData) {
+              const { chaosData } = node;
+              if (
+                chaosData.experimentVerdict === 'Pass' ||
+                chaosData.experimentVerdict === 'Fail'
+              ) {
+                const weightageMap: WeightageMap[] = data.weightages;
+                weightageMap.forEach((weightage) => {
+                  if (weightage.experiment_name === chaosData.experimentName) {
+                    if (chaosData.experimentVerdict === 'Pass') {
+                      experimentTestResultsArrayPerWorkflowRun.push(
+                        (weightage.weightage *
+                          parseInt(chaosData.probeSuccessPercentage, 10)) /
+                          100
+                      );
+                      totalExperimentsPassed += 1;
                     }
-                  });
-                }
+                    if (chaosData.experimentVerdict === 'Fail') {
+                      experimentTestResultsArrayPerWorkflowRun.push(0);
+                    }
+                    if (
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                    ) {
+                      weightsSum += weightage.weightage;
+                      testDetails.testNames.push(weightage.experiment_name);
+                      testDetails.testWeights.push(weightage.weightage);
+                      testDetails.testResults.push(chaosData.experimentVerdict);
+                      isValid = true;
+                      isWorkflowValid = true;
+                    }
+                  }
+                });
               }
             }
-            if (executionData.event_type === 'UPDATE' && isValid) {
-              totalValidRuns += 1;
-              totalValidWorkflowRuns.push({
-                cluster_name: workflowData ? workflowData[0].cluster_name : '',
-                workflow_name: workflowData
-                  ? workflowData[0].workflow_name
-                  : '',
-                run_date: formatDate(executionData.creationTimestamp),
-                tests_passed: totalExperimentsPassed,
-                tests_failed:
-                  experimentTestResultsArrayPerWorkflowRun.length -
-                  totalExperimentsPassed,
-                resilience_score:
-                  experimentTestResultsArrayPerWorkflowRun.length
-                    ? parseFloat(
-                        (
-                          (experimentTestResultsArrayPerWorkflowRun.reduce(
-                            (a, b) => a + b,
-                            0
-                          ) /
-                            weightsSum) *
-                          100
-                        ).toFixed(2)
-                      )
-                    : 0,
-                test_details: testDetails,
-              });
-              workflowTimeSeriesData.push({
-                date: data.last_updated,
-                value: experimentTestResultsArrayPerWorkflowRun.length
-                  ? parseFloat(
-                      (
-                        (experimentTestResultsArrayPerWorkflowRun.reduce(
-                          (a, b) => a + b,
-                          0
-                        ) /
-                          weightsSum) *
-                        100
-                      ).toFixed(2)
-                    )
-                  : 0,
-              });
-            }
-          } catch (error) {
-            console.error(error);
           }
-        });
-        if (isWorkflowValid) {
-          plotData.labels.push(
-            workflowData ? workflowData[0].workflow_name : ''
-          );
-          plotData.colors.push(`#${randomColor()}`);
-          timeSeriesArray.push(workflowTimeSeriesData);
+          if (executionData.event_type === 'UPDATE' && isValid) {
+            totalValidRuns += 1;
+            totalValidWorkflowRuns.push({
+              cluster_name: data.cluster_name,
+              workflow_name: data.workflow_name,
+              run_date: formatDate(executionData.creationTimestamp),
+              tests_passed: totalExperimentsPassed,
+              tests_failed:
+                experimentTestResultsArrayPerWorkflowRun.length -
+                totalExperimentsPassed,
+              resilience_score: data.resiliency_score,
+              test_details: testDetails,
+            });
+            workflowTimeSeriesData.push({
+              date: data.last_updated,
+              value: experimentTestResultsArrayPerWorkflowRun.length
+                ? parseFloat(
+                    (
+                      (experimentTestResultsArrayPerWorkflowRun.reduce(
+                        (a, b) => a + b,
+                        0
+                      ) /
+                        weightsSum) *
+                      100
+                    ).toFixed(2)
+                  )
+                : 0,
+            });
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
+      });
+      if (isWorkflowValid) {
+        plotData.labels.push(
+          workflowRunsData?.getWorkflowRuns.workflow_runs[0].workflow_name ?? ''
+        );
+        plotData.colors.push(`#${randomColor()}`);
+        timeSeriesArray.push(workflowTimeSeriesData);
       }
     });
 

@@ -13,10 +13,16 @@ import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
-import { GET_HEATMAP_DATA, WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
+import {
+  GET_HEATMAP_DATA,
+  WORKFLOW_LIST_DETAILS,
+  WORKFLOW_RUN_DETAILS,
+} from '../../graphql/queries';
 import {
   HeatmapDataResponse,
   HeatmapDataVars,
+  Workflow,
+  WorkflowDataVars,
 } from '../../models/graphql/workflowData';
 import {
   ListWorkflowsInput,
@@ -67,12 +73,21 @@ const WorkflowInfoStats: React.FC = () => {
     }
   );
 
-  let workflowRunID = '';
+  const { data: workflowRunData } = useQuery<Workflow, WorkflowDataVars>(
+    WORKFLOW_RUN_DETAILS,
+    {
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+          workflow_ids: [workflowRunId],
+        },
+      },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
 
-  if (data?.ListWorkflow.workflows[0].workflow_runs) {
-    workflowRunID =
-      data?.ListWorkflow?.workflows[0].workflow_runs[0].workflow_run_id;
-  }
+  const workflowRunID =
+    workflowRunData?.getWorkflowRuns.workflow_runs[0].workflow_run_id ?? '';
 
   const presentYear = new Date().getFullYear();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -127,13 +142,20 @@ const WorkflowInfoStats: React.FC = () => {
       </div>
 
       {/* Information and stats */}
-      {data && <InfoSection data={data} />}
+      {data && workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs && (
+        <InfoSection
+          data={data}
+          workflowRunLength={
+            workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
+          }
+        />
+      )}
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
       {data?.ListWorkflow.workflows[0].cronSyntax !== '' ||
-      (data?.ListWorkflow.workflows[0].workflow_runs?.length &&
-        data?.ListWorkflow.workflows[0].workflow_runs?.length > 1) ? (
+      (workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs &&
+        workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs > 1) ? (
         <div className={classes.heatmapArea}>
           <div className={classes.heatmapAreaHeading}>
             <Typography className={classes.sectionHeading}>
@@ -145,7 +167,7 @@ const WorkflowInfoStats: React.FC = () => {
             <div className={classes.formControlParent}>
               <Typography>
                 Total runs till date:{' '}
-                {data?.ListWorkflow.workflows[0].workflow_runs?.length}
+                {workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs}
               </Typography>
               <FormControl
                 className={classes.formControl}

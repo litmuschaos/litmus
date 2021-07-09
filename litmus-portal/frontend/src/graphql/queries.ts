@@ -52,6 +52,10 @@ export const WORKFLOW_RUN_DETAILS = gql`
     getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
       total_no_of_workflow_runs
       workflow_runs {
+        weightages {
+          experiment_name
+          weightage
+        }
         workflow_id
         workflow_name
         workflow_run_id
@@ -122,11 +126,6 @@ export const WORKFLOW_LIST_DETAILS = gql`
         cluster_id
         cluster_type
         isRemoved
-        workflow_runs {
-          execution_data
-          workflow_run_id
-          last_updated
-        }
       }
     }
   }
