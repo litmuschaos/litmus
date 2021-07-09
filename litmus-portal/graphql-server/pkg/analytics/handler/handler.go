@@ -446,7 +446,7 @@ func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (stri
 			{"panel_groups", newPanelGroups}, {"updated_at", timestamp}}}}
 	} else {
 		update = bson.D{{"$set", bson.D{
-			{"chaos_event_query_template", dashboard.ChaosEventQueryTemplate}, {"chaos_verdict_query_template", dashboard.ChaosEventQueryTemplate},
+			{"chaos_event_query_template", dashboard.ChaosEventQueryTemplate}, {"chaos_verdict_query_template", dashboard.ChaosVerdictQueryTemplate},
 			{"updated_at", timestamp}}}}
 	}
 
@@ -788,14 +788,15 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dashboa
 		currentTime := time.Now().Unix()
 		startTime := strconv.FormatInt(currentTime-int64(dataVariables.RelativeTime), 10)
 		endTime := strconv.FormatInt(currentTime, 10)
+		relativeCheck := dataVariables.RelativeTime != 0
 
 		var queryType string
 
 		if dataVariables.Start != "" && dataVariables.End != "" {
 			queryType = "fixed"
-		} else if dataVariables.RefreshInterval != 0 {
+		} else if relativeCheck && dataVariables.RefreshInterval != 0 {
 			queryType = "relative"
-		} else if dataVariables.RefreshInterval == 0 {
+		} else if relativeCheck && dataVariables.RefreshInterval == 0 {
 			queryType = "relatively-fixed"
 		} else {
 			queryType = "invalid"
@@ -879,7 +880,9 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dashboa
 		}
 
 		close(viewChan)
+		r.Mutex.Lock()
 		delete(r.DashboardData, viewID)
+		r.Mutex.Unlock()
 	}
 }
 

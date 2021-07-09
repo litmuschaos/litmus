@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -588,7 +588,9 @@ func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []
 		<-ctx.Done()
 		log.Printf("Closed dashboard view %v\n", viewID.String())
 		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
+			data_store.Store.Mutex.Lock()
 			delete(data_store.Store.DashboardData, viewID.String())
+			data_store.Store.Mutex.Unlock()
 		}
 	}()
 	go analyticsHandler.DashboardViewer(viewID.String(), promQueries, dashboardQueryMap, dataVariables, *data_store.Store)

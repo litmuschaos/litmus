@@ -76,14 +76,29 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 				log.Printf("Error parsing new annotation  %v\n", err)
 			}
 
+			duplicateEventIndices := make(map[int]int)
+			var duplicateEventOffset = 0
 			for verdictLegendIndex, verdictLegend := range newAnnotation.Legends {
 				verdictLegendName := func(str *string) string { return *str }(verdictLegend)
-				var eventFound = false
+				var (
+					eventFound             = false
+					duplicateEventsFound   = false
+					firstEventFoundAtIndex = 0
+				)
 
 				for eventLegendIndex, eventLegend := range existingAnnotation.Legends {
 					eventLegendName := func(str *string) string { return *str }(eventLegend)
 
 					if verdictLegendName == eventLegendName {
+						if !eventFound {
+							firstEventFoundAtIndex = eventLegendIndex
+						} else {
+							duplicateEventsFound = true
+							if _, ok := duplicateEventIndices[eventLegendIndex]; !ok {
+								duplicateEventIndices[eventLegendIndex] = duplicateEventOffset
+								duplicateEventOffset += 1
+							}
+						}
 						eventFound = true
 						var newVerdictSubData []*model.SubData
 
@@ -105,6 +120,18 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 							}
 						}
 						annotations[annotationIndex].SubDataArray[eventLegendIndex] = append(annotations[annotationIndex].SubDataArray[eventLegendIndex], newVerdictSubData...)
+
+						if duplicateEventsFound {
+							existingDates := make(map[float64]bool)
+							for _, tsv := range annotations[annotationIndex].Tsvs[firstEventFoundAtIndex] {
+								existingDates[func(date *float64) float64 { return *date }(tsv.Date)] = true
+							}
+
+							if _, ok := existingDates[func(date *float64) float64 { return *date }(annotations[annotationIndex].Tsvs[eventLegendIndex][0].Date)]; !ok {
+								annotations[annotationIndex].Tsvs[firstEventFoundAtIndex] = append(annotations[annotationIndex].Tsvs[firstEventFoundAtIndex], annotations[annotationIndex].Tsvs[eventLegendIndex]...)
+							}
+							annotations[annotationIndex].SubDataArray[firstEventFoundAtIndex] = annotations[annotationIndex].SubDataArray[eventLegendIndex]
+						}
 					}
 				}
 
@@ -120,6 +147,17 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 						annotations[annotationIndex].Legends = append(annotations[annotationIndex].Legends, verdictLegend)
 						annotations[annotationIndex].SubDataArray = append(annotations[annotationIndex].SubDataArray, verdictResponse.SubDataArray[verdictLegendIndex])
 						annotations[annotationIndex].Tsvs = append(annotations[annotationIndex].Tsvs, nil)
+					}
+				}
+			}
+
+			if duplicateEventOffset != 0 {
+				numberOfEvents := len(annotations[annotationIndex].Legends)
+				for i := 0; i < numberOfEvents; i++ {
+					if offset, ok := duplicateEventIndices[i]; ok {
+						annotations[annotationIndex].Legends = append(annotations[annotationIndex].Legends[:i-offset], annotations[annotationIndex].Legends[i-offset+1:]...)
+						annotations[annotationIndex].Tsvs = append(annotations[annotationIndex].Tsvs[:i-offset], annotations[annotationIndex].Tsvs[i-offset+1:]...)
+						annotations[annotationIndex].SubDataArray = append(annotations[annotationIndex].SubDataArray[:i-offset], annotations[annotationIndex].SubDataArray[i-offset+1:]...)
 					}
 				}
 			}
