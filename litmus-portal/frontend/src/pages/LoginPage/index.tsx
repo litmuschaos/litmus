@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
         } else {
           setUserDetails(data.access_token);
           setIsLoading(false);
-          window.location.assign('/getStarted');
+          window.location.assign(`${process.env.PUBLIC_URL}/getStarted`);
         }
       })
       .catch((err) => {

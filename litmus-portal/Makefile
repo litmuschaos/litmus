@@ -113,7 +113,7 @@ buildx.push.image:
 buildx.push.frontend:
 	@cd frontend && \
 	if [ "${IMG_TAG}" = "ci" ]; then \
-        docker build . -f Dockerfile -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x" --build-arg TARGETARCH=amd64;\
+        docker build . -f Dockerfile -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x" --build-arg PUBLIC_URL="$(PUBLIC_URL)" --build-arg TARGETARCH=amd64;\
         docker push $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG);\
 	else \
 	    docker buildx build . -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) \

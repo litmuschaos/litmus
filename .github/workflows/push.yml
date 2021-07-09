@@ -241,13 +241,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push frontend docker image
+      - name: Push frontend docker image (/)
         env:
           FRONTEND_IMAGE: ${FRONTEND_IMAGE}
           IMG_TAG: ${IMG_TAG}
           PLATFORMS: ${{ secrets.PLATFORMS }}
           REPONAME: ${{ secrets.REPONAME }}
           timestamp: ${timestamp}
+          PUBLIC_URL: ""
+        run: |
+          source env-vars
+          timestamp=`date "+%s"`
+          make push-frontend
+
+      - name: Push frontend docker image (/litmuschaos)
+        env:
+          FRONTEND_IMAGE: ${FRONTEND_IMAGE}-path-litmuschaos
+          IMG_TAG: ${IMG_TAG}
+          PLATFORMS: ${{ secrets.PLATFORMS }}
+          REPONAME: ${{ secrets.REPONAME }}
+          timestamp: ${timestamp}
+          PUBLIC_URL: "/litmuschaos"
         run: |
           source env-vars
           timestamp=`date "+%s"`

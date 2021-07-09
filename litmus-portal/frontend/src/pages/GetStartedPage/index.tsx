@@ -57,7 +57,7 @@ const GetStarted: React.FC = () => {
   const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
     onCompleted: () => {
       setIsLoading(false);
-      window.location.assign('/home');
+      window.location.assign(`${process.env.PUBLIC_URL}/home`);
     },
   });
 
