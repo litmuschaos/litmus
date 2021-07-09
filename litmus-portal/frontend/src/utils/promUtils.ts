@@ -22,12 +22,26 @@ import {
 } from '../models/graphql/prometheus';
 import {
   CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT,
-  DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+  DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
+  DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
+  DEFAULT_CHAOS_EVENT_QUERY_ID,
+  DEFAULT_CHAOS_VERDICT_QUERY_ID,
   DEFAULT_RELATIVE_TIME_RANGE,
+  DEFAULT_TSDB_SCRAPE_INTERVAL,
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
+  TIME_THRESHOLD_FOR_TSDB,
 } from '../pages/ApplicationDashboard/constants';
 
 const labelMatchOperators = ['==', '!=', '<=', '<', '>=', '>', '=~', '!~', '='];
+
+const timeInSeconds = [
+  30, 60, 300, 600, 900, 1800, 3600, 10800, 21600, 43200, 86400, 259200, 604800,
+  1209600,
+];
+
+const allowedMinSteps = [
+  1, 1, 5, 10, 15, 30, 60, 180, 360, 720, 1440, 2880, 8640, 20160,
+];
 
 export const getDashboardQueryMap = (panelGroups: PanelGroupResponse[]) => {
   const queryMapPanelGroup: queryMapForPanelGroup[] = [];
@@ -47,6 +61,29 @@ export const getDashboardQueryMap = (panelGroups: PanelGroupResponse[]) => {
   return queryMapPanelGroup;
 };
 
+const getNormalizedMinStep = (timeRangeDiff: number) => {
+  let minStep = DEFAULT_TSDB_SCRAPE_INTERVAL;
+  const timeIndex = timeInSeconds.indexOf(timeRangeDiff);
+  if (timeIndex !== -1) {
+    minStep = allowedMinSteps[timeIndex];
+  } else {
+    let start = 0;
+    let end = timeInSeconds.length - 1;
+    let ans = -1;
+    while (start <= end) {
+      const mid = Math.trunc((start + end) / 2);
+      if (timeInSeconds[mid] <= timeRangeDiff) {
+        start = mid + 1;
+      } else {
+        ans = mid;
+        end = mid - 1;
+      }
+    }
+    minStep = allowedMinSteps[ans];
+  }
+  return minStep;
+};
+
 export const getPromQueryInput = (
   prom_queries: PromQueryDetails[],
   timeRangeDiff: number,
@@ -63,31 +100,39 @@ export const getPromQueryInput = (
       resolution: query.resolution,
       minstep:
         Math.ceil(timeRangeDiff / parseInt(query.minstep, 10)) <
-        PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
+        PROMETHEUS_QUERY_RESOLUTION_LIMIT - TIME_THRESHOLD_FOR_TSDB
           ? parseInt(query.minstep, 10)
-          : Math.ceil(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+          : getNormalizedMinStep(timeRangeDiff),
     });
   });
   if (withEvents && eventQueryTemplate && verdictQueryTemplate) {
     promQueries.push({
-      queryid: 'chaos-event',
-      query: eventQueryTemplate, // litmuschaos_awaited_experiments{job="chaos-exporter", chaos_injection_time!=""}
-      legend: '{{chaosresult_name}}',
-      resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+      queryid: DEFAULT_CHAOS_EVENT_QUERY_ID,
+      query: eventQueryTemplate, // `litmuschaos_awaited_experiments{job="chaos-exporter", chaos_injection_time!=""}`,
+      legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
+      resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
-        timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
-          ? 1
-          : Math.ceil(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+        timeRangeDiff <
+        PROMETHEUS_QUERY_RESOLUTION_LIMIT - TIME_THRESHOLD_FOR_TSDB
+          ? DEFAULT_TSDB_SCRAPE_INTERVAL
+          : Math.ceil(
+              timeRangeDiff /
+                (PROMETHEUS_QUERY_RESOLUTION_LIMIT + TIME_THRESHOLD_FOR_TSDB)
+            ),
     });
     promQueries.push({
-      queryid: 'chaos-verdict',
-      query: verdictQueryTemplate, // litmuschaos_experiment_verdict{job="chaos-exporter"}
-      legend: '{{chaosresult_name}}',
-      resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+      queryid: DEFAULT_CHAOS_VERDICT_QUERY_ID,
+      query: verdictQueryTemplate, // `litmuschaos_experiment_verdict{job="chaos-exporter"}`,
+      legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
+      resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
-        timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
-          ? 1
-          : Math.ceil(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+        timeRangeDiff <
+        PROMETHEUS_QUERY_RESOLUTION_LIMIT - TIME_THRESHOLD_FOR_TSDB
+          ? DEFAULT_TSDB_SCRAPE_INTERVAL
+          : Math.ceil(
+              timeRangeDiff /
+                (PROMETHEUS_QUERY_RESOLUTION_LIMIT + TIME_THRESHOLD_FOR_TSDB)
+            ),
     });
   }
   return promQueries;
@@ -240,6 +285,7 @@ export const ChaosEventDataParserForPrometheus = (
       });
     }
   });
+
   return parsedPrometheusData;
 };
 

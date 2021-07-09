@@ -113,7 +113,6 @@ export interface GraphPanelProps extends PanelResponse {
   centralBrushPosition?: BrushPostitionProps;
   handleCentralBrushPosition: (newBrushPosition: BrushPostitionProps) => void;
   centralAllowGraphUpdate: boolean;
-  handleCentralAllowGraphUpdate: (value: boolean) => void;
 }
 
 export interface GraphPanelGroupProps extends PanelGroupResponse {
@@ -123,7 +122,6 @@ export interface GraphPanelGroupProps extends PanelGroupResponse {
   centralBrushPosition?: BrushPostitionProps;
   handleCentralBrushPosition: (newBrushPosition: BrushPostitionProps) => void;
   centralAllowGraphUpdate: boolean;
-  handleCentralAllowGraphUpdate: (value: boolean) => void;
 }
 
 export interface ParsedMetricPrometheusData {
@@ -151,6 +149,12 @@ export interface RangeType {
   endDate: string;
 }
 
+interface TimeControlObject {
+  range: RangeType;
+  relativeTime: number;
+  refreshInterval: number;
+}
+
 export interface SelectedDashboardInformation {
   id: string;
   name: string;
@@ -175,6 +179,7 @@ export interface SelectedDashboardInformation {
   range: RangeType;
   relativeTime: number;
   refreshInterval: number;
+  timeControlStack: TimeControlObject[];
 }
 
 export interface PromQueryDetails extends PromQuery {

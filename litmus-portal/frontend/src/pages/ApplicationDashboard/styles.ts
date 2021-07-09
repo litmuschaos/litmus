@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
     '&::-webkit-scrollbar': {
       display: 'none' /* Safari and Chrome */,
     },
-    marginLeft: theme.spacing(1),
     marginBottom: theme.spacing(2.5),
   },
 

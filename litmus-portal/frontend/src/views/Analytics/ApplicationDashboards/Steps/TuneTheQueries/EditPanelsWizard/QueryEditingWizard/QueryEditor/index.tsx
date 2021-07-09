@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
   FormControl,
   IconButton,
@@ -20,6 +20,7 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accordion } from '../../../../../../../../components/Accordion';
 import InfoTooltip from '../../../../../../../../components/InfoTooltip';
+import PrometheusQueryEditor from '../../../../../../../../components/PrometheusQueryBox';
 import { PROM_LABEL_VALUES } from '../../../../../../../../graphql';
 import {
   PromQueryDetails,
@@ -42,7 +43,6 @@ import {
   setLabelsAndValues,
 } from '../../../../../../../../utils/promUtils';
 import { validateTimeInSeconds } from '../../../../../../../../utils/validate';
-import PrometheusQueryEditor from './PrometheusQueryBox';
 import useStyles from './styles';
 
 interface QueryEditorProps {
@@ -77,13 +77,12 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [open, setOpen] = React.useState<boolean>(true);
+  const [open, setOpen] = React.useState<boolean>(index === 0);
   const [selectedValuesForLabel, setSelectedValuesForLabel] = React.useState<
     Array<Option>
   >([]);
   const [selectedLabel, setSelectedLabel] = React.useState<string>('');
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
   const [localQuery, setLocalQuery] = React.useState<PromQueryDetails>({
     ...promQuery,
     base_query: promQuery.prom_query_name.split('{')[0].includes('(')
@@ -98,7 +97,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
   const [copying, setCopying] = React.useState<boolean>(false);
   const [queryVisible, setQueryVisible] = React.useState<boolean>(true);
 
-  const [getLabelValues, { data: labelValueData }] = useLazyQuery<
+  const { data: labelValueData, refetch } = useQuery<
     PrometheusSeriesResponse,
     PrometheusSeriesQueryVars
   >(PROM_LABEL_VALUES, {
@@ -122,7 +121,12 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
         series: localQuery.base_query ?? '',
       },
     },
-    fetchPolicy: 'network-only',
+    skip:
+      dsURL === '' ||
+      seriesList.length === 0 ||
+      localQuery.base_query === '' ||
+      !open,
+    fetchPolicy: 'cache-and-network',
   });
 
   const getAvailableValues = (label: string) => {
@@ -179,14 +183,6 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
     });
     setSelectedValuesForLabel(options);
   };
-
-  useEffect(() => {
-    if (firstLoad && localQuery.base_query !== '' && dsURL !== '') {
-      getLabelValues();
-      getSelectedValuesForLabel(selectedLabel ?? '');
-      setFirstLoad(false);
-    }
-  }, [firstLoad]);
 
   useEffect(() => {
     if (update) {
@@ -324,15 +320,21 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                     ? (value as string)
                     : (value as Option).name
                   : '';
+                const exitingLocalBaseQuery = localQuery.base_query;
                 setLocalQuery({
                   ...localQuery,
                   base_query: newQuery,
                   prom_query_name: newQuery,
                   labels_and_values_list: [],
                 });
-                if (newQuery !== '' && dsURL !== '') {
+                if (
+                  newQuery !== '' &&
+                  dsURL !== '' &&
+                  exitingLocalBaseQuery !== newQuery &&
+                  open
+                ) {
                   setSelectedValuesForLabel([]);
-                  getLabelValues();
+                  refetch();
                 }
                 setUpdate(true);
               }}
@@ -479,10 +481,11 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                 if (
                   existingBaseQuery !== newBaseQuery &&
                   localQuery.base_query !== '' &&
-                  dsURL !== ''
+                  dsURL !== '' &&
+                  open
                 ) {
-                  getLabelValues();
                   setSelectedValuesForLabel([]);
+                  refetch();
                 }
                 setUpdate(true);
               }}

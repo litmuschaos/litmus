@@ -10,10 +10,14 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import WatchLaterRoundedIcon from '@material-ui/icons/WatchLaterRounded';
 import { ButtonOutlined } from 'litmus-ui';
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import { RangeType } from '../../../../models/dashboardsData';
+import {
+  INVALID_DATE,
+  INVALID_RELATIVE_TIME_RANGE,
+} from '../../../../pages/ApplicationDashboard/constants';
 import refreshData from '../../../../pages/ApplicationDashboard/refreshData';
 import useStyles, { useOutlinedInputStyles } from './styles';
 
@@ -23,13 +27,15 @@ interface RefreshObjectType {
 }
 
 interface ToolBarProps {
+  timeRange: RangeType;
   refreshInterval: number;
-  handleRangeChange: (range: RangeType) => void;
+  handleRangeChange: (range: RangeType, relativeTime: number) => void;
   handleRefreshRateChange: (refreshRate: number) => void;
   handleForceUpdate: () => void;
 }
 
 const ToolBar: React.FC<ToolBarProps> = ({
+  timeRange,
   refreshInterval,
   handleRangeChange,
   handleRefreshRateChange,
@@ -41,10 +47,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   const dateRangeSelectorRef = React.useRef<HTMLDivElement>(null);
   const [isDateRangeSelectorPopoverOpen, setDateRangeSelectorPopoverOpen] =
     React.useState(false);
-  const [range, setRange] = React.useState<RangeType>({
-    startDate: '',
-    endDate: '',
-  });
+  const [range, setRange] = React.useState<RangeType>(timeRange);
   const [refreshRate, setRefreshRate] = React.useState<number>(refreshInterval);
   const [openRefresh, setOpenRefresh] = React.useState(false);
   const handleCloseRefresh = () => setOpenRefresh(false);
@@ -67,10 +70,25 @@ const ToolBar: React.FC<ToolBarProps> = ({
       ).getTime() / 1000
     }`;
     setRange({ startDate: startDateFormatted, endDate: endDateFormatted });
-    handleRangeChange({
-      startDate: startDateFormatted,
-      endDate: endDateFormatted,
-    });
+    // relativeTime to be sent from date range selector
+    // if (relativeTime === INVALID_RELATIVE_TIME_RANGE) {
+    handleRangeChange(
+      {
+        startDate: startDateFormatted,
+        endDate: endDateFormatted,
+      },
+      INVALID_RELATIVE_TIME_RANGE
+    );
+    // }
+    // else {
+    // handleRangeChange(
+    //   {
+    //     startDate: INVALID_DATE,
+    //     endDate: INVALID_DATE,
+    //   },
+    //   relativeTime
+    // );
+    // }
   };
 
   const refreshRateChangeHandler = (
@@ -79,6 +97,21 @@ const ToolBar: React.FC<ToolBarProps> = ({
     setRefreshRate(event.target.value as number);
     handleRefreshRateChange(event.target.value as number);
   };
+
+  useEffect(() => {
+    if (
+      range.startDate !== timeRange.startDate ||
+      range.endDate !== timeRange.endDate
+    ) {
+      setRange(timeRange);
+    }
+  }, [timeRange]);
+
+  useEffect(() => {
+    if (refreshRate !== refreshInterval) {
+      setRefreshRate(refreshInterval);
+    }
+  }, [refreshInterval]);
 
   return (
     <div className={classes.headerDiv}>
@@ -99,7 +132,8 @@ const ToolBar: React.FC<ToolBarProps> = ({
               <IconButton className={classes.rangeSelectorClockIcon}>
                 <WatchLaterRoundedIcon />
               </IconButton>
-              {range.startDate === ''
+              {range.startDate === INVALID_DATE &&
+              range.endDate === INVALID_DATE
                 ? `${t(
                     'analyticsDashboard.monitoringDashboardPage.rangeSelector.last30Mins'
                   )}`

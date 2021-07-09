@@ -114,10 +114,21 @@ const DataSourceTable: React.FC = () => {
     pollInterval: 10000,
   });
 
+  const cleanDrawerState = () => {
+    setForceDeleteVars({
+      connectedDashboards: [],
+      dsID: '',
+      dsName: '',
+    });
+    setShowAllDashboards(false);
+    setDrawerState(false);
+  };
+
   const alertStateHandler = (successState: boolean) => {
     setSuccess(successState);
     setIsAlertOpen(true);
     if (successState) {
+      cleanDrawerState();
       refetch();
     }
   };
@@ -129,16 +140,6 @@ const DataSourceTable: React.FC = () => {
       onError: () => alertStateHandler(false),
     }
   );
-
-  const cleanDrawerState = () => {
-    setForceDeleteVars({
-      connectedDashboards: [],
-      dsID: '',
-      dsName: '',
-    });
-    setShowAllDashboards(false);
-    setDrawerState(false);
-  };
 
   const getStatus = (searchingData: ListDataSourceResponse[]) => {
     const uniqueList: string[] = [];
@@ -485,7 +486,7 @@ const DataSourceTable: React.FC = () => {
               </Typography>
             </TextButton>
             <ButtonFilled
-              onClick={() => {
+              onClick={() =>
                 deleteDataSource({
                   variables: {
                     deleteDSInput: {
@@ -493,9 +494,8 @@ const DataSourceTable: React.FC = () => {
                       force_delete: true,
                     },
                   },
-                });
-                cleanDrawerState();
-              }}
+                })
+              }
               variant="error"
             >
               <Typography

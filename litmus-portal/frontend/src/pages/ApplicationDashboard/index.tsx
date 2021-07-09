@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useQuery, useSubscription } from '@apollo/client';
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client';
 import {
   IconButton,
   Menu,
@@ -34,6 +33,8 @@ import {
   ViewDashboard,
   ViewDashboardInput,
 } from '../../models/graphql/prometheus';
+import useActions from '../../redux/actions';
+import * as DashboardActions from '../../redux/actions/dashboards';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
@@ -53,8 +54,11 @@ import {
   ACTIVE,
   DEFAULT_REFRESH_RATE,
   DEFAULT_RELATIVE_TIME_RANGE,
-  MAX_REFRESH_RATE,
+  INVALID_DATE,
+  INVALID_REFRESH_RATE,
+  INVALID_RELATIVE_TIME_RANGE,
   PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED,
+  TIME_DEVIATION_THRESHOLD_FOR_CONTROL_STACK_OBJECTS,
 } from './constants';
 import useStyles from './styles';
 
@@ -67,13 +71,14 @@ const DashboardPage: React.FC = () => {
   const { palette } = useTheme();
   const classes = useStyles();
   const { t } = useTranslation();
+  const apolloClient = useApolloClient();
+  const dashboard = useActions(DashboardActions);
   const lineGraph: string[] = palette.graph.line;
   const areaGraph: string[] = palette.graph.area;
   const projectID = getProjectID();
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
   );
-
   const [selectedDashboardInformation, setSelectedDashboardInformation] =
     React.useState<SelectedDashboardInformation>({
       id: selectedDashboard.selectedDashboardID,
@@ -97,11 +102,12 @@ const DashboardPage: React.FC = () => {
       dataSourceName: '',
       promQueries: [],
       range: {
-        startDate: '',
-        endDate: '',
+        startDate: INVALID_DATE,
+        endDate: INVALID_DATE,
       },
       relativeTime: DEFAULT_RELATIVE_TIME_RANGE,
       refreshInterval: DEFAULT_REFRESH_RATE,
+      timeControlStack: [],
     });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [dataSourceStatus, setDataSourceStatus] =
@@ -116,6 +122,8 @@ const DashboardPage: React.FC = () => {
     React.useState(true);
   const [isInfoOpen, setIsInfoOpen] = React.useState<Boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [showPromQueryResponseLoader, setShowPromQueryResponseLoader] =
+    React.useState<boolean>(true);
   const [selectedPanels, setSelectedPanels] = React.useState<string[]>([]);
   const [selectedApplications, setSelectedApplications] = React.useState<
     string[]
@@ -178,12 +186,15 @@ const DashboardPage: React.FC = () => {
       selectedDashboardInformation.promQueries.length === 0 ||
       selectedDashboardInformation.metaData?.panel_groups.length === 0 ||
       selectedDashboardInformation.dataSourceURL === '' ||
-      (selectedDashboardInformation.range.startDate === '' &&
-        selectedDashboardInformation.range.endDate === '' &&
-        selectedDashboardInformation.refreshInterval === 0),
+      (selectedDashboardInformation.range.startDate === INVALID_DATE &&
+        selectedDashboardInformation.range.endDate === INVALID_DATE &&
+        selectedDashboardInformation.relativeTime ===
+          INVALID_RELATIVE_TIME_RANGE),
     shouldResubscribe: () => {
       if (reFetch) {
-        setReFetching(true);
+        if (showPromQueryResponseLoader) {
+          setReFetching(true);
+        }
         setReFetch(false);
         return true;
       }
@@ -209,6 +220,14 @@ const DashboardPage: React.FC = () => {
       });
       if (reFetching) {
         setReFetching(false);
+      }
+    },
+    onSubscriptionComplete: () => {
+      if (reFetching) {
+        setReFetching(false);
+      }
+      if (showPromQueryResponseLoader) {
+        setShowPromQueryResponseLoader(false);
       }
     },
   });
@@ -277,12 +296,8 @@ const DashboardPage: React.FC = () => {
             selectedPanelNameAndIDList.map((panel: PanelNameAndID) => panel.id)
           );
           setSelectedApplications([]);
-          setSelectedEvents([]);
           setPromData({
-            chaosEventData: {
-              chaosData: [],
-              chaosEventDetails: [],
-            },
+            ...promData,
             panelGroupQueryMap: [],
           });
           if (selectedDashboard.ds_health_status !== ACTIVE) {
@@ -335,10 +350,12 @@ const DashboardPage: React.FC = () => {
       errorFetchingDashboardQueries.message ===
         PROMETHEUS_ERROR_QUERY_RESOLUTION_LIMIT_REACHED
     ) {
-      if (selectedDashboardInformation.refreshInterval !== MAX_REFRESH_RATE) {
+      if (
+        selectedDashboardInformation.refreshInterval !== INVALID_REFRESH_RATE
+      ) {
         setSelectedDashboardInformation({
           ...selectedDashboardInformation,
-          refreshInterval: MAX_REFRESH_RATE,
+          refreshInterval: INVALID_REFRESH_RATE,
         });
       }
     }
@@ -441,6 +458,9 @@ const DashboardPage: React.FC = () => {
                             data.db_id === selectedDashboardInformation.id
                           }
                           onClick={() => {
+                            dashboard.selectDashboard({
+                              selectedDashboardID: data.db_id,
+                            });
                             setSelectedDashboardInformation({
                               ...selectedDashboardInformation,
                               id: data.db_id,
@@ -499,11 +519,24 @@ const DashboardPage: React.FC = () => {
               />
             )}
             <ToolBar
+              timeRange={selectedDashboardInformation.range}
               refreshInterval={selectedDashboardInformation.refreshInterval}
-              handleRangeChange={(range: RangeType) => {
+              handleRangeChange={(range: RangeType, relativeTime: number) => {
+                let { refreshInterval } = selectedDashboardInformation;
+                if (
+                  range.startDate !== INVALID_DATE &&
+                  range.endDate !== INVALID_DATE &&
+                  relativeTime === INVALID_RELATIVE_TIME_RANGE &&
+                  selectedDashboardInformation.refreshInterval !==
+                    INVALID_REFRESH_RATE
+                ) {
+                  refreshInterval = INVALID_REFRESH_RATE;
+                }
                 setSelectedDashboardInformation({
                   ...selectedDashboardInformation,
                   range,
+                  relativeTime,
+                  refreshInterval,
                   promQueries: generatePromQueries(
                     range,
                     selectedDashboardInformation.metaData?.panel_groups ?? [],
@@ -512,16 +545,47 @@ const DashboardPage: React.FC = () => {
                   ),
                 });
                 setSelectedEvents([]);
+                if (!showPromQueryResponseLoader) {
+                  setShowPromQueryResponseLoader(true);
+                }
                 setReFetch(true);
               }}
               handleRefreshRateChange={(refreshRate: number) => {
+                const { range } = selectedDashboardInformation;
+                let { relativeTime } = selectedDashboardInformation;
+                if (
+                  refreshRate !== INVALID_REFRESH_RATE &&
+                  selectedDashboardInformation.range.startDate !==
+                    INVALID_DATE &&
+                  selectedDashboardInformation.range.endDate !== INVALID_DATE &&
+                  selectedDashboardInformation.relativeTime ===
+                    INVALID_RELATIVE_TIME_RANGE
+                ) {
+                  range.startDate = INVALID_DATE;
+                  range.endDate = INVALID_DATE;
+                  relativeTime = DEFAULT_RELATIVE_TIME_RANGE;
+                }
                 setSelectedDashboardInformation({
                   ...selectedDashboardInformation,
                   refreshInterval: refreshRate,
+                  range,
+                  relativeTime,
                 });
+                if (showPromQueryResponseLoader) {
+                  setShowPromQueryResponseLoader(false);
+                }
                 setReFetch(true);
               }}
-              handleForceUpdate={() => setReFetch(true)}
+              handleForceUpdate={() => {
+                apolloClient.stop();
+                apolloClient.resetStore();
+                setSelectedDashboardInformation({
+                  ...selectedDashboardInformation,
+                  dashboardKey: 'Default',
+                });
+                setIsLoading(true);
+                refetchDashboards();
+              }}
             />
             <div
               className={classes.analyticsDiv}
@@ -537,6 +601,33 @@ const DashboardPage: React.FC = () => {
                   postEventSelectionRoutine={(selectedEventNames: string[]) =>
                     setSelectedEvents(selectedEventNames)
                   }
+                  dashboardID={selectedDashboardInformation.id}
+                  dataSourceURL={selectedDashboardInformation.dataSourceURL}
+                  chaosEventQueryTemplate={
+                    selectedDashboardInformation.chaosEventQueryTemplate
+                  }
+                  chaosVerdictQueryTemplate={
+                    selectedDashboardInformation.chaosVerdictQueryTemplate
+                  }
+                  refetchDashboardAndMetrics={() => {
+                    setPromData({
+                      ...promData,
+                      chaosEventData: {
+                        chaosData: [],
+                        chaosEventDetails: [],
+                      },
+                    });
+                    setSelectedEvents([]);
+                    setSelectedDashboardInformation({
+                      ...selectedDashboardInformation,
+                      dashboardKey: 'Default',
+                    });
+                    if (!showPromQueryResponseLoader) {
+                      setShowPromQueryResponseLoader(true);
+                    }
+                    setIsLoading(true);
+                    refetchDashboards();
+                  }}
                 />
               </div>
               {(loadingDashboardQueries ||
@@ -565,13 +656,203 @@ const DashboardPage: React.FC = () => {
                       <DashboardPanelGroup
                         key={`${panelGroup.panel_group_id}-dashboardPage-component`}
                         centralAllowGraphUpdate={centralAllowGraphUpdate}
-                        handleCentralAllowGraphUpdate={(value: boolean) =>
-                          setCentralAllowGraphUpdate(value)
-                        }
                         centralBrushPosition={centralBrushPosition}
                         handleCentralBrushPosition={(
                           newBrushPosition: BrushPostitionProps
-                        ) => setCentralBrushPosition(newBrushPosition)}
+                        ) => {
+                          const newStart = Math.ceil(
+                            (newBrushPosition.start.x as number) / 1000
+                          );
+                          const newEnd = Math.floor(
+                            (newBrushPosition.end.x as number) / 1000
+                          );
+                          const range: RangeType = {
+                            startDate: `${newStart}`,
+                            endDate: `${newEnd}`,
+                          };
+                          const localTimeControlStack =
+                            selectedDashboardInformation.timeControlStack;
+                          const timeControlObjectFromHistory =
+                            localTimeControlStack[0] ?? undefined;
+                          if (
+                            ((selectedDashboardInformation.range.startDate !==
+                              INVALID_DATE &&
+                              parseInt(
+                                selectedDashboardInformation.range.startDate,
+                                10
+                              ) <= newStart &&
+                              selectedDashboardInformation.range.endDate !==
+                                INVALID_DATE &&
+                              parseInt(
+                                selectedDashboardInformation.range.endDate,
+                                10
+                              ) >= newEnd &&
+                              parseInt(
+                                selectedDashboardInformation.range.endDate,
+                                10
+                              ) -
+                                parseInt(
+                                  selectedDashboardInformation.range.startDate,
+                                  10
+                                ) -
+                                (newEnd - newStart) >
+                                TIME_DEVIATION_THRESHOLD_FOR_CONTROL_STACK_OBJECTS &&
+                              selectedDashboardInformation.relativeTime ===
+                                INVALID_RELATIVE_TIME_RANGE &&
+                              selectedDashboardInformation.refreshInterval ===
+                                INVALID_REFRESH_RATE) ||
+                              (selectedDashboardInformation.relativeTime !==
+                                INVALID_RELATIVE_TIME_RANGE &&
+                                selectedDashboardInformation.range.startDate ===
+                                  INVALID_DATE &&
+                                selectedDashboardInformation.range.endDate ===
+                                  INVALID_DATE)) &&
+                            (timeControlObjectFromHistory
+                              ? (timeControlObjectFromHistory.range
+                                  .startDate !== INVALID_DATE &&
+                                  parseInt(
+                                    timeControlObjectFromHistory.range
+                                      .startDate,
+                                    10
+                                  ) <= newStart &&
+                                  timeControlObjectFromHistory.range.endDate !==
+                                    INVALID_DATE &&
+                                  parseInt(
+                                    timeControlObjectFromHistory.range.endDate,
+                                    10
+                                  ) >= newEnd &&
+                                  parseInt(
+                                    timeControlObjectFromHistory.range.endDate,
+                                    10
+                                  ) -
+                                    parseInt(
+                                      timeControlObjectFromHistory.range
+                                        .startDate,
+                                      10
+                                    ) -
+                                    (newEnd - newStart) >
+                                    TIME_DEVIATION_THRESHOLD_FOR_CONTROL_STACK_OBJECTS &&
+                                  timeControlObjectFromHistory.relativeTime ===
+                                    INVALID_RELATIVE_TIME_RANGE &&
+                                  timeControlObjectFromHistory.refreshInterval ===
+                                    INVALID_REFRESH_RATE) ||
+                                (timeControlObjectFromHistory.range
+                                  .startDate === INVALID_DATE &&
+                                  timeControlObjectFromHistory.range.endDate ===
+                                    INVALID_DATE &&
+                                  timeControlObjectFromHistory.relativeTime !==
+                                    INVALID_RELATIVE_TIME_RANGE &&
+                                  timeControlObjectFromHistory.refreshInterval !==
+                                    INVALID_REFRESH_RATE)
+                              : true)
+                          ) {
+                            localTimeControlStack.push({
+                              range: selectedDashboardInformation.range,
+                              relativeTime:
+                                selectedDashboardInformation.relativeTime,
+                              refreshInterval:
+                                selectedDashboardInformation.refreshInterval,
+                            });
+                            setSelectedDashboardInformation({
+                              ...selectedDashboardInformation,
+                              range,
+                              refreshInterval: INVALID_REFRESH_RATE,
+                              relativeTime: INVALID_RELATIVE_TIME_RANGE,
+                              promQueries: generatePromQueries(
+                                range,
+                                selectedDashboardInformation.metaData
+                                  ?.panel_groups ?? [],
+                                selectedDashboardInformation.chaosEventQueryTemplate,
+                                selectedDashboardInformation.chaosVerdictQueryTemplate
+                              ),
+                              timeControlStack: localTimeControlStack,
+                            });
+                            setSelectedEvents([]);
+                            setReFetch(true);
+                            setCentralAllowGraphUpdate(false);
+                            setCentralBrushPosition(newBrushPosition);
+                          } else if (timeControlObjectFromHistory) {
+                            setSelectedDashboardInformation({
+                              ...selectedDashboardInformation,
+                              range: timeControlObjectFromHistory.range,
+                              refreshInterval:
+                                timeControlObjectFromHistory.refreshInterval,
+                              relativeTime:
+                                timeControlObjectFromHistory.relativeTime,
+                              promQueries: generatePromQueries(
+                                timeControlObjectFromHistory.range,
+                                selectedDashboardInformation.metaData
+                                  ?.panel_groups ?? [],
+                                selectedDashboardInformation.chaosEventQueryTemplate,
+                                selectedDashboardInformation.chaosVerdictQueryTemplate
+                              ),
+                              timeControlStack: [],
+                            });
+                            setSelectedEvents([]);
+                            if (
+                              timeControlObjectFromHistory.range.startDate !==
+                                INVALID_DATE &&
+                              timeControlObjectFromHistory.range.endDate !==
+                                INVALID_DATE &&
+                              timeControlObjectFromHistory.relativeTime ===
+                                INVALID_RELATIVE_TIME_RANGE &&
+                              timeControlObjectFromHistory.refreshInterval ===
+                                INVALID_REFRESH_RATE
+                            ) {
+                              setReFetch(true);
+                              setCentralAllowGraphUpdate(false);
+                              setCentralBrushPosition({
+                                start: {
+                                  x:
+                                    parseInt(
+                                      timeControlObjectFromHistory.range
+                                        .startDate,
+                                      10
+                                    ) * 1000,
+                                },
+                                end: {
+                                  x:
+                                    parseInt(
+                                      timeControlObjectFromHistory.range
+                                        .endDate,
+                                      10
+                                    ) * 1000,
+                                },
+                              });
+                            } else {
+                              setReFetch(true);
+                              setCentralAllowGraphUpdate(true);
+                              setCentralBrushPosition(undefined);
+                            }
+                          } else {
+                            setSelectedDashboardInformation({
+                              ...selectedDashboardInformation,
+                              range: {
+                                startDate: INVALID_DATE,
+                                endDate: INVALID_DATE,
+                              },
+                              refreshInterval: DEFAULT_REFRESH_RATE,
+                              relativeTime: DEFAULT_RELATIVE_TIME_RANGE,
+                              promQueries: generatePromQueries(
+                                {
+                                  startDate: INVALID_DATE,
+                                  endDate: INVALID_DATE,
+                                },
+                                selectedDashboardInformation.metaData
+                                  ?.panel_groups ?? [],
+                                selectedDashboardInformation.chaosEventQueryTemplate,
+                                selectedDashboardInformation.chaosVerdictQueryTemplate
+                              ),
+                            });
+                            setSelectedEvents([]);
+                            setReFetch(true);
+                            setCentralAllowGraphUpdate(true);
+                            setCentralBrushPosition(undefined);
+                          }
+                          if (showPromQueryResponseLoader) {
+                            setShowPromQueryResponseLoader(false);
+                          }
+                        }}
                         panel_group_id={panelGroup.panel_group_id}
                         panel_group_name={panelGroup.panel_group_name}
                         panels={panelGroup.panels}

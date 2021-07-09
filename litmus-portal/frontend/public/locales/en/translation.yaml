@@ -240,6 +240,14 @@ analyticsDashboard:
       search: Search
       all: All
       loading: Fetching chaos injection details ...
+    chaosAnnotationsEditor:
+      heading: Chaos annotations
+      eventQuery: Event query
+      verdictQuery: Verdict query
+      cancel: Cancel
+      saveChanges: Save changes
+      updateSuccess: Successfully updated the chaos annotations
+      updateError: Error updating the chaos annotations
     dashboardCloneModal:
       heading: Clone the application dashboard
       cancel: Cancel

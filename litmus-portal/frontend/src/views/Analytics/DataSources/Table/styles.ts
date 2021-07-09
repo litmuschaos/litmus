@@ -301,7 +301,7 @@ const useStyles = makeStyles((theme) => ({
   },
   confirmButtonText: {
     color: theme.palette.text.secondary,
-    padding: theme.spacing(0, 3),
+    padding: theme.spacing(0, 1.5),
   },
   cancelButton: {
     width: 'fit-content',
@@ -360,8 +360,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
   },
   dashboardsList: {
-    maxHeight: '12rem',
-    overflowY: 'scroll',
+    overflowY: 'auto',
     marginBottom: theme.spacing(3),
   },
   drawerListItem: {

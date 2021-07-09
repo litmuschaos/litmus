@@ -29,7 +29,6 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
   centralBrushPosition,
   handleCentralBrushPosition,
   centralAllowGraphUpdate,
-  handleCentralAllowGraphUpdate,
   metricDataForPanel,
   chaosData,
 }) => {
@@ -146,7 +145,6 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
       <div className={classes.singleGraph}>
         <LineAreaGraph
           centralAllowGraphUpdate={centralAllowGraphUpdate}
-          handleCentralAllowGraphUpdate={handleCentralAllowGraphUpdate}
           centralBrushPosition={centralBrushPosition}
           handleCentralBrushPosition={handleCentralBrushPosition}
           legendTableHeight={120}
@@ -158,6 +156,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
           showEventTable={viewEventMetric}
           showLegendTable
           showTips
+          showMultiToolTip
           showEventMarkers
           unit={unit}
           yLabel={y_axis_left}

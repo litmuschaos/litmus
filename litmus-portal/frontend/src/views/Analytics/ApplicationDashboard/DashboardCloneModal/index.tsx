@@ -48,7 +48,6 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
   const onDashboardLoadRoutine = async (dbID: string) => {
     dashboard.selectDashboard({
       selectedDashboardID: dbID,
-      selectedAgentID: dashboardData.agentID,
     });
     return true;
   };

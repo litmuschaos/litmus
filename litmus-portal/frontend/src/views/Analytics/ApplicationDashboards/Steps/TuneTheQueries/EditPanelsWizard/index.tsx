@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { AppBar, Tabs, useTheme } from '@material-ui/core';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -80,36 +80,41 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
   const { t } = useTranslation();
   const [seriesList, setSeriesList] = useState<Array<Option>>([]);
   const [panelGroupsList, setPanelGroupsList] = useState<Array<Option>>([]);
-  const [getSeriesList] = useLazyQuery<
-    PrometheusSeriesListResponse,
-    PrometheusSeriesListQueryVars
-  >(PROM_SERIES_LIST, {
-    variables: {
-      prometheusDSInput: {
-        url: dashboardVars.dataSourceURL ?? '',
-        start: `${
-          new Date(
-            moment.unix(Math.round(new Date().getTime() / 1000) - 900).format()
-          ).getTime() / 1000
-        }`,
-        end: `${
-          new Date(
-            moment.unix(Math.round(new Date().getTime() / 1000)).format()
-          ).getTime() / 1000
-        }`,
+  useQuery<PrometheusSeriesListResponse, PrometheusSeriesListQueryVars>(
+    PROM_SERIES_LIST,
+    {
+      variables: {
+        prometheusDSInput: {
+          url: dashboardVars.dataSourceURL ?? '',
+          start: `${
+            new Date(
+              moment
+                .unix(Math.round(new Date().getTime() / 1000) - 900)
+                .format()
+            ).getTime() / 1000
+          }`,
+          end: `${
+            new Date(
+              moment.unix(Math.round(new Date().getTime() / 1000)).format()
+            ).getTime() / 1000
+          }`,
+        },
       },
-    },
-    fetchPolicy: 'network-only',
-    onCompleted: (prometheusSeriesData) => {
-      if (prometheusSeriesData) {
-        const seriesValues: Array<Option> = [];
-        prometheusSeriesData.GetPromSeriesList.seriesList?.forEach((series) => {
-          seriesValues.push({ name: series });
-        });
-        setSeriesList(seriesValues);
-      }
-    },
-  });
+      skip: seriesList.length > 0 || dashboardVars.dataSourceURL === '',
+      fetchPolicy: 'cache-and-network',
+      onCompleted: (prometheusSeriesData) => {
+        if (prometheusSeriesData) {
+          const seriesValues: Array<Option> = [];
+          prometheusSeriesData.GetPromSeriesList.seriesList?.forEach(
+            (series) => {
+              seriesValues.push({ name: series });
+            }
+          );
+          setSeriesList(seriesValues);
+        }
+      },
+    }
+  );
 
   const selectedDashboard = useSelector(
     (state: RootState) => state.selectDashboard
@@ -304,7 +309,6 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
     });
     generatePanelGroupsList(panelsWithActiveIndex.panels);
     setTabValue(panelsWithActiveIndex.activeIndex);
-    getSeriesList();
     if (dashboardVars.dashboardTypeID === 'custom' && !configure) {
       handleCreatePanel();
     } else {
