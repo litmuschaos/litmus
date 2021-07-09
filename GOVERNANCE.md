@@ -43,24 +43,17 @@ with the current maintainers of the project and being a person that they can
 depend on and trust to make decisions in the best interest of the project.
 
 Periodically, the existing maintainers curate a list of contributors that have
-shown regular activity on the project over the prior months. From this list,
-maintainer candidates are selected and proposed maintainers slack channel.
+shown regular activity on the project over the prior months. From this list, 
+candidates are selected and proposed as maintainers.
 
-After a candidate has been announced on the maintainers slack channel, the
-existing maintainers are given five business days to discuss the candidate,
-raise objections and cast their vote. The Votes take place via the pull request 
-comment. Candidates must be approved by at least 66% of the
-current maintainers by adding their vote on the mailing list. The reviewer role
-has the same process but only requires 33% of current maintainers. Only
-maintainers of the repository that the candidate is proposed for are allowed to
-vote.
-
-If a candidate is approved, a maintainer will contact the candidate to invite
-the candidate to open a pull request that adds the contributor to the
-MAINTAINERS file. The voting process may take place inside a pull request if a
-maintainer has already discussed the candidacy with the candidate and a
-maintainer is willing to be a sponsor by opening the pull request. The candidate
-becomes a maintainer once the pull request is merged.
+After a candidate has been proposed as maintainer via a Pull Request by any of 
+the existing maintainers, the other maintainers are given five business days 
+to discuss the candidate, raise objections and cast their vote. 
+The Votes take place via the pull request comment. Candidates must be approved by at 
+least 66% of the current maintainers by adding their vote on the mailing list. 
+The reviewer role has the same process but only requires 33% of current maintainers. 
+Only maintainers of the repository that the candidate is proposed for are allowed to 
+vote. The candidate becomes a maintainer once the pull request is merged.
 
 ## Adding sub-projects
 

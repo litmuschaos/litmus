@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 import { Snackbar, Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
@@ -22,8 +22,11 @@ import {
   validateTextEmpty,
   validateTimeInSeconds,
 } from '../../utils/validate';
-import ConfigurePrometheus from '../../views/Analytics/DataSources/Forms/prometheus';
 import useStyles from './styles';
+
+const ConfigurePrometheus = lazy(
+  () => import('../../views/Analytics/DataSources/Forms/prometheus')
+);
 
 interface DataSourceConfigurePageProps {
   configure: boolean;

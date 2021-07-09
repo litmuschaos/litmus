@@ -15,7 +15,7 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
 		if entities.Role(userRole) != entities.RoleAdmin {
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
 		var userRequest entities.User
@@ -88,13 +88,30 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		authenticatedUser, err := service.FindUser(&userRequest)
+
+		// Checking if user exists
+		user, err := service.FindUser(userRequest.UserName)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
+			return
+		}
+
+		// Checking if user is deactivated
+		if user.DeactivatedAt != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserDeactivated], presenter.CreateErrorResponse(utils.ErrUserDeactivated))
+			return
+		}
+
+		// Validating password
+		err = service.CheckPasswordHash(user.Password, userRequest.Password)
 		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
-		token, err := authenticatedUser.GetSignedJWT()
+
+		token, err := user.GetSignedJWT()
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -171,7 +188,7 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 		err = service.IsAdministrator(&adminUser)
 		if err != nil {
 			log.Info(err)
-			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorised], presenter.CreateErrorResponse(utils.ErrUnauthorised))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
 		err = service.UpdatePassword(&userPasswordRequest, false)
@@ -182,6 +199,62 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 		}
 		c.JSON(200, gin.H{
 			"message": "password has been reset successfully",
+		})
+	}
+}
+
+func UpdateUserState(service user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var userRequest entities.UpdateUserState
+		err := c.BindJSON(&userRequest)
+		if err != nil {
+			log.Info(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
+		var adminUser entities.User
+		adminUser.UserName = c.MustGet("username").(string)
+		adminUser.ID = c.MustGet("uid").(string)
+
+		// Checking if loggedIn user is admin
+		err = service.IsAdministrator(&adminUser)
+		if err != nil {
+			log.Info(err)
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		// Checking if user exists
+		user, err := service.FindUser(userRequest.Username)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
+			return
+		}
+
+		// Checking if updated user is admin
+		if user.Role == entities.RoleAdmin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUpdatingAdmin], presenter.CreateErrorResponse(utils.ErrUpdatingAdmin))
+			return
+		}
+
+		// Checking if user is already deactivated
+		if userRequest.IsDeactivate {
+			if user.DeactivatedAt != nil {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyDeactivated], presenter.CreateErrorResponse(utils.ErrUserAlreadyDeactivated))
+				return
+			}
+		}
+
+		err = service.UpdateUserState(userRequest.Username, userRequest.IsDeactivate)
+		if err != nil {
+			log.Info(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{
+			"message": "user's state updated suddenly",
 		})
 	}
 }

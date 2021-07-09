@@ -4,7 +4,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -12,7 +12,6 @@ import YAML from 'yaml';
 import AdjustedWeights from '../../components/AdjustedWeights';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
-import YamlEditor from '../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../components/YamlEditor/Validations';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
@@ -36,6 +35,8 @@ import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { fetchWorkflowNameFromManifest } from '../../utils/yamlUtils';
 import { useStyles } from './styles';
+
+const YamlEditor = lazy(() => import('../../components/YamlEditor/Editor'));
 
 interface URLParams {
   workflowName: string;
@@ -67,6 +68,7 @@ const EditSchedule: React.FC = () => {
     },
   ]);
 
+  const [yamlOpen, setYAMLOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [finishModalOpen, setFinishModalOpen] = useState(false);
   const [errorModal, setErrorModal] = useState(false);
@@ -204,7 +206,7 @@ const EditSchedule: React.FC = () => {
 
   const handleEditOpen = () => {
     setModified(false);
-    setOpen(true);
+    setYAMLOpen(true);
   };
 
   const handleEditClose = () => {
@@ -253,136 +255,180 @@ const EditSchedule: React.FC = () => {
           </Typography>
           <div className={classes.root}>
             <div className={classes.innerContainer}>
-              <Typography className={classes.sumText}>
-                {t('createWorkflow.verifyCommit.summary.header')}
-              </Typography>
-
-              <div className={classes.outerSum}>
-                <div className={classes.summaryDiv}>
-                  <div className={classes.innerSumDiv}>
-                    <Typography className={classes.col1}>
-                      {t('createWorkflow.verifyCommit.summary.workflowName')}:
-                    </Typography>
-                  </div>
-                  <div className={classes.col2} data-cy="WorkflowName">
-                    <Typography>
-                      {fetchWorkflowNameFromManifest(manifest)}
-                    </Typography>
-                  </div>
-                </div>
-
-                <div className={classes.summaryDiv}>
-                  <div className={classes.innerSumDiv}>
-                    <Typography className={classes.col1}>
-                      {t('createWorkflow.verifyCommit.summary.clustername')}:
-                    </Typography>
-                  </div>
-                  <Typography className={classes.schCol2}>
-                    {clustername}
-                  </Typography>
-                </div>
-
-                <div className={classes.summaryDiv}>
-                  <div className={classes.innerSumDiv}>
-                    <Typography className={classes.col1}>
-                      {t('createWorkflow.verifyCommit.summary.desc')}:
-                    </Typography>
-                  </div>
-                  <div className={classes.col2}>
-                    <Typography>{workflow.description}</Typography>
-                  </div>
-                </div>
-                <div className={classes.summaryDiv}>
-                  <div className={classes.innerSumDiv}>
-                    <Typography className={classes.col1}>
-                      {t('createWorkflow.verifyCommit.summary.schedule')}:
-                    </Typography>
-                  </div>
-                  <div className={classes.schCol2}>
-                    {cronSyntax === '' ? (
-                      <Typography>
-                        {t('createWorkflow.verifyCommit.summary.schedulingNow')}
+              {yamlOpen ? (
+                <div className={classes.editorWrapper}>
+                  <div className={`${classes.flex} ${classes.additional}`}>
+                    <div className={classes.flex}>
+                      <img
+                        style={{ width: '2rem' }}
+                        src="/icons/terminal.svg"
+                        alt="Terminal Icon"
+                      />
+                      <Typography className={classes.name}>
+                        {fetchWorkflowNameFromManifest(manifest)}.yaml
                       </Typography>
-                    ) : (
-                      <Typography>{cronstrue.toString(cronSyntax)}</Typography>
-                    )}
+                    </div>
 
                     <ButtonOutlined
-                      className={classes.editButton}
-                      onClick={() =>
-                        history.push({
-                          pathname: `/workflows/schedule/${projectID}/${fetchWorkflowNameFromManifest(
-                            manifest
-                          )}/set`,
-                          search: `?projectID=${projectID}&projectRole=${userRole}`,
-                        })
-                      }
+                      onClick={() => setYAMLOpen(false)}
+                      className={classes.editorCloseBtn}
                     >
-                      <EditIcon className={classes.editIcon} data-cy="edit" />
-                      {t('editSchedule.edit')}
+                      x
                     </ButtonOutlined>
                   </div>
+                  <YamlEditor
+                    content={manifest}
+                    filename={workflow.name}
+                    readOnly
+                  />
                 </div>
-                <div className={classes.summaryDiv}>
-                  <div className={classes.innerSumDiv}>
-                    <Typography className={classes.col1}>
-                      {t('createWorkflow.verifyCommit.summary.adjustedWeights')}
-                      :
-                    </Typography>
-                  </div>
-                  {weights.length === 0 ? (
-                    <div>
-                      <Typography className={classes.col2}>
-                        {t('createWorkflow.verifyCommit.error')}
-                      </Typography>
-                    </div>
-                  ) : (
-                    <div className={classes.adjWeights}>
-                      <div className={classes.progress}>
-                        {weights.map((Test) => (
-                          <AdjustedWeights
-                            key={Test.weight}
-                            testName={`${Test.experimentName} ${t(
-                              'createWorkflow.verifyCommit.test'
-                            )}`}
-                            testValue={Test.weight}
-                            spacing={false}
-                            icon={false}
-                          />
-                        ))}
+              ) : (
+                <>
+                  <Typography className={classes.sumText}>
+                    {t('createWorkflow.verifyCommit.summary.header')}
+                  </Typography>
+
+                  <div className={classes.outerSum}>
+                    <div className={classes.summaryDiv}>
+                      <div className={classes.innerSumDiv}>
+                        <Typography className={classes.col1}>
+                          {t(
+                            'createWorkflow.verifyCommit.summary.workflowName'
+                          )}
+                          :
+                        </Typography>
+                      </div>
+                      <div className={classes.col2} data-cy="WorkflowName">
+                        <Typography>
+                          {fetchWorkflowNameFromManifest(manifest)}
+                        </Typography>
                       </div>
                     </div>
-                  )}
-                </div>
-                <div className={classes.summaryDiv}>
-                  <div className={classes.innerSumDiv}>
-                    <Typography className={classes.col1}>
-                      {t('createWorkflow.verifyCommit.YAML')}
-                    </Typography>
-                  </div>
-                  <div className={classes.yamlFlex}>
-                    {weights.length === 0 ? (
-                      <Typography className={classes.spacingHorizontal}>
-                        {t('createWorkflow.verifyCommit.errYaml')}
+
+                    <div className={classes.summaryDiv}>
+                      <div className={classes.innerSumDiv}>
+                        <Typography className={classes.col1}>
+                          {t('createWorkflow.verifyCommit.summary.clustername')}
+                          :
+                        </Typography>
+                      </div>
+                      <Typography className={classes.schCol2}>
+                        {clustername}
                       </Typography>
-                    ) : (
-                      <Typography>
-                        <b>{yamlStatus}</b>
-                        <span className={classes.spacingHorizontal}>
-                          {t('createWorkflow.verifyCommit.youCanMoveOn')}
-                        </span>
-                      </Typography>
-                    )}
-                    <br />
-                    <ButtonFilled
-                      className={classes.verifyYAMLButton}
-                      onClick={handleEditOpen}
-                    >
-                      {t('createWorkflow.verifyCommit.button.viewYaml')}
-                    </ButtonFilled>
+                    </div>
+
+                    <div className={classes.summaryDiv}>
+                      <div className={classes.innerSumDiv}>
+                        <Typography className={classes.col1}>
+                          {t('createWorkflow.verifyCommit.summary.desc')}:
+                        </Typography>
+                      </div>
+                      <div className={classes.col2}>
+                        <Typography>{workflow.description}</Typography>
+                      </div>
+                    </div>
+                    <div className={classes.summaryDiv}>
+                      <div className={classes.innerSumDiv}>
+                        <Typography className={classes.col1}>
+                          {t('createWorkflow.verifyCommit.summary.schedule')}:
+                        </Typography>
+                      </div>
+                      <div className={classes.schCol2}>
+                        {cronSyntax === '' ? (
+                          <Typography>
+                            {t(
+                              'createWorkflow.verifyCommit.summary.schedulingNow'
+                            )}
+                          </Typography>
+                        ) : (
+                          <Typography>
+                            {cronstrue.toString(cronSyntax)}
+                          </Typography>
+                        )}
+
+                        <ButtonOutlined
+                          className={classes.editButton}
+                          onClick={() =>
+                            history.push({
+                              pathname: `/workflows/schedule/${projectID}/${fetchWorkflowNameFromManifest(
+                                manifest
+                              )}/set`,
+                              search: `?projectID=${projectID}&projectRole=${userRole}`,
+                            })
+                          }
+                        >
+                          <EditIcon
+                            className={classes.editIcon}
+                            data-cy="edit"
+                          />
+                          {t('editSchedule.edit')}
+                        </ButtonOutlined>
+                      </div>
+                    </div>
+                    <div className={classes.summaryDiv}>
+                      <div className={classes.innerSumDiv}>
+                        <Typography className={classes.col1}>
+                          {t(
+                            'createWorkflow.verifyCommit.summary.adjustedWeights'
+                          )}
+                          :
+                        </Typography>
+                      </div>
+                      {weights.length === 0 ? (
+                        <div>
+                          <Typography className={classes.col2}>
+                            {t('createWorkflow.verifyCommit.error')}
+                          </Typography>
+                        </div>
+                      ) : (
+                        <div className={classes.adjWeights}>
+                          <div className={classes.progress}>
+                            {weights.map((Test) => (
+                              <AdjustedWeights
+                                key={Test.weight}
+                                testName={`${Test.experimentName} ${t(
+                                  'createWorkflow.verifyCommit.test'
+                                )}`}
+                                testValue={Test.weight}
+                                spacing={false}
+                                icon={false}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className={classes.summaryDiv}>
+                      <div className={classes.innerSumDiv}>
+                        <Typography className={classes.col1}>
+                          {t('createWorkflow.verifyCommit.YAML')}
+                        </Typography>
+                      </div>
+                      <div className={classes.yamlFlex}>
+                        {weights.length === 0 ? (
+                          <Typography className={classes.spacingHorizontal}>
+                            {t('createWorkflow.verifyCommit.errYaml')}
+                          </Typography>
+                        ) : (
+                          <Typography>
+                            <b>{yamlStatus}</b>
+                            <span className={classes.spacingHorizontal}>
+                              {t('createWorkflow.verifyCommit.youCanMoveOn')}
+                            </span>
+                          </Typography>
+                        )}
+                        <br />
+                        <ButtonFilled
+                          className={classes.verifyYAMLButton}
+                          onClick={handleEditOpen}
+                        >
+                          {t('createWorkflow.verifyCommit.button.viewYaml')}
+                        </ButtonFilled>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
           </div>
           {/* Cancel and Save Button */}
@@ -397,7 +443,10 @@ const EditSchedule: React.FC = () => {
             >
               {t('editSchedule.cancel')}
             </ButtonOutlined>
-            <ButtonFilled onClick={() => handleNext()}>
+            <ButtonFilled
+              data-cy="SaveEditScheduleButton"
+              onClick={() => handleNext()}
+            >
               {t('editSchedule.save')}
             </ButtonFilled>
           </div>

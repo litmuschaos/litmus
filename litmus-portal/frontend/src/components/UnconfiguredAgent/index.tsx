@@ -3,7 +3,7 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AgentDeployModal } from '../AgentDeployModal';
+import AgentDeployModal from '../AgentDeployModal';
 import { MainInfoContainer } from '../MainInfoContainer';
 
 const UnconfiguredAgent: React.FC = () => {

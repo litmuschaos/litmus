@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { UnconfiguredAgent } from '../../../components/UnconfiguredAgent';
 import { Role } from '../../../models/graphql/user';
 import { getProjectRole } from '../../../utils/getSearchParams';
-import { ProjectInfoContainer } from '../ProjectInfoContainer';
+
+const ProjectInfoContainer = lazy(() => import('../ProjectInfoContainer'));
 
 const LandingHome: React.FC = () => {
   const projectRole = getProjectRole();
@@ -17,4 +18,4 @@ const LandingHome: React.FC = () => {
   );
 };
 
-export { LandingHome };
+export default LandingHome;
