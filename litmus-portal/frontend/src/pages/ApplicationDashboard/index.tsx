@@ -285,7 +285,7 @@ const DashboardPage: React.FC = () => {
             dataSourceName: selectedDashboard.ds_name,
             promQueries: generatePromQueries(
               selectedDashboardInformation.range,
-              selectedDashboard.panel_groups,
+              selectedDashboard.panel_groups ?? [],
               selectedDashboard.chaos_event_query_template,
               selectedDashboard.chaos_verdict_query_template
             ),
