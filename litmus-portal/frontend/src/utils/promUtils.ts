@@ -40,7 +40,7 @@ const timeInSeconds = [
 ];
 
 const allowedMinSteps = [
-  1, 1, 5, 10, 15, 30, 60, 180, 360, 720, 1440, 2880, 8640, 20160,
+  1, 2, 10, 20, 30, 60, 120, 360, 720, 1440, 2880, 8640, 20160, 40320,
 ];
 
 export const getDashboardQueryMap = (panelGroups: PanelGroupResponse[]) => {
