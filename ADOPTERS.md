@@ -23,6 +23,7 @@ Please send PRs to add or remove organizations/users. Or You can add a comment i
 |[Lenskart](https://www.lenskart.com/)|Chaos Engineering for better Resiliency | [Our Story](adopters/organizations/lenskart.md)|
 |[Halodoc](https://www.halodoc.com/)|Resiliency Validation of Kubernetes Workloads and Infra on AWS |[Our Story](adopters/organizations/halodoc.md)|
 |[KubeSphere](https://kubesphere.io/)|Chaos Engineering|To Be Added|
+|[Mercedes](https://www.mercedes-benz.com/)|Resiliency validation for applications|[Our Story](adopters/organizations/mercedes.md)|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
