@@ -40,7 +40,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 	}
 
 	//checking duplicate projectname
-	filter := bson.D{{"name", projectName}, {"members.userid", userID}, {"members.role", model.MemberRoleOwner}}
+	filter := bson.D{{"name", projectName}, {"members.user_id", userID}, {"members.role", model.MemberRoleOwner}}
 	projects, err := dbOperationsProject.GetProjects(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -241,7 +241,7 @@ func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, er
 func UpdateProjectName(ctx context.Context, projectID string, projectName string, userID string) (string, error) {
 
 	//checking duplicate projectname
-	filter := bson.D{{"name", projectName}, {"members.userid", userID}, {"members.role", model.MemberRoleOwner}}
+	filter := bson.D{{"name", projectName}, {"members.user_id", userID}, {"members.role", model.MemberRoleOwner}}
 	projects, err := dbOperationsProject.GetProjects(ctx, filter)
 	if err != nil {
 		return "", err
