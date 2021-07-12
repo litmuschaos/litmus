@@ -144,12 +144,12 @@ const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
       >
         {showMore ? (
           <>
-            <img src="/icons/hide.svg" alt="hide" className={classes.icon} />
+            <img src="./icons/hide.svg" alt="hide" className={classes.icon} />
             Hide Statistics
           </>
         ) : (
           <>
-            <img src="/icons/show.svg" alt="show" className={classes.icon} />
+            <img src="./icons/show.svg" alt="show" className={classes.icon} />
             Show Statistics
           </>
         )}

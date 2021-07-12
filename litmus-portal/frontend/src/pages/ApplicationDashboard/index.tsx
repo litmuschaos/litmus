@@ -149,7 +149,7 @@ const DashboardPage: React.FC = () => {
             typeID: selectedDashboard.db_type_id,
             agentID: selectedDashboard.cluster_id,
             agentName: selectedDashboard.cluster_name,
-            urlToIcon: `/icons/${selectedDashboard.db_type_id}_dashboard.svg`,
+            urlToIcon: `./icons/${selectedDashboard.db_type_id}_dashboard.svg`,
             information: selectedDashboard.db_information,
             chaosEventQueryTemplate:
               selectedDashboard.chaos_event_query_template,
@@ -250,7 +250,7 @@ const DashboardPage: React.FC = () => {
                             name: data.db_name,
                             typeName: data.db_type_name,
                             typeID: data.db_type_id,
-                            urlToIcon: `/icons/${data.db_type_id}_dashboard.svg`,
+                            urlToIcon: `./icons/${data.db_type_id}_dashboard.svg`,
                             information: data.db_information,
                             chaosEventQueryTemplate:
                               data.chaos_event_query_template,

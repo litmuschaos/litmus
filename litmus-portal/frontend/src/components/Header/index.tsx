@@ -33,7 +33,7 @@ const Header: React.FC = () => {
           >
             <div className={classes.litmusDiv}>
               <img
-                src="/icons/litmusPurple.svg"
+                src="./icons/litmusPurple.svg"
                 alt="litmus logo"
                 className={classes.logo}
               />

@@ -1,15 +1,15 @@
 import { useQuery } from '@apollo/client';
 import { AppBar, Backdrop, Typography } from '@material-ui/core';
+import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-
-import useTheme from '@material-ui/core/styles/useTheme';
 import { useSelector } from 'react-redux';
-import { StyledTab, TabPanel } from '../../../components/Tabs';
+import { useParams } from 'react-router-dom';
+import BackButton from '../../../components/Button/BackButton';
 import Loader from '../../../components/Loader';
+import { StyledTab, TabPanel } from '../../../components/Tabs';
 import Center from '../../../containers/layouts/Center';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import {
@@ -18,14 +18,13 @@ import {
   GET_PREDEFINED_WORKFLOW_LIST,
 } from '../../../graphql';
 import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
+import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
+import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ChartCard from './chartCard';
 import HeaderSection from './headerSection';
 import useStyles from './styles';
-import BackButton from '../../../components/Button/BackButton';
-import { RootState } from '../../../redux/reducers';
-import * as TabActions from '../../../redux/actions/tabs';
-import useActions from '../../../redux/actions';
 
 interface ChartName {
   ChaosName: string;
@@ -218,7 +217,7 @@ const MyHub: React.FC = () => {
             ) : (
               <>
                 <img
-                  src="/icons/no-experiment-found.svg"
+                  src="./icons/no-experiment-found.svg"
                   alt="no experiment"
                   className={classes.noExpImage}
                 />
@@ -251,7 +250,7 @@ const MyHub: React.FC = () => {
             ) : (
               <>
                 <img
-                  src="/icons/no-experiment-found.svg"
+                  src="./icons/no-experiment-found.svg"
                   alt="no experiment"
                   className={classes.noExpImage}
                 />

@@ -99,7 +99,7 @@ const UploadJSON: React.FC<UploadJSONProps> = ({
       {uploadedJSON === '' || error !== '' ? (
         <div className={classes.uploadJSONText}>
           <img
-            src="/icons/upload-dashboard.svg"
+            src="./icons/upload-dashboard.svg"
             alt="upload json"
             className={classes.uploadImage}
           />
@@ -139,7 +139,7 @@ const UploadJSON: React.FC<UploadJSONProps> = ({
       ) : (
         <div className={classes.uploadSuccessDiv}>
           <img
-            src="/icons/upload-success.svg"
+            src="./icons/upload-success.svg"
             alt="checkmark"
             className={classes.uploadSuccessImg}
           />

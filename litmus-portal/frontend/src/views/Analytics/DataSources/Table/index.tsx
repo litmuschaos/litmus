@@ -304,7 +304,7 @@ const DataSourceTable: React.FC = () => {
                     <TableCell colSpan={6}>
                       <div className={classes.noRecords}>
                         <img
-                          src="/icons/dataSourceUnavailable.svg"
+                          src="./icons/dataSourceUnavailable.svg"
                           className={classes.unavailableIcon}
                           alt="Data Source"
                         />

@@ -46,7 +46,10 @@ const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 
 const Routes: React.FC = () => {
-  const baseRoute = window.location.pathname.split('/')[1];
+  const baseRoute = window.location.pathname
+    .replace(process.env.PUBLIC_URL, '')
+    .split('/')[1];
+
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
   const role = getUserRole();

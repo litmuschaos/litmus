@@ -1,16 +1,16 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Snackbar, Typography } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { lazy, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert } from '@material-ui/lab';
 import DeveloperGuide from '../../components/DeveloperGuide';
 import Loader from '../../components/Loader';
+import { constants } from '../../constants';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
 import { getProjectID } from '../../utils/getSearchParams';
-import { constants } from '../../constants';
 import CustomMyHubCard from './customMyHubCard';
 import useStyles from './styles';
 
@@ -201,7 +201,7 @@ const MyHub: React.FC = () => {
                 data-cy="deleteHubModal"
               >
                 <div className={classes.modalDiv}>
-                  <img src="/icons/red-cross.svg" alt="disconnect" />
+                  <img src="./icons/red-cross.svg" alt="disconnect" />
                   <Typography className={classes.disconnectHeader}>
                     {t('myhub.mainPage.disconnectHeader')}
                   </Typography>

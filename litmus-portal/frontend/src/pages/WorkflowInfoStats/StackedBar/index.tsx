@@ -152,9 +152,9 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
         </div>
         {/* Legend */}
         <div className={classes.stackbarLegend}>
-          <img src="/icons/failedTestIndicator.svg" alt="Failed legend" />
+          <img src="./icons/failedTestIndicator.svg" alt="Failed legend" />
           <Typography>Failed test</Typography>
-          <img src="/icons/passedTestIndicator.svg" alt="Passed legend" />
+          <img src="./icons/passedTestIndicator.svg" alt="Passed legend" />
           <Typography>Passed test</Typography>
         </div>
         {/* Border Ends */}

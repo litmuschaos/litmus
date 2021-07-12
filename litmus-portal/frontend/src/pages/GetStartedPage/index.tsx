@@ -139,7 +139,7 @@ const GetStarted: React.FC = () => {
       <Center>
         <div className={classes.rootDiv}>
           <div className={classes.rootLitmusText}>
-            <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
+            <img src="./icons/LitmusLogoLight.svg" alt="litmus logo" />
             <Typography className={classes.HeaderText}>
               {' '}
               {t('getStarted.welcome')} {username}!

@@ -1,8 +1,8 @@
 import { Typography } from '@material-ui/core';
 import Done from '@material-ui/icons/DoneAllTwoTone';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ButtonOutlined } from 'litmus-ui';
 import useStyles from './styles';
 
 interface InstallProps {
@@ -50,7 +50,7 @@ const InstallChaos: React.FC<InstallProps> = ({
             {!copying ? (
               <div className={classes.rowDiv}>
                 <img
-                  src="/icons/copy.svg"
+                  src="./icons/copy.svg"
                   className={classes.copyBtnImg}
                   alt="copy"
                 />

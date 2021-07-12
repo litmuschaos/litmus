@@ -64,7 +64,7 @@ const LoginPage: React.FC = () => {
       <Center>
         <div className={classes.rootDiv}>
           <div>
-            <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
+            <img src="./icons/LitmusLogoLight.svg" alt="litmus logo" />
             <Typography className={classes.HeaderText}>
               {t('login.heading')}
             </Typography>

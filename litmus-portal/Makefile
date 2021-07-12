@@ -116,7 +116,7 @@ buildx.push.frontend:
         docker build . -f Dockerfile -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x" --build-arg PUBLIC_URL="$(PUBLIC_URL)" --build-arg TARGETARCH=amd64;\
         docker push $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG);\
 	else \
-	    docker buildx build . -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) \
+	    docker buildx build . -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg PUBLIC_URL="$(PUBLIC_URL)" \
 		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x";\
     fi
 
@@ -135,6 +135,6 @@ push-frontend-amd64: docker-build-frontend-amd64 docker-push-frontend-amd64
 docker-build-frontend-amd64:
 	@cd frontend && \
     docker build . -f Dockerfile -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) --build-arg TARGETARCH=amd64 --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) \
-		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x
+		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg PUBLIC_URL="$(PUBLIC_URL)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x
 docker-push-frontend-amd64:
 	@docker push $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG)
