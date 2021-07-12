@@ -307,7 +307,9 @@ type Query {
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
-  ListDashboard(project_id: String!, cluster_id: String, db_id: String): [listDashboardResponse] @authorized
+  ListDashboard(project_id: String!
+    cluster_id: String
+    db_id: String): [listDashboardResponse] @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -416,7 +418,8 @@ type Mutation {
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updateDBInput!, chaosQueryUpdate: Boolean!): String! @authorized
+  updateDashboard(dashboard: updateDBInput!
+    chaosQueryUpdate: Boolean!): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
@@ -460,5 +463,7 @@ type Subscription {
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 
-  viewDashboard(promQueries: [promQueryInput!]!, dashboardQueryMap: [queryMapForPanelGroup!]!, dataVariables: dataVars!): dashboardPromResponse!
+  viewDashboard(promQueries: [promQueryInput!]!
+    dashboardQueryMap: [queryMapForPanelGroup!]!
+    dataVariables: dataVars!): dashboardPromResponse! @authorized
 }
