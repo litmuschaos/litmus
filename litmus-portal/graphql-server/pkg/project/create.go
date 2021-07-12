@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -34,6 +35,21 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 		return nil, err
 	}
 
+	if projectName == "" {
+		return nil, errors.New("project name can't be empty")
+	}
+
+	//checking duplicate projectname
+	filter := bson.D{{"name", projectName}, {"members.user_id", userID}, {"members.role", model.MemberRoleOwner}}
+	projects, err := dbOperationsProject.GetProjects(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(projects) > 0 {
+		return nil, errors.New("project with name: " + projectName + " already exists.")
+	}
+
 	uuid := uuid.New()
 	newProject := &dbSchemaProject.Project{
 		ID:   uuid.String(),
@@ -46,10 +62,10 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 				Email:      *user.Email,
 				Role:       model.MemberRoleOwner,
 				Invitation: dbSchemaProject.AcceptedInvitation,
-				JoinedAt:   time.Now().Format(time.RFC1123Z),
+				JoinedAt:   strconv.FormatInt(time.Now().Unix(), 10),
 			},
 		},
-		CreatedAt: time.Now().String(),
+		CreatedAt: strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	err = dbOperationsProject.CreateProject(ctx, newProject)
@@ -222,9 +238,20 @@ func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, er
 }
 
 //  UpdateProjectName :Updates project name (Multiple projects can have same name)
-func UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error) {
+func UpdateProjectName(ctx context.Context, projectID string, projectName string, userID string) (string, error) {
 
-	err := dbOperationsProject.UpdateProjectName(ctx, projectID, projectName)
+	//checking duplicate projectname
+	filter := bson.D{{"name", projectName}, {"members.user_id", userID}, {"members.role", model.MemberRoleOwner}}
+	projects, err := dbOperationsProject.GetProjects(ctx, filter)
+	if err != nil {
+		return "", err
+	}
+
+	if len(projects) > 0 {
+		return "", errors.New("project with name: " + projectName + " already exists.")
+	}
+
+	err = dbOperationsProject.UpdateProjectName(ctx, projectID, projectName)
 	if err != nil {
 		return "Unsuccessful", errors.New("Error updating project name")
 	}
