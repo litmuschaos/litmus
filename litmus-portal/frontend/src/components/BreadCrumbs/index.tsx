@@ -17,11 +17,6 @@ const Breadcrumb: React.FC = () => {
       {pathname.map((path) => {
         if (path) {
           intermediateRoutes += path;
-          // If Template/Workflow Name is clicked [Workflow / Workflow-name / Template]
-          // it would redirect to /workflows
-          if (pathname[2] === 'template' && path === pathname[3]) {
-            return <span key="path">{path}</span>;
-          }
           if (
             pathname[2] === 'schedule' &&
             (path === pathname[3] || path === pathname[4])
@@ -36,7 +31,7 @@ const Breadcrumb: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               }}
             >
-              {capitalize(path)}
+              {capitalize(decodeURI(path))}
             </Link>
           );
           intermediateRoutes += '/';

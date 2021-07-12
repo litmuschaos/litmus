@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Center from '../../containers/layouts/Center';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { GET_HEATMAP_DATA, WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
 import {
   HeatmapDataResponse,
@@ -108,7 +108,7 @@ const WorkflowInfoStats: React.FC = () => {
   const [workflowRunDate, setworkflowRunDate] = useState<number>(0);
 
   return (
-    <Scaffold>
+    <Wrapper>
       <BackButton />
       {/* Heading of the Page */}
       <div className={classes.headingSection}>
@@ -236,7 +236,7 @@ const WorkflowInfoStats: React.FC = () => {
           workflowRunId={workflowRunID}
         />
       )}
-    </Scaffold>
+    </Wrapper>
   );
 };
 

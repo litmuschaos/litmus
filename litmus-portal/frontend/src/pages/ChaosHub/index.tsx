@@ -1,16 +1,16 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Snackbar, Typography } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { lazy, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert } from '@material-ui/lab';
 import DeveloperGuide from '../../components/DeveloperGuide';
 import Loader from '../../components/Loader';
-import Scaffold from '../../containers/layouts/Scaffold';
+import { constants } from '../../constants';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
 import { getProjectID } from '../../utils/getSearchParams';
-import { constants } from '../../constants';
 import CustomMyHubCard from './customMyHubCard';
 import useStyles from './styles';
 
@@ -141,7 +141,7 @@ const MyHub: React.FC = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       {loading ? (
         <Loader />
       ) : (
@@ -258,7 +258,7 @@ const MyHub: React.FC = () => {
           {cloneResult.message}
         </Alert>
       </Snackbar>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

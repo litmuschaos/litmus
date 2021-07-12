@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../graphql';
 import {
   DashboardDetails,
@@ -217,7 +217,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
     }, [dashboardList, dataSourceList]);
 
     return (
-      <Scaffold>
+      <Wrapper>
         <BackButton />
         <DashboardStepper
           configure={configure}
@@ -225,7 +225,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
           existingDashboardVars={dashboardVars}
           dataSourceList={dataSourceList?.ListDataSource ?? []}
         />
-      </Scaffold>
+      </Wrapper>
     );
   };
 

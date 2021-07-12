@@ -13,7 +13,7 @@ import AdjustedWeights from '../../components/AdjustedWeights';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { parseYamlValidations } from '../../components/YamlEditor/Validations';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
 import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
 import {
@@ -244,7 +244,7 @@ const EditSchedule: React.FC = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       {loading || !manifest ? (
         <Loader />
       ) : (
@@ -551,7 +551,7 @@ const EditSchedule: React.FC = () => {
           </div>
         </>
       )}
-    </Scaffold>
+    </Wrapper>
   );
 };
 

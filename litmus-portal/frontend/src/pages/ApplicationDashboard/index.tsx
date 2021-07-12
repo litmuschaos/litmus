@@ -6,7 +6,7 @@ import { BrushPostitionProps } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../graphql';
 import {
   PanelNameAndID,
@@ -201,7 +201,7 @@ const DashboardPage: React.FC = () => {
   }, [selectedDashboardInformation.dashboardKey, dataSources]);
 
   return (
-    <Scaffold>
+    <Wrapper>
       <div className={classes.rootContainer}>
         <div className={classes.root}>
           <div className={classes.button}>
@@ -370,7 +370,7 @@ const DashboardPage: React.FC = () => {
       ) : (
         <div />
       )}
-    </Scaffold>
+    </Wrapper>
   );
 };
 
