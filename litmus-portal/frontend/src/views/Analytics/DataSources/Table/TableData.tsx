@@ -190,7 +190,7 @@ const TableData: React.FC<TableDataProps> = ({
             }}
             className={classes.menuItem}
           >
-            <div style={{ display: 'flex' }}>
+            <div className={classes.flexDisplay}>
               <img
                 src="/icons/cogwheel.svg"
                 alt="Configure"
@@ -213,7 +213,7 @@ const TableData: React.FC<TableDataProps> = ({
             }}
             className={classes.menuItem}
           >
-            <div style={{ display: 'flex' }}>
+            <div className={classes.flexDisplay}>
               <img
                 src="/icons/delete.svg"
                 alt="Delete"

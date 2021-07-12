@@ -284,7 +284,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div style={{ display: 'flex' }}>
+            <div className={classes.flexDisplay}>
               <img
                 src="/icons/viewAnalytics.svg"
                 alt="View"
@@ -310,7 +310,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div style={{ display: 'flex' }}>
+            <div className={classes.flexDisplay}>
               <img
                 src="/icons/cogwheel.svg"
                 alt="Configure"
@@ -330,7 +330,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             onClick={() => downloadJSON()}
             className={classes.menuItem}
           >
-            <div style={{ display: 'flex' }}>
+            <div className={classes.flexDisplay}>
               <img
                 src="/icons/download-dashboard.svg"
                 alt="JSON"
@@ -356,7 +356,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div style={{ display: 'flex' }}>
+            <div className={classes.flexDisplay}>
               <img
                 src="/icons/delete.svg"
                 alt="Delete"

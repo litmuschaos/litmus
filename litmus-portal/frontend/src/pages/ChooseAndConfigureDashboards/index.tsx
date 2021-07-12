@@ -205,11 +205,8 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
 
     return (
       <Scaffold>
-        {(configure && errorFetchingDashboard) || errorFetchingDataSources ? (
-          <BackButton />
-        ) : (
-          <></>
-        )}
+        {((configure && errorFetchingDashboard) ||
+          errorFetchingDataSources) && <BackButton />}
         {(configure && (loadingDashboard || loadingDataSources)) ||
         (!configure && loadingDataSources) ? (
           <div className={classes.center}>

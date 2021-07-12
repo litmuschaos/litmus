@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(6),
   },
 
+  flexDisplay: {
+    display: 'flex',
+  },
+
   tableMain: {
     marginTop: theme.spacing(4.25),
     height: '29.75rem',
