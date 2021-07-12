@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, useEffect, useState } from 'react';
+import React, { lazy, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
@@ -10,8 +10,7 @@ import {
   Projects,
   UserRole,
 } from '../../models/graphql/user';
-import useActions from '../../redux/actions';
-import * as AnalyticsActions from '../../redux/actions/analytics';
+
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
@@ -253,13 +252,6 @@ const Routes: React.FC = () => {
 };
 
 function App() {
-  const analyticsAction = useActions(AnalyticsActions);
-  const token = getToken();
-  useEffect(() => {
-    if (token !== '') {
-      analyticsAction.loadCommunityAnalytics();
-    }
-  }, [token]);
   return (
     <LitmusThemeProvider>
       <SuspenseLoader style={{ height: '100vh' }}>

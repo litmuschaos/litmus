@@ -223,7 +223,7 @@ const WorkflowDetails: React.FC = () => {
                   }
                   setIsInfoToggled={setIsInfoToggled}
                 />
-                <SuspenseLoader style={{ height: '100%' }}>
+                <SuspenseLoader style={{ height: '50vh' }}>
                   {/* Workflow Details and Experiment Logs */}
                   {isInfoToggled ? (
                     <div>
@@ -267,7 +267,7 @@ const WorkflowDetails: React.FC = () => {
               </div>
             </TabPanel>
             <TabPanel value={workflowDetailsTabValue} index={1}>
-              <SuspenseLoader style={{ height: '100%' }}>
+              <SuspenseLoader style={{ height: '50vh' }}>
                 {/* Workflow Info */}
                 <WorkflowInfo
                   tab={2}

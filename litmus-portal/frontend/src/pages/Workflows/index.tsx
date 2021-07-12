@@ -83,12 +83,12 @@ const Workflows = () => {
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <BrowseWorkflow />
         </SuspenseLoader>
       </TabPanel>
       <TabPanel value={workflowTabValue} index={1}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <BrowseSchedule />
         </SuspenseLoader>
       </TabPanel>

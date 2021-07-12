@@ -79,22 +79,22 @@ const AnalyticsDashboard = () => {
       </AppBar>
 
       <TabPanel value={analyticsTabValue} index={0}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <Overview />
         </SuspenseLoader>
       </TabPanel>
       <TabPanel value={analyticsTabValue} index={1}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <WorkflowComparisonTable />
         </SuspenseLoader>
       </TabPanel>
       <TabPanel value={analyticsTabValue} index={2}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <DashboardTable />
         </SuspenseLoader>
       </TabPanel>
       <TabPanel value={analyticsTabValue} index={3}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <DataSourceTable />
         </SuspenseLoader>
       </TabPanel>
