@@ -5,6 +5,8 @@ export interface ImageRegistryInfo {
   secret_name: string;
   secret_namespace: string;
   enable_registry: boolean;
+  update_registry: boolean;
+  is_default: boolean;
 }
 
 export enum ImageRegistryActions {

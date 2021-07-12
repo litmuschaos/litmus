@@ -122,6 +122,18 @@ const useStyles = makeStyles((theme) => ({
   descDiv: {
     marginTop: theme.spacing(6),
   },
+
+  // CheckBox styles
+  checkboxDiv: {
+    marginTop: theme.spacing(3),
+  },
+  checkBoxText: {
+    fontSize: '0.9rem',
+    fontWeight: 400,
+  },
+  checkBoxDefault: {
+    color: theme.palette.primary.main,
+  },
 }));
 
 export default useStyles;

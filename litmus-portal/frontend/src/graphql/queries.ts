@@ -654,6 +654,7 @@ export const LIST_IMAGE_REGISTRY = gql`
     ListImageRegistry(project_id: $data) {
       image_registry_info {
         enable_registry
+        is_default
       }
       image_registry_id
     }
@@ -664,6 +665,7 @@ export const GET_IMAGE_REGISTRY = gql`
   query GetImageRegistry($registryid: String!, $projectid: String!) {
     GetImageRegistry(image_registry_id: $registryid, project_id: $projectid) {
       image_registry_info {
+        is_default
         enable_registry
         secret_name
         secret_namespace

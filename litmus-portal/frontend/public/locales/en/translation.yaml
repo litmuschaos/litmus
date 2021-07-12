@@ -941,6 +941,7 @@ createWorkflow:
     addTemplate: You can add a template from the scheduled workflows table.
     trueValue: "True"
     falseValue: "False"
+    enableRegistry: Enable Image Registry Changes
     table:
       head1: Sequence
       head2: Name
