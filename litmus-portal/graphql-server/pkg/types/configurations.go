@@ -13,4 +13,5 @@ type SubscriberConfigurationVars struct {
 	ChaosRunnerImage         string
 	ChaosExporterImage       string
 	ContainerRuntimeExecutor string
+	NodeSelector             string
 }

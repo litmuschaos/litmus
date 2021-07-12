@@ -170,6 +170,8 @@ spec:
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
               value: "v1.13.x"
+            - name: NODE_SELECTOR
+              value: ""
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
