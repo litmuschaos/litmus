@@ -33,6 +33,7 @@ interface RegistryInfo {
   secret_name: string;
   secret_namespace: string;
   enable_registry: boolean;
+  is_default: boolean;
 }
 
 interface RegistryData {
@@ -66,6 +67,7 @@ const ImageRegistry = () => {
     secret_name: '',
     secret_namespace: '',
     enable_registry: true,
+    is_default: true,
   });
   const [registryData, setRegistryData] = useState<RegistryData>({
     registry_name: '',
@@ -125,10 +127,7 @@ const ImageRegistry = () => {
     UPDATE_IMAGE_REGISTRY,
     {
       onCompleted: (data) => {
-        if (
-          data.updateImageRegistry.image_registry_info.image_repo_name ===
-          'litmuschaos'
-        ) {
+        if (data.updateImageRegistry.image_registry_info.is_default) {
           setIsCustomRegistryEnabled(false);
           setRegistry('disabled');
         } else {
@@ -171,10 +170,7 @@ const ImageRegistry = () => {
    */
   useEffect(() => {
     if (data !== undefined) {
-      if (
-        data.GetImageRegistry.image_registry_info.image_repo_name ===
-        constants.litmus
-      ) {
+      if (data.GetImageRegistry.image_registry_info.is_default) {
         setRegistry('disabled');
         setIsCustomRegistryEnabled(false);
         setRegistryData({
@@ -212,6 +208,7 @@ const ImageRegistry = () => {
           secret_name: registryInfo.secret_name,
           secret_namespace: registryInfo.secret_namespace,
           enable_registry: true,
+          is_default: false,
         },
       },
     });
@@ -300,6 +297,7 @@ const ImageRegistry = () => {
                                   secret_name: '',
                                   secret_namespace: '',
                                   enable_registry: true,
+                                  is_default: true,
                                 },
                               },
                             })
@@ -314,6 +312,7 @@ const ImageRegistry = () => {
                                   secret_name: '',
                                   secret_namespace: '',
                                   enable_registry: true,
+                                  is_default: true,
                                 },
                               },
                             })
@@ -358,7 +357,7 @@ const ImageRegistry = () => {
                       <strong>{registryData.registry_type}</strong>
                     </Typography>
                   </div>
-                ) : (
+                ) : registry === 'enabled' ? (
                   <>
                     <div className={classes.customDiv}>
                       <InputField
@@ -484,7 +483,6 @@ const ImageRegistry = () => {
                     )}
                     <ButtonFilled
                       disabled={
-                        registry === 'disabled' ||
                         registryInfo.registry_name.trim().length === 0 ||
                         registryInfo.repo_name.trim().length === 0
                       }
@@ -493,7 +491,7 @@ const ImageRegistry = () => {
                       {t('settings.imageRegistry.save')}
                     </ButtonFilled>
                   </>
-                )}
+                ) : null}
               </div>
             </RadioGroup>
           </FormControl>

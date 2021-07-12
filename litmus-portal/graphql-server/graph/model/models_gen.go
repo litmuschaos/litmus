@@ -265,6 +265,7 @@ type HeatmapData struct {
 }
 
 type ImageRegistryResponse struct {
+	IsDefault         bool           `json:"is_default"`
 	ImageRegistryInfo *ImageRegistry `json:"image_registry_info"`
 	ImageRegistryID   string         `json:"image_registry_id"`
 	ProjectID         string         `json:"project_id"`
@@ -748,6 +749,7 @@ type DsDetails struct {
 }
 
 type ImageRegistry struct {
+	IsDefault         *bool   `json:"is_default"`
 	ImageRegistryName string  `json:"image_registry_name"`
 	ImageRepoName     string  `json:"image_repo_name"`
 	ImageRegistryType string  `json:"image_registry_type"`
@@ -757,6 +759,7 @@ type ImageRegistry struct {
 }
 
 type ImageRegistryInput struct {
+	IsDefault         bool    `json:"is_default"`
 	ImageRegistryName string  `json:"image_registry_name"`
 	ImageRepoName     string  `json:"image_repo_name"`
 	ImageRegistryType string  `json:"image_registry_type"`
