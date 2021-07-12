@@ -123,7 +123,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 }
               >
                 <div className={classes.body}>
-                  <img src="/icons/DisconnectIcon.svg" alt="disconnect" />
+                  <img src="./icons/DisconnectIcon.svg" alt="disconnect" />
                   <div className={classes.text}>
                     <Typography className={classes.typo} align="center">
                       {t('targets.modalDelete.head1')} <br />

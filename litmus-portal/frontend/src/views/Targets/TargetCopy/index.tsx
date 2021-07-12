@@ -45,7 +45,7 @@ const TargetCopy: React.FC = () => {
             !copying ? (
               <img
                 className={classes.copyIcon}
-                src="/icons/copy.svg"
+                src="./icons/copy.svg"
                 alt="copy"
               />
             ) : (

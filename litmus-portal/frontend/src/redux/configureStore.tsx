@@ -13,7 +13,9 @@ const persistConfig: PersistConfig<any> = {
   blacklist: [],
 };
 
-const history = createBrowserHistory();
+const history = createBrowserHistory({
+  basename: process.env.PUBLIC_URL,
+});
 
 const dev = process.env.NODE_ENV === 'development';
 

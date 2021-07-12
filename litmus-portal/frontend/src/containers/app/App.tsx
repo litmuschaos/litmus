@@ -3,6 +3,7 @@ import { LitmusThemeProvider } from 'litmus-ui';
 import React, { lazy, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
 import {
   Member,
@@ -16,7 +17,6 @@ import { history } from '../../redux/configureStore';
 import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import Center from '../layouts/Center';
-import { SuspenseLoader } from '../../components/SuspenseLoader';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -46,7 +46,10 @@ const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 
 const Routes: React.FC = () => {
-  const baseRoute = window.location.pathname.split('/')[1];
+  const baseRoute = window.location.pathname
+    .replace(process.env.PUBLIC_URL, '')
+    .split('/')[1];
+
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
   const role = getUserRole();
@@ -133,7 +136,9 @@ const Routes: React.FC = () => {
         ) : (
           <Switch>
             <Route exact path="/getStarted" component={GetStarted} />
+            <Route exact path="/login" component={LoginPage} />
             <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+            <Redirect to="/getStarted" />
           </Switch>
         )}
       </>
@@ -255,11 +260,13 @@ const Routes: React.FC = () => {
 function App() {
   const analyticsAction = useActions(AnalyticsActions);
   const token = getToken();
+
   useEffect(() => {
     if (token !== '') {
       analyticsAction.loadCommunityAnalytics();
     }
   }, [token]);
+
   return (
     <LitmusThemeProvider>
       <SuspenseLoader style={{ height: '100vh' }}>

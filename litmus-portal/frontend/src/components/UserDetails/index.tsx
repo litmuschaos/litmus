@@ -37,10 +37,6 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
   // avatar image source string
   const [avatar, setAvatar] = useState<string>('./avatars/default.svg');
 
-  // const handleOpen = () => {
-  //   setOpen(true);
-  // };
-
   const handleClose = () => {
     setOpen(false);
   };
