@@ -60,19 +60,19 @@ input resource {
 
 input updateDBInput {
   db_id: String!
-  ds_id: String!
-  db_name: String!
-  db_type_name: String!
-  db_type_id: String!
+  ds_id: String
+  db_name: String
+  db_type_name: String
+  db_type_id: String
   db_information: String
-  chaos_event_query_template: String!
-  chaos_verdict_query_template: String!
+  chaos_event_query_template: String
+  chaos_verdict_query_template: String
   application_metadata_map: [applicationMetadata]
-  panel_groups: [updatePanelGroupInput]!
-  end_time: String!
-  start_time: String!
-  cluster_id: ID!
-  refresh_rate: String!
+  panel_groups: [updatePanelGroupInput]
+  end_time: String
+  start_time: String
+  cluster_id: ID
+  refresh_rate: String
 }
 
 input updatePanelGroupInput {
@@ -140,6 +140,24 @@ input promQueryInput {
   minstep: Int!
 }
 
+input queryMapForPanel {
+  panelID: String!
+  queryIDs: [String!]!
+}
+
+input queryMapForPanelGroup {
+  panelGroupID: String!
+  panelQueryMap: [queryMapForPanel!]!
+}
+
+input dataVars {
+  url: String!
+  start: String!
+  end: String!
+  relative_time: Int!
+  refresh_interval: Int!
+}
+
 type metricsPromResponse {
   queryid: String!
   legends: [String]
@@ -151,10 +169,17 @@ type metricsTimeStampValue {
   value: Float
 }
 
+type subData {
+  date: Float
+  value: String!
+  subDataName: String!
+}
+
 type annotationsPromResponse {
   queryid: String!
   legends: [String]
   tsvs: [[annotationsTimeStampValue]]
+  subDataArray: [[subData]]
 }
 
 type annotationsTimeStampValue {
@@ -164,6 +189,21 @@ type annotationsTimeStampValue {
 
 type promResponse {
   metricsResponse: [metricsPromResponse]
+  annotationsResponse: [annotationsPromResponse]
+}
+
+type metricDataForPanel {
+  panelID: String!
+  PanelMetricsResponse: [metricsPromResponse]
+}
+
+type metricDataForPanelGroup {
+  panelGroupID: String!
+  panelGroupMetricsResponse: [metricDataForPanel]
+}
+
+type dashboardPromResponse {
+  dashboardMetricsResponse: [metricDataForPanelGroup]
   annotationsResponse: [annotationsPromResponse]
 }
 
@@ -198,6 +238,8 @@ type listDashboardResponse {
   cluster_name: String
   ds_name: String
   ds_type: String
+  ds_url: String
+  ds_health_status: String
   panel_groups: [panelGroupResponse]!
   end_time: String!
   start_time: String!

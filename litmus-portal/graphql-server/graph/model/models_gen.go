@@ -699,9 +699,10 @@ type WorkflowStats struct {
 }
 
 type AnnotationsPromResponse struct {
-	Queryid string                         `json:"queryid"`
-	Legends []*string                      `json:"legends"`
-	Tsvs    [][]*AnnotationsTimeStampValue `json:"tsvs"`
+	Queryid      string                         `json:"queryid"`
+	Legends      []*string                      `json:"legends"`
+	Tsvs         [][]*AnnotationsTimeStampValue `json:"tsvs"`
+	SubDataArray [][]*SubData                   `json:"subDataArray"`
 }
 
 type AnnotationsTimeStampValue struct {
@@ -740,6 +741,19 @@ type CreateDBInput struct {
 	ProjectID                 string                 `json:"project_id"`
 	ClusterID                 string                 `json:"cluster_id"`
 	RefreshRate               string                 `json:"refresh_rate"`
+}
+
+type DashboardPromResponse struct {
+	DashboardMetricsResponse []*MetricDataForPanelGroup `json:"dashboardMetricsResponse"`
+	AnnotationsResponse      []*AnnotationsPromResponse `json:"annotationsResponse"`
+}
+
+type DataVars struct {
+	URL             string `json:"url"`
+	Start           string `json:"start"`
+	End             string `json:"end"`
+	RelativeTime    int    `json:"relative_time"`
+	RefreshInterval int    `json:"refresh_interval"`
 }
 
 type DeleteDSInput struct {
@@ -791,6 +805,8 @@ type ListDashboardResponse struct {
 	ClusterName               *string                        `json:"cluster_name"`
 	DsName                    *string                        `json:"ds_name"`
 	DsType                    *string                        `json:"ds_type"`
+	DsURL                     *string                        `json:"ds_url"`
+	DsHealthStatus            *string                        `json:"ds_health_status"`
 	PanelGroups               []*PanelGroupResponse          `json:"panel_groups"`
 	EndTime                   string                         `json:"end_time"`
 	StartTime                 string                         `json:"start_time"`
@@ -799,6 +815,16 @@ type ListDashboardResponse struct {
 	ClusterID                 string                         `json:"cluster_id"`
 	CreatedAt                 *string                        `json:"created_at"`
 	UpdatedAt                 *string                        `json:"updated_at"`
+}
+
+type MetricDataForPanel struct {
+	PanelID              string                 `json:"panelID"`
+	PanelMetricsResponse []*MetricsPromResponse `json:"PanelMetricsResponse"`
+}
+
+type MetricDataForPanelGroup struct {
+	PanelGroupID              string                `json:"panelGroupID"`
+	PanelGroupMetricsResponse []*MetricDataForPanel `json:"panelGroupMetricsResponse"`
 }
 
 type MetricsPromResponse struct {
@@ -917,6 +943,16 @@ type PromSeriesResponse struct {
 	LabelValues []*LabelValue `json:"labelValues"`
 }
 
+type QueryMapForPanel struct {
+	PanelID  string   `json:"panelID"`
+	QueryIDs []string `json:"queryIDs"`
+}
+
+type QueryMapForPanelGroup struct {
+	PanelGroupID  string              `json:"panelGroupID"`
+	PanelQueryMap []*QueryMapForPanel `json:"panelQueryMap"`
+}
+
 type Resource struct {
 	Kind  string    `json:"kind"`
 	Names []*string `json:"names"`
@@ -927,21 +963,27 @@ type ResourceResponse struct {
 	Names []*string `json:"names"`
 }
 
+type SubData struct {
+	Date        *float64 `json:"date"`
+	Value       string   `json:"value"`
+	SubDataName string   `json:"subDataName"`
+}
+
 type UpdateDBInput struct {
 	DbID                      string                   `json:"db_id"`
-	DsID                      string                   `json:"ds_id"`
-	DbName                    string                   `json:"db_name"`
-	DbTypeName                string                   `json:"db_type_name"`
-	DbTypeID                  string                   `json:"db_type_id"`
+	DsID                      *string                  `json:"ds_id"`
+	DbName                    *string                  `json:"db_name"`
+	DbTypeName                *string                  `json:"db_type_name"`
+	DbTypeID                  *string                  `json:"db_type_id"`
 	DbInformation             *string                  `json:"db_information"`
-	ChaosEventQueryTemplate   string                   `json:"chaos_event_query_template"`
-	ChaosVerdictQueryTemplate string                   `json:"chaos_verdict_query_template"`
+	ChaosEventQueryTemplate   *string                  `json:"chaos_event_query_template"`
+	ChaosVerdictQueryTemplate *string                  `json:"chaos_verdict_query_template"`
 	ApplicationMetadataMap    []*ApplicationMetadata   `json:"application_metadata_map"`
 	PanelGroups               []*UpdatePanelGroupInput `json:"panel_groups"`
-	EndTime                   string                   `json:"end_time"`
-	StartTime                 string                   `json:"start_time"`
-	ClusterID                 string                   `json:"cluster_id"`
-	RefreshRate               string                   `json:"refresh_rate"`
+	EndTime                   *string                  `json:"end_time"`
+	StartTime                 *string                  `json:"start_time"`
+	ClusterID                 *string                  `json:"cluster_id"`
+	RefreshRate               *string                  `json:"refresh_rate"`
 }
 
 type UpdatePanelGroupInput struct {
