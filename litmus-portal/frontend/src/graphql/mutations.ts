@@ -295,6 +295,7 @@ export const ADD_IMAGE_REGISTRY = gql`
         image_repo_name
         image_registry_name
         image_registry_type
+        is_default
       }
     }
   }
@@ -315,6 +316,7 @@ export const UPDATE_IMAGE_REGISTRY = gql`
         image_repo_name
         image_registry_name
         image_registry_type
+        is_default
       }
     }
   }

@@ -67,6 +67,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
 	go myhub.AddMyHub(context.Background(), defaultHub, newProject.ID)
 	_, err = imageRegistryOps.CreateImageRegistry(ctx, newProject.ID, model.ImageRegistryInput{
+		IsDefault:         bl_true,
 		ImageRegistryName: "docker.io",
 		ImageRepoName:     "litmuschaos",
 		ImageRegistryType: "public",

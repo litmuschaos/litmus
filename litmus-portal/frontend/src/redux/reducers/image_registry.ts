@@ -14,6 +14,7 @@ const initialState: ImageRegistryInfo = {
   secret_namespace: '',
   enable_registry: true,
   update_registry: true,
+  is_default: true,
 };
 
 export const selectedImageRegistry = createReducer<ImageRegistryInfo>(

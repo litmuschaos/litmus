@@ -182,6 +182,7 @@ type ComplexityRoot struct {
 		CreatedAt         func(childComplexity int) int
 		ImageRegistryID   func(childComplexity int) int
 		ImageRegistryInfo func(childComplexity int) int
+		IsDefault         func(childComplexity int) int
 		IsRemoved         func(childComplexity int) int
 		ProjectID         func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
@@ -577,6 +578,7 @@ type ComplexityRoot struct {
 		ImageRegistryName func(childComplexity int) int
 		ImageRegistryType func(childComplexity int) int
 		ImageRepoName     func(childComplexity int) int
+		IsDefault         func(childComplexity int) int
 		SecretName        func(childComplexity int) int
 		SecretNamespace   func(childComplexity int) int
 	}
@@ -1402,6 +1404,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ImageRegistryResponse.ImageRegistryInfo(childComplexity), true
+
+	case "ImageRegistryResponse.is_default":
+		if e.complexity.ImageRegistryResponse.IsDefault == nil {
+			break
+		}
+
+		return e.complexity.ImageRegistryResponse.IsDefault(childComplexity), true
 
 	case "ImageRegistryResponse.is_removed":
 		if e.complexity.ImageRegistryResponse.IsRemoved == nil {
@@ -3730,6 +3739,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ImageRegistry.ImageRepoName(childComplexity), true
 
+	case "imageRegistry.is_default":
+		if e.complexity.ImageRegistry.IsDefault == nil {
+			break
+		}
+
+		return e.complexity.ImageRegistry.IsDefault(childComplexity), true
+
 	case "imageRegistry.secret_name":
 		if e.complexity.ImageRegistry.SecretName == nil {
 			break
@@ -4545,6 +4561,7 @@ type WorkflowRunStatsResponse {
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+    is_default: Boolean
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -4554,6 +4571,7 @@ type WorkflowRunStatsResponse {
 }
 
 input imageRegistryInput {
+    is_default: Boolean!
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -4563,6 +4581,7 @@ input imageRegistryInput {
 }
 
 type ImageRegistryResponse {
+    is_default: Boolean!
     image_registry_info: imageRegistry
     image_registry_id: String!
     project_id: String!
@@ -9496,6 +9515,40 @@ func (ec *executionContext) _HeatmapData_bins(ctx context.Context, field graphql
 	res := resTmp.([]*model.WorkflowRunsData)
 	fc.Result = res
 	return ec.marshalNWorkflowRunsData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ImageRegistryResponse_is_default(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistryResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ImageRegistryResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsDefault, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ImageRegistryResponse_image_registry_info(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistryResponse) (ret graphql.Marshaler) {
@@ -21866,6 +21919,37 @@ func (ec *executionContext) _clusterRegResponse_cluster_name(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _imageRegistry_is_default(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistry) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "imageRegistry",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsDefault, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _imageRegistry_image_registry_name(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistry) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -25535,6 +25619,12 @@ func (ec *executionContext) unmarshalInputimageRegistryInput(ctx context.Context
 
 	for k, v := range asMap {
 		switch k {
+		case "is_default":
+			var err error
+			it.IsDefault, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "image_registry_name":
 			var err error
 			it.ImageRegistryName, err = ec.unmarshalNString2string(ctx, v)
@@ -26692,6 +26782,11 @@ func (ec *executionContext) _ImageRegistryResponse(ctx context.Context, sel ast.
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ImageRegistryResponse")
+		case "is_default":
+			out.Values[i] = ec._ImageRegistryResponse_is_default(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "image_registry_info":
 			out.Values[i] = ec._ImageRegistryResponse_image_registry_info(ctx, field, obj)
 		case "image_registry_id":
@@ -29279,6 +29374,8 @@ func (ec *executionContext) _imageRegistry(ctx context.Context, sel ast.Selectio
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("imageRegistry")
+		case "is_default":
+			out.Values[i] = ec._imageRegistry_is_default(ctx, field, obj)
 		case "image_registry_name":
 			out.Values[i] = ec._imageRegistry_image_registry_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

@@ -77,6 +77,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
           secret_name: regData.secret_name,
           secret_namespace: regData.secret_namespace,
           enable_registry: regData.enable_registry,
+          is_default: regData.is_default,
           update_registry: true,
         });
       }
@@ -106,6 +107,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
           image_registry_type: constants.public,
           secret_name: '',
           secret_namespace: '',
+          is_default: true,
           enable_registry: true,
           update_registry: true,
         });

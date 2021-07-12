@@ -303,7 +303,7 @@ export const updateManifestImage = (
         }
         parsedYaml.spec.templates.forEach((template: any) => {
           if (template.container) {
-            if (registryData.image_repo_name !== constants.litmus) {
+            if (!registryData.is_default) {
               const imageData = template.container.image.split('/');
               const imageName = imageData[imageData.length - 1];
               template.container.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
@@ -327,7 +327,7 @@ export const updateManifestImage = (
         }
         parsedYaml.spec.workflowSpec.templates.forEach((template: any) => {
           if (template.container) {
-            if (registryData.image_repo_name !== constants.litmus) {
+            if (!registryData.is_default) {
               const imageData = template.container.image.split('/');
               const imageName = imageData[imageData.length - 1];
               template.container.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
