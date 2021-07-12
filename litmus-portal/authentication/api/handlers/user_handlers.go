@@ -8,16 +8,20 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
+
 		if entities.Role(userRole) != entities.RoleAdmin {
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
+
 		var userRequest entities.User
 		err := c.BindJSON(&userRequest)
 		if err != nil {
@@ -25,11 +29,26 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+
 		userRequest.UserName = utils.SanitizeString(userRequest.UserName)
 		if userRequest.Role == "" || userRequest.UserName == "" || userRequest.Password == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+
+		// Assigning UID to user
+		userRequest.ID = uuid.Must(uuid.NewRandom()).String()
+
+		// Generating password hash from input password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
+		if err != nil {
+			return
+		}
+		userRequest.Password = string(hashedPassword)
+
+		createdAt := time.Now()
+		userRequest.CreatedAt = &createdAt
+
 		userResponse, err := service.CreateUser(&userRequest)
 		if err == utils.ErrUserExists {
 			log.Info(err)
@@ -41,6 +60,7 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
+
 		c.JSON(200, userResponse)
 	}
 }
