@@ -357,7 +357,7 @@ const ImageRegistry = () => {
                       <strong>{registryData.registry_type}</strong>
                     </Typography>
                   </div>
-                ) : !isCustomRegistryEnabled && registry === 'enabled' ? (
+                ) : registry === 'enabled' ? (
                   <>
                     <div className={classes.customDiv}>
                       <InputField
