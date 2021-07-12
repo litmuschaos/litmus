@@ -13,7 +13,6 @@ export interface Project {
   members: Member[];
   name: string;
   id: string;
-  state: string;
   created_at: string;
   updated_at: string;
   removed_at: string;
@@ -30,7 +29,6 @@ export interface UserDetails {
   created_at: string;
   removed_at: string;
   is_email_verified: string;
-  state: string;
   role: string;
 }
 
@@ -74,11 +72,10 @@ export interface UserData {
   created_at: string;
   updated_at: string;
   deactivated_at: string;
-  state: string;
 }
 
 export interface UpdateUserStateInput {
-  username: string;
+  uid: string;
   isDeactivate: boolean;
 }
 

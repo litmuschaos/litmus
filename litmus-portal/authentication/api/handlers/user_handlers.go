@@ -8,9 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateUser(service user.Service) gin.HandlerFunc {
@@ -35,19 +33,6 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-
-		// Assigning UID to user
-		userRequest.ID = uuid.Must(uuid.NewRandom()).String()
-
-		// Generating password hash from input password
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
-		if err != nil {
-			return
-		}
-		userRequest.Password = string(hashedPassword)
-
-		createdAt := time.Now()
-		userRequest.CreatedAt = &createdAt
 
 		userResponse, err := service.CreateUser(&userRequest)
 		if err == utils.ErrUserExists {

@@ -117,7 +117,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
         <div className={classes.dropDown}>
           {role}
           <IconButton
-            disabled={!!row.deactivated_at}
+            disabled={row.deactivated_at !== undefined}
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
@@ -225,7 +225,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           >
             <div>
               <ButtonFilled
-                disabled={!!row.deactivated_at}
+                disabled={row.deactivated_at !== undefined}
                 onClick={() => {
                   SendInvite({
                     variables: {

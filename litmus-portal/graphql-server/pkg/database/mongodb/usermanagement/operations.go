@@ -2,11 +2,12 @@ package usermanagement
 
 import (
 	"context"
+	"log"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 )
 
 // CreateUser inserts a new user to the database
@@ -88,16 +89,16 @@ func UpdateUserState(ctx context.Context, user User) error {
 		}}}
 
 	update = bson.D{
-				{"$set", bson.D{
-					{"removed_at", user.DeactivatedAt},
-				}},
-			}
+		{"$set", bson.D{
+			{"removed_at", user.DeactivatedAt},
+		}},
+	}
 
-		_, err = mongodb.Operator.Update(ctx, mongodb.ProjectCollection, filter, update)
-		if err != nil {
-			log.Print("Error updating user's state in projects : ", err)
-			return err
-		}
+	_, err = mongodb.Operator.UpdateMany(ctx, mongodb.ProjectCollection, filter, update)
+	if err != nil {
+		log.Print("Error updating user's state in projects : ", err)
+		return err
+	}
 
 	return nil
 }

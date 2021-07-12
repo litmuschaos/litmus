@@ -191,7 +191,6 @@ export const GET_USER = gql`
       created_at
       deactivated_at
       is_email_verified
-      state
       role
     }
   }
@@ -398,7 +397,6 @@ export const LIST_PROJECTS = gql`
         joined_at
         deactivated_at
       }
-      state
       created_at
       updated_at
       removed_at
@@ -419,7 +417,6 @@ export const GET_PROJECT = gql`
         joined_at
         deactivated_at
       }
-      state
       created_at
       updated_at
       removed_at

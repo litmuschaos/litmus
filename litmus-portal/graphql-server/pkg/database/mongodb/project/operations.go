@@ -74,6 +74,7 @@ func GetProjectsByUserID(ctx context.Context, userID string, isOwner bool) ([]Pr
 			}}}
 	} else {
 		query = bson.D{
+			{"removed_at", ""},
 			{"members", bson.D{
 				{"$elemMatch", bson.D{
 					{"user_id", userID},

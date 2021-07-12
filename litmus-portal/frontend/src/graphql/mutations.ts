@@ -39,8 +39,8 @@ export const CREATE_USER = gql`
 `;
 
 export const UPDATE_USER_STATE = gql`
-  mutation updateUserState($username: String!, $isDeactivate: Boolean!) {
-    updateUserState(username: $username, isDeactivate: $isDeactivate)
+  mutation updateUserState($uid: String!, $isDeactivate: Boolean!) {
+    updateUserState(uid: $uid, isDeactivate: $isDeactivate)
   }
 `;
 
