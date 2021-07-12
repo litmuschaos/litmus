@@ -650,6 +650,8 @@ github.com/litmuschaos/litmus v0.0.0-20210701050610-ea493016c718 h1:S3y2G2bS+LGB
 github.com/litmuschaos/litmus v0.0.0-20210701090803-5bc389617186 h1:64ieMA5FaRBiTQPgvV3CF1F0otSu2PWVzYjonLNLHbQ=
 github.com/litmuschaos/litmus v0.0.0-20210702160150-411ccb5d572a h1:1o6+JzP0K2o68iH748VPQBhHr9VC1/IK2fHCoHz3df0=
 github.com/litmuschaos/litmus v0.0.0-20210706183827-95d545c53e75 h1:5PhAs3UCNdQFRzLLo02CgxRvcEx2df1Ejk3hBGw7Jhg=
+github.com/litmuschaos/litmus v0.0.0-20210709031844-026520480432 h1:4zCohs/Jiqvs3shHTdscnCP8cKYHg0jx3tfnJyY4iZg=
+github.com/litmuschaos/litmus v0.0.0-20210712070400-ea1c088beafa h1:iDi2rj+IBnWvT/8F4+N/vP9568h2Nctl2M9yPMRY8VI=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=
 github.com/lucas-clemente/aes12 v0.0.0-20171027163421-cd47fb39b79f/go.mod h1:JpH9J1c9oX6otFSgdUHwUBUizmKlrMjxWnIAjff4m04=

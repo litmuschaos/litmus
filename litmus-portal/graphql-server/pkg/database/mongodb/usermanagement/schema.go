@@ -11,7 +11,6 @@ type User struct {
 	CompanyName     *string `bson:"company_name"`
 	Name            *string `bson:"name"`
 	Role            *string `bson:"role"`
-	State           *string `bson:"state"`
 	CreatedAt       string  `bson:"created_at"`
 	UpdatedAt       string  `bson:"updated_at"`
 	DeactivatedAt   string  `bson:"deactivated_at"`
@@ -28,7 +27,6 @@ func (user User) GetOutputUser() *model.User {
 		CompanyName:     user.CompanyName,
 		Name:            user.Name,
 		Role:            user.Role,
-		State:           user.State,
 		CreatedAt:       user.CreatedAt,
 		UpdatedAt:       user.UpdatedAt,
 		DeactivatedAt:   user.DeactivatedAt,

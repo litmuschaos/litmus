@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -36,7 +37,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		Email:       user.Email,
 		CompanyName: user.CompanyName,
 		Name:        user.Name,
-		CreatedAt:   time.Now().Format(time.RFC1123Z),
+		CreatedAt:   strconv.FormatInt(time.Now().Unix(), 10),
 		Role:        &user.Role,
 	}
 
@@ -50,21 +51,25 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	return outputUser, nil
 }
 
-// UpdateUserState
-func UpdateUserState(ctx context.Context, username string, isDeactivate bool) (string, error) {
+// UpdateUserState updates the deactivated_at state of user and removed_at state of project
+func UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error) {
 	// Checking if admin is being removed
-	if username == "admin" {
+	user, err := dbOperationsUserManagement.GetUserByUserID(ctx, uid)
+	if *user.Role == "admin" {
 		return "Cannot update admin's state", errors.New("cannot update admin's state")
 	}
-	deactivatedAt := time.Now().Format(time.RFC1123Z)
+
+	deactivatedAt := strconv.FormatInt(time.Now().Unix(), 10)
 	if isDeactivate != true {
 		deactivatedAt = ""
 	}
+
 	dbUser := &dbSchemaUserManagement.User{
-		Username:      username,
+		ID:      uid,
 		DeactivatedAt: deactivatedAt,
 	}
-	err := dbOperationsUserManagement.UpdateUserState(ctx, *dbUser)
+
+	err = dbOperationsUserManagement.UpdateUserState(ctx, *dbUser)
 	if err != nil {
 		return "Error updating user's state", err
 	}

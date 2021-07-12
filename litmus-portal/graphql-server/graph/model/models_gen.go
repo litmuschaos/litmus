@@ -561,7 +561,6 @@ type User struct {
 	Name            *string    `json:"name"`
 	Projects        []*Project `json:"projects"`
 	Role            *string    `json:"role"`
-	State           *string    `json:"state"`
 	CreatedAt       string     `json:"created_at"`
 	UpdatedAt       string     `json:"updated_at"`
 	DeactivatedAt   string     `json:"deactivated_at"`
