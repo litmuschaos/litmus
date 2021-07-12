@@ -2,8 +2,10 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"sort"
 	"strconv"
@@ -28,6 +30,10 @@ import (
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+)
+
+const (
+	defaultPath = "/tmp/version/"
 )
 
 var AnalyticsCache = utils.NewCache()
@@ -1651,4 +1657,32 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 		week += 1
 	}
 	return result, nil
+}
+
+// GetPortalDashboardData gets the portal dashboard data from the ChaosHub
+func GetPortalDashboardData(projectID string, hubname string) ([]*model.PortalDashboardData, error) {
+	DashboardDirectoryPath := defaultPath + projectID + "/" + hubname + "/monitoring/dashboards/litmus-portal"
+	var PortalDashboards []*model.PortalDashboardData
+	var PortalDashboardData analytics.PortalDashboard
+	files, err := ioutil.ReadDir(DashboardDirectoryPath)
+	if err != nil {
+		return PortalDashboards, err
+	}
+	for _, file := range files {
+		dashboardData, err := ioutil.ReadFile(DashboardDirectoryPath + "/" + file.Name())
+		if err != nil {
+			dashboardData = []byte("")
+		}
+		err = json.Unmarshal(dashboardData, &PortalDashboardData)
+		if err != nil {
+			return nil, err
+		}
+		dashboard, _ := json.Marshal(PortalDashboardData)
+		data := &model.PortalDashboardData{
+			Name:          file.Name(),
+			DashboardData: string(dashboard),
+		}
+		PortalDashboards = append(PortalDashboards, data)
+	}
+	return PortalDashboards, nil
 }

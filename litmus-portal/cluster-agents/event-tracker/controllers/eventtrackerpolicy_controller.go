@@ -50,7 +50,7 @@ type Response struct {
 
 const ConditionPassed = "ConditionPassed"
 
-func (r *EventTrackerPolicyReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *EventTrackerPolicyReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = context.Background()
 	_ = r.Log.WithValues("eventtrackerpolicy", req.NamespacedName)
 
