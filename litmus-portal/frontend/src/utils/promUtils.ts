@@ -224,7 +224,7 @@ export const MetricDataParserForPrometheus = (
 
 export const getValueFromSubDataArray = (array: subData[], key: string) => {
   let value = 'N/A';
-  array.forEach((element) => {
+  array.reverse().forEach((element) => {
     if (element.subDataName === key) {
       value = element.value;
     }
@@ -259,7 +259,13 @@ export const ChaosEventDataParserForPrometheus = (
               ...dataPoint,
             })),
             baseColor,
-            subData: queryResponse.subDataArray[index],
+            subData: queryResponse.subDataArray[index].map((data) => {
+              return {
+                subDataName: data.subDataName,
+                value: data.value,
+                date: data.date + 2 * DEFAULT_TSDB_SCRAPE_INTERVAL,
+              };
+            }),
           });
         }
         parsedPrometheusData.chaosEventDetails.push({
