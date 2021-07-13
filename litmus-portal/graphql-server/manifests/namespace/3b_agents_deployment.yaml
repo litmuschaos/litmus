@@ -29,6 +29,7 @@ spec:
       labels:
         app: subscriber
     spec:
+      #{nodeselector}
       serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
       containers:
         - name: subscriber
@@ -64,6 +65,7 @@ spec:
       labels:
         app: event-tracker
     spec:
+      #{nodeselector}
       serviceAccountName: event-tracker-sa
       containers:
         - image: #{EVENT-TRACKER-IMAGE}

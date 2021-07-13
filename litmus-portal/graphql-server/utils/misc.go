@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -11,6 +12,7 @@ import (
 
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
+	"gopkg.in/yaml.v2"
 )
 
 // WriteHeaders adds important headers to API responses
@@ -86,6 +88,29 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		return nil, err
 	}
 
+	var nodeselector string
+	if subscriberConfig.NodeSelector != "" {
+		selector := strings.Split(subscriberConfig.NodeSelector, ",")
+		selectorList := make(map[string]string)
+		for _, el := range selector {
+			kv := strings.Split(el, "=")
+			selectorList[kv[0]] = kv[1]
+		}
+
+		nodeSelector := struct {
+			NodeSelector map[string]string `yaml:"nodeSelector"`
+		}{
+			NodeSelector: selectorList,
+		}
+
+		byt, err := yaml.Marshal(nodeSelector)
+		if err != nil {
+			return nil, err
+		}
+
+		nodeselector = string(addRootIndent(byt, 6))
+	}
+
 	for _, fileName := range list {
 
 		fileContent, err := ioutil.ReadFile(rootPath + "/" + fileName)
@@ -110,10 +135,19 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-EXPORTER}", subscriberConfig.ChaosExporterImage, -1)
 		newContent = strings.Replace(newContent, "#{ARGO-CONTAINER-RUNTIME-EXECUTOR}", subscriberConfig.ContainerRuntimeExecutor, -1)
 
+		if subscriberConfig.NodeSelector != "" {
+			newContent = strings.Replace(newContent, "#{nodeselector}", nodeselector, -1)
+		}
+
 		generatedYAML = append(generatedYAML, newContent)
 	}
 
 	return []byte(strings.Join(generatedYAML, "\n")), nil
+}
+
+func addRootIndent(b []byte, n int) []byte {
+	prefix := append([]byte("\n"), bytes.Repeat([]byte(" "), n)...)
+	return bytes.ReplaceAll(b, []byte("\n"), prefix)
 }
 
 // ContainsString checks if a string is present in an array of strings

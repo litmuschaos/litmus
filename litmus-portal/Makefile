@@ -100,15 +100,15 @@ docker.buildx:
 		docker run --rm --privileged multiarch/qemu-user-static --reset -p yes;\
 	fi
 
+buildx.push.image:
+	@cd $(DIRECTORY) && \
+	docker buildx build -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) .
+
 .PHONY: push-portal-component
 push-portal-component: docker.buildx buildx.push.image
 
 .PHONY: push-frontend
 push-frontend: docker.buildx buildx.push.frontend
-
-buildx.push.image:
-	@cd $(DIRECTORY) && \
-	docker buildx build -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) .
 
 buildx.push.frontend:
 	@cd frontend && \
