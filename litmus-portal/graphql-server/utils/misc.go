@@ -134,7 +134,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-EXPORTER}", subscriberConfig.ChaosExporterImage, -1)
 		newContent = strings.Replace(newContent, "#{ARGO-CONTAINER-RUNTIME-EXECUTOR}", subscriberConfig.ContainerRuntimeExecutor, -1)
 
-		if len(*cluster.NodeSelector) > 0 || cluster.NodeSelector != nil {
+		if cluster.NodeSelector != nil {
 			newContent = strings.Replace(newContent, "#{nodeselector}", nodeselector, -1)
 		}
 
