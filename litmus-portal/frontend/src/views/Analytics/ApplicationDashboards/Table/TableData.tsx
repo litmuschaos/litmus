@@ -122,7 +122,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           style={{ maxWidth: '7rem' }}
         >
           <img
-            src={`/icons/${data.db_type_id}_dashboard.svg`}
+            src={`./icons/${data.db_type_id}_dashboard.svg`}
             alt={data.db_type_name}
             className={classes.inlineTypeIcon}
           />
@@ -136,7 +136,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           style={{ maxWidth: '5rem' }}
         >
           <img
-            src="/icons/prometheus.svg"
+            src="./icons/prometheus.svg"
             alt="Prometheus"
             className={classes.inlineIcon}
           />
@@ -149,7 +149,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           className={classes.tableObjects}
           style={{ maxWidth: '12.5rem' }}
         >
-          <img src="/icons/calendarIcon.svg" alt="Calender" />
+          <img src="./icons/calendarIcon.svg" alt="Calender" />
           {formatDate(data.updated_at)}
         </Typography>
       </StyledTableCell>
@@ -195,7 +195,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           >
             <div className={classes.expDiv}>
               <img
-                src="/icons/viewAnalytics.svg"
+                src="./icons/viewAnalytics.svg"
                 alt="View"
                 className={classes.btnImg}
               />
@@ -221,7 +221,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           >
             <div className={classes.expDiv}>
               <img
-                src="/icons/cogwheel.svg"
+                src="./icons/cogwheel.svg"
                 alt="Configure"
                 className={classes.btnImg}
               />
@@ -247,7 +247,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           >
             <div className={classes.expDiv}>
               <img
-                src="/icons/delete.svg"
+                src="./icons/delete.svg"
                 alt="Delete"
                 className={classes.btnImg}
               />

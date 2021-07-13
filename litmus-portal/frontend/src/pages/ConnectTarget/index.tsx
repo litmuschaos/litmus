@@ -40,7 +40,7 @@ const ConnectTarget: React.FC = () => {
               </div>
               <img
                 className={classes.linkTargetImg}
-                src="icons/connectTarget.svg"
+                src="./icons/connectTarget.svg"
                 alt="link target"
               />
             </div>

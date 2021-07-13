@@ -32,3 +32,4 @@ Please send PRs to add or remove organizations/users. Or You can add a comment i
 | [Bhaumik Shah](https://github.com/Bhaumik1802)|Use LitmusChaos for Kafka Resiliency on Dev/Staging|[My Story](adopters/users/Bhaumik_Shah.md)|
 | [Jayadeep KM](https://github.com/kmjayadeep)|Ensure reliability of microservices|[My Story](adopters/users/Jayadeep_KM.md)|
 | [Shantanu Deshpande](https://github.com/ishantanu)|Chaos Engineering Practice as SRE|[My Story](adopters/users/Shantanu_Deshpande.md)|
+| [Omar Hanafi](https://github.com/oHanafi)|Performance Anomaly Detection in Cloud and Containerized Applications|Coming Soon!|

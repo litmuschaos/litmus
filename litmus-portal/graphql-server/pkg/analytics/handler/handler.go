@@ -2,8 +2,10 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"sort"
 	"strconv"
@@ -11,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/google/uuid"
@@ -27,6 +30,10 @@ import (
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+)
+
+const (
+	defaultPath = "/tmp/version/"
 )
 
 var AnalyticsCache = utils.NewCache()
@@ -227,105 +234,11 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 }
 
 // UpdateDashBoard function updates the dashboard based on it's ID
-func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
+func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
-	if dashboard.DbID == "" || dashboard.DsID == "" {
-		return "could not find the dashboard or the connected data source", errors.New("dashBoard ID or data source ID is nil or empty")
-	}
-
-	var (
-		newPanelGroups                = make([]dbSchemaAnalytics.PanelGroup, len(dashboard.PanelGroups))
-		panelsToCreate                []*dbSchemaAnalytics.Panel
-		panelsToUpdate                []*dbSchemaAnalytics.Panel
-		newApplicationMetadataMap     []dbSchemaAnalytics.ApplicationMetadata
-		updatedDashboardPanelIDs      []string
-		updatedDashboardPanelGroupIDs []string
-	)
-
-	for _, applicationMetadata := range dashboard.ApplicationMetadataMap {
-		var newApplications []*dbSchemaAnalytics.Resource
-		for _, application := range applicationMetadata.Applications {
-			newApplication := dbSchemaAnalytics.Resource{
-				Kind:  application.Kind,
-				Names: application.Names,
-			}
-			newApplications = append(newApplications, &newApplication)
-		}
-		newApplicationMetadata := dbSchemaAnalytics.ApplicationMetadata{
-			Namespace:    applicationMetadata.Namespace,
-			Applications: newApplications,
-		}
-
-		newApplicationMetadataMap = append(newApplicationMetadataMap, newApplicationMetadata)
-	}
-
-	for i, panelGroup := range dashboard.PanelGroups {
-
-		var panelGroupID string
-
-		if panelGroup.PanelGroupID == "" {
-			panelGroupID = uuid.New().String()
-		} else {
-			panelGroupID = panelGroup.PanelGroupID
-			updatedDashboardPanelGroupIDs = append(updatedDashboardPanelGroupIDs, panelGroup.PanelGroupID)
-		}
-
-		newPanelGroups[i].PanelGroupID = panelGroupID
-		newPanelGroups[i].PanelGroupName = panelGroup.PanelGroupName
-
-		for _, panel := range panelGroup.Panels {
-
-			var (
-				panelID   string
-				createdAt string
-				updatedAt string
-			)
-
-			if *panel.PanelID == "" {
-				panelID = uuid.New().String()
-				createdAt = strconv.FormatInt(time.Now().Unix(), 10)
-				updatedAt = strconv.FormatInt(time.Now().Unix(), 10)
-			} else {
-				panelID = *panel.PanelID
-				createdAt = *panel.CreatedAt
-				updatedAt = strconv.FormatInt(time.Now().Unix(), 10)
-				updatedDashboardPanelIDs = append(updatedDashboardPanelIDs, *panel.PanelID)
-			}
-
-			var newPromQueries []*dbSchemaAnalytics.PromQuery
-			err := copier.Copy(&newPromQueries, &panel.PromQueries)
-			if err != nil {
-				return "error updating queries", err
-			}
-
-			var newPanelOptions dbSchemaAnalytics.PanelOption
-			err = copier.Copy(&newPanelOptions, &panel.PanelOptions)
-			if err != nil {
-				return "error updating options", err
-			}
-
-			newPanel := dbSchemaAnalytics.Panel{
-				PanelID:      panelID,
-				PanelOptions: &newPanelOptions,
-				PanelName:    panel.PanelName,
-				PanelGroupID: panelGroupID,
-				PromQueries:  newPromQueries,
-				IsRemoved:    false,
-				XAxisDown:    panel.XAxisDown,
-				YAxisLeft:    panel.YAxisLeft,
-				YAxisRight:   panel.YAxisRight,
-				Unit:         panel.Unit,
-				CreatedAt:    createdAt,
-				UpdatedAt:    updatedAt,
-			}
-
-			if *panel.PanelID == "" {
-				panelsToCreate = append(panelsToCreate, &newPanel)
-			} else {
-				panelsToUpdate = append(panelsToUpdate, &newPanel)
-			}
-		}
+	if dashboard.DbID == "" {
+		return "could not find the dashboard", errors.New("dashBoard ID is nil or empty")
 	}
 
 	query := bson.D{
@@ -333,116 +246,217 @@ func UpdateDashBoard(dashboard *model.UpdateDBInput) (string, error) {
 		{"is_removed", false},
 	}
 
-	existingDashboard, err := dbOperationsAnalytics.GetDashboard(query)
-	if err != nil {
-		return "error fetching dashboard details", fmt.Errorf("error on query from dashboard collection by projectid: %v", err)
-	}
+	var update bson.D
 
-	for _, panelGroup := range existingDashboard.PanelGroups {
-		query := bson.D{
-			{"panel_group_id", panelGroup.PanelGroupID},
-			{"is_removed", false},
+	if !chaosQueryUpdate {
+		var (
+			newPanelGroups                = make([]dbSchemaAnalytics.PanelGroup, len(dashboard.PanelGroups))
+			panelsToCreate                []*dbSchemaAnalytics.Panel
+			panelsToUpdate                []*dbSchemaAnalytics.Panel
+			newApplicationMetadataMap     []dbSchemaAnalytics.ApplicationMetadata
+			updatedDashboardPanelIDs      []string
+			updatedDashboardPanelGroupIDs []string
+		)
+
+		for _, applicationMetadata := range dashboard.ApplicationMetadataMap {
+			var newApplications []*dbSchemaAnalytics.Resource
+			for _, application := range applicationMetadata.Applications {
+				newApplication := dbSchemaAnalytics.Resource{
+					Kind:  application.Kind,
+					Names: application.Names,
+				}
+				newApplications = append(newApplications, &newApplication)
+			}
+			newApplicationMetadata := dbSchemaAnalytics.ApplicationMetadata{
+				Namespace:    applicationMetadata.Namespace,
+				Applications: newApplications,
+			}
+
+			newApplicationMetadataMap = append(newApplicationMetadataMap, newApplicationMetadata)
 		}
-		panels, err := dbOperationsAnalytics.ListPanel(query)
-		if err != nil {
-			return "error fetching panels", fmt.Errorf("error on querying from promquery collection: %v", err)
-		}
 
-		var tempPanels []*model.PanelResponse
-		err = copier.Copy(&tempPanels, &panels)
-		if err != nil {
-			return "error fetching panel details", err
-		}
+		for i, panelGroup := range dashboard.PanelGroups {
 
-		for _, panel := range tempPanels {
+			var panelGroupID string
 
-			if !utils.ContainsString(updatedDashboardPanelIDs, panel.PanelID) || !utils.ContainsString(updatedDashboardPanelGroupIDs, panelGroup.PanelGroupID) {
+			if panelGroup.PanelGroupID == "" {
+				panelGroupID = uuid.New().String()
+			} else {
+				panelGroupID = panelGroup.PanelGroupID
+				updatedDashboardPanelGroupIDs = append(updatedDashboardPanelGroupIDs, panelGroup.PanelGroupID)
+			}
 
-				var promQueriesInPanelToBeDeleted []*dbSchemaAnalytics.PromQuery
-				err := copier.Copy(&promQueriesInPanelToBeDeleted, &panel.PromQueries)
+			newPanelGroups[i].PanelGroupID = panelGroupID
+			newPanelGroups[i].PanelGroupName = panelGroup.PanelGroupName
+
+			for _, panel := range panelGroup.Panels {
+
+				var (
+					panelID   string
+					createdAt string
+					updatedAt string
+				)
+
+				if *panel.PanelID == "" {
+					panelID = uuid.New().String()
+					createdAt = strconv.FormatInt(time.Now().Unix(), 10)
+					updatedAt = strconv.FormatInt(time.Now().Unix(), 10)
+				} else {
+					panelID = *panel.PanelID
+					createdAt = *panel.CreatedAt
+					updatedAt = strconv.FormatInt(time.Now().Unix(), 10)
+					updatedDashboardPanelIDs = append(updatedDashboardPanelIDs, *panel.PanelID)
+				}
+
+				var newPromQueries []*dbSchemaAnalytics.PromQuery
+				err := copier.Copy(&newPromQueries, &panel.PromQueries)
 				if err != nil {
 					return "error updating queries", err
 				}
 
-				var panelOptionsOfPanelToBeDeleted dbSchemaAnalytics.PanelOption
-				err = copier.Copy(&panelOptionsOfPanelToBeDeleted, &panel.PanelOptions)
+				var newPanelOptions dbSchemaAnalytics.PanelOption
+				err = copier.Copy(&newPanelOptions, &panel.PanelOptions)
 				if err != nil {
 					return "error updating options", err
 				}
 
-				panelToBeDeleted := dbSchemaAnalytics.Panel{
-					PanelID:      panel.PanelID,
-					PanelOptions: &panelOptionsOfPanelToBeDeleted,
-					PanelName:    *panel.PanelName,
-					PanelGroupID: panelGroup.PanelGroupID,
-					PromQueries:  promQueriesInPanelToBeDeleted,
-					IsRemoved:    true,
+				newPanel := dbSchemaAnalytics.Panel{
+					PanelID:      panelID,
+					PanelOptions: &newPanelOptions,
+					PanelName:    panel.PanelName,
+					PanelGroupID: panelGroupID,
+					PromQueries:  newPromQueries,
+					IsRemoved:    false,
 					XAxisDown:    panel.XAxisDown,
 					YAxisLeft:    panel.YAxisLeft,
 					YAxisRight:   panel.YAxisRight,
 					Unit:         panel.Unit,
-					CreatedAt:    *panel.CreatedAt,
-					UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
+					CreatedAt:    createdAt,
+					UpdatedAt:    updatedAt,
 				}
 
-				panelsToUpdate = append(panelsToUpdate, &panelToBeDeleted)
-
+				if *panel.PanelID == "" {
+					panelsToCreate = append(panelsToCreate, &newPanel)
+				} else {
+					panelsToUpdate = append(panelsToUpdate, &newPanel)
+				}
 			}
 		}
-	}
 
-	if len(panelsToCreate) > 0 {
-		err = dbOperationsAnalytics.InsertPanel(panelsToCreate)
+		existingDashboard, err := dbOperationsAnalytics.GetDashboard(query)
 		if err != nil {
-			return "error creating new panels", fmt.Errorf("error while inserting panel data", err)
+			return "error fetching dashboard details", fmt.Errorf("error on query from dashboard collection by projectid: %v", err)
 		}
-		log.Print("successfully inserted prom query into promquery-collection")
+
+		for _, panelGroup := range existingDashboard.PanelGroups {
+			query := bson.D{
+				{"panel_group_id", panelGroup.PanelGroupID},
+				{"is_removed", false},
+			}
+			panels, err := dbOperationsAnalytics.ListPanel(query)
+			if err != nil {
+				return "error fetching panels", fmt.Errorf("error on querying from promquery collection: %v", err)
+			}
+
+			var tempPanels []*model.PanelResponse
+			err = copier.Copy(&tempPanels, &panels)
+			if err != nil {
+				return "error fetching panel details", err
+			}
+
+			for _, panel := range tempPanels {
+
+				if !utils.ContainsString(updatedDashboardPanelIDs, panel.PanelID) || !utils.ContainsString(updatedDashboardPanelGroupIDs, panelGroup.PanelGroupID) {
+
+					var promQueriesInPanelToBeDeleted []*dbSchemaAnalytics.PromQuery
+					err := copier.Copy(&promQueriesInPanelToBeDeleted, &panel.PromQueries)
+					if err != nil {
+						return "error updating queries", err
+					}
+
+					var panelOptionsOfPanelToBeDeleted dbSchemaAnalytics.PanelOption
+					err = copier.Copy(&panelOptionsOfPanelToBeDeleted, &panel.PanelOptions)
+					if err != nil {
+						return "error updating options", err
+					}
+
+					panelToBeDeleted := dbSchemaAnalytics.Panel{
+						PanelID:      panel.PanelID,
+						PanelOptions: &panelOptionsOfPanelToBeDeleted,
+						PanelName:    *panel.PanelName,
+						PanelGroupID: panelGroup.PanelGroupID,
+						PromQueries:  promQueriesInPanelToBeDeleted,
+						IsRemoved:    true,
+						XAxisDown:    panel.XAxisDown,
+						YAxisLeft:    panel.YAxisLeft,
+						YAxisRight:   panel.YAxisRight,
+						Unit:         panel.Unit,
+						CreatedAt:    *panel.CreatedAt,
+						UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
+					}
+
+					panelsToUpdate = append(panelsToUpdate, &panelToBeDeleted)
+
+				}
+			}
+		}
+
+		if len(panelsToCreate) > 0 {
+			err = dbOperationsAnalytics.InsertPanel(panelsToCreate)
+			if err != nil {
+				return "error creating new panels", fmt.Errorf("error while inserting panel data", err)
+			}
+			log.Print("successfully inserted prom query into promquery-collection")
+		}
+
+		if len(panelsToUpdate) > 0 {
+			for _, panel := range panelsToUpdate {
+				timestamp := strconv.FormatInt(time.Now().Unix(), 10)
+
+				if panel.PanelID == "" && panel.PanelGroupID == "" {
+					return "error getting panel and group details", errors.New("panel ID or panel group ID is nil or empty")
+				}
+
+				var newPanelOption dbSchemaAnalytics.PanelOption
+				err := copier.Copy(&newPanelOption, &panel.PanelOptions)
+				if err != nil {
+					return "error updating panel option", err
+				}
+
+				var newPromQueries []dbSchemaAnalytics.PromQuery
+				err = copier.Copy(&newPromQueries, panel.PromQueries)
+				if err != nil {
+					return "error updating panel queries", err
+				}
+
+				query := bson.D{{"panel_id", panel.PanelID}}
+
+				update := bson.D{{"$set", bson.D{{"panel_name", panel.PanelName}, {"is_removed", panel.IsRemoved},
+					{"panel_group_id", panel.PanelGroupID}, {"panel_options", newPanelOption},
+					{"prom_queries", newPromQueries}, {"updated_at", timestamp},
+					{"y_axis_left", panel.YAxisLeft}, {"y_axis_right", panel.YAxisRight},
+					{"x_axis_down", panel.XAxisDown}, {"unit", panel.Unit}}}}
+
+				err = dbOperationsAnalytics.UpdatePanel(query, update)
+				if err != nil {
+					return "error updating panel", err
+				}
+			}
+		}
+
+		update = bson.D{{"$set", bson.D{{"ds_id", dashboard.DsID}, {"db_name", dashboard.DbName},
+			{"db_type_id", dashboard.DbTypeID}, {"db_type_name", dashboard.DbTypeName},
+			{"db_information", dashboard.DbInformation}, {"cluster_id", dashboard.ClusterID},
+			{"application_metadata_map", newApplicationMetadataMap}, {"end_time", dashboard.EndTime},
+			{"start_time", dashboard.StartTime}, {"refresh_rate", dashboard.RefreshRate},
+			{"panel_groups", newPanelGroups}, {"updated_at", timestamp}}}}
+	} else {
+		update = bson.D{{"$set", bson.D{
+			{"chaos_event_query_template", dashboard.ChaosEventQueryTemplate}, {"chaos_verdict_query_template", dashboard.ChaosVerdictQueryTemplate},
+			{"updated_at", timestamp}}}}
 	}
 
-	if len(panelsToUpdate) > 0 {
-		for _, panel := range panelsToUpdate {
-			timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-
-			if panel.PanelID == "" && panel.PanelGroupID == "" {
-				return "error getting panel and group details", errors.New("panel ID or panel group ID is nil or empty")
-			}
-
-			var newPanelOption dbSchemaAnalytics.PanelOption
-			err := copier.Copy(&newPanelOption, &panel.PanelOptions)
-			if err != nil {
-				return "error updating panel option", err
-			}
-
-			var newPromQueries []dbSchemaAnalytics.PromQuery
-			err = copier.Copy(&newPromQueries, panel.PromQueries)
-			if err != nil {
-				return "error updating panel queries", err
-			}
-
-			query := bson.D{{"panel_id", panel.PanelID}}
-
-			update := bson.D{{"$set", bson.D{{"panel_name", panel.PanelName}, {"is_removed", panel.IsRemoved},
-				{"panel_group_id", panel.PanelGroupID}, {"panel_options", newPanelOption},
-				{"prom_queries", newPromQueries}, {"updated_at", timestamp},
-				{"y_axis_left", panel.YAxisLeft}, {"y_axis_right", panel.YAxisRight},
-				{"x_axis_down", panel.XAxisDown}, {"unit", panel.Unit}}}}
-
-			err = dbOperationsAnalytics.UpdatePanel(query, update)
-			if err != nil {
-				return "error updating panel", err
-			}
-		}
-	}
-
-	update := bson.D{{"$set", bson.D{{"ds_id", dashboard.DsID},
-		{"db_name", dashboard.DbName}, {"db_type_id", dashboard.DbTypeID},
-		{"db_type_name", dashboard.DbTypeName}, {"db_information", dashboard.DbInformation},
-		{"chaos_event_query_template", dashboard.ChaosEventQueryTemplate}, {"chaos_verdict_query_template", dashboard.ChaosEventQueryTemplate},
-		{"cluster_id", dashboard.ClusterID}, {"application_metadata_map", newApplicationMetadataMap},
-		{"end_time", dashboard.EndTime}, {"start_time", dashboard.StartTime},
-		{"refresh_rate", dashboard.RefreshRate}, {"panel_groups", newPanelGroups}, {"updated_at", timestamp}}}}
-
-	err = dbOperationsAnalytics.UpdateDashboard(query, update)
+	err := dbOperationsAnalytics.UpdateDashboard(query, update)
 	if err != nil {
 		return "error updating dashboard", err
 	}
@@ -637,40 +651,55 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 		return nil, err
 	}
 
-	var newDatasources []*model.DSResponse
-	copier.Copy(&newDatasources, &datasource)
+	var (
+		newDataSources []*model.DSResponse
+		wg             sync.WaitGroup
+	)
+	err = copier.Copy(&newDataSources, &datasource)
+	if err != nil {
+		return nil, err
+	}
 
 	tsdbHealthCheckMap := make(map[string]string)
 
-	var wg sync.WaitGroup
-	wg.Add(len(newDatasources))
+	var mutex = &sync.Mutex{}
+	wg.Add(len(newDataSources))
 
-	for _, datasource := range newDatasources {
+	for _, datasource := range newDataSources {
 		datasource := datasource
 		go func(val *model.DSResponse) {
 			defer wg.Done()
 
-			tsdbHealthCheckMap[*datasource.DsID] = prometheus.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
-
+			if _, ok := tsdbHealthCheckMap[*datasource.DsURL]; !ok {
+				mutex.Lock()
+				tsdbHealthCheckMap[*datasource.DsURL] = prometheus.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
+				mutex.Unlock()
+			}
 		}(datasource)
 	}
 
 	wg.Wait()
 
-	for _, datasource := range newDatasources {
-		datasource.HealthStatus = tsdbHealthCheckMap[*datasource.DsID]
+	for _, datasource := range newDataSources {
+		datasource.HealthStatus = tsdbHealthCheckMap[*datasource.DsURL]
 	}
 
-	return newDatasources, nil
+	return newDataSources, nil
 }
 
-func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
+// GetPromQuery takes prometheus queries and returns response for annotations and metrics with a query map
+func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*model.MetricsPromResponse, error) {
 	var (
-		metrics     []*model.MetricsPromResponse
-		annotations []*model.AnnotationsPromResponse
+		metrics         []*model.MetricsPromResponse
+		annotations     []*model.AnnotationsPromResponse
+		wg              sync.WaitGroup
+		verdictResponse *model.AnnotationsPromResponse
 	)
 
-	var wg sync.WaitGroup
+	patchEventWithVerdict := false
+	queryResponseMap := make(map[string]*model.MetricsPromResponse)
+	var mutex = &sync.Mutex{}
+
 	wg.Add(len(promInput.Queries))
 	for _, v := range promInput.Queries {
 		go func(val *model.PromQueryInput) {
@@ -688,32 +717,59 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 			cacheKey := val.Query + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 
 			queryType := "metrics"
-			if strings.Contains(val.Queryid, "chaos-interval") || strings.Contains(val.Queryid, "chaos-verdict") {
+			if strings.Contains(val.Queryid, "chaos-event") || strings.Contains(val.Queryid, "chaos-verdict") {
 				queryType = "annotation"
+				cacheKey = val.Queryid + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 			}
 
 			if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
 				if queryType == "metrics" {
 					metrics = append(metrics, obj.(*model.MetricsPromResponse))
+					mutex.Lock()
+					queryResponseMap[val.Queryid] = obj.(*model.MetricsPromResponse)
+					mutex.Unlock()
 				} else {
-					annotations = append(annotations, obj.(*model.AnnotationsPromResponse))
+					if strings.Contains(val.Queryid, "chaos-event") {
+						annotations = append(annotations, obj.(*model.AnnotationsPromResponse))
+					}
 				}
 			} else {
 				response, err := prometheus.Query(newPromQuery, queryType)
-
 				if err != nil {
 					return
 				}
-
-				cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
-				if cacheError != nil {
-					log.Printf("Adding cache: %v\n", cacheError)
-				}
-
 				if queryType == "metrics" {
 					metrics = append(metrics, response.(*model.MetricsPromResponse))
+					mutex.Lock()
+					queryResponseMap[val.Queryid] = response.(*model.MetricsPromResponse)
+					mutex.Unlock()
+					cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
+					if cacheError != nil {
+						errorStr := fmt.Sprintf("%v", cacheError)
+						if strings.Contains(errorStr, "already exists") {
+							cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
+							if cacheError != nil {
+								log.Printf("Error while caching: %v\n", cacheError)
+							}
+						}
+					}
 				} else {
-					annotations = append(annotations, response.(*model.AnnotationsPromResponse))
+					if strings.Contains(val.Queryid, "chaos-event") {
+						annotations = append(annotations, response.(*model.AnnotationsPromResponse))
+						cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
+						if cacheError != nil {
+							errorStr := fmt.Sprintf("%v", cacheError)
+							if strings.Contains(errorStr, "already exists") {
+								cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
+								if cacheError != nil {
+									log.Printf("Error while caching: %v\n", cacheError)
+								}
+							}
+						}
+					} else if strings.Contains(val.Queryid, "chaos-verdict") {
+						patchEventWithVerdict = true
+						verdictResponse = response.(*model.AnnotationsPromResponse)
+					}
 				}
 			}
 		}(v)
@@ -721,12 +777,121 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, error) {
 
 	wg.Wait()
 
+	if patchEventWithVerdict == true {
+		annotations = ops.PatchChaosEventWithVerdict(annotations, verdictResponse, promInput, AnalyticsCache)
+	}
+
 	newPromResponse := model.PromResponse{
 		MetricsResponse:     metrics,
 		AnnotationsResponse: annotations,
 	}
 
-	return &newPromResponse, nil
+	return &newPromResponse, queryResponseMap, nil
+}
+
+// DashboardViewer takes a dashboard view id, prometheus queries, dashboard query map and data variables to query prometheus and send data periodically to the subscribed client
+func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars, r store.StateData) {
+	if viewChan, ok := r.DashboardData[viewID]; ok {
+
+		currentTime := time.Now().Unix()
+		startTime := strconv.FormatInt(currentTime-int64(dataVariables.RelativeTime), 10)
+		endTime := strconv.FormatInt(currentTime, 10)
+		relativeCheck := dataVariables.RelativeTime != 0
+
+		var queryType string
+
+		if dataVariables.Start != "" && dataVariables.End != "" {
+			queryType = "fixed"
+		} else if relativeCheck && dataVariables.RefreshInterval != 0 {
+			queryType = "relative"
+		} else if relativeCheck && dataVariables.RefreshInterval == 0 {
+			queryType = "relatively-fixed"
+		} else {
+			queryType = "invalid"
+		}
+
+		switch queryType {
+
+		case "fixed":
+			dsDetails := &model.DsDetails{
+				URL:   dataVariables.URL,
+				Start: dataVariables.Start,
+				End:   dataVariables.End,
+			}
+
+			newPromInput := &model.PromInput{
+				Queries:   promQueries,
+				DsDetails: dsDetails,
+			}
+
+			newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
+			if err != nil {
+				log.Printf("Error during data source query of the dashboard view: %v\n", viewID)
+			} else {
+				dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
+				viewChan <- dashboardResponse
+			}
+
+		case "relative":
+			for {
+				dsDetails := &model.DsDetails{
+					URL:   dataVariables.URL,
+					Start: startTime,
+					End:   endTime,
+				}
+
+				newPromInput := &model.PromInput{
+					Queries:   promQueries,
+					DsDetails: dsDetails,
+				}
+
+				newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
+				if err != nil {
+					log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+					break
+				} else {
+					dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
+					viewChan <- dashboardResponse
+					time.Sleep(time.Duration(int64(dataVariables.RefreshInterval)) * time.Second)
+					currentTime = time.Now().Unix()
+					startTime = strconv.FormatInt(currentTime-int64(dataVariables.RelativeTime), 10)
+					endTime = strconv.FormatInt(currentTime, 10)
+				}
+
+				if _, ok := r.DashboardData[viewID]; !ok {
+					break
+				}
+			}
+
+		case "relatively-fixed":
+			dsDetails := &model.DsDetails{
+				URL:   dataVariables.URL,
+				Start: startTime,
+				End:   endTime,
+			}
+
+			newPromInput := &model.PromInput{
+				Queries:   promQueries,
+				DsDetails: dsDetails,
+			}
+
+			newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
+			if err != nil {
+				log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+			} else {
+				dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
+				viewChan <- dashboardResponse
+			}
+
+		case "invalid":
+			log.Printf("Wrong parameters for the dashboard view: %v\n", viewID)
+		}
+
+		close(viewChan)
+		r.Mutex.Lock()
+		delete(r.DashboardData, viewID)
+		r.Mutex.Unlock()
+	}
 }
 
 func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
@@ -747,7 +912,13 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 
 		cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 		if cacheError != nil {
-			log.Printf("Adding cache: %v\n", cacheError)
+			errorStr := fmt.Sprintf("%v", cacheError)
+			if strings.Contains(errorStr, "already exists") {
+				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
+				if cacheError != nil {
+					log.Printf("Error while caching: %v\n", cacheError)
+				}
+			}
 		}
 
 		newPromSeriesResponse = response
@@ -775,7 +946,13 @@ func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListR
 
 		cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 		if cacheError != nil {
-			log.Printf("Adding cache: %v\n", cacheError)
+			errorStr := fmt.Sprintf("%v", cacheError)
+			if strings.Contains(errorStr, "already exists") {
+				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
+				if cacheError != nil {
+					log.Printf("Error while caching: %v\n", cacheError)
+				}
+			}
 		}
 
 		newPromSeriesListResponse = response
@@ -785,10 +962,32 @@ func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListR
 }
 
 // QueryListDashboard lists all the dashboards present in a project using the projectID
-func QueryListDashboard(projectID string) ([]*model.ListDashboardResponse, error) {
-	query := bson.D{
-		{"project_id", projectID},
-		{"is_removed", false},
+func QueryListDashboard(projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error) {
+
+	var (
+		query bson.D
+		wg    sync.WaitGroup
+	)
+
+	if clusterID == nil || *clusterID == "" {
+		if dbID != nil && *dbID != "" {
+			query = bson.D{
+				{"project_id", projectID},
+				{"db_id", dbID},
+				{"is_removed", false},
+			}
+		} else {
+			query = bson.D{
+				{"project_id", projectID},
+				{"is_removed", false},
+			}
+		}
+	} else {
+		query = bson.D{
+			{"project_id", projectID},
+			{"cluster_id", clusterID},
+			{"is_removed", false},
+		}
 	}
 
 	dashboards, err := dbOperationsAnalytics.ListDashboard(query)
@@ -802,12 +1001,68 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardResponse, error
 		return nil, err
 	}
 
-	for _, dashboard := range newListDashboard {
-		datasource, err := dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
-		if err != nil {
-			return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
+	dataSourceMap := make(map[string]*dbSchemaAnalytics.DataSource)
+	dataSourceHealthCheckMap := make(map[string]string)
+
+	if clusterID != nil && *clusterID != "" {
+		var mutex = &sync.Mutex{}
+		wg.Add(len(newListDashboard))
+
+		for _, dashboard := range newListDashboard {
+			if _, ok := dataSourceMap[dashboard.DsID]; !ok {
+				datasource, err := dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
+				if err != nil {
+					return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
+				}
+				dataSourceMap[dashboard.DsID] = datasource
+				go func(val *dbSchemaAnalytics.DataSource) {
+					defer wg.Done()
+
+					if _, ok := dataSourceHealthCheckMap[val.DsID]; !ok {
+						dataSourceStatus := prometheus.TSDBHealthCheck(datasource.DsURL, datasource.DsType)
+						mutex.Lock()
+						dataSourceHealthCheckMap[val.DsID] = dataSourceStatus
+						mutex.Unlock()
+					} else {
+						return
+					}
+				}(datasource)
+			} else {
+				wg.Done()
+			}
 		}
 
+		wg.Wait()
+	}
+
+	for _, dashboard := range newListDashboard {
+
+		var datasource *dbSchemaAnalytics.DataSource
+
+		if clusterID != nil && *clusterID != "" {
+			if dataSourceInfo, ok := dataSourceMap[dashboard.DsID]; ok {
+				datasource = dataSourceInfo
+			} else {
+				return nil, fmt.Errorf("error on querying from datasource collection")
+			}
+			if dataSourceHealthStatus, ok := dataSourceHealthCheckMap[dashboard.DsID]; ok {
+				dashboard.DsHealthStatus = &dataSourceHealthStatus
+			} else {
+				return nil, fmt.Errorf("error while checking data source health status")
+			}
+		} else {
+			if dataSourceInfo, ok := dataSourceMap[dashboard.DsID]; !ok {
+				datasource, err = dbOperationsAnalytics.GetDataSourceByID(dashboard.DsID)
+				if err != nil {
+					return nil, fmt.Errorf("error on querying from datasource collection: %v\n", err)
+				}
+				dataSourceMap[dashboard.DsID] = datasource
+			} else {
+				datasource = dataSourceInfo
+			}
+		}
+
+		dashboard.DsURL = &datasource.DsURL
 		dashboard.DsType = &datasource.DsType
 		dashboard.DsName = &datasource.DsName
 
@@ -1402,4 +1657,32 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 		week += 1
 	}
 	return result, nil
+}
+
+// GetPortalDashboardData gets the portal dashboard data from the ChaosHub
+func GetPortalDashboardData(projectID string, hubname string) ([]*model.PortalDashboardData, error) {
+	DashboardDirectoryPath := defaultPath + projectID + "/" + hubname + "/monitoring/dashboards/litmus-portal"
+	var PortalDashboards []*model.PortalDashboardData
+	var PortalDashboardData analytics.PortalDashboard
+	files, err := ioutil.ReadDir(DashboardDirectoryPath)
+	if err != nil {
+		return PortalDashboards, err
+	}
+	for _, file := range files {
+		dashboardData, err := ioutil.ReadFile(DashboardDirectoryPath + "/" + file.Name())
+		if err != nil {
+			dashboardData = []byte("")
+		}
+		err = json.Unmarshal(dashboardData, &PortalDashboardData)
+		if err != nil {
+			return nil, err
+		}
+		dashboard, _ := json.Marshal(PortalDashboardData)
+		data := &model.PortalDashboardData{
+			Name:          file.Name(),
+			DashboardData: string(dashboard),
+		}
+		PortalDashboards = append(PortalDashboards, data)
+	}
+	return PortalDashboards, nil
 }

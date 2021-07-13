@@ -36,7 +36,7 @@ const ErrorPage = () => {
             </div>
             <div className={classes.imgDiv}>
               <img
-                src="/icons/litmus-404.png"
+                src="./icons/litmus-404.png"
                 className={classes.errImg}
                 alt="404"
               />

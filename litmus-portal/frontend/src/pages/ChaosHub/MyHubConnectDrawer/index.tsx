@@ -549,7 +549,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                                         {!copying ? (
                                           <div className={classes.rowDiv}>
                                             <img
-                                              src="/icons/copy.svg"
+                                              src="./icons/copy.svg"
                                               className={classes.copyBtnImg}
                                               alt="copy"
                                             />

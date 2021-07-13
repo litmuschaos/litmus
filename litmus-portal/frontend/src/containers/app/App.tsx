@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
 import {
   Member,
@@ -45,7 +46,10 @@ const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 
 const Routes: React.FC = () => {
-  const baseRoute = window.location.pathname.split('/')[1];
+  const baseRoute = window.location.pathname
+    .replace(process.env.PUBLIC_URL, '')
+    .split('/')[1];
+
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
   const role = getUserRole();
@@ -55,7 +59,7 @@ const Routes: React.FC = () => {
   const userID = getUserId();
 
   const { loading } = useQuery<Projects>(LIST_PROJECTS, {
-    skip: projectID !== '' && projectID !== undefined,
+    skip: (projectID !== '' && projectID !== undefined) || getToken() === '',
     onCompleted: (data) => {
       if (data.listProjects) {
         data.listProjects.forEach((project): void => {
@@ -83,6 +87,7 @@ const Routes: React.FC = () => {
   });
 
   const { loading: projectValidation } = useQuery<ProjectDetail>(GET_PROJECT, {
+    skip: getToken() === '',
     variables: { projectID },
     onCompleted: (data) => {
       if (data?.getProject) {
@@ -110,15 +115,11 @@ const Routes: React.FC = () => {
   if (getToken() === '') {
     return (
       <>
-        {loading ? (
-          <Loader />
-        ) : (
-          <Switch>
-            <Route exact path="/login" component={LoginPage} />
-            <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-            <Redirect to="/login" />
-          </Switch>
-        )}
+        <Switch>
+          <Route exact path="/login" component={LoginPage} />
+          <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+          <Redirect to="/login" />
+        </Switch>
       </>
     );
   }
@@ -127,11 +128,17 @@ const Routes: React.FC = () => {
     return (
       <>
         {loading ? (
-          <Loader />
+          <div style={{ height: '100vh' }}>
+            <Center>
+              <Loader />
+            </Center>
+          </div>
         ) : (
           <Switch>
             <Route exact path="/getStarted" component={GetStarted} />
+            <Route exact path="/login" component={LoginPage} />
             <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+            <Redirect to="/getStarted" />
           </Switch>
         )}
       </>
@@ -141,7 +148,11 @@ const Routes: React.FC = () => {
   return (
     <>
       {projectValidation && loading ? (
-        <Loader />
+        <div style={{ height: '100vh' }}>
+          <Center>
+            <Loader />
+          </Center>
+        </div>
       ) : (
         <Switch>
           <Route exact path="/home" component={HomePage} />
@@ -249,27 +260,21 @@ const Routes: React.FC = () => {
 function App() {
   const analyticsAction = useActions(AnalyticsActions);
   const token = getToken();
+
   useEffect(() => {
     if (token !== '') {
       analyticsAction.loadCommunityAnalytics();
     }
   }, [token]);
+
   return (
     <LitmusThemeProvider>
-      <Suspense
-        fallback={
-          <div style={{ height: '100vh' }}>
-            <Center>
-              <Loader />
-            </Center>
-          </div>
-        }
-      >
+      <SuspenseLoader style={{ height: '100vh' }}>
         <Router history={history}>
           {/* <Routes /> */}
           <Routes />
         </Router>
-      </Suspense>
+      </SuspenseLoader>
     </LitmusThemeProvider>
   );
 }

@@ -1,6 +1,6 @@
-import { Typography, IconButton } from '@material-ui/core';
-import * as React from 'react';
+import { IconButton, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import * as React from 'react';
 import useStyles from './styles';
 
 interface DeveloperGuideProps {
@@ -34,7 +34,7 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
               </Typography>
               {expAvailable ? (
                 <div className={classes.imgDiv}>
-                  <img src="/icons/guide.svg" alt="dev_guide" />
+                  <img src="./icons/guide.svg" alt="dev_guide" />
                   <a href={docs} className={classes.guideLink} target="_">
                     Developer&#39;s guide
                   </a>

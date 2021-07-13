@@ -89,7 +89,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
             </Typography>
             <div className={classes.iconWithTextDiv}>
               <img
-                src={`/icons/${dashboardConfigurationDetails.typeID}_dashboard.svg`}
+                src={`./icons/${dashboardConfigurationDetails.typeID}_dashboard.svg`}
                 alt="dashboard Icon"
                 className={classes.inlineIcon}
               />

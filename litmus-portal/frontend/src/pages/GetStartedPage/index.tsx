@@ -57,7 +57,7 @@ const GetStarted: React.FC = () => {
   const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
     onCompleted: () => {
       setIsLoading(false);
-      window.location.assign('/home');
+      window.location.assign(`${process.env.PUBLIC_URL}/home`);
     },
   });
 
@@ -139,7 +139,7 @@ const GetStarted: React.FC = () => {
       <Center>
         <div className={classes.rootDiv}>
           <div className={classes.rootLitmusText}>
-            <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
+            <img src="./icons/LitmusLogoLight.svg" alt="litmus logo" />
             <Typography className={classes.HeaderText}>
               {' '}
               {t('getStarted.welcome')} {username}!

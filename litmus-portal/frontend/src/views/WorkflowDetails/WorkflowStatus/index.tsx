@@ -2,13 +2,13 @@ import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  RUNNING,
-  SUCCEEDED,
-  PENDING,
-  FAILED,
   ERROR,
-  SKIPPED,
+  FAILED,
   OMITTED,
+  PENDING,
+  RUNNING,
+  SKIPPED,
+  SUCCEEDED,
 } from '../workflowConstants';
 import useStyles from './styles';
 
@@ -46,7 +46,7 @@ const WorkflowStatus: React.FC<WorkflowStatusProps> = ({ phase }) => {
       <span className={classes.icon}>
         <img
           className={phase === RUNNING ? classes.runningSmallIcon : ''}
-          src={`/icons/${phase.toLowerCase()}.svg`}
+          src={`./icons/${phase.toLowerCase()}.svg`}
           alt="status"
         />
       </span>

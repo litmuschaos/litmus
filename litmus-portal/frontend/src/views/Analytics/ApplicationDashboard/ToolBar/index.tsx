@@ -197,7 +197,7 @@ const ToolBar: React.FC = () => {
             className={classes.refreshButton}
           >
             <img
-              src="/icons/refresh-dashboard.svg"
+              src="./icons/refresh-dashboard.svg"
               alt="refresh icon"
               className={classes.refreshIcon}
             />

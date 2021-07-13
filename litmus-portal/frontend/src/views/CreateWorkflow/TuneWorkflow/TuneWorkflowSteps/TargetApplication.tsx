@@ -91,7 +91,13 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   const [addNodeSelector, setAddNodeSelector] = useState<boolean>(
     !!engineManifest.spec.experiments[0].spec.components['nodeSelectors']
   );
-  const [nodeSelector, setNodeSelector] = useState('');
+  const [nodeSelector, setNodeSelector] = useState(
+    engineManifest.spec.experiments[0].spec.components.nodeSelectors
+      ? engineManifest.spec.experiments[0].spec.components.nodeSelectors[
+          'kubernetes.io/hostname'
+        ]
+      : ''
+  );
   const [appinfoData, setAppInfoData] = useState<AppInfoData[]>([]);
   const [GVRObj, setGVRObj] = useState<GVRRequest>({
     group: '',
