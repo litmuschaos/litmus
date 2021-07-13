@@ -176,13 +176,14 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   });
 
   // Apollo query to get the agent data
-  const { data: agentList, loading } = useQuery<Clusters, ClusterVars>(
-    GET_CLUSTER,
-    {
-      variables: { project_id: projectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const {
+    data: agentList,
+    loading,
+    error,
+  } = useQuery<Clusters, ClusterVars>(GET_CLUSTER, {
+    variables: { project_id: projectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   /**
    * GraphQL subscription to fetch the KubeObjData from the server
@@ -452,7 +453,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
               'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.agent'
             )}
             className={classes.selectText}
-            disabled={activeAgents.length === 0}
+            disabled={activeAgents.length === 0 || loading}
           >
             {activeAgents.map((agent: Cluster) => (
               <MenuItem key={agent.cluster_id} value={agent.cluster_id}>
@@ -473,10 +474,22 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
                 cluster.is_cluster_confirmed &&
                 cluster.is_registered
               );
-            }).length ? (
+            }).length && agentList?.getCluster.length ? (
             <Typography className={classes.formErrorText}>
               {t(
                 'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.agentInactive'
+              )}
+            </Typography>
+          ) : loading ? (
+            <Typography className={classes.formHelperText}>
+              {t(
+                'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.fetchingAgents'
+              )}
+            </Typography>
+          ) : error ? (
+            <Typography className={classes.formErrorText}>
+              {t(
+                'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.errorFetchingAgents'
               )}
             </Typography>
           ) : (

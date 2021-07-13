@@ -261,7 +261,7 @@ const DashboardStepper: React.FC<DashboardStepperProps> = ({
             <ButtonFilled disabled={loading} onClick={() => handleNext()}>
               {!loading && (
                 <img
-                  src="/icons/save-changes.svg"
+                  src="./icons/save-changes.svg"
                   alt="Info icon"
                   className={classes.icon}
                 />
@@ -424,7 +424,7 @@ const DashboardStepper: React.FC<DashboardStepperProps> = ({
           <>
             {!loading && (
               <img
-                src="/icons/save-changes.svg"
+                src="./icons/save-changes.svg"
                 alt="Info icon"
                 className={classes.icon}
               />

@@ -214,7 +214,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
                       }}
                     >
                       <img
-                        src="/icons/bin-red-delete.svg"
+                        src="./icons/bin-red-delete.svg"
                         alt="delete"
                         className={classes.deleteIcon}
                       />

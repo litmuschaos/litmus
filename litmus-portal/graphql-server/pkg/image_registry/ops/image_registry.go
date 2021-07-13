@@ -27,6 +27,7 @@ func CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInf
 		SecretName:        imageRegistryInfo.SecretName,
 		SecretNamespace:   imageRegistryInfo.SecretNamespace,
 		EnableRegistry:    imageRegistryInfo.EnableRegistry,
+		IsDefault:         imageRegistryInfo.IsDefault,
 		CreatedAt:         &currentTime,
 		UpdatedAt:         currentTime,
 	}
@@ -46,6 +47,7 @@ func CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInf
 			SecretName:        imageRegistryInfo.SecretName,
 			SecretNamespace:   imageRegistryInfo.SecretNamespace,
 			EnableRegistry:    imageRegistryInfo.EnableRegistry,
+			IsDefault:         &imageRegistry.IsDefault,
 		},
 		UpdatedAt: &currentTime,
 		CreatedAt: &currentTime,
@@ -68,6 +70,7 @@ func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 		{"secret_name", imageRegistryInfo.SecretName},
 		{"secret_namespace", imageRegistryInfo.SecretNamespace},
 		{"enable_registry", imageRegistryInfo.EnableRegistry},
+		{"is_default", imageRegistryInfo.IsDefault},
 		{"updated_at", currentTime},
 	}}}
 
@@ -86,6 +89,7 @@ func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 			SecretName:        imageRegistryInfo.SecretName,
 			SecretNamespace:   imageRegistryInfo.SecretNamespace,
 			EnableRegistry:    imageRegistryInfo.EnableRegistry,
+			IsDefault:         &imageRegistryInfo.IsDefault,
 		},
 		UpdatedAt: &currentTime,
 		IsRemoved: &bl,
@@ -113,6 +117,7 @@ func GetImageRegistry(ctx context.Context, imageRegistryID string, projectID str
 
 	return &model.ImageRegistryResponse{
 		ImageRegistryInfo: &model.ImageRegistry{
+			IsDefault:         &imageRegistry.IsDefault,
 			ImageRegistryName: imageRegistry.ImageRegistryName,
 			ImageRepoName:     imageRegistry.ImageRepoName,
 			ImageRegistryType: imageRegistry.ImageRegistryType,
@@ -140,6 +145,7 @@ func ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageR
 	for _, ir := range imageRegistries {
 		irResponse = append(irResponse, &model.ImageRegistryResponse{
 			ImageRegistryInfo: &model.ImageRegistry{
+				IsDefault:         &ir.IsDefault,
 				ImageRegistryName: ir.ImageRegistryName,
 				ImageRepoName:     ir.ImageRepoName,
 				ImageRegistryType: ir.ImageRegistryType,

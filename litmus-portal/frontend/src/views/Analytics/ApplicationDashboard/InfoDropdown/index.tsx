@@ -1,6 +1,6 @@
 import { FormControlLabel, Typography } from '@material-ui/core';
 import { TextButton } from 'litmus-ui';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckBox } from '../../../../components/CheckBox';
 import {
@@ -57,6 +57,14 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
     postPanelSelectionRoutine(newSelectedMetrics);
   };
 
+  useEffect(() => {
+    setSelectedMetrics(metricsToBeShown.map((metric) => metric.id));
+  }, [metricsToBeShown]);
+
+  useEffect(() => {
+    setSelectedApplications([]);
+  }, [applicationsToBeShown]);
+
   return (
     <div className={classes.root}>
       <div className={classes.header}>
@@ -89,7 +97,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
             </Typography>
             <div className={classes.iconWithTextDiv}>
               <img
-                src={`/icons/${dashboardConfigurationDetails.typeID}_dashboard.svg`}
+                src={`./icons/${dashboardConfigurationDetails.typeID}_dashboard.svg`}
                 alt="dashboard Icon"
                 className={classes.inlineIcon}
               />

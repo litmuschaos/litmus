@@ -171,7 +171,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
                 className={classes.downloadLogsBtn}
               >
                 <Typography>
-                  <img src="/icons/download-logs.svg" alt="download logs" />{' '}
+                  <img src="./icons/download-logs.svg" alt="download logs" />{' '}
                   {t('workflowDetailsView.logs')}
                 </Typography>
               </ButtonFilled>

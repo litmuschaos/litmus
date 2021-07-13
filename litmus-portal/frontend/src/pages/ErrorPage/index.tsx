@@ -1,7 +1,6 @@
 import { Button, Typography } from '@material-ui/core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import Scaffold from '../../containers/layouts/Scaffold';
 import { history } from '../../redux/configureStore';
 import useStyles from './styles';
 
@@ -12,7 +11,7 @@ const ErrorPage = () => {
   });
   const { t } = useTranslation();
   return (
-    <Scaffold>
+    <>
       <div className={classes.mainHeader}>
         <div className={classes.rootContainer}>
           <div className={classes.root}>
@@ -36,7 +35,7 @@ const ErrorPage = () => {
             </div>
             <div className={classes.imgDiv}>
               <img
-                src="/icons/litmus-404.png"
+                src="./icons/litmus-404.png"
                 className={classes.errImg}
                 alt="404"
               />
@@ -44,7 +43,7 @@ const ErrorPage = () => {
           </div>
         </div>
       </div>
-    </Scaffold>
+    </>
   );
 };
 

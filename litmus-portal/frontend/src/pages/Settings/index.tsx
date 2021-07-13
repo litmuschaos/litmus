@@ -2,14 +2,14 @@ import { Paper, Tabs, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import React, { lazy } from 'react';
 import { useSelector } from 'react-redux';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { UserRole } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import { getUserRole } from '../../utils/auth';
-import { SuspenseLoader } from '../../components/SuspenseLoader';
 import useStyles from './styles';
 
 const AccountSettings = lazy(
@@ -45,7 +45,7 @@ const Settings: React.FC = () => {
   const theme = useTheme();
 
   return (
-    <Scaffold>
+    <Wrapper>
       <Typography variant="h3" className={classes.Head}>
         Settings
       </Typography>
@@ -83,20 +83,20 @@ const Settings: React.FC = () => {
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <AccountSettings />
         </SuspenseLoader>
       </TabPanel>
       <div data-cy="teamTabPanel">
         <TabPanel value={settingsTabValue} index={1}>
-          <SuspenseLoader style={{ height: '100%' }}>
+          <SuspenseLoader style={{ height: '50vh' }}>
             <TeamingTab />
           </SuspenseLoader>
         </TabPanel>
       </div>
       {role === UserRole.admin && (
         <TabPanel value={settingsTabValue} index={2}>
-          <SuspenseLoader style={{ height: '100%' }}>
+          <SuspenseLoader style={{ height: '50vh' }}>
             <UserManagement />
           </SuspenseLoader>
         </TabPanel>
@@ -106,7 +106,7 @@ const Settings: React.FC = () => {
           value={settingsTabValue}
           index={role === UserRole.admin ? 3 : 2}
         >
-          <SuspenseLoader style={{ height: '100%' }}>
+          <SuspenseLoader style={{ height: '50vh' }}>
             <GitOpsTab />
           </SuspenseLoader>
         </TabPanel>
@@ -116,12 +116,12 @@ const Settings: React.FC = () => {
           value={settingsTabValue}
           index={role === UserRole.admin ? 4 : 3}
         >
-          <SuspenseLoader style={{ height: '100%' }}>
+          <SuspenseLoader style={{ height: '50vh' }}>
             <ImageRegistry />
           </SuspenseLoader>
         </TabPanel>
       </div>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

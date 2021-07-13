@@ -2,18 +2,18 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { Typography } from '@material-ui/core';
 import { ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import useStyles from './styles';
-import timeDifference from '../../../utils/datesModifier';
-import { RootState } from '../../../redux/reducers';
 import { ExecutionData, Node } from '../../../models/graphql/workflowData';
-import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
-import trimstring from '../../../utils/trim';
 import useActions from '../../../redux/actions';
-import WorkflowStatus from '../WorkflowStatus';
+import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
+import { RootState } from '../../../redux/reducers';
+import timeDifference from '../../../utils/datesModifier';
+import trimstring from '../../../utils/trim';
 import LogsSwitcher from '../LogsSwitcher';
+import WorkflowStatus from '../WorkflowStatus';
+import useStyles from './styles';
 
 interface NodeLogsModalProps {
   logsOpen: boolean;
@@ -91,7 +91,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                 <div className={classes.experiment}>
                   <span className={classes.icon}>
                     <img
-                      src="/icons/experiment_icon.svg"
+                      src="./icons/experiment_icon.svg"
                       alt="Experiment Icon"
                     />
                   </span>
@@ -109,7 +109,10 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
             <div className={classes.logsHeader}>
               <div className={classes.experiment}>
                 <span className={classes.icon}>
-                  <img src="/icons/experiment_icon.svg" alt="Experiment Icon" />
+                  <img
+                    src="./icons/experiment_icon.svg"
+                    alt="Experiment Icon"
+                  />
                 </span>
                 <Typography className={classes.nodeName}>
                   <strong>{trimstring(data.nodes[pod_name].name, 30)}</strong>

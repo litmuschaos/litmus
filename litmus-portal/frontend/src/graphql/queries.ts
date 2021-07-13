@@ -461,14 +461,20 @@ export const LIST_DATASOURCE_OVERVIEW = gql`
 `;
 
 export const LIST_DASHBOARD = gql`
-  query listDashboard($projectID: String!) {
-    ListDashboard(project_id: $projectID) {
+  query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
+    ListDashboard(
+      project_id: $projectID
+      cluster_id: $clusterID
+      db_id: $dbID
+    ) {
       db_id
       ds_id
       db_name
       cluster_name
       ds_name
       ds_type
+      ds_url
+      ds_health_status
       db_type_id
       db_type_name
       db_information
@@ -520,8 +526,12 @@ export const LIST_DASHBOARD = gql`
 `;
 
 export const LIST_DASHBOARD_OVERVIEW = gql`
-  query listDashboard($projectID: String!) {
-    ListDashboard(project_id: $projectID) {
+  query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
+    ListDashboard(
+      project_id: $projectID
+      cluster_id: $clusterID
+      db_id: $dbID
+    ) {
       db_id
       db_name
       db_type_id
@@ -643,6 +653,7 @@ export const LIST_IMAGE_REGISTRY = gql`
     ListImageRegistry(project_id: $data) {
       image_registry_info {
         enable_registry
+        is_default
       }
       image_registry_id
     }
@@ -653,6 +664,7 @@ export const GET_IMAGE_REGISTRY = gql`
   query GetImageRegistry($registryid: String!, $projectid: String!) {
     GetImageRegistry(image_registry_id: $registryid, project_id: $projectid) {
       image_registry_info {
+        is_default
         enable_registry
         secret_name
         secret_namespace

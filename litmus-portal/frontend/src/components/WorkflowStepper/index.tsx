@@ -280,7 +280,7 @@ const WorkflowStepper = () => {
         handleNext={() => handleNext()}
         finishAction={() => {}}
       >
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           {getStepContent(activeStep, childRef)}
         </SuspenseLoader>
       </LitmusStepper>

@@ -13,7 +13,7 @@ import AdjustedWeights from '../../components/AdjustedWeights';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { parseYamlValidations } from '../../components/YamlEditor/Validations';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
 import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
 import {
@@ -244,7 +244,7 @@ const EditSchedule: React.FC = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       {loading || !manifest ? (
         <Loader />
       ) : (
@@ -261,7 +261,7 @@ const EditSchedule: React.FC = () => {
                     <div className={classes.flex}>
                       <img
                         style={{ width: '2rem' }}
-                        src="/icons/terminal.svg"
+                        src="./icons/terminal.svg"
                         alt="Terminal Icon"
                       />
                       <Typography className={classes.name}>
@@ -485,7 +485,7 @@ const EditSchedule: React.FC = () => {
               }
             >
               <div className={classes.modal}>
-                <img src="/icons/finish.svg" alt="mark" />
+                <img src="./icons/finish.svg" alt="mark" />
                 <div className={classes.heading}>
                   {t('editSchedule.theSchedule')}
                   <br />
@@ -527,7 +527,7 @@ const EditSchedule: React.FC = () => {
               }
             >
               <div className={classes.modal}>
-                <img src="/icons/red-cross.svg" alt="mark" />
+                <img src="./icons/red-cross.svg" alt="mark" />
                 <div className={classes.heading}>
                   <strong>{t('workflowStepper.workflowFailed')}</strong>
                 </div>
@@ -551,7 +551,7 @@ const EditSchedule: React.FC = () => {
           </div>
         </>
       )}
-    </Scaffold>
+    </Wrapper>
   );
 };
 
