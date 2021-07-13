@@ -9,7 +9,6 @@ import createReducer from './createReducer';
 const initialState: DataSourceData = {
   selectedDataSourceID: '',
   selectedDataSourceName: '',
-  selectedDataSourceURL: '',
 };
 
 export const selectDataSource = createReducer<DataSourceData>(initialState, {

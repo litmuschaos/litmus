@@ -15,7 +15,6 @@ import {
 } from '../../../../models/graphql/dashboardsDetails';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
-import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import { history } from '../../../../redux/configureStore';
 import { ReactComponent as AnalyticsIcon } from '../../../../svg/analytics.svg';
 import { ReactComponent as CogwheelIcon } from '../../../../svg/cogwheel.svg';
@@ -35,22 +34,14 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
   data,
 }) => {
   const classes = useStyles();
-
-  const dashboard = useActions(DashboardActions);
-  const dataSource = useActions(DataSourceActions);
-
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+  const dashboard = useActions(DashboardActions);
 
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
-      refreshRate: 0,
-    });
-    dataSource.selectDataSource({
-      selectedDataSourceURL: '',
-      selectedDataSourceID: '',
-      selectedDataSourceName: '',
+      selectedAgentID: data.cluster_id,
     });
     return true;
   };
