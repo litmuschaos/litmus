@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { useMutation, useQuery } from '@apollo/client';
 import { Drawer, Snackbar, Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -89,11 +88,13 @@ const ChaosAnnotationsEditor: React.FC<ChaosAnnotationsEditorProps> = ({
       onCompleted: (prometheusSeriesData) => {
         if (prometheusSeriesData) {
           const seriesValues: Array<Option> = [];
-          prometheusSeriesData.GetPromSeriesList.seriesList?.forEach(
-            (series) => {
-              seriesValues.push({ name: series });
-            }
-          );
+          if (prometheusSeriesData.GetPromSeriesList.seriesList) {
+            prometheusSeriesData.GetPromSeriesList.seriesList.forEach(
+              (series) => {
+                seriesValues.push({ name: series });
+              }
+            );
+          }
           setSeriesList(seriesValues);
         }
       },

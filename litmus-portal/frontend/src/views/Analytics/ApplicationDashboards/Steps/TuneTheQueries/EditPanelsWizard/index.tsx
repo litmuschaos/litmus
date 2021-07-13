@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
 import { AppBar, Tabs, useTheme } from '@material-ui/core';
 import moment from 'moment';
@@ -105,11 +104,13 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       onCompleted: (prometheusSeriesData) => {
         if (prometheusSeriesData) {
           const seriesValues: Array<Option> = [];
-          prometheusSeriesData.GetPromSeriesList.seriesList?.forEach(
-            (series) => {
-              seriesValues.push({ name: series });
-            }
-          );
+          if (prometheusSeriesData.GetPromSeriesList.seriesList) {
+            prometheusSeriesData.GetPromSeriesList.seriesList.forEach(
+              (series) => {
+                seriesValues.push({ name: series });
+              }
+            );
+          }
           setSeriesList(seriesValues);
         }
       },
@@ -125,21 +126,25 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
 
   const getPanelsByGroup = (name: string) => {
     const preSelectedPanels: string[] = [];
-    dashboardVars.selectedPanelGroupMap?.forEach((panelGroup) => {
-      if (name === panelGroup.groupName) {
-        panelGroup.panels.forEach((panel) => {
-          preSelectedPanels.push(panel);
-        });
-      }
-    });
+    if (dashboardVars.selectedPanelGroupMap) {
+      dashboardVars.selectedPanelGroupMap.forEach((panelGroup) => {
+        if (name === panelGroup.groupName) {
+          panelGroup.panels.forEach((panel) => {
+            preSelectedPanels.push(panel);
+          });
+        }
+      });
+    }
     return preSelectedPanels;
   };
 
   const getSelectedPanelGroups = () => {
     const preSelectedPanelGroups: string[] = [];
-    dashboardVars.selectedPanelGroupMap?.forEach((panelGroup) => {
-      preSelectedPanelGroups.push(panelGroup.groupName);
-    });
+    if (dashboardVars.selectedPanelGroupMap) {
+      dashboardVars.selectedPanelGroupMap.forEach((panelGroup) => {
+        preSelectedPanelGroups.push(panelGroup.groupName);
+      });
+    }
     const selectedPanelGroups: PanelGroupDetails[] = [];
     selectedDashboard.dashboardJSON.panelGroups.forEach(
       (panelGroup: PanelGroupDetails) => {
@@ -271,33 +276,35 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       activeIndex: 0,
     };
     let count = 0;
-    dashboardDetails.panelGroups?.forEach((panelGroup) => {
-      panelGroup.panels.forEach((panel) => {
-        if (
-          configure &&
-          panel.panel_id &&
-          activeEditPanelID !== '' &&
-          panel.panel_id === activeEditPanelID
-        ) {
-          allSelectedPanelsWithActiveIndex.activeIndex = count;
-        }
-        allSelectedPanelsWithActiveIndex.panels.push({
-          panel_id: panel.panel_id ?? '',
-          panel_group_id: panel.panel_group_id ?? '',
-          created_at: panel.created_at ?? '',
-          panel_group_name: panel.panel_group_name ?? '',
-          ds_url: dashboardVars.dataSourceURL ?? '',
-          prom_queries: panel.prom_queries,
-          panel_options: panel.panel_options,
-          panel_name: panel.panel_name,
-          y_axis_left: panel.y_axis_left,
-          y_axis_right: panel.y_axis_right,
-          x_axis_down: panel.x_axis_down,
-          unit: panel.unit,
+    if (dashboardDetails.panelGroups) {
+      dashboardDetails.panelGroups.forEach((panelGroup) => {
+        panelGroup.panels.forEach((panel) => {
+          if (
+            configure &&
+            panel.panel_id &&
+            activeEditPanelID !== '' &&
+            panel.panel_id === activeEditPanelID
+          ) {
+            allSelectedPanelsWithActiveIndex.activeIndex = count;
+          }
+          allSelectedPanelsWithActiveIndex.panels.push({
+            panel_id: panel.panel_id ?? '',
+            panel_group_id: panel.panel_group_id ?? '',
+            created_at: panel.created_at ?? '',
+            panel_group_name: panel.panel_group_name ?? '',
+            ds_url: dashboardVars.dataSourceURL ?? '',
+            prom_queries: panel.prom_queries,
+            panel_options: panel.panel_options,
+            panel_name: panel.panel_name,
+            y_axis_left: panel.y_axis_left,
+            y_axis_right: panel.y_axis_right,
+            x_axis_down: panel.x_axis_down,
+            unit: panel.unit,
+          });
+          count += 1;
         });
-        count += 1;
       });
-    });
+    }
     return allSelectedPanelsWithActiveIndex;
   };
 

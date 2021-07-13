@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { Typography } from '@material-ui/core';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -33,11 +32,13 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
       seriesData: [],
       closedAreaData: [],
     };
-    metricDataForGroup?.forEach((panelMetrics) => {
-      if (panelMetrics.panelID === panelID) {
-        filteredMetricsData = panelMetrics.metricDataForPanel;
-      }
-    });
+    if (metricDataForGroup) {
+      metricDataForGroup.forEach((panelMetrics) => {
+        if (panelMetrics.panelID === panelID) {
+          filteredMetricsData = panelMetrics.metricDataForPanel;
+        }
+      });
+    }
     return filteredMetricsData;
   };
 

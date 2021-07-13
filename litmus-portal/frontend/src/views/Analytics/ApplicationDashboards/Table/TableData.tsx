@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { useMutation } from '@apollo/client';
 import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -131,20 +130,22 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
 
     const applicationMetadataMap: ApplicationMetadata[] = [];
 
-    data.application_metadata_map?.forEach((applicationMetadata) => {
-      const applications: Resource[] = [];
+    if (data.application_metadata_map) {
+      data.application_metadata_map.forEach((applicationMetadata) => {
+        const applications: Resource[] = [];
 
-      applicationMetadata.applications.forEach((application) => {
-        applications.push({
-          kind: application.kind,
-          names: application.names,
+        applicationMetadata.applications.forEach((application) => {
+          applications.push({
+            kind: application.kind,
+            names: application.names,
+          });
+        });
+        applicationMetadataMap.push({
+          namespace: applicationMetadata.namespace,
+          applications,
         });
       });
-      applicationMetadataMap.push({
-        namespace: applicationMetadata.namespace,
-        applications,
-      });
-    });
+    }
 
     const exportedDashboard: DashboardExport = {
       dashboardID: data.db_type_id,

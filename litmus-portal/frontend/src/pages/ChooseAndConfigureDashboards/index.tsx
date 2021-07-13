@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
@@ -156,19 +155,21 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
       applicationMetadataMapResponse: ApplicationMetadataResponse[]
     ) => {
       const applicationMetadataMap: ApplicationMetadata[] = [];
-      applicationMetadataMapResponse?.forEach((applicationMetadata) => {
-        const applications: Resource[] = [];
-        applicationMetadata.applications.forEach((application) => {
-          applications.push({
-            kind: application.kind,
-            names: application.names,
+      if (applicationMetadataMapResponse) {
+        applicationMetadataMapResponse.forEach((applicationMetadata) => {
+          const applications: Resource[] = [];
+          applicationMetadata.applications.forEach((application) => {
+            applications.push({
+              kind: application.kind,
+              names: application.names,
+            });
+          });
+          applicationMetadataMap.push({
+            namespace: applicationMetadata.namespace,
+            applications,
           });
         });
-        applicationMetadataMap.push({
-          namespace: applicationMetadata.namespace,
-          applications,
-        });
-      });
+      }
       return applicationMetadataMap;
     };
 

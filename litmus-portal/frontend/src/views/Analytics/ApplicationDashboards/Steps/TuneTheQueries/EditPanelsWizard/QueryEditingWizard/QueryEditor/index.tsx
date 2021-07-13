@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
 import {
   FormControl,
@@ -130,8 +129,11 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
 
   const getAvailableValues = (label: string) => {
     let options: Array<Option> = [];
-    if (labelValueData) {
-      labelValueData.GetPromLabelNamesAndValues.labelValues?.forEach(
+    if (
+      labelValueData &&
+      labelValueData.GetPromLabelNamesAndValues.labelValues
+    ) {
+      labelValueData.GetPromLabelNamesAndValues.labelValues.forEach(
         (labelValue) => {
           if (labelValue.label === label) {
             options = labelValue.values ?? [];
@@ -193,13 +195,15 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
   const getValueList = (list: LabelValue[]) => {
     const completionOptions: any[] = [];
     list.forEach((labelValue) => {
-      labelValue.values?.forEach((value) => {
-        completionOptions.push({
-          value,
-          score: 3,
-          meta: `Value for ${labelValue.label}`,
+      if (labelValue.values) {
+        labelValue.values.forEach((value) => {
+          completionOptions.push({
+            value,
+            score: 3,
+            meta: `Value for ${labelValue.label}`,
+          });
         });
-      });
+      }
     });
     return completionOptions;
   };
