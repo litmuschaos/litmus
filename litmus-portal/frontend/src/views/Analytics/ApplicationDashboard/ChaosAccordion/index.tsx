@@ -123,7 +123,7 @@ const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
             data-cy="editChaosQueryButton"
             className={classes.editIconButton}
           >
-            <img src="/icons/editIcon.svg" alt="Edit" />
+            <img src="./icons/editIcon.svg" alt="Edit" />
           </IconButton>
         </AccordionSummary>
         <StyledAccordionDetails style={{ width: '100%' }}>

@@ -118,7 +118,7 @@ const TableData: React.FC<TableDataProps> = ({
           style={{ maxWidth: '5rem' }}
         >
           <img
-            src="/icons/prometheus.svg"
+            src="./icons/prometheus.svg"
             alt="Prometheus"
             className={classes.inlineIcon}
           />
@@ -130,7 +130,7 @@ const TableData: React.FC<TableDataProps> = ({
           className={`${classes.tableObjects} ${classes.flexObject}`}
           style={{ maxWidth: '13.5rem' }}
         >
-          <img src="/icons/calendarIcon.svg" alt="Calender" />
+          <img src="./icons/calendarIcon.svg" alt="Calender" />
           {formatDate(data.updated_at)}
         </Typography>
       </StyledTableCell>
@@ -192,7 +192,7 @@ const TableData: React.FC<TableDataProps> = ({
           >
             <div className={classes.flexDisplay}>
               <img
-                src="/icons/cogwheel.svg"
+                src="./icons/cogwheel.svg"
                 alt="Configure"
                 className={classes.btnImg}
               />
@@ -215,7 +215,7 @@ const TableData: React.FC<TableDataProps> = ({
           >
             <div className={classes.flexDisplay}>
               <img
-                src="/icons/delete.svg"
+                src="./icons/delete.svg"
                 alt="Delete"
                 className={classes.btnImg}
               />

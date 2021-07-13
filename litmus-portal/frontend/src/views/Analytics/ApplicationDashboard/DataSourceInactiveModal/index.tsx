@@ -57,7 +57,7 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
             }}
           >
             <img
-              src="/icons/disconnected.svg"
+              src="./icons/disconnected.svg"
               alt="disconnected"
               className={classes.buttonIcon}
             />
@@ -79,7 +79,7 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
             }
           >
             <img
-              src="/icons/disconnected.svg"
+              src="./icons/disconnected.svg"
               alt="disconnected"
               className={classes.buttonIcon}
             />

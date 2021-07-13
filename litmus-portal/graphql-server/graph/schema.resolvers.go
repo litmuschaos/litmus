@@ -252,8 +252,8 @@ func (r *mutationResolver) UpdateDataSource(ctx context.Context, datasource mode
 	return analyticsHandler.UpdateDataSource(datasource)
 }
 
-func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput) (string, error) {
-	return analyticsHandler.UpdateDashBoard(dashboard)
+func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
+	return analyticsHandler.UpdateDashBoard(dashboard, chaosQueryUpdate)
 }
 
 func (r *mutationResolver) UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error) {
@@ -413,7 +413,8 @@ func (r *queryResolver) ListDataSource(ctx context.Context, projectID string) ([
 }
 
 func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error) {
-	return analyticsHandler.GetPromQuery(query)
+	promResponseData, _, err := analyticsHandler.GetPromQuery(query)
+	return promResponseData, err
 }
 
 func (r *queryResolver) GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
@@ -424,8 +425,8 @@ func (r *queryResolver) GetPromSeriesList(ctx context.Context, dsDetails *model.
 	return analyticsHandler.GetSeriesList(dsDetails)
 }
 
-func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardResponse, error) {
-	return analyticsHandler.QueryListDashboard(projectID)
+func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error) {
+	return analyticsHandler.QueryListDashboard(projectID, clusterID, dbID)
 }
 
 func (r *queryResolver) PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error) {
@@ -585,6 +586,26 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequ
 	}()
 	go wfHandler.GetKubeObjData(reqID.String(), kubeObjectRequest, *data_store.Store)
 	return kubeObjData, nil
+}
+
+func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error) {
+	dashboardData := make(chan *model.DashboardPromResponse)
+	viewID := uuid.New()
+	log.Printf("Dashboard view %v created\n", viewID.String())
+	data_store.Store.Mutex.Lock()
+	data_store.Store.DashboardData[viewID.String()] = dashboardData
+	data_store.Store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		log.Printf("Closed dashboard view %v\n", viewID.String())
+		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
+			data_store.Store.Mutex.Lock()
+			delete(data_store.Store.DashboardData, viewID.String())
+			data_store.Store.Mutex.Unlock()
+		}
+	}()
+	go analyticsHandler.DashboardViewer(viewID.String(), promQueries, dashboardQueryMap, dataVariables, *data_store.Store)
+	return dashboardData, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

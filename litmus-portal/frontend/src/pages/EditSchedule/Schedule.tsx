@@ -409,7 +409,7 @@ const ScheduleWorkflow = () => {
               </div>
             </div>
             <img
-              src="/icons/calendarWorkflowIcon.svg"
+              src="./icons/calendarWorkflowIcon.svg"
               alt="calendar"
               className={classes.calIcon}
             />

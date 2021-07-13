@@ -2,7 +2,7 @@ export default [
   {
     dashboardTypeID: 'generic_pod_metrics',
     typeName: 'Pod metrics',
-    urlToIcon: '/icons/generic_pod_metrics_dashboard.svg',
+    urlToIcon: './icons/generic_pod_metrics_dashboard.svg',
     information:
       'This dashboard visualizes Pod level CPU and memory usage metrics interleaved with chaos events.',
     urlToDashboard:
@@ -15,7 +15,7 @@ export default [
   {
     dashboardTypeID: 'sock-shop',
     typeName: 'Sock Shop',
-    urlToIcon: '/icons/sock-shop_dashboard.svg',
+    urlToIcon: './icons/sock-shop_dashboard.svg',
     information:
       'This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics.',
     urlToDashboard:
@@ -28,7 +28,7 @@ export default [
   {
     dashboardTypeID: 'generic_node_metrics',
     typeName: 'Node metrics',
-    urlToIcon: '/icons/generic_node_metrics_dashboard.svg',
+    urlToIcon: './icons/generic_node_metrics_dashboard.svg',
     information:
       'This dashboard visualizes Node level CPU, memory, disk and IO utilization metrics interleaved with chaos events.',
     urlToDashboard:
@@ -41,7 +41,7 @@ export default [
   {
     dashboardTypeID: 'custom',
     typeName: 'Custom dashboard',
-    urlToIcon: '/icons/custom_dashboard.svg',
+    urlToIcon: './icons/custom_dashboard.svg',
     information: 'Create your own custom dashboard',
     chaosEventQueryTemplate:
       'litmuschaos_awaited_experiments{job="chaos-exporter"}',
@@ -51,7 +51,7 @@ export default [
   {
     dashboardTypeID: 'upload',
     typeName: 'Upload a dashboard',
-    urlToIcon: '/icons/upload-json.svg',
+    urlToIcon: './icons/upload-json.svg',
     information: 'Create a dashboard by uploading a json file',
   },
 ];

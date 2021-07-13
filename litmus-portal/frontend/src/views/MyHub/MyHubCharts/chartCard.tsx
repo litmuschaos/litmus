@@ -49,7 +49,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
         <CardContent className={classes.cardContent}>
           <img
             src={imageURL}
-            onError={() => setImageURL('/icons/default-experiment.svg')}
+            onError={() => setImageURL('./icons/default-experiment.svg')}
             alt={expName.ExperimentName}
             className={classes.cardImage}
           />

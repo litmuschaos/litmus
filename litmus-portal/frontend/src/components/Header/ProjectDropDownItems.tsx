@@ -18,10 +18,10 @@ import { getProjectID } from '../../utils/getSearchParams';
 import Loader from '../Loader';
 import useStyles from './styles';
 
-interface otherProjectsType {
+type OtherProjectsType = {
   projectDetails: Project;
   currentUserProjectRole: string;
-}
+};
 
 interface CustomisedListItemProps {
   handleClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -66,9 +66,9 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
     >
       <ListItemIcon>
         {selected ? (
-          <img src="/icons/selectedProject.svg" alt="Selected Project" />
+          <img src="./icons/selectedProject.svg" alt="Selected Project" />
         ) : (
-          <img src="/icons/nonSelectedproject.svg" alt="Un-selected Project" />
+          <img src="./icons/nonSelectedproject.svg" alt="Un-selected Project" />
         )}
       </ListItemIcon>
       <ListItemText
@@ -82,7 +82,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
           aria-label="copyProject"
         >
           {!copying ? (
-            <img src="/icons/copyProjectID.svg" alt="Copy project ID" />
+            <img src="./icons/copyProjectID.svg" alt="Copy project ID" />
           ) : (
             <DoneIcon />
           )}
@@ -98,17 +98,19 @@ const ProjectDropdownItems: React.FC = () => {
   const { data, loading } = useQuery<Projects>(LIST_PROJECTS);
   const projects = data?.listProjects ?? [];
 
-  const baseRoute = window.location.pathname.split('/')[1];
+  const baseRoute = window.location.pathname
+    .replace(process.env.PUBLIC_URL, '')
+    .split('/')[1];
 
   const userID = getUserId();
   const projectID = getProjectID();
 
   const [myProjects, setMyProjects] = useState<Project[]>([]);
-  const [otherProjects, setOtherProjects] = useState<otherProjectsType[]>([]);
+  const [otherProjects, setOtherProjects] = useState<OtherProjectsType[]>([]);
 
   useEffect(() => {
     const projectOwner: Project[] = [];
-    const projectOther: otherProjectsType[] = [];
+    const projectOther: OtherProjectsType[] = [];
 
     projects.map((project) => {
       return project.members.forEach((member: Member) => {

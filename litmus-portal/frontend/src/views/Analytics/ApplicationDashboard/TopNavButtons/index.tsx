@@ -160,7 +160,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
           className={classes.button}
         >
           <img
-            src="/icons/infoWhite.svg"
+            src="./icons/infoWhite.svg"
             alt="Info icon"
             className={classes.icon}
           />
@@ -176,7 +176,11 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
           }}
           className={classes.button}
         >
-          <img src="/icons/info.svg" alt="Info icon" className={classes.icon} />
+          <img
+            src="./icons/info.svg"
+            alt="Info icon"
+            className={classes.icon}
+          />
           <Typography className={classes.infoText}>
             {t('analyticsDashboard.monitoringDashboardPage.infoButtonText')}
           </Typography>
@@ -195,7 +199,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
             className={classes.button}
           >
             <img
-              src="/icons/menu-active.svg"
+              src="./icons/menu-active.svg"
               alt="Options icon"
               className={classes.menuIcon}
             />
@@ -212,7 +216,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
             className={classes.button}
           >
             <img
-              src="/icons/menu.svg"
+              src="./icons/menu.svg"
               alt="Options icon"
               className={classes.menuIcon}
             />
@@ -256,7 +260,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
         >
           <div className={classes.expDiv}>
             <img
-              src="/icons/cogwheel.svg"
+              src="./icons/cogwheel.svg"
               alt="Configure"
               className={classes.btnImg}
             />
@@ -278,7 +282,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
         >
           <div className={classes.expDiv}>
             <img
-              src="/icons/copy-dashboard.svg"
+              src="./icons/copy-dashboard.svg"
               alt="Make a copy"
               className={classes.btnImg}
             />
@@ -298,7 +302,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
         >
           <div className={classes.expDiv}>
             <img
-              src="/icons/download-dashboard.svg"
+              src="./icons/download-dashboard.svg"
               alt="Download json"
               className={classes.btnImg}
             />
@@ -319,7 +323,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
         >
           <div className={classes.expDiv}>
             <img
-              src="/icons/export-dashboard.svg"
+              src="./icons/export-dashboard.svg"
               alt="Export pdf"
               className={classes.btnImg}
             />

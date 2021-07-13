@@ -246,7 +246,7 @@ const ChaosTable: React.FC<ChaosTableProps> = ({
                       <TableCell colSpan={5}>
                         <div className={classes.noRecords}>
                           <img
-                            src="/icons/dashboardUnavailable.svg"
+                            src="./icons/dashboardUnavailable.svg"
                             className={classes.cloudIcon}
                             alt="Chaos event unavailable"
                           />

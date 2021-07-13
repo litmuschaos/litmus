@@ -273,7 +273,7 @@ const DashboardPage: React.FC = () => {
             typeName: selectedDashboard.db_type_name,
             typeID: selectedDashboard.db_type_id,
             agentName: selectedDashboard.cluster_name,
-            urlToIcon: `/icons/${selectedDashboard.db_type_id}_dashboard.svg`,
+            urlToIcon: `./icons/${selectedDashboard.db_type_id}_dashboard.svg`,
             information: selectedDashboard.db_information,
             chaosEventQueryTemplate:
               selectedDashboard.chaos_event_query_template,

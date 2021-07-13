@@ -261,7 +261,7 @@ const EditSchedule: React.FC = () => {
                     <div className={classes.flex}>
                       <img
                         style={{ width: '2rem' }}
-                        src="/icons/terminal.svg"
+                        src="./icons/terminal.svg"
                         alt="Terminal Icon"
                       />
                       <Typography className={classes.name}>
@@ -485,7 +485,7 @@ const EditSchedule: React.FC = () => {
               }
             >
               <div className={classes.modal}>
-                <img src="/icons/finish.svg" alt="mark" />
+                <img src="./icons/finish.svg" alt="mark" />
                 <div className={classes.heading}>
                   {t('editSchedule.theSchedule')}
                   <br />
@@ -527,7 +527,7 @@ const EditSchedule: React.FC = () => {
               }
             >
               <div className={classes.modal}>
-                <img src="/icons/red-cross.svg" alt="mark" />
+                <img src="./icons/red-cross.svg" alt="mark" />
                 <div className={classes.heading}>
                   <strong>{t('workflowStepper.workflowFailed')}</strong>
                 </div>

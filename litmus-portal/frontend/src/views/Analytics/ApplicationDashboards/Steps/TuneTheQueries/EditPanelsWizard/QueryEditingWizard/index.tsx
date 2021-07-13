@@ -230,7 +230,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
             className={classes.iconButton}
           >
             <img
-              src="/icons/query-settings.svg"
+              src="./icons/query-settings.svg"
               alt="Settings icon"
               className={classes.icon}
             />
@@ -241,7 +241,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               className={`${classes.iconButton} ${classes.deleteButton}`}
             >
               <img
-                src="/icons/delete.svg"
+                src="./icons/delete.svg"
                 alt="Delete icon"
                 className={classes.icon}
               />

@@ -29,7 +29,7 @@ const AdjustedWeights: React.FC<AdjustedWeightsProps> = ({
             {icon ? (
               <div style={{ display: 'flex' }}>
                 <img
-                  src="/icons/experimentDetails.svg"
+                  src="./icons/experimentDetails.svg"
                   alt="experiment details icon"
                   className={classes.experimentIcon}
                 />
@@ -51,7 +51,7 @@ const AdjustedWeights: React.FC<AdjustedWeightsProps> = ({
             {icon ? (
               <span>
                 <img
-                  src="/icons/experimentDetails.svg"
+                  src="./icons/experimentDetails.svg"
                   alt="experiment details icon"
                   className={classes.experimentIcon}
                 />{' '}
