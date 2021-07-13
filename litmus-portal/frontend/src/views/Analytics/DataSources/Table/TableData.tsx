@@ -5,6 +5,7 @@ import { ButtonFilled, LightPills, Modal, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import TextPopOver from '../../../../components/TextPopOver';
 import { DELETE_DATASOURCE } from '../../../../graphql';
 import {
   DeleteDataSourceInput,
@@ -105,14 +106,15 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell className={classes.columnDivider}>
         <Typography
-          className={`${classes.tableObjects} ${classes.dataSourceNameColData}`}
+          className={`${classes.tableObjects} ${classes.dataSourceNameCol}`}
+          style={{ fontWeight: 500 }}
         >
           {data.ds_name}
         </Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.dividerPadding}>
         <Typography
-          className={classes.tableObjects}
+          className={`${classes.tableObjects} ${classes.flexObject}`}
           style={{ maxWidth: '5rem' }}
         >
           <img
@@ -125,8 +127,8 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell>
         <Typography
-          className={classes.tableObjects}
-          style={{ maxWidth: '12.5rem' }}
+          className={`${classes.tableObjects} ${classes.flexObject}`}
+          style={{ maxWidth: '13.5rem' }}
         >
           <img src="./icons/calendarIcon.svg" alt="Calender" />
           {formatDate(data.updated_at)}
@@ -140,11 +142,10 @@ const TableData: React.FC<TableDataProps> = ({
           endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
           classes={{ label: classes.buttonLabel }}
         >
-          <Typography
+          <TextPopOver
+            text={data.ds_url}
             className={`${classes.tableObjects} ${classes.dataSourceUrlColData}`}
-          >
-            {data.ds_url}
-          </Typography>
+          />
         </TextButton>
       </StyledTableCell>
 
@@ -189,7 +190,7 @@ const TableData: React.FC<TableDataProps> = ({
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div className={classes.flexDisplay}>
               <img
                 src="./icons/cogwheel.svg"
                 alt="Configure"
@@ -212,7 +213,7 @@ const TableData: React.FC<TableDataProps> = ({
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div className={classes.flexDisplay}>
               <img
                 src="./icons/delete.svg"
                 alt="Delete"

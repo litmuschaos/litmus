@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   toolBar: {
     height: '4.9rem',
     display: 'flex',
+    justifyContent: 'space-between',
     background: theme.palette.header,
     padding: theme.spacing(0, 7.5),
     '& *': {
@@ -18,6 +19,10 @@ const useStyles = makeStyles((theme: Theme) => ({
       flexGrow: 1,
       marginLeft: theme.spacing(15),
     },
+  },
+  details: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
   // Logo
   litmusDiv: {

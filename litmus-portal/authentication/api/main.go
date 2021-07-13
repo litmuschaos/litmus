@@ -40,10 +40,11 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	app := gin.Default()
-	config := cors.DefaultConfig()
-	config.AddAllowHeaders("Access-Control-Allow-Origin")
-	config.AllowAllOrigins = true
-	app.Use(cors.New(config))
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		AllowCredentials: true,
+	}))
 	routes.UserRouter(app, userService)
 	err = app.Run(utils.Port)
 	if err != nil {
