@@ -1,11 +1,9 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -14,6 +12,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
@@ -27,22 +27,11 @@ import (
 const defaultPort = "8080"
 
 func init() {
-	log.Printf("Go Version: %s", runtime.Version())
-	log.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	logrus.Printf("Go Version: %s", runtime.Version())
+	logrus.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
 	if os.Getenv("DB_SERVER") == "" || os.Getenv("JWT_SECRET") == "" || os.Getenv("SELF_CLUSTER") == "" || os.Getenv("AGENT_SCOPE") == "" || os.Getenv("AGENT_NAMESPACE") == "" || os.Getenv("LITMUS_PORTAL_NAMESPACE") == "" || os.Getenv("DB_USER") == "" || os.Getenv("DB_PASSWORD") == "" || os.Getenv("PORTAL_SCOPE") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("EVENT_TRACKER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE") == "" || os.Getenv("CONTAINER_RUNTIME_EXECUTOR") == "" || os.Getenv("HUB_BRANCH_NAME") == "" {
-		log.Fatal("Some environment variable are not setup")
-	}
-
-	nodeSelector := os.Getenv("NODE_SELECTOR")
-	if nodeSelector != "" {
-		selector := strings.Split(nodeSelector, ",")
-		for _, el := range selector {
-			kv := strings.Split(el, "=")
-			if len(kv) != 2 {
-				log.Fatal("NodeSelector env is not correct")
-			}
-		}
+		logrus.Fatal("Some environment variable are not setup")
 	}
 }
 
@@ -86,7 +75,7 @@ func main() {
 	router.Handle("/query", authorization.Middleware(srv))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
 	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	logrus.Fatal(http.ListenAndServe(":"+port, router))
 
 }
