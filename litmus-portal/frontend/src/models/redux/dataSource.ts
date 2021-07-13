@@ -1,8 +1,6 @@
 export interface DataSourceData {
   selectedDataSourceID: string;
-  selectedDataSourceURL: string;
   selectedDataSourceName: string;
-  selectedDataSourceTemplateID?: number;
 }
 
 export enum DataSourceSelectionActions {

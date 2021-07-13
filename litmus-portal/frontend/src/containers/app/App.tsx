@@ -242,11 +242,6 @@ const Routes: React.FC = () => {
           <Redirect exact path="/workflows/template" to="/workflows" />
           <Redirect exact path="/analytics/overview" to="/analytics" />
           <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
-          <Redirect
-            exact
-            path="/analytics/kubernetesdashborad"
-            to="/analytics"
-          />
           <Redirect exact path="/analytics/datasource" to="/analytics" />
           <Redirect exact path="/analytics/dashboard" to="/analytics" />
           <Redirect exact path="/api-doc" to="/api-doc/index.html" />

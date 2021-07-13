@@ -10,6 +10,7 @@ import {
   PromQuery,
   updatePanelGroupInput,
 } from './graphql/dashboardsDetails';
+import { promQueryInput } from './graphql/prometheus';
 
 export interface PanelGroupMap {
   groupName: string;
@@ -95,28 +96,41 @@ export interface PanelNameAndID {
   id: string;
 }
 
+export interface QueryMapForPanel {
+  panelID: string;
+  metricDataForPanel: ParsedMetricPrometheusData;
+}
+
+export interface QueryMapForPanelGroup {
+  panelGroupID: string;
+  metricDataForGroup: QueryMapForPanel[];
+}
+
 export interface GraphPanelProps extends PanelResponse {
   className?: string;
-  controllerPanelID?: string;
-  selectedApplications?: string[];
+  metricDataForPanel?: ParsedMetricPrometheusData;
+  chaosData?: Array<GraphMetric>;
   centralBrushPosition?: BrushPostitionProps;
   handleCentralBrushPosition: (newBrushPosition: BrushPostitionProps) => void;
   centralAllowGraphUpdate: boolean;
-  handleCentralAllowGraphUpdate: (value: boolean) => void;
 }
 
 export interface GraphPanelGroupProps extends PanelGroupResponse {
   selectedPanels?: string[];
-  selectedApplications?: string[];
+  metricDataForGroup?: QueryMapForPanel[];
+  chaosData?: Array<GraphMetric>;
   centralBrushPosition?: BrushPostitionProps;
   handleCentralBrushPosition: (newBrushPosition: BrushPostitionProps) => void;
   centralAllowGraphUpdate: boolean;
-  handleCentralAllowGraphUpdate: (value: boolean) => void;
 }
 
-export interface ParsedPrometheusData {
+export interface ParsedMetricPrometheusData {
   seriesData: Array<GraphMetric>;
   closedAreaData: Array<GraphMetric>;
+}
+
+export interface ParsedChaosEventPrometheusData {
+  chaosEventDetails: ChaosEventDetails[];
   chaosData: Array<GraphMetric>;
 }
 
@@ -126,8 +140,19 @@ export interface ChaosEventDetails {
   chaosResultName: string;
   workflow: string;
   engineContext: string;
-  target: string;
   verdict: string;
+  injectionFailed: boolean;
+}
+
+export interface RangeType {
+  startDate: string;
+  endDate: string;
+}
+
+interface TimeControlObject {
+  range: RangeType;
+  relativeTime: number;
+  refreshInterval: number;
 }
 
 export interface SelectedDashboardInformation {
@@ -143,9 +168,18 @@ export interface SelectedDashboardInformation {
   chaosVerdictQueryTemplate: string;
   applicationMetadataMap: ApplicationMetadata[];
   dashboardListForAgent: ListDashboardResponse[];
-  metaData: ListDashboardResponse[];
+  metaData: ListDashboardResponse | undefined;
+  closedAreaQueryIDs: string[];
   dashboardKey: string;
   panelNameAndIDList: PanelNameAndID[];
+  dataSourceURL: string;
+  dataSourceID: string;
+  dataSourceName: string;
+  promQueries: promQueryInput[];
+  range: RangeType;
+  relativeTime: number;
+  refreshInterval: number;
+  timeControlStack: TimeControlObject[];
 }
 
 export interface PromQueryDetails extends PromQuery {

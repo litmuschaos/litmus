@@ -1,8 +1,10 @@
-/* eslint-disable no-unused-expressions */
 import { useQuery } from '@apollo/client';
+import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
+import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../graphql';
 import {
@@ -15,7 +17,6 @@ import {
   ApplicationMetadata,
   ApplicationMetadataResponse,
   DashboardList,
-  ListDashboardResponse,
   ListDashboardVars,
   PanelGroupResponse,
   PanelOption,
@@ -25,7 +26,6 @@ import {
 } from '../../models/graphql/dashboardsDetails';
 import {
   DataSourceList,
-  ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../models/graphql/dataSourceDetails';
 import useActions from '../../redux/actions';
@@ -33,6 +33,7 @@ import * as AlertActions from '../../redux/actions/alert';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
 import DashboardStepper from '../../views/Analytics/ApplicationDashboards/Stepper';
+import useStyles from './styles';
 
 interface ChooseAndConfigureDashboardsProps {
   configure: boolean;
@@ -40,6 +41,8 @@ interface ChooseAndConfigureDashboardsProps {
 
 const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> =
   ({ configure }) => {
+    const classes = useStyles();
+    const { t } = useTranslation();
     const projectID = getProjectID();
     const selectedDashboard = useSelector(
       (state: RootState) => state.selectDashboard
@@ -48,22 +51,24 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
     alert.changeAlertState(false);
 
     // Apollo query to get the data source data
-    const { data: dataSourceList } = useQuery<
-      DataSourceList,
-      ListDataSourceVars
-    >(LIST_DATASOURCE, {
+    const {
+      data: dataSourceList,
+      loading: loadingDataSources,
+      error: errorFetchingDataSources,
+    } = useQuery<DataSourceList, ListDataSourceVars>(LIST_DATASOURCE, {
       variables: { projectID },
       fetchPolicy: 'cache-and-network',
     });
 
     // Apollo query to get the dashboard data
-    const { data: dashboardList } = useQuery<DashboardList, ListDashboardVars>(
-      LIST_DASHBOARD,
-      {
-        variables: { projectID },
-        fetchPolicy: 'cache-and-network',
-      }
-    );
+    const {
+      data: dashboardList,
+      loading: loadingDashboard,
+      error: errorFetchingDashboard,
+    } = useQuery<DashboardList, ListDashboardVars>(LIST_DASHBOARD, {
+      variables: { projectID, dbID: selectedDashboard.selectedDashboardID },
+      fetchPolicy: 'network-only',
+    });
 
     const [dashboardVars, setDashboardVars] = React.useState<DashboardDetails>({
       id: '',
@@ -150,81 +155,98 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
       applicationMetadataMapResponse: ApplicationMetadataResponse[]
     ) => {
       const applicationMetadataMap: ApplicationMetadata[] = [];
-      applicationMetadataMapResponse?.forEach((applicationMetadata) => {
-        const applications: Resource[] = [];
-        applicationMetadata.applications.forEach((application) => {
-          applications.push({
-            kind: application.kind,
-            names: application.names,
+      if (applicationMetadataMapResponse) {
+        applicationMetadataMapResponse.forEach((applicationMetadata) => {
+          const applications: Resource[] = [];
+          applicationMetadata.applications.forEach((application) => {
+            applications.push({
+              kind: application.kind,
+              names: application.names,
+            });
+          });
+          applicationMetadataMap.push({
+            namespace: applicationMetadata.namespace,
+            applications,
           });
         });
-        applicationMetadataMap.push({
-          namespace: applicationMetadata.namespace,
-          applications,
-        });
-      });
+      }
       return applicationMetadataMap;
     };
 
-    const getSelectedDsURL = (selectedDsID: string) => {
-      const dsList: ListDataSourceResponse[] =
-        dataSourceList?.ListDataSource ?? [];
-      let selectedDsURL: string = '';
-      dsList.forEach((ds) => {
-        if (ds.ds_id === selectedDsID) {
-          selectedDsURL = ds.ds_url;
-        }
-      });
-      return selectedDsURL;
-    };
-
     useEffect(() => {
-      if (configure === true) {
-        dashboardList?.ListDashboard?.forEach(
-          (dashboardDetail: ListDashboardResponse) => {
-            if (
-              dashboardDetail.db_id === selectedDashboard.selectedDashboardID
-            ) {
-              setDashboardVars({
-                ...dashboardVars,
-                id: selectedDashboard.selectedDashboardID,
-                name: dashboardDetail.db_name,
-                dataSourceType: dashboardDetail.ds_type,
-                dashboardTypeID: dashboardDetail.db_type_id,
-                dashboardTypeName: dashboardDetail.db_type_name,
-                dataSourceID: dashboardDetail.ds_id,
-                dataSourceURL: getSelectedDsURL(dashboardDetail.ds_id),
-                agentID: dashboardDetail.cluster_id,
-                information: dashboardDetail.db_information,
-                panelGroupMap: getExistingPanelGroupMap(
-                  dashboardDetail.panel_groups
-                ),
-                panelGroups: getExistingPanelGroups(
-                  dashboardDetail.panel_groups
-                ),
-                chaosEventQueryTemplate:
-                  dashboardDetail.chaos_event_query_template,
-                chaosVerdictQueryTemplate:
-                  dashboardDetail.chaos_verdict_query_template,
-                applicationMetadataMap: getApplicationMetadataMap(
-                  dashboardDetail.application_metadata_map
-                ),
-              });
-            }
-          }
-        );
+      if (
+        configure === true &&
+        dashboardList &&
+        dashboardList.ListDashboard &&
+        dashboardList.ListDashboard.length > 0
+      ) {
+        const dashboardDetail = dashboardList.ListDashboard[0];
+        setDashboardVars({
+          ...dashboardVars,
+          id: selectedDashboard.selectedDashboardID,
+          name: dashboardDetail.db_name,
+          dataSourceType: dashboardDetail.ds_type,
+          dashboardTypeID: dashboardDetail.db_type_id,
+          dashboardTypeName: dashboardDetail.db_type_name,
+          dataSourceID: dashboardDetail.ds_id,
+          dataSourceURL: dashboardDetail.ds_url,
+          agentID: dashboardDetail.cluster_id,
+          information: dashboardDetail.db_information,
+          panelGroupMap: getExistingPanelGroupMap(dashboardDetail.panel_groups),
+          panelGroups: getExistingPanelGroups(dashboardDetail.panel_groups),
+          chaosEventQueryTemplate: dashboardDetail.chaos_event_query_template,
+          chaosVerdictQueryTemplate:
+            dashboardDetail.chaos_verdict_query_template,
+          applicationMetadataMap: getApplicationMetadataMap(
+            dashboardDetail.application_metadata_map
+          ),
+        });
       }
     }, [dashboardList, dataSourceList]);
 
     return (
       <Scaffold>
-        <BackButton />
-        <DashboardStepper
-          configure={configure}
-          activePanelID={selectedDashboard.activePanelID}
-          existingDashboardVars={dashboardVars}
-          dataSourceList={dataSourceList?.ListDataSource ?? []}
-        />
+        {((configure && errorFetchingDashboard) ||
+          errorFetchingDataSources) && <BackButton />}
+        {(configure && (loadingDashboard || loadingDataSources)) ||
+        (!configure && loadingDataSources) ? (
+          <div className={classes.center}>
+            <Loader />
+            <Typography className={classes.loading}>
+              {configure
+                ? t('analyticsDashboard.applicationDashboards.loadingDashboard')
+                : t(
+                    'analyticsDashboard.applicationDashboards.loadingDataSources'
+                  )}
+            </Typography>
+          </div>
+        ) : configure && errorFetchingDashboard ? (
+          <div className={classes.center}>
+            <Typography className={classes.error}>
+              {t(
+                'analyticsDashboard.applicationDashboards.errorFetchingDashboard'
+              )}
+            </Typography>
+          </div>
+        ) : errorFetchingDataSources ? (
+          <div className={classes.center}>
+            <Typography className={classes.error}>
+              {t(
+                'analyticsDashboard.applicationDashboards.errorFetchingDataSources'
+              )}
+            </Typography>
+          </div>
+        ) : (
+          <>
+            <BackButton />
+            <DashboardStepper
+              configure={configure}
+              activePanelID={selectedDashboard.activePanelID}
+              existingDashboardVars={dashboardVars}
+              dataSourceList={dataSourceList?.ListDataSource ?? []}
+            />
+          </>
+        )}
       </Scaffold>
     );
   };
