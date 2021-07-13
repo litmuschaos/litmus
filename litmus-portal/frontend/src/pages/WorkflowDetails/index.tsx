@@ -9,7 +9,7 @@ import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import {
   WORKFLOW_DETAILS_WITH_EXEC_DATA,
   WORKFLOW_EVENTS_WITH_EXEC_DATA,
@@ -178,7 +178,7 @@ const WorkflowDetails: React.FC = () => {
   }, [data]);
 
   return (
-    <Scaffold>
+    <Wrapper>
       <div className={classes.root}>
         <div className={classes.button}>
           <BackButton />
@@ -303,7 +303,7 @@ const WorkflowDetails: React.FC = () => {
           <Loader />
         )}
       </div>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

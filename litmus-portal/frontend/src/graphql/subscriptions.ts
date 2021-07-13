@@ -48,3 +48,45 @@ export const KUBE_OBJ = gql`
     }
   }
 `;
+
+export const VIEW_DASHBOARD = gql`
+  subscription viewDashboard(
+    $prometheusQueries: [promQueryInput!]!
+    $queryMap: [queryMapForPanelGroup!]!
+    $dataVarMap: dataVars!
+  ) {
+    viewDashboard(
+      promQueries: $prometheusQueries
+      dashboardQueryMap: $queryMap
+      dataVariables: $dataVarMap
+    ) {
+      dashboardMetricsResponse {
+        panelGroupID
+        panelGroupMetricsResponse {
+          panelID
+          PanelMetricsResponse {
+            queryid
+            legends
+            tsvs {
+              date
+              value
+            }
+          }
+        }
+      }
+      annotationsResponse {
+        queryid
+        legends
+        tsvs {
+          date
+          value
+        }
+        subDataArray {
+          date
+          subDataName
+          value
+        }
+      }
+    }
+  }
+`;

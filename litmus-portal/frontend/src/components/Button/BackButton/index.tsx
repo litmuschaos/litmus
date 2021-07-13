@@ -14,7 +14,7 @@ const BackButton: React.FC<IconButtonProps> = ({ onClick }) => {
       className={classes.btn}
       onClick={onClick ?? (() => history.goBack())}
     >
-      <img src="/icons/back.svg" alt="back" />
+      <img src="./icons/back.svg" alt="back" />
       <Typography className={classes.text}>{t('button.backButton')}</Typography>
     </IconButton>
   );

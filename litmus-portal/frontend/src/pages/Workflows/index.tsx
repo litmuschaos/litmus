@@ -5,8 +5,9 @@ import { ButtonFilled } from 'litmus-ui';
 import React, { lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import * as TemplateSelectionActions from '../../redux/actions/template';
@@ -14,7 +15,6 @@ import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import { SuspenseLoader } from '../../components/SuspenseLoader';
 import useStyles from './styles';
 
 const BrowseSchedule = lazy(
@@ -53,7 +53,7 @@ const Workflows = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       <section>
         <div className={classes.header}>
           <Typography variant="h3">Chaos Workflows</Typography>
@@ -92,7 +92,7 @@ const Workflows = () => {
           <BrowseSchedule />
         </SuspenseLoader>
       </TabPanel>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
   FormControl,
   IconButton,
@@ -12,6 +10,7 @@ import {
 } from '@material-ui/core';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
+import DoneIcon from '@material-ui/icons/Done';
 import { Autocomplete } from '@material-ui/lab';
 import { AutocompleteChipInput, InputField } from 'litmus-ui';
 import moment from 'moment';
@@ -19,6 +18,7 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accordion } from '../../../../../../../../components/Accordion';
 import InfoTooltip from '../../../../../../../../components/InfoTooltip';
+import PrometheusQueryEditor from '../../../../../../../../components/PrometheusQueryBox';
 import { PROM_LABEL_VALUES } from '../../../../../../../../graphql';
 import {
   PromQueryDetails,
@@ -33,17 +33,18 @@ import {
 import { ReactComponent as ExpandAccordion } from '../../../../../../../../svg/expandQueryAccordion.svg';
 import { ReactComponent as CopyQuery } from '../../../../../../../../svg/queryCopy.svg';
 import { ReactComponent as DeleteQuery } from '../../../../../../../../svg/queryDelete.svg';
-import { ReactComponent as ShowHideQuery } from '../../../../../../../../svg/queryHide.svg';
+import { ReactComponent as QueryHidden } from '../../../../../../../../svg/queryHidden.svg';
+import { ReactComponent as QueryVisible } from '../../../../../../../../svg/queryVisible.svg';
 import { ReactComponent as ShrinkAccordion } from '../../../../../../../../svg/shrinkQueryAccordion.svg';
 import {
   getLabelsAndValues,
   setLabelsAndValues,
 } from '../../../../../../../../utils/promUtils';
 import { validateTimeInSeconds } from '../../../../../../../../utils/validate';
-import PrometheusQueryEditor from './PrometheusQueryBox';
 import useStyles from './styles';
 
 interface QueryEditorProps {
+  numberOfQueries: number;
   index: number;
   promQuery: PromQueryDetails;
   selectedApps: ApplicationMetadata[];
@@ -62,6 +63,7 @@ interface Option {
 const resolutions: string[] = ['1/1', '1/2', '1/3', '1/4', '1/5', '1/10'];
 
 const QueryEditor: React.FC<QueryEditorProps> = ({
+  numberOfQueries,
   index,
   promQuery,
   selectedApps,
@@ -73,14 +75,12 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [open, setOpen] = React.useState<boolean>(true);
+  const [open, setOpen] = React.useState<boolean>(index === 0);
   const [selectedValuesForLabel, setSelectedValuesForLabel] = React.useState<
     Array<Option>
   >([]);
-
   const [selectedLabel, setSelectedLabel] = React.useState<string>('');
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
   const [localQuery, setLocalQuery] = React.useState<PromQueryDetails>({
     ...promQuery,
     base_query: promQuery.prom_query_name.split('{')[0].includes('(')
@@ -92,8 +92,10 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
       : promQuery.prom_query_name.split('{')[0],
     labels_and_values_list: getLabelsAndValues(promQuery.prom_query_name),
   });
+  const [copying, setCopying] = React.useState<boolean>(false);
+  const [queryVisible, setQueryVisible] = React.useState<boolean>(true);
 
-  const [getLabelValues, { data: labelValueData }] = useLazyQuery<
+  const { data: labelValueData, refetch } = useQuery<
     PrometheusSeriesResponse,
     PrometheusSeriesQueryVars
   >(PROM_LABEL_VALUES, {
@@ -117,13 +119,21 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
         series: localQuery.base_query ?? '',
       },
     },
-    fetchPolicy: 'network-only',
+    skip:
+      dsURL === '' ||
+      seriesList.length === 0 ||
+      localQuery.base_query === '' ||
+      !open,
+    fetchPolicy: 'cache-and-network',
   });
 
   const getAvailableValues = (label: string) => {
     let options: Array<Option> = [];
-    if (labelValueData) {
-      labelValueData.GetPromLabelNamesAndValues.labelValues?.forEach(
+    if (
+      labelValueData &&
+      labelValueData.GetPromLabelNamesAndValues.labelValues
+    ) {
+      labelValueData.GetPromLabelNamesAndValues.labelValues.forEach(
         (labelValue) => {
           if (labelValue.label === label) {
             options = labelValue.values ?? [];
@@ -176,14 +186,6 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
   };
 
   useEffect(() => {
-    if (firstLoad && localQuery.base_query !== '' && dsURL !== '') {
-      getLabelValues();
-      getSelectedValuesForLabel(selectedLabel ?? '');
-      setFirstLoad(false);
-    }
-  }, [firstLoad]);
-
-  useEffect(() => {
     if (update) {
       handleUpdateQuery(localQuery, index);
       setUpdate(false);
@@ -193,25 +195,35 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
   const getValueList = (list: LabelValue[]) => {
     const completionOptions: any[] = [];
     list.forEach((labelValue) => {
-      labelValue.values?.forEach((value) => {
-        completionOptions.push({
-          value,
-          score: 3,
-          meta: `Value for ${labelValue.label}`,
+      if (labelValue.values) {
+        labelValue.values.forEach((value) => {
+          completionOptions.push({
+            value,
+            score: 3,
+            meta: `Value for ${labelValue.label}`,
+          });
         });
-      });
+      }
     });
     return completionOptions;
   };
 
+  const fallbackCopyTextToClipboard = (text: string) => {
+    // eslint-disable-next-line no-alert
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', text);
+  };
+
   const copyTextToClipboard = (text: string) => {
     if (!navigator.clipboard) {
-      console.error('Oops Could not copy text: ');
+      fallbackCopyTextToClipboard(text);
       return;
     }
+    setCopying(true);
     navigator.clipboard
       .writeText(text)
       .catch((err) => console.error('Async: Could not copy text: ', err));
+
+    setTimeout(() => setCopying(false), 3000);
   };
 
   return (
@@ -247,30 +259,41 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
             <div className={classes.flex}>
               <IconButton
                 className={classes.iconButton}
-                onClick={() => {
-                  copyTextToClipboard(localQuery.prom_query_name);
-                }}
+                onClick={() =>
+                  copyTextToClipboard(`${localQuery.prom_query_name}`)
+                }
+                aria-label="copyQuery"
               >
-                <CopyQuery className={classes.icon} />
+                {!copying ? (
+                  <CopyQuery className={classes.icon} />
+                ) : (
+                  <DoneIcon className={classes.icon} />
+                )}
               </IconButton>
 
-              <IconButton
-                className={classes.iconButton}
-                onClick={() => {
-                  handleShowAndHideQuery(index);
-                }}
-              >
-                <ShowHideQuery className={classes.icon} />
-              </IconButton>
-
-              <IconButton
-                className={classes.iconButton}
-                onClick={() => {
-                  handleDeleteQuery(index);
-                }}
-              >
-                <DeleteQuery className={classes.icon} />
-              </IconButton>
+              {numberOfQueries > 1 && (
+                <>
+                  <IconButton
+                    className={classes.iconButton}
+                    onClick={() => {
+                      setQueryVisible(!queryVisible);
+                      handleShowAndHideQuery(index);
+                    }}
+                  >
+                    {queryVisible ? (
+                      <QueryVisible className={classes.icon} />
+                    ) : (
+                      <QueryHidden className={classes.icon} />
+                    )}
+                  </IconButton>
+                  <IconButton
+                    className={classes.iconButton}
+                    onClick={() => handleDeleteQuery(index)}
+                  >
+                    <DeleteQuery className={classes.icon} />
+                  </IconButton>
+                </>
+              )}
             </div>
           </div>
         </AccordionSummary>
@@ -300,15 +323,21 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                     ? (value as string)
                     : (value as Option).name
                   : '';
+                const exitingLocalBaseQuery = localQuery.base_query;
                 setLocalQuery({
                   ...localQuery,
                   base_query: newQuery,
                   prom_query_name: newQuery,
                   labels_and_values_list: [],
                 });
-                if (newQuery !== '' && dsURL !== '') {
+                if (
+                  newQuery !== '' &&
+                  dsURL !== '' &&
+                  exitingLocalBaseQuery !== newQuery &&
+                  open
+                ) {
                   setSelectedValuesForLabel([]);
-                  getLabelValues();
+                  refetch();
                 }
                 setUpdate(true);
               }}
@@ -455,10 +484,11 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                 if (
                   existingBaseQuery !== newBaseQuery &&
                   localQuery.base_query !== '' &&
-                  dsURL !== ''
+                  dsURL !== '' &&
+                  open
                 ) {
-                  getLabelValues();
                   setSelectedValuesForLabel([]);
+                  refetch();
                 }
                 setUpdate(true);
               }}

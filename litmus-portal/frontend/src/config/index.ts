@@ -12,12 +12,12 @@ if (
   process.env.NODE_ENV.trim() === 'test'
 ) {
   authURL = `${window.location.protocol}//${window.location.hostname}:3000`;
-  apiURL = `${window.location.protocol}//${window.location.hostname}:8080`;
-  sockURL += `//${window.location.hostname}:8080`;
+  apiURL = `${window.location.protocol}//${window.location.hostname}:8080/query`;
+  sockURL += `//${window.location.hostname}:8080/query`;
 } else {
-  authURL = '/auth';
-  apiURL = '/api';
-  sockURL += `//${loc.host}/ws`;
+  authURL = `${process.env.PUBLIC_URL}/auth`;
+  apiURL = `${process.env.PUBLIC_URL}/api/query`;
+  sockURL += `//${loc.host}${process.env.PUBLIC_URL}/ws/query`;
 }
 export default {
   environment: process.env.NODE_ENV,

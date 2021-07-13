@@ -2,14 +2,14 @@ import { Paper, Tabs, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import React, { lazy } from 'react';
 import { useSelector } from 'react-redux';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { UserRole } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import { getUserRole } from '../../utils/auth';
-import { SuspenseLoader } from '../../components/SuspenseLoader';
 import useStyles from './styles';
 
 const AccountSettings = lazy(
@@ -45,7 +45,7 @@ const Settings: React.FC = () => {
   const theme = useTheme();
 
   return (
-    <Scaffold>
+    <Wrapper>
       <Typography variant="h3" className={classes.Head}>
         Settings
       </Typography>
@@ -121,7 +121,7 @@ const Settings: React.FC = () => {
           </SuspenseLoader>
         </TabPanel>
       </div>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

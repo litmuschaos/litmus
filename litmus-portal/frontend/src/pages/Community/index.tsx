@@ -10,9 +10,9 @@ import InfoFilledWrap from '../../components/InfoFilled/index';
 import Loader from '../../components/Loader';
 import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
 import Center from '../../containers/layouts/Center';
-import Scaffold from '../../containers/layouts/Scaffold/index';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { RootState } from '../../redux/reducers';
 import { getToken } from '../../utils/auth';
 import CommunityAnalyticsPlot from '../../views/Community/CommunityTimeSeriesPlot';
@@ -37,7 +37,7 @@ const Community: React.FC = () => {
 
   if (loading) {
     return (
-      <Scaffold>
+      <>
         <div className={classes.root}>
           <div>
             <Typography variant="h3" className={classes.mainHeader}>
@@ -49,12 +49,12 @@ const Community: React.FC = () => {
             </div>
           </div>
         </div>
-      </Scaffold>
+      </>
     );
   }
   if (error) {
     return (
-      <Scaffold>
+      <Wrapper>
         <div className={classes.root}>
           <div>
             <Typography variant="h3" className={classes.mainHeader}>
@@ -69,12 +69,12 @@ const Community: React.FC = () => {
             </Center>
           </div>
         </div>
-      </Scaffold>
+      </Wrapper>
     );
   }
 
   return (
-    <Scaffold>
+    <Wrapper>
       <div className={classes.root}>
         <div>
           <Typography variant="h3" className={classes.mainHeader}>
@@ -158,7 +158,7 @@ const Community: React.FC = () => {
           </div>
         </section>
       </div>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

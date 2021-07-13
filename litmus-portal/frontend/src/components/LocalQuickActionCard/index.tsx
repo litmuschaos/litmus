@@ -48,7 +48,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       : emptyData,
     returningHome
       ? {
-          src: '/icons/calendarWorkflowIcon.svg',
+          src: './icons/calendarWorkflowIcon.svg',
           alt: 'workflow',
           onClick: () =>
             history.push({
@@ -60,7 +60,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       : emptyData,
     homePage || returningHome || analytics
       ? {
-          src: '/icons/target.svg',
+          src: './icons/target.svg',
           alt: 'agent',
           onClick: () =>
             history.push({
@@ -75,7 +75,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     (homePage || returningHome || community || analytics) &&
     getProjectRole() === Role.owner
       ? {
-          src: '/icons/teamMember.svg',
+          src: './icons/teamMember.svg',
           alt: 'team',
           onClick: () => {
             tabs.changeSettingsTabs(1);
@@ -89,7 +89,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       : emptyData,
     homePage || community
       ? {
-          src: '/icons/survey.svg',
+          src: './icons/survey.svg',
           alt: 'survey',
           onClick: () => window.open(constants.FeedbackForm),
           text: t('quickActionCard.quickSurvey'),
@@ -97,7 +97,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       : emptyData,
     homePage || community || analytics
       ? {
-          src: '/icons/docs.svg',
+          src: './icons/docs.svg',
           alt: 'docs',
           onClick: () =>
             window.open('https://docs.litmuschaos.io/docs/getstarted'),

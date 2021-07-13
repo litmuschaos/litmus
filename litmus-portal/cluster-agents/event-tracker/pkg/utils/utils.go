@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -101,14 +102,14 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 	}
 
 	deploymentRes := schema.GroupVersionResource{Group: "eventtracker.litmuschaos.io", Version: "v1", Resource: "eventtrackerpolicies"}
-	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace(AgentNamespace).List(metav1.ListOptions{})
+	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace(AgentNamespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, ep := range deploymentConfigList.Items {
 
-		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace(AgentNamespace).Get(ep.GetName(), metav1.GetOptions{})
+		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace(AgentNamespace).Get(context.TODO(), ep.GetName(), metav1.GetOptions{})
 		if err != nil {
 			return err
 		}
@@ -188,7 +189,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 			return err
 		}
 
-		_, err = clientSet.Resource(deploymentRes).Namespace(AgentNamespace).Update(&unstruc, metav1.UpdateOptions{})
+		_, err = clientSet.Resource(deploymentRes).Namespace(AgentNamespace).Update(context.TODO(), &unstruc, metav1.UpdateOptions{})
 		if err != nil {
 			return err
 		}
@@ -205,7 +206,7 @@ func getAgentConfigMapData() (string, string, string, error) {
 		return "", "", "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(ExternAgentConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(context.TODO(), ExternAgentConfigName, metav1.GetOptions{})
 	if k8sErrors.IsNotFound(err) {
 		return "", "", "", errors.New(ExternAgentConfigName + " configmap not found")
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {

@@ -43,6 +43,7 @@ interface Option {
 }
 
 interface QueryEditingWizardProps {
+  numberOfPanels: number;
   panelVars: PanelDetails;
   selectedApps: ApplicationMetadata[];
   seriesList: Array<Option>;
@@ -59,6 +60,7 @@ interface Update {
 }
 
 const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
+  numberOfPanels,
   panelVars,
   selectedApps,
   seriesList,
@@ -189,6 +191,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
             options={panelGroupsList}
             getOptionLabel={(option: Option) => option.name}
             style={{ width: '10.3rem' }}
+            value={{ name: panelInfo.panel_group_name ?? '' }}
             renderInput={(params) => (
               <TextField {...params} variant="standard" size="small" />
             )}
@@ -227,21 +230,23 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
             className={classes.iconButton}
           >
             <img
-              src="/icons/query-settings.svg"
+              src="./icons/query-settings.svg"
               alt="Settings icon"
               className={classes.icon}
             />
           </ButtonOutlined>
-          <ButtonOutlined
-            onClick={() => setDeletePanelModalOpen(true)}
-            className={`${classes.iconButton} ${classes.deleteButton}`}
-          >
-            <img
-              src="/icons/delete.svg"
-              alt="Delete icon"
-              className={classes.icon}
-            />
-          </ButtonOutlined>
+          {numberOfPanels > 1 && (
+            <ButtonOutlined
+              onClick={() => setDeletePanelModalOpen(true)}
+              className={`${classes.iconButton} ${classes.deleteButton}`}
+            >
+              <img
+                src="./icons/delete.svg"
+                alt="Delete icon"
+                className={classes.icon}
+              />
+            </ButtonOutlined>
+          )}
         </div>
       </div>
       <Graph panelVars={panelVars} prometheusQueryData={prometheusQueryData} />
@@ -294,6 +299,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
             <TabPanel value={tabValue} index={0}>
               {panelInfo.prom_queries.map((prom_query, index) => (
                 <QueryEditor
+                  numberOfQueries={panelInfo.prom_queries.length}
                   index={index}
                   key={`query-editor-${prom_query.queryid}`}
                   promQuery={prom_query}

@@ -26,7 +26,11 @@ import {
   ListDataSourceResponse,
   ListDataSourceVars,
 } from '../../../../models/graphql/dataSourceDetails';
-import { getProjectID } from '../../../../utils/getSearchParams';
+import { history } from '../../../../redux/configureStore';
+import {
+  getProjectID,
+  getProjectRole,
+} from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -50,7 +54,6 @@ interface SortData {
 
 interface Filter {
   range: RangeType;
-  selectedDataSourceType: string;
   sortData: SortData;
   selectedStatus: string;
   searchTokens: string[];
@@ -65,9 +68,10 @@ interface ForceDeleteVars {
 const DataSourceTable: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const projectID = getProjectID();
+  const projectRole = getProjectRole();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
-    selectedDataSourceType: 'All',
     sortData: {
       name: { sort: false, ascending: true },
       lastConfigured: { sort: true, ascending: false },
@@ -77,7 +81,6 @@ const DataSourceTable: React.FC = () => {
   });
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const projectID = getProjectID();
   const [success, setSuccess] = React.useState(false);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [drawerState, setDrawerState] = React.useState(false);
@@ -111,10 +114,21 @@ const DataSourceTable: React.FC = () => {
     pollInterval: 10000,
   });
 
+  const cleanDrawerState = () => {
+    setForceDeleteVars({
+      connectedDashboards: [],
+      dsID: '',
+      dsName: '',
+    });
+    setShowAllDashboards(false);
+    setDrawerState(false);
+  };
+
   const alertStateHandler = (successState: boolean) => {
     setSuccess(successState);
     setIsAlertOpen(true);
     if (successState) {
+      cleanDrawerState();
       refetch();
     }
   };
@@ -126,26 +140,6 @@ const DataSourceTable: React.FC = () => {
       onError: () => alertStateHandler(false),
     }
   );
-
-  const cleanDrawerState = () => {
-    setForceDeleteVars({
-      connectedDashboards: [],
-      dsID: '',
-      dsName: '',
-    });
-    setShowAllDashboards(false);
-    setDrawerState(false);
-  };
-
-  const getDataSourceType = (searchingData: ListDataSourceResponse[]) => {
-    const uniqueList: string[] = [];
-    searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.ds_type)) {
-        uniqueList.push(data.ds_type);
-      }
-    });
-    return uniqueList;
-  };
 
   const getStatus = (searchingData: ListDataSourceResponse[]) => {
     const uniqueList: string[] = [];
@@ -165,11 +159,6 @@ const DataSourceTable: React.FC = () => {
             ds.ds_name.toLowerCase().includes(s)
           );
         })
-          .filter((data) => {
-            return filter.selectedDataSourceType === 'All'
-              ? true
-              : data.ds_type === filter.selectedDataSourceType;
-          })
           .filter((data) => {
             return filter.selectedStatus === 'All'
               ? true
@@ -204,8 +193,8 @@ const DataSourceTable: React.FC = () => {
               const x = parseInt(a.updated_at, 10);
               const y = parseInt(b.updated_at, 10);
               return filter.sortData.lastConfigured.ascending
-                ? sortNumAsc(y, x)
-                : sortNumDesc(y, x);
+                ? sortNumAsc(x, y)
+                : sortNumDesc(x, y);
             }
             return 0;
           })
@@ -213,6 +202,24 @@ const DataSourceTable: React.FC = () => {
 
   return (
     <div className={classes.root}>
+      <div className={classes.tabHeaderFlex}>
+        <Typography className={classes.tabHeaderText}>
+          {t('analyticsDashboard.dataSourceTable.dataSources')}
+        </Typography>
+        <ButtonFilled
+          onClick={() =>
+            history.push({
+              pathname: '/analytics/datasource/create',
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            })
+          }
+          className={classes.addButton}
+        >
+          <Typography className={classes.buttonText}>
+            {t('analyticsDashboard.dataSourceTable.addDataSource')}
+          </Typography>
+        </ButtonFilled>
+      </div>
       <Paper>
         <section className="Heading section">
           <TableToolBar
@@ -220,7 +227,7 @@ const DataSourceTable: React.FC = () => {
             handleSearch={(
               event: React.ChangeEvent<{ value: unknown }> | undefined,
               token: string | undefined
-            ) =>
+            ) => {
               setFilter({
                 ...filter,
                 searchTokens: (event !== undefined
@@ -230,34 +237,30 @@ const DataSourceTable: React.FC = () => {
                   .toLowerCase()
                   .split(' ')
                   .filter((s) => s !== ''),
-              })
-            }
-            dataSourceTypes={getDataSourceType(data?.ListDataSource ?? [])}
+              });
+              setPage(0);
+            }}
             statuses={getStatus(data?.ListDataSource ?? [])}
-            callbackToSetDataSourceType={(dataSourceType: string) =>
-              setFilter({
-                ...filter,
-                selectedDataSourceType: dataSourceType,
-              })
-            }
-            callbackToSetStatus={(status: string) =>
+            callbackToSetStatus={(status: string) => {
               setFilter({
                 ...filter,
                 selectedStatus: status,
-              })
-            }
+              });
+              setPage(0);
+            }}
             callbackToSetRange={(
               selectedStartDate: string,
               selectedEndDate: string
-            ) =>
+            ) => {
               setFilter({
                 ...filter,
                 range: {
                   startDate: selectedStartDate,
                   endDate: selectedEndDate,
                 },
-              })
-            }
+              });
+              setPage(0);
+            }}
           />
         </section>
       </Paper>
@@ -304,7 +307,7 @@ const DataSourceTable: React.FC = () => {
                     <TableCell colSpan={6}>
                       <div className={classes.noRecords}>
                         <img
-                          src="/icons/dataSourceUnavailable.svg"
+                          src="./icons/dataSourceUnavailable.svg"
                           className={classes.unavailableIcon}
                           alt="Data Source"
                         />
@@ -483,7 +486,7 @@ const DataSourceTable: React.FC = () => {
               </Typography>
             </TextButton>
             <ButtonFilled
-              onClick={() => {
+              onClick={() =>
                 deleteDataSource({
                   variables: {
                     deleteDSInput: {
@@ -491,9 +494,8 @@ const DataSourceTable: React.FC = () => {
                       force_delete: true,
                     },
                   },
-                });
-                cleanDrawerState();
-              }}
+                })
+              }
               variant="error"
             >
               <Typography
