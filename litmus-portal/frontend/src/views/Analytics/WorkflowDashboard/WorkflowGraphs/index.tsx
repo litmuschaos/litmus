@@ -10,6 +10,8 @@ import {
 } from '@material-ui/core';
 import { RadialChart, RadialChartMetric } from 'litmus-ui';
 import React, { useState } from 'react';
+import Loader from '../../../../components/Loader';
+import Center from '../../../../containers/layouts/Center';
 import { GET_WORKFLOW_RUNS_STATS } from '../../../../graphql';
 import {
   WorkflowRunStatsRequest,
@@ -27,17 +29,17 @@ const WorkflowGraphs: React.FC = () => {
 
   const projectID = getProjectID();
 
-  const { data } = useQuery<WorkflowRunStatsResponse, WorkflowRunStatsRequest>(
-    GET_WORKFLOW_RUNS_STATS,
-    {
-      variables: {
-        workflowRunStatsRequest: {
-          project_id: projectID,
-        },
+  const { data, loading } = useQuery<
+    WorkflowRunStatsResponse,
+    WorkflowRunStatsRequest
+  >(GET_WORKFLOW_RUNS_STATS, {
+    variables: {
+      workflowRunStatsRequest: {
+        project_id: projectID,
       },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+    },
+    fetchPolicy: 'cache-and-network',
+  });
   // States for filters
   const [filters, setFilters] = useState<Filter>(Filter.Monthly);
 
@@ -80,13 +82,19 @@ const WorkflowGraphs: React.FC = () => {
           <Typography className={classes.radialChartContainerHeading}>
             Workflow Run stats
           </Typography>
-          <div style={{ width: '18rem', height: '23rem' }}>
-            <RadialChart
-              radialData={graphData}
-              legendTableHeight={105}
-              heading="Workflows"
-              showCenterHeading
-            />
+          <div className={classes.radialChart}>
+            {loading ? (
+              <Center>
+                <Loader />
+              </Center>
+            ) : (
+              <RadialChart
+                radialData={graphData}
+                legendTableHeight={105}
+                heading="Workflows"
+                showCenterHeading
+              />
+            )}
           </div>
         </Paper>
       </div>

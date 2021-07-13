@@ -9,6 +9,18 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'flex-end',
     marginBottom: theme.spacing(3.5),
   },
+  formControl: {
+    margin: theme.spacing(1, 3, 0, 2),
+    minWidth: '9rem',
+    '& fieldset': {
+      height: '3.1875rem',
+    },
+  },
+  selectText: {
+    height: '2.5rem',
+    color: theme.palette.text.primary,
+    padding: theme.spacing(0.5),
+  },
   graphs: {
     width: '100%',
     padding: theme.spacing(4.375),
@@ -30,17 +42,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
     margin: theme.spacing(1.875, 0),
   },
-  selectText: {
-    height: '2.5rem',
-    color: theme.palette.text.primary,
-    padding: theme.spacing(0.5),
-  },
-  formControl: {
-    margin: theme.spacing(1, 3, 0, 2),
-    minWidth: '9rem',
-    '& fieldset': {
-      height: '3.1875rem',
-    },
+  radialChart: {
+    width: '18rem',
+    height: '23rem',
   },
 }));
 
