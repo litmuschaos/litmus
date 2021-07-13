@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"runtime"
@@ -13,6 +12,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"

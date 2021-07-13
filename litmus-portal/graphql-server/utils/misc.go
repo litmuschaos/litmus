@@ -89,7 +89,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 	}
 
 	var nodeselector string
-	if len(*cluster.NodeSelector) > 0 || cluster.NodeSelector != nil {
+	if cluster.NodeSelector != nil {
 		selector := strings.Split(*cluster.NodeSelector, ",")
 		selectorList := make(map[string]string)
 		for _, el := range selector {
@@ -112,7 +112,6 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 	}
 
 	for _, fileName := range list {
-
 		fileContent, err := ioutil.ReadFile(rootPath + "/" + fileName)
 		if err != nil {
 			return nil, err

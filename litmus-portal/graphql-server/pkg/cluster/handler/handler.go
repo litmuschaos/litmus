@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 	"strconv"
@@ -11,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -31,7 +31,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		return &model.ClusterRegResponse{}, err
 	}
 
-	if len(*input.NodeSelector) > 0 || input.NodeSelector != nil {
+	if input.NodeSelector != nil {
 		selectors := strings.Split(*input.NodeSelector, ",")
 
 		for _, el := range selectors {
