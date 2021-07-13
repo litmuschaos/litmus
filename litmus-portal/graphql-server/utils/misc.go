@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"unicode"
 
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
@@ -129,4 +130,46 @@ func ContainsString(s []string, str string) bool {
 // Truncate a float to two levels of precision
 func Truncate(num float64) float64 {
 	return float64(int(num*100)) / 100
+}
+
+// Split returns the string in between a before sub-string and an after sub-string
+func Split(str, before, after string) string {
+	a := strings.SplitAfterN(str, before, 2)
+	b := strings.SplitAfterN(a[len(a)-1], after, 2)
+	if 1 == len(b) {
+		return b[0]
+	}
+	return b[0][0 : len(b[0])-len(after)]
+}
+
+// GetKeyValueMapFromQuotedString returns key value pairs from a string with quotes
+func GetKeyValueMapFromQuotedString(quotedString string) map[string]string {
+	lastQuote := rune(0)
+	f := func(c rune) bool {
+		switch {
+		case c == lastQuote:
+			lastQuote = rune(0)
+			return false
+		case lastQuote != rune(0):
+			return false
+		case unicode.In(c, unicode.Quotation_Mark):
+			lastQuote = c
+			return false
+		default:
+			return unicode.IsSpace(c)
+
+		}
+	}
+
+	// splitting string by space but considering quoted section
+	items := strings.FieldsFunc(quotedString, f)
+
+	// create and fill the map
+	m := make(map[string]string)
+	for _, item := range items {
+		x := strings.Split(item, "=")
+		m[x[0]] = x[1][1 : len(x[1])-2]
+	}
+
+	return m
 }

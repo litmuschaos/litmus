@@ -45,7 +45,10 @@ const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 
 const Routes: React.FC = () => {
-  const baseRoute = window.location.pathname.split('/')[1];
+  const baseRoute = window.location.pathname
+    .replace(process.env.PUBLIC_URL, '')
+    .split('/')[1];
+
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
   const role = getUserRole();
@@ -120,9 +123,6 @@ const Routes: React.FC = () => {
     );
   }
 
-  // console.log('Loading =', loading);
-  // console.log('Project Validation =', projectValidation);
-
   if (!projectID) {
     return (
       <>
@@ -130,7 +130,9 @@ const Routes: React.FC = () => {
           <SuspenseLoader style={{ height: '80vh' }}>
             <Switch>
               <Route exact path="/getStarted" component={GetStarted} />
+              <Route exact path="/login" component={LoginPage} />
               <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+              <Redirect to="/getStarted" />
             </Switch>
           </SuspenseLoader>
         )}
@@ -257,11 +259,13 @@ const Routes: React.FC = () => {
 function App() {
   const analyticsAction = useActions(AnalyticsActions);
   const token = getToken();
+
   useEffect(() => {
     if (token !== '') {
       analyticsAction.loadCommunityAnalytics();
     }
   }, [token]);
+
   return (
     <LitmusThemeProvider>
       <Router history={history}>

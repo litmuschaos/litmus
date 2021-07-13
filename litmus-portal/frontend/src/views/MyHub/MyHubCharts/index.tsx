@@ -217,7 +217,7 @@ const MyHub: React.FC = () => {
             ) : (
               <>
                 <img
-                  src="/icons/no-experiment-found.svg"
+                  src="./icons/no-experiment-found.svg"
                   alt="no experiment"
                   className={classes.noExpImage}
                 />
@@ -250,7 +250,7 @@ const MyHub: React.FC = () => {
             ) : (
               <>
                 <img
-                  src="/icons/no-experiment-found.svg"
+                  src="./icons/no-experiment-found.svg"
                   alt="no experiment"
                   className={classes.noExpImage}
                 />

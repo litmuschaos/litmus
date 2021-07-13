@@ -207,7 +207,7 @@ const WorkflowInfoStats: React.FC = () => {
               <Typography>Resiliency:</Typography>
               <Typography className={classes.infoHint}>Less</Typography>
               <img
-                src="/icons/resiliencyScoreIndicators.svg"
+                src="./icons/resiliencyScoreIndicators.svg"
                 alt="score legend"
               />
               <Typography className={classes.infoHint}>More</Typography>

@@ -6,7 +6,9 @@ import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
 
 const Breadcrumb: React.FC = () => {
-  const pathname: string[] = window.location.pathname.split('/');
+  const pathname: string[] = window.location.pathname
+    .replace(process.env.PUBLIC_URL, '')
+    .split('/');
   let intermediateRoutes = '/';
   const classes = useStyles();
   const projectID = getProjectID();

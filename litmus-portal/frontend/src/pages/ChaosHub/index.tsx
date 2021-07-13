@@ -201,7 +201,7 @@ const MyHub: React.FC = () => {
                 data-cy="deleteHubModal"
               >
                 <div className={classes.modalDiv}>
-                  <img src="/icons/red-cross.svg" alt="disconnect" />
+                  <img src="./icons/red-cross.svg" alt="disconnect" />
                   <Typography className={classes.disconnectHeader}>
                     {t('myhub.mainPage.disconnectHeader')}
                   </Typography>

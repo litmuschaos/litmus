@@ -388,7 +388,7 @@ const DashboardTable: React.FC = () => {
                     <TableCell colSpan={6}>
                       <div className={classes.noRecords}>
                         <img
-                          src="/icons/dashboardUnavailable.svg"
+                          src="./icons/dashboardUnavailable.svg"
                           className={classes.unavailableIcon}
                           alt="Dashboard"
                         />

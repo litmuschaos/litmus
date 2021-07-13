@@ -1,4 +1,5 @@
 type imageRegistry {
+    is_default: Boolean
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -8,6 +9,7 @@ type imageRegistry {
 }
 
 input imageRegistryInput {
+    is_default: Boolean!
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -17,6 +19,7 @@ input imageRegistryInput {
 }
 
 type ImageRegistryResponse {
+    is_default: Boolean!
     image_registry_info: imageRegistry
     image_registry_id: String!
     project_id: String!

@@ -8,6 +8,7 @@ type ImageRegistry struct {
 	ImageRegistryType string  `bson:"image_registry_type"`
 	SecretName        *string `bson:"secret_name"`
 	SecretNamespace   *string `bson:"secret_namespace"`
+	IsDefault         bool    `bson:"is_default"`
 	EnableRegistry    *bool   `bson:"enable_registry"`
 	UpdatedAt         string  `bson:"updated_at"`
 	CreatedAt         *string `bson:"created_at"`
