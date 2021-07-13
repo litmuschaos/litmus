@@ -332,7 +332,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           >
             <div className={classes.flexDisplay}>
               <img
-                src="/icons/download-dashboard.svg"
+                src="./icons/download-dashboard.svg"
                 alt="JSON"
                 className={classes.btnImg}
               />
