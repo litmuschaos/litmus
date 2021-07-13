@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { CREATE_DATASOURCE, UPDATE_DATASOURCE } from '../../graphql/mutations';
 import { DataSourceDetails } from '../../models/dataSourceData';
 import {
@@ -182,7 +182,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
   }, [dataSourceVars]);
 
   return (
-    <Scaffold>
+    <Wrapper>
       <div className={classes.rootConfigure}>
         {configure === false ? (
           <div>
@@ -305,7 +305,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
           </Alert>
         </Snackbar>
       )}
-    </Scaffold>
+    </Wrapper>
   );
 };
 

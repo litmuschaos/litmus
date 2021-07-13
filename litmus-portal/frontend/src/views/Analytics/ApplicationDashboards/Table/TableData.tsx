@@ -7,12 +7,21 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DELETE_DASHBOARD } from '../../../../graphql/mutations';
 import {
+  DashboardExport,
+  PanelExport,
+  PanelGroupExport,
+  PanelGroupMap,
+  PromQueryExport,
+} from '../../../../models/dashboardsData';
+import {
+  ApplicationMetadata,
   DeleteDashboardInput,
   ListDashboardResponse,
+  PanelOption,
+  Resource,
 } from '../../../../models/graphql/dashboardsDetails';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
-import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import { history } from '../../../../redux/configureStore';
 import {
   getProjectID,
@@ -29,7 +38,6 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const dashboard = useActions(DashboardActions);
-  const dataSource = useActions(DataSourceActions);
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const [mutate, setMutate] = React.useState(false);
@@ -38,13 +46,6 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
     React.useState<DeleteDashboardInput>({
       dbID: '',
     });
-
-  // Function to convert UNIX time in format of dddd, DD MMM YYYY, HH:mm
-  const formatDate = (date: string) => {
-    const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format('dddd, DD MMM YYYY, HH:mm');
-    return resDate;
-  };
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -52,6 +53,12 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('dddd, DD MMM YYYY, HH:mm');
+    return resDate;
   };
 
   const [deleteDashboard] = useMutation<boolean, DeleteDashboardInput>(
@@ -71,14 +78,99 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
-      refreshRate: 0,
-    });
-    dataSource.selectDataSource({
-      selectedDataSourceURL: '',
-      selectedDataSourceID: '',
-      selectedDataSourceName: '',
+      selectedAgentID: data.cluster_id,
     });
     return true;
+  };
+
+  const getDashboard = () => {
+    const panelGroupMap: PanelGroupMap[] = [];
+    const panelGroups: PanelGroupExport[] = [];
+    data.panel_groups.forEach((panelGroup) => {
+      panelGroupMap.push({
+        groupName: panelGroup.panel_group_name,
+        panels: [],
+      });
+      const len: number = panelGroupMap.length;
+      const selectedPanels: PanelExport[] = [];
+      panelGroup.panels.forEach((panel) => {
+        panelGroupMap[len - 1].panels.push(panel.panel_name);
+        const queries: PromQueryExport[] = [];
+        panel.prom_queries.forEach((query) => {
+          queries.push({
+            prom_query_name: query.prom_query_name,
+            legend: query.legend,
+            resolution: query.resolution,
+            minstep: query.minstep,
+            line: query.line,
+            close_area: query.close_area,
+          });
+        });
+        const options: PanelOption = {
+          points: panel.panel_options.points,
+          grids: panel.panel_options.grids,
+          left_axis: panel.panel_options.left_axis,
+        };
+        const selectedPanel: PanelExport = {
+          prom_queries: queries,
+          panel_options: options,
+          panel_name: panel.panel_name,
+          y_axis_left: panel.y_axis_left,
+          y_axis_right: panel.y_axis_right,
+          x_axis_down: panel.x_axis_down,
+          unit: panel.unit,
+        };
+        selectedPanels.push(selectedPanel);
+      });
+      panelGroups.push({
+        panel_group_name: panelGroup.panel_group_name,
+        panels: selectedPanels,
+      });
+    });
+
+    const applicationMetadataMap: ApplicationMetadata[] = [];
+
+    if (data.application_metadata_map) {
+      data.application_metadata_map.forEach((applicationMetadata) => {
+        const applications: Resource[] = [];
+
+        applicationMetadata.applications.forEach((application) => {
+          applications.push({
+            kind: application.kind,
+            names: application.names,
+          });
+        });
+        applicationMetadataMap.push({
+          namespace: applicationMetadata.namespace,
+          applications,
+        });
+      });
+    }
+
+    const exportedDashboard: DashboardExport = {
+      dashboardID: data.db_type_id,
+      name: data.db_name,
+      information: data.db_information,
+      chaosEventQueryTemplate: data.chaos_event_query_template,
+      chaosVerdictQueryTemplate: data.chaos_verdict_query_template,
+      applicationMetadataMap,
+      panelGroupMap,
+      panelGroups,
+    };
+
+    return exportedDashboard;
+  };
+
+  // Function to download the JSON
+  const downloadJSON = () => {
+    const element = document.createElement('a');
+    const file = new Blob([JSON.stringify(getDashboard(), null, 2)], {
+      type: 'text/json',
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `${data.db_name}.json`;
+    document.body.appendChild(element);
+    element.click();
   };
 
   useEffect(() => {
@@ -147,7 +239,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
       <StyledTableCell>
         <Typography
           className={classes.tableObjects}
-          style={{ maxWidth: '12.5rem' }}
+          style={{ maxWidth: '13.5rem' }}
         >
           <img src="./icons/calendarIcon.svg" alt="Calender" />
           {formatDate(data.updated_at)}
@@ -193,7 +285,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div className={classes.flexDisplay}>
               <img
                 src="./icons/viewAnalytics.svg"
                 alt="View"
@@ -219,17 +311,37 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div className={classes.flexDisplay}>
               <img
                 src="./icons/cogwheel.svg"
                 alt="Configure"
                 className={classes.btnImg}
               />
               <Typography
-                data-cy=" configureDashboard"
+                data-cy="configureDashboard"
                 className={classes.btnText}
               >
                 {t('analyticsDashboard.applicationDashboardTable.configure')}
+              </Typography>
+            </div>
+          </MenuItem>
+
+          <MenuItem
+            value="Download"
+            onClick={() => downloadJSON()}
+            className={classes.menuItem}
+          >
+            <div className={classes.flexDisplay}>
+              <img
+                src="./icons/download-dashboard.svg"
+                alt="JSON"
+                className={classes.btnImg}
+              />
+              <Typography
+                data-cy="downloadDashboard"
+                className={classes.btnText}
+              >
+                {t('analyticsDashboard.applicationDashboardTable.json')}
               </Typography>
             </div>
           </MenuItem>
@@ -245,7 +357,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             }}
             className={classes.menuItem}
           >
-            <div className={classes.expDiv}>
+            <div className={classes.flexDisplay}>
               <img
                 src="./icons/delete.svg"
                 alt="Delete"

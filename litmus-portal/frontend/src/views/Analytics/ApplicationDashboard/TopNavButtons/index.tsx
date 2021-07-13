@@ -64,7 +64,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
   const getDashboard = () => {
     const panelGroupMap: PanelGroupMap[] = [];
     const panelGroups: PanelGroupExport[] = [];
-    dashboardData.metaData[0].panel_groups.forEach((panelGroup) => {
+    dashboardData.metaData?.panel_groups.forEach((panelGroup) => {
       panelGroupMap.push({
         groupName: panelGroup.panel_group_name,
         panels: [],

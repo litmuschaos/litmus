@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import DeveloperGuide from '../../components/DeveloperGuide';
 import Loader from '../../components/Loader';
 import { constants } from '../../constants';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
 import { getProjectID } from '../../utils/getSearchParams';
@@ -141,7 +141,7 @@ const MyHub: React.FC = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       {loading ? (
         <Loader />
       ) : (
@@ -258,7 +258,7 @@ const MyHub: React.FC = () => {
           {cloneResult.message}
         </Alert>
       </Snackbar>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

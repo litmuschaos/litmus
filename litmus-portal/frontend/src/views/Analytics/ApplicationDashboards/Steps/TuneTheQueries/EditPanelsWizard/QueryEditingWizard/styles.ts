@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
   modalHeading: {
     fontSize: '1.5rem',
     lineHeight: '130%',
-    fontFeatureSettings: 'pnum on, lnum on',
+    fontFeatureSettings: `'pnum' on, 'lnum' on`,
     margin: theme.spacing(2.5, 0, 4.5),
     padding: theme.spacing(0, 6.5),
   },
