@@ -2,17 +2,17 @@ package myhubOps
 
 import (
 	"fmt"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/transport"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"os"
 	"strings"
 
 	ssh2 "golang.org/x/crypto/ssh"
-	"gopkg.in/src-d/go-git.v4/plumbing/transport"
-	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
-	"gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
 
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
@@ -197,38 +197,6 @@ func (c MyHubConfig) setterRepositoryWorktreeReference() (*git.Repository, *git.
 	return repository, workTree, plumbingRef, nil
 }
 
-// GitHardReset executes "git reset --hard HEAD" in provided Repository Path
-func (c MyHubConfig) GitHardReset() error {
-	RepoPath := GetClonePath(c)
-	repository, err := git.PlainOpen(RepoPath)
-	if err != nil {
-		return fmt.Errorf("error in executing PlainOpen: %s", err)
-	}
-	workTree, err := repository.Worktree()
-	if err != nil {
-		return fmt.Errorf("error in executing Worktree: %s", err)
-	}
-	if workTree.Reset(&git.ResetOptions{Mode: git.HardReset}) != nil {
-		return fmt.Errorf("error in executing Reset: %s", err)
-	}
-	return nil
-}
-
-// CompareLocalandRemoteCommit compares local and remote latest commit
-func (c MyHubConfig) CompareLocalandRemoteCommit() (bool, error) {
-	RepoPath := GetClonePath(c)
-	repository, err := git.PlainOpen(RepoPath)
-	if err != nil {
-		return false, fmt.Errorf("error in executing PlainOpen: %s", err)
-	}
-	hash, err := repository.ResolveRevision(plumbing.Revision(c.Branch))
-	if err != nil {
-		return false, fmt.Errorf("error in executing ResolveRevision: %s", err)
-	}
-	c.RemoteCommit = hash.String()
-	return c.RemoteCommit == c.LocalCommit, nil
-}
-
 // GitPull updates the repository in provided Path
 func (c MyHubConfig) GitPull() error {
 	_, workTree, plumbingRef, err := c.setterRepositoryWorktreeReference()
@@ -274,16 +242,6 @@ func (c MyHubConfig) gitPullPrivateRepo() error {
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-// HandlerForMismatchCommits calls relative functions if the Local and Remote Commits do not match
-func (c MyHubConfig) HandlerForMismatchCommits() error {
-	err := c.GitPull()
-	if err != nil {
-		return err
-	}
-	log.WithFields(log.Fields{"execution": "complete"}).Info("Executed GitPull()... ")
 	return nil
 }
 
