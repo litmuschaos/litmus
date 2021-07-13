@@ -271,8 +271,14 @@ export const CREATE_DASHBOARD = gql`
 `;
 
 export const UPDATE_DASHBOARD = gql`
-  mutation updateDashboard($updateDBInput: updateDBInput) {
-    updateDashboard(dashboard: $updateDBInput)
+  mutation updateDashboard(
+    $updateDBInput: updateDBInput!
+    $chaosQueryUpdate: Boolean!
+  ) {
+    updateDashboard(
+      dashboard: $updateDBInput
+      chaosQueryUpdate: $chaosQueryUpdate
+    )
   }
 `;
 

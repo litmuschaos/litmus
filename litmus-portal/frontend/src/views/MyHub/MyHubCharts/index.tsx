@@ -11,7 +11,7 @@ import BackButton from '../../../components/Button/BackButton';
 import Loader from '../../../components/Loader';
 import { StyledTab, TabPanel } from '../../../components/Tabs';
 import Center from '../../../containers/layouts/Center';
-import Scaffold from '../../../containers/layouts/Scaffold';
+import Wrapper from '../../../containers/layouts/Wrapper';
 import {
   GET_CHARTS_DATA,
   GET_HUB_STATUS,
@@ -149,7 +149,7 @@ const MyHub: React.FC = () => {
       </Center>
     </Backdrop>
   ) : (
-    <Scaffold>
+    <Wrapper>
       <BackButton />
       <div className={classes.header}>
         <Typography variant="h3" gutterBottom>
@@ -262,7 +262,7 @@ const MyHub: React.FC = () => {
           </div>
         </div>
       </TabPanel>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

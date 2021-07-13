@@ -1,8 +1,8 @@
 import { Typography } from '@material-ui/core';
+import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import UsageStats from '../../views/UsageStatistics/UsageStats';
 import UsageTable from '../../views/UsageStatistics/UsageTable';
 import UsageRangePicker from './datePicker';
@@ -64,7 +64,7 @@ const UsageStatistics = () => {
     });
   };
   return (
-    <Scaffold>
+    <Wrapper>
       <Typography variant="h3">{t('usage.usageHeader')}</Typography>
       <div style={{ display: 'flex' }}>
         <Typography className={classes.description}>
@@ -88,7 +88,7 @@ const UsageStatistics = () => {
         {t('usage.projectSubtitle')}
       </Typography>
       <UsageTable start_time={dates.start_date} end_time={dates.end_date} />
-    </Scaffold>
+    </Wrapper>
   );
 };
 

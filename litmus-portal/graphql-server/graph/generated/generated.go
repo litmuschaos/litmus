@@ -5053,6 +5053,7 @@ input ClusterInput {
   agent_scope: String!
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
+  node_selector: String
 }
 
 type ClusterEvent {
@@ -25309,6 +25310,12 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 		case "agent_sa_exists":
 			var err error
 			it.AgentSaExists, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "node_selector":
+			var err error
+			it.NodeSelector, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}

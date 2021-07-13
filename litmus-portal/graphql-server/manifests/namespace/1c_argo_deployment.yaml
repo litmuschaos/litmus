@@ -27,6 +27,7 @@ spec:
       labels:
         app: workflow-controller
     spec:
+      #{nodeselector}
       containers:
         - args:
             - --configmap

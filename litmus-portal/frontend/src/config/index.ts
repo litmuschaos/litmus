@@ -16,8 +16,8 @@ if (
   sockURL += `//${window.location.hostname}:8080`;
 } else {
   authURL = `${process.env.PUBLIC_URL}/auth`;
-  apiURL = `${process.env.PUBLIC_URL}/api/query`;
-  sockURL += `//${loc.host}${process.env.PUBLIC_URL}/ws/query`;
+  apiURL = `${process.env.PUBLIC_URL}/api`;
+  sockURL += `//${loc.host}${process.env.PUBLIC_URL}/ws`;
 }
 export default {
   environment: process.env.NODE_ENV,

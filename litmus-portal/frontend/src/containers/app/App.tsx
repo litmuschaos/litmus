@@ -1,8 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, useEffect, useState } from 'react';
+import React, { lazy, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
-import Loader from '../../components/Loader';
 import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
 import {
@@ -11,12 +10,11 @@ import {
   Projects,
   UserRole,
 } from '../../models/graphql/user';
-import useActions from '../../redux/actions';
-import * as AnalyticsActions from '../../redux/actions/analytics';
+
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import Center from '../layouts/Center';
+import Scaffold from '../layouts/Scaffold';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -114,32 +112,28 @@ const Routes: React.FC = () => {
 
   if (getToken() === '') {
     return (
-      <>
+      <SuspenseLoader style={{ height: '80vh' }}>
         <Switch>
           <Route exact path="/login" component={LoginPage} />
           <Redirect exact path="/api-doc" to="/api-doc/index.html" />
           <Redirect to="/login" />
         </Switch>
-      </>
+      </SuspenseLoader>
     );
   }
 
   if (!projectID) {
     return (
       <>
-        {loading ? (
-          <div style={{ height: '100vh' }}>
-            <Center>
-              <Loader />
-            </Center>
-          </div>
-        ) : (
-          <Switch>
-            <Route exact path="/getStarted" component={GetStarted} />
-            <Route exact path="/login" component={LoginPage} />
-            <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-            <Redirect to="/getStarted" />
-          </Switch>
+        {!loading && (
+          <SuspenseLoader style={{ height: '80vh' }}>
+            <Switch>
+              <Route exact path="/getStarted" component={GetStarted} />
+              <Route exact path="/login" component={LoginPage} />
+              <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+              <Redirect to="/getStarted" />
+            </Switch>
+          </SuspenseLoader>
         )}
       </>
     );
@@ -147,134 +141,122 @@ const Routes: React.FC = () => {
 
   return (
     <>
-      {projectValidation && loading ? (
-        <div style={{ height: '100vh' }}>
-          <Center>
-            <Loader />
-          </Center>
-        </div>
-      ) : (
-        <Switch>
-          <Route exact path="/home" component={HomePage} />
-          <Redirect exact path="/" to="/home" />
-          <Route exact path="/workflows" component={Workflows} />
-          <Route exact path="/analytics" component={AnalyticsDashboard} />
-          <Route
-            exact
-            path="/analytics/datasource/create"
-            component={() => <DataSourceConfigurePage configure={false} />}
-          />
-          <Route
-            exact
-            path="/analytics/datasource/configure"
-            component={() => <DataSourceConfigurePage configure />}
-          />
-          <Route
-            exact
-            path="/analytics/dashboard/create"
-            component={() => <ChooseAndConfigureDashboards configure={false} />}
-          />
-          <Route
-            exact
-            path="/analytics/dashboard/configure"
-            component={() => <ChooseAndConfigureDashboards configure />}
-          />
-          <Route
-            exact
-            path="/analytics/application-dashboard"
-            component={() => <DashboardPage />}
-          />
-          <Route exact path="/create-workflow" component={CreateWorkflow} />
-          <Route
-            exact
-            path="/workflows/:workflowRunId"
-            component={WorkflowDetails}
-          />
-          <Route
-            exact
-            path="/workflows/schedule/:scheduleProjectID/:workflowName"
-            component={EditSchedule}
-          />
-          <Route
-            exact
-            path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
-            component={SetNewSchedule}
-          />
-          <Route
-            exact
-            path="/analytics/workflowdashboard/:workflowRunId"
-            component={WorkflowInfoStats}
-          />
-          <Route exact path="/community" component={Community} />
-          <Route exact path="/targets" component={Targets} />
-          <Route exact path="/target-connect" component={ConnectTargets} />
-          <Route exact path="/myhub" component={MyHub} />
-          <Route exact path="/myhub/:hubname" component={ChaosChart} />
-          <Route
-            exact
-            path="/myhub/:hubname/:chart/:experiment"
-            component={MyHubExperiment}
-          />
-          {projectRole === 'Owner' ? (
-            <Route path="/settings" component={Settings} />
-          ) : (
-            <Redirect
-              to={{
-                pathname: '/home',
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              }}
-            />
-          )}
-          {role === UserRole.admin ? (
-            <Route path="/usage-statistics" component={UsageStatistics} />
-          ) : (
-            <Redirect
-              to={{
-                pathname: '/home',
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              }}
-            />
-          )}
-          <Route exact path="/404" component={ErrorPage} />
-          {/* Redirects */}
-          <Redirect exact path="/getStarted" to="/home" />
-          <Redirect exact path="/workflows/schedule" to="/workflows" />
-          <Redirect exact path="/workflows/template" to="/workflows" />
-          <Redirect exact path="/analytics/overview" to="/analytics" />
-          <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
-          <Redirect
-            exact
-            path="/analytics/kubernetesdashborad"
-            to="/analytics"
-          />
-          <Redirect exact path="/analytics/datasource" to="/analytics" />
-          <Redirect exact path="/analytics/dashboard" to="/analytics" />
-          <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-          <Redirect to="/404" />
-        </Switch>
+      {!projectValidation && !loading && (
+        <Scaffold>
+          <SuspenseLoader style={{ height: '80vh' }}>
+            <Switch>
+              <Route exact path="/home" component={HomePage} />
+              <Redirect exact path="/" to="/home" />
+              <Route exact path="/workflows" component={Workflows} />
+              <Route exact path="/analytics" component={AnalyticsDashboard} />
+              <Route
+                exact
+                path="/analytics/datasource/create"
+                component={() => <DataSourceConfigurePage configure={false} />}
+              />
+              <Route
+                exact
+                path="/analytics/datasource/configure"
+                component={() => <DataSourceConfigurePage configure />}
+              />
+              <Route
+                exact
+                path="/analytics/dashboard/create"
+                component={() => (
+                  <ChooseAndConfigureDashboards configure={false} />
+                )}
+              />
+              <Route
+                exact
+                path="/analytics/dashboard/configure"
+                component={() => <ChooseAndConfigureDashboards configure />}
+              />
+              <Route
+                exact
+                path="/analytics/application-dashboard"
+                component={() => <DashboardPage />}
+              />
+              <Route exact path="/create-workflow" component={CreateWorkflow} />
+              <Route
+                exact
+                path="/workflows/:workflowRunId"
+                component={WorkflowDetails}
+              />
+              <Route
+                exact
+                path="/workflows/schedule/:scheduleProjectID/:workflowName"
+                component={EditSchedule}
+              />
+              <Route
+                exact
+                path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
+                component={SetNewSchedule}
+              />
+              <Route
+                exact
+                path="/analytics/workflowdashboard/:workflowRunId"
+                component={WorkflowInfoStats}
+              />
+              <Route exact path="/community" component={Community} />
+              <Route exact path="/targets" component={Targets} />
+              <Route exact path="/target-connect" component={ConnectTargets} />
+              <Route exact path="/myhub" component={MyHub} />
+              <Route exact path="/myhub/:hubname" component={ChaosChart} />
+              <Route
+                exact
+                path="/myhub/:hubname/:chart/:experiment"
+                component={MyHubExperiment}
+              />
+              {projectRole === 'Owner' ? (
+                <Route path="/settings" component={Settings} />
+              ) : (
+                <Redirect
+                  to={{
+                    pathname: '/home',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  }}
+                />
+              )}
+              {role === UserRole.admin ? (
+                <Route path="/usage-statistics" component={UsageStatistics} />
+              ) : (
+                <Redirect
+                  to={{
+                    pathname: '/home',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  }}
+                />
+              )}
+              <Route exact path="/404" component={ErrorPage} />
+              {/* Redirects */}
+              <Redirect exact path="/getStarted" to="/home" />
+              <Redirect exact path="/workflows/schedule" to="/workflows" />
+              <Redirect exact path="/workflows/template" to="/workflows" />
+              <Redirect exact path="/analytics/overview" to="/analytics" />
+              <Redirect
+                exact
+                path="/analytics/litmusdashboard"
+                to="/analytics"
+              />
+              <Redirect exact path="/analytics/datasource" to="/analytics" />
+              <Redirect exact path="/analytics/dashboard" to="/analytics" />
+              <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+              <Redirect to="/404" />
+            </Switch>
+          </SuspenseLoader>
+        </Scaffold>
       )}
     </>
   );
 };
 
 function App() {
-  const analyticsAction = useActions(AnalyticsActions);
-  const token = getToken();
-
-  useEffect(() => {
-    if (token !== '') {
-      analyticsAction.loadCommunityAnalytics();
-    }
-  }, [token]);
-
   return (
     <LitmusThemeProvider>
-      <SuspenseLoader style={{ height: '100vh' }}>
-        <Router history={history}>
-          {/* <Routes /> */}
-          <Routes />
-        </Router>
-      </SuspenseLoader>
+      <Router history={history}>
+        {/* <Routes /> */}
+        <Routes />
+      </Router>
     </LitmusThemeProvider>
   );
 }

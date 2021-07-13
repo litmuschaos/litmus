@@ -4,13 +4,13 @@ import Tabs from '@material-ui/core/Tabs';
 import React, { lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
-import { SuspenseLoader } from '../../components/SuspenseLoader';
 
 const Overview = lazy(() => import('../../views/Analytics/Overview'));
 const DashboardTable = lazy(
@@ -40,7 +40,7 @@ const AnalyticsDashboard = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       <section>
         <div className={classes.header}>
           <Typography variant="h3">
@@ -79,26 +79,26 @@ const AnalyticsDashboard = () => {
       </AppBar>
 
       <TabPanel value={analyticsTabValue} index={0}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <Overview />
         </SuspenseLoader>
       </TabPanel>
       <TabPanel value={analyticsTabValue} index={1}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <WorkflowComparisonTable />
         </SuspenseLoader>
       </TabPanel>
       <TabPanel value={analyticsTabValue} index={2}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <DashboardTable />
         </SuspenseLoader>
       </TabPanel>
       <TabPanel value={analyticsTabValue} index={3}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <DataSourceTable />
         </SuspenseLoader>
       </TabPanel>
-    </Scaffold>
+    </Wrapper>
   );
 };
 
