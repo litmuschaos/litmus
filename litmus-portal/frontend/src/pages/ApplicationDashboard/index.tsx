@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { LIST_DASHBOARD, VIEW_DASHBOARD } from '../../graphql';
 import {
   PanelNameAndID,
@@ -360,7 +360,7 @@ const DashboardPage: React.FC = () => {
   }, [errorFetchingDashboardQueries]);
 
   return (
-    <Scaffold>
+    <Wrapper>
       <div className={classes.rootContainer}>
         {errorFetchingDashboards ||
           selectedDashboard.selectedDashboardID === '' ||
@@ -876,7 +876,7 @@ const DashboardPage: React.FC = () => {
           dashboardID={selectedDashboardInformation.id}
         />
       )}
-    </Scaffold>
+    </Wrapper>
   );
 };
 
