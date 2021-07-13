@@ -89,8 +89,8 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 	}
 
 	var nodeselector string
-	if subscriberConfig.NodeSelector != "" {
-		selector := strings.Split(subscriberConfig.NodeSelector, ",")
+	if len(*cluster.NodeSelector) > 0 || cluster.NodeSelector != nil {
+		selector := strings.Split(*cluster.NodeSelector, ",")
 		selectorList := make(map[string]string)
 		for _, el := range selector {
 			kv := strings.Split(el, "=")
@@ -135,7 +135,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-EXPORTER}", subscriberConfig.ChaosExporterImage, -1)
 		newContent = strings.Replace(newContent, "#{ARGO-CONTAINER-RUNTIME-EXECUTOR}", subscriberConfig.ContainerRuntimeExecutor, -1)
 
-		if subscriberConfig.NodeSelector != "" {
+		if len(*cluster.NodeSelector) > 0 || cluster.NodeSelector != nil {
 			newContent = strings.Replace(newContent, "#{nodeselector}", nodeselector, -1)
 		}
 
