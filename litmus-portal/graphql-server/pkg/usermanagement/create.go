@@ -65,7 +65,7 @@ func UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string
 	}
 
 	dbUser := &dbSchemaUserManagement.User{
-		ID:      uid,
+		ID:            uid,
 		DeactivatedAt: deactivatedAt,
 	}
 
