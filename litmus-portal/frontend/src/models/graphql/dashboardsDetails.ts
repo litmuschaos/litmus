@@ -115,6 +115,20 @@ export interface UpdatePanelInput {
   panelInput: Panel[];
 }
 
+export interface PortalDashboardsVars {
+  projectID: string;
+  hubName: string;
+}
+
+export interface PortalDashboardsResponse {
+  name: string;
+  dashboard_data: string;
+}
+
+export interface PortalDashboardList {
+  PortalDashboardData: PortalDashboardsResponse[];
+}
+
 export interface ResourceResponse {
   kind: string;
   names: string[];
@@ -149,6 +163,7 @@ export interface ListDashboardResponse {
   cluster_id: string;
   created_at: string;
   updated_at: string;
+  viewed_at: string;
 }
 
 export interface ListDashboardVars {
