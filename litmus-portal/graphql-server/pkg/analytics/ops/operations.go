@@ -232,12 +232,12 @@ func UpdateViewedAt(dashboardID *string, viewID string) error {
 		if err != nil {
 			log.Printf("error updating viewed_at field of the dashboard: %v\n", *dashboardID)
 			return err
-		} else {
-			log.Printf("successfully updated viewed_at field of the dashboard: %v\n", *dashboardID)
-			return nil
 		}
-	} else {
-		log.Printf("dashboard is not saved for the view: %v\n", viewID)
+
+		log.Printf("successfully updated viewed_at field of the dashboard: %v\n", *dashboardID)
 		return nil
 	}
+
+	log.Printf("dashboard is not saved for the view: %v\n", viewID)
+	return nil
 }
