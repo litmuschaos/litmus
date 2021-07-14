@@ -7,7 +7,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -20,12 +20,12 @@ import {
   Pagination,
   Workflow,
   WorkflowDataVars,
-  WorkflowRunFilterInput
+  WorkflowRunFilterInput,
 } from '../../../models/graphql/workflowData';
 import {
   ListWorkflowsInput,
   ScheduledWorkflows,
-  WeightageMap
+  WeightageMap,
 } from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { sortNumAsc, sortNumDesc } from '../../../utils/sort';
