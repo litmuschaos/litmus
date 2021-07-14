@@ -461,6 +461,15 @@ export const LIST_DATASOURCE_OVERVIEW = gql`
   }
 `;
 
+export const GET_PORTAL_DASHBOARDS = gql`
+  query getPortalDashboards($projectID: String!, $hubName: String!) {
+    PortalDashboardData(project_id: $projectID, hub_name: $hubName) {
+      name
+      dashboard_data
+    }
+  }
+`;
+
 export const LIST_DASHBOARD = gql`
   query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
     ListDashboard(
@@ -520,8 +529,7 @@ export const LIST_DASHBOARD = gql`
       refresh_rate
       project_id
       cluster_id
-      created_at
-      updated_at
+      viewed_at
     }
   }
 `;
@@ -539,7 +547,7 @@ export const LIST_DASHBOARD_OVERVIEW = gql`
       db_type_name
       cluster_name
       cluster_id
-      updated_at
+      viewed_at
       db_information
       chaos_event_query_template
       chaos_verdict_query_template
