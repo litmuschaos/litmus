@@ -790,7 +790,7 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*
 }
 
 // DashboardViewer takes a dashboard view id, prometheus queries, dashboard query map and data variables to query prometheus and send data periodically to the subscribed client
-func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars, r store.StateData) {
+func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars, r store.StateData) {
 	if viewChan, ok := r.DashboardData[viewID]; ok {
 
 		currentTime := time.Now().Unix()
@@ -886,6 +886,8 @@ func DashboardViewer(viewID string, promQueries []*model.PromQueryInput, dashboa
 		case "invalid":
 			log.Printf("Wrong parameters for the dashboard view: %v\n", viewID)
 		}
+
+		ops.UpdateViewedAt(dashboardID, viewID)
 
 		close(viewChan)
 		r.Mutex.Lock()

@@ -10,12 +10,13 @@ import (
 	"strconv"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	analyticsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/handler"
+	analyticsOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -588,7 +589,7 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequ
 	return kubeObjData, nil
 }
 
-func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error) {
+func (r *subscriptionResolver) ViewDashboard(ctx context.Context, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error) {
 	dashboardData := make(chan *model.DashboardPromResponse)
 	viewID := uuid.New()
 	log.Printf("Dashboard view %v created\n", viewID.String())
@@ -599,12 +600,14 @@ func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []
 		<-ctx.Done()
 		log.Printf("Closed dashboard view %v\n", viewID.String())
 		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
+			analyticsOps.UpdateViewedAt(dashboardID, viewID.String())
+
 			data_store.Store.Mutex.Lock()
 			delete(data_store.Store.DashboardData, viewID.String())
 			data_store.Store.Mutex.Unlock()
 		}
 	}()
-	go analyticsHandler.DashboardViewer(viewID.String(), promQueries, dashboardQueryMap, dataVariables, *data_store.Store)
+	go analyticsHandler.DashboardViewer(viewID.String(), dashboardID, promQueries, dashboardQueryMap, dataVariables, *data_store.Store)
 	return dashboardData, nil
 }
 

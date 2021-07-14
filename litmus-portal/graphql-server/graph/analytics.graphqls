@@ -248,6 +248,7 @@ type listDashboardResponse {
   cluster_id: ID!
   created_at: String
   updated_at: String
+  viewed_at: String
 }
 
 type applicationMetadataResponse {
