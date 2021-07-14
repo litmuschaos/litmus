@@ -145,7 +145,7 @@ const MyHub: React.FC = () => {
       {loading ? (
         <Loader />
       ) : (
-        <>
+        <div className={classes.root}>
           {/* Header Div */}
           <div className={classes.header}>
             <Typography variant="h3">{t('myhub.mainPage.header')}</Typography>
@@ -159,34 +159,32 @@ const MyHub: React.FC = () => {
           </div>
           {/* Charts Div */}
           <div className={classes.mainDiv}>
-            <div className={classes.githubConfirmed}>
-              <Typography className={classes.connectHub}>
-                {t('myhub.mainPage.switchHub')}
-              </Typography>
-              <div className={classes.noHub}>
-                {totalHubs && totalHubs.length === 0 ? (
-                  <DeveloperGuide
-                    header={t('myhub.mainPage.devGuideHeader')}
-                    description={t('myhub.mainPage.devGuideDescription')}
-                    expAvailable={false}
-                  />
-                ) : (
-                  <></>
-                )}
-                <div className={classes.chartsGroup}>
-                  {totalHubs &&
-                    totalHubs.map((hub: HubDetails) => (
-                      <CustomMyHubCard
-                        key={hub.id}
-                        hub={hub}
-                        keyValue={key}
-                        handleDelete={handleDelete}
-                        handleRefresh={handleRefresh}
-                        refreshLoader={refreshLoading}
-                        handleEditHub={openHubDrawer}
-                      />
-                    ))}
-                </div>
+            <Typography className={classes.connectHub}>
+              {t('myhub.mainPage.switchHub')}
+            </Typography>
+            <div className={classes.noHub}>
+              {totalHubs && totalHubs.length === 0 ? (
+                <DeveloperGuide
+                  header={t('myhub.mainPage.devGuideHeader')}
+                  description={t('myhub.mainPage.devGuideDescription')}
+                  expAvailable={false}
+                />
+              ) : (
+                <></>
+              )}
+              <div className={classes.chartsGroup}>
+                {totalHubs &&
+                  totalHubs.map((hub: HubDetails) => (
+                    <CustomMyHubCard
+                      key={hub.id}
+                      hub={hub}
+                      keyValue={key}
+                      handleDelete={handleDelete}
+                      handleRefresh={handleRefresh}
+                      refreshLoader={refreshLoading}
+                      handleEditHub={openHubDrawer}
+                    />
+                  ))}
               </div>
             </div>
             {deleteHub.deleteHubModal ? (
@@ -220,7 +218,7 @@ const MyHub: React.FC = () => {
               </Modal>
             ) : null}
           </div>
-        </>
+        </div>
       )}
 
       {/* Add/Edit MyHub Drawer */}
