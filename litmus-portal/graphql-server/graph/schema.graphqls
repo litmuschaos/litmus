@@ -90,11 +90,6 @@ input WeightagesInput {
   weightage: Int!
 }
 
-type weightages {
-  experiment_name: String!
-  weightage: Int!
-}
-
 input ChaosWorkFlowInput {
   workflow_id: String
   workflow_manifest: String!
@@ -150,30 +145,6 @@ input PodLogRequest {
   exp_pod: String
   runner_pod: String
   chaos_namespace: String
-}
-
-type ScheduledWorkflows {
-  workflow_type: String!
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  isRemoved: Boolean!
-}
-
-type WorkflowRuns {
-  execution_data: String!
-  workflow_run_id: ID!
-  last_updated: String!
 }
 
 type clusterRegResponse {
