@@ -67,6 +67,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
       error: errorFetchingDashboard,
     } = useQuery<DashboardList, ListDashboardVars>(LIST_DASHBOARD, {
       variables: { projectID, dbID: selectedDashboard.selectedDashboardID },
+      skip: !configure || selectedDashboard.selectedDashboardID === '',
       fetchPolicy: 'network-only',
     });
 
