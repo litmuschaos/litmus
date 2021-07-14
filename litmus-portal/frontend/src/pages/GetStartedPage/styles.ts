@@ -55,7 +55,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(1.875),
     background: theme.palette.primary.light,
     color: theme.palette.text.secondary,
-    maxWidth: '8rem',
     '&:disabled': {
       PointerEvents: 'none',
       background: theme.palette.primary.light,
@@ -64,6 +63,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     '&:hover': {
       background: theme.palette.primary.light,
     },
+  },
+  skipButton: {
+    padding: theme.spacing(1.25, 4),
+    marginTop: theme.spacing(1.875),
+    color: theme.palette.text.secondary,
   },
   buttonGroup: {
     width: '100%',

@@ -90,11 +90,6 @@ input WeightagesInput {
   weightage: Int!
 }
 
-type weightages {
-  experiment_name: String!
-  weightage: Int!
-}
-
 input ChaosWorkFlowInput {
   workflow_id: String
   workflow_manifest: String!
@@ -150,30 +145,6 @@ input PodLogRequest {
   exp_pod: String
   runner_pod: String
   chaos_namespace: String
-}
-
-type ScheduledWorkflows {
-  workflow_type: String!
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  isRemoved: Boolean!
-}
-
-type WorkflowRuns {
-  execution_data: String!
-  workflow_run_id: ID!
-  last_updated: String!
 }
 
 type clusterRegResponse {
@@ -282,7 +253,9 @@ type Query {
     show_workflow_runs: Boolean!
   ): [WorkflowStats]! @authorized
 
-  getWorkflowRunStats(workflowRunStatsRequest: WorkflowRunStatsRequest!): WorkflowRunStatsResponse! @authorized
+  getWorkflowRunStats(
+    workflowRunStatsRequest: WorkflowRunStatsRequest!
+  ): WorkflowRunStatsResponse! @authorized
 
   ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
     @authorized
@@ -308,11 +281,14 @@ type Query {
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
-  ListDashboard(project_id: String!
+  ListDashboard(
+    project_id: String!
     cluster_id: String
     db_id: String): [listDashboardResponse] @authorized
 
-  PortalDashboardData (project_id: String!, hub_name: String!) : [PortalDashboardData!]! @authorized
+  PortalDashboardData (
+    project_id: String!
+    hub_name: String!) : [PortalDashboardData!]! @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -330,16 +306,21 @@ type Query {
     project_id: String!
   ): ImageRegistryResponse! @authorized
 
-  UsageQuery(query:UsageQuery!): UsageData! @authorized
+  UsageQuery(query: UsageQuery!): UsageData! @authorized
 }
 
 type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
+  # Used to create a user
   createUser(user: CreateUserInput!): User! @authorized
 
-  #It is used to create a project
+  # Used to disable a user
+  updateUserState(uid: String!, isDeactivate: Boolean!): String!
+    @authorized
+
+  # It is used to create a project
   createProject(projectName: String!): Project! @authorized
 
   updateUser(user: UpdateUserInput!): String! @authorized
@@ -421,7 +402,8 @@ type Mutation {
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updateDBInput!
+  updateDashboard(
+    dashboard: updateDBInput!
     chaosQueryUpdate: Boolean!): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
@@ -466,7 +448,9 @@ type Subscription {
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 
-  viewDashboard(promQueries: [promQueryInput!]!
+  viewDashboard(
+    dashboardID: String
+    promQueries: [promQueryInput!]!
     dashboardQueryMap: [queryMapForPanelGroup!]!
     dataVariables: dataVars!): dashboardPromResponse! @authorized
 }

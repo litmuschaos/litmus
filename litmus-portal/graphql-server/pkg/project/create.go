@@ -117,7 +117,7 @@ func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, error) {
 
-	projects, err := dbOperationsProject.GetProjectsByUserID(ctx, userID)
+	projects, err := dbOperationsProject.GetProjectsByUserID(ctx, userID, false)
 	if err != nil {
 		return nil, err
 	}
@@ -132,6 +132,11 @@ func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, 
 // SendInvitation send an invitation to a new user and
 // returns an error if the member is already part of the project
 func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+
+	user, err := dbOperationsUserManagement.GetUserByUserID(ctx, member.UserID)
+	if err != nil {
+		return nil, err
+	}
 
 	invitation, err := getInvitation(ctx, member)
 	if err != nil {
@@ -148,10 +153,6 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 		return nil, err
 	}
 
-	user, err := dbOperationsUserManagement.GetUserByUserID(ctx, member.UserID)
-	if err != nil {
-		return nil, err
-	}
 	newMember := &dbSchemaProject.Member{
 		UserID:     user.ID,
 		UserName:   user.Username,

@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '95%',
     fontSize: '1.125rem',
     color: theme.palette.text.primary,
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2, 2),
   },
 
   title: {

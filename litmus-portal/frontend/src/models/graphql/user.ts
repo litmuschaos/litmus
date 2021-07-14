@@ -6,12 +6,16 @@ export interface Member {
   name: string;
   email: string;
   joined_at: string;
+  deactivated_at: string;
 }
 
 export interface Project {
   members: Member[];
   name: string;
   id: string;
+  created_at: string;
+  updated_at: string;
+  removed_at: string;
 }
 
 export interface UserDetails {
@@ -25,7 +29,6 @@ export interface UserDetails {
   created_at: string;
   removed_at: string;
   is_email_verified: string;
-  state: string;
   role: string;
 }
 
@@ -58,6 +61,22 @@ export interface UpdateUser {
     name: string;
     email: string;
   };
+}
+
+export interface UserData {
+  _id: string;
+  username: string;
+  email: string;
+  name: string;
+  logged_in: boolean;
+  created_at: string;
+  updated_at: string;
+  deactivated_at: string;
+}
+
+export interface UpdateUserStateInput {
+  uid: string;
+  isDeactivate: boolean;
 }
 
 export interface SSHKey {

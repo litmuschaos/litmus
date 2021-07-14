@@ -10,8 +10,10 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	dbOperationsAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/patrickmn/go-cache"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func CreateDateMap(updatedAt string, filter model.TimeFrequency, statsMap map[string]model.WorkflowStats) error {
@@ -215,4 +217,22 @@ func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, new
 	}
 
 	return dashboardResponse
+}
+
+// UpdateViewedAt updates the viewed_at field of a dashboard based on dashboard id and it's view id
+func UpdateViewedAt(dashboardID *string, viewID string) {
+	if dashboardID != nil && *dashboardID != "" {
+		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
+		query := bson.D{
+			{"db_id", dashboardID},
+			{"is_removed", false},
+		}
+		update := bson.D{{"$set", bson.D{{"viewed_at", timestamp}}}}
+		err := dbOperationsAnalytics.UpdateDashboard(query, update)
+		if err != nil {
+			log.Printf("error updating viewed_at field of the dashboard: %v\n", *dashboardID)
+		}
+		log.Printf("successfully updated viewed_at field of the dashboard: %v\n", *dashboardID)
+	}
+	log.Printf("dashboard is not saved for the view: %v\n", viewID)
 }
