@@ -48,8 +48,9 @@ They use LitmusChaos as the tool of choice for carrying out chaos experiments in
 
 ### Cloud-Native OSS Projects 
 
-The projects listed here, in most cases use LitmusChaos for testing the resilience of the respective opensource framework/platform (in a manual or automated fashion)
-or in other cases integrate with it via a plugin/service to provide add resilience validation capability to their existing functions. 
+The projects listed here, in most cases use LitmusChaos for testing the resilience of the respective opensource framework/platform 
+(in a manual or automated fashion) or in other cases integrate with it via a plugin/service to provide add resilience validation capability to their 
+existing functions. 
 
 | Organization | Usecase | Details |
 | :---         | :---    | :---    |
