@@ -4,8 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
-
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -45,7 +44,7 @@ func GetUserByUserName(ctx context.Context, username string) (*User, error) {
 func UpdateUserState(ctx context.Context, user User) error {
 	// Disabling user in user collection
 	filter := bson.D{
-		{"username", user.Username},
+		{"_id", user.ID},
 	}
 
 	update := bson.D{
@@ -59,10 +58,10 @@ func UpdateUserState(ctx context.Context, user User) error {
 		return err
 	}
 
-	// Disabling user in project collection
+	// Updating state of user in project collection
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.D{{"elem.username", user.Username}},
+			bson.D{{"elem.user_id", user.ID}},
 		},
 	})
 
@@ -79,27 +78,26 @@ func UpdateUserState(ctx context.Context, user User) error {
 		return err
 	}
 
-	// Updating state of project where owner is disabled
-	projects, err := project.GetProjectsByUserID(ctx, user.Username, true)
-	if err != nil {
-		return err
+	filter = bson.D{
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"user_id", user.ID},
+				{"role", bson.D{
+					{"$eq", model.MemberRoleOwner},
+				}},
+			}},
+		}}}
+
+	update = bson.D{
+		{"$set", bson.D{
+			{"removed_at", user.DeactivatedAt},
+		}},
 	}
 
-	for _, val := range projects {
-		filter = bson.D{
-			{"_id", val.ID},
-		}
-		update = bson.D{
-			{"$set", bson.D{
-				{"removed_at", user.DeactivatedAt},
-			}},
-		}
-
-		_, err = mongodb.Operator.Update(ctx, mongodb.ProjectCollection, filter, update)
-		if err != nil {
-			log.Print("Error updating user's state in projects : ", err)
-			return err
-		}
+	_, err = mongodb.Operator.UpdateMany(ctx, mongodb.ProjectCollection, filter, update)
+	if err != nil {
+		log.Print("Error updating user's state in projects : ", err)
+		return err
 	}
 
 	return nil

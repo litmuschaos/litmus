@@ -218,7 +218,7 @@ const GetStarted: React.FC = () => {
                   {loading ? (
                     <Loader size={loaderSize} />
                   ) : (
-                    <>{t('getStarted.button.skip')}</>
+                    <Typography>{t('getStarted.button.skip')}</Typography>
                   )}
                 </TextButton>
               </div>

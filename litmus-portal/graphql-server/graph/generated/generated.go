@@ -285,7 +285,7 @@ type ComplexityRoot struct {
 		UpdatePanel            func(childComplexity int, panelInput []*model.Panel) int
 		UpdateProjectName      func(childComplexity int, projectID string, projectName string) int
 		UpdateUser             func(childComplexity int, user model.UpdateUserInput) int
-		UpdateUserState        func(childComplexity int, username string, isDeactivate bool) int
+		UpdateUserState        func(childComplexity int, uid string, isDeactivate bool) int
 		UserClusterReg         func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
@@ -471,7 +471,6 @@ type ComplexityRoot struct {
 		Name            func(childComplexity int) int
 		Projects        func(childComplexity int) int
 		Role            func(childComplexity int) int
-		State           func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
 		Username        func(childComplexity int) int
 	}
@@ -721,7 +720,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error)
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
-	UpdateUserState(ctx context.Context, username string, isDeactivate bool) (string, error)
+	UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error)
 	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
@@ -2188,7 +2187,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUserState(childComplexity, args["username"].(string), args["isDeactivate"].(bool)), true
+		return e.complexity.Mutation.UpdateUserState(childComplexity, args["uid"].(string), args["isDeactivate"].(bool)), true
 
 	case "Mutation.userClusterReg":
 		if e.complexity.Mutation.UserClusterReg == nil {
@@ -3292,13 +3291,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Role(childComplexity), true
-
-	case "User.state":
-		if e.complexity.User.State == nil {
-			break
-		}
-
-		return e.complexity.User.State(childComplexity), true
 
 	case "User.updated_at":
 		if e.complexity.User.UpdatedAt == nil {
@@ -5365,7 +5357,7 @@ type Mutation {
   createUser(user: CreateUserInput!): User! @authorized
 
   # Used to disable a user
-  updateUserState(username: String!, isDeactivate: Boolean!): String!
+  updateUserState(uid: String!, isDeactivate: Boolean!): String!
     @authorized
 
   # It is used to create a project
@@ -5575,7 +5567,6 @@ input UsageQuery{
   name: String
   projects: [Project!]!
   role: String
-  state: String
   created_at: String!
   updated_at: String!
   deactivated_at: String!
@@ -6374,13 +6365,13 @@ func (ec *executionContext) field_Mutation_updateUserState_args(ctx context.Cont
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["username"]; ok {
+	if tmp, ok := rawArgs["uid"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["username"] = arg0
+	args["uid"] = arg0
 	var arg1 bool
 	if tmp, ok := rawArgs["isDeactivate"]; ok {
 		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
@@ -11249,7 +11240,7 @@ func (ec *executionContext) _Mutation_updateUserState(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateUserState(rctx, args["username"].(string), args["isDeactivate"].(bool))
+			return ec.resolvers.Mutation().UpdateUserState(rctx, args["uid"].(string), args["isDeactivate"].(bool))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -19027,37 +19018,6 @@ func (ec *executionContext) _User_role(ctx context.Context, field graphql.Collec
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Role, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_state(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.State, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -29703,8 +29663,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "role":
 			out.Values[i] = ec._User_role(ctx, field, obj)
-		case "state":
-			out.Values[i] = ec._User_state(ctx, field, obj)
 		case "created_at":
 			out.Values[i] = ec._User_created_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

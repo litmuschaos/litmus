@@ -35,9 +35,11 @@ const TableData: React.FC<TableDataProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
 
+  // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
-    const day = moment(date).format('Do MMM, YYYY LT');
-    return day;
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('DD MMM YYYY, HH:mm');
+    return resDate;
   };
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -74,7 +76,7 @@ const TableData: React.FC<TableDataProps> = ({
         } else {
           UpdateUserState({
             variables: {
-              username: row?.username,
+              uid: row?._id,
               isDeactivate: !row?.deactivated_at,
             },
           });
@@ -181,7 +183,7 @@ const TableData: React.FC<TableDataProps> = ({
                   />
                 </IconButton>
                 <Typography>
-                  {row.deactivated_at ? 'Enable User' : 'Disable User'}
+                  {row.deactivated_at ? 'Activate User' : 'Deactivate User'}
                 </Typography>
               </MenuItem>
             </Menu>

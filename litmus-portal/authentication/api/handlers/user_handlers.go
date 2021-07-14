@@ -5,6 +5,7 @@ import (
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/user"
 	"litmus/litmus-portal/authentication/pkg/utils"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -37,16 +38,18 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 		}
 
 		// Assigning UID to user
-		userRequest.ID = uuid.Must(uuid.NewRandom()).String()
+		uID := uuid.Must(uuid.NewRandom()).String()
+		userRequest.ID = uID
 
-		// Generating password hash from input password
+		// Generating password hash
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
 		if err != nil {
-			return
+			log.Println("Error generating password for admin")
 		}
-		userRequest.Password = string(hashedPassword)
+		password := string(hashedPassword)
+		userRequest.Password = password
 
-		createdAt := time.Now()
+		createdAt := strconv.FormatInt(time.Now().Unix(), 10)
 		userRequest.CreatedAt = &createdAt
 
 		userResponse, err := service.CreateUser(&userRequest)

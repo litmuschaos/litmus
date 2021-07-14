@@ -4,6 +4,7 @@ import (
 	"context"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
+	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -145,7 +146,7 @@ func (r repository) UpdateUserState(username string, isDeactivate bool) error {
 	var err error
 	if isDeactivate {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
-			"deactivated_at": time.Now(),
+			"deactivated_at": strconv.FormatInt(time.Now().Unix(), 10),
 		}})
 	} else {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{

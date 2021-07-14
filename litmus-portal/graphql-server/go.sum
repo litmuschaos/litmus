@@ -643,6 +643,7 @@ github.com/litmuschaos/chaos-operator v0.0.0-20210224131102-ca6a465ed348/go.mod 
 github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032 h1:Nza94oOqOsao8eFWC19iFviS8XsxS2eVk7Q0a9WDKBE=
 github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032/go.mod h1:7EO6kbZKeJGKzkchgQepCxywvqNFNvNHW0G+u9923AY=
 github.com/litmuschaos/elves v0.0.0-20201107015738-552d74669e3c/go.mod h1:DsbHGNUq/78NZozWVVI9Q6eBei4I+JjlkkD5aibJ3MQ=
+github.com/litmuschaos/litmus v0.0.0-20210713115854-cf2fd4e55b25 h1:WvRVtO0mcQ60NyNoaSYa0tTN47txeqjlnzFd7cFk6JY=
 github.com/litmuschaos/litmus v0.0.0-20210714074945-7ccebbb8b190 h1:QnoAGVWAymQsXMDGq+2VfJ+pF2sePcGTaG//YEKgNaE=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=

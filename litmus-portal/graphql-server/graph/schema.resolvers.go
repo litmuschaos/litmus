@@ -40,14 +40,14 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUser
 	return usermanagement.CreateUser(ctx, user)
 }
 
-func (r *mutationResolver) UpdateUserState(ctx context.Context, username string, isDeactivate bool) (string, error) {
+func (r *mutationResolver) UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error) {
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
-	userName := claims["username"].(string)
-	if userName != "admin" {
+	userRole := claims["role"].(string)
+	if userRole != "admin" {
 		return "Unauthorized", errors.New("Unauthorized ")
 	}
 
-	return usermanagement.UpdateUserState(ctx, username, isDeactivate)
+	return usermanagement.UpdateUserState(ctx, uid, isDeactivate)
 }
 
 func (r *mutationResolver) CreateProject(ctx context.Context, projectName string) (*model.Project, error) {
