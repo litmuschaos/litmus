@@ -1,4 +1,4 @@
-This is a list organizations that have publicly acknowledged usage of LitmusChaos and shared details of how they are leveraging it for chaos engineering. 
+This is a list of organizations that have publicly acknowledged usage of LitmusChaos and shared details of how they are leveraging it for chaos engineering. 
 Please send a PR to this file (along with details in a respective [org](./adopters/organizations) folder) to add/remove entries. If you are an independent user 
 and wish to to share your adoption story, please raise a PR against the [users](USERS.md) file. 
 
