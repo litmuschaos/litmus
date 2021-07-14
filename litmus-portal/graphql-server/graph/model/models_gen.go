@@ -334,13 +334,14 @@ type ManifestTemplate struct {
 }
 
 type Member struct {
-	UserID     string     `json:"user_id"`
-	UserName   string     `json:"user_name"`
-	Name       string     `json:"name"`
-	Email      string     `json:"email"`
-	Role       MemberRole `json:"role"`
-	Invitation string     `json:"invitation"`
-	JoinedAt   string     `json:"joined_at"`
+	UserID        string     `json:"user_id"`
+	UserName      string     `json:"user_name"`
+	Name          string     `json:"name"`
+	Email         string     `json:"email"`
+	Role          MemberRole `json:"role"`
+	Invitation    string     `json:"invitation"`
+	JoinedAt      string     `json:"joined_at"`
+	DeactivatedAt string     `json:"deactivated_at"`
 }
 
 type MemberInput struct {
@@ -549,10 +550,9 @@ type User struct {
 	Name            *string    `json:"name"`
 	Projects        []*Project `json:"projects"`
 	Role            *string    `json:"role"`
-	State           *string    `json:"state"`
 	CreatedAt       string     `json:"created_at"`
 	UpdatedAt       string     `json:"updated_at"`
-	RemovedAt       string     `json:"removed_at"`
+	DeactivatedAt   string     `json:"deactivated_at"`
 }
 
 type WeightagesInput struct {

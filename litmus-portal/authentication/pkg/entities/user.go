@@ -10,16 +10,16 @@ import (
 
 //User contains the user information
 type User struct {
-	ID            string     `bson:"_id,omitempty" json:"_id"`
-	UserName      string     `bson:"username,omitempty" json:"username"`
-	Password      string     `bson:"password,omitempty" json:"password,omitempty"`
-	Email         string     `bson:"email,omitempty" json:"email,omitempty"`
-	Name          string     `bson:"name,omitempty" json:"name,omitempty"`
-	Role          Role       `bson:"role,omitempty" json:"role"`
-	LoggedIn      bool       `bson:"logged_in,omitempty" json:"logged_in,omitempty"`
-	CreatedAt     *time.Time `bson:"created_at,omitempty" json:"created_at,omitempty"`
-	UpdatedAt     *time.Time `bson:"updated_at,omitempty" json:"updated_at,omitempty"`
-	DeactivatedAt *time.Time `bson:"deactivated_at,omitempty" json:"deactivated_at,omitempty"`
+	ID            string  `bson:"_id,omitempty" json:"_id"`
+	UserName      string  `bson:"username,omitempty" json:"username"`
+	Password      string  `bson:"password,omitempty" json:"password,omitempty"`
+	Email         string  `bson:"email,omitempty" json:"email,omitempty"`
+	Name          string  `bson:"name,omitempty" json:"name,omitempty"`
+	Role          Role    `bson:"role,omitempty" json:"role"`
+	LoggedIn      bool    `bson:"logged_in,omitempty" json:"logged_in,omitempty"`
+	CreatedAt     *string `bson:"created_at,omitempty" json:"created_at,omitempty"`
+	UpdatedAt     *string `bson:"updated_at,omitempty" json:"updated_at,omitempty"`
+	DeactivatedAt *string `bson:"deactivated_at,omitempty" json:"deactivated_at,omitempty"`
 }
 
 // UserPassword defines structure for password related requests

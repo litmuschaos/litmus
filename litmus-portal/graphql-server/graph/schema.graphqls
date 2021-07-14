@@ -253,7 +253,9 @@ type Query {
     show_workflow_runs: Boolean!
   ): [WorkflowStats]! @authorized
 
-  getWorkflowRunStats(workflowRunStatsRequest: WorkflowRunStatsRequest!): WorkflowRunStatsResponse! @authorized
+  getWorkflowRunStats(
+    workflowRunStatsRequest: WorkflowRunStatsRequest!
+  ): WorkflowRunStatsResponse! @authorized
 
   ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
     @authorized
@@ -304,16 +306,21 @@ type Query {
     project_id: String!
   ): ImageRegistryResponse! @authorized
 
-  UsageQuery(query:UsageQuery!): UsageData! @authorized
+  UsageQuery(query: UsageQuery!): UsageData! @authorized
 }
 
 type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
+  # Used to create a user
   createUser(user: CreateUserInput!): User! @authorized
 
-  #It is used to create a project
+  # Used to disable a user
+  updateUserState(uid: String!, isDeactivate: Boolean!): String!
+    @authorized
+
+  # It is used to create a project
   createProject(projectName: String!): Project! @authorized
 
   updateUser(user: UpdateUserInput!): String! @authorized

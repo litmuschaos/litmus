@@ -41,6 +41,16 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUser
 	return usermanagement.CreateUser(ctx, user)
 }
 
+func (r *mutationResolver) UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error) {
+	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
+	userRole := claims["role"].(string)
+	if userRole != "admin" {
+		return "Unauthorized", errors.New("Unauthorized ")
+	}
+
+	return usermanagement.UpdateUserState(ctx, uid, isDeactivate)
+}
+
 func (r *mutationResolver) CreateProject(ctx context.Context, projectName string) (*model.Project, error) {
 	//fetching all the user's details from jwt token
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
@@ -79,12 +89,21 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, member model.Memb
 		return nil, err
 	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	return project.SendInvitation(ctx, member)
 }
 
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.PendingInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -94,7 +113,11 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.Me
 
 func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.PendingInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -104,7 +127,6 @@ func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.M
 
 func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
-
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -114,7 +136,11 @@ func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.Me
 
 func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -334,6 +360,12 @@ func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*mode
 func (r *queryResolver) ListProjects(ctx context.Context) ([]*model.Project, error) {
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	userUID := claims["uid"].(string)
+
+	err := authorization.ValidateUserStatus(ctx, userUID)
+	if err != nil {
+		return nil, err
+	}
+
 	return project.GetProjectsByUserID(ctx, userUID)
 }
 

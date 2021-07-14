@@ -188,9 +188,8 @@ export const GET_USER = gql`
       company_name
       updated_at
       created_at
-      removed_at
+      deactivated_at
       is_email_verified
-      state
       role
     }
   }
@@ -251,6 +250,8 @@ export const ALL_USERS = gql`
       name
       username
       email
+      created_at
+      deactivated_at
     }
   }
 `;
@@ -393,8 +394,8 @@ export const LIST_PROJECTS = gql`
         role
         invitation
         joined_at
+        deactivated_at
       }
-      state
       created_at
       updated_at
       removed_at
@@ -413,8 +414,8 @@ export const GET_PROJECT = gql`
         role
         invitation
         joined_at
+        deactivated_at
       }
-      state
       created_at
       updated_at
       removed_at

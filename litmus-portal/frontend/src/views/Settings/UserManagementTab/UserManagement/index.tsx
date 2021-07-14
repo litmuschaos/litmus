@@ -1,10 +1,8 @@
 import {
   createStyles,
   FormControl,
-  IconButton,
   InputAdornment,
   InputLabel,
-  Menu,
   MenuItem,
   Paper,
   Select,
@@ -21,18 +19,17 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
-import { ButtonFilled, LightPills } from 'litmus-ui';
-import moment from 'moment';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import config from '../../../../config';
-import { UserRole } from '../../../../models/graphql/user';
+import { UserData } from '../../../../models/graphql/user';
 import { getToken } from '../../../../utils/auth';
 import CreateUser from '../CreateUser';
 import EditUser from '../EditUser';
 import useStyles from './styles';
+import TableData from './tableData';
 
 // StyledTableCell used to create custom table cell
 const StyledTableCell = withStyles((theme: Theme) =>
@@ -46,18 +43,6 @@ const StyledTableCell = withStyles((theme: Theme) =>
     },
   })
 )(TableCell);
-
-interface UserData {
-  _id: string;
-  username: string;
-  email: string;
-  name: string;
-  logged_in: boolean;
-  created_at: string;
-  updated_at: string;
-  removed_at: string;
-  state: string;
-}
 
 interface FilterOptions {
   search: string;
@@ -87,7 +72,6 @@ const UserManagement: React.FC = () => {
     rowsPerPage: 5,
   });
   const [editDiv, setEditDiv] = React.useState<boolean>(false);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   useEffect(() => {
     fetch(`${config.auth.url}/users`, {
@@ -109,26 +93,16 @@ const UserManagement: React.FC = () => {
   }, [showDiv]);
 
   const filteredData = rows
-    ?.filter((dataRow) => dataRow.username !== UserRole.admin)
     ?.filter((dataRow) =>
       dataRow.username.toLowerCase().includes(filters.search.toLowerCase())
     )
     .filter((datarow) => {
       if (filters.status === 'all') return true;
-      if (filters.status === 'signedin') return datarow.logged_in === true;
-      return datarow.logged_in === false;
+      if (filters.status === 'deactivated') return datarow.deactivated_at;
+      return !datarow.deactivated_at;
     });
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const [currRow, setCurrRow] = React.useState<UserData>();
-
-  const formatDate = (date: string) => {
-    const day = moment(date).format('Do MMM, YYYY LT');
-    return day;
-  };
 
   return (
     <div>
@@ -219,14 +193,14 @@ const UserManagement: React.FC = () => {
                           <MenuItem value="all">
                             {t('settings.userManagementTab.label.options.all')}
                           </MenuItem>
-                          <MenuItem value="signedout">
+                          <MenuItem value="deactivated">
                             {t(
-                              'settings.userManagementTab.label.options.notSignedIn'
+                              'settings.userManagementTab.label.options.deactivated'
                             )}
                           </MenuItem>
-                          <MenuItem value="signedin">
+                          <MenuItem value="active">
                             {t(
-                              'settings.userManagementTab.label.options.signedIn'
+                              'settings.userManagementTab.label.options.active'
                             )}
                           </MenuItem>
                         </Select>
@@ -252,18 +226,28 @@ const UserManagement: React.FC = () => {
                       <TableHead>
                         <TableRow className={classes.TR}>
                           <StyledTableCell className={classes.styledTC}>
-                            {t('settings.userManagementTab.tableCell.status')}
+                            <Typography className={classes.tableHeader}>
+                              {t(
+                                'settings.userManagementTab.tableCell.username'
+                              )}
+                            </Typography>
                           </StyledTableCell>
                           <StyledTableCell>
-                            {t('settings.userManagementTab.tableCell.username')}
+                            <Typography className={classes.tableHeader}>
+                              {t('settings.userManagementTab.tableCell.name')}
+                            </Typography>
                           </StyledTableCell>
                           <StyledTableCell>
-                            {t('settings.userManagementTab.tableCell.email')}
+                            <Typography className={classes.tableHeader}>
+                              {t('settings.userManagementTab.tableCell.email')}
+                            </Typography>
                           </StyledTableCell>
                           <StyledTableCell>
-                            {t(
-                              'settings.userManagementTab.tableCell.userCreated'
-                            )}
+                            <Typography className={classes.tableHeader}>
+                              {t(
+                                'settings.userManagementTab.tableCell.userCreated'
+                              )}
+                            </Typography>
                           </StyledTableCell>
                           <StyledTableCell />
                           <TableHead />
@@ -279,113 +263,17 @@ const UserManagement: React.FC = () => {
                                 paginationData.rowsPerPage +
                                 paginationData.rowsPerPage
                             )
-                            .map((row, index) => (
-                              <TableRow
-                                data-cy="userTableRow"
-                                key={row.name}
-                                className={classes.TR}
-                              >
-                                <TableCell
-                                  className={classes.firstTC}
-                                  component="th"
-                                  scope="row"
-                                >
-                                  <div className={classes.firstCol}>
-                                    {row.logged_in ? (
-                                      <LightPills
-                                        variant="success"
-                                        label={t(
-                                          'settings.userManagementTab.label.options.signedIn'
-                                        )}
-                                      />
-                                    ) : (
-                                      <LightPills
-                                        variant="danger"
-                                        label={t(
-                                          'settings.userManagementTab.label.options.notSignedIn'
-                                        )}
-                                      />
-                                    )}
-                                    {row.name}
-                                  </div>
-                                </TableCell>
-
-                                <TableCell className={classes.otherTC}>
-                                  {row.username}
-                                </TableCell>
-                                <TableCell className={classes.otherTC}>
-                                  {row.email}
-                                </TableCell>
-                                <TableCell className={classes.otherTC}>
-                                  <div className={classes.dateDiv}>
-                                    <img
-                                      className={classes.calIcon}
-                                      src="./icons/calendarIcon.svg"
-                                      alt="calendar"
-                                    />
-                                    {formatDate(row.created_at)}
-                                  </div>
-                                </TableCell>
-                                <TableCell
-                                  className={classes.lastTC}
-                                  key={row.username}
-                                >
-                                  <IconButton
-                                    data-cy="editUser"
-                                    aria-label="more"
-                                    aria-controls="long-menu"
-                                    aria-haspopup="true"
-                                    onClick={(event) => {
-                                      setCurrRow(row);
-                                      setAnchorEl(event.currentTarget);
-                                    }}
-                                    className={classes.optionBtn}
-                                  >
-                                    <MoreVertIcon />
-                                  </IconButton>
-                                  <Menu
-                                    keepMounted
-                                    open={Boolean(anchorEl)}
-                                    id="long-menu"
-                                    anchorEl={anchorEl}
-                                    onClose={handleClose}
-                                  >
-                                    <MenuItem
-                                      data-cy="editProfile"
-                                      value={index}
-                                      onClick={() => {
-                                        setEditDiv(true);
-                                        setAnchorEl(null);
-                                      }}
-                                    >
-                                      <IconButton disabled>
-                                        <img
-                                          alt="delete"
-                                          src="./icons/Edit.svg"
-                                        />
-                                      </IconButton>
-                                      {t(
-                                        'settings.userManagementTab.editProfile'
-                                      )}
-                                    </MenuItem>
-                                    {/* 
-                                    <MenuItem
-                                      value="delete"
-                                      disabled
-                                      onClick={() => {}}
-                                    >
-                                      <IconButton disabled>
-                                        <img
-                                          alt="delete"
-                                          src="./icons/bin.svg"
-                                        />
-                                      </IconButton>
-                                      <Typography>Delete User</Typography>
-                                    </MenuItem> */}
-                                  </Menu>
-                                </TableCell>
-                              </TableRow>
-                            ))
+                            .map((row) => {
+                              return (
+                                <TableData
+                                  row={row}
+                                  handleEditDiv={() => setEditDiv(true)}
+                                  handleCurrRow={(row: UserData) => {
+                                    setCurrRow(row);
+                                  }}
+                                />
+                              );
+                            })
                         ) : (
                           <TableRow>
                             <TableCell colSpan={5} align="center">

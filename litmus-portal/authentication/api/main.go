@@ -8,10 +8,14 @@ import (
 	"litmus/litmus-portal/authentication/pkg/user"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"runtime"
+	"strconv"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -59,12 +63,28 @@ func validatedAdminSetup(service user.Service) {
 			log.Fatalf("Config %s has not been set", configName)
 		}
 	}
-	adminUser := &entities.User{
-		UserName: utils.AdminName,
-		Password: utils.AdminPassword,
-		Role:     entities.RoleAdmin,
+
+	// Assigning UID to admin
+	uID := uuid.Must(uuid.NewRandom()).String()
+
+	// Generating password hash
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(utils.AdminPassword), utils.PasswordEncryptionCost)
+	if err != nil {
+		log.Println("Error generating password for admin")
 	}
-	_, err := service.CreateUser(adminUser)
+	password := string(hashedPassword)
+
+	createdAt := strconv.FormatInt(time.Now().Unix(), 10)
+
+	adminUser := entities.User{
+		ID:        uID,
+		UserName:  utils.AdminName,
+		Password:  password,
+		Role:      entities.RoleAdmin,
+		CreatedAt: &createdAt,
+	}
+
+	_, err = service.CreateUser(&adminUser)
 	if err == utils.ErrUserExists {
 		log.Println("Admin already exists in the database, not creating a new admin")
 	}

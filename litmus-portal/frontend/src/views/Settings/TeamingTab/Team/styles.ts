@@ -36,6 +36,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: 'inherit',
     margin: theme.spacing(-3),
   },
+  dark: {
+    color: theme.palette.text.disabled,
+  },
+
   table: {
     backgroundColor: theme.palette.background.paper,
     height: '25.125rem',
@@ -148,6 +152,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   avatarBackground: {
     backgroundColor: theme.palette.primary.main,
+    width: '2.56rem',
+    height: '2.56rem',
+    alignContent: 'right',
+    marginRight: theme.spacing(2.5),
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: theme.spacing(2.5),
+    },
+  },
+  tooltip: {
+    boxShadow: `0 5px 10px rgb(0 0 0 / 30%)`,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+  },
+  darkBg: {
+    backgroundColor: theme.palette.text.hint,
     width: '2.56rem',
     height: '2.56rem',
     alignContent: 'right',
