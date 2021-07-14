@@ -115,6 +115,7 @@ export interface queryMapForPanelGroup {
 }
 
 export interface ViewDashboardInput {
+  dbID?: string;
   prometheusQueries: promQueryInput[];
   queryMap: queryMapForPanelGroup[];
   dataVarMap: dataVars;

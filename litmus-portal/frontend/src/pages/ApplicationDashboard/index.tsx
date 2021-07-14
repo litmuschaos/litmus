@@ -168,6 +168,7 @@ const DashboardPage: React.FC = () => {
     error: errorFetchingDashboardQueries,
   } = useSubscription<ViewDashboard, ViewDashboardInput>(VIEW_DASHBOARD, {
     variables: {
+      dbID: selectedDashboardInformation.id,
       prometheusQueries: selectedDashboardInformation.promQueries,
       queryMap: getDashboardQueryMap(
         selectedDashboardInformation.metaData?.panel_groups ?? []
