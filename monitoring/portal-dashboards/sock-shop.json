@@ -2,8 +2,8 @@
   "dashboardID": "sock-shop",
   "name": "Sock Shop",
   "information": "This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics.",
-  "chaosEventQueryTemplate": "litmuschaos_awaited_experiments{job=\"chaos-exporter\"}",
-  "chaosVerdictQueryTemplate": "litmuschaos_experiment_verdict{job=\"chaos-exporter\"}",
+  "chaosEventQueryTemplate": "litmuschaos_awaited_experiments{job=\"chaos-exporter\", chaos_injection_time!=\"\"}",
+  "chaosVerdictQueryTemplate": "litmuschaos_experiment_verdict{job=\"chaos-exporter\", chaosresult_verdict!=\"Awaited\"}",
   "panelGroupMap": [
     {
       "groupName": "Orders Metrics",
