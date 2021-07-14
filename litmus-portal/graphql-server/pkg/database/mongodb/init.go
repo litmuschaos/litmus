@@ -2,10 +2,10 @@ package mongodb
 
 import (
 	"context"
-	"log"
 	"os"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -80,7 +80,7 @@ func (m *MongoClient) Initialize() *MongoClient {
 	)
 
 	if dbServer == "" || dbUser == "" || dbPassword == "" {
-		log.Fatal("DB configuration failed")
+		logrus.Fatal("DB configuration failed")
 	}
 
 	credential := options.Credential{
@@ -91,7 +91,7 @@ func (m *MongoClient) Initialize() *MongoClient {
 	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	ctx, _ := context.WithTimeout(backgroundContext, ConnectionTimeout)
@@ -99,9 +99,9 @@ func (m *MongoClient) Initialize() *MongoClient {
 	// Check the connection
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	} else {
-		log.Print("Connected To MONGODB")
+		logrus.Print("Connected To MongoDB")
 	}
 
 	m.Database = client.Database(dbName)
@@ -131,7 +131,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		log.Fatal("Error Creating Index for Workflow Collection: ", err)
+		logrus.Fatal("Error Creating Index for Workflow Collection: ", err)
 	}
 
 	m.WorkflowTemplateCollection = m.Database.Collection(collections[WorkflowTemplateCollection])
@@ -145,7 +145,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		log.Fatal("Error Creating Index for GitOps Collection : ", err)
+		logrus.Fatal("Error Creating Index for GitOps Collection : ", err)
 	}
 
 	m.MyHubCollection = m.Database.Collection(collections[MyHubCollection])

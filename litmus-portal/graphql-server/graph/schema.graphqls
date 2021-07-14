@@ -39,6 +39,7 @@ input ClusterInput {
   agent_scope: String!
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
+  node_selector: String
 }
 
 type ClusterEvent {

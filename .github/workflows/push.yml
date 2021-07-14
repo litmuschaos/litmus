@@ -288,7 +288,6 @@ jobs:
 
       - name: Push frontend docker image (/litmuschaos)
         env:
-          FRONTEND_IMAGE: ${FRONTEND_IMAGE}-path-litmuschaos
           IMG_TAG: ${IMG_TAG}
           PLATFORMS: ${{ secrets.PLATFORMS }}
           REPONAME: ${{ secrets.REPONAME }}
@@ -296,5 +295,6 @@ jobs:
           PUBLIC_URL: "/litmuschaos"
         run: |
           source env-vars
+          export FRONTEND_IMAGE="litmusportal-frontend-path-litmuschaos"
           timestamp=`date "+%s"`
           make push-frontend
