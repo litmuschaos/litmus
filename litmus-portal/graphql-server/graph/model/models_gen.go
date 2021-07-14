@@ -815,6 +815,7 @@ type ListDashboardResponse struct {
 	ClusterID                 string                         `json:"cluster_id"`
 	CreatedAt                 *string                        `json:"created_at"`
 	UpdatedAt                 *string                        `json:"updated_at"`
+	ViewedAt                  *string                        `json:"viewed_at"`
 }
 
 type MetricDataForPanel struct {
