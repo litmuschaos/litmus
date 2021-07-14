@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.13.5
+    app.kubernetes.io/version: v1.13.6
     app.kubernetes.io/component: operator
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl

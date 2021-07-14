@@ -166,9 +166,9 @@ const DashboardTable: React.FC = () => {
             return filter.range.startDate === 'all' ||
               (filter.range.startDate && filter.range.endDate === undefined)
               ? true
-              : parseInt(data.updated_at, 10) * 1000 >=
+              : parseInt(data.viewed_at, 10) * 1000 >=
                   new Date(moment(filter.range.startDate).format()).getTime() &&
-                  parseInt(data.updated_at, 10) * 1000 <=
+                  parseInt(data.viewed_at, 10) * 1000 <=
                     new Date(
                       new Date(moment(filter.range.endDate).format()).setHours(
                         23,
@@ -187,8 +187,8 @@ const DashboardTable: React.FC = () => {
                 : sortAlphaDesc(x, y);
             }
             if (filter.sortData.lastViewed.sort) {
-              const x = parseInt(a.updated_at, 10);
-              const y = parseInt(b.updated_at, 10);
+              const x = parseInt(a.viewed_at, 10);
+              const y = parseInt(b.viewed_at, 10);
               return filter.sortData.lastViewed.ascending
                 ? sortNumAsc(x, y)
                 : sortNumDesc(x, y);

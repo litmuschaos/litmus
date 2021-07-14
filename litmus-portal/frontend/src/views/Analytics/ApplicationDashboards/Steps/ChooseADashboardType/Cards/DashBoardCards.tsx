@@ -24,27 +24,6 @@ const DashboardCards: React.FC<DashboardCardsProps> = ({
   const { t } = useTranslation();
   const dashboard = useActions(DashboardActions);
 
-  // Function to fetch json
-
-  const fetchJson = (link: string) => {
-    fetch(link)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP status ${response.status}`);
-        }
-        response.text().then((jsonText) => {
-          dashboard.selectDashboard({
-            dashboardJSON: JSON.parse(jsonText),
-          });
-          handleClick();
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        generateAlert();
-      });
-  };
-
   const [upload, setUpload] = React.useState(false);
 
   return (
@@ -63,7 +42,10 @@ const DashboardCards: React.FC<DashboardCardsProps> = ({
                     d.dashboardTypeID !== 'custom' &&
                     d.dashboardTypeID !== 'upload'
                   ) {
-                    fetchJson(d.urlToDashboard ?? '');
+                    dashboard.selectDashboard({
+                      dashboardJSON: d.dashboardJSON,
+                    });
+                    handleClick();
                   } else if (d.dashboardTypeID === 'custom') {
                     dashboard.selectDashboard({
                       dashboardJSON: null,

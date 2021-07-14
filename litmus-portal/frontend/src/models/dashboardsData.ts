@@ -57,9 +57,7 @@ export interface DashboardData {
   typeName: string;
   urlToIcon: string;
   information: string;
-  urlToDashboard?: string;
-  chaosEventQueryTemplate?: string;
-  chaosVerdictQueryTemplate?: string;
+  dashboardJSON?: string;
   handleClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
