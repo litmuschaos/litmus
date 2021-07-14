@@ -17,6 +17,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[Intuit](https://www.intuit.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Argo Based Chaos Workflows](https://youtu.be/Uwqop-s99LA?t=720)|[Our Story](adopters/organizations/intuit.md)|
 |[Kitopi](https://www.kitopi.com/)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/kitopi.md)|
 |[Lenskart](https://www.lenskart.com/)|Chaos Engineering for better Resiliency | [Our Story](adopters/organizations/lenskart.md)|
+|[Mercedes](https://www.mercedes-benz.com/)|Resiliency validation for applications|[Our Story](adopters/organizations/mercedes.md)|
 |[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
 
 ### Cloud-Native Vendors
