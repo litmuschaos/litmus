@@ -887,10 +887,7 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 			log.Printf("Wrong parameters for the dashboard view: %v\n", viewID)
 		}
 
-		err := ops.UpdateViewedAt(dashboardID, viewID)
-		if err != nil {
-			log.Printf("error - %v\n", err)
-		}
+		ops.UpdateViewedAt(dashboardID, viewID)
 
 		close(viewChan)
 		r.Mutex.Lock()

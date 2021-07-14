@@ -220,7 +220,7 @@ func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, new
 }
 
 // UpdateViewedAt updates the viewed_at field of a dashboard based on dashboard id and it's view id
-func UpdateViewedAt(dashboardID *string, viewID string) error {
+func UpdateViewedAt(dashboardID *string, viewID string) {
 	if dashboardID != nil && *dashboardID != "" {
 		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 		query := bson.D{
@@ -231,13 +231,8 @@ func UpdateViewedAt(dashboardID *string, viewID string) error {
 		err := dbOperationsAnalytics.UpdateDashboard(query, update)
 		if err != nil {
 			log.Printf("error updating viewed_at field of the dashboard: %v\n", *dashboardID)
-			return err
 		}
-
 		log.Printf("successfully updated viewed_at field of the dashboard: %v\n", *dashboardID)
-		return nil
 	}
-
 	log.Printf("dashboard is not saved for the view: %v\n", viewID)
-	return nil
 }

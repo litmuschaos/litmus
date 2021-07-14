@@ -16,7 +16,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	analyticsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops"
+	analyticsOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -600,10 +600,8 @@ func (r *subscriptionResolver) ViewDashboard(ctx context.Context, dashboardID *s
 		<-ctx.Done()
 		log.Printf("Closed dashboard view %v\n", viewID.String())
 		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
-			err := ops.UpdateViewedAt(dashboardID, viewID.String())
-			if err != nil {
-				log.Printf("error - %v\n", err)
-			}
+			analyticsOps.UpdateViewedAt(dashboardID, viewID.String())
+
 			data_store.Store.Mutex.Lock()
 			delete(data_store.Store.DashboardData, viewID.String())
 			data_store.Store.Mutex.Unlock()
