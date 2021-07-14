@@ -230,10 +230,10 @@ func UpdateViewedAt(dashboardID *string, viewID string) error {
 		update := bson.D{{"$set", bson.D{{"viewed_at", timestamp}}}}
 		err := dbOperationsAnalytics.UpdateDashboard(query, update)
 		if err != nil {
-			log.Printf("error updating last viewed field of dashboard: %v\n", dashboardID)
+			log.Printf("error updating viewed_at field of the dashboard: %v\n", *dashboardID)
 			return err
 		} else {
-			log.Printf("successfully updated last viewed field of dashboard: %v\n", dashboardID)
+			log.Printf("successfully updated viewed_at field of the dashboard: %v\n", *dashboardID)
 			return nil
 		}
 	} else {
