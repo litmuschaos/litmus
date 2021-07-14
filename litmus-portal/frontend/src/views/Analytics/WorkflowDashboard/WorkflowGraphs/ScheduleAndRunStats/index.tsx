@@ -2,7 +2,9 @@ import { useQuery } from '@apollo/client';
 import { Paper, Tabs, useTheme } from '@material-ui/core';
 import { GraphMetric, LineAreaGraph } from 'litmus-ui';
 import React from 'react';
+import Loader from '../../../../../components/Loader';
 import { StyledTab } from '../../../../../components/Tabs';
+import Center from '../../../../../containers/layouts/Center';
 import { WORKFLOW_STATS } from '../../../../../graphql';
 import {
   Filter,
@@ -35,7 +37,7 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
     setActiveTab(actTab);
   };
 
-  const { data } = useQuery<WorkflowStatsResponse, WorkflowStatsVars>(
+  const { data, loading } = useQuery<WorkflowStatsResponse, WorkflowStatsVars>(
     WORKFLOW_STATS,
     {
       variables: {
@@ -87,21 +89,27 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
         />
       </Tabs>
       <div className={classes.graphContainer}>
-        <LineAreaGraph
-          closedSeries={closedSeriesData}
-          showLegendTable={false}
-          showPoints
-          showTips
-          showMultiToolTip
-          yLabelOffset={35}
-          xAxistimeFormat={xAxisTimeFormat(filter)}
-          margin={{
-            top: 20,
-            left: 35,
-            bottom: 30,
-            right: 20,
-          }}
-        />
+        {loading ? (
+          <Center>
+            <Loader />
+          </Center>
+        ) : (
+          <LineAreaGraph
+            closedSeries={closedSeriesData}
+            showLegendTable={false}
+            showPoints
+            showTips
+            showMultiToolTip
+            yLabelOffset={35}
+            xAxistimeFormat={xAxisTimeFormat(filter)}
+            margin={{
+              top: 20,
+              left: 35,
+              bottom: 30,
+              right: 20,
+            }}
+          />
+        )}
       </div>
     </Paper>
   );

@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import {
   FormControl,
   InputLabel,
@@ -13,10 +13,12 @@ import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Center from '../../containers/layouts/Center';
 import Wrapper from '../../containers/layouts/Wrapper';
-import { GET_HEATMAP_DATA, WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
+import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
 import {
   HeatmapDataResponse,
   HeatmapDataVars,
+  Workflow,
+  WorkflowDataVars,
 } from '../../models/graphql/workflowData';
 import {
   ListWorkflowsInput,
@@ -44,7 +46,7 @@ const TestCalendarHeatmapTooltip = ({
 };
 
 interface URLParams {
-  workflowRunId: string;
+  workflowId: string;
 }
 
 const valueThreshold = [13, 26, 39, 49, 59, 69, 79, 89, 100];
@@ -53,26 +55,43 @@ const WorkflowInfoStats: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
 
-  // TODO: This is actually workflowID NOT run ID, fix in app.tsx
-  const { workflowRunId }: URLParams = useParams();
+  const { workflowId }: URLParams = useParams();
 
   // Apollo query to get the scheduled workflow data
   const { data } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
     WORKFLOW_LIST_DETAILS,
     {
       variables: {
-        workflowInput: { project_id: projectID, workflow_ids: [workflowRunId] },
+        workflowInput: { project_id: projectID, workflow_ids: [workflowId] },
       },
       fetchPolicy: 'cache-and-network',
     }
   );
 
-  let workflowRunID = '';
+  const { data: workflowRunData } = useQuery<Workflow, WorkflowDataVars>(
+    gql`
+      query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+        getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+          total_no_of_workflow_runs
+          workflow_runs {
+            workflow_run_id
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+          workflow_ids: [workflowId],
+        },
+      },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
 
-  if (data?.ListWorkflow.workflows[0].workflow_runs) {
-    workflowRunID =
-      data?.ListWorkflow?.workflows[0].workflow_runs[0].workflow_run_id;
-  }
+  const workflowRunID =
+    workflowRunData?.getWorkflowRuns.workflow_runs[0].workflow_run_id ?? '';
 
   const presentYear = new Date().getFullYear();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -91,21 +110,44 @@ const WorkflowInfoStats: React.FC = () => {
   const { data: heatmapData, loading } = useQuery<
     HeatmapDataResponse,
     HeatmapDataVars
-  >(GET_HEATMAP_DATA, {
-    variables: {
-      project_id: projectID,
-      workflow_id: workflowRunId,
-      year,
-    },
-    fetchPolicy: 'cache-and-network',
-  });
+  >(
+    gql`
+      query getHeatmapData(
+        $project_id: String!
+        $workflow_id: String!
+        $year: Int!
+      ) {
+        getHeatmapData(
+          project_id: $project_id
+          workflow_id: $workflow_id
+          year: $year
+        ) {
+          bins {
+            value
+            workflowRunDetail {
+              no_of_runs
+              date_stamp
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        project_id: projectID,
+        workflow_id: workflowId,
+        year,
+      },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
 
   const yearArray = [presentYear, presentYear - 1, presentYear - 2];
 
   const [showStackBar, setShowStackBar] = useState<boolean>(false);
   const [dataCheck, setDataCheck] = useState<boolean>(false);
 
-  const [workflowRunDate, setworkflowRunDate] = useState<number>(0);
+  const [workflowRunDate, setWorkflowRunDate] = useState<number>(0);
 
   return (
     <Wrapper>
@@ -127,13 +169,20 @@ const WorkflowInfoStats: React.FC = () => {
       </div>
 
       {/* Information and stats */}
-      {data && <InfoSection data={data} />}
+      {data && workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs && (
+        <InfoSection
+          data={data}
+          workflowRunLength={
+            workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
+          }
+        />
+      )}
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
       {data?.ListWorkflow.workflows[0].cronSyntax !== '' ||
-      (data?.ListWorkflow.workflows[0].workflow_runs?.length &&
-        data?.ListWorkflow.workflows[0].workflow_runs?.length > 1) ? (
+      (workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs &&
+        workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs > 1) ? (
         <div className={classes.heatmapArea}>
           <div className={classes.heatmapAreaHeading}>
             <Typography className={classes.sectionHeading}>
@@ -145,7 +194,7 @@ const WorkflowInfoStats: React.FC = () => {
             <div className={classes.formControlParent}>
               <Typography>
                 Total runs till date:{' '}
-                {data?.ListWorkflow.workflows[0].workflow_runs?.length}
+                {workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs}
               </Typography>
               <FormControl
                 className={classes.formControl}
@@ -159,7 +208,7 @@ const WorkflowInfoStats: React.FC = () => {
                     setYear(event.target.value as number);
                     setDataCheck(false);
                     setShowStackBar(false);
-                    setworkflowRunDate(0);
+                    setWorkflowRunDate(0);
                     handleTableClose();
                   }}
                 >
@@ -188,7 +237,7 @@ const WorkflowInfoStats: React.FC = () => {
                       } else {
                         setShowStackBar(true);
                         handleTableClose();
-                        setworkflowRunDate(
+                        setWorkflowRunDate(
                           bin.bin.workflowRunDetail.date_stamp
                         );
                       }
@@ -196,7 +245,7 @@ const WorkflowInfoStats: React.FC = () => {
                       setShowStackBar(false);
                       setDataCheck(false);
                       handleTableClose();
-                      setworkflowRunDate(0);
+                      setWorkflowRunDate(0);
                     }
                   }}
                 />
@@ -215,7 +264,7 @@ const WorkflowInfoStats: React.FC = () => {
           </div>
           {showStackBar && (
             <StackedBarGraph
-              workflowID={workflowRunId}
+              workflowID={workflowId}
               date={workflowRunDate}
               handleTableOpen={handleTableOpen}
               handleTableClose={handleTableClose}
@@ -232,7 +281,7 @@ const WorkflowInfoStats: React.FC = () => {
         </div>
       ) : (
         <WorkflowRunTable
-          workflowId={workflowRunId}
+          workflowId={workflowId}
           workflowRunId={workflowRunID}
         />
       )}

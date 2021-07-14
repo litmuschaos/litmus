@@ -46,10 +46,16 @@ export interface ExecutionData {
   nodes: Nodes;
 }
 
+export interface WeightageMap {
+  experiment_name: string;
+  weightage: number;
+}
+
 export interface WorkflowRun {
   workflow_run_id: string;
   workflow_id: string;
   cluster_name: string;
+  weightages: WeightageMap[];
   last_updated: string;
   project_id: string;
   cluster_id: string;

@@ -52,6 +52,10 @@ export const WORKFLOW_RUN_DETAILS = gql`
     getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
       total_no_of_workflow_runs
       workflow_runs {
+        weightages {
+          experiment_name
+          weightage
+        }
         workflow_id
         workflow_name
         workflow_run_id
@@ -122,11 +126,6 @@ export const WORKFLOW_LIST_DETAILS = gql`
         cluster_id
         cluster_type
         isRemoved
-        workflow_runs {
-          execution_data
-          workflow_run_id
-          last_updated
-        }
       }
     }
   }
@@ -686,27 +685,6 @@ export const GET_IMAGE_REGISTRY = gql`
   }
 `;
 
-export const GET_HEATMAP_DATA = gql`
-  query getHeatmapData(
-    $project_id: String!
-    $workflow_id: String!
-    $year: Int!
-  ) {
-    getHeatmapData(
-      project_id: $project_id
-      workflow_id: $workflow_id
-      year: $year
-    ) {
-      bins {
-        value
-        workflowRunDetail {
-          no_of_runs
-          date_stamp
-        }
-      }
-    }
-  }
-`;
 export const GET_GLOBAL_STATS = gql`
   query getGlobalStats($query: UsageQuery!) {
     UsageQuery(query: $query) {

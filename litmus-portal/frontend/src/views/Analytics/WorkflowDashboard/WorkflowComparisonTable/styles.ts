@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
   tableMain: {
     marginTop: theme.spacing(4.25),
     backgroundColor: theme.palette.background.paper,
-    maxHeight: '30.15rem',
+    minHeight: '30.15rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
