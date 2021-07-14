@@ -107,7 +107,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     community
       ? {
           src: './icons/docs.svg',
-          alt: 'docs',
+          alt: 'api-docs',
           onClick: () => window.open('/api-docs/index.html'),
           text: t('quickActionCard.readAPIDocs'),
         }
