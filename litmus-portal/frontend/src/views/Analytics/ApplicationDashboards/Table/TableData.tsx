@@ -242,7 +242,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           style={{ maxWidth: '13.5rem' }}
         >
           <img src="./icons/calendarIcon.svg" alt="Calender" />
-          {formatDate(data.updated_at)}
+          {formatDate(data.viewed_at)}
         </Typography>
       </StyledTableCell>
 

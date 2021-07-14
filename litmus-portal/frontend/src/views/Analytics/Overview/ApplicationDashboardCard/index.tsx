@@ -93,20 +93,22 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
 
     const applicationMetadataMap: ApplicationMetadata[] = [];
 
-    data.application_metadata_map.forEach((applicationMetadata) => {
-      const applications: Resource[] = [];
+    if (data.application_metadata_map) {
+      data.application_metadata_map.forEach((applicationMetadata) => {
+        const applications: Resource[] = [];
 
-      applicationMetadata.applications.forEach((application) => {
-        applications.push({
-          kind: application.kind,
-          names: application.names,
+        applicationMetadata.applications.forEach((application) => {
+          applications.push({
+            kind: application.kind,
+            names: application.names,
+          });
+        });
+        applicationMetadataMap.push({
+          namespace: applicationMetadata.namespace,
+          applications,
         });
       });
-      applicationMetadataMap.push({
-        namespace: applicationMetadata.namespace,
-        applications,
-      });
-    });
+    }
 
     const exportedDashboard: DashboardExport = {
       dashboardID: data.db_type_id,
@@ -158,7 +160,7 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
             </div>
           </div>
           <Typography className={`${classes.noWrapProvider} ${classes.hint}`}>
-            {timeDifferenceForDate(data.updated_at)}
+            {timeDifferenceForDate(data.viewed_at)}
           </Typography>
           <section className={classes.cardActionsSection}>
             <div className={classes.cardActions}>

@@ -412,7 +412,7 @@ analyticsDashboard:
           creating: Creating
       errors:
         step1:
-          message: Error loading dashboard
+          message: Error loading dashboard(s)
           messageViewer: You cannot create a dashboard as a Viewer
         step2:
           messageViewer: You cannot configure a dashboard as a Viewer
