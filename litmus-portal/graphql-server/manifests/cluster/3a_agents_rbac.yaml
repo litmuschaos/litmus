@@ -158,7 +158,7 @@ metadata:
 rules:
   # for managing the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: ['']
-    resources: ['pods', 'services']
+    resources: ['pods', 'services', 'namespaces']
     verbs: ['create', 'get', 'watch', 'patch', 'delete', 'list']
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
@@ -168,8 +168,8 @@ rules:
 
   # for creation & deletion of application in predefined workflows
   - apiGroups: ['apps']
-    resources: ['deployments']
-    verbs: ['get', 'watch', 'create', 'delete']
+    resources: ['deployments', 'statefulsets']
+    verbs: ['get', 'watch', 'patch' , 'create', 'delete']
     
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: ['litmuschaos.io']
