@@ -16,12 +16,12 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	analyticsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/handler"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbOperationsAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
@@ -600,17 +600,9 @@ func (r *subscriptionResolver) ViewDashboard(ctx context.Context, dashboardID *s
 		<-ctx.Done()
 		log.Printf("Closed dashboard view %v\n", viewID.String())
 		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
-			if dashboardID != nil && *dashboardID != "" {
-				timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-				query := bson.D{
-					{"db_id", dashboardID},
-					{"is_removed", false},
-				}
-				update := bson.D{{"$set", bson.D{{"viewed_at", timestamp}}}}
-				err := dbOperationsAnalytics.UpdateDashboard(query, update)
-				if err != nil {
-					log.Printf("error updating last viewed field of dashboard: %v - %v \n", dashboardID, err)
-				}
+			err := ops.UpdateViewedAt(dashboardID, viewID.String())
+			if err != nil {
+				log.Printf("error - %v\n", err)
 			}
 			data_store.Store.Mutex.Lock()
 			delete(data_store.Store.DashboardData, viewID.String())
