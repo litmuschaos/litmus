@@ -1430,11 +1430,11 @@ usage:
     agentClusterScope: cluster scope
     agentNamespaceScope: namespace scope
     workflowScheduleHeader: Workflow Schedules
-    workflowScheduleSubtitle: Total number of chaos workflows scheduled in this month.
+    workflowScheduleSubtitle: Total number of scheduled workflows.
     workflowRunHeader: Workflow Runs
-    workflowRunSubtitle: Number of workflows ran this month.
+    workflowRunSubtitle: Total number of workflow runs.
     experimentRunHeader: Experiments Runs
-    experimentRunSubtitle: Total number of chaos experiments ran this month.
+    experimentRunSubtitle: Total number of chaos experiment runs.
   table:
     project: Projects
     owner: Project Owner
