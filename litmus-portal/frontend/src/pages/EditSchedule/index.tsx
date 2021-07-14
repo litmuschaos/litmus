@@ -4,7 +4,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -12,9 +12,8 @@ import YAML from 'yaml';
 import AdjustedWeights from '../../components/AdjustedWeights';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
-import YamlEditor from '../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../components/YamlEditor/Validations';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
 import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
 import {
@@ -36,6 +35,8 @@ import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { fetchWorkflowNameFromManifest } from '../../utils/yamlUtils';
 import { useStyles } from './styles';
+
+const YamlEditor = lazy(() => import('../../components/YamlEditor/Editor'));
 
 interface URLParams {
   workflowName: string;
@@ -243,7 +244,7 @@ const EditSchedule: React.FC = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       {loading || !manifest ? (
         <Loader />
       ) : (
@@ -260,7 +261,7 @@ const EditSchedule: React.FC = () => {
                     <div className={classes.flex}>
                       <img
                         style={{ width: '2rem' }}
-                        src="/icons/terminal.svg"
+                        src="./icons/terminal.svg"
                         alt="Terminal Icon"
                       />
                       <Typography className={classes.name}>
@@ -484,7 +485,7 @@ const EditSchedule: React.FC = () => {
               }
             >
               <div className={classes.modal}>
-                <img src="/icons/finish.svg" alt="mark" />
+                <img src="./icons/finish.svg" alt="mark" />
                 <div className={classes.heading}>
                   {t('editSchedule.theSchedule')}
                   <br />
@@ -526,7 +527,7 @@ const EditSchedule: React.FC = () => {
               }
             >
               <div className={classes.modal}>
-                <img src="/icons/red-cross.svg" alt="mark" />
+                <img src="./icons/red-cross.svg" alt="mark" />
                 <div className={classes.heading}>
                   <strong>{t('workflowStepper.workflowFailed')}</strong>
                 </div>
@@ -550,7 +551,7 @@ const EditSchedule: React.FC = () => {
           </div>
         </>
       )}
-    </Scaffold>
+    </Wrapper>
   );
 };
 

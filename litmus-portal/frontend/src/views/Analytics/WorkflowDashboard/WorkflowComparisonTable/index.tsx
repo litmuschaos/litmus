@@ -499,7 +499,7 @@ const WorkflowComparisonTable = () => {
         );
         doc.text(totalValidWorkflowRunsCount.toString(), 105, 25);
         const img = new Image();
-        img.src = '/icons/LitmusLogo.png';
+        img.src = './icons/LitmusLogo.png';
         doc.addImage(img, 'png', 165, 10, 30, 12.5);
         doc.line(0, 33, 300, 33);
         doc.setLineWidth(5.0);

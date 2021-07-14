@@ -495,7 +495,7 @@ const GitOpsTab = () => {
                     ) : null}
                   </div>
                   <img
-                    src="/icons/gitops-image.svg"
+                    src="./icons/gitops-image.svg"
                     alt="Gitops"
                     style={{ marginLeft: 'auto', paddingLeft: 20 }}
                   />
@@ -516,7 +516,7 @@ const GitOpsTab = () => {
                 {gitopsResult.type === 'fail' ? (
                   <div>
                     <img
-                      src="/icons/red-cross.svg"
+                      src="./icons/red-cross.svg"
                       alt="checkmark"
                       className={classes.checkImg}
                     />
@@ -532,7 +532,7 @@ const GitOpsTab = () => {
                   {gitopsResult.type === 'success' ? (
                     <>
                       <img
-                        src="/icons/checkmark.svg"
+                        src="./icons/checkmark.svg"
                         alt="checkmark"
                         className={classes.checkImg}
                       />

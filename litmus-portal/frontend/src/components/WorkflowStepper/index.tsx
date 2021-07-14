@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import localforage from 'localforage';
-import React, { useEffect, useRef } from 'react';
+import React, { lazy, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Row from '../../containers/layouts/Row';
@@ -12,16 +12,38 @@ import useActions from '../../redux/actions';
 import * as AlertActions from '../../redux/actions/alert';
 import { RootState } from '../../redux/reducers';
 import { getProjectRole } from '../../utils/getSearchParams';
-import ChooseAWorkflowAgent from '../../views/CreateWorkflow/ChooseAWorkflowAgent';
-import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
-import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
-import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
-import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
-import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
-import WorkflowSettings from '../../views/CreateWorkflow/WorkflowSettings';
 import { LitmusStepper } from '../LitmusStepper';
 import Loader from '../Loader';
 import useStyles from './styles';
+import { SuspenseLoader } from '../SuspenseLoader';
+
+const ChooseAWorkflowAgent = lazy(
+  () => import('../../views/CreateWorkflow/ChooseAWorkflowAgent')
+);
+
+const ChooseWorkflow = lazy(
+  () => import('../../views/CreateWorkflow/ChooseWorkflow/index')
+);
+
+const ReliablityScore = lazy(
+  () => import('../../views/CreateWorkflow/ReliabilityScore')
+);
+
+const ScheduleWorkflow = lazy(
+  () => import('../../views/CreateWorkflow/ScheduleWorkflow')
+);
+
+const TuneWorkflow = lazy(
+  () => import('../../views/CreateWorkflow/TuneWorkflow/index')
+);
+
+const VerifyCommit = lazy(
+  () => import('../../views/CreateWorkflow/VerifyCommit')
+);
+
+const WorkflowSettings = lazy(
+  () => import('../../views/CreateWorkflow/WorkflowSettings')
+);
 
 interface ControlButtonProps {
   position: string;
@@ -258,7 +280,9 @@ const WorkflowStepper = () => {
         handleNext={() => handleNext()}
         finishAction={() => {}}
       >
-        {getStepContent(activeStep, childRef)}
+        <SuspenseLoader style={{ height: '50vh' }}>
+          {getStepContent(activeStep, childRef)}
+        </SuspenseLoader>
       </LitmusStepper>
     </div>
   );

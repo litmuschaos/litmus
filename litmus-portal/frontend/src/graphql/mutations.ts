@@ -271,8 +271,14 @@ export const CREATE_DASHBOARD = gql`
 `;
 
 export const UPDATE_DASHBOARD = gql`
-  mutation updateDashboard($updateDBInput: updateDBInput) {
-    updateDashboard(dashboard: $updateDBInput)
+  mutation updateDashboard(
+    $updateDBInput: updateDBInput!
+    $chaosQueryUpdate: Boolean!
+  ) {
+    updateDashboard(
+      dashboard: $updateDBInput
+      chaosQueryUpdate: $chaosQueryUpdate
+    )
   }
 `;
 
@@ -301,6 +307,7 @@ export const ADD_IMAGE_REGISTRY = gql`
         image_repo_name
         image_registry_name
         image_registry_type
+        is_default
       }
     }
   }
@@ -321,6 +328,7 @@ export const UPDATE_IMAGE_REGISTRY = gql`
         image_repo_name
         image_registry_name
         image_registry_type
+        is_default
       }
     }
   }

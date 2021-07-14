@@ -148,7 +148,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                 radialData={progressGraphData}
                 semiCircle
                 unit="%"
-                imageSrc="/icons/resilienceGraph.svg"
+                imageSrc="./icons/resilienceGraph.svg"
                 imageAlt="Resiliency Graph"
                 iconSize="2rem"
                 iconTop="3.5rem"

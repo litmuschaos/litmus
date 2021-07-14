@@ -2,7 +2,7 @@ import { Tooltip, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import { history } from '../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import BrowseCluster from '../../views/Targets/BrowseCluster';
@@ -22,7 +22,7 @@ const Targets: React.FC = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       <section className="Header section">
         <div className={classes.header}>
           <Typography variant="h3">{t('targets.connectHome.head')}</Typography>
@@ -48,7 +48,7 @@ const Targets: React.FC = () => {
         </div>
       </section>
       <BrowseCluster />
-    </Scaffold>
+    </Wrapper>
   );
 };
 export default Targets;

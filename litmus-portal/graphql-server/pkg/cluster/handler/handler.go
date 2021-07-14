@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -30,6 +31,21 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		return &model.ClusterRegResponse{}, err
 	}
 
+	if input.NodeSelector != nil {
+		selectors := strings.Split(*input.NodeSelector, ",")
+
+		for _, el := range selectors {
+			kv := strings.Split(el, "=")
+			if len(kv) != 2 {
+				return nil, errors.New("nodeselector environment variable is not correct. Correct format: \"key1=value2,key2=value2\"")
+			}
+
+			if strings.Contains(kv[0], "\"") || strings.Contains(kv[1], "\"") {
+				return nil, errors.New("nodeselector environment variable contains escape character(s). Correct format: \"key1=value2,key2=value2\"")
+			}
+		}
+	}
+
 	newCluster := dbSchemaCluster.Cluster{
 		ClusterID:      clusterID,
 		ClusterName:    input.ClusterName,
@@ -47,6 +63,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		UpdatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		Token:          token,
 		IsRemoved:      false,
+		NodeSelector:   input.NodeSelector,
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
@@ -54,7 +71,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		return &model.ClusterRegResponse{}, err
 	}
 
-	log.Print("NEW CLUSTER REGISTERED : ID-", clusterID, " PID-", input.ProjectID)
+	logrus.Print("New Agent Registered with ID: ", clusterID, " PROJECT_ID: ", input.ProjectID)
 
 	return &model.ClusterRegResponse{
 		ClusterID:   newCluster.ClusterID,

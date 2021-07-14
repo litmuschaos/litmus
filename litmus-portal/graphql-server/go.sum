@@ -643,13 +643,7 @@ github.com/litmuschaos/chaos-operator v0.0.0-20210224131102-ca6a465ed348/go.mod 
 github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032 h1:Nza94oOqOsao8eFWC19iFviS8XsxS2eVk7Q0a9WDKBE=
 github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032/go.mod h1:7EO6kbZKeJGKzkchgQepCxywvqNFNvNHW0G+u9923AY=
 github.com/litmuschaos/elves v0.0.0-20201107015738-552d74669e3c/go.mod h1:DsbHGNUq/78NZozWVVI9Q6eBei4I+JjlkkD5aibJ3MQ=
-github.com/litmuschaos/litmus v0.0.0-20210625165851-bbf66174de82 h1:xQLoccOKCX4WCPxwEbYd47hq05NmrGZVE8OX+WCRTeQ=
-github.com/litmuschaos/litmus v0.0.0-20210628113034-48d3f9ce7a8a h1:jTiEhTd2JDxE+chaZD16LHiSmwLUAhQNVlvXqzKfHY4=
-github.com/litmuschaos/litmus v0.0.0-20210629090039-c52ae1dd1a59 h1:GWS8zZhtvNdkErjFBf+DOwCFWyxrA+PtD6d/Phpr7Bc=
-github.com/litmuschaos/litmus v0.0.0-20210701050610-ea493016c718 h1:S3y2G2bS+LGBOssMCIx0AhlU3NT4b9VEAnW82GyW1Wo=
-github.com/litmuschaos/litmus v0.0.0-20210701090803-5bc389617186 h1:64ieMA5FaRBiTQPgvV3CF1F0otSu2PWVzYjonLNLHbQ=
-github.com/litmuschaos/litmus v0.0.0-20210702160150-411ccb5d572a h1:1o6+JzP0K2o68iH748VPQBhHr9VC1/IK2fHCoHz3df0=
-github.com/litmuschaos/litmus v0.0.0-20210706183827-95d545c53e75 h1:5PhAs3UCNdQFRzLLo02CgxRvcEx2df1Ejk3hBGw7Jhg=
+github.com/litmuschaos/litmus v0.0.0-20210714074945-7ccebbb8b190 h1:QnoAGVWAymQsXMDGq+2VfJ+pF2sePcGTaG//YEKgNaE=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=
 github.com/lucas-clemente/aes12 v0.0.0-20171027163421-cd47fb39b79f/go.mod h1:JpH9J1c9oX6otFSgdUHwUBUizmKlrMjxWnIAjff4m04=

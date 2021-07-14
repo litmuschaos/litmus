@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
 import { OutlinedInputProps, TextField } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import React, { useState } from 'react';
 import { useStyles, useStylesLitmus } from './styles';
 
 interface InputFieldOutlineProps {
@@ -246,7 +246,7 @@ const InputFieldOutline: React.FC<InputFieldOutlineProps> = ({
               disableUnderline: true,
               endAdornment: (
                 <InputAdornment position="end">
-                  <img src="/icons/closeFilled.svg" alt="Error" />
+                  <img src="./icons/closeFilled.svg" alt="Error" />
                 </InputAdornment>
               ),
             } as Partial<OutlinedInputProps>
@@ -309,7 +309,7 @@ const InputFieldOutline: React.FC<InputFieldOutlineProps> = ({
               ),
               endAdornment: (
                 <InputAdornment position="end">
-                  <img src="/icons/closeFilled.svg" alt="Error" />
+                  <img src="./icons/closeFilled.svg" alt="Error" />
                 </InputAdornment>
               ),
             } as Partial<OutlinedInputProps>

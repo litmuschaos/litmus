@@ -1,12 +1,12 @@
 import React from 'react';
 import WorkflowStepper from '../../components/WorkflowStepper';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 
 const CreateWorkflow = () => {
   return (
-    <Scaffold>
+    <Wrapper>
       <WorkflowStepper />
-    </Scaffold>
+    </Wrapper>
   );
 };
 

@@ -31,6 +31,7 @@ spec:
         name: chaos-operator
     spec:
       serviceAccountName: litmus-cluster-scope
+      #{nodeselector}
       containers:
         - name: chaos-operator
           image: #{LITMUS-CHAOS-OPERATOR}
@@ -66,6 +67,7 @@ spec:
       labels:
         app: chaos-exporter
     spec:
+      #{nodeselector}
       containers:
         - image: #{LITMUS-CHAOS-EXPORTER}
           imagePullPolicy: Always

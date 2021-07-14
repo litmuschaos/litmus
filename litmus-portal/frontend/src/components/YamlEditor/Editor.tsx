@@ -15,10 +15,7 @@ import SelectAllTwoToneIcon from '@material-ui/icons/SelectAllTwoTone';
 import UndoTwoToneIcon from '@material-ui/icons/UndoTwoTone';
 import UnfoldLessTwoToneIcon from '@material-ui/icons/UnfoldLessTwoTone';
 import UnfoldMoreTwoToneIcon from '@material-ui/icons/UnfoldMoreTwoTone';
-import React, { useEffect, useState } from 'react';
 import AceEditor from 'react-ace';
-import useStyles from './styles';
-import { AceValidations, parseYamlValidations } from './Validations';
 import 'ace-builds/src-min-noconflict/ext-beautify';
 import 'ace-builds/src-min-noconflict/ext-code_lens';
 import 'ace-builds/src-min-noconflict/ext-elastic_tabstops_lite';
@@ -41,6 +38,9 @@ import 'ace-builds/src-min-noconflict/ext-themelist';
 import 'ace-builds/src-min-noconflict/ext-whitespace';
 import 'brace/mode/yaml';
 import 'brace/theme/solarized_dark';
+import React, { useEffect, useState } from 'react';
+import useStyles from './styles';
+import { AceValidations, parseYamlValidations } from './Validations';
 
 interface YamlEditorProps {
   content: string;
@@ -96,8 +96,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       const nodeStyleErrorList =
         document.getElementsByClassName('ace_gutter-cell');
       for (let i = 0; i < nodeStyleErrorList.length; i += 1) {
-        (nodeStyleErrorList[i] as any).style.backgroundColor =
-          palette.common.black;
+        (nodeStyleErrorList[i] as any).style.backgroundColor = 'rgb(1, 49, 63)';
         (nodeStyleErrorList[i] as any).style.color =
           palette.secondary.contrastText;
       }

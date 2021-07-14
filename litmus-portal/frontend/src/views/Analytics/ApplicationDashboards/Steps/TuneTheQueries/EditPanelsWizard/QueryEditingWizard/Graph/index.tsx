@@ -5,14 +5,14 @@ import React, { useEffect, useState } from 'react';
 import { PROM_QUERY } from '../../../../../../../../graphql';
 import {
   PanelDetails,
-  ParsedPrometheusData,
+  ParsedMetricPrometheusData,
 } from '../../../../../../../../models/dashboardsData';
 import {
   PrometheusQueryVars,
   PrometheusResponse,
   promInput,
 } from '../../../../../../../../models/graphql/prometheus';
-import { DataParserForPrometheus } from '../../../../../../../../utils/promUtils';
+import { MetricDataParserForPrometheus } from '../../../../../../../../utils/promUtils';
 import useStyles from './styles';
 
 interface GraphProps {
@@ -26,10 +26,9 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
   const lineGraph: string[] = palette.graph.line;
   const areaGraph: string[] = palette.graph.area;
   const [firstLoad, setFirstLoad] = useState<boolean>(true);
-  const [graphData, setGraphData] = React.useState<ParsedPrometheusData>({
+  const [graphData, setGraphData] = React.useState<ParsedMetricPrometheusData>({
     seriesData: [],
     closedAreaData: [],
-    chaosData: [],
   });
 
   const [getGraphData] = useLazyQuery<PrometheusResponse, PrometheusQueryVars>(
@@ -41,14 +40,15 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
       fetchPolicy: 'no-cache',
       onCompleted: (prometheusData) => {
         if (prometheusData) {
-          const parsedData: ParsedPrometheusData = DataParserForPrometheus(
-            prometheusData,
-            lineGraph,
-            areaGraph,
-            panelVars.prom_queries
-              .filter((query) => query.close_area)
-              .map((query) => query.queryid)
-          );
+          const parsedData: ParsedMetricPrometheusData =
+            MetricDataParserForPrometheus(
+              prometheusData.GetPromQuery.metricsResponse ?? [],
+              lineGraph,
+              areaGraph,
+              panelVars.prom_queries
+                .filter((query) => query.close_area)
+                .map((query) => query.queryid)
+            );
           setGraphData(parsedData);
         }
       },
@@ -75,11 +75,11 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
         showGrid={panelVars.panel_options.grids}
         showPoints={panelVars.panel_options.points}
         showLegendTable
-        showTips={false}
+        showTips
         unit={panelVars.unit}
         yLabel={panelVars.y_axis_left}
         yLabelOffset={55}
-        margin={{ left: 80, right: 20, top: 20, bottom: 10 }}
+        margin={{ left: 80, right: 20, top: 20, bottom: 30 }}
       />
     </div>
   );

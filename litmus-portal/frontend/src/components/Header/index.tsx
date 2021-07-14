@@ -5,7 +5,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import Breadcrumb from '../BreadCrumbs';
 import ProfileDropdown from './ProfileDropDown';
 import ProjectDropdown from './ProjectDropDown';
 import useStyles from './styles';
@@ -33,7 +32,7 @@ const Header: React.FC = () => {
           >
             <div className={classes.litmusDiv}>
               <img
-                src="/icons/litmusPurple.svg"
+                src="./icons/litmusPurple.svg"
                 alt="litmus logo"
                 className={classes.logo}
               />
@@ -42,9 +41,10 @@ const Header: React.FC = () => {
               </Typography>
             </div>
           </Link>
-          <Breadcrumb />
-          <ProjectDropdown />
-          <ProfileDropdown />
+          <div className={classes.details}>
+            <ProjectDropdown />
+            <ProfileDropdown />
+          </div>
         </Toolbar>
       </AppBar>
     </div>

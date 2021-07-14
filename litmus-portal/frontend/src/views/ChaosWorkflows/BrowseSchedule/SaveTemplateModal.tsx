@@ -4,7 +4,6 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import YAML from 'yaml';
 import { Alert } from '@material-ui/lab';
 import { useTranslation } from 'react-i18next';
 import YamlEditor from '../../../components/YamlEditor/Editor';
@@ -49,7 +48,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
     {
       variables: {
         data: {
-          manifest: YAML.stringify(editManifest),
+          manifest: editManifest,
           template_name: templateName,
           template_description: templateDesc,
           project_id: getProjectID(),

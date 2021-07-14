@@ -1,5 +1,5 @@
-import { Modal, ButtonOutlined, ButtonFilled, InputField } from 'litmus-ui';
-import { MenuItem, Select, InputLabel } from '@material-ui/core';
+import { ButtonOutlined, ButtonFilled, InputField } from 'litmus-ui';
+import { MenuItem, Select, InputLabel, Drawer } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import useStyles from './styles';
@@ -99,7 +99,8 @@ const AddProbe: React.FC<AddProbeProps> = ({
     setProbeType('httpProbe/inputs');
   };
 
-  const handleAddProbe = () => {
+  const handleAddProbe = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const properties = runProperties;
     if (Number.isNaN(parseInt(properties.initialDelaySeconds as string, 10))) {
       delete properties.initialDelaySeconds;
@@ -115,39 +116,38 @@ const AddProbe: React.FC<AddProbeProps> = ({
     });
     setAllProbes(allProbes);
     addProbe(allProbes);
+    clearData();
   };
 
   return (
-    <Modal
+    <Drawer
+      className={classes.drawer}
+      anchor="right"
       open={open}
-      onClose={() => {
-        clearData();
-        handleClose();
+      classes={{
+        paper: classes.drawerPaper,
       }}
-      width="60%"
-      className={classes.modal}
-      aria-labelledby="simple-modal-title"
-      aria-describedby="simple-modal-description"
-      modalActions={
-        <ButtonOutlined
-          className={classes.closeButton}
-          onClick={() => {
-            clearData();
-            handleClose();
-          }}
-        >
-          &#x2715;
-        </ButtonOutlined>
-      }
+      ModalProps={{
+        keepMounted: true,
+      }}
     >
       <div className={classes.modal}>
-        <form onSubmit={handleAddProbe} className={classes.form}>
+        <form onSubmit={handleAddProbe} className={classes.form} action="#">
           <div className={classes.heading}>
             {t('createWorkflow.tuneWorkflow.addProbe.heading')}
             <strong>
               {' '}
               {t('createWorkflow.tuneWorkflow.addProbe.headingStrong')}
             </strong>
+            <ButtonOutlined
+              className={classes.closeButton}
+              onClick={() => {
+                clearData();
+                handleClose();
+              }}
+            >
+              &#x2715;
+            </ButtonOutlined>
           </div>
           <div className={classes.formField}>
             <InputLabel htmlFor="name" className={classes.formLabel}>
@@ -158,6 +158,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
               name="name"
               type="text"
               required
+              width="70%"
               value={probeData.name}
               helperText={
                 validateProbeName(allProbes, probeData.name)
@@ -307,14 +308,14 @@ const AddProbe: React.FC<AddProbeProps> = ({
               />
             </div>
           </div>
-          <div className={classes.formField}>
+          <div className={classes.delayField}>
             <InputLabel className={classes.formLabel} htmlFor="initial-delay">
               {t('createWorkflow.tuneWorkflow.addProbe.labels.initialDelay')}
               (sec)
             </InputLabel>
             <InputField
               variant="primary"
-              width="70%"
+              width="50%"
               id="initial-delay"
               name="initialDelaySeconds"
               type="number"
@@ -327,7 +328,10 @@ const AddProbe: React.FC<AddProbeProps> = ({
             {t('createWorkflow.tuneWorkflow.addProbe.labels.probeDetails')}
           </div>
 
-          <ProbeDetails setProbeData={setProbeData} probeData={probeData} />
+          <ProbeDetails
+            setProbeData={(probes) => setProbeData(probes)}
+            probeData={probeData}
+          />
 
           <div className={classes.buttonDiv}>
             <ButtonOutlined
@@ -350,7 +354,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           </div>
         </form>
       </div>
-    </Modal>
+    </Drawer>
   );
 };
 

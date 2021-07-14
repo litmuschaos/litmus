@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
   headerSection: {
     width: '100%',
     display: 'flex',
-    flexDirection: 'row',
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -33,6 +32,10 @@ const useStyles = makeStyles((theme) => ({
 
   search: {
     marginLeft: theme.spacing(6),
+  },
+
+  flexDisplay: {
+    display: 'flex',
   },
 
   tableMain: {
@@ -104,14 +107,13 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(4),
   },
 
+  dataSourceNameCol: {
+    minWidth: '10rem',
+  },
+
   headSpacing: {
     minWidth: '5rem',
     paddingLeft: theme.spacing(2),
-  },
-
-  nameContent: {
-    display: 'flex',
-    flexDirection: 'row',
   },
 
   nameContentIcons: {
@@ -149,7 +151,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '9rem',
     border: `0.1px solid ${theme.palette.border.main}`,
     borderRadius: '0.25rem',
-    marginRight: theme.spacing(1.5),
+    marginRight: theme.spacing(3),
     textTransform: 'none',
     '&:hover': {
       borderColor: theme.palette.highlight,
@@ -170,18 +172,16 @@ const useStyles = makeStyles((theme) => ({
     width: '5rem',
   },
 
-  tableObjects: {
+  flexObject: {
     display: 'flex',
     gap: '0.5rem',
+  },
+
+  tableObjects: {
     textAlign: 'left',
     color: theme.palette.text.primary,
     fontSize: '0.75rem',
     lineHeight: '150%',
-  },
-
-  dataSourceNameColData: {
-    maxWidth: '10rem',
-    fontWeight: 500,
   },
 
   dataSourceUrlColData: {
@@ -229,18 +229,25 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2.5),
   },
 
-  dataSourceNameForm: {
-    marginRight: theme.spacing(2.8),
-  },
-
   selectText: {
     color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(0.4),
   },
 
+  // Tab header
+  tabHeaderFlex: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    margin: theme.spacing(1.25, 0, 4.25),
+  },
+  tabHeaderText: {
+    fontSize: '1.5rem',
+    lineHeight: '130%',
+    fontFeatureSettings: `'pnum' on, 'lnum' on`,
+    margin: 'auto 0',
+  },
   addButton: {
-    margin: theme.spacing(0, 3, 0, 1),
     padding: theme.spacing(0, 2.5),
   },
 
@@ -254,10 +261,6 @@ const useStyles = makeStyles((theme) => ({
   },
   headerIcon: {
     color: theme.palette.border.main,
-  },
-  expDiv: {
-    display: 'flex',
-    flexDirection: 'row',
   },
   btnImg: {
     width: '0.8125rem',
@@ -276,7 +279,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.5rem',
     lineHeight: '130%',
     fontWeight: 'bold',
-    fontFeatureSettings: 'pnum on, lnum on',
+    fontFeatureSettings: `'pnum' on, 'lnum' on`,
     margin: theme.spacing(2.5, 0, 4.5),
     padding: theme.spacing(0, 6.5),
   },
@@ -302,7 +305,7 @@ const useStyles = makeStyles((theme) => ({
   },
   confirmButtonText: {
     color: theme.palette.text.secondary,
-    padding: theme.spacing(0, 3),
+    padding: theme.spacing(0, 1.5),
   },
   cancelButton: {
     width: 'fit-content',
@@ -341,7 +344,7 @@ const useStyles = makeStyles((theme) => ({
   drawerHeading: {
     fontSize: '1.5rem',
     lineHeight: '130%',
-    fontFeatureSettings: 'pnum on, lnum on',
+    fontFeatureSettings: `'pnum' on, 'lnum' on`,
   },
   warningBlock: {
     margin: theme.spacing(5, 0),
@@ -361,8 +364,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
   },
   dashboardsList: {
-    maxHeight: '12rem',
-    overflowY: 'scroll',
+    overflowY: 'auto',
     marginBottom: theme.spacing(3),
   },
   drawerListItem: {

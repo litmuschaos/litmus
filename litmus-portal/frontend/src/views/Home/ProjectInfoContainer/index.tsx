@@ -125,4 +125,4 @@ const ProjectInfoContainer: React.FC = () => {
   );
 };
 
-export { ProjectInfoContainer };
+export default ProjectInfoContainer;

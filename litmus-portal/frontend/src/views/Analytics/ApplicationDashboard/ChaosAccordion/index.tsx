@@ -8,6 +8,7 @@ import { TextButton } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
+import ChaosAnnotationsEditor from '../ChaosAnnotationsEditor';
 import ChaosTable from '../ChaosTable';
 import useStyles from './styles';
 
@@ -57,68 +58,97 @@ const StyledAccordionDetails = withStyles((theme) => ({
 
 interface ChaosAccordionProps {
   dashboardKey: string;
+  isLoading: boolean;
   chaosEventsToBeShown: ChaosEventDetails[];
-  postEventSelectionRoutine: (selectedEvents: string[]) => void;
+  postEventSelectionRoutine: (selectedEventNames: string[]) => void;
+  dashboardID: string;
+  dataSourceURL: string;
+  chaosEventQueryTemplate: string;
+  chaosVerdictQueryTemplate: string;
+  refetchDashboardAndMetrics: () => void;
 }
 
 const ChaosAccordion: React.FC<ChaosAccordionProps> = ({
   dashboardKey,
+  isLoading,
   chaosEventsToBeShown,
   postEventSelectionRoutine,
+  dashboardID,
+  dataSourceURL,
+  chaosEventQueryTemplate,
+  chaosVerdictQueryTemplate,
+  refetchDashboardAndMetrics,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [chaosTableOpen, setChaosTableOpen] = React.useState<boolean>(false);
+  const [chaosAnnotationsEditorOpen, setChaosAnnotationsEditorOpen] =
+    React.useState<boolean>(false);
 
   return (
-    <Accordion expanded={chaosTableOpen}>
-      <AccordionSummary
-        aria-controls="chaos-table-content"
-        id="chaos-table-header"
-        className={classes.accordionSummary}
-        key={`chaos-table-${dashboardKey}`}
-      >
-        <TextButton
-          className={classes.button}
-          onClick={() => setChaosTableOpen(!chaosTableOpen)}
-          variant="highlight"
-          startIcon={
-            !chaosTableOpen ? (
-              <ArrowDropDownIcon className={classes.tableDropIcon} />
-            ) : (
-              <ArrowDropUpIcon className={classes.tableDropIcon} />
-            )
-          }
+    <>
+      <Accordion expanded={chaosTableOpen}>
+        <AccordionSummary
+          aria-controls="chaos-table-content"
+          id="chaos-table-header"
+          className={classes.accordionSummary}
+          key={`chaos-table-${dashboardKey}`}
         >
-          <Typography className={classes.chaosHelperText}>
-            {!chaosTableOpen
-              ? t(
-                  'analyticsDashboard.monitoringDashboardPage.chaosTable.showTable'
-                )
-              : t(
-                  'analyticsDashboard.monitoringDashboardPage.chaosTable.hideTable'
-                )}
-          </Typography>
-        </TextButton>
-        <IconButton
-          aria-label="edit chaos query"
-          aria-haspopup="true"
-          disabled
-          data-cy="editChaosQueryButton"
-          className={classes.editIconButton}
-        >
-          <img src="/icons/editIcon.svg" alt="Edit" />
-        </IconButton>
-      </AccordionSummary>
-      <StyledAccordionDetails className={classes.accordionDetails}>
-        <ChaosTable
-          chaosList={chaosEventsToBeShown}
-          selectEvents={(selectedEvents: string[]) =>
-            postEventSelectionRoutine(selectedEvents)
-          }
-        />
-      </StyledAccordionDetails>
-    </Accordion>
+          <TextButton
+            className={classes.button}
+            onClick={() => setChaosTableOpen(!chaosTableOpen)}
+            variant="highlight"
+            startIcon={
+              !chaosTableOpen ? (
+                <ArrowDropDownIcon className={classes.tableDropIcon} />
+              ) : (
+                <ArrowDropUpIcon className={classes.tableDropIcon} />
+              )
+            }
+          >
+            <Typography className={classes.chaosHelperText}>
+              {!chaosTableOpen
+                ? t(
+                    'analyticsDashboard.monitoringDashboardPage.chaosTable.showTable'
+                  )
+                : t(
+                    'analyticsDashboard.monitoringDashboardPage.chaosTable.hideTable'
+                  )}
+            </Typography>
+          </TextButton>
+          <IconButton
+            aria-label="edit chaos query"
+            aria-haspopup="true"
+            onClick={() => setChaosAnnotationsEditorOpen(true)}
+            data-cy="editChaosQueryButton"
+            className={classes.editIconButton}
+          >
+            <img src="./icons/editIcon.svg" alt="Edit" />
+          </IconButton>
+        </AccordionSummary>
+        <StyledAccordionDetails style={{ width: '100%' }}>
+          <ChaosTable
+            isLoading={isLoading}
+            chaosList={chaosEventsToBeShown}
+            selectEvents={(selectedEvents: string[]) =>
+              postEventSelectionRoutine(selectedEvents)
+            }
+          />
+        </StyledAccordionDetails>
+      </Accordion>
+      <ChaosAnnotationsEditor
+        drawerOpen={chaosAnnotationsEditorOpen}
+        handleDrawerClose={() => setChaosAnnotationsEditorOpen(false)}
+        handleSuccessfulUpdate={() => {
+          setChaosAnnotationsEditorOpen(false);
+          refetchDashboardAndMetrics();
+        }}
+        dashboardID={dashboardID}
+        dataSourceURL={dataSourceURL}
+        chaosEventQueryTemplate={chaosEventQueryTemplate}
+        chaosVerdictQueryTemplate={chaosVerdictQueryTemplate}
+      />
+    </>
   );
 };
 
