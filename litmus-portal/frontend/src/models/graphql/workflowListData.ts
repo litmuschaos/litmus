@@ -66,7 +66,6 @@ export interface ScheduledWorkflow {
   cluster_id: string;
   cluster_type: string;
   isRemoved: Boolean;
-  workflow_runs?: WorkflowRun[];
 }
 
 export interface WorkflowList {

@@ -11,9 +11,13 @@ import WorkflowStats from './WorkflowStats';
 
 interface InfoSectionProps {
   data: ScheduledWorkflows;
+  workflowRunLength: number;
 }
 
-const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
+const InfoSection: React.FC<InfoSectionProps> = ({
+  data,
+  workflowRunLength,
+}) => {
   const classes = useStyles();
 
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -89,8 +93,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
           {/* Column 3 */}
           <div>
             <Typography className={classes.infoHeader}>
-              Total Runs : {/* Replace with LIST_API */}
-              {data.ListWorkflow.workflows[0].workflow_runs?.length}
+              Total Runs :{workflowRunLength}
             </Typography>
             <Typography>
               Last Run :{' '}
@@ -132,9 +135,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ data }) => {
           <WorkflowStats
             workflowID={data.ListWorkflow.workflows[0].workflow_id}
             isCron={data.ListWorkflow.workflows[0].cronSyntax !== ''}
-            noOfWorkflowRuns={
-              data.ListWorkflow.workflows[0].workflow_runs?.length ?? 0
-            }
+            noOfWorkflowRuns={workflowRunLength ?? 0}
           />
         )}
       </div>

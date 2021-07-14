@@ -10,7 +10,6 @@ import {
   Projects,
   UserRole,
 } from '../../models/graphql/user';
-
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
@@ -194,7 +193,7 @@ const Routes: React.FC = () => {
               />
               <Route
                 exact
-                path="/analytics/workflowdashboard/:workflowRunId"
+                path="/analytics/workflowdashboard/:workflowId"
                 component={WorkflowInfoStats}
               />
               <Route exact path="/community" component={Community} />

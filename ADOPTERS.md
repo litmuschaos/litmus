@@ -59,6 +59,3 @@ existing functions.
 |[OpenEBS](https://openebs.io/)|[Openebs-CI](https://openebs.ci/)|[Our Story](adopters/organizations/openebs.md)|
 
 
-
-
-
