@@ -1,5 +1,5 @@
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: subscriber-role
@@ -44,7 +44,7 @@ rules:
       ]
     verbs: ["get", "list", "create", "delete", "update", "watch"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: subscriber-role-binding
@@ -66,7 +66,7 @@ metadata:
   labels:
     name: litmus-admin
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: litmus-admin
@@ -175,7 +175,7 @@ rules:
     resources: ["nodes"]
     verbs: ["patch", "get", "list", "update"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: litmus-admin
@@ -224,7 +224,7 @@ rules:
       ["chaosengines", "chaosexperiments", "chaosresults", "chaosschedules"]
     verbs: ["create", "list", "get", "patch", "delete", "watch"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: chaos-role-binding

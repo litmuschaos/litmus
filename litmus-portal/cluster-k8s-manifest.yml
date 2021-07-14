@@ -67,35 +67,6 @@ metadata:
   name: litmus-server-account
   namespace: litmus
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: litmus-server
-  namespace: litmus
-  labels:
-    name: litmus-server
-rules:
-  - apiGroups:
-      - "*"
-    resources:
-      - "*"
-    verbs:
-      - "*"
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: litmus-server-rb
-  namespace: litmus
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
-roleRef:
-  kind: ClusterRole
-  name: litmus-server
-  apiGroup: rbac.authorization.k8s.io
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
