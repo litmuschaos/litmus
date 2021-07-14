@@ -37,6 +37,25 @@ const ChooseADashboardType = forwardRef(
     const alert = useActions(AlertActions);
     const [dashboardList, setDashboardList] = useState<DashboardData[]>([]);
 
+    const addCustomAndUploadDashboardCards = (dashboards: DashboardData[]) => {
+      // Custom dashboard
+      dashboards.push({
+        dashboardTypeID: 'custom',
+        typeName: 'Custom dashboard',
+        urlToIcon: './icons/custom_dashboard.svg',
+        information: 'Create your own custom dashboard',
+      });
+      // Upload a dashboard
+      dashboards.push({
+        dashboardTypeID: 'upload',
+        typeName: 'Upload a dashboard',
+        urlToIcon: './icons/upload-json.svg',
+        information: 'Create a dashboard by uploading a json file',
+      });
+
+      return dashboards;
+    };
+
     const { data: hubs, loading: loadingHubs } = useQuery<HubStatus>(
       GET_HUB_STATUS,
       {
@@ -55,7 +74,7 @@ const ChooseADashboardType = forwardRef(
       PortalDashboardsVars
     >(GET_PORTAL_DASHBOARDS, {
       onCompleted: (data) => {
-        const dashboards: DashboardData[] = [];
+        let dashboards: DashboardData[] = [];
         (data.PortalDashboardData ?? []).forEach((dashboard) => {
           const parsedDashboardData = JSON.parse(dashboard.dashboard_data);
           dashboards.push({
@@ -66,20 +85,7 @@ const ChooseADashboardType = forwardRef(
             dashboardJSON: parsedDashboardData,
           });
         });
-        // Custom dashboard
-        dashboards.push({
-          dashboardTypeID: 'custom',
-          typeName: 'Custom dashboard',
-          urlToIcon: './icons/custom_dashboard.svg',
-          information: 'Create your own custom dashboard',
-        });
-        // Upload a dashboard
-        dashboards.push({
-          dashboardTypeID: 'upload',
-          typeName: 'Upload a dashboard',
-          urlToIcon: './icons/upload-json.svg',
-          information: 'Create a dashboard by uploading a json file',
-        });
+        dashboards = addCustomAndUploadDashboardCards(dashboards);
         setDashboardList(dashboards);
       },
       onError: () => {
@@ -116,6 +122,10 @@ const ChooseADashboardType = forwardRef(
             },
           });
         } else {
+          const dashboards: DashboardData[] = addCustomAndUploadDashboardCards(
+            []
+          );
+          setDashboardList(dashboards);
           alert.changeAlertState(true);
         }
       }
