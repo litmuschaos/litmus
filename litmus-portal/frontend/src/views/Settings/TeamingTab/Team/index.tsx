@@ -142,10 +142,10 @@ const TeamingTab: React.FC = () => {
   const acceptedFilteredData = !loading
     ? accepted &&
       accepted
-        ?.filter((dataRow) =>
+        .filter((dataRow) =>
           dataRow.user_name.toLowerCase().includes(filters.search.toLowerCase())
         )
-        ?.filter((dataRow: Member) => {
+        .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
           if (filters.role === 'Editor') return dataRow.role === 'Editor';
           if (filters.role === 'Viewer') return dataRow.role === 'Viewer';
@@ -156,7 +156,7 @@ const TeamingTab: React.FC = () => {
   const notAcceptedFilteredData = !loading
     ? notAccepted &&
       notAccepted
-        ?.filter((dataRow) =>
+        .filter((dataRow) =>
           dataRow.user_name.toLowerCase().includes(filters.search.toLowerCase())
         )
         .filter((dataRow: Member) => {
@@ -182,7 +182,7 @@ const TeamingTab: React.FC = () => {
   const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
     onCompleted: () => {
       if (dataProject?.listProjects) {
-        setProjects(dataProject?.listProjects);
+        setProjects(dataProject.listProjects);
       }
     },
     fetchPolicy: 'cache-and-network',
