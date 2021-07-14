@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   rootContainer: {
-    width: '90%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3.75),
   },
   expMain: {
-    marginLeft: theme.spacing(1.25),
     marginBottom: theme.spacing(2),
   },
   linkText: {
@@ -56,7 +55,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '0.1875rem',
     padding: theme.spacing(3.75),
     paddingTop: theme.spacing(6.25),
-    marginLeft: theme.spacing(2.5),
   },
   expInfo: {
     display: 'flex',
