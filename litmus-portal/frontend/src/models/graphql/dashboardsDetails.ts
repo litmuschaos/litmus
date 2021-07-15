@@ -90,20 +90,21 @@ export interface updatePanelGroupInput {
 export interface UpdateDashboardInput {
   updateDBInput: {
     db_id: string;
-    ds_id: string;
-    db_name: string;
-    db_type_id: string;
-    db_type_name: string;
-    db_information: string;
-    chaos_event_query_template: string;
-    chaos_verdict_query_template: string;
-    application_metadata_map: ApplicationMetadata[];
-    end_time: string;
-    start_time: string;
-    cluster_id: string;
-    refresh_rate: string;
-    panel_groups: updatePanelGroupInput[];
+    ds_id?: string;
+    db_name?: string;
+    db_type_id?: string;
+    db_type_name?: string;
+    db_information?: string;
+    chaos_event_query_template?: string;
+    chaos_verdict_query_template?: string;
+    application_metadata_map?: ApplicationMetadata[];
+    end_time?: string;
+    start_time?: string;
+    cluster_id?: string;
+    refresh_rate?: string;
+    panel_groups?: updatePanelGroupInput[];
   };
+  chaosQueryUpdate: boolean;
 }
 
 export interface DeleteDashboardInput {
@@ -112,6 +113,20 @@ export interface DeleteDashboardInput {
 
 export interface UpdatePanelInput {
   panelInput: Panel[];
+}
+
+export interface PortalDashboardsVars {
+  projectID: string;
+  hubName: string;
+}
+
+export interface PortalDashboardsResponse {
+  name: string;
+  dashboard_data: string;
+}
+
+export interface PortalDashboardList {
+  PortalDashboardData: PortalDashboardsResponse[];
 }
 
 export interface ResourceResponse {
@@ -127,11 +142,13 @@ export interface ApplicationMetadataResponse {
 export interface ListDashboardResponse {
   db_id: string;
   ds_id: string;
-  ds_type: string;
   db_name: string;
   db_type: string;
   cluster_name: string;
   ds_name: string;
+  ds_type: string;
+  ds_url: string;
+  ds_health_status: string;
   db_type_id: string;
   db_type_name: string;
   db_information: string;
@@ -146,10 +163,13 @@ export interface ListDashboardResponse {
   cluster_id: string;
   created_at: string;
   updated_at: string;
+  viewed_at: string;
 }
 
 export interface ListDashboardVars {
   projectID: string;
+  clusterID?: string;
+  dbID?: string;
 }
 
 export interface DashboardList {

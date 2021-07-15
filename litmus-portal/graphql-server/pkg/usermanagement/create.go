@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -20,7 +21,7 @@ const (
 )
 
 // CreateUser checks if the user with the given username is already present in the database
-// if not it creates a new user and puts in the DB
+// if not, it creates a new user and inserts in the DB
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
 	outputUser, err := GetUser(ctx, user.Username)
@@ -36,7 +37,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		Email:       user.Email,
 		CompanyName: user.CompanyName,
 		Name:        user.Name,
-		CreatedAt:   time.Now().Format(time.RFC1123Z),
+		CreatedAt:   strconv.FormatInt(time.Now().Unix(), 10),
 		Role:        &user.Role,
 	}
 
@@ -48,6 +49,31 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 
 	outputUser = newUser.GetOutputUser()
 	return outputUser, nil
+}
+
+// UpdateUserState updates the deactivated_at state of user and removed_at state of project
+func UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error) {
+	// Checking if admin is being removed
+	user, err := dbOperationsUserManagement.GetUserByUserID(ctx, uid)
+	if *user.Role == "admin" {
+		return "Cannot update admin's state", errors.New("cannot update admin's state")
+	}
+
+	deactivatedAt := strconv.FormatInt(time.Now().Unix(), 10)
+	if isDeactivate != true {
+		deactivatedAt = ""
+	}
+
+	dbUser := &dbSchemaUserManagement.User{
+		ID:            uid,
+		DeactivatedAt: deactivatedAt,
+	}
+
+	err = dbOperationsUserManagement.UpdateUserState(ctx, *dbUser)
+	if err != nil {
+		return "Error updating user's state", err
+	}
+	return "User's state updated successfully", nil
 }
 
 // GetUser queries the user collection for a user with a given username,
@@ -73,7 +99,10 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 // GetUsers queries the list of all the users from the DB and returns it in the appropriate format
 func GetUsers(ctx context.Context) ([]*model.User, error) {
 
-	users, err := dbOperationsUserManagement.GetUsers(ctx, bson.D{})
+	users, err := dbOperationsUserManagement.GetUsers(ctx,
+		bson.D{
+			{"deactivated_at", ""},
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -100,5 +129,5 @@ func UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	if err != nil {
 		return "Updating user aborted", err
 	}
-	return "Update Successful", err
+	return "Update Successful", nil
 }

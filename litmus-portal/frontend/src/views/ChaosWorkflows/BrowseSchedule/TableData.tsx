@@ -367,7 +367,7 @@ const TableData: React.FC<TableDataProps> = ({
             <MenuItem value="Edit_Schedule" onClick={() => editSchedule()}>
               <div className={classes.expDiv}>
                 <img
-                  src="/icons/Edit.svg"
+                  src="./icons/Edit.svg"
                   alt="Edit Schedule"
                   className={classes.btnImg}
                 />
@@ -402,7 +402,7 @@ const TableData: React.FC<TableDataProps> = ({
               >
                 <div className={classes.expDiv}>
                   <img
-                    src="/icons/disableSchedule.svg"
+                    src="./icons/disableSchedule.svg"
                     alt="Delete Schedule"
                     className={classes.btnImg}
                   />
@@ -426,7 +426,7 @@ const TableData: React.FC<TableDataProps> = ({
               >
                 <div className={classes.expDiv}>
                   <img
-                    src="/icons/disableSchedule.svg"
+                    src="./icons/disableSchedule.svg"
                     alt="Enable Schedule"
                     className={classes.btnImg}
                   />
@@ -471,7 +471,7 @@ const TableData: React.FC<TableDataProps> = ({
             <MenuItem value="Analysis" onClick={() => setIsModalOpen(true)}>
               <div className={classes.expDiv}>
                 <img
-                  src="/icons/deleteSchedule.svg"
+                  src="./icons/deleteSchedule.svg"
                   alt="Delete Schedule"
                   className={classes.btnImg}
                 />

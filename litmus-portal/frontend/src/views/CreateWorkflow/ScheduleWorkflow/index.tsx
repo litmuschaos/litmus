@@ -390,7 +390,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
             </div>
           </div>
           <img
-            src="/icons/calendarWorkflowIcon.svg"
+            src="./icons/calendarWorkflowIcon.svg"
             alt="calendar"
             className={classes.calIcon}
           />
@@ -471,6 +471,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
                   <div className={classes.innerRecurring}>
                     <FormControl component="fieldset">
                       <RadioGroup
+                        data-cy="RecurringSchedule"
                         aria-label="instanceDef"
                         name="instanceDef"
                         value={valueDef}

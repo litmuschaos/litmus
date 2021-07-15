@@ -18,3 +18,5 @@ tmp/
 .env
 litmus-portal-service
 litmus-portal-app
+
+**/client_id

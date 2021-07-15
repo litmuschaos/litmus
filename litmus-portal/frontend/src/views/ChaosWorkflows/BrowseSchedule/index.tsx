@@ -355,7 +355,7 @@ const BrowseSchedule: React.FC = () => {
 
         {/* Pagination Section */}
         <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
+          rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={data?.ListWorkflow.total_no_of_workflows ?? 0}
           rowsPerPage={paginationData.limit}

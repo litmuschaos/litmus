@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery, useSubscription } from '@apollo/client';
 import {
   FormControl,
@@ -31,6 +29,10 @@ import {
   Resource,
 } from '../../../../../../models/graphql/dashboardsDetails';
 import { ListDataSourceResponse } from '../../../../../../models/graphql/dataSourceDetails';
+import {
+  DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY,
+  DEFAULT_CHAOS_VERDICT_PROMETHEUS_QUERY,
+} from '../../../../../../pages/ApplicationDashboard/constants';
 import useActions from '../../../../../../redux/actions';
 import * as DashboardActions from '../../../../../../redux/actions/dashboards';
 import { RootState } from '../../../../../../redux/reducers';
@@ -84,45 +86,47 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
       selectedDashboardID: '',
     });
     const selectedApps: ApplicationMetadata[] = [];
-    dashboardJSON.applicationMetadataMap?.forEach(
-      (applicationMetadata: ApplicationMetadata) => {
-        const namespaceApps = availableApplicationMetadataMap.filter(
-          (appMeta) => appMeta.namespace === applicationMetadata.namespace
-        )[0];
-        applicationMetadata.applications.forEach((app) => {
-          const kindApps = namespaceApps.applications.filter(
-            (appKind) => appKind.kind === app.kind
+    if (dashboardJSON.applicationMetadataMap) {
+      dashboardJSON.applicationMetadataMap.forEach(
+        (applicationMetadata: ApplicationMetadata) => {
+          const namespaceApps = availableApplicationMetadataMap.filter(
+            (appMeta) => appMeta.namespace === applicationMetadata.namespace
           )[0];
-          const availableApps = app.names.filter((name) =>
-            kindApps.names.includes(name)
-          );
-          if (availableApps.length) {
-            let nsIndex = -1;
-            selectedApps.forEach((existingApp, index) => {
-              if (existingApp.namespace === applicationMetadata.namespace) {
-                nsIndex = index;
+          applicationMetadata.applications.forEach((app) => {
+            const kindApps = namespaceApps.applications.filter(
+              (appKind) => appKind.kind === app.kind
+            )[0];
+            const availableApps = app.names.filter((name) =>
+              kindApps.names.includes(name)
+            );
+            if (availableApps.length) {
+              let nsIndex = -1;
+              selectedApps.forEach((existingApp, index) => {
+                if (existingApp.namespace === applicationMetadata.namespace) {
+                  nsIndex = index;
+                }
+              });
+              if (nsIndex !== -1) {
+                selectedApps[nsIndex].applications.push({
+                  kind: app.kind,
+                  names: availableApps,
+                });
+              } else {
+                selectedApps.push({
+                  namespace: applicationMetadata.namespace,
+                  applications: [
+                    {
+                      kind: app.kind,
+                      names: availableApps,
+                    },
+                  ],
+                });
               }
-            });
-            if (nsIndex !== -1) {
-              selectedApps[nsIndex].applications.push({
-                kind: app.kind,
-                names: availableApps,
-              });
-            } else {
-              selectedApps.push({
-                namespace: applicationMetadata.namespace,
-                applications: [
-                  {
-                    kind: app.kind,
-                    names: availableApps,
-                  },
-                ],
-              });
             }
-          }
-        });
-      }
-    );
+          });
+        }
+      );
+    }
     return selectedApps;
   };
 
@@ -154,12 +158,12 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
     chaosEventQueryTemplate: !configure
       ? selectedDashboard.dashboardJSON
         ? selectedDashboard.dashboardJSON.chaosEventQueryTemplate
-        : 'litmuschaos_awaited_experiments{job="chaos-exporter"}'
+        : DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY
       : dashboardVars.chaosEventQueryTemplate ?? '',
     chaosVerdictQueryTemplate: !configure
       ? selectedDashboard.dashboardJSON
         ? selectedDashboard.dashboardJSON.chaosVerdictQueryTemplate
-        : 'litmuschaos_experiment_verdict{job="chaos-exporter"}'
+        : DEFAULT_CHAOS_VERDICT_PROMETHEUS_QUERY
       : dashboardVars.chaosVerdictQueryTemplate ?? '',
     agentID: dashboardVars.agentID ?? '',
     information: !configure
@@ -176,13 +180,14 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   });
 
   // Apollo query to get the agent data
-  const { data: agentList, loading } = useQuery<Clusters, ClusterVars>(
-    GET_CLUSTER,
-    {
-      variables: { project_id: projectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const {
+    data: agentList,
+    loading,
+    error,
+  } = useQuery<Clusters, ClusterVars>(GET_CLUSTER, {
+    variables: { project_id: projectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   /**
    * GraphQL subscription to fetch the KubeObjData from the server
@@ -365,25 +370,29 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
 
   const getSelectedAppDetails = () => {
     const options: Array<Option> = [];
-    dashboardDetails.applicationMetadataMap?.forEach((app) => {
-      app.applications.forEach((resources) => {
-        resources.names.forEach((name) => {
-          options.push({
-            name: `${app.namespace} / ${resources.kind} / ${name}`,
+    if (dashboardDetails.applicationMetadataMap) {
+      dashboardDetails.applicationMetadataMap.forEach((app) => {
+        app.applications.forEach((resources) => {
+          resources.names.forEach((name) => {
+            options.push({
+              name: `${app.namespace} / ${resources.kind} / ${name}`,
+            });
           });
         });
       });
-    });
+    }
     return options;
   };
 
   const getSelectedAppNamespaces = () => {
     const options: Array<Option> = [];
-    dashboardDetails.applicationMetadataMap?.forEach((app) => {
-      options.push({
-        name: app.namespace,
+    if (dashboardDetails.applicationMetadataMap) {
+      dashboardDetails.applicationMetadataMap.forEach((app) => {
+        options.push({
+          name: app.namespace,
+        });
       });
-    });
+    }
     return options;
   };
 
@@ -452,7 +461,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
               'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.agent'
             )}
             className={classes.selectText}
-            disabled={activeAgents.length === 0}
+            disabled={activeAgents.length === 0 || loading}
           >
             {activeAgents.map((agent: Cluster) => (
               <MenuItem key={agent.cluster_id} value={agent.cluster_id}>
@@ -473,10 +482,22 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
                 cluster.is_cluster_confirmed &&
                 cluster.is_registered
               );
-            }).length ? (
+            }).length && agentList?.getCluster.length ? (
             <Typography className={classes.formErrorText}>
               {t(
                 'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.agentInactive'
+              )}
+            </Typography>
+          ) : loading ? (
+            <Typography className={classes.formHelperText}>
+              {t(
+                'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.fetchingAgents'
+              )}
+            </Typography>
+          ) : error ? (
+            <Typography className={classes.formErrorText}>
+              {t(
+                'analyticsDashboard.applicationDashboards.configureDashboardMetadata.form.errorFetchingAgents'
               )}
             </Typography>
           ) : (

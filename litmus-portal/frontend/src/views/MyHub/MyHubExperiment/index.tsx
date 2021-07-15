@@ -3,16 +3,16 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import DeveloperGuide from '../../../components/DeveloperGuide';
-import ExperimentHeader from '../ExperimentHeader';
 import ExperimentInfo from '../../../components/ExperimentInfo';
 import InstallChaos from '../../../components/InstallChaos';
 import Loader from '../../../components/Loader';
 import UsefulLinks from '../../../components/UsefulLinks';
 import config from '../../../config';
-import Scaffold from '../../../containers/layouts/Scaffold';
+import Wrapper from '../../../containers/layouts/Wrapper';
 import { GET_EXPERIMENT_DATA, GET_HUB_STATUS } from '../../../graphql';
 import { ExperimentDetail, HubStatus, Link } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
+import ExperimentHeader from '../ExperimentHeader';
 import useStyles from './styles';
 
 interface URLParams {
@@ -65,7 +65,7 @@ const MyHub = () => {
   const { t } = useTranslation();
 
   return (
-    <Scaffold>
+    <Wrapper>
       {loading ? (
         <Loader />
       ) : (
@@ -161,7 +161,7 @@ const MyHub = () => {
           </div>
         </div>
       )}
-    </Scaffold>
+    </Wrapper>
   );
 };
 

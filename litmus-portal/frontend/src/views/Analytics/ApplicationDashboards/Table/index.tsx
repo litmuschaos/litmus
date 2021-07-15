@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { TextButton } from 'litmus-ui';
+import { ButtonFilled, TextButton } from 'litmus-ui';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +58,6 @@ interface SortData {
 
 interface Filter {
   range: RangeType;
-  selectedDataSourceType: string;
   selectedDashboardType: string;
   sortData: SortData;
   selectedAgentName: string;
@@ -70,7 +69,6 @@ const DashboardTable: React.FC = () => {
   const { t } = useTranslation();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
-    selectedDataSourceType: 'All',
     selectedDashboardType: 'All',
     sortData: {
       name: { sort: false, ascending: true },
@@ -126,16 +124,6 @@ const DashboardTable: React.FC = () => {
     setPage(0);
   };
 
-  const getDataSourceType = (searchingData: ListDashboardResponse[]) => {
-    const uniqueList: string[] = [];
-    searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.ds_type)) {
-        uniqueList.push(data.ds_type);
-      }
-    });
-    return uniqueList;
-  };
-
   const getDashboardType = (searchingData: ListDashboardResponse[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
@@ -165,11 +153,6 @@ const DashboardTable: React.FC = () => {
           );
         })
           .filter((data) => {
-            return filter.selectedDataSourceType === 'All'
-              ? true
-              : data.ds_type === filter.selectedDataSourceType;
-          })
-          .filter((data) => {
             return filter.selectedDashboardType === 'All'
               ? true
               : data.db_type_name === filter.selectedDashboardType;
@@ -183,9 +166,9 @@ const DashboardTable: React.FC = () => {
             return filter.range.startDate === 'all' ||
               (filter.range.startDate && filter.range.endDate === undefined)
               ? true
-              : parseInt(data.updated_at, 10) * 1000 >=
+              : parseInt(data.viewed_at, 10) * 1000 >=
                   new Date(moment(filter.range.startDate).format()).getTime() &&
-                  parseInt(data.updated_at, 10) * 1000 <=
+                  parseInt(data.viewed_at, 10) * 1000 <=
                     new Date(
                       new Date(moment(filter.range.endDate).format()).setHours(
                         23,
@@ -204,11 +187,11 @@ const DashboardTable: React.FC = () => {
                 : sortAlphaDesc(x, y);
             }
             if (filter.sortData.lastViewed.sort) {
-              const x = parseInt(a.updated_at, 10);
-              const y = parseInt(b.updated_at, 10);
+              const x = parseInt(a.viewed_at, 10);
+              const y = parseInt(b.viewed_at, 10);
               return filter.sortData.lastViewed.ascending
-                ? sortNumAsc(y, x)
-                : sortNumDesc(y, x);
+                ? sortNumAsc(x, y)
+                : sortNumDesc(x, y);
             }
             return 0;
           })
@@ -228,6 +211,35 @@ const DashboardTable: React.FC = () => {
 
   return (
     <div className={classes.root}>
+      <div className={classes.tabHeaderFlex}>
+        <Typography className={classes.tabHeaderText}>
+          {t('analyticsDashboard.applicationDashboardTable.dashboards')}
+        </Typography>
+        <ButtonFilled
+          onClick={() =>
+            history.push({
+              pathname: '/analytics/dashboard/create',
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            })
+          }
+          className={classes.createButton}
+          disabled={
+            loadingDataSources ||
+            (!activeDataSourceAvailable && !loadingDataSources)
+          }
+        >
+          <Typography
+            className={`${classes.buttonText} ${
+              loadingDataSources ||
+              (!activeDataSourceAvailable && !loadingDataSources)
+                ? classes.disabledText
+                : ''
+            }`}
+          >
+            {t('analyticsDashboard.applicationDashboardTable.createDashboard')}
+          </Typography>
+        </ButtonFilled>
+      </div>
       {!activeDataSourceAvailable && !loadingDataSources && (
         <blockquote className={classes.warningBlock}>
           <Typography className={classes.warningText} align="left">
@@ -290,7 +302,7 @@ const DashboardTable: React.FC = () => {
             handleSearch={(
               event: React.ChangeEvent<{ value: unknown }> | undefined,
               token: string | undefined
-            ) =>
+            ) => {
               setFilter({
                 ...filter,
                 searchTokens: (event !== undefined
@@ -300,44 +312,38 @@ const DashboardTable: React.FC = () => {
                   .toLowerCase()
                   .split(' ')
                   .filter((s) => s !== ''),
-              })
-            }
-            dataSourceTypes={getDataSourceType(data?.ListDashboard ?? [])}
+              });
+              setPage(0);
+            }}
             dashboardTypes={getDashboardType(data?.ListDashboard ?? [])}
             agentNames={getAgentName(data?.ListDashboard ?? [])}
-            callbackToSetDataSourceType={(dataSourceType: string) =>
-              setFilter({
-                ...filter,
-                selectedDataSourceType: dataSourceType,
-              })
-            }
-            callbackToSetDashboardType={(dashboardType: string) =>
+            callbackToSetDashboardType={(dashboardType: string) => {
               setFilter({
                 ...filter,
                 selectedDashboardType: dashboardType,
-              })
-            }
-            callbackToSetAgentName={(agentName: string) =>
+              });
+              setPage(0);
+            }}
+            callbackToSetAgentName={(agentName: string) => {
               setFilter({
                 ...filter,
                 selectedAgentName: agentName,
-              })
-            }
+              });
+              setPage(0);
+            }}
             callbackToSetRange={(
               selectedStartDate: string,
               selectedEndDate: string
-            ) =>
+            ) => {
               setFilter({
                 ...filter,
                 range: {
                   startDate: selectedStartDate,
                   endDate: selectedEndDate,
                 },
-              })
-            }
-            createButtonDisabled={
-              !activeDataSourceAvailable && !loadingDataSources
-            }
+              });
+              setPage(0);
+            }}
           />
         </section>
       </Paper>
@@ -388,7 +394,7 @@ const DashboardTable: React.FC = () => {
                     <TableCell colSpan={6}>
                       <div className={classes.noRecords}>
                         <img
-                          src="/icons/dashboardUnavailable.svg"
+                          src="./icons/dashboardUnavailable.svg"
                           className={classes.unavailableIcon}
                           alt="Dashboard"
                         />

@@ -11,7 +11,6 @@ import {
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
-import { STATUS_RUNNING } from '../../ApplicationDashboard/constants';
 import WorkflowRunTable from '../WorkflowRunTable';
 import useStyles from './styles';
 
@@ -65,7 +64,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
 
   if (data?.getWorkflowRuns.workflow_runs) {
     data.getWorkflowRuns.workflow_runs.forEach((wfrun) => {
-      if (wfrun.phase !== STATUS_RUNNING) {
+      if (wfrun.phase !== 'Running') {
         stackBarData.push({
           id: wfrun.workflow_run_id,
           date: Number(wfrun.last_updated) * 1000,
@@ -152,9 +151,9 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
         </div>
         {/* Legend */}
         <div className={classes.stackbarLegend}>
-          <img src="/icons/failedTestIndicator.svg" alt="Failed legend" />
+          <img src="./icons/failedTestIndicator.svg" alt="Failed legend" />
           <Typography>Failed test</Typography>
-          <img src="/icons/passedTestIndicator.svg" alt="Passed legend" />
+          <img src="./icons/passedTestIndicator.svg" alt="Passed legend" />
           <Typography>Passed test</Typography>
         </div>
         {/* Border Ends */}

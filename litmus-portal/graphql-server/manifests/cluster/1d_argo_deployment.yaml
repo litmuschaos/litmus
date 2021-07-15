@@ -27,6 +27,7 @@ spec:
       labels:
         app: workflow-controller
     spec:
+      #{nodeselector}
       containers:
         - args:
             - --configmap
@@ -39,6 +40,4 @@ spec:
             - workflow-controller
           image: #{ARGO-WORKFLOW-CONTROLLER}
           name: workflow-controller
-      nodeSelector:
-        kubernetes.io/os: linux
       serviceAccountName: argo

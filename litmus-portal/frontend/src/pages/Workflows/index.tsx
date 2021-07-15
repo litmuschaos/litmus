@@ -2,11 +2,12 @@ import { AppBar, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import { ButtonFilled } from 'litmus-ui';
-import React from 'react';
+import React, { lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
-import Scaffold from '../../containers/layouts/Scaffold';
+import Wrapper from '../../containers/layouts/Wrapper';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import * as TemplateSelectionActions from '../../redux/actions/template';
@@ -14,9 +15,12 @@ import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
-import BrowseWorkflow from '../../views/ChaosWorkflows/Runs';
 import useStyles from './styles';
+
+const BrowseSchedule = lazy(
+  () => import('../../views/ChaosWorkflows/BrowseSchedule')
+);
+const BrowseWorkflow = lazy(() => import('../../views/ChaosWorkflows/Runs'));
 
 const Workflows = () => {
   const classes = useStyles();
@@ -49,7 +53,7 @@ const Workflows = () => {
   };
 
   return (
-    <Scaffold>
+    <Wrapper>
       <section>
         <div className={classes.header}>
           <Typography variant="h3">Chaos Workflows</Typography>
@@ -79,12 +83,16 @@ const Workflows = () => {
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
-        <BrowseWorkflow />
+        <SuspenseLoader style={{ height: '50vh' }}>
+          <BrowseWorkflow />
+        </SuspenseLoader>
       </TabPanel>
       <TabPanel value={workflowTabValue} index={1}>
-        <BrowseSchedule />
+        <SuspenseLoader style={{ height: '50vh' }}>
+          <BrowseSchedule />
+        </SuspenseLoader>
       </TabPanel>
-    </Scaffold>
+    </Wrapper>
   );
 };
 

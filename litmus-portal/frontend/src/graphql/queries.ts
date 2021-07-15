@@ -52,6 +52,10 @@ export const WORKFLOW_RUN_DETAILS = gql`
     getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
       total_no_of_workflow_runs
       workflow_runs {
+        weightages {
+          experiment_name
+          weightage
+        }
         workflow_id
         workflow_name
         workflow_run_id
@@ -122,11 +126,6 @@ export const WORKFLOW_LIST_DETAILS = gql`
         cluster_id
         cluster_type
         isRemoved
-        workflow_runs {
-          execution_data
-          workflow_run_id
-          last_updated
-        }
       }
     }
   }
@@ -189,9 +188,8 @@ export const GET_USER = gql`
       company_name
       updated_at
       created_at
-      removed_at
+      deactivated_at
       is_email_verified
-      state
       role
     }
   }
@@ -252,6 +250,8 @@ export const ALL_USERS = gql`
       name
       username
       email
+      created_at
+      deactivated_at
     }
   }
 `;
@@ -394,8 +394,8 @@ export const LIST_PROJECTS = gql`
         role
         invitation
         joined_at
+        deactivated_at
       }
-      state
       created_at
       updated_at
       removed_at
@@ -414,8 +414,8 @@ export const GET_PROJECT = gql`
         role
         invitation
         joined_at
+        deactivated_at
       }
-      state
       created_at
       updated_at
       removed_at
@@ -461,15 +461,30 @@ export const LIST_DATASOURCE_OVERVIEW = gql`
   }
 `;
 
+export const GET_PORTAL_DASHBOARDS = gql`
+  query getPortalDashboards($projectID: String!, $hubName: String!) {
+    PortalDashboardData(project_id: $projectID, hub_name: $hubName) {
+      name
+      dashboard_data
+    }
+  }
+`;
+
 export const LIST_DASHBOARD = gql`
-  query listDashboard($projectID: String!) {
-    ListDashboard(project_id: $projectID) {
+  query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
+    ListDashboard(
+      project_id: $projectID
+      cluster_id: $clusterID
+      db_id: $dbID
+    ) {
       db_id
       ds_id
       db_name
       cluster_name
       ds_name
       ds_type
+      ds_url
+      ds_health_status
       db_type_id
       db_type_name
       db_information
@@ -514,22 +529,25 @@ export const LIST_DASHBOARD = gql`
       refresh_rate
       project_id
       cluster_id
-      created_at
-      updated_at
+      viewed_at
     }
   }
 `;
 
 export const LIST_DASHBOARD_OVERVIEW = gql`
-  query listDashboard($projectID: String!) {
-    ListDashboard(project_id: $projectID) {
+  query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
+    ListDashboard(
+      project_id: $projectID
+      cluster_id: $clusterID
+      db_id: $dbID
+    ) {
       db_id
       db_name
       db_type_id
       db_type_name
       cluster_name
       cluster_id
-      updated_at
+      viewed_at
       db_information
       chaos_event_query_template
       chaos_verdict_query_template
@@ -644,6 +662,7 @@ export const LIST_IMAGE_REGISTRY = gql`
     ListImageRegistry(project_id: $data) {
       image_registry_info {
         enable_registry
+        is_default
       }
       image_registry_id
     }
@@ -654,6 +673,7 @@ export const GET_IMAGE_REGISTRY = gql`
   query GetImageRegistry($registryid: String!, $projectid: String!) {
     GetImageRegistry(image_registry_id: $registryid, project_id: $projectid) {
       image_registry_info {
+        is_default
         enable_registry
         secret_name
         secret_namespace
@@ -666,27 +686,6 @@ export const GET_IMAGE_REGISTRY = gql`
   }
 `;
 
-export const GET_HEATMAP_DATA = gql`
-  query getHeatmapData(
-    $project_id: String!
-    $workflow_id: String!
-    $year: Int!
-  ) {
-    getHeatmapData(
-      project_id: $project_id
-      workflow_id: $workflow_id
-      year: $year
-    ) {
-      bins {
-        value
-        workflowRunDetail {
-          no_of_runs
-          date_stamp
-        }
-      }
-    }
-  }
-`;
 export const GET_GLOBAL_STATS = gql`
   query getGlobalStats($query: UsageQuery!) {
     UsageQuery(query: $query) {

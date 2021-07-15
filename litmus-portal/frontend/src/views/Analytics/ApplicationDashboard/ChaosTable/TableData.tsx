@@ -2,9 +2,11 @@ import { Typography } from '@material-ui/core';
 import React from 'react';
 import { CheckBox } from '../../../../components/CheckBox';
 import { StyledTableCell } from '../../../../components/StyledTableCell';
+import TextPopOver from '../../../../components/TextPopOver';
 import { ChaosEventDetails } from '../../../../models/dashboardsData';
 import {
   CHAOS_EXPERIMENT_VERDICT_FAIL,
+  CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT,
   CHAOS_EXPERIMENT_VERDICT_PASS,
 } from '../../../../pages/ApplicationDashboard/constants';
 import useStyles from './styles';
@@ -25,46 +27,39 @@ const TableData: React.FC<TableDataProps> = ({
   return (
     <>
       <StyledTableCell padding="checkbox" className={classes.checkbox}>
-        <CheckBox
-          checked={itemSelectionStatus}
-          inputProps={{ 'aria-labelledby': labelIdentifier }}
-        />
+        {!data.injectionFailed && (
+          <CheckBox
+            checked={itemSelectionStatus}
+            inputProps={{ 'aria-labelledby': labelIdentifier }}
+          />
+        )}
       </StyledTableCell>
-      <StyledTableCell>
-        <Typography
-          className={classes.tableObjects}
-          style={{ maxWidth: '15rem' }}
-        >
+      <StyledTableCell className={classes.flexObject}>
+        {!data.injectionFailed && (
           <div
             className={classes.colorCircle}
             style={{ background: data.legendColor }}
           />
-          {data.chaosResultName}
-        </Typography>
+        )}
+        <TextPopOver
+          text={data.chaosResultName}
+          className={classes.tableObjects}
+          style={{ maxWidth: '15rem' }}
+        />
       </StyledTableCell>
       <StyledTableCell>
-        <Typography
+        <TextPopOver
+          text={data.workflow}
           className={classes.tableObjects}
           style={{ maxWidth: '12.5rem' }}
-        >
-          {data.workflow}
-        </Typography>
+        />
       </StyledTableCell>
       <StyledTableCell>
-        <Typography
+        <TextPopOver
+          text={data.engineContext}
           className={classes.tableObjects}
           style={{ maxWidth: '7.5rem' }}
-        >
-          {data.engineContext}
-        </Typography>
-      </StyledTableCell>
-      <StyledTableCell>
-        <Typography
-          className={classes.tableObjects}
-          style={{ maxWidth: '7.5rem' }}
-        >
-          {data.target}
-        </Typography>
+        />
       </StyledTableCell>
       <StyledTableCell>
         <Typography
@@ -73,6 +68,8 @@ const TableData: React.FC<TableDataProps> = ({
               ? classes.pass
               : data.verdict === CHAOS_EXPERIMENT_VERDICT_FAIL
               ? classes.fail
+              : data.verdict === CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT
+              ? classes.failedToInject
               : classes.awaited
           }`}
         >

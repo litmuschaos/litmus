@@ -18,6 +18,8 @@ export interface UserInvite {
   name: string;
   username: string;
   email: string;
+  created_at: string;
+  deactivated_at: string;
 }
 
 // Invitation status for users

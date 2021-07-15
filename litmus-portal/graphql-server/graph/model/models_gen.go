@@ -147,6 +147,7 @@ type ClusterInput struct {
 	AgentScope     string  `json:"agent_scope"`
 	AgentNsExists  *bool   `json:"agent_ns_exists"`
 	AgentSaExists  *bool   `json:"agent_sa_exists"`
+	NodeSelector   *string `json:"node_selector"`
 }
 
 type CreateMyHub struct {
@@ -265,6 +266,7 @@ type HeatmapData struct {
 }
 
 type ImageRegistryResponse struct {
+	IsDefault         bool           `json:"is_default"`
 	ImageRegistryInfo *ImageRegistry `json:"image_registry_info"`
 	ImageRegistryID   string         `json:"image_registry_id"`
 	ProjectID         string         `json:"project_id"`
@@ -332,13 +334,14 @@ type ManifestTemplate struct {
 }
 
 type Member struct {
-	UserID     string     `json:"user_id"`
-	UserName   string     `json:"user_name"`
-	Name       string     `json:"name"`
-	Email      string     `json:"email"`
-	Role       MemberRole `json:"role"`
-	Invitation string     `json:"invitation"`
-	JoinedAt   string     `json:"joined_at"`
+	UserID        string     `json:"user_id"`
+	UserName      string     `json:"user_name"`
+	Name          string     `json:"name"`
+	Email         string     `json:"email"`
+	Role          MemberRole `json:"role"`
+	Invitation    string     `json:"invitation"`
+	JoinedAt      string     `json:"joined_at"`
+	DeactivatedAt string     `json:"deactivated_at"`
 }
 
 type MemberInput struct {
@@ -437,6 +440,11 @@ type PodLogResponse struct {
 	Log           string `json:"log"`
 }
 
+type PortalDashboardData struct {
+	Name          string `json:"name"`
+	DashboardData string `json:"dashboard_data"`
+}
+
 type Project struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
@@ -462,24 +470,6 @@ type Provider struct {
 type SSHKey struct {
 	PublicKey  string `json:"publicKey"`
 	PrivateKey string `json:"privateKey"`
-}
-
-type ScheduledWorkflows struct {
-	WorkflowType        string        `json:"workflow_type"`
-	WorkflowID          string        `json:"workflow_id"`
-	WorkflowManifest    string        `json:"workflow_manifest"`
-	CronSyntax          string        `json:"cronSyntax"`
-	ClusterName         string        `json:"cluster_name"`
-	WorkflowName        string        `json:"workflow_name"`
-	WorkflowDescription string        `json:"workflow_description"`
-	Weightages          []*Weightages `json:"weightages"`
-	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
-	UpdatedAt           string        `json:"updated_at"`
-	CreatedAt           string        `json:"created_at"`
-	ProjectID           string        `json:"project_id"`
-	ClusterID           string        `json:"cluster_id"`
-	ClusterType         string        `json:"cluster_type"`
-	IsRemoved           bool          `json:"isRemoved"`
 }
 
 type Spec struct {
@@ -560,10 +550,9 @@ type User struct {
 	Name            *string    `json:"name"`
 	Projects        []*Project `json:"projects"`
 	Role            *string    `json:"role"`
-	State           *string    `json:"state"`
 	CreatedAt       string     `json:"created_at"`
 	UpdatedAt       string     `json:"updated_at"`
-	RemovedAt       string     `json:"removed_at"`
+	DeactivatedAt   string     `json:"deactivated_at"`
 }
 
 type WeightagesInput struct {
@@ -572,21 +561,20 @@ type WeightagesInput struct {
 }
 
 type Workflow struct {
-	WorkflowID          string          `json:"workflow_id"`
-	WorkflowManifest    string          `json:"workflow_manifest"`
-	CronSyntax          string          `json:"cronSyntax"`
-	ClusterName         string          `json:"cluster_name"`
-	WorkflowName        string          `json:"workflow_name"`
-	WorkflowDescription string          `json:"workflow_description"`
-	Weightages          []*Weightages   `json:"weightages"`
-	IsCustomWorkflow    bool            `json:"isCustomWorkflow"`
-	UpdatedAt           string          `json:"updated_at"`
-	CreatedAt           string          `json:"created_at"`
-	ProjectID           string          `json:"project_id"`
-	ClusterID           string          `json:"cluster_id"`
-	ClusterType         string          `json:"cluster_type"`
-	IsRemoved           bool            `json:"isRemoved"`
-	WorkflowRuns        []*WorkflowRuns `json:"workflow_runs"`
+	WorkflowID          string        `json:"workflow_id"`
+	WorkflowManifest    string        `json:"workflow_manifest"`
+	CronSyntax          string        `json:"cronSyntax"`
+	ClusterName         string        `json:"cluster_name"`
+	WorkflowName        string        `json:"workflow_name"`
+	WorkflowDescription string        `json:"workflow_description"`
+	Weightages          []*Weightages `json:"weightages"`
+	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
+	UpdatedAt           string        `json:"updated_at"`
+	CreatedAt           string        `json:"created_at"`
+	ProjectID           string        `json:"project_id"`
+	ClusterID           string        `json:"cluster_id"`
+	ClusterType         string        `json:"cluster_type"`
+	IsRemoved           bool          `json:"isRemoved"`
 }
 
 type WorkflowFilterInput struct {
@@ -595,24 +583,25 @@ type WorkflowFilterInput struct {
 }
 
 type WorkflowRun struct {
-	WorkflowRunID      string   `json:"workflow_run_id"`
-	WorkflowID         string   `json:"workflow_id"`
-	ClusterName        string   `json:"cluster_name"`
-	LastUpdated        string   `json:"last_updated"`
-	ProjectID          string   `json:"project_id"`
-	ClusterID          string   `json:"cluster_id"`
-	WorkflowName       string   `json:"workflow_name"`
-	ClusterType        *string  `json:"cluster_type"`
-	Phase              string   `json:"phase"`
-	ResiliencyScore    *float64 `json:"resiliency_score"`
-	ExperimentsPassed  *int     `json:"experiments_passed"`
-	ExperimentsFailed  *int     `json:"experiments_failed"`
-	ExperimentsAwaited *int     `json:"experiments_awaited"`
-	ExperimentsStopped *int     `json:"experiments_stopped"`
-	ExperimentsNa      *int     `json:"experiments_na"`
-	TotalExperiments   *int     `json:"total_experiments"`
-	ExecutionData      string   `json:"execution_data"`
-	IsRemoved          *bool    `json:"isRemoved"`
+	WorkflowRunID      string        `json:"workflow_run_id"`
+	WorkflowID         string        `json:"workflow_id"`
+	ClusterName        string        `json:"cluster_name"`
+	Weightages         []*Weightages `json:"weightages"`
+	LastUpdated        string        `json:"last_updated"`
+	ProjectID          string        `json:"project_id"`
+	ClusterID          string        `json:"cluster_id"`
+	WorkflowName       string        `json:"workflow_name"`
+	ClusterType        *string       `json:"cluster_type"`
+	Phase              string        `json:"phase"`
+	ResiliencyScore    *float64      `json:"resiliency_score"`
+	ExperimentsPassed  *int          `json:"experiments_passed"`
+	ExperimentsFailed  *int          `json:"experiments_failed"`
+	ExperimentsAwaited *int          `json:"experiments_awaited"`
+	ExperimentsStopped *int          `json:"experiments_stopped"`
+	ExperimentsNa      *int          `json:"experiments_na"`
+	TotalExperiments   *int          `json:"total_experiments"`
+	ExecutionData      string        `json:"execution_data"`
+	IsRemoved          *bool         `json:"isRemoved"`
 }
 
 type WorkflowRunDetails struct {
@@ -665,12 +654,6 @@ type WorkflowRunStatsResponse struct {
 	WorkflowRunFailedPercentage    float64 `json:"workflow_run_failed_percentage"`
 }
 
-type WorkflowRuns struct {
-	ExecutionData string `json:"execution_data"`
-	WorkflowRunID string `json:"workflow_run_id"`
-	LastUpdated   string `json:"last_updated"`
-}
-
 type WorkflowRunsData struct {
 	Value             *float64            `json:"value"`
 	WorkflowRunDetail *WorkflowRunDetails `json:"workflowRunDetail"`
@@ -693,9 +676,10 @@ type WorkflowStats struct {
 }
 
 type AnnotationsPromResponse struct {
-	Queryid string                         `json:"queryid"`
-	Legends []*string                      `json:"legends"`
-	Tsvs    [][]*AnnotationsTimeStampValue `json:"tsvs"`
+	Queryid      string                         `json:"queryid"`
+	Legends      []*string                      `json:"legends"`
+	Tsvs         [][]*AnnotationsTimeStampValue `json:"tsvs"`
+	SubDataArray [][]*SubData                   `json:"subDataArray"`
 }
 
 type AnnotationsTimeStampValue struct {
@@ -736,6 +720,19 @@ type CreateDBInput struct {
 	RefreshRate               string                 `json:"refresh_rate"`
 }
 
+type DashboardPromResponse struct {
+	DashboardMetricsResponse []*MetricDataForPanelGroup `json:"dashboardMetricsResponse"`
+	AnnotationsResponse      []*AnnotationsPromResponse `json:"annotationsResponse"`
+}
+
+type DataVars struct {
+	URL             string `json:"url"`
+	Start           string `json:"start"`
+	End             string `json:"end"`
+	RelativeTime    int    `json:"relative_time"`
+	RefreshInterval int    `json:"refresh_interval"`
+}
+
 type DeleteDSInput struct {
 	ForceDelete bool   `json:"force_delete"`
 	DsID        string `json:"ds_id"`
@@ -748,6 +745,7 @@ type DsDetails struct {
 }
 
 type ImageRegistry struct {
+	IsDefault         *bool   `json:"is_default"`
 	ImageRegistryName string  `json:"image_registry_name"`
 	ImageRepoName     string  `json:"image_repo_name"`
 	ImageRegistryType string  `json:"image_registry_type"`
@@ -757,6 +755,7 @@ type ImageRegistry struct {
 }
 
 type ImageRegistryInput struct {
+	IsDefault         bool    `json:"is_default"`
 	ImageRegistryName string  `json:"image_registry_name"`
 	ImageRepoName     string  `json:"image_repo_name"`
 	ImageRegistryType string  `json:"image_registry_type"`
@@ -783,6 +782,8 @@ type ListDashboardResponse struct {
 	ClusterName               *string                        `json:"cluster_name"`
 	DsName                    *string                        `json:"ds_name"`
 	DsType                    *string                        `json:"ds_type"`
+	DsURL                     *string                        `json:"ds_url"`
+	DsHealthStatus            *string                        `json:"ds_health_status"`
 	PanelGroups               []*PanelGroupResponse          `json:"panel_groups"`
 	EndTime                   string                         `json:"end_time"`
 	StartTime                 string                         `json:"start_time"`
@@ -791,6 +792,17 @@ type ListDashboardResponse struct {
 	ClusterID                 string                         `json:"cluster_id"`
 	CreatedAt                 *string                        `json:"created_at"`
 	UpdatedAt                 *string                        `json:"updated_at"`
+	ViewedAt                  *string                        `json:"viewed_at"`
+}
+
+type MetricDataForPanel struct {
+	PanelID              string                 `json:"panelID"`
+	PanelMetricsResponse []*MetricsPromResponse `json:"PanelMetricsResponse"`
+}
+
+type MetricDataForPanelGroup struct {
+	PanelGroupID              string                `json:"panelGroupID"`
+	PanelGroupMetricsResponse []*MetricDataForPanel `json:"panelGroupMetricsResponse"`
 }
 
 type MetricsPromResponse struct {
@@ -909,6 +921,16 @@ type PromSeriesResponse struct {
 	LabelValues []*LabelValue `json:"labelValues"`
 }
 
+type QueryMapForPanel struct {
+	PanelID  string   `json:"panelID"`
+	QueryIDs []string `json:"queryIDs"`
+}
+
+type QueryMapForPanelGroup struct {
+	PanelGroupID  string              `json:"panelGroupID"`
+	PanelQueryMap []*QueryMapForPanel `json:"panelQueryMap"`
+}
+
 type Resource struct {
 	Kind  string    `json:"kind"`
 	Names []*string `json:"names"`
@@ -919,21 +941,27 @@ type ResourceResponse struct {
 	Names []*string `json:"names"`
 }
 
+type SubData struct {
+	Date        *float64 `json:"date"`
+	Value       string   `json:"value"`
+	SubDataName string   `json:"subDataName"`
+}
+
 type UpdateDBInput struct {
 	DbID                      string                   `json:"db_id"`
-	DsID                      string                   `json:"ds_id"`
-	DbName                    string                   `json:"db_name"`
-	DbTypeName                string                   `json:"db_type_name"`
-	DbTypeID                  string                   `json:"db_type_id"`
+	DsID                      *string                  `json:"ds_id"`
+	DbName                    *string                  `json:"db_name"`
+	DbTypeName                *string                  `json:"db_type_name"`
+	DbTypeID                  *string                  `json:"db_type_id"`
 	DbInformation             *string                  `json:"db_information"`
-	ChaosEventQueryTemplate   string                   `json:"chaos_event_query_template"`
-	ChaosVerdictQueryTemplate string                   `json:"chaos_verdict_query_template"`
+	ChaosEventQueryTemplate   *string                  `json:"chaos_event_query_template"`
+	ChaosVerdictQueryTemplate *string                  `json:"chaos_verdict_query_template"`
 	ApplicationMetadataMap    []*ApplicationMetadata   `json:"application_metadata_map"`
 	PanelGroups               []*UpdatePanelGroupInput `json:"panel_groups"`
-	EndTime                   string                   `json:"end_time"`
-	StartTime                 string                   `json:"start_time"`
-	ClusterID                 string                   `json:"cluster_id"`
-	RefreshRate               string                   `json:"refresh_rate"`
+	EndTime                   *string                  `json:"end_time"`
+	StartTime                 *string                  `json:"start_time"`
+	ClusterID                 *string                  `json:"cluster_id"`
+	RefreshRate               *string                  `json:"refresh_rate"`
 }
 
 type UpdatePanelGroupInput struct {

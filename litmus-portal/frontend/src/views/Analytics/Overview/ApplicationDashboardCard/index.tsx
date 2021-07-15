@@ -15,7 +15,6 @@ import {
 } from '../../../../models/graphql/dashboardsDetails';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
-import * as DataSourceActions from '../../../../redux/actions/dataSource';
 import { history } from '../../../../redux/configureStore';
 import { ReactComponent as AnalyticsIcon } from '../../../../svg/analytics.svg';
 import { ReactComponent as CogwheelIcon } from '../../../../svg/cogwheel.svg';
@@ -35,22 +34,14 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
   data,
 }) => {
   const classes = useStyles();
-
-  const dashboard = useActions(DashboardActions);
-  const dataSource = useActions(DataSourceActions);
-
   const projectID = getProjectID();
   const projectRole = getProjectRole();
+  const dashboard = useActions(DashboardActions);
 
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
       selectedDashboardID: data.db_id,
-      refreshRate: 0,
-    });
-    dataSource.selectDataSource({
-      selectedDataSourceURL: '',
-      selectedDataSourceID: '',
-      selectedDataSourceName: '',
+      selectedAgentID: data.cluster_id,
     });
     return true;
   };
@@ -102,20 +93,22 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
 
     const applicationMetadataMap: ApplicationMetadata[] = [];
 
-    data.application_metadata_map.forEach((applicationMetadata) => {
-      const applications: Resource[] = [];
+    if (data.application_metadata_map) {
+      data.application_metadata_map.forEach((applicationMetadata) => {
+        const applications: Resource[] = [];
 
-      applicationMetadata.applications.forEach((application) => {
-        applications.push({
-          kind: application.kind,
-          names: application.names,
+        applicationMetadata.applications.forEach((application) => {
+          applications.push({
+            kind: application.kind,
+            names: application.names,
+          });
+        });
+        applicationMetadataMap.push({
+          namespace: applicationMetadata.namespace,
+          applications,
         });
       });
-      applicationMetadataMap.push({
-        namespace: applicationMetadata.namespace,
-        applications,
-      });
-    });
+    }
 
     const exportedDashboard: DashboardExport = {
       dashboardID: data.db_type_id,
@@ -150,7 +143,7 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
           <div>
             <div className={classes.statusDiv}>
               <img
-                src={`/icons/${data.db_type_id}_dashboard.svg`}
+                src={`./icons/${data.db_type_id}_dashboard.svg`}
                 alt="k8s"
                 title={data.db_type}
               />
@@ -167,7 +160,7 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
             </div>
           </div>
           <Typography className={`${classes.noWrapProvider} ${classes.hint}`}>
-            {timeDifferenceForDate(data.updated_at)}
+            {timeDifferenceForDate(data.viewed_at)}
           </Typography>
           <section className={classes.cardActionsSection}>
             <div className={classes.cardActions}>

@@ -1,27 +1,92 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-param-reassign */
 import {
-  ParsedPrometheusData,
+  ParsedChaosEventPrometheusData,
+  ParsedMetricPrometheusData,
   PromQueryDetails,
   QueryLabelValue,
+  QueryMapForPanelGroup,
+  RangeType,
 } from '../models/dashboardsData';
+import { PanelGroupResponse } from '../models/graphql/dashboardsDetails';
 import {
+  annotationsPromResponse,
+  metricDataForPanelGroup,
+  metricsPromResponse,
   metricsTimeStampValue,
-  PrometheusResponse,
   promQueryInput,
+  queryMapForPanel,
+  queryMapForPanelGroup,
+  subData,
 } from '../models/graphql/prometheus';
 import {
-  DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+  CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT,
+  DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
+  DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
+  DEFAULT_CHAOS_EVENT_QUERY_ID,
+  DEFAULT_CHAOS_VERDICT_QUERY_ID,
+  DEFAULT_RELATIVE_TIME_RANGE,
+  DEFAULT_TSDB_SCRAPE_INTERVAL,
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
+  TIME_THRESHOLD_FOR_TSDB,
 } from '../pages/ApplicationDashboard/constants';
 
 const labelMatchOperators = ['==', '!=', '<=', '<', '>=', '>', '=~', '!~', '='];
 
+const timeInSeconds = [
+  30, 60, 300, 600, 900, 1800, 3600, 10800, 21600, 43200, 86400, 259200, 604800,
+  1209600,
+];
+
+const allowedMinSteps = [
+  1, 2, 10, 20, 30, 60, 120, 360, 720, 1440, 2880, 8640, 20160, 40320,
+];
+
+export const getDashboardQueryMap = (panelGroups: PanelGroupResponse[]) => {
+  const queryMapPanelGroup: queryMapForPanelGroup[] = [];
+  panelGroups.forEach((panelGroup) => {
+    const queryMapPanel: queryMapForPanel[] = [];
+    panelGroup.panels.forEach((panel) => {
+      queryMapPanel.push({
+        panelID: panel.panel_id,
+        queryIDs: panel.prom_queries.map((query) => query.queryid),
+      });
+    });
+    queryMapPanelGroup.push({
+      panelGroupID: panelGroup.panel_group_id,
+      panelQueryMap: queryMapPanel,
+    });
+  });
+  return queryMapPanelGroup;
+};
+
+const getNormalizedMinStep = (timeRangeDiff: number) => {
+  let minStep: number;
+  const timeIndex = timeInSeconds.indexOf(timeRangeDiff);
+  if (timeIndex !== -1) {
+    minStep = allowedMinSteps[timeIndex];
+  } else {
+    let start = 0;
+    let end = timeInSeconds.length - 1;
+    let ans = -1;
+    while (start <= end) {
+      const mid = Math.trunc((start + end) / 2);
+      if (timeInSeconds[mid] <= timeRangeDiff) {
+        start = mid + 1;
+      } else {
+        ans = mid;
+        end = mid - 1;
+      }
+    }
+    minStep = allowedMinSteps[ans];
+  }
+  return minStep;
+};
+
 export const getPromQueryInput = (
   prom_queries: PromQueryDetails[],
   timeRangeDiff: number,
-  withEvents: Boolean
+  withEvents: boolean,
+  eventQueryTemplate?: string,
+  verdictQueryTemplate?: string
 ) => {
   const promQueries: promQueryInput[] = [];
   prom_queries.forEach((query: PromQueryDetails) => {
@@ -31,123 +96,229 @@ export const getPromQueryInput = (
       legend: query.legend,
       resolution: query.resolution,
       minstep:
-        Math.floor(timeRangeDiff / parseInt(query.minstep, 10)) *
-          prom_queries.length <
-        PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
+        Math.ceil(timeRangeDiff / parseInt(query.minstep, 10)) <
+        PROMETHEUS_QUERY_RESOLUTION_LIMIT - TIME_THRESHOLD_FOR_TSDB
           ? parseInt(query.minstep, 10)
-          : Math.floor(
-              (timeRangeDiff * prom_queries.length) /
-                (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)
-            ),
+          : getNormalizedMinStep(timeRangeDiff),
     });
   });
-  if (withEvents) {
+  if (withEvents && eventQueryTemplate && verdictQueryTemplate) {
     promQueries.push({
-      queryid: 'chaos-interval',
-      query: 'litmuschaos_awaited_experiments{job="chaos-exporter"}',
-      legend: '{{chaosengine_name}}',
-      resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
+      queryid: DEFAULT_CHAOS_EVENT_QUERY_ID,
+      query: eventQueryTemplate,
+      legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
+      resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
-        timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
-          ? 1
-          : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
+        timeRangeDiff <
+        PROMETHEUS_QUERY_RESOLUTION_LIMIT - TIME_THRESHOLD_FOR_TSDB
+          ? DEFAULT_TSDB_SCRAPE_INTERVAL
+          : Math.ceil(
+              timeRangeDiff /
+                (PROMETHEUS_QUERY_RESOLUTION_LIMIT + TIME_THRESHOLD_FOR_TSDB)
+            ),
     });
-    // promQueries.push({
-    //   queryid: 'chaos-verdict',
-    //   query: 'litmuschaos_experiment_verdict{job="chaos-exporter"}',
-    //   legend: '{{chaosengine_name}}',
-    //   resolution: DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY_RESOLUTION,
-    //   minstep:
-    //     timeRangeDiff < PROMETHEUS_QUERY_RESOLUTION_LIMIT - 1
-    //       ? 1
-    //       : Math.floor(timeRangeDiff / (PROMETHEUS_QUERY_RESOLUTION_LIMIT + 1)),
-    // });
+    promQueries.push({
+      queryid: DEFAULT_CHAOS_VERDICT_QUERY_ID,
+      query: verdictQueryTemplate,
+      legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
+      resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
+      minstep:
+        timeRangeDiff <
+        PROMETHEUS_QUERY_RESOLUTION_LIMIT - TIME_THRESHOLD_FOR_TSDB
+          ? DEFAULT_TSDB_SCRAPE_INTERVAL
+          : Math.ceil(
+              timeRangeDiff /
+                (PROMETHEUS_QUERY_RESOLUTION_LIMIT + TIME_THRESHOLD_FOR_TSDB)
+            ),
+    });
   }
   return promQueries;
 };
 
-export const DataParserForPrometheus = (
-  prometheusData: PrometheusResponse,
+export const generatePromQueries = (
+  range: RangeType,
+  dashboardMetaPanelGroups: PanelGroupResponse[],
+  chaosEventQueryTemplate: string,
+  chaosVerdictQueryTemplate: string
+) => {
+  const timeRangeDiff: number =
+    range.startDate !== ''
+      ? parseInt(range.endDate, 10) - parseInt(range.startDate, 10)
+      : DEFAULT_RELATIVE_TIME_RANGE;
+  const promQueries: promQueryInput[] = getPromQueryInput(
+    dashboardMetaPanelGroups
+      .flatMap((panelGroup) => panelGroup.panels)
+      .flatMap((panel) => panel.prom_queries),
+    timeRangeDiff,
+    true,
+    chaosEventQueryTemplate,
+    chaosVerdictQueryTemplate
+  );
+  return promQueries;
+};
+
+export const MetricDataParserForPrometheus = (
+  metricData: metricsPromResponse[],
   lineGraph: string[],
   areaGraph: string[],
   closedAreaQueryIDs: string[],
   selectedApplications?: string[]
 ) => {
-  const parsedPrometheusData: ParsedPrometheusData = {
+  const parsedPrometheusData: ParsedMetricPrometheusData = {
     seriesData: [],
     closedAreaData: [],
-    chaosData: [],
   };
-  prometheusData.GetPromQuery.annotationsResponse?.forEach(
-    (queryResponse, mainIndex) => {
-      if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
-        parsedPrometheusData.chaosData.push(
-          ...queryResponse.legends.map((elem, index) => ({
+  metricData.forEach((queryResponse, mainIndex) => {
+    if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
+      let { legends } = queryResponse;
+      let { tsvs } = queryResponse;
+      if (selectedApplications && selectedApplications.length) {
+        const newLegends: string[] = [];
+        const newTsvs: metricsTimeStampValue[][] = [];
+        queryResponse.legends.forEach((legend, index) => {
+          const filteredApps: string[] = selectedApplications.filter((app) =>
+            legend.includes(app)
+          );
+          if (filteredApps.length) {
+            newLegends.push(legend);
+            newTsvs.push(queryResponse.tsvs[index]);
+          }
+        });
+        legends = newLegends;
+        tsvs = newTsvs;
+      }
+      if (closedAreaQueryIDs.includes(queryResponse.queryid)) {
+        parsedPrometheusData.closedAreaData.push(
+          ...legends.map((elem, index) => ({
             metricName: elem,
-            data: queryResponse.tsvs[index].map((dataPoint) => ({
+            data: tsvs[index].map((dataPoint) => ({
               ...dataPoint,
             })),
             baseColor:
               areaGraph[
                 (mainIndex + (index % areaGraph.length)) % areaGraph.length
               ],
-            subData: [],
+          }))
+        );
+      } else {
+        parsedPrometheusData.seriesData.push(
+          ...legends.map((elem, index) => ({
+            metricName: elem,
+            data: tsvs[index].map((dataPoint) => ({
+              ...dataPoint,
+            })),
+            baseColor:
+              lineGraph[
+                (mainIndex + (index % lineGraph.length)) % lineGraph.length
+              ],
           }))
         );
       }
     }
-  );
-  prometheusData.GetPromQuery.metricsResponse?.forEach(
-    (queryResponse, mainIndex) => {
-      if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
-        let { legends } = queryResponse;
-        let { tsvs } = queryResponse;
-        if (selectedApplications && selectedApplications.length) {
-          const newLegends: string[] = [];
-          const newTsvs: metricsTimeStampValue[][] = [];
-          queryResponse.legends.forEach((legend, index) => {
-            const filteredApps: string[] = selectedApplications.filter((app) =>
-              legend.includes(app)
-            );
-            if (filteredApps.length) {
-              newLegends.push(legend);
-              newTsvs.push(queryResponse.tsvs[index]);
-            }
-          });
-          legends = newLegends;
-          tsvs = newTsvs;
-        }
-        if (closedAreaQueryIDs.includes(queryResponse.queryid)) {
-          parsedPrometheusData.closedAreaData.push(
-            ...legends.map((elem, index) => ({
-              metricName: elem,
-              data: tsvs[index].map((dataPoint) => ({
-                ...dataPoint,
-              })),
-              baseColor:
-                areaGraph[
-                  (mainIndex + (index % areaGraph.length)) % areaGraph.length
-                ],
-            }))
-          );
-        } else {
-          parsedPrometheusData.seriesData.push(
-            ...legends.map((elem, index) => ({
-              metricName: elem,
-              data: tsvs[index].map((dataPoint) => ({
-                ...dataPoint,
-              })),
-              baseColor:
-                lineGraph[
-                  (mainIndex + (index % lineGraph.length)) % lineGraph.length
-                ],
-            }))
-          );
-        }
-      }
-    }
-  );
+  });
   return parsedPrometheusData;
+};
+
+export const getValueFromSubDataArray = (array: subData[], key: string) => {
+  let value = 'N/A';
+  array.reverse().forEach((element) => {
+    if (element.subDataName === key) {
+      value = element.value;
+    }
+  });
+  return value;
+};
+
+export const ChaosEventDataParserForPrometheus = (
+  chaosEventData: annotationsPromResponse[],
+  areaGraph: string[],
+  selectedEvents: string[]
+) => {
+  const selectAll = selectedEvents.length === 0;
+  const parsedPrometheusData: ParsedChaosEventPrometheusData = {
+    chaosEventDetails: [],
+    chaosData: [],
+  };
+  chaosEventData.forEach((queryResponse, mainIndex) => {
+    if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
+      queryResponse.legends.forEach((elem, index) => {
+        const baseColor =
+          areaGraph[
+            (mainIndex + (index % areaGraph.length)) % areaGraph.length
+          ];
+        if (
+          queryResponse.tsvs[index] &&
+          (selectAll || selectedEvents.includes(elem))
+        ) {
+          parsedPrometheusData.chaosData.push({
+            metricName: elem,
+            data: queryResponse.tsvs[index].map((dataPoint) => ({
+              ...dataPoint,
+            })),
+            baseColor,
+            subData: queryResponse.subDataArray[index].map((data) => {
+              return {
+                subDataName: data.subDataName,
+                value: data.value,
+                date: data.date + 2 * DEFAULT_TSDB_SCRAPE_INTERVAL * 1000,
+              };
+            }),
+          });
+        }
+        parsedPrometheusData.chaosEventDetails.push({
+          id: elem,
+          legendColor: baseColor,
+          chaosResultName: elem,
+          workflow: getValueFromSubDataArray(
+            queryResponse.subDataArray[index],
+            'Workflow'
+          ),
+          engineContext: getValueFromSubDataArray(
+            queryResponse.subDataArray[index],
+            'Engine context'
+          ),
+          verdict: queryResponse.tsvs[index]
+            ? getValueFromSubDataArray(
+                queryResponse.subDataArray[index],
+                'Experiment verdict'
+              )
+            : CHAOS_EXPERIMENT_VERDICT_FAILED_TO_INJECT,
+          injectionFailed: !queryResponse.tsvs[index],
+        });
+      });
+    }
+  });
+
+  return parsedPrometheusData;
+};
+
+export const DashboardMetricDataParserForPrometheus = (
+  metricData: metricDataForPanelGroup[],
+  lineGraph: string[],
+  areaGraph: string[],
+  closedAreaQueryIDs: string[],
+  selectedApplications?: string[]
+) => {
+  const mappedData: QueryMapForPanelGroup[] = [];
+  metricData.forEach((panelGroupData, panelGroupIndex) => {
+    mappedData.push({
+      panelGroupID: panelGroupData.panelGroupID,
+      metricDataForGroup: [],
+    });
+    panelGroupData.panelGroupMetricsResponse.forEach((panelData) => {
+      mappedData[panelGroupIndex].metricDataForGroup.push({
+        panelID: panelData.panelID,
+        metricDataForPanel: MetricDataParserForPrometheus(
+          panelData.PanelMetricsResponse,
+          lineGraph,
+          areaGraph,
+          closedAreaQueryIDs,
+          selectedApplications
+        ),
+      });
+    });
+  });
+  return mappedData;
 };
 
 export const replaceBetween = (
@@ -184,13 +355,14 @@ export const getLabelsAndValues = (queryString: string) => {
         return ret;
       });
       const labelAndValue = adjustedLabelValue.trim().split(splitOperator);
-      const re1 = /\"(.*?)\"/g;
+      const re1 = /"(.*?)"/g;
       if (labelAndValue.length > 0 && labelAndValue[1]) {
         const arr1: string[] = labelAndValue[1].match(re1) as string[];
         if (arr1 && arr1.length > 0) {
           let updateStatus = false;
           labelValuesList.forEach((labVal) => {
             if (labVal.label === labelAndValue[0]) {
+              // eslint-disable-next-line no-param-reassign
               labVal.value = labVal.value.concat(
                 arr1[0].substring(1, arr1[0].length - 1).split('|')
               );
