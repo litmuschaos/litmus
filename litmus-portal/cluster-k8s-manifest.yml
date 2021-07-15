@@ -306,7 +306,7 @@ rules:
   # for creation & deletion of application in predefined workflows
   - apiGroups: [apps]
     resources: [deployments, statefulsets]
-    verbs: [get, watch, patch , create, delete]
+    verbs: [get, watch, patch, create, delete]
     
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: [litmuschaos.io]
