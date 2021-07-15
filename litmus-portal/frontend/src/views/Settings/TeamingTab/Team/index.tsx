@@ -420,8 +420,6 @@ const TeamingTab: React.FC = () => {
                   showModal={() => {
                     showModal();
                   }}
-                  // handleOpen={() => setCancelInviteOpen(true)}
-                  // open={cancelInviteOpen}
                 />
               </TabPanel>
               {/* user table */}
