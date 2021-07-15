@@ -192,9 +192,10 @@ const WorkflowComparisonTable = () => {
         const workflowTimeSeriesData: DatedResilienceScore[] = [];
         let isWorkflowValid: boolean = false;
         selectedWorkflows.forEach((workflowID) => {
-          const selectedRuns = runs?.filter(
-            (workflowRun) => workflowRun.workflow_id === workflowID
-          );
+          const selectedRuns =
+            runs?.filter(
+              (workflowRun) => workflowRun.workflow_id === workflowID
+            ) ?? [];
           selectedRuns.forEach((data: WorkflowRun) => {
             try {
               const executionData: ExecutionData = JSON.parse(
