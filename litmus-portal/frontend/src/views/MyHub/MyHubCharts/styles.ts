@@ -4,14 +4,13 @@ const useStyles = makeStyles((theme) => ({
   mainDiv: {
     display: 'flex',
     flexDirection: 'column',
-    width: '95%',
-    marginLeft: theme.spacing(1.25),
+    width: '100%',
     marginTop: theme.spacing(3),
   },
   header: {
     width: '100%',
     color: theme.palette.text.primary,
-    margin: theme.spacing(4.5, 1.5, 2.5, 1.5),
+    margin: theme.spacing(4.5, 0, 2.5, 0),
   },
   backdrop: {
     background: theme.palette.disabledBackground,

@@ -10,8 +10,8 @@ import createApolloClient from './utils/createApolloClient';
 const { persistor, store } = configureStore();
 
 const client = createApolloClient(
-  config.grahqlEndpoint,
-  config.grahqlEndpointSubscription
+  `${config.grahqlEndpoint}/query`,
+  `${config.grahqlEndpointSubscription}/query`
 );
 
 const ReduxRoot = () => {

@@ -2,12 +2,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    width: '97.5%',
+    width: '100%',
     margin: '0 auto',
-    [theme.breakpoints.up('lg')]: {
-      width: '98%',
-      margin: theme.spacing(2, 'auto'),
-    },
   },
   // Header
   headWrapper: {

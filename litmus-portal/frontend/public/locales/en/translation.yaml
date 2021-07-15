@@ -3,7 +3,8 @@ getStarted:
   button:
     continue: Next
     back: Back
-    finish: Finish
+    finish: Change Password
+    skip: Skip for now
     step: Step
     of: of
   project:
@@ -412,7 +413,7 @@ analyticsDashboard:
           creating: Creating
       errors:
         step1:
-          message: Error loading dashboard
+          message: Error loading dashboard(s)
           messageViewer: You cannot create a dashboard as a Viewer
         step2:
           messageViewer: You cannot configure a dashboard as a Viewer
@@ -769,10 +770,10 @@ settings:
       userStatus: User Status
       options:
         all: All
-        signedIn: Signed in
-        notSignedIn: Not Signed in
+        active: Active
+        deactivated: Deactivated
     tableCell:
-      status: Status
+      name: Name
       username: Username
       email: Email
       userCreated: User Created
@@ -1430,11 +1431,11 @@ usage:
     agentClusterScope: cluster scope
     agentNamespaceScope: namespace scope
     workflowScheduleHeader: Workflow Schedules
-    workflowScheduleSubtitle: Total number of chaos workflows scheduled in this month.
+    workflowScheduleSubtitle: Total number of scheduled workflows.
     workflowRunHeader: Workflow Runs
-    workflowRunSubtitle: Number of workflows ran this month.
+    workflowRunSubtitle: Total number of workflow runs.
     experimentRunHeader: Experiments Runs
-    experimentRunSubtitle: Total number of chaos experiments ran this month.
+    experimentRunSubtitle: Total number of chaos experiment runs.
   table:
     project: Projects
     owner: Project Owner

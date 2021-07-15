@@ -30,6 +30,7 @@ spec:
         app: subscriber
     spec:
       serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
+      #{nodeselector}
       containers:
         - name: subscriber
           image: #{SUBSCRIBER-IMAGE}
@@ -61,6 +62,7 @@ spec:
         app: event-tracker
     spec:
       serviceAccountName: event-tracker-sa
+      #{nodeselector}
       containers:
         - image: #{EVENT-TRACKER-IMAGE}
           imagePullPolicy: Always

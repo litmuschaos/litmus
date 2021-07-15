@@ -30,7 +30,7 @@ rules:
   # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
 - apiGroups: [""]
   resources: ["secrets","configmaps"]
-  verbs: ["get","list",]
+  verbs: ["get","list"]
 
   # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
 - apiGroups: [""]
@@ -113,7 +113,6 @@ rules:
 - apiGroups: [""]
   resources: ["nodes"]
   verbs: ["patch","get","list","update"]
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -130,21 +129,6 @@ subjects:
   name: litmus-admin
   namespace: #{AGENT-NAMESPACE}
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: litmus-admin
-  labels:
-    name: litmus-admin
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: litmus-admin
-subjects:
-  - kind: ServiceAccount
-    name: litmus-admin
-    namespace: #{AGENT-NAMESPACE}
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -158,7 +142,7 @@ metadata:
 rules:
   # for managing the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: ['']
-    resources: ['pods', 'services']
+    resources: ['pods', 'services', 'namespaces']
     verbs: ['create', 'get', 'watch', 'patch', 'delete', 'list']
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
@@ -168,8 +152,8 @@ rules:
 
   # for creation & deletion of application in predefined workflows
   - apiGroups: ['apps']
-    resources: ['deployments']
-    verbs: ['get', 'watch', 'create', 'delete']
+    resources: ['deployments', 'statefulsets']
+    verbs: ['get', 'watch', 'patch' , 'create', 'delete']
     
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: ['litmuschaos.io']
@@ -189,14 +173,13 @@ subjects:
     name: argo-chaos
     namespace: #{AGENT-NAMESPACE}
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: subscriber-cluster-role
   namespace: #{AGENT-NAMESPACE}
   labels:
     name: subscriber-cluster-role
-
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
@@ -226,7 +209,7 @@ rules:
   resources: ["workflows","workflows/finalizers","workflowtemplates", "workflowtemplates/finalizers","cronworkflows","cronworkflows/finalizers","clusterworkflowtemplates","clusterworkflowtemplates/finalizers","rollouts"]
   verbs: ["get","list","create","delete","update","watch"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: subscriber-cluster-role-binding

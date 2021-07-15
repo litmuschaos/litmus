@@ -58,17 +58,32 @@ func GetProjects(ctx context.Context, query bson.D) ([]Project, error) {
 }
 
 // GetProjectsByUserID returns a project based on the userID
-func GetProjectsByUserID(ctx context.Context, userID string) ([]Project, error) {
+func GetProjectsByUserID(ctx context.Context, userID string, isOwner bool) ([]Project, error) {
 	var projects []Project
-	query := bson.D{
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"user_id", userID},
-				{"invitation", bson.D{
-					{"$ne", DeclinedInvitation},
+	query := bson.D{}
+
+	if isOwner == true {
+		query = bson.D{
+			{"members", bson.D{
+				{"$elemMatch", bson.D{
+					{"user_id", userID},
+					{"role", bson.D{
+						{"$eq", model.MemberRoleOwner},
+					}},
 				}},
-			}},
-		}}}
+			}}}
+	} else {
+		query = bson.D{
+			{"removed_at", ""},
+			{"members", bson.D{
+				{"$elemMatch", bson.D{
+					{"user_id", userID},
+					{"invitation", bson.D{
+						{"$ne", DeclinedInvitation},
+					}},
+				}},
+			}}}
+	}
 
 	result, err := mongodb.Operator.List(ctx, mongodb.ProjectCollection, query)
 	if err != nil {

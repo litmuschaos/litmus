@@ -77,13 +77,35 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   firstTC: {
     borderRight: `1px solid ${theme.palette.border.main}`,
-    maxWidth: '17.56rem',
+    maxWidth: '8.5rem',
   },
   firstCol: {
     display: 'flex',
     alignItems: 'center',
-    maxWidth: '17.56rem',
     marginLeft: theme.spacing(3),
+    '& svg': {
+      width: '3.75rem',
+    },
+
+    '& circle': {
+      r: '0.5',
+      cx: '2.5',
+      cy: '2.5',
+    },
+  },
+  tableHeader: {
+    color: theme.palette.text.hint,
+  },
+  tooltip: {
+    boxShadow: `0 5px 10px rgb(0 0 0 / 30%)`,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+  },
+  statusActive: {
+    fill: theme.palette.secondary.dark,
+  },
+  statusDeactivated: {
+    fill: theme.palette.disabledBackground,
   },
   otherTC: {
     maxWidth: '15.375rem',

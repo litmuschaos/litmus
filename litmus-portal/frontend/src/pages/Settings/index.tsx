@@ -83,20 +83,20 @@ const Settings: React.FC = () => {
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
-        <SuspenseLoader style={{ height: '100%' }}>
+        <SuspenseLoader style={{ height: '50vh' }}>
           <AccountSettings />
         </SuspenseLoader>
       </TabPanel>
       <div data-cy="teamTabPanel">
         <TabPanel value={settingsTabValue} index={1}>
-          <SuspenseLoader style={{ height: '100%' }}>
+          <SuspenseLoader style={{ height: '50vh' }}>
             <TeamingTab />
           </SuspenseLoader>
         </TabPanel>
       </div>
       {role === UserRole.admin && (
         <TabPanel value={settingsTabValue} index={2}>
-          <SuspenseLoader style={{ height: '100%' }}>
+          <SuspenseLoader style={{ height: '50vh' }}>
             <UserManagement />
           </SuspenseLoader>
         </TabPanel>
@@ -106,7 +106,7 @@ const Settings: React.FC = () => {
           value={settingsTabValue}
           index={role === UserRole.admin ? 3 : 2}
         >
-          <SuspenseLoader style={{ height: '100%' }}>
+          <SuspenseLoader style={{ height: '50vh' }}>
             <GitOpsTab />
           </SuspenseLoader>
         </TabPanel>
@@ -116,7 +116,7 @@ const Settings: React.FC = () => {
           value={settingsTabValue}
           index={role === UserRole.admin ? 4 : 3}
         >
-          <SuspenseLoader style={{ height: '100%' }}>
+          <SuspenseLoader style={{ height: '50vh' }}>
             <ImageRegistry />
           </SuspenseLoader>
         </TabPanel>

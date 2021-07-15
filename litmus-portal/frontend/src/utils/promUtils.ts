@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-param-reassign */
 import {
   ParsedChaosEventPrometheusData,
   ParsedMetricPrometheusData,
@@ -108,7 +105,7 @@ export const getPromQueryInput = (
   if (withEvents && eventQueryTemplate && verdictQueryTemplate) {
     promQueries.push({
       queryid: DEFAULT_CHAOS_EVENT_QUERY_ID,
-      query: eventQueryTemplate, // `litmuschaos_awaited_experiments{job="chaos-exporter", chaos_injection_time!=""}`,
+      query: eventQueryTemplate,
       legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
       resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
@@ -122,7 +119,7 @@ export const getPromQueryInput = (
     });
     promQueries.push({
       queryid: DEFAULT_CHAOS_VERDICT_QUERY_ID,
-      query: verdictQueryTemplate, // `litmuschaos_experiment_verdict{job="chaos-exporter"}`,
+      query: verdictQueryTemplate,
       legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
       resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
       minstep:
@@ -263,7 +260,7 @@ export const ChaosEventDataParserForPrometheus = (
               return {
                 subDataName: data.subDataName,
                 value: data.value,
-                date: data.date + 2 * DEFAULT_TSDB_SCRAPE_INTERVAL,
+                date: data.date + 2 * DEFAULT_TSDB_SCRAPE_INTERVAL * 1000,
               };
             }),
           });
@@ -358,13 +355,14 @@ export const getLabelsAndValues = (queryString: string) => {
         return ret;
       });
       const labelAndValue = adjustedLabelValue.trim().split(splitOperator);
-      const re1 = /\"(.*?)\"/g;
+      const re1 = /"(.*?)"/g;
       if (labelAndValue.length > 0 && labelAndValue[1]) {
         const arr1: string[] = labelAndValue[1].match(re1) as string[];
         if (arr1 && arr1.length > 0) {
           let updateStatus = false;
           labelValuesList.forEach((labVal) => {
             if (labVal.label === labelAndValue[0]) {
+              // eslint-disable-next-line no-param-reassign
               labVal.value = labVal.value.concat(
                 arr1[0].substring(1, arr1[0].length - 1).split('|')
               );

@@ -7,10 +7,9 @@ type User {
   name: String
   projects: [Project!]!
   role: String
-  state: String
   created_at: String!
   updated_at: String!
-  removed_at: String!
+  deactivated_at: String!
 }
 
 input CreateUserInput {
