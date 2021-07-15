@@ -14,6 +14,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func Status(service user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, err := service.GetUsers()
+		if err != nil {
+			log.Error(err)
+			c.JSON(500, entities.ApiStatus{"down"})
+			return
+		}
+		c.JSON(200, entities.ApiStatus{"up"})
+	}
+}
+
 func CreateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
