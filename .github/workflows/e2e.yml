@@ -85,7 +85,7 @@ jobs:
   tests:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
     needs: [docker-build-image]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout litmus-E2E Repository
         uses: actions/checkout@v2
@@ -102,7 +102,7 @@ jobs:
             **Test Status:** The testing has been started please wait for the results ...
 
       - name: Setting up KinD Cluster
-        uses: engineerd/setup-kind@v0.5.0
+        run: kind create cluster --wait 5m
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -141,7 +141,7 @@ jobs:
           echo "URL=$AccessURL" >> $GITHUB_ENV
 
       - name: Portal Authentication Tests
-        if: startsWith(github.event.comment.body, '/run-e2e')
+        if: always()
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
@@ -162,7 +162,7 @@ jobs:
           COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
 
       - name: Post Authentication Tests
-        if: startsWith(github.event.comment.body, '/run-e2e')
+        if: always()
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
@@ -174,7 +174,7 @@ jobs:
           CYPRESS_BASE_URL: ${{ env.URL }}
 
       - name: Check the test run
-        if: startsWith(github.event.comment.body, '/run-e2e')
+        if: always()
         run: |
           echo "TEST_RUN=true" >> $GITHUB_ENV
 
