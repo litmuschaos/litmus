@@ -5,6 +5,9 @@ on:
       - master
       - v*
 
+env:
+  DOCKER_BUILDKIT: 1 # Enable Docker_buildkit in all build jobs
+
 jobs:
   changes:
     runs-on: ubuntu-latest
