@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 /* eslint-disable no-loop-func */
 import { useLazyQuery, useQuery } from '@apollo/client';
 import {
@@ -116,8 +115,10 @@ const WorkflowComparisonTable = () => {
   });
   const [displayData, setDisplayData] = useState<ScheduledWorkflow[]>([]);
   const [clusters, setClusters] = React.useState<string[]>([]);
-  const [selected, setSelected] = React.useState<string[]>([]);
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const [selectedWorkflows, setSelectedWorkflows] = React.useState<string[]>(
+    []
+  );
+  const isSelected = (name: string) => selectedWorkflows.indexOf(name) !== -1;
   const [compare, setCompare] = React.useState<Boolean>(false);
   const [isDataAvailable, setIsDataAvailable] = React.useState<Boolean>(true);
   const [showAll, setShowAll] = React.useState<Boolean>(true);
@@ -128,15 +129,20 @@ const WorkflowComparisonTable = () => {
   >([]);
   const [totalValidWorkflowRunsCount, setTotalValidWorkflowRunsCount] =
     React.useState<number>(0);
-
-  const [selectedWorkflowID, setSelectedWorkflowID] = useState('');
-
   const projectID = getProjectID();
-
   const [paginationData, setPaginationData] = useState<Pagination>({
     page: 0,
     limit: 5,
   });
+
+  const randomColor = () => Math.floor(Math.random() * 16777215).toString(16);
+
+  // Function to convert UNIX time in format of DD MMM YYY
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('dddd DD/MM/YYYY HH:mm:ss Z');
+    return resDate;
+  };
 
   // Apollo query to get the scheduled workflow data
   const { data, loading, error } = useQuery<
@@ -155,17 +161,209 @@ const WorkflowComparisonTable = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  const [getWorkflowRun, { data: workflowRunsData }] = useLazyQuery<
-    Workflow,
-    WorkflowDataVars
-  >(WORKFLOW_RUN_DETAILS, {
-    variables: {
-      workflowRunsInput: {
-        project_id: projectID,
-        workflow_ids: [selectedWorkflowID],
+  const [getWorkflowRun] = useLazyQuery<Workflow, WorkflowDataVars>(
+    WORKFLOW_RUN_DETAILS,
+    {
+      variables: {
+        workflowRunsInput: {
+          project_id: projectID,
+          workflow_ids: selectedWorkflows,
+        },
       },
-    },
-  });
+      onCompleted: (data) => {
+        const plotData: ResilienceScoreComparisonPlotProps = {
+          xData: {
+            Hourly: [[]],
+            Daily: [[]],
+            Monthly: [[]],
+          },
+          yData: {
+            Hourly: [[]],
+            Daily: [[]],
+            Monthly: [[]],
+          },
+          labels: [],
+          colors: [],
+        };
+        let totalValidRuns: number = 0;
+        const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
+        const timeSeriesArray: DatedResilienceScore[][] = [];
+        const runs = data?.getWorkflowRuns.workflow_runs;
+        const workflowTimeSeriesData: DatedResilienceScore[] = [];
+        let isWorkflowValid: boolean = false;
+        selectedWorkflows.forEach((workflowID) => {
+          const selectedRuns = runs?.filter(
+            (workflowRun) => workflowRun.workflow_id === workflowID
+          );
+          selectedRuns.forEach((data: WorkflowRun) => {
+            try {
+              const executionData: ExecutionData = JSON.parse(
+                data.execution_data
+              );
+              const { nodes } = executionData;
+              const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+              let totalExperimentsPassed: number = 0;
+              let weightsSum: number = 0;
+              const testDetails: TestDetails = {
+                testNames: [],
+                testWeights: [],
+                testResults: [],
+              };
+              let isValid: boolean = false;
+              for (const key of Object.keys(nodes)) {
+                const node = nodes[key];
+                if (node.chaosData) {
+                  const { chaosData } = node;
+                  if (
+                    chaosData.experimentVerdict === 'Pass' ||
+                    chaosData.experimentVerdict === 'Fail'
+                  ) {
+                    const weightageMap: WeightageMap[] = data.weightages;
+                    weightageMap.forEach((weightage) => {
+                      if (
+                        weightage.experiment_name === chaosData.experimentName
+                      ) {
+                        if (chaosData.experimentVerdict === 'Pass') {
+                          experimentTestResultsArrayPerWorkflowRun.push(
+                            (weightage.weightage *
+                              parseInt(chaosData.probeSuccessPercentage, 10)) /
+                              100
+                          );
+                          totalExperimentsPassed += 1;
+                        }
+                        if (chaosData.experimentVerdict === 'Fail') {
+                          experimentTestResultsArrayPerWorkflowRun.push(0);
+                        }
+                        if (
+                          chaosData.experimentVerdict === 'Pass' ||
+                          chaosData.experimentVerdict === 'Fail'
+                        ) {
+                          weightsSum += weightage.weightage;
+                          testDetails.testNames.push(weightage.experiment_name);
+                          testDetails.testWeights.push(weightage.weightage);
+                          testDetails.testResults.push(
+                            chaosData.experimentVerdict
+                          );
+                          isValid = true;
+                          isWorkflowValid = true;
+                        }
+                      }
+                    });
+                  }
+                }
+              }
+              if (executionData.event_type === 'UPDATE' && isValid) {
+                totalValidRuns += 1;
+                totalValidWorkflowRuns.push({
+                  cluster_name: data.cluster_name,
+                  workflow_name: data.workflow_name,
+                  run_date: formatDate(executionData.creationTimestamp),
+                  tests_passed: totalExperimentsPassed,
+                  tests_failed:
+                    experimentTestResultsArrayPerWorkflowRun.length -
+                    totalExperimentsPassed,
+                  resilience_score: data.resiliency_score,
+                  test_details: testDetails,
+                });
+                workflowTimeSeriesData.push({
+                  date: data.last_updated,
+                  value: experimentTestResultsArrayPerWorkflowRun.length
+                    ? parseFloat(
+                        (
+                          (experimentTestResultsArrayPerWorkflowRun.reduce(
+                            (a, b) => a + b,
+                            0
+                          ) /
+                            weightsSum) *
+                          100
+                        ).toFixed(2)
+                      )
+                    : 0,
+                });
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          });
+          if (isWorkflowValid) {
+            plotData.labels.push(selectedRuns[0].workflow_name ?? '');
+            plotData.colors.push(`#${randomColor()}`);
+            timeSeriesArray.push(workflowTimeSeriesData);
+          }
+        });
+
+        if (plotData.labels.length === 0) {
+          setIsDataAvailable(false);
+        }
+
+        timeSeriesArray.forEach((workflowTimeSeriesData, index) => {
+          const hourlyGroupedResults = _.groupBy(
+            workflowTimeSeriesData,
+            (data) =>
+              moment
+                .unix(parseInt(data.date, 10))
+                .startOf('hour')
+                .format('YYYY-MM-DD HH:mm:ss')
+          );
+          const dailyGroupedResults = _.groupBy(
+            workflowTimeSeriesData,
+            (data) =>
+              moment
+                .unix(parseInt(data.date, 10))
+                .startOf('day')
+                .format('YYYY-MM-DD')
+          );
+          const monthlyGroupedResults = _.groupBy(
+            workflowTimeSeriesData,
+            (data) =>
+              moment
+                .unix(parseInt(data.date, 10))
+                .startOf('month')
+                .format('YYYY-MM')
+          );
+          plotData.xData.Hourly[index] = [];
+          plotData.yData.Hourly[index] = [];
+          Object.keys(hourlyGroupedResults).forEach((hour) => {
+            let total = 0;
+            hourlyGroupedResults[hour].forEach((data) => {
+              total += data.value;
+            });
+            plotData.xData.Hourly[index].push(hour);
+            plotData.yData.Hourly[index].push(
+              total / hourlyGroupedResults[hour].length
+            );
+          });
+          plotData.xData.Daily[index] = [];
+          plotData.yData.Daily[index] = [];
+          Object.keys(dailyGroupedResults).forEach((day) => {
+            let total = 0;
+            dailyGroupedResults[day].forEach((data) => {
+              total += data.value;
+            });
+            plotData.xData.Daily[index].push(day);
+            plotData.yData.Daily[index].push(
+              total / dailyGroupedResults[day].length
+            );
+          });
+          plotData.xData.Monthly[index] = [];
+          plotData.yData.Monthly[index] = [];
+          Object.keys(monthlyGroupedResults).forEach((month) => {
+            let total = 0;
+            monthlyGroupedResults[month].forEach((data) => {
+              total += data.value;
+            });
+            plotData.xData.Monthly[index].push(month);
+            plotData.yData.Monthly[index].push(
+              total / monthlyGroupedResults[month].length
+            );
+          });
+        });
+        setPlotDataForComparison(plotData);
+        setTotalValidWorkflowRuns(totalValidWorkflowRuns);
+        setTotalValidWorkflowRunsCount(totalValidRuns);
+      },
+    }
+  );
 
   const getClusters = (searchingData: ScheduledWorkflow[]) => {
     const uniqueList: string[] = [];
@@ -182,29 +380,29 @@ const WorkflowComparisonTable = () => {
       const newSelecteds = displayData.map(
         (n: ScheduledWorkflow) => n.workflow_id
       );
-      setSelected(newSelecteds);
+      setSelectedWorkflows(newSelecteds);
       return;
     }
-    setSelected([]);
+    setSelectedWorkflows([]);
   };
 
   const handleClick = (name: string) => {
-    const selectedIndex = selected.indexOf(name);
+    const selectedIndex = selectedWorkflows.indexOf(name);
     let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selectedWorkflows, name);
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
+      newSelected = newSelected.concat(selectedWorkflows.slice(1));
+    } else if (selectedIndex === selectedWorkflows.length - 1) {
+      newSelected = newSelected.concat(selectedWorkflows.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
+        selectedWorkflows.slice(0, selectedIndex),
+        selectedWorkflows.slice(selectedIndex + 1)
       );
     }
-    setSelected(newSelected);
+    setSelectedWorkflows(newSelected);
   };
 
   const searchingDataRetriever = () => {
@@ -213,219 +411,31 @@ const WorkflowComparisonTable = () => {
       searchingData = data?.ListWorkflow.workflows ?? [];
     } else {
       const searchedData: ScheduledWorkflow[] = [];
-      selected.forEach((workflowID) => {
-        data?.ListWorkflow.workflows.forEach((workflow) => {
-          if (workflow.workflow_id === workflowID) {
-            searchedData.push(workflow);
-          }
-        });
+      selectedWorkflows.forEach((workflowID) => {
+        if (data) {
+          data.ListWorkflow.workflows.forEach((workflow) => {
+            if (workflow.workflow_id === workflowID) {
+              searchedData.push(workflow);
+            }
+          });
+        }
       });
       searchingData = searchedData;
     }
     return searchingData;
   };
 
-  const randomColor = () => Math.floor(Math.random() * 16777215).toString(16);
-
-  // Function to convert UNIX time in format of DD MMM YYY
-  const formatDate = (date: string) => {
-    const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format('dddd DD/MM/YYYY HH:mm:ss Z');
-    return resDate;
-  };
-
-  const generateDataForComparing = () => {
-    const plotData: ResilienceScoreComparisonPlotProps = {
-      xData: {
-        Hourly: [[]],
-        Daily: [[]],
-        Monthly: [[]],
-      },
-      yData: {
-        Hourly: [[]],
-        Daily: [[]],
-        Monthly: [[]],
-      },
-      labels: [],
-      colors: [],
-    };
-    let totalValidRuns: number = 0;
-    const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
-    const timeSeriesArray: DatedResilienceScore[][] = [];
-    selected.forEach((workflow) => {
-      // const workflowData = data?.ListWorkflow.workflows.filter(function match(
-      //   wkf
-      // ) {
-      //   return wkf.workflow_id === workflow;
-      // });
-      setSelectedWorkflowID(workflow);
-      getWorkflowRun();
-      const runs = workflowRunsData?.getWorkflowRuns.workflow_runs;
-      const workflowTimeSeriesData: DatedResilienceScore[] = [];
-      let isWorkflowValid: boolean = false;
-      runs?.forEach((data: WorkflowRun) => {
-        try {
-          const executionData: ExecutionData = JSON.parse(data.execution_data);
-          const { nodes } = executionData;
-          const experimentTestResultsArrayPerWorkflowRun: number[] = [];
-          let totalExperimentsPassed: number = 0;
-          let weightsSum: number = 0;
-          const testDetails: TestDetails = {
-            testNames: [],
-            testWeights: [],
-            testResults: [],
-          };
-          let isValid: boolean = false;
-          for (const key of Object.keys(nodes)) {
-            const node = nodes[key];
-            if (node.chaosData) {
-              const { chaosData } = node;
-              if (
-                chaosData.experimentVerdict === 'Pass' ||
-                chaosData.experimentVerdict === 'Fail'
-              ) {
-                const weightageMap: WeightageMap[] = data.weightages;
-                weightageMap.forEach((weightage) => {
-                  if (weightage.experiment_name === chaosData.experimentName) {
-                    if (chaosData.experimentVerdict === 'Pass') {
-                      experimentTestResultsArrayPerWorkflowRun.push(
-                        (weightage.weightage *
-                          parseInt(chaosData.probeSuccessPercentage, 10)) /
-                          100
-                      );
-                      totalExperimentsPassed += 1;
-                    }
-                    if (chaosData.experimentVerdict === 'Fail') {
-                      experimentTestResultsArrayPerWorkflowRun.push(0);
-                    }
-                    if (
-                      chaosData.experimentVerdict === 'Pass' ||
-                      chaosData.experimentVerdict === 'Fail'
-                    ) {
-                      weightsSum += weightage.weightage;
-                      testDetails.testNames.push(weightage.experiment_name);
-                      testDetails.testWeights.push(weightage.weightage);
-                      testDetails.testResults.push(chaosData.experimentVerdict);
-                      isValid = true;
-                      isWorkflowValid = true;
-                    }
-                  }
-                });
-              }
-            }
-          }
-          if (executionData.event_type === 'UPDATE' && isValid) {
-            totalValidRuns += 1;
-            totalValidWorkflowRuns.push({
-              cluster_name: data.cluster_name,
-              workflow_name: data.workflow_name,
-              run_date: formatDate(executionData.creationTimestamp),
-              tests_passed: totalExperimentsPassed,
-              tests_failed:
-                experimentTestResultsArrayPerWorkflowRun.length -
-                totalExperimentsPassed,
-              resilience_score: data.resiliency_score,
-              test_details: testDetails,
-            });
-            workflowTimeSeriesData.push({
-              date: data.last_updated,
-              value: experimentTestResultsArrayPerWorkflowRun.length
-                ? parseFloat(
-                    (
-                      (experimentTestResultsArrayPerWorkflowRun.reduce(
-                        (a, b) => a + b,
-                        0
-                      ) /
-                        weightsSum) *
-                      100
-                    ).toFixed(2)
-                  )
-                : 0,
-            });
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      });
-      if (isWorkflowValid) {
-        plotData.labels.push(
-          workflowRunsData?.getWorkflowRuns.workflow_runs[0].workflow_name ?? ''
-        );
-        plotData.colors.push(`#${randomColor()}`);
-        timeSeriesArray.push(workflowTimeSeriesData);
-      }
-    });
-
-    if (plotData.labels.length === 0) {
-      setIsDataAvailable(false);
-    }
-
-    timeSeriesArray.forEach((workflowTimeSeriesData, index) => {
-      const hourlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
-        moment
-          .unix(parseInt(data.date, 10))
-          .startOf('hour')
-          .format('YYYY-MM-DD HH:mm:ss')
-      );
-      const dailyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
-        moment.unix(parseInt(data.date, 10)).startOf('day').format('YYYY-MM-DD')
-      );
-      const monthlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
-        moment.unix(parseInt(data.date, 10)).startOf('month').format('YYYY-MM')
-      );
-      plotData.xData.Hourly[index] = [];
-      plotData.yData.Hourly[index] = [];
-      Object.keys(hourlyGroupedResults).forEach((hour) => {
-        let total = 0;
-        hourlyGroupedResults[hour].forEach((data) => {
-          total += data.value;
-        });
-        plotData.xData.Hourly[index].push(hour);
-        plotData.yData.Hourly[index].push(
-          total / hourlyGroupedResults[hour].length
-        );
-      });
-      plotData.xData.Daily[index] = [];
-      plotData.yData.Daily[index] = [];
-      Object.keys(dailyGroupedResults).forEach((day) => {
-        let total = 0;
-        dailyGroupedResults[day].forEach((data) => {
-          total += data.value;
-        });
-        plotData.xData.Daily[index].push(day);
-        plotData.yData.Daily[index].push(
-          total / dailyGroupedResults[day].length
-        );
-      });
-      plotData.xData.Monthly[index] = [];
-      plotData.yData.Monthly[index] = [];
-      Object.keys(monthlyGroupedResults).forEach((month) => {
-        let total = 0;
-        monthlyGroupedResults[month].forEach((data) => {
-          total += data.value;
-        });
-        plotData.xData.Monthly[index].push(month);
-        plotData.yData.Monthly[index].push(
-          total / monthlyGroupedResults[month].length
-        );
-      });
-    });
-    setPlotDataForComparison(plotData);
-    setTotalValidWorkflowRuns(totalValidWorkflowRuns);
-    setTotalValidWorkflowRunsCount(totalValidRuns);
-  };
-
   const CallbackForComparing = (compareWorkflows: boolean) => {
+    getWorkflowRun();
     setCompare(compareWorkflows);
     const payload: ScheduledWorkflow[] = [];
-    selected.forEach((workflow) => {
+    selectedWorkflows.forEach((workflow) => {
       displayData.forEach((displayWorkflow, i) => {
         if (displayWorkflow.workflow_id === workflow && data) {
           payload.push(data?.ListWorkflow.workflows[i]);
         }
       });
     });
-    generateDataForComparing();
     setDisplayData(payload);
   };
 
@@ -445,9 +455,11 @@ const WorkflowComparisonTable = () => {
       const rows: any[] = [];
       totalValidWorkflowRuns.forEach((run) => {
         let detail_string = '';
-        run.test_details?.testNames.forEach((experiment, index) => {
-          detail_string += `${experiment}\n${run.test_details?.testWeights[index]} / ${run.test_details?.testResults[index]}\n`;
-        });
+        if (run.test_details) {
+          run.test_details.testNames.forEach((experiment, index) => {
+            detail_string += `${experiment}\n${run.test_details?.testWeights[index]} / ${run.test_details?.testResults[index]}\n`;
+          });
+        }
         rows.push({
           cluster_name: run.cluster_name,
           workflow_name: run.workflow_name,
@@ -660,7 +672,7 @@ const WorkflowComparisonTable = () => {
         <div>
           <section className="Heading section">
             <TableToolBar
-              numSelected={selected.length}
+              numSelected={selectedWorkflows.length}
               searchToken={filter.searchTokens[0]}
               handleSearch={(
                 event: React.ChangeEvent<{ value: unknown }> | undefined,
@@ -706,13 +718,13 @@ const WorkflowComparisonTable = () => {
             <Paper className={classes.tableBody}>
               <TableContainer
                 className={
-                  compare === false && selected.length <= 2
+                  compare === false && selectedWorkflows.length <= 2
                     ? classes.tableMain
-                    : compare === false && selected.length > 2
+                    : compare === false && selectedWorkflows.length > 2
                     ? classes.tableMainShowAll
-                    : showAll === true && selected.length <= 3
+                    : showAll === true && selectedWorkflows.length <= 3
                     ? classes.tableMainShowAll
-                    : showAll === true && selected.length > 3
+                    : showAll === true && selectedWorkflows.length > 3
                     ? classes.tableMain
                     : classes.tableMainCompare
                 }
@@ -720,7 +732,7 @@ const WorkflowComparisonTable = () => {
                 <Table stickyHeader aria-label="simple table">
                   <TableHeader
                     onSelectAllClick={handleSelectAllClick}
-                    numSelected={selected.length}
+                    numSelected={selectedWorkflows.length}
                     rowCount={displayData.length}
                     comparisonState={compare}
                     callBackToSort={(sortConfigurations: SortData) => {
@@ -731,7 +743,7 @@ const WorkflowComparisonTable = () => {
                     }}
                   />
                   <TableBody>
-                    {loading && !data?.ListWorkflow ? (
+                    {loading || !data?.ListWorkflow ? (
                       <TableRow>
                         <TableCell colSpan={6}>
                           <Loader />
@@ -816,13 +828,11 @@ const WorkflowComparisonTable = () => {
                   onClick={() => setShowAll(true)}
                 >
                   <Typography className={classes.seeAllText} variant="body2">
-                    {' '}
                     <strong>
-                      {t(
+                      {` ${t(
                         'chaosWorkflows.browseAnalytics.workFlowComparisonTable.showSelectedWorkflows'
-                      )}{' '}
-                      ({selected.length}){' '}
-                    </strong>{' '}
+                      )} ${selectedWorkflows.length} `}
+                    </strong>
                   </Typography>
                 </Paper>
               )}
