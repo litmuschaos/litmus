@@ -247,8 +247,8 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  creationTimestamp: null
   name: event-tracker-role
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - eventtracker.litmuschaos.io
@@ -289,6 +289,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: event-tracker-role-binding
+  namespace: #{AGENT-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
