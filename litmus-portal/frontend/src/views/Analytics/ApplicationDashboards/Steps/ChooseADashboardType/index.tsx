@@ -89,6 +89,10 @@ const ChooseADashboardType = forwardRef(
         setDashboardList(dashboards);
       },
       onError: () => {
+        const dashboards: DashboardData[] = addCustomAndUploadDashboardCards(
+          []
+        );
+        setDashboardList(dashboards);
         alert.changeAlertState(true);
       },
     });
