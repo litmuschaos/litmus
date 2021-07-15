@@ -209,9 +209,9 @@ rules:
     verbs: ["create", "get", "watch", "patch", "delete", "list"]
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
-  - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get", "watch"]
+  - apiGroups: ['']
+    resources: ['pods/log', 'secrets', 'configmaps']
+    verbs: ['get', 'watch', 'create', 'delete', 'patch']
 
   # for creation & deletion of application in predefined workflows
   - apiGroups: ["apps"]
