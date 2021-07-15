@@ -174,10 +174,15 @@ type ComplexityRoot struct {
 		UserName      func(childComplexity int) int
 	}
 
+	HeatmapData struct {
+		Bins func(childComplexity int) int
+	}
+
 	ImageRegistryResponse struct {
 		CreatedAt         func(childComplexity int) int
 		ImageRegistryID   func(childComplexity int) int
 		ImageRegistryInfo func(childComplexity int) int
+		IsDefault         func(childComplexity int) int
 		IsRemoved         func(childComplexity int) int
 		ProjectID         func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
@@ -216,13 +221,14 @@ type ComplexityRoot struct {
 	}
 
 	Member struct {
-		Email      func(childComplexity int) int
-		Invitation func(childComplexity int) int
-		JoinedAt   func(childComplexity int) int
-		Name       func(childComplexity int) int
-		Role       func(childComplexity int) int
-		UserID     func(childComplexity int) int
-		UserName   func(childComplexity int) int
+		DeactivatedAt func(childComplexity int) int
+		Email         func(childComplexity int) int
+		Invitation    func(childComplexity int) int
+		JoinedAt      func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Role          func(childComplexity int) int
+		UserID        func(childComplexity int) int
+		UserName      func(childComplexity int) int
 	}
 
 	MemberStat struct {
@@ -271,7 +277,7 @@ type ComplexityRoot struct {
 		SyncHub                func(childComplexity int, id string) int
 		SyncWorkflow           func(childComplexity int, workflowid string, workflowRunID string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
-		UpdateDashboard        func(childComplexity int, dashboard *model.UpdateDBInput) int
+		UpdateDashboard        func(childComplexity int, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
 		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
 		UpdateGitOps           func(childComplexity int, config model.GitConfig) int
 		UpdateImageRegistry    func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
@@ -279,6 +285,7 @@ type ComplexityRoot struct {
 		UpdatePanel            func(childComplexity int, panelInput []*model.Panel) int
 		UpdateProjectName      func(childComplexity int, projectID string, projectName string) int
 		UpdateUser             func(childComplexity int, user model.UpdateUserInput) int
+		UpdateUserState        func(childComplexity int, uid string, isDeactivate bool) int
 		UserClusterReg         func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
@@ -336,6 +343,11 @@ type ComplexityRoot struct {
 		WorkflowRunID func(childComplexity int) int
 	}
 
+	PortalDashboardData struct {
+		DashboardData func(childComplexity int) int
+		Name          func(childComplexity int) int
+	}
+
 	Project struct {
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
@@ -362,6 +374,7 @@ type ComplexityRoot struct {
 		GetCharts                   func(childComplexity int, hubName string, projectID string) int
 		GetCluster                  func(childComplexity int, projectID string, clusterType *string) int
 		GetGitOpsDetails            func(childComplexity int, projectID string) int
+		GetHeatmapData              func(childComplexity int, projectID string, workflowID string, year int) int
 		GetHubExperiment            func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetHubStatus                func(childComplexity int, projectID string) int
 		GetImageRegistry            func(childComplexity int, imageRegistryID string, projectID string) int
@@ -377,12 +390,13 @@ type ComplexityRoot struct {
 		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
 		GetWorkflowStats            func(childComplexity int, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) int
 		GetYAMLData                 func(childComplexity int, experimentInput model.ExperimentInput) int
-		ListDashboard               func(childComplexity int, projectID string) int
+		ListDashboard               func(childComplexity int, projectID string, clusterID *string, dbID *string) int
 		ListDataSource              func(childComplexity int, projectID string) int
 		ListImageRegistry           func(childComplexity int, projectID string) int
 		ListManifestTemplate        func(childComplexity int, projectID string) int
 		ListProjects                func(childComplexity int) int
 		ListWorkflow                func(childComplexity int, workflowInput model.ListWorkflowsInput) int
+		PortalDashboardData         func(childComplexity int, projectID string, hubName string) int
 		UsageQuery                  func(childComplexity int, query model.UsageQuery) int
 		Users                       func(childComplexity int) int
 	}
@@ -390,24 +404,6 @@ type ComplexityRoot struct {
 	SSHKey struct {
 		PrivateKey func(childComplexity int) int
 		PublicKey  func(childComplexity int) int
-	}
-
-	ScheduledWorkflows struct {
-		ClusterID           func(childComplexity int) int
-		ClusterName         func(childComplexity int) int
-		ClusterType         func(childComplexity int) int
-		CreatedAt           func(childComplexity int) int
-		CronSyntax          func(childComplexity int) int
-		IsCustomWorkflow    func(childComplexity int) int
-		IsRemoved           func(childComplexity int) int
-		ProjectID           func(childComplexity int) int
-		UpdatedAt           func(childComplexity int) int
-		Weightages          func(childComplexity int) int
-		WorkflowDescription func(childComplexity int) int
-		WorkflowID          func(childComplexity int) int
-		WorkflowManifest    func(childComplexity int) int
-		WorkflowName        func(childComplexity int) int
-		WorkflowType        func(childComplexity int) int
 	}
 
 	Spec struct {
@@ -430,6 +426,7 @@ type ComplexityRoot struct {
 		ClusterEventListener  func(childComplexity int, projectID string) int
 		GetKubeObject         func(childComplexity int, kubeObjectRequest model.KubeObjectRequest) int
 		GetPodLog             func(childComplexity int, podDetails model.PodLogRequest) int
+		ViewDashboard         func(childComplexity int, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) int
 		WorkflowEventListener func(childComplexity int, projectID string) int
 	}
 
@@ -449,14 +446,13 @@ type ComplexityRoot struct {
 	User struct {
 		CompanyName     func(childComplexity int) int
 		CreatedAt       func(childComplexity int) int
+		DeactivatedAt   func(childComplexity int) int
 		Email           func(childComplexity int) int
 		ID              func(childComplexity int) int
 		IsEmailVerified func(childComplexity int) int
 		Name            func(childComplexity int) int
 		Projects        func(childComplexity int) int
-		RemovedAt       func(childComplexity int) int
 		Role            func(childComplexity int) int
-		State           func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
 		Username        func(childComplexity int) int
 	}
@@ -476,7 +472,6 @@ type ComplexityRoot struct {
 		WorkflowID          func(childComplexity int) int
 		WorkflowManifest    func(childComplexity int) int
 		WorkflowName        func(childComplexity int) int
-		WorkflowRuns        func(childComplexity int) int
 	}
 
 	WorkflowRun struct {
@@ -495,9 +490,15 @@ type ComplexityRoot struct {
 		ProjectID          func(childComplexity int) int
 		ResiliencyScore    func(childComplexity int) int
 		TotalExperiments   func(childComplexity int) int
+		Weightages         func(childComplexity int) int
 		WorkflowID         func(childComplexity int) int
 		WorkflowName       func(childComplexity int) int
 		WorkflowRunID      func(childComplexity int) int
+	}
+
+	WorkflowRunDetails struct {
+		DateStamp func(childComplexity int) int
+		NoOfRuns  func(childComplexity int) int
 	}
 
 	WorkflowRunStatsResponse struct {
@@ -518,10 +519,9 @@ type ComplexityRoot struct {
 		WorkflowRunSucceededPercentage func(childComplexity int) int
 	}
 
-	WorkflowRuns struct {
-		ExecutionData func(childComplexity int) int
-		LastUpdated   func(childComplexity int) int
-		WorkflowRunID func(childComplexity int) int
+	WorkflowRunsData struct {
+		Value             func(childComplexity int) int
+		WorkflowRunDetail func(childComplexity int) int
 	}
 
 	WorkflowStat struct {
@@ -536,9 +536,10 @@ type ComplexityRoot struct {
 	}
 
 	AnnotationsPromResponse struct {
-		Legends func(childComplexity int) int
-		Queryid func(childComplexity int) int
-		Tsvs    func(childComplexity int) int
+		Legends      func(childComplexity int) int
+		Queryid      func(childComplexity int) int
+		SubDataArray func(childComplexity int) int
+		Tsvs         func(childComplexity int) int
 	}
 
 	AnnotationsTimeStampValue struct {
@@ -557,11 +558,17 @@ type ComplexityRoot struct {
 		Token       func(childComplexity int) int
 	}
 
+	DashboardPromResponse struct {
+		AnnotationsResponse      func(childComplexity int) int
+		DashboardMetricsResponse func(childComplexity int) int
+	}
+
 	ImageRegistry struct {
 		EnableRegistry    func(childComplexity int) int
 		ImageRegistryName func(childComplexity int) int
 		ImageRegistryType func(childComplexity int) int
 		ImageRepoName     func(childComplexity int) int
+		IsDefault         func(childComplexity int) int
 		SecretName        func(childComplexity int) int
 		SecretNamespace   func(childComplexity int) int
 	}
@@ -583,15 +590,28 @@ type ComplexityRoot struct {
 		DbName                    func(childComplexity int) int
 		DbTypeID                  func(childComplexity int) int
 		DbTypeName                func(childComplexity int) int
+		DsHealthStatus            func(childComplexity int) int
 		DsID                      func(childComplexity int) int
 		DsName                    func(childComplexity int) int
 		DsType                    func(childComplexity int) int
+		DsURL                     func(childComplexity int) int
 		EndTime                   func(childComplexity int) int
 		PanelGroups               func(childComplexity int) int
 		ProjectID                 func(childComplexity int) int
 		RefreshRate               func(childComplexity int) int
 		StartTime                 func(childComplexity int) int
 		UpdatedAt                 func(childComplexity int) int
+		ViewedAt                  func(childComplexity int) int
+	}
+
+	MetricDataForPanel struct {
+		PanelID              func(childComplexity int) int
+		PanelMetricsResponse func(childComplexity int) int
+	}
+
+	MetricDataForPanelGroup struct {
+		PanelGroupID              func(childComplexity int) int
+		PanelGroupMetricsResponse func(childComplexity int) int
 	}
 
 	MetricsPromResponse struct {
@@ -662,6 +682,12 @@ type ComplexityRoot struct {
 		Names func(childComplexity int) int
 	}
 
+	SubData struct {
+		Date        func(childComplexity int) int
+		SubDataName func(childComplexity int) int
+		Value       func(childComplexity int) int
+	}
+
 	Weightages struct {
 		ExperimentName func(childComplexity int) int
 		Weightage      func(childComplexity int) int
@@ -671,6 +697,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error)
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
+	UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error)
 	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
@@ -703,7 +730,7 @@ type MutationResolver interface {
 	CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error)
 	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error)
 	UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error)
-	UpdateDashboard(ctx context.Context, dashboard *model.UpdateDBInput) (string, error)
+	UpdateDashboard(ctx context.Context, dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error)
 	UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error)
 	DeleteDashboard(ctx context.Context, dbID *string) (bool, error)
 	DeleteDataSource(ctx context.Context, input model.DeleteDSInput) (bool, error)
@@ -720,6 +747,7 @@ type QueryResolver interface {
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	ListProjects(ctx context.Context) ([]*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
+	GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error)
 	GetWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error)
 	GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error)
 	ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error)
@@ -733,7 +761,8 @@ type QueryResolver interface {
 	GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error)
 	GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error)
 	GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error)
-	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardResponse, error)
+	ListDashboard(ctx context.Context, projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error)
+	PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
 	GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error)
@@ -747,6 +776,7 @@ type SubscriptionResolver interface {
 	GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error)
 	ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error)
 	GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error)
+	ViewDashboard(ctx context.Context, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error)
 }
 
 type executableSchema struct {
@@ -1359,6 +1389,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.GitConfigResponse.UserName(childComplexity), true
 
+	case "HeatmapData.bins":
+		if e.complexity.HeatmapData.Bins == nil {
+			break
+		}
+
+		return e.complexity.HeatmapData.Bins(childComplexity), true
+
 	case "ImageRegistryResponse.created_at":
 		if e.complexity.ImageRegistryResponse.CreatedAt == nil {
 			break
@@ -1379,6 +1416,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ImageRegistryResponse.ImageRegistryInfo(childComplexity), true
+
+	case "ImageRegistryResponse.is_default":
+		if e.complexity.ImageRegistryResponse.IsDefault == nil {
+			break
+		}
+
+		return e.complexity.ImageRegistryResponse.IsDefault(childComplexity), true
 
 	case "ImageRegistryResponse.is_removed":
 		if e.complexity.ImageRegistryResponse.IsRemoved == nil {
@@ -1519,6 +1563,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ManifestTemplate.TemplateName(childComplexity), true
+
+	case "Member.deactivated_at":
+		if e.complexity.Member.DeactivatedAt == nil {
+			break
+		}
+
+		return e.complexity.Member.DeactivatedAt(childComplexity), true
 
 	case "Member.email":
 		if e.complexity.Member.Email == nil {
@@ -2017,7 +2068,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(*model.UpdateDBInput)), true
+		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(model.UpdateDBInput), args["chaosQueryUpdate"].(bool)), true
 
 	case "Mutation.updateDataSource":
 		if e.complexity.Mutation.UpdateDataSource == nil {
@@ -2102,6 +2153,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["user"].(model.UpdateUserInput)), true
+
+	case "Mutation.updateUserState":
+		if e.complexity.Mutation.UpdateUserState == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateUserState_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateUserState(childComplexity, args["uid"].(string), args["isDeactivate"].(bool)), true
 
 	case "Mutation.userClusterReg":
 		if e.complexity.Mutation.UserClusterReg == nil {
@@ -2388,6 +2451,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PodLogResponse.WorkflowRunID(childComplexity), true
 
+	case "PortalDashboardData.dashboard_data":
+		if e.complexity.PortalDashboardData.DashboardData == nil {
+			break
+		}
+
+		return e.complexity.PortalDashboardData.DashboardData(childComplexity), true
+
+	case "PortalDashboardData.name":
+		if e.complexity.PortalDashboardData.Name == nil {
+			break
+		}
+
+		return e.complexity.PortalDashboardData.Name(childComplexity), true
+
 	case "Project.created_at":
 		if e.complexity.Project.CreatedAt == nil {
 			break
@@ -2514,6 +2591,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetGitOpsDetails(childComplexity, args["project_id"].(string)), true
+
+	case "Query.getHeatmapData":
+		if e.complexity.Query.GetHeatmapData == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getHeatmapData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetHeatmapData(childComplexity, args["project_id"].(string), args["workflow_id"].(string), args["year"].(int)), true
 
 	case "Query.getHubExperiment":
 		if e.complexity.Query.GetHubExperiment == nil {
@@ -2705,7 +2794,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListDashboard(childComplexity, args["project_id"].(string)), true
+		return e.complexity.Query.ListDashboard(childComplexity, args["project_id"].(string), args["cluster_id"].(*string), args["db_id"].(*string)), true
 
 	case "Query.ListDataSource":
 		if e.complexity.Query.ListDataSource == nil {
@@ -2762,6 +2851,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ListWorkflow(childComplexity, args["workflowInput"].(model.ListWorkflowsInput)), true
 
+	case "Query.PortalDashboardData":
+		if e.complexity.Query.PortalDashboardData == nil {
+			break
+		}
+
+		args, err := ec.field_Query_PortalDashboardData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PortalDashboardData(childComplexity, args["project_id"].(string), args["hub_name"].(string)), true
+
 	case "Query.UsageQuery":
 		if e.complexity.Query.UsageQuery == nil {
 			break
@@ -2794,111 +2895,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SSHKey.PublicKey(childComplexity), true
-
-	case "ScheduledWorkflows.cluster_id":
-		if e.complexity.ScheduledWorkflows.ClusterID == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.ClusterID(childComplexity), true
-
-	case "ScheduledWorkflows.cluster_name":
-		if e.complexity.ScheduledWorkflows.ClusterName == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.ClusterName(childComplexity), true
-
-	case "ScheduledWorkflows.cluster_type":
-		if e.complexity.ScheduledWorkflows.ClusterType == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.ClusterType(childComplexity), true
-
-	case "ScheduledWorkflows.created_at":
-		if e.complexity.ScheduledWorkflows.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.CreatedAt(childComplexity), true
-
-	case "ScheduledWorkflows.cronSyntax":
-		if e.complexity.ScheduledWorkflows.CronSyntax == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.CronSyntax(childComplexity), true
-
-	case "ScheduledWorkflows.isCustomWorkflow":
-		if e.complexity.ScheduledWorkflows.IsCustomWorkflow == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.IsCustomWorkflow(childComplexity), true
-
-	case "ScheduledWorkflows.isRemoved":
-		if e.complexity.ScheduledWorkflows.IsRemoved == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.IsRemoved(childComplexity), true
-
-	case "ScheduledWorkflows.project_id":
-		if e.complexity.ScheduledWorkflows.ProjectID == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.ProjectID(childComplexity), true
-
-	case "ScheduledWorkflows.updated_at":
-		if e.complexity.ScheduledWorkflows.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.UpdatedAt(childComplexity), true
-
-	case "ScheduledWorkflows.weightages":
-		if e.complexity.ScheduledWorkflows.Weightages == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.Weightages(childComplexity), true
-
-	case "ScheduledWorkflows.workflow_description":
-		if e.complexity.ScheduledWorkflows.WorkflowDescription == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.WorkflowDescription(childComplexity), true
-
-	case "ScheduledWorkflows.workflow_id":
-		if e.complexity.ScheduledWorkflows.WorkflowID == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.WorkflowID(childComplexity), true
-
-	case "ScheduledWorkflows.workflow_manifest":
-		if e.complexity.ScheduledWorkflows.WorkflowManifest == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.WorkflowManifest(childComplexity), true
-
-	case "ScheduledWorkflows.workflow_name":
-		if e.complexity.ScheduledWorkflows.WorkflowName == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.WorkflowName(childComplexity), true
-
-	case "ScheduledWorkflows.workflow_type":
-		if e.complexity.ScheduledWorkflows.WorkflowType == nil {
-			break
-		}
-
-		return e.complexity.ScheduledWorkflows.WorkflowType(childComplexity), true
 
 	case "Spec.CategoryDescription":
 		if e.complexity.Spec.CategoryDescription == nil {
@@ -3032,6 +3028,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.GetPodLog(childComplexity, args["podDetails"].(model.PodLogRequest)), true
 
+	case "Subscription.viewDashboard":
+		if e.complexity.Subscription.ViewDashboard == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_viewDashboard_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.ViewDashboard(childComplexity, args["dashboardID"].(*string), args["promQueries"].([]*model.PromQueryInput), args["dashboardQueryMap"].([]*model.QueryMapForPanelGroup), args["dataVariables"].(model.DataVars)), true
+
 	case "Subscription.workflowEventListener":
 		if e.complexity.Subscription.WorkflowEventListener == nil {
 			break
@@ -3107,6 +3115,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.CreatedAt(childComplexity), true
 
+	case "User.deactivated_at":
+		if e.complexity.User.DeactivatedAt == nil {
+			break
+		}
+
+		return e.complexity.User.DeactivatedAt(childComplexity), true
+
 	case "User.email":
 		if e.complexity.User.Email == nil {
 			break
@@ -3142,26 +3157,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Projects(childComplexity), true
 
-	case "User.removed_at":
-		if e.complexity.User.RemovedAt == nil {
-			break
-		}
-
-		return e.complexity.User.RemovedAt(childComplexity), true
-
 	case "User.role":
 		if e.complexity.User.Role == nil {
 			break
 		}
 
 		return e.complexity.User.Role(childComplexity), true
-
-	case "User.state":
-		if e.complexity.User.State == nil {
-			break
-		}
-
-		return e.complexity.User.State(childComplexity), true
 
 	case "User.updated_at":
 		if e.complexity.User.UpdatedAt == nil {
@@ -3275,13 +3276,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Workflow.WorkflowName(childComplexity), true
 
-	case "Workflow.workflow_runs":
-		if e.complexity.Workflow.WorkflowRuns == nil {
-			break
-		}
-
-		return e.complexity.Workflow.WorkflowRuns(childComplexity), true
-
 	case "WorkflowRun.cluster_id":
 		if e.complexity.WorkflowRun.ClusterID == nil {
 			break
@@ -3387,6 +3381,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRun.TotalExperiments(childComplexity), true
 
+	case "WorkflowRun.weightages":
+		if e.complexity.WorkflowRun.Weightages == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.Weightages(childComplexity), true
+
 	case "WorkflowRun.workflow_id":
 		if e.complexity.WorkflowRun.WorkflowID == nil {
 			break
@@ -3407,6 +3408,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkflowRun.WorkflowRunID(childComplexity), true
+
+	case "WorkflowRunDetails.date_stamp":
+		if e.complexity.WorkflowRunDetails.DateStamp == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunDetails.DateStamp(childComplexity), true
+
+	case "WorkflowRunDetails.no_of_runs":
+		if e.complexity.WorkflowRunDetails.NoOfRuns == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRunDetails.NoOfRuns(childComplexity), true
 
 	case "WorkflowRunStatsResponse.average_resiliency_score":
 		if e.complexity.WorkflowRunStatsResponse.AverageResiliencyScore == nil {
@@ -3513,26 +3528,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRunStatsResponse.WorkflowRunSucceededPercentage(childComplexity), true
 
-	case "WorkflowRuns.execution_data":
-		if e.complexity.WorkflowRuns.ExecutionData == nil {
+	case "WorkflowRunsData.value":
+		if e.complexity.WorkflowRunsData.Value == nil {
 			break
 		}
 
-		return e.complexity.WorkflowRuns.ExecutionData(childComplexity), true
+		return e.complexity.WorkflowRunsData.Value(childComplexity), true
 
-	case "WorkflowRuns.last_updated":
-		if e.complexity.WorkflowRuns.LastUpdated == nil {
+	case "WorkflowRunsData.workflowRunDetail":
+		if e.complexity.WorkflowRunsData.WorkflowRunDetail == nil {
 			break
 		}
 
-		return e.complexity.WorkflowRuns.LastUpdated(childComplexity), true
-
-	case "WorkflowRuns.workflow_run_id":
-		if e.complexity.WorkflowRuns.WorkflowRunID == nil {
-			break
-		}
-
-		return e.complexity.WorkflowRuns.WorkflowRunID(childComplexity), true
+		return e.complexity.WorkflowRunsData.WorkflowRunDetail(childComplexity), true
 
 	case "WorkflowStat.ExpRuns":
 		if e.complexity.WorkflowStat.ExpRuns == nil {
@@ -3582,6 +3590,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AnnotationsPromResponse.Queryid(childComplexity), true
+
+	case "annotationsPromResponse.subDataArray":
+		if e.complexity.AnnotationsPromResponse.SubDataArray == nil {
+			break
+		}
+
+		return e.complexity.AnnotationsPromResponse.SubDataArray(childComplexity), true
 
 	case "annotationsPromResponse.tsvs":
 		if e.complexity.AnnotationsPromResponse.Tsvs == nil {
@@ -3639,6 +3654,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClusterRegResponse.Token(childComplexity), true
 
+	case "dashboardPromResponse.annotationsResponse":
+		if e.complexity.DashboardPromResponse.AnnotationsResponse == nil {
+			break
+		}
+
+		return e.complexity.DashboardPromResponse.AnnotationsResponse(childComplexity), true
+
+	case "dashboardPromResponse.dashboardMetricsResponse":
+		if e.complexity.DashboardPromResponse.DashboardMetricsResponse == nil {
+			break
+		}
+
+		return e.complexity.DashboardPromResponse.DashboardMetricsResponse(childComplexity), true
+
 	case "imageRegistry.enable_registry":
 		if e.complexity.ImageRegistry.EnableRegistry == nil {
 			break
@@ -3666,6 +3695,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ImageRegistry.ImageRepoName(childComplexity), true
+
+	case "imageRegistry.is_default":
+		if e.complexity.ImageRegistry.IsDefault == nil {
+			break
+		}
+
+		return e.complexity.ImageRegistry.IsDefault(childComplexity), true
 
 	case "imageRegistry.secret_name":
 		if e.complexity.ImageRegistry.SecretName == nil {
@@ -3772,6 +3808,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ListDashboardResponse.DbTypeName(childComplexity), true
 
+	case "listDashboardResponse.ds_health_status":
+		if e.complexity.ListDashboardResponse.DsHealthStatus == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardResponse.DsHealthStatus(childComplexity), true
+
 	case "listDashboardResponse.ds_id":
 		if e.complexity.ListDashboardResponse.DsID == nil {
 			break
@@ -3792,6 +3835,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListDashboardResponse.DsType(childComplexity), true
+
+	case "listDashboardResponse.ds_url":
+		if e.complexity.ListDashboardResponse.DsURL == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardResponse.DsURL(childComplexity), true
 
 	case "listDashboardResponse.end_time":
 		if e.complexity.ListDashboardResponse.EndTime == nil {
@@ -3834,6 +3884,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListDashboardResponse.UpdatedAt(childComplexity), true
+
+	case "listDashboardResponse.viewed_at":
+		if e.complexity.ListDashboardResponse.ViewedAt == nil {
+			break
+		}
+
+		return e.complexity.ListDashboardResponse.ViewedAt(childComplexity), true
+
+	case "metricDataForPanel.panelID":
+		if e.complexity.MetricDataForPanel.PanelID == nil {
+			break
+		}
+
+		return e.complexity.MetricDataForPanel.PanelID(childComplexity), true
+
+	case "metricDataForPanel.PanelMetricsResponse":
+		if e.complexity.MetricDataForPanel.PanelMetricsResponse == nil {
+			break
+		}
+
+		return e.complexity.MetricDataForPanel.PanelMetricsResponse(childComplexity), true
+
+	case "metricDataForPanelGroup.panelGroupID":
+		if e.complexity.MetricDataForPanelGroup.PanelGroupID == nil {
+			break
+		}
+
+		return e.complexity.MetricDataForPanelGroup.PanelGroupID(childComplexity), true
+
+	case "metricDataForPanelGroup.panelGroupMetricsResponse":
+		if e.complexity.MetricDataForPanelGroup.PanelGroupMetricsResponse == nil {
+			break
+		}
+
+		return e.complexity.MetricDataForPanelGroup.PanelGroupMetricsResponse(childComplexity), true
 
 	case "metricsPromResponse.legends":
 		if e.complexity.MetricsPromResponse.Legends == nil {
@@ -4080,6 +4165,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceResponse.Names(childComplexity), true
 
+	case "subData.date":
+		if e.complexity.SubData.Date == nil {
+			break
+		}
+
+		return e.complexity.SubData.Date(childComplexity), true
+
+	case "subData.subDataName":
+		if e.complexity.SubData.SubDataName == nil {
+			break
+		}
+
+		return e.complexity.SubData.SubDataName(childComplexity), true
+
+	case "subData.value":
+		if e.complexity.SubData.Value == nil {
+			break
+		}
+
+		return e.complexity.SubData.Value(childComplexity), true
+
 	case "weightages.experiment_name":
 		if e.complexity.Weightages.ExperimentName == nil {
 			break
@@ -4175,7 +4281,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	{Name: "graph/analytics.graphqls", Input: `input DSInput {
   ds_id: String
   ds_name: String!
   ds_type: String!
@@ -4237,19 +4343,19 @@ input resource {
 
 input updateDBInput {
   db_id: String!
-  ds_id: String!
-  db_name: String!
-  db_type_name: String!
-  db_type_id: String!
+  ds_id: String
+  db_name: String
+  db_type_name: String
+  db_type_id: String
   db_information: String
-  chaos_event_query_template: String!
-  chaos_verdict_query_template: String!
+  chaos_event_query_template: String
+  chaos_verdict_query_template: String
   application_metadata_map: [applicationMetadata]
-  panel_groups: [updatePanelGroupInput]!
-  end_time: String!
-  start_time: String!
-  cluster_id: ID!
-  refresh_rate: String!
+  panel_groups: [updatePanelGroupInput]
+  end_time: String
+  start_time: String
+  cluster_id: ID
+  refresh_rate: String
 }
 
 input updatePanelGroupInput {
@@ -4317,6 +4423,24 @@ input promQueryInput {
   minstep: Int!
 }
 
+input queryMapForPanel {
+  panelID: String!
+  queryIDs: [String!]!
+}
+
+input queryMapForPanelGroup {
+  panelGroupID: String!
+  panelQueryMap: [queryMapForPanel!]!
+}
+
+input dataVars {
+  url: String!
+  start: String!
+  end: String!
+  relative_time: Int!
+  refresh_interval: Int!
+}
+
 type metricsPromResponse {
   queryid: String!
   legends: [String]
@@ -4328,10 +4452,17 @@ type metricsTimeStampValue {
   value: Float
 }
 
+type subData {
+  date: Float
+  value: String!
+  subDataName: String!
+}
+
 type annotationsPromResponse {
   queryid: String!
   legends: [String]
   tsvs: [[annotationsTimeStampValue]]
+  subDataArray: [[subData]]
 }
 
 type annotationsTimeStampValue {
@@ -4341,6 +4472,21 @@ type annotationsTimeStampValue {
 
 type promResponse {
   metricsResponse: [metricsPromResponse]
+  annotationsResponse: [annotationsPromResponse]
+}
+
+type metricDataForPanel {
+  panelID: String!
+  PanelMetricsResponse: [metricsPromResponse]
+}
+
+type metricDataForPanelGroup {
+  panelGroupID: String!
+  panelGroupMetricsResponse: [metricDataForPanel]
+}
+
+type dashboardPromResponse {
+  dashboardMetricsResponse: [metricDataForPanelGroup]
   annotationsResponse: [annotationsPromResponse]
 }
 
@@ -4375,6 +4521,8 @@ type listDashboardResponse {
   cluster_name: String
   ds_name: String
   ds_type: String
+  ds_url: String
+  ds_health_status: String
   panel_groups: [panelGroupResponse]!
   end_time: String!
   start_time: String!
@@ -4383,6 +4531,7 @@ type listDashboardResponse {
   cluster_id: ID!
   created_at: String
   updated_at: String
+  viewed_at: String
 }
 
 type applicationMetadataResponse {
@@ -4445,6 +4594,19 @@ type WorkflowStats {
   value: Int!
 }
 
+type WorkflowRunDetails {
+  no_of_runs: Int!
+  date_stamp: Float!
+}
+
+type WorkflowRunsData {
+  value: Float
+  workflowRunDetail: WorkflowRunDetails
+}
+
+type HeatmapData {
+  bins: [WorkflowRunsData]!
+}
 input WorkflowRunStatsRequest {
   project_id: ID!
   workflow_ids: [ID]
@@ -4466,8 +4628,14 @@ type WorkflowRunStatsResponse {
   failed_percentage: Float!
   workflow_run_succeeded_percentage: Float!
   workflow_run_failed_percentage: Float!
+}
+
+type PortalDashboardData {
+    name: String!
+    dashboard_data: String!
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+	{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+    is_default: Boolean
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -4477,6 +4645,7 @@ type WorkflowRunStatsResponse {
 }
 
 input imageRegistryInput {
+    is_default: Boolean!
     image_registry_name: String!
     image_repo_name: String!
     image_registry_type: String!
@@ -4486,6 +4655,7 @@ input imageRegistryInput {
 }
 
 type ImageRegistryResponse {
+    is_default: Boolean!
     image_registry_info: imageRegistry
     image_registry_id: String!
     project_id: String!
@@ -4494,7 +4664,7 @@ type ImageRegistryResponse {
     is_removed: Boolean
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -4668,7 +4838,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
+	{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -4686,6 +4856,7 @@ type Member {
   role: MemberRole!
   invitation: String!
   joined_at: String!
+  deactivated_at: String!
 }
 
 input MemberInput {
@@ -4700,7 +4871,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -4741,6 +4912,7 @@ input ClusterInput {
   agent_scope: String!
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
+  node_selector: String
 }
 
 type ClusterEvent {
@@ -4787,11 +4959,6 @@ type ClusterConfirmResponse {
 }
 
 input WeightagesInput {
-  experiment_name: String!
-  weightage: Int!
-}
-
-type weightages {
   experiment_name: String!
   weightage: Int!
 }
@@ -4851,30 +5018,6 @@ input PodLogRequest {
   exp_pod: String
   runner_pod: String
   chaos_namespace: String
-}
-
-type ScheduledWorkflows {
-  workflow_type: String!
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  isRemoved: Boolean!
-}
-
-type WorkflowRuns {
-  execution_data: String!
-  workflow_run_id: ID!
-  last_updated: String!
 }
 
 type clusterRegResponse {
@@ -4970,13 +5113,22 @@ type Query {
 
   users: [User!]! @authorized
 
+  # Query to fetch workflow data for heatmap
+  getHeatmapData(
+    project_id: String!
+    workflow_id: String!
+    year: Int!
+  ): [HeatmapData]! @authorized
+
   getWorkflowStats(
     project_id: ID!
     filter: TimeFrequency!
     show_workflow_runs: Boolean!
   ): [WorkflowStats]! @authorized
 
-  getWorkflowRunStats(workflowRunStatsRequest: WorkflowRunStatsRequest!): WorkflowRunStatsResponse! @authorized
+  getWorkflowRunStats(
+    workflowRunStatsRequest: WorkflowRunStatsRequest!
+  ): WorkflowRunStatsResponse! @authorized
 
   ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
     @authorized
@@ -5002,7 +5154,14 @@ type Query {
 
   GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
 
-  ListDashboard(project_id: String!): [listDashboardResponse] @authorized
+  ListDashboard(
+    project_id: String!
+    cluster_id: String
+    db_id: String): [listDashboardResponse] @authorized
+
+  PortalDashboardData (
+    project_id: String!
+    hub_name: String!) : [PortalDashboardData!]! @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -5020,16 +5179,21 @@ type Query {
     project_id: String!
   ): ImageRegistryResponse! @authorized
 
-  UsageQuery(query:UsageQuery!): UsageData! @authorized
+  UsageQuery(query: UsageQuery!): UsageData! @authorized
 }
 
 type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
+  # Used to create a user
   createUser(user: CreateUserInput!): User! @authorized
 
-  #It is used to create a project
+  # Used to disable a user
+  updateUserState(uid: String!, isDeactivate: Boolean!): String!
+    @authorized
+
+  # It is used to create a project
   createProject(projectName: String!): Project! @authorized
 
   updateUser(user: UpdateUserInput!): String! @authorized
@@ -5111,7 +5275,9 @@ type Mutation {
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updateDBInput): String! @authorized
+  updateDashboard(
+    dashboard: updateDBInput!
+    chaosQueryUpdate: Boolean!): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
@@ -5154,9 +5320,15 @@ type Subscription {
 
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
     @authorized
+
+  viewDashboard(
+    dashboardID: String
+    promQueries: [promQueryInput!]!
+    dashboardQueryMap: [queryMapForPanelGroup!]!
+    dataVariables: dataVars!): dashboardPromResponse! @authorized
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
+	{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
     Schedules : Int!
     Runs      : Int!
     ExpRuns   : Int!
@@ -5222,7 +5394,7 @@ input UsageQuery{
     Sort: UsageSortInput
     SearchProject: String
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
+	{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -5231,10 +5403,9 @@ input UsageQuery{
   name: String
   projects: [Project!]!
   role: String
-  state: String
   created_at: String!
   updated_at: String!
-  removed_at: String!
+  deactivated_at: String!
 }
 
 input CreateUserInput {
@@ -5253,7 +5424,7 @@ input UpdateUserInput {
   company_name: String
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
+	{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
   Running
@@ -5296,10 +5467,16 @@ input GetWorkflowRunsInput {
   filter: WorkflowRunFilterInput
 }
 
+type weightages {
+  experiment_name: String!
+  weightage: Int!
+}
+
 type WorkflowRun {
   workflow_run_id: ID!
   workflow_id: ID!
   cluster_name: String!
+  weightages: [weightages!]!
   last_updated: String!
   project_id: ID!
   cluster_id: ID!
@@ -5355,7 +5532,6 @@ type Workflow {
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
-  workflow_runs: [WorkflowRuns]
 }
 
 type ListWorkflowsOutput {
@@ -5891,14 +6067,22 @@ func (ec *executionContext) field_Mutation_updateChaosWorkflow_args(ctx context.
 func (ec *executionContext) field_Mutation_updateDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.UpdateDBInput
+	var arg0 model.UpdateDBInput
 	if tmp, ok := rawArgs["dashboard"]; ok {
-		arg0, err = ec.unmarshalOupdateDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, tmp)
+		arg0, err = ec.unmarshalNupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["dashboard"] = arg0
+	var arg1 bool
+	if tmp, ok := rawArgs["chaosQueryUpdate"]; ok {
+		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["chaosQueryUpdate"] = arg1
 	return args, nil
 }
 
@@ -6015,6 +6199,28 @@ func (ec *executionContext) field_Mutation_updateProjectName_args(ctx context.Co
 		}
 	}
 	args["projectName"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateUserState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["uid"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["uid"] = arg0
+	var arg1 bool
+	if tmp, ok := rawArgs["isDeactivate"]; ok {
+		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["isDeactivate"] = arg1
 	return args, nil
 }
 
@@ -6171,6 +6377,22 @@ func (ec *executionContext) field_Query_ListDashboard_args(ctx context.Context, 
 		}
 	}
 	args["project_id"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["cluster_id"]; ok {
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cluster_id"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["db_id"]; ok {
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["db_id"] = arg2
 	return args, nil
 }
 
@@ -6227,6 +6449,28 @@ func (ec *executionContext) field_Query_ListWorkflow_args(ctx context.Context, r
 		}
 	}
 	args["workflowInput"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_PortalDashboardData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["project_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["project_id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["hub_name"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["hub_name"] = arg1
 	return args, nil
 }
 
@@ -6313,6 +6557,36 @@ func (ec *executionContext) field_Query_getGitOpsDetails_args(ctx context.Contex
 		}
 	}
 	args["project_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getHeatmapData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["project_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["project_id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["workflow_id"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflow_id"] = arg1
+	var arg2 int
+	if tmp, ok := rawArgs["year"]; ok {
+		arg2, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["year"] = arg2
 	return args, nil
 }
 
@@ -6497,6 +6771,44 @@ func (ec *executionContext) field_Subscription_getPodLog_args(ctx context.Contex
 		}
 	}
 	args["podDetails"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_viewDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["dashboardID"]; ok {
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dashboardID"] = arg0
+	var arg1 []*model.PromQueryInput
+	if tmp, ok := rawArgs["promQueries"]; ok {
+		arg1, err = ec.unmarshalNpromQueryInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["promQueries"] = arg1
+	var arg2 []*model.QueryMapForPanelGroup
+	if tmp, ok := rawArgs["dashboardQueryMap"]; ok {
+		arg2, err = ec.unmarshalNqueryMapForPanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroupᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dashboardQueryMap"] = arg2
+	var arg3 model.DataVars
+	if tmp, ok := rawArgs["dataVariables"]; ok {
+		arg3, err = ec.unmarshalNdataVars2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDataVars(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dataVariables"] = arg3
 	return args, nil
 }
 
@@ -9350,6 +9662,74 @@ func (ec *executionContext) _GitConfigResponse_SSHPrivateKey(ctx context.Context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _HeatmapData_bins(ctx context.Context, field graphql.CollectedField, obj *model.HeatmapData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "HeatmapData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Bins, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WorkflowRunsData)
+	fc.Result = res
+	return ec.marshalNWorkflowRunsData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ImageRegistryResponse_is_default(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistryResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ImageRegistryResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsDefault, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ImageRegistryResponse_image_registry_info(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistryResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -10358,6 +10738,40 @@ func (ec *executionContext) _Member_joined_at(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Member_deactivated_at(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Member",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeactivatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MemberStat_Owner(ctx context.Context, field graphql.CollectedField, obj *model.MemberStat) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -10648,6 +11062,67 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateUserState(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateUserState_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateUserState(rctx, args["uid"].(string), args["isDeactivate"].(bool))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -12494,7 +12969,7 @@ func (ec *executionContext) _Mutation_updateDashboard(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(*model.UpdateDBInput))
+			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(model.UpdateDBInput), args["chaosQueryUpdate"].(bool))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -14317,6 +14792,74 @@ func (ec *executionContext) _PodLogResponse_log(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PortalDashboardData_name(ctx context.Context, field graphql.CollectedField, obj *model.PortalDashboardData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PortalDashboardData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortalDashboardData_dashboard_data(ctx context.Context, field graphql.CollectedField, obj *model.PortalDashboardData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PortalDashboardData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DashboardData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Project_id(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15108,6 +15651,67 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getHeatmapData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getHeatmapData_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetHeatmapData(rctx, args["project_id"].(string), args["workflow_id"].(string), args["year"].(int))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.HeatmapData); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.HeatmapData`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.HeatmapData)
+	fc.Result = res
+	return ec.marshalNHeatmapData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_getWorkflowStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15866,7 +16470,7 @@ func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListDashboard(rctx, args["project_id"].(string))
+			return ec.resolvers.Query().ListDashboard(rctx, args["project_id"].(string), args["cluster_id"].(*string), args["db_id"].(*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -15897,6 +16501,67 @@ func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field grap
 	res := resTmp.([]*model.ListDashboardResponse)
 	fc.Result = res
 	return ec.marshalOlistDashboardResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_PortalDashboardData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_PortalDashboardData_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().PortalDashboardData(rctx, args["project_id"].(string), args["hub_name"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.PortalDashboardData); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PortalDashboardData`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.PortalDashboardData)
+	fc.Result = res
+	return ec.marshalNPortalDashboardData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardDataᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getGitOpsDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -16397,516 +17062,6 @@ func (ec *executionContext) _SSHKey_privateKey(ctx context.Context, field graphq
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_workflow_type(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WorkflowType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_workflow_id(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WorkflowID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_workflow_manifest(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WorkflowManifest, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_cronSyntax(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CronSyntax, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ClusterName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_workflow_name(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WorkflowName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_workflow_description(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WorkflowDescription, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_weightages(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Weightages, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Weightages)
-	fc.Result = res
-	return ec.marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_isCustomWorkflow(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsCustomWorkflow, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_created_at(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_project_id(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ClusterID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_cluster_type(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ClusterType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ScheduledWorkflows_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ScheduledWorkflows",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsRemoved, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Spec_DisplayName(ctx context.Context, field graphql.CollectedField, obj *model.Spec) (ret graphql.Marshaler) {
@@ -17649,6 +17804,77 @@ func (ec *executionContext) _Subscription_getKubeObject(ctx context.Context, fie
 	}
 }
 
+func (ec *executionContext) _Subscription_viewDashboard(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Subscription",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Subscription_viewDashboard_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Subscription().ViewDashboard(rctx, args["dashboardID"].(*string), args["promQueries"].([]*model.PromQueryInput), args["dashboardQueryMap"].([]*model.QueryMapForPanelGroup), args["dataVariables"].(model.DataVars))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(<-chan *model.DashboardPromResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.DashboardPromResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *model.DashboardPromResponse)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNdashboardPromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDashboardPromResponse(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
 func (ec *executionContext) _TotalCount_Projects(ctx context.Context, field graphql.CollectedField, obj *model.TotalCount) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18144,37 +18370,6 @@ func (ec *executionContext) _User_role(ctx context.Context, field graphql.Collec
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_state(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.State, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _User_created_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18243,7 +18438,7 @@ func (ec *executionContext) _User_updated_at(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_removed_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_deactivated_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -18260,7 +18455,7 @@ func (ec *executionContext) _User_removed_at(ctx context.Context, field graphql.
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.RemovedAt, nil
+		return obj.DeactivatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18753,37 +18948,6 @@ func (ec *executionContext) _Workflow_isRemoved(ctx context.Context, field graph
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Workflow_workflow_runs(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Workflow",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WorkflowRuns, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.WorkflowRuns)
-	fc.Result = res
-	return ec.marshalOWorkflowRuns2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRuns(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _WorkflowRun_workflow_run_id(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18884,6 +19048,40 @@ func (ec *executionContext) _WorkflowRun_cluster_name(ctx context.Context, field
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_weightages(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Weightages, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Weightages)
+	fc.Result = res
+	return ec.marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRun_last_updated(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
@@ -19367,6 +19565,74 @@ func (ec *executionContext) _WorkflowRun_isRemoved(ctx context.Context, field gr
 	res := resTmp.(*bool)
 	fc.Result = res
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunDetails_no_of_runs(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunDetails) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoOfRuns, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRunDetails_date_stamp(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunDetails) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRunDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DateStamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRunStatsResponse_total_workflow_runs(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunStatsResponse) (ret graphql.Marshaler) {
@@ -19879,7 +20145,7 @@ func (ec *executionContext) _WorkflowRunStatsResponse_workflow_run_failed_percen
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WorkflowRuns_execution_data(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRuns) (ret graphql.Marshaler) {
+func (ec *executionContext) _WorkflowRunsData_value(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunsData) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19887,7 +20153,7 @@ func (ec *executionContext) _WorkflowRuns_execution_data(ctx context.Context, fi
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "WorkflowRuns",
+		Object:   "WorkflowRunsData",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19896,24 +20162,21 @@ func (ec *executionContext) _WorkflowRuns_execution_data(ctx context.Context, fi
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ExecutionData, nil
+		return obj.Value, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*float64)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WorkflowRuns_workflow_run_id(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRuns) (ret graphql.Marshaler) {
+func (ec *executionContext) _WorkflowRunsData_workflowRunDetail(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunsData) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19921,7 +20184,7 @@ func (ec *executionContext) _WorkflowRuns_workflow_run_id(ctx context.Context, f
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "WorkflowRuns",
+		Object:   "WorkflowRunsData",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -19930,55 +20193,18 @@ func (ec *executionContext) _WorkflowRuns_workflow_run_id(ctx context.Context, f
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.WorkflowRunID, nil
+		return obj.WorkflowRunDetail, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.WorkflowRunDetails)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _WorkflowRuns_last_updated(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRuns) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "WorkflowRuns",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LastUpdated, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOWorkflowRunDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunDetails(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowStat_Schedules(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowStat) (ret graphql.Marshaler) {
@@ -21298,6 +21524,37 @@ func (ec *executionContext) _annotationsPromResponse_tsvs(ctx context.Context, f
 	return ec.marshalOannotationsTimeStampValue2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsTimeStampValue(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _annotationsPromResponse_subDataArray(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "annotationsPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SubDataArray, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([][]*model.SubData)
+	fc.Result = res
+	return ec.marshalOsubData2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _annotationsTimeStampValue_date(ctx context.Context, field graphql.CollectedField, obj *model.AnnotationsTimeStampValue) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -21525,6 +21782,99 @@ func (ec *executionContext) _clusterRegResponse_cluster_name(ctx context.Context
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _dashboardPromResponse_dashboardMetricsResponse(ctx context.Context, field graphql.CollectedField, obj *model.DashboardPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "dashboardPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DashboardMetricsResponse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MetricDataForPanelGroup)
+	fc.Result = res
+	return ec.marshalOmetricDataForPanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _dashboardPromResponse_annotationsResponse(ctx context.Context, field graphql.CollectedField, obj *model.DashboardPromResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "dashboardPromResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AnnotationsResponse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.AnnotationsPromResponse)
+	fc.Result = res
+	return ec.marshalOannotationsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _imageRegistry_is_default(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistry) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "imageRegistry",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsDefault, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _imageRegistry_image_registry_name(ctx context.Context, field graphql.CollectedField, obj *model.ImageRegistry) (ret graphql.Marshaler) {
@@ -22180,6 +22530,68 @@ func (ec *executionContext) _listDashboardResponse_ds_type(ctx context.Context, 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _listDashboardResponse_ds_url(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DsURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _listDashboardResponse_ds_health_status(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DsHealthStatus, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _listDashboardResponse_panel_groups(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -22444,6 +22856,167 @@ func (ec *executionContext) _listDashboardResponse_updated_at(ctx context.Contex
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _listDashboardResponse_viewed_at(ctx context.Context, field graphql.CollectedField, obj *model.ListDashboardResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "listDashboardResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ViewedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricDataForPanel_panelID(ctx context.Context, field graphql.CollectedField, obj *model.MetricDataForPanel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricDataForPanel",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricDataForPanel_PanelMetricsResponse(ctx context.Context, field graphql.CollectedField, obj *model.MetricDataForPanel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricDataForPanel",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelMetricsResponse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MetricsPromResponse)
+	fc.Result = res
+	return ec.marshalOmetricsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricDataForPanelGroup_panelGroupID(ctx context.Context, field graphql.CollectedField, obj *model.MetricDataForPanelGroup) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricDataForPanelGroup",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelGroupID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _metricDataForPanelGroup_panelGroupMetricsResponse(ctx context.Context, field graphql.CollectedField, obj *model.MetricDataForPanelGroup) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "metricDataForPanelGroup",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelGroupMetricsResponse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MetricDataForPanel)
+	fc.Result = res
+	return ec.marshalOmetricDataForPanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _metricsPromResponse_queryid(ctx context.Context, field graphql.CollectedField, obj *model.MetricsPromResponse) (ret graphql.Marshaler) {
@@ -23552,6 +24125,105 @@ func (ec *executionContext) _resourceResponse_names(ctx context.Context, field g
 	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _subData_date(ctx context.Context, field graphql.CollectedField, obj *model.SubData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "subData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Date, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _subData_value(ctx context.Context, field graphql.CollectedField, obj *model.SubData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "subData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _subData_subDataName(ctx context.Context, field graphql.CollectedField, obj *model.SubData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "subData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SubDataName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _weightages_experiment_name(ctx context.Context, field graphql.CollectedField, obj *model.Weightages) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -23909,6 +24581,12 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 		case "agent_sa_exists":
 			var err error
 			it.AgentSaExists, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "node_selector":
+			var err error
+			it.NodeSelector, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25136,6 +25814,48 @@ func (ec *executionContext) unmarshalInputcreateDBInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputdataVars(ctx context.Context, obj interface{}) (model.DataVars, error) {
+	var it model.DataVars
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "url":
+			var err error
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "start":
+			var err error
+			it.Start, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "end":
+			var err error
+			it.End, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "relative_time":
+			var err error
+			it.RelativeTime, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "refresh_interval":
+			var err error
+			it.RefreshInterval, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputdeleteDSInput(ctx context.Context, obj interface{}) (model.DeleteDSInput, error) {
 	var it model.DeleteDSInput
 	var asMap = obj.(map[string]interface{})
@@ -25196,6 +25916,12 @@ func (ec *executionContext) unmarshalInputimageRegistryInput(ctx context.Context
 
 	for k, v := range asMap {
 		switch k {
+		case "is_default":
+			var err error
+			it.IsDefault, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "image_registry_name":
 			var err error
 			it.ImageRegistryName, err = ec.unmarshalNString2string(ctx, v)
@@ -25514,6 +26240,54 @@ func (ec *executionContext) unmarshalInputpromSeriesInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputqueryMapForPanel(ctx context.Context, obj interface{}) (model.QueryMapForPanel, error) {
+	var it model.QueryMapForPanel
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "panelID":
+			var err error
+			it.PanelID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "queryIDs":
+			var err error
+			it.QueryIDs, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputqueryMapForPanelGroup(ctx context.Context, obj interface{}) (model.QueryMapForPanelGroup, error) {
+	var it model.QueryMapForPanelGroup
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "panelGroupID":
+			var err error
+			it.PanelGroupID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "panelQueryMap":
+			var err error
+			it.PanelQueryMap, err = ec.unmarshalNqueryMapForPanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputresource(ctx context.Context, obj interface{}) (model.Resource, error) {
 	var it model.Resource
 	var asMap = obj.(map[string]interface{})
@@ -25552,25 +26326,25 @@ func (ec *executionContext) unmarshalInputupdateDBInput(ctx context.Context, obj
 			}
 		case "ds_id":
 			var err error
-			it.DsID, err = ec.unmarshalNString2string(ctx, v)
+			it.DsID, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "db_name":
 			var err error
-			it.DbName, err = ec.unmarshalNString2string(ctx, v)
+			it.DbName, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "db_type_name":
 			var err error
-			it.DbTypeName, err = ec.unmarshalNString2string(ctx, v)
+			it.DbTypeName, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "db_type_id":
 			var err error
-			it.DbTypeID, err = ec.unmarshalNString2string(ctx, v)
+			it.DbTypeID, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25582,13 +26356,13 @@ func (ec *executionContext) unmarshalInputupdateDBInput(ctx context.Context, obj
 			}
 		case "chaos_event_query_template":
 			var err error
-			it.ChaosEventQueryTemplate, err = ec.unmarshalNString2string(ctx, v)
+			it.ChaosEventQueryTemplate, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "chaos_verdict_query_template":
 			var err error
-			it.ChaosVerdictQueryTemplate, err = ec.unmarshalNString2string(ctx, v)
+			it.ChaosVerdictQueryTemplate, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25600,31 +26374,31 @@ func (ec *executionContext) unmarshalInputupdateDBInput(ctx context.Context, obj
 			}
 		case "panel_groups":
 			var err error
-			it.PanelGroups, err = ec.unmarshalNupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, v)
+			it.PanelGroups, err = ec.unmarshalOupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "end_time":
 			var err error
-			it.EndTime, err = ec.unmarshalNString2string(ctx, v)
+			it.EndTime, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "start_time":
 			var err error
-			it.StartTime, err = ec.unmarshalNString2string(ctx, v)
+			it.StartTime, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "cluster_id":
 			var err error
-			it.ClusterID, err = ec.unmarshalNID2string(ctx, v)
+			it.ClusterID, err = ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "refresh_rate":
 			var err error
-			it.RefreshRate, err = ec.unmarshalNString2string(ctx, v)
+			it.RefreshRate, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26315,6 +27089,33 @@ func (ec *executionContext) _GitConfigResponse(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var heatmapDataImplementors = []string{"HeatmapData"}
+
+func (ec *executionContext) _HeatmapData(ctx context.Context, sel ast.SelectionSet, obj *model.HeatmapData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, heatmapDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("HeatmapData")
+		case "bins":
+			out.Values[i] = ec._HeatmapData_bins(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var imageRegistryResponseImplementors = []string{"ImageRegistryResponse"}
 
 func (ec *executionContext) _ImageRegistryResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ImageRegistryResponse) graphql.Marshaler {
@@ -26326,6 +27127,11 @@ func (ec *executionContext) _ImageRegistryResponse(ctx context.Context, sel ast.
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ImageRegistryResponse")
+		case "is_default":
+			out.Values[i] = ec._ImageRegistryResponse_is_default(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "image_registry_info":
 			out.Values[i] = ec._ImageRegistryResponse_image_registry_info(ctx, field, obj)
 		case "image_registry_id":
@@ -26596,6 +27402,11 @@ func (ec *executionContext) _Member(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "deactivated_at":
+			out.Values[i] = ec._Member_deactivated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26698,6 +27509,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createUser":
 			out.Values[i] = ec._Mutation_createUser(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateUserState":
+			out.Values[i] = ec._Mutation_updateUserState(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -27189,6 +28005,38 @@ func (ec *executionContext) _PodLogResponse(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var portalDashboardDataImplementors = []string{"PortalDashboardData"}
+
+func (ec *executionContext) _PortalDashboardData(ctx context.Context, sel ast.SelectionSet, obj *model.PortalDashboardData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, portalDashboardDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PortalDashboardData")
+		case "name":
+			out.Values[i] = ec._PortalDashboardData_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "dashboard_data":
+			out.Values[i] = ec._PortalDashboardData_dashboard_data(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var projectImplementors = []string{"Project"}
 
 func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, obj *model.Project) graphql.Marshaler {
@@ -27416,6 +28264,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "getHeatmapData":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getHeatmapData(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "getWorkflowStats":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -27609,6 +28471,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_ListDashboard(ctx, field)
 				return res
 			})
+		case "PortalDashboardData":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_PortalDashboardData(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "getGitOpsDetails":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -27737,103 +28613,6 @@ func (ec *executionContext) _SSHKey(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
-var scheduledWorkflowsImplementors = []string{"ScheduledWorkflows"}
-
-func (ec *executionContext) _ScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, obj *model.ScheduledWorkflows) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, scheduledWorkflowsImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ScheduledWorkflows")
-		case "workflow_type":
-			out.Values[i] = ec._ScheduledWorkflows_workflow_type(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "workflow_id":
-			out.Values[i] = ec._ScheduledWorkflows_workflow_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "workflow_manifest":
-			out.Values[i] = ec._ScheduledWorkflows_workflow_manifest(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "cronSyntax":
-			out.Values[i] = ec._ScheduledWorkflows_cronSyntax(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "cluster_name":
-			out.Values[i] = ec._ScheduledWorkflows_cluster_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "workflow_name":
-			out.Values[i] = ec._ScheduledWorkflows_workflow_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "workflow_description":
-			out.Values[i] = ec._ScheduledWorkflows_workflow_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "weightages":
-			out.Values[i] = ec._ScheduledWorkflows_weightages(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "isCustomWorkflow":
-			out.Values[i] = ec._ScheduledWorkflows_isCustomWorkflow(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updated_at":
-			out.Values[i] = ec._ScheduledWorkflows_updated_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "created_at":
-			out.Values[i] = ec._ScheduledWorkflows_created_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "project_id":
-			out.Values[i] = ec._ScheduledWorkflows_project_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "cluster_id":
-			out.Values[i] = ec._ScheduledWorkflows_cluster_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "cluster_type":
-			out.Values[i] = ec._ScheduledWorkflows_cluster_type(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "isRemoved":
-			out.Values[i] = ec._ScheduledWorkflows_isRemoved(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var specImplementors = []string{"Spec"}
 
 func (ec *executionContext) _Spec(ctx context.Context, sel ast.SelectionSet, obj *model.Spec) graphql.Marshaler {
@@ -27936,6 +28715,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_clusterConnect(ctx, fields[0])
 	case "getKubeObject":
 		return ec._Subscription_getKubeObject(ctx, fields[0])
+	case "viewDashboard":
+		return ec._Subscription_viewDashboard(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -28056,8 +28837,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "role":
 			out.Values[i] = ec._User_role(ctx, field, obj)
-		case "state":
-			out.Values[i] = ec._User_state(ctx, field, obj)
 		case "created_at":
 			out.Values[i] = ec._User_created_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -28068,8 +28847,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "removed_at":
-			out.Values[i] = ec._User_removed_at(ctx, field, obj)
+		case "deactivated_at":
+			out.Values[i] = ec._User_deactivated_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28165,8 +28944,6 @@ func (ec *executionContext) _Workflow(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "workflow_runs":
-			out.Values[i] = ec._Workflow_workflow_runs(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -28201,6 +28978,11 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			}
 		case "cluster_name":
 			out.Values[i] = ec._WorkflowRun_cluster_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "weightages":
+			out.Values[i] = ec._WorkflowRun_weightages(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28252,6 +29034,38 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			}
 		case "isRemoved":
 			out.Values[i] = ec._WorkflowRun_isRemoved(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var workflowRunDetailsImplementors = []string{"WorkflowRunDetails"}
+
+func (ec *executionContext) _WorkflowRunDetails(ctx context.Context, sel ast.SelectionSet, obj *model.WorkflowRunDetails) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workflowRunDetailsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkflowRunDetails")
+		case "no_of_runs":
+			out.Values[i] = ec._WorkflowRunDetails_no_of_runs(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "date_stamp":
+			out.Values[i] = ec._WorkflowRunDetails_date_stamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -28360,32 +29174,21 @@ func (ec *executionContext) _WorkflowRunStatsResponse(ctx context.Context, sel a
 	return out
 }
 
-var workflowRunsImplementors = []string{"WorkflowRuns"}
+var workflowRunsDataImplementors = []string{"WorkflowRunsData"}
 
-func (ec *executionContext) _WorkflowRuns(ctx context.Context, sel ast.SelectionSet, obj *model.WorkflowRuns) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, workflowRunsImplementors)
+func (ec *executionContext) _WorkflowRunsData(ctx context.Context, sel ast.SelectionSet, obj *model.WorkflowRunsData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workflowRunsDataImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("WorkflowRuns")
-		case "execution_data":
-			out.Values[i] = ec._WorkflowRuns_execution_data(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "workflow_run_id":
-			out.Values[i] = ec._WorkflowRuns_workflow_run_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "last_updated":
-			out.Values[i] = ec._WorkflowRuns_last_updated(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			out.Values[i] = graphql.MarshalString("WorkflowRunsData")
+		case "value":
+			out.Values[i] = ec._WorkflowRunsData_value(ctx, field, obj)
+		case "workflowRunDetail":
+			out.Values[i] = ec._WorkflowRunsData_workflowRunDetail(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -28727,6 +29530,8 @@ func (ec *executionContext) _annotationsPromResponse(ctx context.Context, sel as
 			out.Values[i] = ec._annotationsPromResponse_legends(ctx, field, obj)
 		case "tsvs":
 			out.Values[i] = ec._annotationsPromResponse_tsvs(ctx, field, obj)
+		case "subDataArray":
+			out.Values[i] = ec._annotationsPromResponse_subDataArray(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -28830,6 +29635,32 @@ func (ec *executionContext) _clusterRegResponse(ctx context.Context, sel ast.Sel
 	return out
 }
 
+var dashboardPromResponseImplementors = []string{"dashboardPromResponse"}
+
+func (ec *executionContext) _dashboardPromResponse(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardPromResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardPromResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("dashboardPromResponse")
+		case "dashboardMetricsResponse":
+			out.Values[i] = ec._dashboardPromResponse_dashboardMetricsResponse(ctx, field, obj)
+		case "annotationsResponse":
+			out.Values[i] = ec._dashboardPromResponse_annotationsResponse(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var imageRegistryImplementors = []string{"imageRegistry"}
 
 func (ec *executionContext) _imageRegistry(ctx context.Context, sel ast.SelectionSet, obj *model.ImageRegistry) graphql.Marshaler {
@@ -28841,6 +29672,8 @@ func (ec *executionContext) _imageRegistry(ctx context.Context, sel ast.Selectio
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("imageRegistry")
+		case "is_default":
+			out.Values[i] = ec._imageRegistry_is_default(ctx, field, obj)
 		case "image_registry_name":
 			out.Values[i] = ec._imageRegistry_image_registry_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -28958,6 +29791,10 @@ func (ec *executionContext) _listDashboardResponse(ctx context.Context, sel ast.
 			out.Values[i] = ec._listDashboardResponse_ds_name(ctx, field, obj)
 		case "ds_type":
 			out.Values[i] = ec._listDashboardResponse_ds_type(ctx, field, obj)
+		case "ds_url":
+			out.Values[i] = ec._listDashboardResponse_ds_url(ctx, field, obj)
+		case "ds_health_status":
+			out.Values[i] = ec._listDashboardResponse_ds_health_status(ctx, field, obj)
 		case "panel_groups":
 			out.Values[i] = ec._listDashboardResponse_panel_groups(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -28992,6 +29829,66 @@ func (ec *executionContext) _listDashboardResponse(ctx context.Context, sel ast.
 			out.Values[i] = ec._listDashboardResponse_created_at(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._listDashboardResponse_updated_at(ctx, field, obj)
+		case "viewed_at":
+			out.Values[i] = ec._listDashboardResponse_viewed_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var metricDataForPanelImplementors = []string{"metricDataForPanel"}
+
+func (ec *executionContext) _metricDataForPanel(ctx context.Context, sel ast.SelectionSet, obj *model.MetricDataForPanel) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metricDataForPanelImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("metricDataForPanel")
+		case "panelID":
+			out.Values[i] = ec._metricDataForPanel_panelID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "PanelMetricsResponse":
+			out.Values[i] = ec._metricDataForPanel_PanelMetricsResponse(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var metricDataForPanelGroupImplementors = []string{"metricDataForPanelGroup"}
+
+func (ec *executionContext) _metricDataForPanelGroup(ctx context.Context, sel ast.SelectionSet, obj *model.MetricDataForPanelGroup) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metricDataForPanelGroupImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("metricDataForPanelGroup")
+		case "panelGroupID":
+			out.Values[i] = ec._metricDataForPanelGroup_panelGroupID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "panelGroupMetricsResponse":
+			out.Values[i] = ec._metricDataForPanelGroup_panelGroupMetricsResponse(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -29325,6 +30222,40 @@ func (ec *executionContext) _resourceResponse(ctx context.Context, sel ast.Selec
 			}
 		case "names":
 			out.Values[i] = ec._resourceResponse_names(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var subDataImplementors = []string{"subData"}
+
+func (ec *executionContext) _subData(ctx context.Context, sel ast.SelectionSet, obj *model.SubData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("subData")
+		case "date":
+			out.Values[i] = ec._subData_date(ctx, field, obj)
+		case "value":
+			out.Values[i] = ec._subData_value(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "subDataName":
+			out.Values[i] = ec._subData_subDataName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -29797,6 +30728,43 @@ func (ec *executionContext) marshalNGitConfigResponse2ᚖgithubᚗcomᚋlitmusch
 		return graphql.Null
 	}
 	return ec._GitConfigResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNHeatmapData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx context.Context, sel ast.SelectionSet, v []*model.HeatmapData) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOHeatmapData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
@@ -30290,6 +31258,57 @@ func (ec *executionContext) marshalNPodLogResponse2ᚖgithubᚗcomᚋlitmuschaos
 	return ec._PodLogResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNPortalDashboardData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardData(ctx context.Context, sel ast.SelectionSet, v model.PortalDashboardData) graphql.Marshaler {
+	return ec._PortalDashboardData(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPortalDashboardData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardDataᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PortalDashboardData) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPortalDashboardData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNPortalDashboardData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardData(ctx context.Context, sel ast.SelectionSet, v *model.PortalDashboardData) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PortalDashboardData(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNProject2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v model.Project) graphql.Marshaler {
 	return ec._Project(ctx, sel, &v)
 }
@@ -30700,6 +31719,43 @@ func (ec *executionContext) marshalNWorkflowRunStatsResponse2ᚖgithubᚗcomᚋl
 	return ec._WorkflowRunStatsResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNWorkflowRunsData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v []*model.WorkflowRunsData) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOWorkflowRunsData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) unmarshalNWorkflowSortingField2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortingField(ctx context.Context, v interface{}) (model.WorkflowSortingField, error) {
 	var res model.WorkflowSortingField
 	return res, res.UnmarshalGQL(v)
@@ -31000,6 +32056,24 @@ func (ec *executionContext) marshalNclusterRegResponse2ᚖgithubᚗcomᚋlitmusc
 	return ec._clusterRegResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNdashboardPromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDashboardPromResponse(ctx context.Context, sel ast.SelectionSet, v model.DashboardPromResponse) graphql.Marshaler {
+	return ec._dashboardPromResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNdashboardPromResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDashboardPromResponse(ctx context.Context, sel ast.SelectionSet, v *model.DashboardPromResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._dashboardPromResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNdataVars2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDataVars(ctx context.Context, v interface{}) (model.DataVars, error) {
+	return ec.unmarshalInputdataVars(ctx, v)
+}
+
 func (ec *executionContext) unmarshalNdeleteDSInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDeleteDSInput(ctx context.Context, v interface{}) (model.DeleteDSInput, error) {
 	return ec.unmarshalInputdeleteDSInput(ctx, v)
 }
@@ -31091,6 +32165,38 @@ func (ec *executionContext) marshalNpanelGroupResponse2ᚕᚖgithubᚗcomᚋlitm
 	return ret
 }
 
+func (ec *executionContext) unmarshalNpromQueryInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInput(ctx context.Context, v interface{}) (model.PromQueryInput, error) {
+	return ec.unmarshalInputpromQueryInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNpromQueryInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInputᚄ(ctx context.Context, v interface{}) ([]*model.PromQueryInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.PromQueryInput, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNpromQueryInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNpromQueryInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInput(ctx context.Context, v interface{}) (*model.PromQueryInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNpromQueryInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromQueryInput(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) marshalNpromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPromResponse(ctx context.Context, sel ast.SelectionSet, v model.PromResponse) graphql.Marshaler {
 	return ec._promResponse(ctx, sel, &v)
 }
@@ -31133,7 +32239,11 @@ func (ec *executionContext) marshalNpromSeriesResponse2ᚖgithubᚗcomᚋlitmusc
 	return ec._promSeriesResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) ([]*model.UpdatePanelGroupInput, error) {
+func (ec *executionContext) unmarshalNqueryMapForPanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx context.Context, v interface{}) (model.QueryMapForPanel, error) {
+	return ec.unmarshalInputqueryMapForPanel(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelᚄ(ctx context.Context, v interface{}) ([]*model.QueryMapForPanel, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -31143,14 +32253,58 @@ func (ec *executionContext) unmarshalNupdatePanelGroupInput2ᚕᚖgithubᚗcom�
 		}
 	}
 	var err error
-	res := make([]*model.UpdatePanelGroupInput, len(vSlice))
+	res := make([]*model.QueryMapForPanel, len(vSlice))
 	for i := range vSlice {
-		res[i], err = ec.unmarshalOupdatePanelGroupInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNqueryMapForPanel2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanel2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx context.Context, v interface{}) (*model.QueryMapForPanel, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNqueryMapForPanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanelGroup2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroup(ctx context.Context, v interface{}) (model.QueryMapForPanelGroup, error) {
+	return ec.unmarshalInputqueryMapForPanelGroup(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroupᚄ(ctx context.Context, v interface{}) ([]*model.QueryMapForPanelGroup, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.QueryMapForPanelGroup, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNqueryMapForPanelGroup2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroup(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNqueryMapForPanelGroup2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroup(ctx context.Context, v interface{}) (*model.QueryMapForPanelGroup, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNqueryMapForPanelGroup2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanelGroup(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalNupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {
+	return ec.unmarshalInputupdateDBInput(ctx, v)
 }
 
 func (ec *executionContext) marshalNweightages2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v model.Weightages) graphql.Marshaler {
@@ -31319,6 +32473,17 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return ec.marshalOFloat2float64(ctx, sel, *v)
+}
+
+func (ec *executionContext) marshalOHeatmapData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx context.Context, sel ast.SelectionSet, v model.HeatmapData) graphql.Marshaler {
+	return ec._HeatmapData(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOHeatmapData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHeatmapData(ctx context.Context, sel ast.SelectionSet, v *model.HeatmapData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._HeatmapData(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
@@ -31632,6 +32797,17 @@ func (ec *executionContext) marshalOWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋ
 	return ec._WorkflowRun(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOWorkflowRunDetails2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunDetails(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRunDetails) graphql.Marshaler {
+	return ec._WorkflowRunDetails(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOWorkflowRunDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunDetails(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowRunDetails) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WorkflowRunDetails(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOWorkflowRunFilterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunFilterInput(ctx context.Context, v interface{}) (model.WorkflowRunFilterInput, error) {
 	return ec.unmarshalInputWorkflowRunFilterInput(ctx, v)
 }
@@ -31680,55 +32856,15 @@ func (ec *executionContext) marshalOWorkflowRunStatus2ᚖgithubᚗcomᚋlitmusch
 	return v
 }
 
-func (ec *executionContext) marshalOWorkflowRuns2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRuns(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRuns) graphql.Marshaler {
-	return ec._WorkflowRuns(ctx, sel, &v)
+func (ec *executionContext) marshalOWorkflowRunsData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRunsData) graphql.Marshaler {
+	return ec._WorkflowRunsData(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOWorkflowRuns2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRuns(ctx context.Context, sel ast.SelectionSet, v []*model.WorkflowRuns) graphql.Marshaler {
+func (ec *executionContext) marshalOWorkflowRunsData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunsData(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowRunsData) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOWorkflowRuns2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRuns(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalOWorkflowRuns2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRuns(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowRuns) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._WorkflowRuns(ctx, sel, v)
+	return ec._WorkflowRunsData(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOWorkflowSortInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowSortInput(ctx context.Context, v interface{}) (model.WorkflowSortInput, error) {
@@ -32298,6 +33434,108 @@ func (ec *executionContext) marshalOlistDashboardResponse2ᚖgithubᚗcomᚋlitm
 	return ec._listDashboardResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOmetricDataForPanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx context.Context, sel ast.SelectionSet, v model.MetricDataForPanel) graphql.Marshaler {
+	return ec._metricDataForPanel(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOmetricDataForPanel2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDataForPanel) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOmetricDataForPanel2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOmetricDataForPanel2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx context.Context, sel ast.SelectionSet, v *model.MetricDataForPanel) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._metricDataForPanel(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOmetricDataForPanelGroup2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx context.Context, sel ast.SelectionSet, v model.MetricDataForPanelGroup) graphql.Marshaler {
+	return ec._metricDataForPanelGroup(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOmetricDataForPanelGroup2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDataForPanelGroup) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOmetricDataForPanelGroup2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOmetricDataForPanelGroup2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanelGroup(ctx context.Context, sel ast.SelectionSet, v *model.MetricDataForPanelGroup) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._metricDataForPanelGroup(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOmetricsPromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricsPromResponse(ctx context.Context, sel ast.SelectionSet, v model.MetricsPromResponse) graphql.Marshaler {
 	return ec._metricsPromResponse(ctx, sel, &v)
 }
@@ -32842,20 +34080,119 @@ func (ec *executionContext) marshalOresourceResponse2ᚖgithubᚗcomᚋlitmuscha
 	return ec._resourceResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {
-	return ec.unmarshalInputupdateDBInput(ctx, v)
+func (ec *executionContext) marshalOsubData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx context.Context, sel ast.SelectionSet, v model.SubData) graphql.Marshaler {
+	return ec._subData(ctx, sel, &v)
 }
 
-func (ec *executionContext) unmarshalOupdateDBInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (*model.UpdateDBInput, error) {
+func (ec *executionContext) marshalOsubData2ᚕᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx context.Context, sel ast.SelectionSet, v [][]*model.SubData) graphql.Marshaler {
 	if v == nil {
-		return nil, nil
+		return graphql.Null
 	}
-	res, err := ec.unmarshalOupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, v)
-	return &res, err
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOsubData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOsubData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx context.Context, sel ast.SelectionSet, v []*model.SubData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOsubData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOsubData2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSubData(ctx context.Context, sel ast.SelectionSet, v *model.SubData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._subData(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOupdatePanelGroupInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) (model.UpdatePanelGroupInput, error) {
 	return ec.unmarshalInputupdatePanelGroupInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOupdatePanelGroupInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) ([]*model.UpdatePanelGroupInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.UpdatePanelGroupInput, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOupdatePanelGroupInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalOupdatePanelGroupInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdatePanelGroupInput(ctx context.Context, v interface{}) (*model.UpdatePanelGroupInput, error) {

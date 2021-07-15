@@ -24,16 +24,10 @@ import AddProbe from '../AddProbe';
 import useStyles from './styles';
 
 interface SteadyStateProps {
-  engineIndex: number;
   gotoStep: (page: number) => void;
-  closeStepper: () => void;
 }
 
-const SteadyState: React.FC<SteadyStateProps> = ({
-  engineIndex,
-  gotoStep,
-  closeStepper,
-}) => {
+const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const workflow = useActions(WorkflowActions);
@@ -55,14 +49,9 @@ const SteadyState: React.FC<SteadyStateProps> = ({
     setAddProbe(false);
   };
 
-  // handleManiYAMLChange allows to update the main manifest
-  // with the changes in individual Chaos Engines
+  // handleManiYAMLChange allows to update the changes in individual Chaos Engines
   const handleMainYAMLChange = () => {
-    const mainManifest = YAML.parse(manifest.manifest);
-    mainManifest.spec.templates[engineIndex].inputs.artifacts[0].raw.data =
-      YAML.stringify(chaosEngine);
     workflow.setWorkflowManifest({
-      manifest: YAML.stringify(mainManifest),
       engineYAML: YAML.stringify(chaosEngine),
     });
   };
@@ -103,10 +92,10 @@ const SteadyState: React.FC<SteadyStateProps> = ({
     setAddProbe(false);
   };
 
-  const handleStepperClose = () => {
+  const handleNext = () => {
     chaosEngine.spec.experiments[0].spec.probe = probesData;
     handleMainYAMLChange();
-    return closeStepper();
+    gotoStep(3);
   };
 
   return (
@@ -225,7 +214,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({
                       }}
                     >
                       <img
-                        src="/icons/bin-red-delete.svg"
+                        src="./icons/bin-red-delete.svg"
                         alt="delete"
                         className={classes.deleteIcon}
                       />
@@ -269,10 +258,10 @@ const SteadyState: React.FC<SteadyStateProps> = ({
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handleStepperClose()}
+          onClick={() => handleNext()}
           className={classes.button}
         >
-          {t('createWorkflow.tuneWorkflow.steadyState.finish')}
+          Next
         </Button>
       </div>
     </div>

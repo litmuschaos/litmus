@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Link, Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, TextButton } from 'litmus-ui';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import { MainInfoContainer } from '../../../components/MainInfoContainer';
@@ -47,6 +47,9 @@ const Overview: React.FC = () => {
   let applicationDashboardCount = 0;
   let isAgentPresent = false;
 
+  // Local state to display number of data sources
+  const [dataSourceCount, setDataSourceCount] = useState<number>(0);
+
   // Query to check if agent is present or not
   const { data: agentList, loading: agentListLoading } = useQuery<
     Clusters,
@@ -69,6 +72,9 @@ const Overview: React.FC = () => {
   } = useQuery<DataSourceList, ListDataSourceVars>(LIST_DATASOURCE_OVERVIEW, {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      setDataSourceCount(data.ListDataSource.length);
+    },
   });
 
   // Set boolean to conditionally render the banner
@@ -248,6 +254,7 @@ const Overview: React.FC = () => {
           description="Data source(s) have been found to be connected in this project. Select “Create dashboard” to configure a chaos interleaved dashboard"
           button={
             <ButtonFilled
+              style={{ marginLeft: '0' }}
               onClick={() => {
                 history.push({
                   pathname: '/analytics/dashboard/create',
@@ -335,7 +342,7 @@ const Overview: React.FC = () => {
       )}
       {dataSource && (
         <OverviewContainer
-          count={1}
+          count={dataSourceCount}
           countUnit="Data source"
           description="Data sources are needed to configure interleaving dashboards"
           maxWidth="38.5625rem"

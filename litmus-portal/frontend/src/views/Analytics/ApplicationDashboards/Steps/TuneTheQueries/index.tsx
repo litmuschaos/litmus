@@ -17,13 +17,12 @@ import {
   updatePanelGroupInput,
 } from '../../../../../models/graphql/dashboardsDetails';
 import {
-  DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+  DEFAULT_REFRESH_RATE,
   DEFAULT_RELATIVE_TIME_RANGE,
 } from '../../../../../pages/ApplicationDashboard/constants';
 import useActions from '../../../../../redux/actions';
 import * as AlertActions from '../../../../../redux/actions/alert';
 import * as DashboardActions from '../../../../../redux/actions/dashboards';
-import * as DataSourceActions from '../../../../../redux/actions/dataSource';
 import { history } from '../../../../../redux/configureStore';
 import {
   getProjectID,
@@ -55,7 +54,6 @@ const TuneTheQueries = forwardRef(
     const projectRole = getProjectRole();
     const alert = useActions(AlertActions);
     const dashboard = useActions(DashboardActions);
-    const dataSource = useActions(DataSourceActions);
     const [proceed, setProceed] = React.useState<boolean>(false);
 
     const [updatedDashboardDetails, setUpdatedDashboardDetails] =
@@ -66,12 +64,7 @@ const TuneTheQueries = forwardRef(
     const onDashboardLoadRoutine = async (dbID: string) => {
       dashboard.selectDashboard({
         selectedDashboardID: dbID,
-        refreshRate: 0,
-      });
-      dataSource.selectDataSource({
-        selectedDataSourceURL: '',
-        selectedDataSourceID: '',
-        selectedDataSourceName: '',
+        selectedAgentID: dashboardVars.agentID ?? '',
       });
       return true;
     };
@@ -224,7 +217,7 @@ const TuneTheQueries = forwardRef(
         }`,
         project_id: projectID,
         cluster_id: dashboardVars.agentID ?? '',
-        refresh_rate: DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+        refresh_rate: `${DEFAULT_REFRESH_RATE}`,
       };
       createDashboard({
         variables: { createDBInput: dashboardInput },
@@ -240,20 +233,17 @@ const TuneTheQueries = forwardRef(
         db_type_id: dashboardVars.dashboardTypeID ?? '',
         db_type_name: dashboardVars.dashboardTypeName ?? '',
         db_information: dashboardVars.information ?? '',
-        chaos_event_query_template: dashboardVars.chaosEventQueryTemplate ?? '',
-        chaos_verdict_query_template:
-          dashboardVars.chaosVerdictQueryTemplate ?? '',
         application_metadata_map: dashboardVars.applicationMetadataMap ?? [],
         panel_groups: getPanelGroups(),
         end_time: `${Math.round(new Date().getTime() / 1000)}`,
         start_time: `${
           Math.round(new Date().getTime() / 1000) - DEFAULT_RELATIVE_TIME_RANGE
         }`,
-        refresh_rate: DEFAULT_DASHBOARD_REFRESH_RATE_STRING,
+        refresh_rate: `${DEFAULT_REFRESH_RATE}`,
         cluster_id: dashboardVars.agentID ?? '',
       };
       updateDashboard({
-        variables: { updateDBInput: dashboardInput },
+        variables: { updateDBInput: dashboardInput, chaosQueryUpdate: false },
       });
     };
 

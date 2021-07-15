@@ -1,9 +1,9 @@
 import { useQuery } from '@apollo/client';
 import { Box, Paper, Tab, Tabs, useTheme } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LIST_PROJECTS } from '../../../../graphql';
-import { Member, Project, Projects } from '../../../../models/graphql/user';
+import { Member, Projects } from '../../../../models/graphql/user';
 import { getUserId } from '../../../../utils/auth';
 import AcceptedInvitations from './AcceptedInvitations';
 import ReceivedInvitations from './ReceivedInvitations';
@@ -48,42 +48,46 @@ const Invitation: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = React.useState(0);
-  const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
-    setActiveTab(actTab);
-  };
 
   const userID = getUserId();
 
   const [projectOtherCount, setProjectOtherCount] = useState<number>(0);
   const [invitationsCount, setInvitationCount] = useState<number>(0);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
+
+  const { data: dataProject, refetch } = useQuery<Projects>(LIST_PROJECTS, {
     onCompleted: () => {
       if (dataProject?.listProjects) {
-        setProjects(dataProject?.listProjects);
+        let otherCount = 0;
+        let inviteCount = 0;
+        dataProject.listProjects.forEach((project) => {
+          project.members.forEach((member: Member) => {
+            if (member.user_id === userID && member.invitation === 'Pending') {
+              inviteCount++;
+            } else if (
+              member.user_id === userID &&
+              member.role !== 'Owner' &&
+              member.invitation === 'Accepted'
+            ) {
+              otherCount++;
+            }
+          });
+        });
+        setInvitationCount(inviteCount);
+        setProjectOtherCount(otherCount);
       }
+    },
+    onError: () => {
+      setInvitationCount(0);
+      setProjectOtherCount(0);
     },
     fetchPolicy: 'cache-and-network',
   });
-  useEffect(() => {
-    let otherCount = 0;
-    let inviteCount = 0;
-    projects.map((project) => {
-      return project.members.forEach((member: Member) => {
-        if (member.user_id === userID && member.invitation === 'Pending') {
-          inviteCount++;
-        } else if (
-          member.user_id === userID &&
-          member.role !== 'Owner' &&
-          member.invitation === 'Accepted'
-        ) {
-          otherCount++;
-        }
-      });
-    });
-    setInvitationCount(inviteCount);
-    setProjectOtherCount(otherCount);
-  }, [projects, dataProject]);
+
+  const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
+    setActiveTab(actTab);
+    refetch();
+  };
+
   return (
     <div>
       <Paper className={classes.root} elevation={0}>

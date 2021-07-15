@@ -19,7 +19,6 @@ import { constants } from '../../../constants';
 import {
   ADD_MY_HUB,
   GENERATE_SSH,
-  SAVE_MY_HUB,
   UPDATE_MY_HUB,
 } from '../../../graphql/mutations';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
@@ -98,8 +97,6 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
     (hubs) => hubs.HubName === hubName
   )[0];
 
-  const [saveChanges, setSaveChanges] = useState(false);
-
   /**
    * Add MyHub mutation to create a new hub
    */
@@ -118,35 +115,12 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
         setAlertState(true);
         setAlertResult({
           type: constants.error,
-          message: `Error: ${error.message}. 
-                    You can still save the Hub configuration.`,
+          message: `Error: ${error.message}. `,
         });
-        setSaveChanges(true);
+        refetchQuery();
       },
     }
   );
-
-  /**
-   * Save My Hub mutation to save a hub details for later
-   */
-  const [saveMyHub] = useMutation<MyHubData, CreateMyHub>(SAVE_MY_HUB, {
-    onCompleted: () => {
-      setAlertState(true);
-      setAlertResult({
-        type: constants.success,
-        message: 'My Hub was successfully saved',
-      });
-      setSaveChanges(false);
-      refetchQuery();
-    },
-    onError: () => {
-      setAlertState(true);
-      setAlertResult({
-        type: constants.error,
-        message: 'Error while adding My Hub',
-      });
-    },
-  });
 
   /**
    * Update MyHub mutation to edit the myhub configuration
@@ -197,36 +171,6 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
         variables: {
           MyHubDetails: {
             id: hubData?.id,
-            HubName: gitHub.HubName.trim(),
-            RepoURL: gitHub.GitURL,
-            RepoBranch: gitHub.GitBranch,
-            IsPrivate: isToggled.isPublicToggled
-              ? false
-              : !!isToggled.isPrivateToggled,
-            AuthType: isToggled.isPublicToggled
-              ? MyHubType.basic
-              : privateHub === 'token'
-              ? MyHubType.token
-              : privateHub === 'ssh'
-              ? MyHubType.ssh
-              : MyHubType.basic,
-            Token: accessToken,
-            UserName: 'user',
-            Password: 'user',
-            SSHPrivateKey: sshKey.privateKey,
-            SSHPublicKey: sshKey.publicKey,
-          },
-          projectID,
-        },
-      });
-    } else if (saveChanges) {
-      /**
-       * Save changes is enabled if add myhub mutation fails.
-       * This will call the save myhub mutation
-       */
-      saveMyHub({
-        variables: {
-          MyHubDetails: {
             HubName: gitHub.HubName.trim(),
             RepoURL: gitHub.GitURL,
             RepoBranch: gitHub.GitBranch,
@@ -361,7 +305,6 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
         GitURL: '',
         GitBranch: '',
       });
-      setSaveChanges(false);
       setSshKey({
         publicKey: '',
         privateKey: '',
@@ -549,7 +492,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                                         {!copying ? (
                                           <div className={classes.rowDiv}>
                                             <img
-                                              src="/icons/copy.svg"
+                                              src="./icons/copy.svg"
                                               className={classes.copyBtnImg}
                                               alt="copy"
                                             />
@@ -600,8 +543,6 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                 >
                   {loading || updateHubLoader ? (
                     <Loader size={20} />
-                  ) : saveChanges ? (
-                    'Save Changes'
                   ) : (
                     t('myhub.connectHubPage.submitBtn')
                   )}

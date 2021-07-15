@@ -1,6 +1,11 @@
+export interface Label {
+  subject?: string;
+  [index: string]: any;
+}
 export interface Metadata {
   name: string;
   namespace: string;
+  labels: Label[];
 }
 
 export interface SecurityContext {

@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainHeader: {
     height: '103%',
-    backgroundImage: `url(${'/icons/error-background.svg'})`,
+    backgroundImage: `url(${'./icons/error-background.svg'})`,
     backgroundSize: 'cover',
     marginLeft: theme.spacing(-5),
     marginRight: theme.spacing(-5),

@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import localforage from 'localforage';
 import React, {
+  lazy,
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -25,8 +26,11 @@ import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import parsed, { updateManifestImage } from '../../../utils/yamlUtils';
-import ConfigurationStepper from './ConfigurationStepper/ConfigurationStepper';
 import useStyles from './styles';
+
+const ConfigurationStepper = lazy(
+  () => import('./ConfigurationStepper/ConfigurationStepper')
+);
 
 interface WorkflowTableProps {
   isCustom: boolean | undefined;

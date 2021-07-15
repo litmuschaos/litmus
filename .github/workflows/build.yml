@@ -5,6 +5,9 @@ on:
       - master
       - v*
 
+env:
+  DOCKER_BUILDKIT: 1 # Enable Docker_buildkit in all build jobs
+
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -39,6 +42,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.16" # By default, the go version is v1.15 in runner.
       - name: Check Golang imports order
         uses: Jerome1337/goimports-action@v1.0.3
         with:

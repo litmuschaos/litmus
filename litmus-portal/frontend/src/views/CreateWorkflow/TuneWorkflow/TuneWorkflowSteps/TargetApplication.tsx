@@ -51,14 +51,10 @@ interface TargetApplicationData {
 }
 
 interface TargetApplicationProp {
-  engineIndex: number;
   gotoStep: (page: number) => void;
 }
 
-const TargetApplication: React.FC<TargetApplicationProp> = ({
-  engineIndex,
-  gotoStep,
-}) => {
+const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   const { t } = useTranslation();
   /**
    * State Variables to manage theme changes
@@ -95,7 +91,13 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
   const [addNodeSelector, setAddNodeSelector] = useState<boolean>(
     !!engineManifest.spec.experiments[0].spec.components['nodeSelectors']
   );
-  const [nodeSelector, setNodeSelector] = useState('');
+  const [nodeSelector, setNodeSelector] = useState(
+    engineManifest.spec.experiments[0].spec.components.nodeSelectors
+      ? engineManifest.spec.experiments[0].spec.components.nodeSelectors[
+          'kubernetes.io/hostname'
+        ]
+      : ''
+  );
   const [appinfoData, setAppInfoData] = useState<AppInfoData[]>([]);
   const [GVRObj, setGVRObj] = useState<GVRRequest>({
     group: '',
@@ -152,9 +154,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({
       ];
     }
     engineManifest.spec.jobCleanUpPolicy = targetApp.jobCleanUpPolicy;
-    const mainManifest = YAML.parse(manifest.manifest);
-    mainManifest.spec.templates[engineIndex].inputs.artifacts[0].raw.data =
-      YAML.stringify(engineManifest);
+
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(engineManifest),
     });

@@ -251,7 +251,7 @@ const BrowseCluster: React.FC = () => {
                     >
                       <div className={classes.targetsIcon}>
                         <img
-                          src="/icons/arrow_downward.svg"
+                          src="./icons/arrow_downward.svg"
                           alt="ConnectTarget icon"
                         />
                       </div>
@@ -276,7 +276,7 @@ const BrowseCluster: React.FC = () => {
                     >
                       <div className={classes.targetsIcon}>
                         <img
-                          src="/icons/arrow_downward.svg"
+                          src="./icons/arrow_downward.svg"
                           alt="ConnectTarget icon"
                         />
                       </div>

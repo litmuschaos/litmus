@@ -33,7 +33,12 @@ interface SortInput {
   Descending?: boolean;
 }
 
-const UsageTable = () => {
+interface TimeRange {
+  start_time: string;
+  end_time: string;
+}
+
+const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [paginationData, setPaginationData] = useState<Pagination>({
@@ -46,21 +51,15 @@ const UsageTable = () => {
   });
   const [search, setSearch] = useState<string>('');
 
-  const [usageQuery, { loading, data }] = useLazyQuery(GLOBAL_PROJECT_DATA, {});
+  const [usageQuery, { loading, data }] = useLazyQuery(GLOBAL_PROJECT_DATA);
 
   useEffect(() => {
     usageQuery({
       variables: {
         query: {
           DateRange: {
-            start_date: Math.trunc(
-              new Date(
-                new Date().getFullYear(),
-                new Date().getMonth(),
-                1
-              ).getTime() / 1000
-            ).toString(),
-            end_date: Math.trunc(new Date().getTime() / 1000).toString(),
+            start_date: start_time,
+            end_date: end_time,
           },
           Pagination: {
             page: paginationData.page,
@@ -71,7 +70,7 @@ const UsageTable = () => {
         },
       },
     });
-  }, [paginationData, search, sortData]);
+  }, [paginationData, search, sortData, start_time, end_time]);
 
   return (
     <div className={classes.table}>

@@ -1,6 +1,6 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonFilled, InputField } from 'litmus-ui';
+import { ButtonFilled, InputField, TextButton } from 'litmus-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
@@ -57,7 +57,7 @@ const GetStarted: React.FC = () => {
   const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
     onCompleted: () => {
       setIsLoading(false);
-      window.location.assign('/home');
+      window.location.assign(`${process.env.PUBLIC_URL}/home`);
     },
   });
 
@@ -139,7 +139,7 @@ const GetStarted: React.FC = () => {
       <Center>
         <div className={classes.rootDiv}>
           <div className={classes.rootLitmusText}>
-            <img src="icons/LitmusLogoLight.svg" alt="litmus logo" />
+            <img src="./icons/LitmusLogoLight.svg" alt="litmus logo" />
             <Typography className={classes.HeaderText}>
               {' '}
               {t('getStarted.welcome')} {username}!
@@ -204,6 +204,23 @@ const GetStarted: React.FC = () => {
                     <>{t('getStarted.button.finish')}</>
                   )}
                 </ButtonFilled>
+              </div>
+              <div data-cy="skipButton">
+                <TextButton
+                  className={classes.skipButton}
+                  title="Skip for now"
+                  variant="highlight"
+                  onClick={() => {
+                    setIsLoading(true);
+                    getUserInfo();
+                  }}
+                >
+                  {loading ? (
+                    <Loader size={loaderSize} />
+                  ) : (
+                    <Typography>{t('getStarted.button.skip')}</Typography>
+                  )}
+                </TextButton>
               </div>
             </div>
           </form>

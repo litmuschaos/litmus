@@ -1,6 +1,6 @@
 module github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber
 
-go 1.14
+go 1.16
 
 require (
 	github.com/argoproj/argo v2.5.2+incompatible

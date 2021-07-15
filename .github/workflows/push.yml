@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.16" # By default, the go version is v1.15 in runner.
       - run: |
           make backend-services-checks
 
@@ -212,10 +215,21 @@ jobs:
           source env-vars
           make push-portal-component
 
-  ## TODO: the build time for multiarch frontend image is higher so it is used in release
+  ## TODO: the build time for multiarch frontend image is higher so it is used in the release
   ## builds only need to optimize the build duration and also add it with ci tag
+  ## Build and push / base path
   docker-build-and-push-frontend:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        frontend:
+          [
+            { "image_name": "litmusportal-frontend", "path": "" },
+            {
+              "image_name": "litmusportal-frontend-path-litmuschaos",
+              "path": "/litmuschaos",
+            },
+          ]
     needs:
       - get-envs
       - frontend-checks
@@ -241,14 +255,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push frontend docker image
+      - name: Push frontend docker image ( ${{ matrix.frontend.image_name }} )
         env:
-          FRONTEND_IMAGE: ${FRONTEND_IMAGE}
           IMG_TAG: ${IMG_TAG}
           PLATFORMS: ${{ secrets.PLATFORMS }}
           REPONAME: ${{ secrets.REPONAME }}
           timestamp: ${timestamp}
+          PUBLIC_URL: ${{ matrix.frontend.path }}
         run: |
           source env-vars
+          FRONTEND_IMAGE=${{ matrix.frontend.image_name }}
           timestamp=`date "+%s"`
           make push-frontend

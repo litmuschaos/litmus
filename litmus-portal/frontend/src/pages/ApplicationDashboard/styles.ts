@@ -7,21 +7,50 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     overflowX: 'hidden',
+    msOverflowX: 'hidden',
   },
 
   root: {
-    marginLeft: theme.spacing(1),
+    overflowY: 'hidden',
+    msOverflowY: 'hidden',
+    msOverflowStyle: 'none' /* Internet Explorer 10+ */,
+    scrollbarWidth: 'none' /* Firefox */,
+    '&::-webkit-scrollbar': {
+      display: 'none' /* Safari and Chrome */,
+    },
     marginBottom: theme.spacing(2.5),
+  },
+
+  center: {
+    padding: '25%',
+  },
+
+  loading: {
+    textAlign: 'center',
+    marginTop: theme.spacing(2),
+    color: theme.palette.text.hint,
+    fontSize: '1.25rem',
+  },
+
+  error: {
+    textAlign: 'center',
+    color: theme.palette.error.main,
+    fontSize: '1rem',
+  },
+
+  flexButtons: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+
+  flexButton: {
+    margin: theme.spacing(3, 2, 0),
   },
 
   controlsDiv: {
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: theme.spacing(4.5),
-  },
-
-  italic: {
-    fontStyle: 'italic',
   },
 
   analyticsDiv: {
@@ -46,72 +75,25 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
   },
 
-  weightedFont: {
-    fontWeight: 500,
+  // Menu
+  menuList: {
+    boxShadow: '0 5px 9px rgba(0, 0, 0, 0.1)',
   },
-
-  // Menu option
   menuItem: {
     minWidth: '10rem',
     height: '2.5rem',
-  },
-
-  menuItemSelected: {
-    background: theme.palette.primary.light,
-    color: theme.palette.secondary.contrastText,
+    background: `${theme.palette.background.paper} !important`,
     '&:hover': {
-      background: theme.palette.primary.light,
+      background: `${theme.palette.cards.highlight} !important`,
     },
-    minWidth: '10rem',
-    height: '2.5rem',
-  },
-
-  expDiv: {
-    display: 'flex',
+    '&.Mui-selected': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
   },
 
   btnText: {
     fontWeight: 500,
-  },
-
-  formControl: {
-    width: '9rem',
-    marginLeft: theme.spacing(1.5),
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(3.75),
-    },
-    '& .MuiSelect-outlined': {
-      padding: '0.925rem',
-      '&:focus': {
-        borderColor: theme.palette.primary.main,
-      },
-      '& .MuiInputLabel-root': {
-        color: `${theme.palette.text.hint} !important`,
-        marginTop: `${theme.spacing(2)} !important`,
-      },
-    },
-  },
-
-  inputLabel: {
-    color: theme.palette.text.hint,
-    marginTop: theme.spacing(-1),
-    '&.MuiInputLabel-shrink': {
-      marginTop: theme.spacing(1),
-    },
-  },
-
-  menuListItem: {
-    color: theme.palette.text.hint,
-    height: '2.4rem',
-  },
-
-  menuListItemSelected: {
-    height: '2.4rem',
-    background: `${theme.palette.primary.light} !important`,
-    color: theme.palette.secondary.contrastText,
-    '&:hover': {
-      background: `${theme.palette.primary.light} !important`,
-    },
+    fontStyle: 'italic',
   },
 
   chaosTableSection: {

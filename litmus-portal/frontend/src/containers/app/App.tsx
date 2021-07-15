@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
-import Loader from '../../components/Loader';
+import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
 import {
   Member,
@@ -10,12 +10,10 @@ import {
   Projects,
   UserRole,
 } from '../../models/graphql/user';
-import useActions from '../../redux/actions';
-import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
-import Center from '../layouts/Center';
+import Scaffold from '../layouts/Scaffold';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -31,7 +29,7 @@ const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
 const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
-const AnalyticsPage = lazy(() => import('../../pages/WorkflowAnalytics'));
+const WorkflowInfoStats = lazy(() => import('../../pages/WorkflowInfoStats'));
 const AnalyticsDashboard = lazy(() => import('../../pages/AnalyticsPage'));
 const DataSourceConfigurePage = lazy(
   () => import('../../pages/ConfigureDataSources')
@@ -45,7 +43,10 @@ const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
 
 const Routes: React.FC = () => {
-  const baseRoute = window.location.pathname.split('/')[1];
+  const baseRoute = window.location.pathname
+    .replace(process.env.PUBLIC_URL, '')
+    .split('/')[1];
+
   const projectIDFromURL = getProjectID();
   const projectRoleFromURL = getProjectRole();
   const role = getUserRole();
@@ -55,7 +56,7 @@ const Routes: React.FC = () => {
   const userID = getUserId();
 
   const { loading } = useQuery<Projects>(LIST_PROJECTS, {
-    skip: projectID !== '' && projectID !== undefined,
+    skip: (projectID !== '' && projectID !== undefined) || getToken() === '',
     onCompleted: (data) => {
       if (data.listProjects) {
         data.listProjects.forEach((project): void => {
@@ -83,6 +84,7 @@ const Routes: React.FC = () => {
   });
 
   const { loading: projectValidation } = useQuery<ProjectDetail>(GET_PROJECT, {
+    skip: getToken() === '',
     variables: { projectID },
     onCompleted: (data) => {
       if (data?.getProject) {
@@ -109,30 +111,28 @@ const Routes: React.FC = () => {
 
   if (getToken() === '') {
     return (
-      <>
-        {loading ? (
-          <Loader />
-        ) : (
-          <Switch>
-            <Route exact path="/login" component={LoginPage} />
-            <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-            <Redirect to="/login" />
-          </Switch>
-        )}
-      </>
+      <SuspenseLoader style={{ height: '80vh' }}>
+        <Switch>
+          <Route exact path="/login" component={LoginPage} />
+          <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+          <Redirect to="/login" />
+        </Switch>
+      </SuspenseLoader>
     );
   }
 
   if (!projectID) {
     return (
       <>
-        {loading ? (
-          <Loader />
-        ) : (
-          <Switch>
-            <Route exact path="/getStarted" component={GetStarted} />
-            <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-          </Switch>
+        {!loading && (
+          <SuspenseLoader style={{ height: '80vh' }}>
+            <Switch>
+              <Route exact path="/getStarted" component={GetStarted} />
+              <Route exact path="/login" component={LoginPage} />
+              <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+              <Redirect to="/getStarted" />
+            </Switch>
+          </SuspenseLoader>
         )}
       </>
     );
@@ -140,136 +140,122 @@ const Routes: React.FC = () => {
 
   return (
     <>
-      {projectValidation && loading ? (
-        <Loader />
-      ) : (
-        <Switch>
-          <Route exact path="/home" component={HomePage} />
-          <Redirect exact path="/" to="/home" />
-          <Route exact path="/workflows" component={Workflows} />
-          <Route exact path="/analytics" component={AnalyticsDashboard} />
-          <Route
-            exact
-            path="/analytics/datasource/create"
-            component={() => <DataSourceConfigurePage configure={false} />}
-          />
-          <Route
-            exact
-            path="/analytics/datasource/configure"
-            component={() => <DataSourceConfigurePage configure />}
-          />
-          <Route
-            exact
-            path="/analytics/dashboard/create"
-            component={() => <ChooseAndConfigureDashboards configure={false} />}
-          />
-          <Route
-            exact
-            path="/analytics/dashboard/configure"
-            component={() => <ChooseAndConfigureDashboards configure />}
-          />
-          <Route
-            exact
-            path="/analytics/application-dashboard"
-            component={() => <DashboardPage />}
-          />
-          <Route exact path="/create-workflow" component={CreateWorkflow} />
-          <Route
-            exact
-            path="/workflows/:workflowRunId"
-            component={WorkflowDetails}
-          />
-          <Route
-            exact
-            path="/workflows/schedule/:scheduleProjectID/:workflowName"
-            component={EditSchedule}
-          />
-          <Route
-            exact
-            path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
-            component={SetNewSchedule}
-          />
-          <Route
-            exact
-            path="/workflows/analytics/:workflowRunId"
-            component={AnalyticsPage}
-          />
-          <Route exact path="/community" component={Community} />
-          <Route exact path="/targets" component={Targets} />
-          <Route exact path="/target-connect" component={ConnectTargets} />
-          <Route exact path="/myhub" component={MyHub} />
-          <Route exact path="/myhub/:hubname" component={ChaosChart} />
-          <Route
-            exact
-            path="/myhub/:hubname/:chart/:experiment"
-            component={MyHubExperiment}
-          />
-          {projectRole === 'Owner' ? (
-            <Route path="/settings" component={Settings} />
-          ) : (
-            <Redirect
-              to={{
-                pathname: '/home',
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              }}
-            />
-          )}
-          {role === UserRole.admin ? (
-            <Route path="/usage-statistics" component={UsageStatistics} />
-          ) : (
-            <Redirect
-              to={{
-                pathname: '/home',
-                search: `?projectID=${projectID}&projectRole=${projectRole}`,
-              }}
-            />
-          )}
-          <Route exact path="/404" component={ErrorPage} />
-          {/* Redirects */}
-          <Redirect exact path="/getStarted" to="/home" />
-          <Redirect exact path="/workflows/schedule" to="/workflows" />
-          <Redirect exact path="/workflows/template" to="/workflows" />
-          <Redirect exact path="/analytics/overview" to="/analytics" />
-          <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
-          <Redirect
-            exact
-            path="/analytics/kubernetesdashborad"
-            to="/analytics"
-          />
-          <Redirect exact path="/analytics/datasource" to="/analytics" />
-          <Redirect exact path="/analytics/dashboard" to="/analytics" />
-          <Redirect exact path="/api-doc" to="/api-doc/index.html" />
-          <Redirect to="/404" />
-        </Switch>
+      {!projectValidation && !loading && (
+        <Scaffold>
+          <SuspenseLoader style={{ height: '80vh' }}>
+            <Switch>
+              <Route exact path="/home" component={HomePage} />
+              <Redirect exact path="/" to="/home" />
+              <Route exact path="/workflows" component={Workflows} />
+              <Route exact path="/analytics" component={AnalyticsDashboard} />
+              <Route
+                exact
+                path="/analytics/datasource/create"
+                component={() => <DataSourceConfigurePage configure={false} />}
+              />
+              <Route
+                exact
+                path="/analytics/datasource/configure"
+                component={() => <DataSourceConfigurePage configure />}
+              />
+              <Route
+                exact
+                path="/analytics/dashboard/create"
+                component={() => (
+                  <ChooseAndConfigureDashboards configure={false} />
+                )}
+              />
+              <Route
+                exact
+                path="/analytics/dashboard/configure"
+                component={() => <ChooseAndConfigureDashboards configure />}
+              />
+              <Route
+                exact
+                path="/analytics/application-dashboard"
+                component={() => <DashboardPage />}
+              />
+              <Route exact path="/create-workflow" component={CreateWorkflow} />
+              <Route
+                exact
+                path="/workflows/:workflowRunId"
+                component={WorkflowDetails}
+              />
+              <Route
+                exact
+                path="/workflows/schedule/:scheduleProjectID/:workflowName"
+                component={EditSchedule}
+              />
+              <Route
+                exact
+                path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
+                component={SetNewSchedule}
+              />
+              <Route
+                exact
+                path="/analytics/workflowdashboard/:workflowId"
+                component={WorkflowInfoStats}
+              />
+              <Route exact path="/community" component={Community} />
+              <Route exact path="/targets" component={Targets} />
+              <Route exact path="/target-connect" component={ConnectTargets} />
+              <Route exact path="/myhub" component={MyHub} />
+              <Route exact path="/myhub/:hubname" component={ChaosChart} />
+              <Route
+                exact
+                path="/myhub/:hubname/:chart/:experiment"
+                component={MyHubExperiment}
+              />
+              {projectRole === 'Owner' ? (
+                <Route path="/settings" component={Settings} />
+              ) : (
+                <Redirect
+                  to={{
+                    pathname: '/home',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  }}
+                />
+              )}
+              {role === UserRole.admin ? (
+                <Route path="/usage-statistics" component={UsageStatistics} />
+              ) : (
+                <Redirect
+                  to={{
+                    pathname: '/home',
+                    search: `?projectID=${projectID}&projectRole=${projectRole}`,
+                  }}
+                />
+              )}
+              <Route exact path="/404" component={ErrorPage} />
+              {/* Redirects */}
+              <Redirect exact path="/getStarted" to="/home" />
+              <Redirect exact path="/workflows/schedule" to="/workflows" />
+              <Redirect exact path="/workflows/template" to="/workflows" />
+              <Redirect exact path="/analytics/overview" to="/analytics" />
+              <Redirect
+                exact
+                path="/analytics/litmusdashboard"
+                to="/analytics"
+              />
+              <Redirect exact path="/analytics/datasource" to="/analytics" />
+              <Redirect exact path="/analytics/dashboard" to="/analytics" />
+              <Redirect exact path="/api-doc" to="/api-doc/index.html" />
+              <Redirect to="/404" />
+            </Switch>
+          </SuspenseLoader>
+        </Scaffold>
       )}
     </>
   );
 };
 
 function App() {
-  const analyticsAction = useActions(AnalyticsActions);
-  const token = getToken();
-  useEffect(() => {
-    if (token !== '') {
-      analyticsAction.loadCommunityAnalytics();
-    }
-  }, [token]);
   return (
     <LitmusThemeProvider>
-      <Suspense
-        fallback={
-          <div style={{ height: '100vh' }}>
-            <Center>
-              <Loader />
-            </Center>
-          </div>
-        }
-      >
-        <Router history={history}>
-          {/* <Routes /> */}
-          <Routes />
-        </Router>
-      </Suspense>
+      <Router history={history}>
+        {/* <Routes /> */}
+        <Routes />
+      </Router>
     </LitmusThemeProvider>
   );
 }

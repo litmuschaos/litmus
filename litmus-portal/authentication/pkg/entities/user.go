@@ -10,43 +10,49 @@ import (
 
 //User contains the user information
 type User struct {
-	ID        string     `bson:"_id,omitempty" json:"_id"`
-	UserName  string     `bson:"username,omitempty" json:"username"`
-	Password  string     `bson:"password,omitempty" json:"password,omitempty"`
-	Email     string     `bson:"email,omitempty" json:"email,omitempty"`
-	Name      string     `bson:"name,omitempty" json:"name,omitempty"`
-	Role      Role       `bson:"role,omitempty" json:"role"`
-	LoggedIn  bool       `bson:"logged_in,omitempty" json:"logged_in,omitempty"`
-	CreatedAt *time.Time `bson:"created_at,omitempty" json:"created_at,omitempty"`
-	UpdatedAt *time.Time `bson:"updated_at,omitempty" json:"updated_at,omitempty"`
-	RemovedAt *time.Time `bson:"removed_at,omitempty" json:"removed_at,omitempty"`
+	ID            string  `bson:"_id,omitempty" json:"_id"`
+	UserName      string  `bson:"username,omitempty" json:"username"`
+	Password      string  `bson:"password,omitempty" json:"password,omitempty"`
+	Email         string  `bson:"email,omitempty" json:"email,omitempty"`
+	Name          string  `bson:"name,omitempty" json:"name,omitempty"`
+	Role          Role    `bson:"role,omitempty" json:"role"`
+	LoggedIn      bool    `bson:"logged_in,omitempty" json:"logged_in,omitempty"`
+	CreatedAt     *string `bson:"created_at,omitempty" json:"created_at,omitempty"`
+	UpdatedAt     *string `bson:"updated_at,omitempty" json:"updated_at,omitempty"`
+	DeactivatedAt *string `bson:"deactivated_at,omitempty" json:"deactivated_at,omitempty"`
 }
 
-//UserPassword defines structure for password related requests
+// UserPassword defines structure for password related requests
 type UserPassword struct {
 	Username    string `json:"username,omitempty"`
 	OldPassword string `json:"old_password,omitempty"`
 	NewPassword string `json:"new_password,omitempty"`
 }
 
-//Role states the role of the user in the portal
+// UpdateUserState defines structure to deactivate or reactivate user
+type UpdateUserState struct {
+	Username     string `json:"username"`
+	IsDeactivate bool   `json:"is_deactivate"`
+}
+
+// Role states the role of the user in the portal
 type Role string
 
 const (
-	//RoleAdmin gives the admin permissions to a user
+	// RoleAdmin gives the admin permissions to a user
 	RoleAdmin Role = "admin"
 
 	//RoleUser gives the normal user permissions to a user
 	RoleUser Role = "user"
 )
 
-//SanitizedUser returns the user object without sensitive information
+// SanitizedUser returns the user object without sensitive information
 func (user *User) SanitizedUser() *User {
 	user.Password = ""
 	return user
 }
 
-//GetSignedJWT generates the JWT Token for the user object
+// GetSignedJWT generates the JWT Token for the user object
 func (user *User) GetSignedJWT() (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS512)

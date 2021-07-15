@@ -41,26 +41,28 @@ func (project *Project) GetOutputMembers() []*model.Member {
 
 // Member contains the required fields to be stored in the database for a member
 type Member struct {
-	UserID     string           `bson:"user_id"`
-	UserName   string           `bson:"username"`
-	Name       string           `bson:"name"`
-	Email      string           `bson:"email"`
-	Role       model.MemberRole `bson:"role"`
-	Invitation Invitation       `bson:"invitation"`
-	JoinedAt   string           `bson:"joined_at"`
+	UserID        string           `bson:"user_id"`
+	UserName      string           `bson:"username"`
+	Name          string           `bson:"name"`
+	Email         string           `bson:"email"`
+	Role          model.MemberRole `bson:"role"`
+	Invitation    Invitation       `bson:"invitation"`
+	JoinedAt      string           `bson:"joined_at"`
+	DeactivatedAt string           `bson:"deactivated_at"`
 }
 
 // GetOutputMember takes a Member struct as input and returns the graphQL model equivalent
 func (member *Member) GetOutputMember() *model.Member {
 
 	return &model.Member{
-		UserID:     member.UserID,
-		UserName:   member.UserName,
-		Name:       member.Name,
-		Email:      member.Email,
-		Role:       member.Role,
-		Invitation: string(member.Invitation),
-		JoinedAt:   member.JoinedAt,
+		UserID:        member.UserID,
+		UserName:      member.UserName,
+		Name:          member.Name,
+		Email:         member.Email,
+		Role:          member.Role,
+		Invitation:    string(member.Invitation),
+		JoinedAt:      member.JoinedAt,
+		DeactivatedAt: member.DeactivatedAt,
 	}
 }
 
@@ -79,15 +81,4 @@ const (
 
 	//ExitedProject is the state when the user has exited the project
 	ExitedProject Invitation = "Exited"
-)
-
-// Filter: different types of filter for graphs
-type Filter string
-
-const (
-	Monthly Filter = "Monthly"
-
-	Weekly Filter = "Weekly"
-
-	Hourly Filter = "Hourly"
 )

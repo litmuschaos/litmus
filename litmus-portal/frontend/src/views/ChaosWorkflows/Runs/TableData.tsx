@@ -186,7 +186,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             </Typography>
             <div className={classes.imageRunning}>
               <img
-                src="/icons/running.svg"
+                src="./icons/running.svg"
                 alt="running"
                 className={classes.runningSmallIcon}
               />{' '}
@@ -396,7 +396,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
               <img
-                src="/icons/show-workflow.svg"
+                src="./icons/show-workflow.svg"
                 alt="Display Workflow"
                 className={classes.btnImg}
               />
@@ -410,14 +410,14 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             onClick={() => {
               if (data.phase?.toLowerCase() !== 'notavailable')
                 history.push({
-                  pathname: `/workflows/analytics/${data.workflow_id}`,
+                  pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowAnalytics">
               <img
-                src="/icons/show-analytics.svg"
+                src="./icons/show-analytics.svg"
                 alt="Display Analytics"
                 className={classes.btnImg}
               />
