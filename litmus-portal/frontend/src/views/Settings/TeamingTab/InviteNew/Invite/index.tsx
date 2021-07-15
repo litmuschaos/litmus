@@ -87,6 +87,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
 
   useQuery(ALL_USERS, {
     skip: !dataB,
+    fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       const memberList = new Map();
       const users: UserInvite[] = [];
