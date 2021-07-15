@@ -34,6 +34,7 @@ import Invitation from '../Invitation';
 import InviteNew from '../InviteNew';
 import InvitedTable from './invitedTable';
 import MembersTable from './membersTable';
+import Loader from '../../../../components/Loader';
 import useStyles from './styles';
 
 interface FilterOptions {
@@ -443,7 +444,11 @@ const TeamingTab: React.FC = () => {
           </div>
         </>
       ) : (
-        ''
+        <div style={{ height: '50vh' }}>
+          <Center>
+            <Loader />
+          </Center>
+        </div>
       )}
     </div>
   );
