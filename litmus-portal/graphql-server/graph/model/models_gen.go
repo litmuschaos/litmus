@@ -334,13 +334,14 @@ type ManifestTemplate struct {
 }
 
 type Member struct {
-	UserID     string     `json:"user_id"`
-	UserName   string     `json:"user_name"`
-	Name       string     `json:"name"`
-	Email      string     `json:"email"`
-	Role       MemberRole `json:"role"`
-	Invitation string     `json:"invitation"`
-	JoinedAt   string     `json:"joined_at"`
+	UserID        string     `json:"user_id"`
+	UserName      string     `json:"user_name"`
+	Name          string     `json:"name"`
+	Email         string     `json:"email"`
+	Role          MemberRole `json:"role"`
+	Invitation    string     `json:"invitation"`
+	JoinedAt      string     `json:"joined_at"`
+	DeactivatedAt string     `json:"deactivated_at"`
 }
 
 type MemberInput struct {
@@ -471,24 +472,6 @@ type SSHKey struct {
 	PrivateKey string `json:"privateKey"`
 }
 
-type ScheduledWorkflows struct {
-	WorkflowType        string        `json:"workflow_type"`
-	WorkflowID          string        `json:"workflow_id"`
-	WorkflowManifest    string        `json:"workflow_manifest"`
-	CronSyntax          string        `json:"cronSyntax"`
-	ClusterName         string        `json:"cluster_name"`
-	WorkflowName        string        `json:"workflow_name"`
-	WorkflowDescription string        `json:"workflow_description"`
-	Weightages          []*Weightages `json:"weightages"`
-	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
-	UpdatedAt           string        `json:"updated_at"`
-	CreatedAt           string        `json:"created_at"`
-	ProjectID           string        `json:"project_id"`
-	ClusterID           string        `json:"cluster_id"`
-	ClusterType         string        `json:"cluster_type"`
-	IsRemoved           bool          `json:"isRemoved"`
-}
-
 type Spec struct {
 	DisplayName         string        `json:"DisplayName"`
 	CategoryDescription string        `json:"CategoryDescription"`
@@ -567,10 +550,9 @@ type User struct {
 	Name            *string    `json:"name"`
 	Projects        []*Project `json:"projects"`
 	Role            *string    `json:"role"`
-	State           *string    `json:"state"`
 	CreatedAt       string     `json:"created_at"`
 	UpdatedAt       string     `json:"updated_at"`
-	RemovedAt       string     `json:"removed_at"`
+	DeactivatedAt   string     `json:"deactivated_at"`
 }
 
 type WeightagesInput struct {
@@ -579,21 +561,20 @@ type WeightagesInput struct {
 }
 
 type Workflow struct {
-	WorkflowID          string          `json:"workflow_id"`
-	WorkflowManifest    string          `json:"workflow_manifest"`
-	CronSyntax          string          `json:"cronSyntax"`
-	ClusterName         string          `json:"cluster_name"`
-	WorkflowName        string          `json:"workflow_name"`
-	WorkflowDescription string          `json:"workflow_description"`
-	Weightages          []*Weightages   `json:"weightages"`
-	IsCustomWorkflow    bool            `json:"isCustomWorkflow"`
-	UpdatedAt           string          `json:"updated_at"`
-	CreatedAt           string          `json:"created_at"`
-	ProjectID           string          `json:"project_id"`
-	ClusterID           string          `json:"cluster_id"`
-	ClusterType         string          `json:"cluster_type"`
-	IsRemoved           bool            `json:"isRemoved"`
-	WorkflowRuns        []*WorkflowRuns `json:"workflow_runs"`
+	WorkflowID          string        `json:"workflow_id"`
+	WorkflowManifest    string        `json:"workflow_manifest"`
+	CronSyntax          string        `json:"cronSyntax"`
+	ClusterName         string        `json:"cluster_name"`
+	WorkflowName        string        `json:"workflow_name"`
+	WorkflowDescription string        `json:"workflow_description"`
+	Weightages          []*Weightages `json:"weightages"`
+	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
+	UpdatedAt           string        `json:"updated_at"`
+	CreatedAt           string        `json:"created_at"`
+	ProjectID           string        `json:"project_id"`
+	ClusterID           string        `json:"cluster_id"`
+	ClusterType         string        `json:"cluster_type"`
+	IsRemoved           bool          `json:"isRemoved"`
 }
 
 type WorkflowFilterInput struct {
@@ -602,24 +583,25 @@ type WorkflowFilterInput struct {
 }
 
 type WorkflowRun struct {
-	WorkflowRunID      string   `json:"workflow_run_id"`
-	WorkflowID         string   `json:"workflow_id"`
-	ClusterName        string   `json:"cluster_name"`
-	LastUpdated        string   `json:"last_updated"`
-	ProjectID          string   `json:"project_id"`
-	ClusterID          string   `json:"cluster_id"`
-	WorkflowName       string   `json:"workflow_name"`
-	ClusterType        *string  `json:"cluster_type"`
-	Phase              string   `json:"phase"`
-	ResiliencyScore    *float64 `json:"resiliency_score"`
-	ExperimentsPassed  *int     `json:"experiments_passed"`
-	ExperimentsFailed  *int     `json:"experiments_failed"`
-	ExperimentsAwaited *int     `json:"experiments_awaited"`
-	ExperimentsStopped *int     `json:"experiments_stopped"`
-	ExperimentsNa      *int     `json:"experiments_na"`
-	TotalExperiments   *int     `json:"total_experiments"`
-	ExecutionData      string   `json:"execution_data"`
-	IsRemoved          *bool    `json:"isRemoved"`
+	WorkflowRunID      string        `json:"workflow_run_id"`
+	WorkflowID         string        `json:"workflow_id"`
+	ClusterName        string        `json:"cluster_name"`
+	Weightages         []*Weightages `json:"weightages"`
+	LastUpdated        string        `json:"last_updated"`
+	ProjectID          string        `json:"project_id"`
+	ClusterID          string        `json:"cluster_id"`
+	WorkflowName       string        `json:"workflow_name"`
+	ClusterType        *string       `json:"cluster_type"`
+	Phase              string        `json:"phase"`
+	ResiliencyScore    *float64      `json:"resiliency_score"`
+	ExperimentsPassed  *int          `json:"experiments_passed"`
+	ExperimentsFailed  *int          `json:"experiments_failed"`
+	ExperimentsAwaited *int          `json:"experiments_awaited"`
+	ExperimentsStopped *int          `json:"experiments_stopped"`
+	ExperimentsNa      *int          `json:"experiments_na"`
+	TotalExperiments   *int          `json:"total_experiments"`
+	ExecutionData      string        `json:"execution_data"`
+	IsRemoved          *bool         `json:"isRemoved"`
 }
 
 type WorkflowRunDetails struct {
@@ -670,12 +652,6 @@ type WorkflowRunStatsResponse struct {
 	FailedPercentage               float64 `json:"failed_percentage"`
 	WorkflowRunSucceededPercentage float64 `json:"workflow_run_succeeded_percentage"`
 	WorkflowRunFailedPercentage    float64 `json:"workflow_run_failed_percentage"`
-}
-
-type WorkflowRuns struct {
-	ExecutionData string `json:"execution_data"`
-	WorkflowRunID string `json:"workflow_run_id"`
-	LastUpdated   string `json:"last_updated"`
 }
 
 type WorkflowRunsData struct {
@@ -816,6 +792,7 @@ type ListDashboardResponse struct {
 	ClusterID                 string                         `json:"cluster_id"`
 	CreatedAt                 *string                        `json:"created_at"`
 	UpdatedAt                 *string                        `json:"updated_at"`
+	ViewedAt                  *string                        `json:"viewed_at"`
 }
 
 type MetricDataForPanel struct {

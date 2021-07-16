@@ -1,5 +1,5 @@
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: subscriber-role
@@ -44,7 +44,7 @@ rules:
       ]
     verbs: ["get", "list", "create", "delete", "update", "watch"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: subscriber-role-binding
@@ -66,7 +66,7 @@ metadata:
   labels:
     name: litmus-admin
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: litmus-admin
@@ -175,7 +175,7 @@ rules:
     resources: ["nodes"]
     verbs: ["patch", "get", "list", "update"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: litmus-admin
@@ -209,14 +209,14 @@ rules:
     verbs: ["create", "get", "watch", "patch", "delete", "list"]
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
-  - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get", "watch"]
+  - apiGroups: ['']
+    resources: ['pods/log', 'secrets', 'configmaps']
+    verbs: ['get', 'watch', 'create', 'delete', 'patch']
 
   # for creation & deletion of application in predefined workflows
   - apiGroups: ["apps"]
-    resources: ["deployments"]
-    verbs: ["get", "watch", "create", "delete"]
+    resources: ['deployments', 'statefulsets']
+    verbs: ['get', 'watch', 'patch' , 'create', 'delete']
 
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: ["litmuschaos.io"]
@@ -224,7 +224,7 @@ rules:
       ["chaosengines", "chaosexperiments", "chaosresults", "chaosschedules"]
     verbs: ["create", "list", "get", "patch", "delete", "watch"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: chaos-role-binding
@@ -247,8 +247,8 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  creationTimestamp: null
   name: event-tracker-role
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - eventtracker.litmuschaos.io
@@ -289,6 +289,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: event-tracker-role-binding
+  namespace: #{AGENT-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

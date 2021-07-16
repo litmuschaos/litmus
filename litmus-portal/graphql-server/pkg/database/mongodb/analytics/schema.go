@@ -30,6 +30,7 @@ type DashBoard struct {
 	ApplicationMetadataMap    []ApplicationMetadata `bson:"application_metadata_map"`
 	CreatedAt                 string                `bson:"created_at"`
 	UpdatedAt                 string                `bson:"updated_at"`
+	ViewedAt                  string                `bson:"viewed_at"`
 	ClusterID                 string                `bson:"cluster_id"`
 	ProjectID                 string                `bson:"project_id"`
 	EndTime                   string                `bson:"end_time"`

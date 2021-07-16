@@ -2,8 +2,8 @@
   "dashboardID": "generic_node_metrics",
   "name": "Node metrics",
   "information": "This dashboard visualizes Node level CPU, memory, disk and IO utilization metrics interleaved with chaos events.",
-  "chaosEventQueryTemplate": "litmuschaos_awaited_experiments{job=\"chaos-exporter\"}",
-  "chaosVerdictQueryTemplate": "litmuschaos_experiment_verdict{job=\"chaos-exporter\"}",
+  "chaosEventQueryTemplate": "litmuschaos_awaited_experiments{job=\"chaos-exporter\", chaos_injection_time!=\"\"}",
+  "chaosVerdictQueryTemplate": "litmuschaos_experiment_verdict{job=\"chaos-exporter\", chaosresult_verdict!=\"Awaited\"}",
   "panelGroupMap": [
     {
       "groupName": "CPU Utilization Metrics",
@@ -23,14 +23,14 @@
     {
       "groupName": "Network Usage Metrics",
       "panels": [
-        "Chaos-Node-Network Traffic Bytes",
+        "Chaos-Node-Network Traffic Bits",
         "Chaos-Node-Network Traffic Packets"
       ]
     }
   ],
   "panelGroups": [
     {
-      "panel_group_name": "CPU Usage Metrics",
+      "panel_group_name": "CPU Utilization Metrics",
       "panels": [
         {
           "panel_name": "Chaos-Node-CPU Utilization",
@@ -57,7 +57,7 @@
       ]
     },
     {
-      "panel_group_name": "Memory Usage Metrics",
+      "panel_group_name": "Memory Utilization Metrics",
       "panels": [
         {
           "panel_name": "Chaos-Node-Memory Utilization",
@@ -131,6 +131,71 @@
             {
               "prom_query_name": "node_disk_io_time_seconds_total",
               "legend": "{{instance}} - {{device}} - Time spent doing I/Os",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "panel_group_name": "Network Usage Metrics",
+      "panels": [
+        {
+          "panel_name": "Chaos-Node-Network Traffic Bits",
+          "panel_options": {
+            "points": false,
+            "grids": true,
+            "left_axis": true
+          },
+          "y_axis_left": "bits out (-) / in (+)",
+          "y_axis_right": "CHAOS",
+          "x_axis_down": "Time",
+          "unit": "b/s",
+          "prom_queries": [
+            {
+              "prom_query_name": "node_network_receive_bytes_total*8",
+              "legend": "{{instance}} - {{device}} - Receive",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            },
+            {
+              "prom_query_name": "node_network_transmit_bytes_total*8",
+              "legend": "{{instance}} - {{device}} - Transmit",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            }
+          ]
+        },
+        {
+          "panel_name": "Chaos-Node-Network Traffic Packets",
+          "panel_options": {
+            "points": false,
+            "grids": true,
+            "left_axis": true
+          },
+          "y_axis_left": "packets out (-) / in (+)",
+          "y_axis_right": "CHAOS",
+          "x_axis_down": "Time",
+          "unit": "p/s",
+          "prom_queries": [
+            {
+              "prom_query_name": "node_network_receive_packets_total",
+              "legend": "{{instance}} - {{device}} - Receive",
+              "resolution": "1/2",
+              "minstep": "5",
+              "line": true,
+              "close_area": false
+            },
+            {
+              "prom_query_name": "node_network_transmit_packets_total",
+              "legend": "{{instance}} - {{device}} - Transmit",
               "resolution": "1/2",
               "minstep": "5",
               "line": true,

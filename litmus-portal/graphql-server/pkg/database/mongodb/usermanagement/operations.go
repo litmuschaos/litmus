@@ -4,10 +4,10 @@ import (
 	"context"
 	"log"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
 
 // CreateUser inserts a new user to the database
@@ -38,6 +38,69 @@ func GetUserByUserName(ctx context.Context, username string) (*User, error) {
 	}
 
 	return user, err
+}
+
+// DeactivateUser updates the details of user in both user and project collections
+func UpdateUserState(ctx context.Context, user User) error {
+	// Disabling user in user collection
+	filter := bson.D{
+		{"_id", user.ID},
+	}
+
+	update := bson.D{
+		{"$set", bson.D{
+			{"deactivated_at", user.DeactivatedAt},
+		}},
+	}
+	_, err := mongodb.Operator.Update(ctx, mongodb.UserCollection, filter, update)
+	if err != nil {
+		log.Print("Error updating user's state: ", err)
+		return err
+	}
+
+	// Updating state of user in project collection
+	opts := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{
+			bson.D{{"elem.user_id", user.ID}},
+		},
+	})
+
+	filter = bson.D{{}}
+	update = bson.D{
+		{"$set", bson.D{
+			{"members.$[elem].deactivated_at", user.DeactivatedAt},
+		}},
+	}
+
+	_, err = mongodb.Operator.UpdateMany(ctx, mongodb.ProjectCollection, filter, update, opts)
+	if err != nil {
+		log.Print("Error updating user's state in projects : ", err)
+		return err
+	}
+
+	filter = bson.D{
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"user_id", user.ID},
+				{"role", bson.D{
+					{"$eq", model.MemberRoleOwner},
+				}},
+			}},
+		}}}
+
+	update = bson.D{
+		{"$set", bson.D{
+			{"removed_at", user.DeactivatedAt},
+		}},
+	}
+
+	_, err = mongodb.Operator.UpdateMany(ctx, mongodb.ProjectCollection, filter, update)
+	if err != nil {
+		log.Print("Error updating user's state in projects : ", err)
+		return err
+	}
+
+	return nil
 }
 
 // GetUserByUserID returns user details based on userID

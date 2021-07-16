@@ -109,28 +109,30 @@ const useStyles = makeStyles((theme: Theme) => ({
     lineHeight: '5rem', // Making the div content vertically aligned
     padding: theme.spacing(0, 5),
     margin: theme.spacing(1, 0),
+    position: 'relative',
 
     '& #body': {
-      width: '100%',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
     },
 
     '& #left-div': {
-      width: '15%',
       margin: theme.spacing(2),
     },
 
     '& #right-div': {
-      width: '30%',
+      position: 'absolute',
+      left: 200,
+      width: '15%',
       margin: theme.spacing(0, 4, 0, 4),
     },
     '& #last-div': {
+      position: 'absolute',
       width: '45%',
       display: 'flex',
+      right: 20,
       margin: theme.spacing(0, 2, 0, 2),
-      position: 'relative',
     },
   },
   lastDivChildren: {

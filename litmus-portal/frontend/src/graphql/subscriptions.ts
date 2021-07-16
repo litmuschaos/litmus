@@ -51,11 +51,13 @@ export const KUBE_OBJ = gql`
 
 export const VIEW_DASHBOARD = gql`
   subscription viewDashboard(
+    $dbID: String
     $prometheusQueries: [promQueryInput!]!
     $queryMap: [queryMapForPanelGroup!]!
     $dataVarMap: dataVars!
   ) {
     viewDashboard(
+      dashboardID: $dbID
       promQueries: $prometheusQueries
       dashboardQueryMap: $queryMap
       dataVariables: $dataVarMap

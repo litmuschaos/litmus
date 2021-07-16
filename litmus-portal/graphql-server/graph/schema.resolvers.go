@@ -10,12 +10,13 @@ import (
 	"strconv"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	analyticsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/handler"
+	analyticsOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -38,6 +39,16 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 	return usermanagement.CreateUser(ctx, user)
+}
+
+func (r *mutationResolver) UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error) {
+	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
+	userRole := claims["role"].(string)
+	if userRole != "admin" {
+		return "Unauthorized", errors.New("Unauthorized ")
+	}
+
+	return usermanagement.UpdateUserState(ctx, uid, isDeactivate)
 }
 
 func (r *mutationResolver) CreateProject(ctx context.Context, projectName string) (*model.Project, error) {
@@ -78,12 +89,21 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, member model.Memb
 		return nil, err
 	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	return project.SendInvitation(ctx, member)
 }
 
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.PendingInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -93,7 +113,11 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.Me
 
 func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.PendingInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -103,7 +127,6 @@ func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.M
 
 func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleOwner}, usermanagement.AcceptedInvitation)
-
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -113,7 +136,11 @@ func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.Me
 
 func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
 	err := authorization.ValidateRole(ctx, member.ProjectID, []model.MemberRole{model.MemberRoleViewer, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return "Unsuccessful", err
+	}
 
+	err = authorization.ValidateUserStatus(ctx, member.UserID)
 	if err != nil {
 		return "Unsuccessful", err
 	}
@@ -333,6 +360,12 @@ func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*mode
 func (r *queryResolver) ListProjects(ctx context.Context) ([]*model.Project, error) {
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	userUID := claims["uid"].(string)
+
+	err := authorization.ValidateUserStatus(ctx, userUID)
+	if err != nil {
+		return nil, err
+	}
+
 	return project.GetProjectsByUserID(ctx, userUID)
 }
 
@@ -588,7 +621,7 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequ
 	return kubeObjData, nil
 }
 
-func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error) {
+func (r *subscriptionResolver) ViewDashboard(ctx context.Context, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error) {
 	dashboardData := make(chan *model.DashboardPromResponse)
 	viewID := uuid.New()
 	log.Printf("Dashboard view %v created\n", viewID.String())
@@ -599,12 +632,14 @@ func (r *subscriptionResolver) ViewDashboard(ctx context.Context, promQueries []
 		<-ctx.Done()
 		log.Printf("Closed dashboard view %v\n", viewID.String())
 		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
+			analyticsOps.UpdateViewedAt(dashboardID, viewID.String())
+
 			data_store.Store.Mutex.Lock()
 			delete(data_store.Store.DashboardData, viewID.String())
 			data_store.Store.Mutex.Unlock()
 		}
 	}()
-	go analyticsHandler.DashboardViewer(viewID.String(), promQueries, dashboardQueryMap, dataVariables, *data_store.Store)
+	go analyticsHandler.DashboardViewer(viewID.String(), dashboardID, promQueries, dashboardQueryMap, dataVariables, *data_store.Store)
 	return dashboardData, nil
 }
 

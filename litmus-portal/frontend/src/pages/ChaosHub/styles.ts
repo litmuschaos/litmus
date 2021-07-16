@@ -1,16 +1,20 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    margin: '0 auto',
+  },
   mainDiv: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     width: '100%',
     marginTop: theme.spacing(3),
   },
   header: {
     width: '100%',
     color: theme.palette.text.primary,
-    margin: theme.spacing(1, 1.5, 2.5, 2.8),
+    margin: theme.spacing(1, 0, 2.5, 0),
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -27,11 +31,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     paddingTop: theme.spacing(2.5),
     paddingBottom: theme.spacing(2.5),
-  },
-  githubConfirmed: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginLeft: 12,
   },
   chartsGroup: {
     display: 'flex',
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
       cursor: 'pointer',
     },
     borderRadius: theme.spacing(0.375),
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 0),
   },
   connected: {
     height: '1.625rem',
@@ -77,7 +76,6 @@ const useStyles = makeStyles((theme) => ({
   },
   connectHub: {
     fontSize: '1.125rem',
-    marginLeft: theme.spacing(2),
   },
   connectNewHub: {
     marginRight: theme.spacing(5),
