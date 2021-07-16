@@ -1,19 +1,18 @@
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import { useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced with Chart
 import Typography from '@material-ui/core/Typography';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import InfoFilledWrap from '../../components/InfoFilled/index';
 import Loader from '../../components/Loader';
-import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
 import Center from '../../containers/layouts/Center';
+import Wrapper from '../../containers/layouts/Wrapper';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
-import Wrapper from '../../containers/layouts/Wrapper';
 import { RootState } from '../../redux/reducers';
+import SlackLogo from '../../svg/slack.svg';
 import { getToken } from '../../utils/auth';
 import CommunityAnalyticsPlot from '../../views/Community/CommunityTimeSeriesPlot';
 import GeoMap from '../../views/Community/GeoMap/index';
@@ -21,6 +20,7 @@ import useStyles from './styles';
 
 const Community: React.FC = () => {
   const { t } = useTranslation();
+  const { palette } = useTheme();
   const classes = useStyles();
   const token = getToken();
   const analyticsAction = useActions(AnalyticsActions);
@@ -104,7 +104,7 @@ const Community: React.FC = () => {
                 <CommunityAnalyticsPlot />
               </Paper>
 
-              <div>
+              {/* <div>
                 <Card className={classes.card}>
                   <CardContent className={classes.cardContent}>
                     <div className={classes.imgDiv}>
@@ -136,7 +136,7 @@ const Community: React.FC = () => {
                     </Button>
                   </a>
                 </Card>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
@@ -151,9 +151,75 @@ const Community: React.FC = () => {
               <Paper className={classes.paper}>
                 <GeoMap />
               </Paper>
-              <div className={classes.quickActionCard}>
+              {/* <div className={classes.quickActionCard}>
                 <LocalQuickActionCard variant="community" />
+              </div> */}
+            </div>
+          </div>
+        </section>
+        <section>
+          <div
+            style={{
+              display: 'grid',
+              gridGap: '1rem',
+              gridTemplateColumns: '1fr 1fr',
+              gridTemplateRows: 'auto',
+            }}
+            className={classes.paper}
+          >
+            <div className={`${classes.joinCard} ${classes.slack}`}>
+              <div className={classes.cardTextWithLogo}>
+                <Typography className={classes.joinCardText}>
+                  Litmuschaos on
+                </Typography>
+                <img
+                  src={SlackLogo}
+                  alt="Slack logo"
+                  className={classes.logo}
+                />
               </div>
+              <ButtonFilled
+                className={`${classes.joinButton} ${classes.buttonSmall}`}
+              >
+                Join Us
+              </ButtonFilled>
+            </div>
+            <div className={`${classes.joinCard} ${classes.dev}`}>
+              <div className={classes.cardTextWithLogo}>
+                <Typography className={classes.joinCardText}>
+                  Litmuschaos on
+                </Typography>
+                <img
+                  className={`${classes.devToLogo} ${classes.logo}`}
+                  src="./icons/devto.svg"
+                  alt="DevTo logo"
+                />
+              </div>
+              <ButtonFilled
+                className={`${classes.joinButton} ${classes.buttonSmall}`}
+              >
+                Follow
+              </ButtonFilled>
+            </div>
+            <div className={`${classes.joinCard} ${classes.feedback}`}>
+              <Typography className={classes.joinCardText}>
+                What do you think of Litmus?
+              </Typography>
+              <ButtonFilled
+                className={`${classes.joinButton} ${classes.buttonLarge}`}
+              >
+                Provide Feedback
+              </ButtonFilled>
+            </div>
+            <div className={`${classes.joinCard} ${classes.communityEvents}`}>
+              <Typography className={classes.joinCardText}>
+                Know about Community Events
+              </Typography>
+              <ButtonFilled
+                className={`${classes.joinButton} ${classes.buttonLarge}`}
+              >
+                Explore Events
+              </ButtonFilled>
             </div>
           </div>
         </section>

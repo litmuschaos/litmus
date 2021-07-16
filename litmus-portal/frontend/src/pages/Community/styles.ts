@@ -91,21 +91,19 @@ const useStyles = makeStyles((theme) => ({
     bottom: theme.spacing(2),
     left: theme.spacing(3),
   },
-
+  logo: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    width: '5rem',
+    height: '3rem',
+    userDrag: 'none',
+  },
   devToLogo: {
     fill: 'white',
     filter:
       'invert(98%) sepia(100%) saturate(0%) hue-rotate(86deg) brightness(118%) contrast(119%)',
-    marginLeft: theme.spacing(2),
-    marginTop: theme.spacing(1),
-    width: '5rem',
-    height: '3rem',
   },
-  imgDiv: {
-    '& img': {
-      userDrag: 'none',
-    },
-  },
+
   followBtn: {
     width: '10rem',
     height: '3rem',
@@ -153,6 +151,57 @@ const useStyles = makeStyles((theme) => ({
       width: '20rem',
       flexDirection: 'column',
     },
+  },
+  joinCard: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: '5.3125rem',
+    borderRadius: '5px',
+    padding: '.4275rem 1.5rem .4275rem 1.5rem',
+  },
+  cardTextWithLogo: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  joinCardText: {
+    color: theme.palette.text.secondary,
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    fontSize: '24px',
+    lineHeight: '150%',
+    textAlign: 'center',
+  },
+  slack: {
+    background: theme.palette.text.primary,
+  },
+  dev: {
+    background: theme.palette.status.experiment.running,
+  },
+  feedback: {
+    background: theme.palette.primary.main,
+  },
+  communityEvents: {
+    background: theme.palette.status.experiment.failed,
+  },
+  joinButton: {
+    radius: '3px',
+    height: '1.9375rem',
+    background: `${theme.palette.text.secondary} !important`,
+    color: theme.palette.text.primary,
+    fontWtyle: 'normal',
+    fontWeight: 'normal',
+    fontSize: '0.875rem',
+    linHeight: '1.065rem',
+    '& :hover': {
+      background: theme.palette.text.secondary,
+    },
+  },
+  buttonSmall: {
+    width: '6.125rem',
+  },
+  buttonLarge: {
+    width: '10.25rem',
   },
 }));
 
