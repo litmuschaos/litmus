@@ -14,15 +14,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Status will request users list and return, if successful,
+// an http code 200
 func Status(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := service.GetUsers()
 		if err != nil {
 			log.Error(err)
-			c.JSON(500, entities.ApiStatus{"down"})
+			c.JSON(500, entities.APIStatus{"down"})
 			return
 		}
-		c.JSON(200, entities.ApiStatus{"up"})
+		c.JSON(200, entities.APIStatus{"up"})
 	}
 }
 

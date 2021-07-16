@@ -35,7 +35,8 @@ type UpdateUserState struct {
 	IsDeactivate bool   `json:"is_deactivate"`
 }
 
-type ApiStatus struct {
+// APIStatus defines structure for APIroute status
+type APIStatus struct {
         Status     string `json:"status"`
 }
 
