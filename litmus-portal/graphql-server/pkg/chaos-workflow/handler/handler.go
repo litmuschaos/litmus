@@ -865,7 +865,7 @@ func ListWorkflowTemplate(ctx context.Context, projectID string) ([]*model.Manif
 	return templateList, err
 }
 
-// QueryTemplateWorkflowID is used to fetch the workflow template with template id
+// QueryTemplateWorkflowByID is used to fetch the workflow template with template id
 func QueryTemplateWorkflowByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error) {
 	template, err := dbSchemaWorkflowTemplate.GetTemplateByTemplateID(ctx, templateID)
 	if err != nil {
