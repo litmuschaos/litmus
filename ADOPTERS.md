@@ -58,5 +58,6 @@ existing functions.
 |[KubeFlare](https://github.com/raspbernetes)|Resilience of microservices on ARM64 (Raspberry Pi) based clusters|[Our Story](adopters/organizations/raspbernetes.md)|
 |[OpenEBS](https://openebs.io/)|[Openebs-CI](https://openebs.ci/)|[Our Story](adopters/organizations/openebs.md)|
 |[Pravega](https://pravega.io/)|To inject faults while exercising quality tests on our product|[Our Story](adopters/organizations/pravega.md)|
+|[Red Hat](https://www.redhat.com/en)|[Chaos Engineering with Kraken](https://github.com/cloud-bulldozer/kraken)|[Our Story](adopters/organizations/redhat_kraken.md)|
 
 
