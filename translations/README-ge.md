@@ -59,7 +59,7 @@ Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_b
 
 ## Mit Litmus loslegen
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](/images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 Erste Informationen findet man in der <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Dokumentation (Seite aktuell noch auf Englisch)</a>.
 

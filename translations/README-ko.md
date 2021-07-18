@@ -37,7 +37,7 @@
 
 ## 리트머스 시작하기
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](/images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 시작하려면 <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">리트머스 문서</a>를 확인해보세요.
 

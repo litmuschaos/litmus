@@ -37,7 +37,7 @@
 
 ## 如何使用石蕊
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](/images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 请看此处 <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a>.
 

@@ -41,7 +41,7 @@ Litmusはクラウドネイティブなアプローチで、カオスの生成�
 
 ## Litmusを始める
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](/images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 始めるには <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmusドキュメンテーション</a>を参照ください。。
 

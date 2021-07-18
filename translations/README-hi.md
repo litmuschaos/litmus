@@ -41,7 +41,7 @@
 
 ## लिटमस की व्याख्या
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](/images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 समझने के लिए [लिटमस डॉक्स](https://docs.litmuschaos.io/docs/next/getstarted.html) देखें।
 
