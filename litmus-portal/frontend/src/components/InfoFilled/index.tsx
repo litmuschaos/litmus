@@ -5,11 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Center from '../../containers/layouts/Center';
 import { RootState } from '../../redux/reducers';
+import DownloadIcon from '../../svg/download.svg';
+import ExperimentIcon from '../../svg/myhub.svg';
+import WorkflowIcon from '../../svg/workflows.svg';
 import formatCount from '../../utils/formatCount';
 import Loader from '../Loader';
 import useStyles from './styles';
 
 interface CardValueData {
+  imgPath: string;
   color: string;
   value: number;
   statType: string;
@@ -32,23 +36,27 @@ const InfoFilledWrap: React.FC = () => {
 
   const cardData: CardValueData[] = [
     {
+      imgPath: ExperimentIcon,
       color: theme.palette.warning.main,
       value: parseInt(communityData.github.experimentsCount, 10),
       statType: 'Total Experiments',
     },
     {
+      imgPath: DownloadIcon,
       color: theme.palette.secondary.main,
       value: parseInt(communityData.google.operatorInstalls, 10),
       statType: 'Operator Installs',
       plus: true,
     },
     {
+      imgPath: WorkflowIcon,
       color: theme.palette.primary.main,
       value: parseInt(communityData.google.totalRuns, 10),
       statType: 'Total Experiment Runs',
       plus: true,
     },
     {
+      imgPath: './icons/github.svg',
       color: theme.palette.error.main,
       value: parseInt(communityData.github.stars, 10),
       statType: 'GitHub Stars',
@@ -57,11 +65,7 @@ const InfoFilledWrap: React.FC = () => {
 
   const cardArray = cardData.map((individualCard) => {
     return (
-      <div
-        key={individualCard.value}
-        style={{ backgroundColor: `${individualCard.color}` }}
-        className={classes.infoFilledDiv}
-      >
+      <div key={individualCard.statType} className={classes.infoFilledDiv}>
         {/*
           If value of plus is provided then render a different
           plus icon else dont
@@ -69,17 +73,28 @@ const InfoFilledWrap: React.FC = () => {
           formatCount -> utility is used to convert large value to
           their respective Thousands or Millions respectively
         */}
-        {individualCard.plus ? (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            justifyContent: 'center',
+          }}
+        >
+          <img
+            style={{
+              width: '1.5rem',
+              height: '1.5rem',
+              marginRight: '0.5rem',
+              fill: 'red',
+            }}
+            src={individualCard.imgPath}
+          />
           <Typography className={classes.value}>
             {formatCount(individualCard.value)}
-            <span className={classes.plusBtn}>+</span>
+            {individualCard.plus && <span className={classes.plusBtn}>+</span>}
           </Typography>
-        ) : (
-          <Typography className={classes.value}>
-            {formatCount(individualCard.value)}
-          </Typography>
-        )}
-        <hr className={classes.horizontalRule} />
+        </div>
+
         <Typography className={classes.statType}>
           {individualCard.statType}
         </Typography>

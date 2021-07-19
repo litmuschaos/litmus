@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     flexGrow: 1,
     width: theme.spacing(30),
-    height: theme.spacing(22),
+    height: theme.spacing(12.5),
     marginRight: theme.spacing(3),
     borderRadius: 3,
     [theme.breakpoints.down('sm')]: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     width: theme.spacing(30),
-    height: theme.spacing(22),
+    height: theme.spacing(12.5),
     flexGrow: 1,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
@@ -28,27 +28,22 @@ const useStyles = makeStyles((theme) => ({
   errorMessage: {
     marginLeft: theme.spacing(10),
   },
-  horizontalRule: {
-    width: theme.spacing(14),
-    opacity: 0.5,
-  },
   value: {
     textAlign: 'center',
-    paddingTop: theme.spacing(4),
-    fontFamily: 'Ubuntu',
+    paddingTop: theme.spacing(2),
     letterSpacing: theme.spacing(0.3),
-    fontWeight: 'bold',
-    fontSize: theme.spacing(4),
-    color: theme.palette.common.white,
+    fontWeight: 'normal',
+    fontSize: theme.spacing(3),
+    color: theme.palette.text.primary,
   },
   plusBtn: {
-    fontSize: theme.spacing(2.5),
-    fontWeight: 'bold',
+    fontSize: theme.spacing(3),
+    fontWeight: 'normal',
   },
   statType: {
     textAlign: 'center',
     fontSize: theme.spacing(2),
-    color: theme.palette.common.white,
+    color: theme.palette.text.primary,
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
   },

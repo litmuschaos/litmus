@@ -82,7 +82,7 @@ const Community: React.FC = () => {
         </div>
 
         {/* Litmus Daily Insights */}
-        <section>
+        <section className={classes.paper}>
           <Typography className={classes.header2}>
             {t('community.heading')}
           </Typography>

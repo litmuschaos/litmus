@@ -41,8 +41,7 @@ const useStyles = makeStyles((theme) => ({
   cardDiv: {
     display: 'flex',
     flexDirection: 'row',
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
+    paddingTop: theme.spacing(1),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
