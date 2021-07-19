@@ -103,6 +103,7 @@ const useStyles = makeStyles((theme) => ({
     filter:
       'invert(98%) sepia(100%) saturate(0%) hue-rotate(86deg) brightness(118%) contrast(119%)',
   },
+  devTologo: { width: '2rem', height: '2rem' },
 
   followBtn: {
     width: '10rem',
@@ -154,11 +155,11 @@ const useStyles = makeStyles((theme) => ({
   },
   joinCard: {
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
     height: '5.3125rem',
     borderRadius: '5px',
     padding: '.4275rem 1.5rem .4275rem 1.5rem',
+    justifyContent: 'space-between',
   },
   cardTextWithLogo: {
     display: 'flex',
@@ -170,19 +171,48 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     fontSize: '24px',
     lineHeight: '150%',
+    textAlign: 'left',
+    marginLeft: '1.5rem',
+  },
+  joinCardTextMedium: {
+    color: theme.palette.text.secondary,
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    fontSize: '18px',
+    lineHeight: '150%',
+    textAlign: 'left',
+    marginLeft: '1.5rem',
+  },
+  joinCardTextSmall: {
+    color: theme.palette.text.secondary,
+    fontStyle: 'normal',
+    fontSize: '14px',
+    lineHeight: '150%',
+    textAlign: 'left',
+    marginLeft: '1.5rem',
+  },
+  footerText: {
+    color: theme.palette.text.primary,
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    fontSize: '18px',
+    lineHeight: '150%',
     textAlign: 'center',
   },
   slack: {
     background: theme.palette.text.primary,
+    gridArea: 'slack',
   },
   dev: {
     background: theme.palette.status.experiment.running,
   },
   feedback: {
     background: theme.palette.primary.main,
+    gridArea: 'feedback',
   },
   communityEvents: {
     background: theme.palette.status.experiment.failed,
+    gridArea: 'communityEvents',
   },
   joinButton: {
     radius: '3px',

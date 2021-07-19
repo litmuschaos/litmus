@@ -1,7 +1,6 @@
 import { useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced with Chart
 import Typography from '@material-ui/core/Typography';
-import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -164,9 +163,38 @@ const Community: React.FC = () => {
               gridGap: '1rem',
               gridTemplateColumns: '1fr 1fr',
               gridTemplateRows: 'auto',
+              gridTemplateAreas: `"feedback slack" 
+              "communityEvents communityEvents"`,
             }}
             className={classes.paper}
           >
+            <div className={`${classes.joinCard} ${classes.feedback}`}>
+              <div style={{ display: 'flex' }}>
+                <img
+                  style={{ height: '3rem', width: '3rem' }}
+                  src={'./icons/feedback.svg'}
+                  alt="right-arrow"
+                />
+                <div>
+                  <Typography className={classes.joinCardTextMedium}>
+                    What do you think of Litmus?
+                  </Typography>
+                  <Typography className={classes.joinCardTextSmall}>
+                    Provide your valuable feedback
+                  </Typography>
+                </div>
+              </div>
+              {/* <ButtonFilled
+                className={`${classes.joinButton} ${classes.buttonLarge}`}
+              >
+                Provide Feedback
+              </ButtonFilled> */}
+              <img
+                style={{ height: '0.9375rem' }}
+                src={'./icons/right-arrow.svg'}
+                alt="right-arrow"
+              />
+            </div>
             <div className={`${classes.joinCard} ${classes.slack}`}>
               <div className={classes.cardTextWithLogo}>
                 <Typography className={classes.joinCardText}>
@@ -178,13 +206,13 @@ const Community: React.FC = () => {
                   className={classes.logo}
                 />
               </div>
-              <ButtonFilled
-                className={`${classes.joinButton} ${classes.buttonSmall}`}
-              >
-                Join Us
-              </ButtonFilled>
+              <img
+                style={{ height: '0.9375rem' }}
+                src={'./icons/right-arrow.svg'}
+                alt="right-arrow"
+              />
             </div>
-            <div className={`${classes.joinCard} ${classes.dev}`}>
+            {/* <div className={`${classes.joinCard} ${classes.dev}`}>
               <div className={classes.cardTextWithLogo}>
                 <Typography className={classes.joinCardText}>
                   Litmuschaos on
@@ -200,29 +228,150 @@ const Community: React.FC = () => {
               >
                 Follow
               </ButtonFilled>
-            </div>
-            <div className={`${classes.joinCard} ${classes.feedback}`}>
-              <Typography className={classes.joinCardText}>
-                What do you think of Litmus?
-              </Typography>
-              <ButtonFilled
-                className={`${classes.joinButton} ${classes.buttonLarge}`}
-              >
-                Provide Feedback
-              </ButtonFilled>
-            </div>
+            </div> */}
+
             <div className={`${classes.joinCard} ${classes.communityEvents}`}>
-              <Typography className={classes.joinCardText}>
-                Know about Community Events
-              </Typography>
-              <ButtonFilled
-                className={`${classes.joinButton} ${classes.buttonLarge}`}
-              >
-                Explore Events
-              </ButtonFilled>
+              <div style={{ display: 'flex' }}>
+                <img
+                  style={{ height: '3rem', width: '3rem' }}
+                  src={'./icons/communityMeetup.svg'}
+                  alt="right-arrow"
+                />
+                <div>
+                  <Typography className={classes.joinCardTextMedium}>
+                    Know about Community Events
+                  </Typography>
+                  <Typography className={classes.joinCardTextSmall}>
+                    Explore about monthly community sync ups, Kubernetes meet
+                    ups and other events in CNCF
+                  </Typography>
+                </div>
+              </div>
+              <img
+                style={{ height: '0.9375rem' }}
+                src={'./icons/right-arrow.svg'}
+                alt="right-arrow"
+              />
             </div>
           </div>
         </section>
+
+        <footer>
+          <div
+            style={{
+              height: '5.3125rem',
+              background: 'white',
+              position: 'relative',
+              marginTop: '2rem',
+              border: '1px solid rgba(0, 0, 0, 0.05)',
+              borderRadius: '5px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+            className={classes.paper}
+          >
+            <div
+              style={{
+                width: '20rem',
+              }}
+            >
+              <span className={classes.footerText}>
+                Follow us on other platforms
+              </span>
+            </div>
+            <div
+              style={{
+                width: '20rem',
+              }}
+            >
+              <div style={{ display: 'flex-root' }}>
+                <button
+                  style={{
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    border: '0',
+                    width: '2rem',
+                    height: '2rem',
+                    verticalAlign: 'middle',
+                    marginRight: '1rem',
+                  }}
+                >
+                  <img src={'./icons/github.svg'} alt="plugin" />
+                </button>
+                <button
+                  style={{
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    border: '0',
+                    width: '2rem',
+                    height: '2rem',
+                    verticalAlign: 'middle',
+                    marginRight: '1rem',
+                  }}
+                >
+                  <img src={'./icons/meetup.svg'} alt="plugin" />
+                </button>
+                <button
+                  style={{
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    border: '0',
+                    width: '2rem',
+                    height: '2rem',
+                    verticalAlign: 'middle',
+                    marginRight: '1rem',
+                  }}
+                >
+                  <img
+                    className={`${classes.devTologo}`}
+                    src="./icons/devto.svg"
+                    alt="DevTo logo"
+                  />
+                </button>
+                <button
+                  style={{
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    border: '0',
+                    width: '2rem',
+                    height: '2rem',
+                    verticalAlign: 'middle',
+                    marginRight: '1rem',
+                  }}
+                >
+                  <img src={'./icons/twitter.svg'} alt="plugin" />
+                </button>
+                <button
+                  style={{
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    border: '0',
+                    width: '2rem',
+                    height: '2rem',
+                    verticalAlign: 'middle',
+                    marginRight: '1rem',
+                  }}
+                >
+                  <img src={'./icons/medium.svg'} alt="plugin" />
+                </button>
+                <button
+                  style={{
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    border: '0',
+                    width: '2rem',
+                    height: '2rem',
+                    verticalAlign: 'middle',
+                    marginRight: '1rem',
+                  }}
+                >
+                  <img src={'./icons/youtube.svg'} alt="plugin" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </Wrapper>
   );
