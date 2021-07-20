@@ -1,0 +1,15 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-cpu-hog-sa
+  experiments:
+  - name: node-cpu-hog
+    spec:
+      components:
+        env:
+        - name: TARGET_NODES
+          value: 'node01,node02'
