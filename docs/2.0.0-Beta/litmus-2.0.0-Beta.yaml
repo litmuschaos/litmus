@@ -405,7 +405,7 @@ kind: ClusterRole
 metadata:
   name: litmus-server-cr
 rules:
-  - apiGroups: [networking.k8s.io/v1, extensions/v1beta1]
+  - apiGroups: [networking.k8s.io, extensions]
     resources: [ingresses]
     verbs: [get]
   - apiGroups: [""]

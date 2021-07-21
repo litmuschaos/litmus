@@ -35,7 +35,7 @@ const TableData: React.FC<TableDataProps> = ({
   const classes = useStyles();
   const { t } = useTranslation();
 
-  // Function to convert UNIX time in format of DD MMM YYY
+  // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
   const formatDate = (date: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();
     const resDate = moment(updated).format('DD MMM YYYY, HH:mm');

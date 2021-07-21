@@ -37,15 +37,8 @@ interface TableDataProps {
   row: Member;
   index: number;
   showModal: () => void;
-  modalOpen: boolean;
-  handleModalOpen: () => void;
 }
-const InvitedTableData: React.FC<TableDataProps> = ({
-  row,
-  showModal,
-  modalOpen,
-  handleModalOpen,
-}) => {
+const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
   const classes = useStyles();
   const projectID = getProjectID();
 
@@ -72,6 +65,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
   });
 
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
+  const [cancelInviteOpen, setCancelInviteOpen] = useState<boolean>(false);
 
   // Query to get user details
   useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
@@ -117,7 +111,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
         <div className={classes.dropDown}>
           {role}
           <IconButton
-            disabled={row.deactivated_at !== undefined}
+            disabled={row.deactivated_at !== ''}
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
@@ -210,7 +204,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
         <div className={classes.lastCell}>
           {row.invitation !== InvitationStatus.exited &&
             row.invitation !== InvitationStatus.declined && (
-              <IconButton onClick={handleModalOpen}>
+              <IconButton onClick={() => setCancelInviteOpen(true)}>
                 <img alt="delete" src="./icons/deleteBox.svg" height="45" />
               </IconButton>
             )}
@@ -225,7 +219,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           >
             <div>
               <ButtonFilled
-                disabled={row.deactivated_at !== undefined}
+                disabled={row.deactivated_at !== ''}
                 onClick={() => {
                   SendInvite({
                     variables: {
@@ -244,12 +238,18 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           </Tooltip>
         </div>
       </TableCell>
-      {modalOpen && (
+      {cancelInviteOpen && (
         <RemoveMemberModal
-          open={modalOpen}
-          handleClose={showModal}
+          open={cancelInviteOpen}
+          handleClose={() => {
+            showModal();
+            setCancelInviteOpen(false);
+          }}
           row={row}
-          showModal={showModal}
+          showModal={() => {
+            showModal();
+            setCancelInviteOpen(false);
+          }}
           isRemove={false}
         />
       )}
