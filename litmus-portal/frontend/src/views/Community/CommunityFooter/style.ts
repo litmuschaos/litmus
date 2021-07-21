@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-// Community Component Styling
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',

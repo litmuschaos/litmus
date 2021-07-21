@@ -107,14 +107,14 @@ login:
   tooltipText: You need to contact your admin to reset your password.
 
 schedule:
-  heading: 'Schedule a workflow'
-  headingDesc: 'Click on test to see detailed log of your workflow'
-  headingText: 'Schedule details:'
-  description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  heading: Schedule a workflow
+  headingDesc: Click on test to see detailed log of your workflow
+  headingText: Schedule details:'
+  description: Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.
+  save: Save Changes
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
+  scheduleAfterSometime: Choose the minutes, hours, or days when you want to start workflow
   scheduleSpecificTime: Schedule at a specific time
   scheduleFuture: Select date and time to start workflow in future
   scheduleRecurring: Recurring Schedule
@@ -122,7 +122,7 @@ schedule:
   after: After
   at: at
   At: At
-  scheduleOn: 'On'
+  scheduleOn: On
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new workflow on this project.
   contact: Contact portal administrator to upgrade your permission.
@@ -948,8 +948,8 @@ createWorkflow:
     revertSchedule: Revert Schedule
     noTemplates: No template available.
     addTemplate: You can add a template from the scheduled workflows table.
-    trueValue: 'True'
-    falseValue: 'False'
+    trueValue: True
+    falseValue: False
     enableRegistry: Enable Image Registry Changes
     table:
       head1: Sequence
