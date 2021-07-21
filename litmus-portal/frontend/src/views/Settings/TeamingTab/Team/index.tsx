@@ -15,6 +15,7 @@ import {
 import { EditableText, Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Loader from '../../../../components/Loader';
 import Center from '../../../../containers/layouts/Center';
 import {
   GET_PROJECT,
@@ -104,6 +105,7 @@ const TeamingTab: React.FC = () => {
     ProjectDetailVars
   >(GET_PROJECT, {
     variables: { projectID },
+    fetchPolicy: 'cache-and-network',
     onCompleted: () => {
       setLoading(false);
       const memberList = dataB?.getProject.members ?? [];
@@ -123,7 +125,6 @@ const TeamingTab: React.FC = () => {
       setAccepted([...acceptedUsers]);
       setNotAccepted([...notAcceptedUsers]);
     },
-    fetchPolicy: 'cache-and-network',
   });
 
   // State for pagination
@@ -169,7 +170,6 @@ const TeamingTab: React.FC = () => {
 
   const [inviteNewOpen, setInviteNewOpen] = React.useState(false);
   const [deleteMemberOpen, setDeleteMemberOpen] = React.useState(false);
-  const [cancelInviteOpen, setCancelInviteOpen] = React.useState(false);
 
   function showModal() {
     refetchGetProject();
@@ -180,12 +180,12 @@ const TeamingTab: React.FC = () => {
   const [invitationsCount, setInvitationCount] = useState<number>(0);
   const [projects, setProjects] = useState<Project[]>([]);
   const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
+    fetchPolicy: 'cache-and-network',
     onCompleted: () => {
       if (dataProject?.listProjects) {
         setProjects(dataProject.listProjects);
       }
     },
-    fetchPolicy: 'cache-and-network',
   });
   useEffect(() => {
     let projectOwner = 0;
@@ -419,10 +419,7 @@ const TeamingTab: React.FC = () => {
                   notAcceptedFilteredData={notAcceptedFilteredData}
                   showModal={() => {
                     showModal();
-                    setCancelInviteOpen(false);
                   }}
-                  handleOpen={() => setCancelInviteOpen(true)}
-                  open={cancelInviteOpen}
                 />
               </TabPanel>
               {/* user table */}
@@ -443,7 +440,11 @@ const TeamingTab: React.FC = () => {
           </div>
         </>
       ) : (
-        ''
+        <div style={{ height: '50vh' }}>
+          <Center>
+            <Loader />
+          </Center>
+        </div>
       )}
     </div>
   );

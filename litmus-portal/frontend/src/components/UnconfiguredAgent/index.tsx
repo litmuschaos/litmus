@@ -27,7 +27,7 @@ const UnconfiguredAgent: React.FC = () => {
         heading={t('homeViews.landingHome.heading')}
         description={t('homeViews.landingHome.description')}
         button={
-          <ButtonFilled onClick={handleOpen}>
+          <ButtonFilled style={{ marginLeft: '0' }} onClick={handleOpen}>
             <ArrowUpwardIcon />
             <Typography>{t('homeViews.landingHome.deploy')}</Typography>
           </ButtonFilled>
