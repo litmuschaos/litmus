@@ -528,7 +528,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: gdsoumya/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:ci
           env:
             - name: DB_SERVER
               valueFrom:
