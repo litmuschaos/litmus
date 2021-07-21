@@ -1,5 +1,4 @@
-## it contains percentage of application pods to be targeted with matching labels or names in the application namespace
-## supported for all pod-level experiment expect pod-autoscaler
+## name of the target container
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -17,8 +16,8 @@ spec:
     spec:
       components:
         env:
-        # percentage of application pods
-        - name: PODS_AFFECTED_PERC
-          value: '100'
+        # name of the target container
+        - name: TARGET_CONTAINER
+          value: 'nginx'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

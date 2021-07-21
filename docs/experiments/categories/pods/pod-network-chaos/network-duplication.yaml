@@ -1,5 +1,4 @@
-## it contains percentage of application pods to be targeted with matching labels or names in the application namespace
-## supported for all pod-level experiment expect pod-autoscaler
+# it inject the chaos for the ingrees and egress traffic
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -11,14 +10,14 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-delete-sa
+  chaosServiceAccount: pod-network-duplication-sa
   experiments:
-  - name: pod-delete
+  - name: pod-network-duplication
     spec:
       components:
         env:
-        # percentage of application pods
-        - name: PODS_AFFECTED_PERC
+        # network packet duplication percentage
+        - name: NETWORK_PACKET_DUPLICATION_PERCENTAGE
           value: '100'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

@@ -1,5 +1,3 @@
-## it contains percentage of application pods to be targeted with matching labels or names in the application namespace
-## supported for all pod-level experiment expect pod-autoscaler
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -11,14 +9,15 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-delete-sa
+  chaosServiceAccount: disk-fill-sa
   experiments:
-  - name: pod-delete
+  - name: disk-fill
     spec:
       components:
         env:
-        # percentage of application pods
-        - name: PODS_AFFECTED_PERC
-          value: '100'
+        ## ephemeral storage needs to fill
+        ## in will application, if ephemeral-storage limits is not specified inside target application
+        - name: EPHEMERAL_STORAGE_MEBIBYTES
+          value: '256' #in MiBi
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

@@ -1,5 +1,3 @@
-## it contains percentage of application pods to be targeted with matching labels or names in the application namespace
-## supported for all pod-level experiment expect pod-autoscaler
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -11,14 +9,15 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-delete-sa
+  chaosServiceAccount: pod-io-stress-sa
   experiments:
-  - name: pod-delete
+  - name: pod-io-stress
     spec:
       components:
         env:
-        # percentage of application pods
-        - name: PODS_AFFECTED_PERC
-          value: '100'
+        # name of lib
+        # it supports litmus and pumba lib
+        - name: LIB
+          value: 'pumba'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
