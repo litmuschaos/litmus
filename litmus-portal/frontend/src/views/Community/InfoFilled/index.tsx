@@ -75,17 +75,22 @@ const InfoFilledWrap: React.FC = () => {
           formatCount -> utility is used to convert large value to
           their respective Thousands or Millions respectively
         */}
-        <div className={classes.imgTextWrap}>
-          <input
-            type="image"
-            src={individualCard.imgPath}
-            alt={individualCard.statType}
-            onClick={() => {
-              individualCard.statType === 'GitHub Stars'
-                ? window.open('https://github.com/litmuschaos/litmus')
-                : window.open('https://hub.litmuschaos.io');
-            }}
-          />
+        <div
+          role="button"
+          tabIndex={0}
+          className={classes.imgTextWrap}
+          onClick={() => {
+            individualCard.statType === 'GitHub Stars'
+              ? window.open('https://github.com/litmuschaos/litmus')
+              : window.open('https://hub.litmuschaos.io');
+          }}
+          onKeyDown={() => {
+            individualCard.statType === 'GitHub Stars'
+              ? window.open('https://github.com/litmuschaos/litmus')
+              : window.open('https://hub.litmuschaos.io');
+          }}
+        >
+          <img src={individualCard.imgPath} alt={individualCard.statType} />
           <Typography className={classes.value}>
             {formatCount(individualCard.value)}
             {individualCard.plus && <span className={classes.plusBtn}>+</span>}
