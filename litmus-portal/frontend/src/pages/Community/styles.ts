@@ -32,8 +32,7 @@ const useStyles = makeStyles((theme) => ({
   header2: {
     fontSize: '1.5rem',
     fontWeight: 'normal',
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(1),
+    paddingTop: theme.spacing(2, 0, 1, 0),
     textAlign: 'left',
     marginLeft: theme.spacing(4),
   },
