@@ -583,6 +583,8 @@ spec:
                   key: DB_PASSWORD
             - name: PORTAL_SCOPE
               value: "namespace"
+            - name: AGENT_DEPLOYMENTS
+              value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
             - name: PORTAL_ENDPOINT
               value: "http://litmusportal-server-service:9002"
             - name: SUBSCRIBER_IMAGE
