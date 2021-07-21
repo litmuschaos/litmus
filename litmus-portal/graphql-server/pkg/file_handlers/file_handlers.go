@@ -17,6 +17,7 @@ import (
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	AgentNamespace:           os.Getenv("AGENT_NAMESPACE"),
 	AgentScope:               os.Getenv("AGENT_SCOPE"),
+	AgentDeployments:         os.Getenv("AGENT_DEPLOYMENTS"),
 	SubscriberImage:          os.Getenv("SUBSCRIBER_IMAGE"),
 	EventTrackerImage:        os.Getenv("EVENT_TRACKER_IMAGE"),
 	WorkflowControllerImage:  os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
