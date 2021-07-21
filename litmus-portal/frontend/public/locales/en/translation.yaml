@@ -150,6 +150,15 @@ community:
   statsHeading: 'Litmus users around the world:'
   litmusChaos: Litmuschaos
   follow: Follow
+  feedback:
+    title: What do you think of Litmus?
+    subHeading: Provide your valuable feedback
+  joinSlack: Litmuschaos on
+  communityEvents:
+    title: Know about Community Events
+    subHeading: Explore about monthly community sync ups, Kubernetes meetups and other events in CNCF
+  footerText: Follow us on other platforms
+
 
 analytics:
   workflowAnalytics: Workflow Analytics

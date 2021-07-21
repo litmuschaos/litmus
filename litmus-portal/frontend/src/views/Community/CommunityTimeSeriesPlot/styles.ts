@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-// CommunityTimeSeriesPlot Component Styling
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(0.5),

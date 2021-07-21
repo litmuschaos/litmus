@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   heading: {
-    fontFamily: 'Ubuntu',
     fontSize: '1.5rem',
     color: theme.palette.text.primary,
   },
@@ -35,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
   description: {
     width: '50rem',
     marginTop: theme.spacing(3),
-    fontFamily: 'Ubuntu',
     fontSize: '1rem',
     color: theme.palette.text.primary,
   },
@@ -208,7 +206,6 @@ const useStyles = makeStyles((theme) => ({
 
   markStyleCorrect: {
     display: 'inline-block',
-    fontFamily: 'Ubuntu',
     fontSize: '1rem',
     color: theme.palette.secondary.main,
   },
