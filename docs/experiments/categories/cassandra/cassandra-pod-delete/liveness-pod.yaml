@@ -1,0 +1,30 @@
+## contains details of cassandra application
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "cassandra"
+    applabel: "app=cassandra"
+    appkind: "statefulset"
+  chaosServiceAccount: casssandra-pod-delete-sa
+  experiments:
+  - name: casssandra-pod-delete
+    spec:
+      components:
+        env:
+        # checks the liveness of cassandra while injecting chaos
+        # supports: enabled, disabled. default: disabled
+        - name: CASSANDRA_LIVENESS_CHECK
+          value: 'enabled'
+        # image of the cassandra liveness deployment
+        - name: CASSANDRA_LIVENESS_IMAGE
+          value: 'litmuschaos/cassandra-client:latest'
+        # keyspace replication factor, needed for liveness check
+        - name: KEYSPACE_REPLICATION_FACTOR
+          value: '3'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

@@ -6,6 +6,10 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
+  appinfo:
+    appns: "kafka"
+    applabel: "app=cp-kafka"
+    appkind: "statefulset"
   chaosServiceAccount: kafka-broker-pod-failure-sa
   experiments:
   - name: kafka-broker-pod-failure
