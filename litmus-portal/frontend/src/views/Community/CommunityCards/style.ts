@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateRows: 'auto',
     gridTemplateAreas: `"feedback slack" 
               "communityEvents communityEvents"`,
-    marginRight: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     textAlign: 'center',
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
@@ -17,8 +17,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   logo: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
+    margin: theme.spacing(1, 0, 0, 1),
     width: '5rem',
     height: '3rem',
     userDrag: 'none',
@@ -28,11 +27,10 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     height: '5.3125rem',
     borderRadius: '5px',
-    padding: '.4275rem 1.5rem .4275rem 1.5rem',
+    padding: theme.spacing(0.855, 2),
     justifyContent: 'space-between',
     border: '1px solid rgba(0, 0, 0, 0.05)',
     boxSizing: 'border-box',
-    // check
     '&:hover': {
       cursor: 'pointer',
       boxShadow:
@@ -81,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
   arrowIcon: {
     height: '0.9375rem',
     width: '0.9375rem',
-    fill: 'white',
+    fill: theme.palette.text.secondary,
     filter:
       'invert(98%) sepia(100%) saturate(0%) hue-rotate(86deg) brightness(118%) contrast(119%)',
   },

@@ -3,13 +3,12 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    marginRight: theme.spacing(2),
+    marginTop: theme.spacing(4),
     textAlign: 'center',
     color: theme.palette.text.primary,
     background: theme.palette.text.secondary,
     height: '5.3125rem',
     position: 'relative',
-    marginTop: '2rem',
     border: '1px solid rgba(0, 0, 0, 0.05)',
     borderRadius: '5px',
     alignItems: 'center',
@@ -24,11 +23,11 @@ const useStyles = makeStyles((theme) => ({
   footerIconButton: {
     cursor: 'pointer',
     background: 'transparent',
-    border: '0',
+    border: 0,
     width: '2rem',
     height: '2rem',
     verticalAlign: 'middle',
-    marginRight: '1rem',
+    marginRight: theme.spacing(2),
     '& img': { width: '2rem', height: '2rem' },
   },
 

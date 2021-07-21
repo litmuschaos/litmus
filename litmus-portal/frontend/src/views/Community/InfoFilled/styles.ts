@@ -5,9 +5,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
-    width: theme.spacing(30),
-    height: theme.spacing(12.5),
-    marginRight: theme.spacing(3),
+    height: '6.25rem',
     borderRadius: 3,
     [theme.breakpoints.down('sm')]: {
       width: '15rem',
@@ -16,8 +14,7 @@ const useStyles = makeStyles((theme) => ({
   infoFilledWrap: {
     display: 'flex',
     flexDirection: 'row',
-    width: theme.spacing(30),
-    height: theme.spacing(12.5),
+    height: '6.25rem',
     flexGrow: 1,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
@@ -33,8 +30,7 @@ const useStyles = makeStyles((theme) => ({
     '& img': {
       width: '1.5rem',
       height: '1.5rem',
-      marginRight: '0.5rem',
-      fill: 'red',
+      marginRight: theme.spacing(1),
     },
   },
   errorMessage: {
@@ -46,19 +42,18 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
     letterSpacing: theme.spacing(0.3),
     fontWeight: 'normal',
-    fontSize: theme.spacing(3),
+    fontSize: '1.5rem',
     color: theme.palette.text.primary,
   },
   plusBtn: {
-    fontSize: theme.spacing(3),
+    fontSize: '1.5rem',
     fontWeight: 'normal',
   },
   statType: {
     textAlign: 'center',
-    fontSize: theme.spacing(2),
+    fontSize: '1rem',
     color: theme.palette.text.primary,
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    padding: theme.spacing(0, 2),
   },
   horizontalLine: {
     width: 120,

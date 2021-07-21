@@ -12,8 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   LitmusAnalyticsBlock: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+    margin: theme.spacing(2, 0),
   },
   errorMessage: {
     marginTop: theme.spacing(35),
@@ -59,7 +58,6 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     flexGrow: 1,
     textAlign: 'center',
-    marginRight: theme.spacing(2),
     color: theme.palette.text.primary,
     backgroundColor: theme.palette.text.secondary,
     [theme.breakpoints.down('sm')]: {
@@ -74,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     height: '21.25rem',
     width: '20rem',
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: theme.palette.text.secondary,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       marginTop: theme.spacing(2),
@@ -102,8 +100,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   LitmusUsedBlock: {
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(4),
+    margin: theme.spacing(2, 0),
   },
 
   LitmusUsedDiv: {

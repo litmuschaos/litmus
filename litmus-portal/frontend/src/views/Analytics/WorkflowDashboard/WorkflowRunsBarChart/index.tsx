@@ -184,6 +184,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         tickwidth: 0,
         ticklen: 0,
         tickfont: {
+          family: 'Inter',
           color: palette.text.hint,
         },
         rangeselector: selectorOptions,
