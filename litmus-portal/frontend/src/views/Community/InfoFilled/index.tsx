@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-import { useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,14 +7,12 @@ import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
 import { RootState } from '../../../redux/reducers';
 import DownloadIcon from '../../../svg/downloadGreen.svg';
-import ExperimentIcon from '../../../svg/myhub.svg';
 import WorkflowIcon from '../../../svg/workflowsPurple.svg';
 import formatCount from '../../../utils/formatCount';
 import useStyles from './styles';
 
 interface CardValueData {
   imgPath: string;
-  color: string;
   value: number;
   statType: string;
   plus?: boolean | undefined;
@@ -29,7 +26,6 @@ interface CardValueData {
 const InfoFilledWrap: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const theme = useTheme();
   // Card Value Data fetched from Redux
   const { communityData, loading, error } = useSelector(
     (state: RootState) => state.communityData
@@ -37,28 +33,24 @@ const InfoFilledWrap: React.FC = () => {
 
   const cardData: CardValueData[] = [
     {
-      imgPath: ExperimentIcon,
-      color: theme.palette.warning.main,
+      imgPath: './icons/myhub.svg',
       value: parseInt(communityData.github.experimentsCount, 10),
       statType: 'Total Experiments',
     },
     {
       imgPath: DownloadIcon,
-      color: theme.palette.secondary.main,
       value: parseInt(communityData.google.operatorInstalls, 10),
       statType: 'Operator Installs',
       plus: true,
     },
     {
       imgPath: WorkflowIcon,
-      color: theme.palette.primary.main,
       value: parseInt(communityData.google.totalRuns, 10),
       statType: 'Total Experiment Runs',
       plus: true,
     },
     {
       imgPath: './icons/github.svg',
-      color: theme.palette.error.main,
       value: parseInt(communityData.github.stars, 10),
       statType: 'GitHub Stars',
       plus: true,
