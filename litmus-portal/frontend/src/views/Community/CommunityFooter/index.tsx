@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import useStyles from './style';
 
+// Footer Icons
 interface FooterIconButtonProps {
   imgPath: string;
   altText: string;
@@ -26,6 +27,7 @@ const FooterIconButton: React.FC<FooterIconButtonProps> = ({
   );
 };
 
+// Array of objects with data for the Footer Icons
 const footerIconButtonData: Array<FooterIconButtonProps> = [
   {
     imgPath: './icons/github.svg',
