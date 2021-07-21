@@ -186,10 +186,7 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="litmusAPIDocs"
           handleClick={() => {
-            history.push({
-              pathname: `/api-doc/index.html`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
+            window.open('https://litmuschaos.github.io/litmus/api.html');
           }}
           label="Litmus API Docs"
           selected={pathName === 'docs'}
