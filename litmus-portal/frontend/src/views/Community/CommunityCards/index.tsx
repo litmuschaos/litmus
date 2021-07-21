@@ -37,7 +37,6 @@ const CommunityCards: React.FC = () => {
             </Typography>
           </div>
         </div>
-
         <img
           className={classes.arrowIcon}
           src="./icons/right-arrow.svg"
