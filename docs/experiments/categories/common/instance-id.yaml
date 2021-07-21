@@ -15,9 +15,8 @@ spec:
     spec:
       components:
         env:
-        # define the sequence of execution of chaos in case of mutiple targets
-        # supports: serial, parallel. default: parallel
+        # user-defined string appended as suffix in the chaosresult name
         - name: INSTANCE_ID
-          value: 'parallel'
+          value: '123'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

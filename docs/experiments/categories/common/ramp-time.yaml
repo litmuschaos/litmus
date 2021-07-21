@@ -15,9 +15,8 @@ spec:
     spec:
       components:
         env:
-        # define the sequence of execution of chaos in case of mutiple targets
-        # supports: serial, parallel. default: parallel
-        - name: INSTANCE_ID
-          value: 'parallel'
+        # waits for the time interval before and after injection of chaos
+        - name: RAMP_TIME
+          value: '10' # in seconds
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
