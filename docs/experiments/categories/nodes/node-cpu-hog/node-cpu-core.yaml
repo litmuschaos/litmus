@@ -1,5 +1,3 @@
-## provide the comma separated target node names
-## it is applicable for the [node-cpu-hog, node-memory-hog, node-io-stress]
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -13,8 +11,8 @@ spec:
     spec:
       components:
         env:
-        # comma separated target node names
-        - name: TARGET_NODES
-          value: 'node01,node02'
+        # number of cpu cores to be stressed
+        - name: NODE_CPU_CORE
+          value: '2'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

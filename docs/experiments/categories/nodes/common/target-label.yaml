@@ -13,8 +13,9 @@ spec:
     spec:
       components:
         env:
-        # comma separated target node names
-        - name: TARGET_NODES
-          value: 'node01,node02'
+        # labels of the targeted node
+        # it will derive the target nodes if TARGET_NODE(S) ENV is not set
+        - name: NODE_LABEL
+          value: 'key=value'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

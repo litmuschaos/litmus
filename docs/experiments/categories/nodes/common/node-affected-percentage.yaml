@@ -1,4 +1,4 @@
-## provide the comma separated target node names
+## provide the percentage of nodes to be targeted with matching labels
 ## it is applicable for the [node-cpu-hog, node-memory-hog, node-io-stress]
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
@@ -13,8 +13,12 @@ spec:
     spec:
       components:
         env:
-        # comma separated target node names
-        - name: TARGET_NODES
-          value: 'node01,node02'
+        # percentage of nodes to be targeted with matching node labels
+        - name: NODES_AFFECTED_PERC
+          value: '100'
+        # labels of the targeted node
+        # it will derive the target nodes if TARGET_NODE(S) ENV is not set
+        - name: NODE_LABEL
+          value: 'key=value'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
