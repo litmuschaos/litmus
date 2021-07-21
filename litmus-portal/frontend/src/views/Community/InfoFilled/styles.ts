@@ -25,9 +25,22 @@ const useStyles = makeStyles((theme) => ({
       height: '100%',
     },
   },
+  imgTextWrap: {
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    '& img': {
+      width: '1.5rem',
+      height: '1.5rem',
+      marginRight: '0.5rem',
+      fill: 'red',
+    },
+  },
   errorMessage: {
     marginLeft: theme.spacing(10),
   },
+
   value: {
     textAlign: 'center',
     paddingTop: theme.spacing(2),

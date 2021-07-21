@@ -30,12 +30,21 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
-
   header2: {
     fontSize: '1.5rem',
-    fontWeight: 'bold',
+    fontWeight: 'normal',
     paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(1),
+    textAlign: 'left',
+    marginLeft: theme.spacing(4),
+  },
+  subHeading: {
+    color: theme.palette.text.hint,
+    fontSize: '1.125rem',
+    fontWeight: 'normal',
     paddingBottom: theme.spacing(2),
+    textAlign: 'left',
+    marginLeft: theme.spacing(4),
   },
 
   cardDiv: {
@@ -49,16 +58,17 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     flexGrow: 1,
-    marginRight: theme.spacing(2),
     textAlign: 'center',
+    marginRight: theme.spacing(2),
     color: theme.palette.text.primary,
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.text.secondary,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       width: '100%',
       flexDirection: 'column',
     },
   },
+
   card: {
     backgroundColor: theme.palette.primary.main,
     height: '21.25rem',
@@ -90,32 +100,6 @@ const useStyles = makeStyles((theme) => ({
     bottom: theme.spacing(2),
     left: theme.spacing(3),
   },
-  logo: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    width: '5rem',
-    height: '3rem',
-    userDrag: 'none',
-  },
-  devToLogo: {
-    fill: 'white',
-    filter:
-      'invert(98%) sepia(100%) saturate(0%) hue-rotate(86deg) brightness(118%) contrast(119%)',
-  },
-  devTologo: { width: '2rem', height: '2rem' },
-
-  followBtn: {
-    width: '10rem',
-    height: '3rem',
-    backgroundColor: theme.palette.secondary.contrastText,
-    fontSize: '0.8rem',
-    color: theme.palette.common.black,
-    textTransform: 'none',
-  },
-
-  devToLink: {
-    textDecoration: 'none',
-  },
 
   LitmusUsedBlock: {
     marginTop: theme.spacing(4),
@@ -132,105 +116,6 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       flexDirection: 'column',
     },
-  },
-
-  quickActionCard: {
-    height: '21.25rem',
-    width: '15rem',
-    marginLeft: theme.spacing(3),
-    marginRight: theme.spacing(7),
-    [theme.breakpoints.down('md')]: {
-      display: 'flex',
-      width: '15rem',
-      flexDirection: 'column',
-    },
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      margin: 0,
-      marginTop: theme.spacing(5),
-      width: '20rem',
-      flexDirection: 'column',
-    },
-  },
-  joinCard: {
-    display: 'flex',
-    alignItems: 'center',
-    height: '5.3125rem',
-    borderRadius: '5px',
-    padding: '.4275rem 1.5rem .4275rem 1.5rem',
-    justifyContent: 'space-between',
-  },
-  cardTextWithLogo: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  joinCardText: {
-    color: theme.palette.text.secondary,
-    fontStyle: 'normal',
-    fontWeight: 'bold',
-    fontSize: '24px',
-    lineHeight: '150%',
-    textAlign: 'left',
-    marginLeft: '1.5rem',
-  },
-  joinCardTextMedium: {
-    color: theme.palette.text.secondary,
-    fontStyle: 'normal',
-    fontWeight: 'bold',
-    fontSize: '18px',
-    lineHeight: '150%',
-    textAlign: 'left',
-    marginLeft: '1.5rem',
-  },
-  joinCardTextSmall: {
-    color: theme.palette.text.secondary,
-    fontStyle: 'normal',
-    fontSize: '14px',
-    lineHeight: '150%',
-    textAlign: 'left',
-    marginLeft: '1.5rem',
-  },
-  footerText: {
-    color: theme.palette.text.primary,
-    fontStyle: 'normal',
-    fontWeight: 'bold',
-    fontSize: '18px',
-    lineHeight: '150%',
-    textAlign: 'center',
-  },
-  slack: {
-    background: theme.palette.text.primary,
-    gridArea: 'slack',
-  },
-  dev: {
-    background: theme.palette.status.experiment.running,
-  },
-  feedback: {
-    background: theme.palette.primary.main,
-    gridArea: 'feedback',
-  },
-  communityEvents: {
-    background: theme.palette.status.experiment.failed,
-    gridArea: 'communityEvents',
-  },
-  joinButton: {
-    radius: '3px',
-    height: '1.9375rem',
-    background: `${theme.palette.text.secondary} !important`,
-    color: theme.palette.text.primary,
-    fontWtyle: 'normal',
-    fontWeight: 'normal',
-    fontSize: '0.875rem',
-    linHeight: '1.065rem',
-    '& :hover': {
-      background: theme.palette.text.secondary,
-    },
-  },
-  buttonSmall: {
-    width: '6.125rem',
-  },
-  buttonLarge: {
-    width: '10.25rem',
   },
 }));
 

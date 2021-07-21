@@ -1,15 +1,16 @@
+/* eslint-disable no-unused-expressions */
 import { useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import Center from '../../containers/layouts/Center';
-import { RootState } from '../../redux/reducers';
-import DownloadIcon from '../../svg/download.svg';
-import ExperimentIcon from '../../svg/myhub.svg';
-import WorkflowIcon from '../../svg/workflows.svg';
-import formatCount from '../../utils/formatCount';
-import Loader from '../Loader';
+import Loader from '../../../components/Loader';
+import Center from '../../../containers/layouts/Center';
+import { RootState } from '../../../redux/reducers';
+import DownloadIcon from '../../../svg/downloadGreen.svg';
+import ExperimentIcon from '../../../svg/myhub.svg';
+import WorkflowIcon from '../../../svg/workflowsPurple.svg';
+import formatCount from '../../../utils/formatCount';
 import useStyles from './styles';
 
 interface CardValueData {
@@ -60,6 +61,7 @@ const InfoFilledWrap: React.FC = () => {
       color: theme.palette.error.main,
       value: parseInt(communityData.github.stars, 10),
       statType: 'GitHub Stars',
+      plus: true,
     },
   ];
 
@@ -73,21 +75,16 @@ const InfoFilledWrap: React.FC = () => {
           formatCount -> utility is used to convert large value to
           their respective Thousands or Millions respectively
         */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'baseline',
-            justifyContent: 'center',
-          }}
-        >
-          <img
-            style={{
-              width: '1.5rem',
-              height: '1.5rem',
-              marginRight: '0.5rem',
-              fill: 'red',
-            }}
+        <div className={classes.imgTextWrap}>
+          <input
+            type="image"
             src={individualCard.imgPath}
+            alt={individualCard.statType}
+            onClick={() => {
+              individualCard.statType === 'GitHub Stars'
+                ? window.open('https://github.com/litmuschaos/litmus')
+                : window.open('https://hub.litmuschaos.io');
+            }}
           />
           <Typography className={classes.value}>
             {formatCount(individualCard.value)}

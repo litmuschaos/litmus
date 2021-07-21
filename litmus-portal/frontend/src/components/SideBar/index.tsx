@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
 import { ReactComponent as AnalyticsIcon } from '../../svg/analytics-sidebar.svg';
+import { ReactComponent as CodeIcon } from '../../svg/code.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
@@ -181,6 +182,19 @@ const SideBar: React.FC = () => {
           selected={pathName === 'docs'}
         >
           <DocsIcon />
+        </CustomisedListItem>
+        <CustomisedListItem
+          key="litmusAPIDocs"
+          handleClick={() => {
+            history.push({
+              pathname: `/api-doc/index.html`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
+          }}
+          label="Litmus API Docs"
+          selected={pathName === 'docs'}
+        >
+          <CodeIcon />
         </CustomisedListItem>
         <CustomisedListItem
           key="community"

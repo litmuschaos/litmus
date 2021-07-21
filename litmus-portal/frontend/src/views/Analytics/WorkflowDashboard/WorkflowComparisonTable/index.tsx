@@ -527,7 +527,6 @@ const WorkflowComparisonTable = () => {
             },
             styles: {
               overflow: 'linebreak',
-              font: 'Ubuntu',
               lineColor: [0, 0, 0],
             },
             bodyStyles: {

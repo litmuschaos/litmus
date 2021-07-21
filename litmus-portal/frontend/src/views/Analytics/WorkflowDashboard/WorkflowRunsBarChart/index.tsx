@@ -184,7 +184,6 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         tickwidth: 0,
         ticklen: 0,
         tickfont: {
-          family: 'Ubuntu, monospace',
           color: palette.text.hint,
         },
         rangeselector: selectorOptions,
@@ -202,7 +201,6 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         tickwidth: 0,
         ticklen: 0,
         tickfont: {
-          family: 'Ubuntu, monospace',
           color: palette.text.hint,
         },
       },
@@ -218,7 +216,6 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         p: 10,
       },
       font: {
-        family: 'Ubuntu, monospace',
         color: palette.text.hint,
       },
       barmode: 'stack',

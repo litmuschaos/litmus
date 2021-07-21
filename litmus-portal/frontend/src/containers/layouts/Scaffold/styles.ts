@@ -10,7 +10,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridTemplateColumns: '20.5em auto',
     gridTemplateRows: '6.5em auto',
     gridTemplateAreas: '"header header" "sidebar content"',
-    fontFamily: 'Ubuntu',
 
     '& ::-webkit-scrollbar': {
       width: '0.4rem',
