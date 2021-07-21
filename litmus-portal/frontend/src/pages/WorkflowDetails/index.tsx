@@ -156,8 +156,9 @@ const WorkflowDetails: React.FC = () => {
 
   // Setting NodeId of first Node in redux for selection of first node in Argo graph by default
   useEffect(() => {
-    if (workflowRun && pod_name === '') {
+    if (workflowRun !== undefined && pod_name === '') {
       if (
+        JSON.parse(workflowRun.execution_data as string).nodes !== null &&
         Object.keys(JSON.parse(workflowRun.execution_data as string).nodes)
           .length
       ) {
@@ -175,7 +176,7 @@ const WorkflowDetails: React.FC = () => {
         setWorkflowFailed(true);
       }
     }
-  }, [data]);
+  }, [workflowRun]);
 
   return (
     <Wrapper>

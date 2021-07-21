@@ -10,9 +10,9 @@ import InfoFilledWrap from '../../components/InfoFilled/index';
 import Loader from '../../components/Loader';
 import { LocalQuickActionCard } from '../../components/LocalQuickActionCard';
 import Center from '../../containers/layouts/Center';
+import Wrapper from '../../containers/layouts/Wrapper';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
-import Wrapper from '../../containers/layouts/Wrapper';
 import { RootState } from '../../redux/reducers';
 import { getToken } from '../../utils/auth';
 import CommunityAnalyticsPlot from '../../views/Community/CommunityTimeSeriesPlot';
@@ -56,11 +56,10 @@ const Community: React.FC = () => {
     return (
       <Wrapper>
         <div className={classes.root}>
-          <div>
-            <Typography variant="h3" className={classes.mainHeader}>
-              {t('community.title')}
-            </Typography>
-          </div>
+          <Typography variant="h3" className={classes.mainHeader}>
+            {t('community.title')}
+          </Typography>
+
           <div className={classes.errorMessage}>
             <Center>
               <Typography variant="h4">
@@ -76,11 +75,9 @@ const Community: React.FC = () => {
   return (
     <Wrapper>
       <div className={classes.root}>
-        <div>
-          <Typography variant="h3" className={classes.mainHeader}>
-            {t('community.title')}
-          </Typography>
-        </div>
+        <Typography variant="h3" className={classes.mainHeader}>
+          {t('community.title')}
+        </Typography>
 
         {/* Litmus Daily Insights */}
         <section>

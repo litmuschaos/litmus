@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   content: {
     gridArea: 'content',
     padding: theme.spacing(5, 7.5),
-    overflowY: 'scroll',
+    overflowY: 'auto',
   },
   sidebar: {
     gridArea: 'sidebar',
