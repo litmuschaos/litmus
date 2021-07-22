@@ -54,11 +54,10 @@ const Community: React.FC = () => {
     return (
       <Wrapper>
         <div className={classes.root}>
-          <div>
-            <Typography variant="h3" className={classes.mainHeader}>
-              {t('community.title')}
-            </Typography>
-          </div>
+          <Typography variant="h3" className={classes.mainHeader}>
+            {t('community.title')}
+          </Typography>
+
           <div className={classes.errorMessage}>
             <Center>
               <Typography variant="h4">
@@ -74,11 +73,9 @@ const Community: React.FC = () => {
   return (
     <Wrapper>
       <div className={classes.root}>
-        <div>
-          <Typography variant="h3" className={classes.mainHeader}>
-            {t('community.title')}
-          </Typography>
-        </div>
+        <Typography variant="h3" className={classes.mainHeader}>
+          {t('community.title')}
+        </Typography>
 
         {/* Litmus Daily Insights */}
         <section className={classes.paper}>
