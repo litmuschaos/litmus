@@ -67,7 +67,7 @@ const AgentDeployModal: React.FC<AgentDeployModalProps> = ({ handleClose }) => {
         </div>
         <ButtonOutlined
           className={classes.copyButton}
-          onClick={() => copyTextToClipboard(`litmusctl agent connect`)}
+          onClick={() => copyTextToClipboard(`litmusctl create agent`)}
         >
           {copying ? (
             <DoneIcon />
