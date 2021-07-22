@@ -35,6 +35,11 @@ type UpdateUserState struct {
 	IsDeactivate bool   `json:"is_deactivate"`
 }
 
+// APIStatus defines structure for APIroute status
+type APIStatus struct {
+	Status string `json:"status"`
+}
+
 // Role states the role of the user in the portal
 type Role string
 

@@ -563,7 +563,7 @@ homeViews:
       secondStep: 2. Download
       litmusctl: litmusctl
       thirdStep: 3. Paste and run the following command into the cluster console
-      agentRegister: $ litmusctl agent connect
+      agentRegister: $ litmusctl create agent
       copy: Copy
       done: Done
   projectInfoContainer:
