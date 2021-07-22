@@ -1,3 +1,4 @@
+# waits for the ramp time before and after injection of chaos 
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

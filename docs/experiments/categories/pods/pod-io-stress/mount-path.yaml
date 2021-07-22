@@ -15,7 +15,7 @@ spec:
     spec:
       components:
         env:
-        # path need to be stresses/filled
+        # path need to be stressed/filled
         - name: VOLUME_MOUNT_PATH
           value: '10'
         - name: TOTAL_CHAOS_DURATION

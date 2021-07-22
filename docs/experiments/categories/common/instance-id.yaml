@@ -1,3 +1,4 @@
+# provide to append user-defined suffix in the end of chaosresult name
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

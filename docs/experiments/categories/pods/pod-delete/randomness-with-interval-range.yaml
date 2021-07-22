@@ -1,3 +1,4 @@
+# contains random chaos interval with lower and upper bound of range i.e [l,r]
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

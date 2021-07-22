@@ -1,3 +1,4 @@
+# memory to be stressed in MB
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

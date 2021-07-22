@@ -1,4 +1,4 @@
-## provide the comma separated target node names
+## provide the labels of the targeted nodes
 ## it is applicable for the [node-cpu-hog, node-memory-hog, node-io-stress]
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine

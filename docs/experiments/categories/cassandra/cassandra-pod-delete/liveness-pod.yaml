@@ -1,4 +1,5 @@
-## contains details of cassandra application
+## enable the cassandra liveness check, while injecting chaos
+## it continuosly performs cassandra database operations(with cqlsh command) to vefify the liveness status
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

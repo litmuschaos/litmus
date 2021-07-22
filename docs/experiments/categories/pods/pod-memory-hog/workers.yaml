@@ -1,3 +1,4 @@
+# number of workers used for the stress
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

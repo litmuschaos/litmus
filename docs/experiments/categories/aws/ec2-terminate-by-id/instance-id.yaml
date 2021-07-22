@@ -1,3 +1,4 @@
+# contains the instance id, to be terminated/stopped
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

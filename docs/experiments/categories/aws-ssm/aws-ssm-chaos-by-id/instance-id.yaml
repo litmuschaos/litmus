@@ -12,6 +12,7 @@ spec:
       components:
         env:
         # comma separated list of ec2 instance id(s)
+        # all instances should belongs to the same region(REGION)
         - name: EC2_INSTANCE_ID
           value: 'instance-01,instance-02'
         # region of the ec2 instance

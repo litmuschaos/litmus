@@ -1,3 +1,4 @@
+# percentage of ec2 instances, needs to terminate with provided tags
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

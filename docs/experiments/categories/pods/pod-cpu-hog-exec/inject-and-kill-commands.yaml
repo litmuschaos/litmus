@@ -1,3 +1,4 @@
+# provide the chaos kill, used to kill the chaos process
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

@@ -1,3 +1,4 @@
+# pumba chaoslib used to kill the container
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

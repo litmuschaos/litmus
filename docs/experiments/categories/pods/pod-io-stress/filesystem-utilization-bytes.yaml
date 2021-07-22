@@ -1,3 +1,6 @@
+# stress the i/o of the targeted pod with given FILESYSTEM_UTILIZATION_BYTES
+# it is mutually exclusive with the FILESYSTEM_UTILIZATION_PERCENTAGE.
+# if both are provided then it will use FILESYSTEM_UTILIZATION_PERCENTAGE for stress
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

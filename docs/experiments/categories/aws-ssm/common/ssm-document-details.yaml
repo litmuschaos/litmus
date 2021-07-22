@@ -12,7 +12,7 @@ spec:
     spec:
       components:
         env:
-        # name of the ssmm docs
+        # name of the ssm docs
         - name: DOCUMENT_NAME
           value: 'AWS-SSM-Doc'
         # format of the ssm docs

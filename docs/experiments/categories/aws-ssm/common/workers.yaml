@@ -1,3 +1,4 @@
+# workers details used to stress the instance
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

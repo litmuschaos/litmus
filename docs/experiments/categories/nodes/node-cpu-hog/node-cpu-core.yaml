@@ -1,3 +1,4 @@
+# stress the cpu of the targeted nodes
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

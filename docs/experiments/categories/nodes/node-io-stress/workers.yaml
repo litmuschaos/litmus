@@ -1,3 +1,4 @@
+# define the workers count for the i/o and vm
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

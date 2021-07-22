@@ -1,3 +1,4 @@
+# target the ec2 instances with matching tag
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

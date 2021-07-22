@@ -1,3 +1,4 @@
+# provide the cpu cores to stress the ec2 instance
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

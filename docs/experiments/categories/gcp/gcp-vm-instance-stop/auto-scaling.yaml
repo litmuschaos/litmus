@@ -1,4 +1,4 @@
-## details of the gcp instance
+## scale up and down to maintain the available instance counts
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

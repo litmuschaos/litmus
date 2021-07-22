@@ -1,4 +1,4 @@
-## contains details of cassandra application
+## force env provided to forcefully or gracefully delete the pod
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

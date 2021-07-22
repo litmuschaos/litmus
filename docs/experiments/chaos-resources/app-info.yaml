@@ -1,3 +1,7 @@
+# contains details of the AUT(application under test)
+# appns: name of the application
+# applabel: label of the applicaton
+# appkind: kind of the application. supports: deployment, statefulset, daemonset, rollout, deploymentconfig
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -5,6 +9,7 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
+  # AUT details
   appinfo:
     appns: "default"
     applabel: "app=nginx"

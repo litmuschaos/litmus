@@ -1,3 +1,4 @@
+# specific linux signal passed while kiiling container
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

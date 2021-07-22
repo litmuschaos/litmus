@@ -1,3 +1,4 @@
+# name of the ssh user used to ssh into targeted node
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

@@ -1,4 +1,5 @@
 ## name of the target container
+## it will use first container as target container if TARGET_CONTAINER is provided as empty
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

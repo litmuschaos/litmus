@@ -1,3 +1,4 @@
+# path inside node/vm where containers are present 
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

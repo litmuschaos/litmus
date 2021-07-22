@@ -1,3 +1,4 @@
+## percentage of ephemeral storage limit specified at `resource.limits.ephemeral-storage` inside target application 
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -15,7 +16,7 @@ spec:
     spec:
       components:
         env:
-        ## percentage of ephemeral storage limit specified at `resource.limits.ephemeral-storage` inside target application 
+        ## percentage of ephemeral storage limit, which needs to be filled
         - name: FILL_PERCENTAGE
           value: '80' # in percentage
         - name: TOTAL_CHAOS_DURATION

@@ -1,3 +1,6 @@
+# stress the memory of the targeted node with MEMORY_CONSUMPTION_PERCENTAGE of node capacity
+# it is mutually exclusive with the MEMORY_CONSUMPTION_MEBIBYTES.
+# if both are provided then it will use MEMORY_CONSUMPTION_PERCENTAGE for stress
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

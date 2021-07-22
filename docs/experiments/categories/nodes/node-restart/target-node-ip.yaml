@@ -1,3 +1,4 @@
+# internal ip of the targeted node
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

@@ -1,3 +1,6 @@
+# stress the i/o of the targeted node with FILESYSTEM_UTILIZATION_PERCENTAGE of total free space 
+# it is mutually exclusive with the FILESYSTEM_UTILIZATION_BYTES.
+# if both are provided then it will use FILESYSTEM_UTILIZATION_PERCENTAGE for stress
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

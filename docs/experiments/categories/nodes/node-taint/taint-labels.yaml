@@ -1,3 +1,4 @@
+# node tainted with provided key and effect
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
