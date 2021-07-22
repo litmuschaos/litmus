@@ -112,7 +112,7 @@ func GetServerEndpoint() (string, error) {
 			1. hostname
 			2. IPAddress
 		*/
-		if len(getIng.Spec.Rules) > 0 && getIng.Spec.Rules[0].Host != ""{
+		if len(getIng.Spec.Rules) > 0 && getIng.Spec.Rules[0].Host != "" {
 			IPAddress = getIng.Spec.Rules[0].Host
 		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].IP != "" {
 			IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
