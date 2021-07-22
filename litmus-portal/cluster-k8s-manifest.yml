@@ -300,13 +300,13 @@ rules:
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: [""]
-    resources: [pods/log]
-    verbs: [get, watch]
+    resources: [pods/log, secrets, configmaps]
+    verbs: [get, watch, create, delete, patch]
 
   # for creation & deletion of application in predefined workflows
   - apiGroups: [apps]
     resources: [deployments, statefulsets]
-    verbs: [get, watch, patch , create, delete]
+    verbs: [get, watch, patch, create, delete]
     
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: [litmuschaos.io]
@@ -405,7 +405,7 @@ kind: ClusterRole
 metadata:
   name: litmus-server-cr
 rules:
-  - apiGroups: [networking.k8s.io/v1, extensions/v1beta1]
+  - apiGroups: [networking.k8s.io, extensions]
     resources: [ingresses]
     verbs: [get]
   - apiGroups: [""]
@@ -584,6 +584,8 @@ spec:
               value: "litmuschaos/chaos-exporter:1.13.6"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
+            - name: AGENT_DEPLOYMENTS
+              value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
             - name: NODE_NAME
               valueFrom:
                 fieldRef:

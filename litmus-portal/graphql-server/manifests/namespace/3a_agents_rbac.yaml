@@ -209,9 +209,9 @@ rules:
     verbs: ["create", "get", "watch", "patch", "delete", "list"]
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
-  - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get", "watch"]
+  - apiGroups: ['']
+    resources: ['pods/log', 'secrets', 'configmaps']
+    verbs: ['get', 'watch', 'create', 'delete', 'patch']
 
   # for creation & deletion of application in predefined workflows
   - apiGroups: ["apps"]
@@ -247,8 +247,8 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  creationTimestamp: null
   name: event-tracker-role
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - eventtracker.litmuschaos.io
@@ -289,6 +289,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: event-tracker-role-binding
+  namespace: #{AGENT-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
