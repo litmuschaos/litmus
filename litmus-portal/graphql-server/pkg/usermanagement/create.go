@@ -123,7 +123,7 @@ func UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 		Email:       user.Email,
 		CompanyName: user.CompanyName,
 		Name:        user.Name,
-		UpdatedAt:   time.Now().Format(time.RFC1123Z),
+		UpdatedAt:   strconv.FormatInt(time.Now().Unix(), 10),
 	}
 	err := dbOperationsUserManagement.UpdateUser(ctx, dbUser)
 	if err != nil {

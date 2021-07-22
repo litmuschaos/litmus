@@ -290,7 +290,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           tickwidth: 2,
           ticklen: 5,
           tickfont: {
-            family: 'Ubuntu',
+            font: 'Inter',
             color: palette.text.hint,
           },
           mirror: true,
@@ -310,7 +310,6 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           tickwidth: 2,
           ticklen: 5,
           tickfont: {
-            family: 'Ubuntu',
             color: palette.text.hint,
           },
           mirror: true,
@@ -330,7 +329,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           b: 130,
         },
         font: {
-          family: 'Ubuntu, monospace',
+          font: 'Inter, sans-serif',
           color: palette.text.hint,
         },
         showlegend: true,

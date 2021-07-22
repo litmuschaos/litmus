@@ -1,16 +1,18 @@
-import { useTheme } from '@material-ui/core/styles';
+/* eslint-disable no-unused-expressions */
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import Center from '../../containers/layouts/Center';
-import { RootState } from '../../redux/reducers';
-import formatCount from '../../utils/formatCount';
-import Loader from '../Loader';
+import Loader from '../../../components/Loader';
+import Center from '../../../containers/layouts/Center';
+import { RootState } from '../../../redux/reducers';
+import DownloadIcon from '../../../svg/downloadGreen.svg';
+import WorkflowIcon from '../../../svg/workflowsPurple.svg';
+import formatCount from '../../../utils/formatCount';
 import useStyles from './styles';
 
 interface CardValueData {
-  color: string;
+  imgPath: string;
   value: number;
   statType: string;
   plus?: boolean | undefined;
@@ -24,7 +26,6 @@ interface CardValueData {
 const InfoFilledWrap: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const theme = useTheme();
   // Card Value Data fetched from Redux
   const { communityData, loading, error } = useSelector(
     (state: RootState) => state.communityData
@@ -32,36 +33,33 @@ const InfoFilledWrap: React.FC = () => {
 
   const cardData: CardValueData[] = [
     {
-      color: theme.palette.warning.main,
+      imgPath: './icons/myhub.svg',
       value: parseInt(communityData.github.experimentsCount, 10),
       statType: 'Total Experiments',
     },
     {
-      color: theme.palette.secondary.main,
+      imgPath: DownloadIcon,
       value: parseInt(communityData.google.operatorInstalls, 10),
       statType: 'Operator Installs',
       plus: true,
     },
     {
-      color: theme.palette.primary.main,
+      imgPath: WorkflowIcon,
       value: parseInt(communityData.google.totalRuns, 10),
       statType: 'Total Experiment Runs',
       plus: true,
     },
     {
-      color: theme.palette.error.main,
+      imgPath: './icons/github.svg',
       value: parseInt(communityData.github.stars, 10),
       statType: 'GitHub Stars',
+      plus: true,
     },
   ];
 
   const cardArray = cardData.map((individualCard) => {
     return (
-      <div
-        key={individualCard.value}
-        style={{ backgroundColor: `${individualCard.color}` }}
-        className={classes.infoFilledDiv}
-      >
+      <div key={individualCard.statType} className={classes.infoFilledDiv}>
         {/*
           If value of plus is provided then render a different
           plus icon else dont
@@ -69,17 +67,28 @@ const InfoFilledWrap: React.FC = () => {
           formatCount -> utility is used to convert large value to
           their respective Thousands or Millions respectively
         */}
-        {individualCard.plus ? (
+        <div
+          role="button"
+          tabIndex={0}
+          className={classes.imgTextWrap}
+          onClick={() => {
+            individualCard.statType === 'GitHub Stars'
+              ? window.open('https://github.com/litmuschaos/litmus')
+              : window.open('https://hub.litmuschaos.io');
+          }}
+          onKeyDown={() => {
+            individualCard.statType === 'GitHub Stars'
+              ? window.open('https://github.com/litmuschaos/litmus')
+              : window.open('https://hub.litmuschaos.io');
+          }}
+        >
+          <img src={individualCard.imgPath} alt={individualCard.statType} />
           <Typography className={classes.value}>
             {formatCount(individualCard.value)}
-            <span className={classes.plusBtn}>+</span>
+            {individualCard.plus && <span className={classes.plusBtn}>+</span>}
           </Typography>
-        ) : (
-          <Typography className={classes.value}>
-            {formatCount(individualCard.value)}
-          </Typography>
-        )}
-        <hr className={classes.horizontalRule} />
+        </div>
+
         <Typography className={classes.statType}>
           {individualCard.statType}
         </Typography>
