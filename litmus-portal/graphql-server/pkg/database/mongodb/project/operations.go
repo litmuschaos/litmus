@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -172,7 +173,7 @@ func UpdateInvite(ctx context.Context, projectID, userID string, invitation Invi
 		update = bson.D{
 			{"$set", bson.D{
 				{"members.$[elem].invitation", invitation},
-				{"members.$[elem].joined_at", time.Now().Format(time.RFC1123Z)},
+				{"members.$[elem].joined_at", strconv.FormatInt(time.Now().Unix(), 10)},
 			}}}
 	case ExitedProject:
 		update = bson.D{

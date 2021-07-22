@@ -301,7 +301,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
             y: 1,
             traceorder: 'normal',
             font: {
-              family: 'ubuntu',
+              family: 'Inter',
               size: 12,
               color: palette.text.primary,
             },
