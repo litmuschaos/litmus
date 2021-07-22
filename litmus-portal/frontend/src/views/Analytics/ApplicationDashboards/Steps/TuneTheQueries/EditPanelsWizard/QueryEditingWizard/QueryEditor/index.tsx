@@ -144,13 +144,11 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
     return options;
   };
 
-  const getSelectedValuesForLabel = (label: string) => {
+  const getSelectedValuesForLabel = (label: string, queryString: string) => {
     const allOptions: string[] = getAvailableValues(label).map(
       (option) => option.name
     );
-    const labelValuesList: QueryLabelValue[] = getLabelsAndValues(
-      localQuery.prom_query_name
-    );
+    const labelValuesList: QueryLabelValue[] = getLabelsAndValues(queryString);
     const options: Array<Option> = [];
     labelValuesList.forEach((labelValue) => {
       if (labelValue.label === label) {
@@ -361,7 +359,10 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   value={selectedLabel}
                   onChange={(event: any) => {
                     setSelectedLabel(event.target.value as string);
-                    getSelectedValuesForLabel(event.target.value as string);
+                    getSelectedValuesForLabel(
+                      event.target.value as string,
+                      localQuery.prom_query_name
+                    );
                   }}
                   label={t(
                     'analyticsDashboard.applicationDashboards.tuneTheQueries.selectKey'
@@ -384,6 +385,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
 
               <AutocompleteChipInput
                 value={selectedValuesForLabel}
+                freeSolo
                 onChange={(event, value) => {
                   const selectedValues: Array<Option> = value as Array<Option>;
                   const existingLabelValuesList: QueryLabelValue[] =
@@ -403,16 +405,20 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                       value: selectedValues.map((option) => option.name),
                     });
                   }
+                  const newPromQueryName = setLabelsAndValues(
+                    localQuery.base_query ?? '',
+                    localQuery.prom_query_name ?? '',
+                    existingLabelValuesList
+                  );
                   setLocalQuery({
                     ...localQuery,
-                    prom_query_name: setLabelsAndValues(
-                      localQuery.base_query ?? '',
-                      localQuery.prom_query_name ?? '',
-                      existingLabelValuesList
-                    ),
+                    prom_query_name: newPromQueryName,
                     labels_and_values_list: existingLabelValuesList,
                   });
-                  getSelectedValuesForLabel(selectedLabel ?? '');
+                  getSelectedValuesForLabel(
+                    selectedLabel ?? '',
+                    newPromQueryName
+                  );
                   setUpdate(true);
                 }}
                 getOptionSelected={(option) =>
