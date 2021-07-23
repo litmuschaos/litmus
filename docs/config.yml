@@ -1379,8 +1379,7 @@ domains:
       - name: Create Image Registry
         query: mutation.createImageRegistry
         description: |
-          This query is used to create a new image registry. 
-          This query is used to list all the image registries.
+          This query is used to create a new image registry.
           <table>
           <tr>
             <th>Field</th>
