@@ -13,7 +13,7 @@ spec:
   experiments:
   - name: pod-delete
     spec:
-      probes:
+      probe:
       - name: "delete-percona-pvc"
         type: "k8sProbe"
         k8sProbe/inputs:

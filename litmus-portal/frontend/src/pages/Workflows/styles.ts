@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     color: theme.palette.text.primary,
-    margin: theme.spacing(1, 1.5, 2.5, 1.5),
+    margin: theme.spacing(1, 0, 2, 0),
   },
   scheduleBtn: {
     marginLeft: 'auto',

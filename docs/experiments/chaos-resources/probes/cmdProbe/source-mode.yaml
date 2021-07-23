@@ -14,7 +14,7 @@ spec:
   experiments:
   - name: pod-delete
     spec:
-      probes:
+      probe:
       - name: "check-database-integrity"
         type: "cmdProbe"
         cmdProbe/inputs:

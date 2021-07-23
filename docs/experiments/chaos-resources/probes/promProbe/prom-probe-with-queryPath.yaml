@@ -13,7 +13,7 @@ spec:
   experiments:
   - name: pod-delete
     spec:
-      probes:
+      probe:
       - name: "check-probe-success"
         type: "promProbe"
         promProbe/inputs:
