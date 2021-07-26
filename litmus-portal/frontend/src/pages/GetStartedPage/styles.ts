@@ -18,13 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '50%',
     zIndex: 999,
   },
-  logo: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '-8rem',
-  },
   heading: {
-    marginTop: '10rem',
     fontWeight: 500,
     fontSize: '1.5rem',
     color: theme.palette.text.secondary,
@@ -43,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '2rem auto',
   },
   inputValue: {
-    margin: theme.spacing(1.875, 0, 1.875, 0),
+    marginBottom: theme.spacing(1.75),
     '& .MuiFormHelperText-root': {
       background: theme.palette.loginBackground,
       marginTop: 0,
@@ -67,12 +61,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   skipButton: {
-    padding: theme.spacing(1.25, 4),
+    padding: theme.spacing(1.25, 0),
     marginTop: theme.spacing(1.875),
-    color: theme.palette.highlight,
+    color: theme.palette.text.secondary,
   },
   buttonGroup: {
-    width: '100%',
+    width: '25rem',
     color: theme.palette.text.secondary,
     display: 'flex',
     justifyContent: 'space-between',
@@ -81,9 +75,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   step: {
     marginTop: theme.spacing(1.875),
   },
-  barbedWire: {
+  logo: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
+    left: 20,
   },
 }));
 export default useStyles;

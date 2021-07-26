@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 999,
   },
   heading: {
-    marginTop: '10rem',
     fontWeight: 500,
     fontSize: '1.5rem',
     color: theme.palette.text.secondary,
@@ -83,13 +82,13 @@ const useStyles = makeStyles((theme) => ({
   },
   forgetPwdText: {
     textDecoration: 'none',
-    color: theme.palette.text.hint,
+    color: theme.palette.text.secondary,
     cursor: 'pointer',
   },
   logo: {
     position: 'absolute',
-    bottom: 0,
-    left: 2,
+    bottom: 20,
+    left: 20,
   },
 }));
 export default useStyles;

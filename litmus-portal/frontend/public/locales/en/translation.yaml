@@ -14,7 +14,7 @@ getStarted:
     desc: Choose an appropriate name for your project. This project name will be used when collaborating with your team members.
   password:
     name: password
-    label: Password
+    label: New Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
     info: Set a new Password
@@ -103,7 +103,7 @@ login:
   subHeading1: Login to create, orchestrate, analyze and collaborate your Litmus workflows.
   subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
   wrongCredentials: Wrong Credentials - Try again with correct username or password
-  forgetPassword: Forgot your password?
+  forgotPassword: Forgot your password?
   tooltipText: You need to contact your admin to reset your password.
 
 schedule:
