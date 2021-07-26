@@ -58,7 +58,7 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 		// Generating password hash
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
 		if err != nil {
-			log.Println("Error generating password for admin")
+			log.Println("Error generating password")
 		}
 		password := string(hashedPassword)
 		userRequest.Password = password
@@ -83,20 +83,30 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 }
 func UpdateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var userRequest entities.User
+		var userRequest entities.UserDetails
 		err := c.BindJSON(&userRequest)
 		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+
 		uid := c.MustGet("uid").(string)
-		userRequest.ID = uid
-		userResponse, err := service.UpdateUser(&userRequest)
+
+		// Checking if password is updated
+		if userRequest.Password != "" {
+			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
+			if err != nil {
+				return
+			}
+			userRequest.Password = string(hashedPassword)
+		}
+
+		err = service.UpdateUser(uid, &userRequest)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 		}
-		c.JSON(200, userResponse)
+		c.JSON(200, gin.H{"message": "User details updated successfully"})
 	}
 }
 func FetchUsers(service user.Service) gin.HandlerFunc {
