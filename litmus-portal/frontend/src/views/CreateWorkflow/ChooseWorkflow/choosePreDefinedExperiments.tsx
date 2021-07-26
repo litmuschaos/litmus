@@ -159,7 +159,7 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
                   onChange={(e) => {
                     handleMyHubChange(e);
                   }}
-                  label="Select MyHub"
+                  label="Select ChaosHub"
                   MenuProps={MenuProps}
                 >
                   {availableHubs.map((hubs) => (

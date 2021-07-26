@@ -34,9 +34,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   logo: {
     left: theme.spacing(4.375),
   },
+  chaosText: {
+    fontSize: '1.625rem',
+    backgroundColor: theme.palette.cards.highlight,
+    padding: theme.spacing(0, 0.625),
+    borderRadius: 3,
+  },
   litmusHome: {
     fontSize: '1.625rem',
-    marginLeft: theme.spacing(1.75),
+    marginLeft: theme.spacing(0.5),
   },
   projectDropdown: {
     display: 'flex',
