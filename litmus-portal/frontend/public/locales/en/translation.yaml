@@ -25,7 +25,7 @@ getStarted:
 ###########################################
 
 sidebar:
-  title: Litmus
+  title: Chaos Center
   version: Litmus Version
   time: Build Time
 
@@ -576,7 +576,7 @@ homeViews:
   agentConfiguredHome:
     error: Error fetching the data!
     noWorkflow:
-      heading: Schedule your first workflow
+      heading: Schedule your first Litmus workflow
       description: Now it is successfully running on your Kubernetes cluster. Once you schedule chaos workflows, reliability analytics will be displayed here.
       schedule: Schedule a workflow
       explore: Explore pre defined workflows
