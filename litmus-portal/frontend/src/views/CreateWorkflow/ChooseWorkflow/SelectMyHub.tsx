@@ -80,7 +80,7 @@ const SelectMyHub = () => {
             onChange={(e) => {
               handleMyHubChange(e);
             }}
-            label="Cluster Status"
+            label="Select ChaosHub"
             MenuProps={MenuProps}
           >
             {availableHubs.map((hubs) => (

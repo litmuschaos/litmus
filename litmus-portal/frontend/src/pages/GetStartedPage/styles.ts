@@ -1,6 +1,11 @@
 import { makeStyles, Theme } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  topDesign: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+  },
   rootContainer: {
     position: 'fixed',
     width: '100%',
@@ -8,40 +13,31 @@ const useStyles = makeStyles((theme: Theme) => ({
     background: theme.palette.loginBackground,
   },
   rootDiv: {
-    display: 'flex',
+    margin: '0 auto',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    width: '50%',
+    zIndex: 999,
   },
-  rootLitmusText: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    '& img': {
-      marginBottom: theme.spacing(1.5),
-    },
-  },
-  HeaderText: {
-    maxWidth: '23.56rem',
+  heading: {
     fontWeight: 500,
-    fontSize: '2rem',
+    fontSize: '1.5rem',
     color: theme.palette.text.secondary,
+    textAlign: 'center',
   },
-  litmusText: {
-    maxWidth: '23.56rem',
-    fontWeight: 400,
+  subheading: {
+    marginTop: '1rem',
+    maxWidth: '23.75rem',
     fontSize: '1rem',
-    marginTop: theme.spacing(1.875),
     color: theme.palette.text.secondary,
+    textAlign: 'center',
+    margin: '0 auto',
   },
   inputDiv: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(7.5),
+    maxWidth: '23.75rem',
+    margin: '2rem auto',
   },
   inputValue: {
-    margin: theme.spacing(1.875, 0, 1.875, 0),
+    marginBottom: theme.spacing(1.75),
     '& .MuiFormHelperText-root': {
       background: theme.palette.loginBackground,
       marginTop: 0,
@@ -65,12 +61,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   skipButton: {
-    padding: theme.spacing(1.25, 4),
+    padding: theme.spacing(1.25, 0),
     marginTop: theme.spacing(1.875),
     color: theme.palette.text.secondary,
   },
   buttonGroup: {
-    width: '100%',
+    width: '25rem',
     color: theme.palette.text.secondary,
     display: 'flex',
     justifyContent: 'space-between',
@@ -78,6 +74,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   step: {
     marginTop: theme.spacing(1.875),
+  },
+  logo: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
   },
 }));
 export default useStyles;

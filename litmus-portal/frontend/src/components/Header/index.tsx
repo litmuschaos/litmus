@@ -2,7 +2,6 @@ import { Typography } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import ProfileDropdown from './ProfileDropDown';
@@ -11,7 +10,6 @@ import useStyles from './styles';
 
 const Header: React.FC = () => {
   const classes = useStyles();
-  const { t } = useTranslation();
 
   // Get selected projectID from the URL
   const projectID = getProjectID();
@@ -31,13 +29,11 @@ const Header: React.FC = () => {
             className={classes.homeLink}
           >
             <div className={classes.litmusDiv}>
-              <img
-                src="./icons/litmusPurple.svg"
-                alt="litmus logo"
-                className={classes.logo}
-              />
+              <Typography className={classes.chaosText} variant="body1">
+                <strong>Chaos</strong>
+              </Typography>
               <Typography className={classes.litmusHome} variant="body1">
-                {t('sidebar.title')}
+                <strong>Center</strong>
               </Typography>
             </div>
           </Link>

@@ -37,7 +37,6 @@ const Targets: React.FC = () => {
           >
             <div className={classes.scheduleBtn}>
               <ButtonFilled
-                variant="success"
                 onClick={handleCluster}
                 disabled={userRole === 'Viewer'}
               >
