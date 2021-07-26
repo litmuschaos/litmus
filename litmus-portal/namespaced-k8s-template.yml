@@ -494,10 +494,6 @@ spec:
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:ci
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -540,10 +536,6 @@ spec:
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
           env:
             - name: DB_SERVER
               valueFrom:
@@ -610,10 +602,6 @@ spec:
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
-          resources:
-            limits:
-              cpu: 200m
-              memory: 250Mi
           env:
             - name: STRICT_PASSWORD_POLICY
               value: "false"
@@ -682,10 +670,6 @@ spec:
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
           ports:
             - containerPort: 27017
           imagePullPolicy: Always
