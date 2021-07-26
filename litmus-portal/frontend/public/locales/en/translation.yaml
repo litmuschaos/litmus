@@ -17,7 +17,7 @@ getStarted:
     label: Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
-    info: Set your new Password
+    info: Set a new Password
     desc: Use the new password at your next login.
 
 ###########################################
@@ -99,8 +99,8 @@ home:
   heading: Welcome,
 
 login:
-  heading: Chaos Engineering for your Cloud Native applications
-  subHeading1: Create, orchestrate, analyze and collaborate your Chaos Workflows.
+  heading: Welcome to Chaos Center
+  subHeading1: Login to create, orchestrate, analyze and collaborate your Litmus workflows.
   subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
   wrongCredentials: Wrong Credentials - Try again with correct username or password
   forgetPassword: Forgot your password?
@@ -158,7 +158,6 @@ community:
     title: Know about Community Events
     subHeading: Explore about monthly community sync ups, Kubernetes meetups and other events in CNCF
   footerText: Follow us on other platforms
-
 
 analytics:
   workflowAnalytics: Workflow Analytics

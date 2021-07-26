@@ -138,19 +138,12 @@ const GetStarted: React.FC = () => {
     <div className={classes.rootContainer}>
       <Center>
         <div className={classes.rootDiv}>
-          <div className={classes.rootLitmusText}>
-            <img src="./icons/LitmusLogoLight.svg" alt="litmus logo" />
-            <Typography className={classes.HeaderText}>
-              {' '}
-              {t('getStarted.welcome')} {username}!
-            </Typography>
-            <Typography className={classes.HeaderText}>
-              {t('getStarted.password.info')}
-            </Typography>
-            <Typography className={classes.litmusText}>
-              {t('getStarted.password.desc')}
-            </Typography>
-          </div>
+          <Typography className={classes.heading}>
+            {t('getStarted.password.info')}
+          </Typography>
+          <Typography className={classes.subheading}>
+            {t('getStarted.password.desc')}
+          </Typography>
           <form
             id="login-form"
             className={classes.inputDiv}
@@ -192,19 +185,6 @@ const GetStarted: React.FC = () => {
               }
             />
             <div className={classes.buttonGroup}>
-              <div data-cy="finishButton">
-                <ButtonFilled
-                  className={classes.submitButton}
-                  type="submit"
-                  disabled={isError.current}
-                >
-                  {loading ? (
-                    <Loader size={loaderSize} />
-                  ) : (
-                    <>{t('getStarted.button.finish')}</>
-                  )}
-                </ButtonFilled>
-              </div>
               <div data-cy="skipButton">
                 <TextButton
                   className={classes.skipButton}
@@ -222,9 +202,27 @@ const GetStarted: React.FC = () => {
                   )}
                 </TextButton>
               </div>
+              <div data-cy="finishButton">
+                <ButtonFilled
+                  className={classes.submitButton}
+                  type="submit"
+                  disabled={isError.current}
+                >
+                  {loading ? (
+                    <Loader size={loaderSize} />
+                  ) : (
+                    <>{t('getStarted.button.finish')}</>
+                  )}
+                </ButtonFilled>
+              </div>
             </div>
           </form>
         </div>
+        <img
+          className={classes.logo}
+          src="./icons/LitmusLogoLight.svg"
+          alt="Litmus Logo"
+        />
       </Center>
     </div>
   );

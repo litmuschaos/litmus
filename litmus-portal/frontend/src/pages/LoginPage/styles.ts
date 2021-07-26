@@ -1,6 +1,11 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
+  topDesign: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+  },
   rootContainer: {
     position: 'fixed',
     width: '100%',
@@ -8,26 +13,29 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.loginBackground,
   },
   rootDiv: {
-    display: 'flex',
+    margin: '0 auto',
     alignItems: 'center',
-    padding: theme.spacing(2),
-    maxWidth: '49rem',
+    width: '50%',
+    zIndex: 999,
   },
-  HeaderText: {
-    maxWidth: '23.56rem',
+  heading: {
+    marginTop: '10rem',
     fontWeight: 500,
-    fontSize: '2rem',
+    fontSize: '1.5rem',
     color: theme.palette.text.secondary,
-    margin: theme.spacing(1.5, 0, 2.5, 0),
+    textAlign: 'center',
   },
-  litmusText: {
-    maxWidth: '23.56rem',
+  subheading: {
+    marginTop: '1rem',
+    maxWidth: '23.75rem',
     fontSize: '1rem',
     color: theme.palette.text.secondary,
+    textAlign: 'center',
+    margin: '0 auto',
   },
   inputDiv: {
     maxWidth: '23.75rem',
-    margin: theme.spacing(6, 0, 0, 7.5),
+    margin: '2rem auto',
   },
   inputValue: {
     marginBottom: theme.spacing(1.75),
@@ -74,7 +82,14 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.background.paper,
   },
   forgetPwdText: {
-    textDecoration: 'underline',
+    textDecoration: 'none',
+    color: theme.palette.text.hint,
+    cursor: 'pointer',
+  },
+  logo: {
+    position: 'absolute',
+    bottom: 0,
+    left: 2,
   },
 }));
 export default useStyles;
