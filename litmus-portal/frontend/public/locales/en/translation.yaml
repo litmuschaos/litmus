@@ -26,6 +26,8 @@ getStarted:
 
 sidebar:
   title: Litmus
+  version: Litmus Version
+  time: Build Time
 
 header:
   projectDropdown:
