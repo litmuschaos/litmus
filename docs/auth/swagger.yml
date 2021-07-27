@@ -309,7 +309,7 @@ paths:
       - application/json
   "/updatestate":
     post:
-      description: Testing
+      description: This API is used to update the state of a user.
       responses:
         '200':
           description: Successful response
