@@ -92,6 +92,7 @@ func UpdateUser(service user.Service) gin.HandlerFunc {
 		}
 
 		uid := c.MustGet("uid").(string)
+		userRequest.ID = uid
 
 		// Checking if password is updated
 		if userRequest.Password != "" {
@@ -102,7 +103,7 @@ func UpdateUser(service user.Service) gin.HandlerFunc {
 			userRequest.Password = string(hashedPassword)
 		}
 
-		err = service.UpdateUser(uid, &userRequest)
+		err = service.UpdateUser(&userRequest)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 		}

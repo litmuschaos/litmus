@@ -23,6 +23,7 @@ type User struct {
 
 // UserDetails is used to update user's personal details
 type UserDetails struct {
+	ID       string `bson:"id,omitempty"`
 	Email    string `bson:"email,omitempty" json:"email,omitempty"`
 	Name     string `bson:"name,omitempty" json:"name,omitempty"`
 	Password string `bson:"password,omitempty" json:"password,omitempty"`
