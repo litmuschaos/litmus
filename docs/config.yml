@@ -10,6 +10,8 @@ info:
     title: Litmus Portal API Documentation
     description: |
       Litmus Portal provides console and UI experience for managing, monitoring, and events around chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
+      <br/>
+      <b>Note:</b> Litmus Portal Authentication APIs are available <a href="https://litmuschaos.github.io/litmus/auth/api.html" target="_blank"> here. </a>
 domains:
   - name: Cluster
     description: |
@@ -1529,3 +1531,71 @@ domains:
           </tr>
           </table>
 
+  - name: Analytics
+    description: Analytics allows user to visualize the chaos metrics with the help of different dashboards and graphs present in the Litmus Portal.
+    usecases:
+      - name: Get HeatMap Data
+        query: query.getHeatmapData
+        description: |
+          This query is used to get year-wise calendar heatmap of daily average resilience scores for workflow runs.
+      - name: Get Workflow Stats
+        query: query.getWorkflowStats
+        description: |
+          This query is used to get monthly, daily and hourly workflow schedule and run statistics as a time series.
+      - name: Get Workflow Run Stats
+        query: query.getWorkflowRunStats
+        description: |
+          This query is used to get aggregated workflow and experiment statistics for completed runs of selected schedules.
+      - name: List DataSource
+        query: query.ListDataSource
+        description: |
+          This query is used to list all connected data sources in a project.
+      - name: Get Prom Query
+        query: query.GetPromQuery
+        description: |
+          This query is used to get prometheus time series data from promQL queries and data source details.
+      - name: Get Prom Label names and values
+        query: query.GetPromLabelNamesAndValues
+        description: |
+          This query is used to get labels and values associated with a prometheus metric and a given data source.
+      - name: get Prom Series List
+        query: query.GetPromSeriesList
+        description: |
+          This query is used to get a list of all time series metric names available on a prometheus data source.
+      - name: List Dashboard
+        query: query.ListDashboard
+        description: |
+          This query is used to list all dashboards created in a project.
+      - name: Portal Dashboard Data
+        query: query.PortalDashboardData
+        description: |
+          This query is used to list all pre-configured dashboard templates available in litmus center.
+      - name: Create DataSource
+        query: mutation.createDataSource
+        description: |
+          This mutation is used to add a prometheus data source to the project which serves as a metrics collector for agent clusters.
+      - name: Create Dashboard
+        query: mutation.createDashBoard
+        description: |
+          This mutation is used to create an application dashboard providing agent information, data source details and prometheus queries.
+      - name: Update DataSource
+        query: mutation.updateDataSource
+        description: |
+          This mutation is used to update a conncted data source's information.
+      - name: Update Dashboard
+        query: mutation.updateDashboard
+        description: |
+          This mutation is used to update a dashboard's information and details.
+      - name: Update Panel
+        query: mutation.updatePanel
+        description: |
+          This mutation is used to update prometheus queries and panel details for selected panels.
+      - name: Delete Dashboard
+        query: mutation.deleteDashboard
+        description: |
+          This mutation is used to delete a dashboard from a project.
+      - name: Delete DataSource
+        query: mutation.deleteDataSource
+        description: |
+          Disconnect a data source from a project
+     
