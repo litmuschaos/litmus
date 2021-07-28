@@ -5,9 +5,9 @@ go 1.16
 require (
 	github.com/99designs/gqlgen v0.11.3
 	github.com/argoproj/argo v0.0.0-20200806220847-5759a0e198d3
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-git/go-git/v5 v5.2.0
+	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/websocket v1.4.1
@@ -21,7 +21,7 @@ require (
 	github.com/prometheus/common v0.24.0
 	github.com/rs/cors v1.6.0
 	github.com/sirupsen/logrus v1.6.0
-	github.com/tidwall/gjson v1.6.0
+	github.com/tidwall/gjson v1.8.1
 	github.com/tidwall/sjson v1.1.1
 	github.com/vektah/gqlparser/v2 v2.0.1
 	go.mongodb.org/mongo-driver v1.5.3
