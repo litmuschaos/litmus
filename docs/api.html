@@ -205,7 +205,7 @@
                 <a href="#operation-get_prom_label_names_and_values-post"> Get Prom Label names and values </a>
               </li>
               <li>
-                <a href="#operation-get_prom_series_list-post"> get Prom Series List </a>
+                <a href="#operation-get_prom_series_list-post"> Get Prom Series List </a>
               </li>
               <li>
                 <a href="#operation-list_dashboard-post"> List Dashboard </a>
@@ -235,6 +235,9 @@
                 <a href="#operation-delete_datasource-post"> Delete DataSource </a>
               </li>
             </ul>
+          </section>
+          <section>
+          <a href="https://litmuschaos.github.io/litmus/auth/api.html" target="_blank">Authentication</a>
           </section>
           <h5>Schema Definitions</h5>
           <a href="#definition-ActionPayload"> ActionPayload </a>
@@ -1239,45 +1242,7 @@ http://localhost:8080/query
                       <td>Optional</td>
                     </tr>
                   </table>
-                  <h6>Example Body:</h6> {
-                  <br/>
-                  <p style="margin-left: 40px">
-                    <b>"project_id"</b>: "5fd7d9212c9f32447e28317b",
-                    <br/>
-                    <b>"workflow_ids"</b>: ["3gr3f492146f53d4g3e283re"],
-                    <br/>
-                    <b>"workflow_run_ids"</b>:["32433d454ft452421dff55"],
-                    <br/>
-                    <b>"pagination"</b>:{
-                    <br/>
-                    <b>"page"</b>:"1"
-                    <br/>
-                    <b>"limit"</b>:"10"
-                    <br/> },
-                    <br/>
-                    <b>"sort"</b>:{
-                    <br/>
-                    <b>"field"</b>:"name"
-                    <br/>
-                    <b>"descending"</b>:true
-                    <br/> },
-                    <br/>
-                    <b>"filter"</b>:{
-                    <br/>
-                    <b>"workflow_name"</b>:"name",
-                    <br/>
-                    <b>"cluster_name"</b>:"Self-Cluster",
-                    <br/>
-                    <b>"workflow_status"</b>: "Running"
-                    <br/>
-                    <b> "date_range":</b> {
-                    <br/>
-                    <b>"start_date"</b>: 191323221,
-                    <br/>
-                    <b>"end_date"</b>: 189890087,
-                    <br/> }
-                    <br/> },
-                    <br/> </p> } </section>
+                </section>
               </div>
             </div>
             <div class="doc-row">
@@ -3658,7 +3623,7 @@ http://localhost:8080/query
                     <tr>
                       <td>FileType</td>
                       <td>-</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                   </table>
                 </section>
@@ -3821,7 +3786,7 @@ http://localhost:8080/query
                     <tr>
                       <td>FileType</td>
                       <td>-</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                   </table>
                 </section>
@@ -4118,7 +4083,7 @@ http://localhost:8080/query
                     <tr>
                       <td>FileType</td>
                       <td>-</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                   </table>
                 </section>
@@ -7790,6 +7755,28 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This query is used to get year-wise calendar heatmap of daily average resilience scores for workflow runs.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>workflow_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>year</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -7936,6 +7923,28 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This query is used to get monthly, daily and hourly workflow schedule and run statistics as a time series.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>filter</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>show_workflow_runs</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -8091,6 +8100,23 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This query is used to get aggregated workflow and experiment statistics for completed runs of selected schedules.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>workflow_ids</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -8247,6 +8273,18 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This query is used to list all connected data sources in a project.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -8531,6 +8569,33 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This query is used to get labels and values associated with a prometheus metric and a given data source.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>series</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_details.url</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_details.start</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_details.end</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -8655,12 +8720,34 @@ http://localhost:8080/query
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">get Prom Series List</span>
+              <span class="operation-summary">Get Prom Series List</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This query is used to get a list of all time series metric names available on a prometheus data source.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>url</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>start</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>end</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -8790,6 +8877,28 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This query is used to list all dashboards created in a project.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>cluster_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>db_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -8979,6 +9088,23 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This query is used to list all pre-configured dashboard templates available in litmus center.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>hub_name</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -9116,7 +9242,93 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This mutation is used to add a prometheus data source to the project which serves as a metrics collector for agent clusters.</p>
-                </section>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>ds_name</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_url</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>access_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>auth_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>basic_auth_username</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>basic_auth_password</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>scrape_interval</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>query_timeout</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>http_method</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                  <h6>Example Body:</h6> {
+                  <br/>
+                  <p style="margin-left: 40px">
+                    <b>"ds_name"</b>: "sample data source",
+                    <br/>
+                    <b>"ds_type"</b>: "Prometheus",
+                    <br/>
+                    <b>"access_type"</b>: "Server (Default)",
+                    <br/>
+                    <b>"auth_type"</b>: "no auth",
+                    <br/>
+                    <b>"basic_auth_password"</b>: "",
+                    <br/>
+                    <b>"basic_auth_username"</b>: "",
+                    <br/>
+                    <b>"ds_url"</b>: "https://demo.com:9090",
+                    <br/>
+                    <b>"http_method"</b>: "POST",
+                    <br/>
+                    <b>"project_id"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",
+                    <br/>
+                    <b>"query_timeout"</b>: "30",
+                    <br/>
+                    <b>"scrape_interval"</b>: "15",
+                    <br/> </p> } </section>
               </div>
             </div>
             <div class="doc-row">
@@ -9503,7 +9715,100 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This mutation is used to update a conncted data source&#39;s information.</p>
-                </section>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>ds_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_name</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_url</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>access_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>auth_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>basic_auth_username</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>basic_auth_password</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>scrape_interval</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>query_timeout</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>http_method</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                  <h6>Example Body:</h6> {
+                  <br/>
+                  <p style="margin-left: 40px">
+                    <b>"ds_id"</b>: "sample data source",
+                    <br/>
+                    <b>"ds_name"</b>: "sample data source",
+                    <br/>
+                    <b>"ds_type"</b>: "Prometheus",
+                    <br/>
+                    <b>"access_type"</b>: "Server (Default)",
+                    <br/>
+                    <b>"auth_type"</b>: "no auth",
+                    <br/>
+                    <b>"basic_auth_password"</b>: "",
+                    <br/>
+                    <b>"basic_auth_username"</b>: "",
+                    <br/>
+                    <b>"ds_url"</b>: "https://demo.com:9090",
+                    <br/>
+                    <b>"http_method"</b>: "POST",
+                    <br/>
+                    <b>"project_id"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",
+                    <br/>
+                    <b>"query_timeout"</b>: "30",
+                    <br/>
+                    <b>"scrape_interval"</b>: "15",
+                    <br/> </p> } </section>
               </div>
             </div>
             <div class="doc-row">
@@ -10000,6 +10305,18 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This mutation is used to delete a dashboard from a project.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>db_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
@@ -10111,6 +10428,23 @@ http://localhost:8080/query
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Disconnect a data source from a project</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>force_delete</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
