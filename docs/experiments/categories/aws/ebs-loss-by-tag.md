@@ -1,4 +1,4 @@
-# EBS Loss By ID
+# EBS Loss By Tag
 
 It contains tunable to execute the `ebs-loss-by-tag` experiment. This experiment detach the given ebs volume and reattached after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 

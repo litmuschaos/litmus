@@ -1,4 +1,4 @@
-# EC2 Terminate By ID
+# EC2 Terminate By Tag
 
 It contains tunable to execute the `ec2-terminate-by-tag` experiment. This experiment stop the given ec2 instance and restart after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
