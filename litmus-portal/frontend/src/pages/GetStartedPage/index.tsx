@@ -112,7 +112,6 @@ const GetStarted: React.FC = () => {
         Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify({
-        username,
         email: getUserEmail(),
         name: getUserFullName(),
         password: values.password,
