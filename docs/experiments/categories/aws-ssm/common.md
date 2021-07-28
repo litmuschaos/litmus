@@ -1,4 +1,4 @@
-# AWS-SSM experiment tunables
+# AWS-SSM experiments tunables
 
 It contains the aws-ssm pecfic experiment tunables.
 

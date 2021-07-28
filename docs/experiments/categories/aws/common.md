@@ -1,4 +1,4 @@
-## AWS experiment tunnables
+## AWS experiments tunnables
 
 It contains the aws specfic experiment tunables.
 
