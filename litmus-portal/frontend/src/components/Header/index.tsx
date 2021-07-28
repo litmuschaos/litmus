@@ -28,14 +28,9 @@ const Header: React.FC = () => {
             }}
             className={classes.homeLink}
           >
-            <div className={classes.litmusDiv}>
-              <Typography className={classes.chaosText} variant="body1">
-                <strong>Chaos</strong>
-              </Typography>
-              <Typography className={classes.litmusHome} variant="body1">
-                <strong>Center</strong>
-              </Typography>
-            </div>
+            <Typography className={classes.chaosText} variant="body1">
+              Chaos Center
+            </Typography>
           </Link>
           <div className={classes.details}>
             <ProjectDropdown />

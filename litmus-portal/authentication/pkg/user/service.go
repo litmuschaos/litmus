@@ -10,7 +10,7 @@ type Service interface {
 	CheckPasswordHash(hash, password string) error
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
-	UpdateUser(user *entities.User) (*entities.User, error)
+	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
 	GetUsers() (*[]entities.User, error)
 	UpdateUserState(username string, isDeactivate bool) error
@@ -41,7 +41,7 @@ func (s service) CreateUser(user *entities.User) (*entities.User, error) {
 }
 
 // UpdateUser updates user details in the database
-func (s service) UpdateUser(user *entities.User) (*entities.User, error) {
+func (s service) UpdateUser(user *entities.UserDetails) error {
 	return s.repository.UpdateUser(user)
 }
 

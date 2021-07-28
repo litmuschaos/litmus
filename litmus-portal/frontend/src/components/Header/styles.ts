@@ -25,24 +25,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'flex-end',
   },
   // Logo
-  litmusDiv: {
-    display: 'flex',
-  },
   homeLink: {
     textDecoration: 'none',
   },
-  logo: {
-    left: theme.spacing(4.375),
-  },
   chaosText: {
     fontSize: '1.625rem',
-    backgroundColor: theme.palette.cards.highlight,
-    padding: theme.spacing(0, 0.625),
-    borderRadius: 3,
-  },
-  litmusHome: {
-    fontSize: '1.625rem',
-    marginLeft: theme.spacing(0.5),
+    color: theme.palette.text.secondary,
+    fontWeight: 600,
   },
   projectDropdown: {
     display: 'flex',

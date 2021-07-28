@@ -18,5 +18,6 @@ tmp/
 .env
 litmus-portal-service
 litmus-portal-app
+litmus-portal/graphql-server/server
 
 **/client_id
