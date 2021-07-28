@@ -13,7 +13,7 @@ interface WorkFlowTests {
   test_result: string;
   test_weight: number;
   resulting_points: number;
-  last_run: string;
+  last_updated: string;
   context: string;
 }
 interface TableDataProps {
@@ -51,7 +51,9 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <StyledTableCell>
         <ExperimentStatus
           status={
-            data.test_result !== 'Awaited' && data.test_result !== 'N/A'
+            data.test_result !== 'Awaited' &&
+            data.test_result !== 'N/A' &&
+            data.test_result !== ''
               ? `${data.test_result}ed`
               : data.test_result
           }
@@ -79,7 +81,9 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </StyledTableCell>
 
       <StyledTableCell>
-        <Typography>{formatDate(data.last_run)}</Typography>
+        <Typography>
+          {data.last_updated !== '' && formatDate(data.last_updated)}
+        </Typography>
       </StyledTableCell>
     </>
   );
