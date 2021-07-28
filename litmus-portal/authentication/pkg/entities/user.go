@@ -4,7 +4,7 @@ import (
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/sirupsen/logrus"
 )
 
