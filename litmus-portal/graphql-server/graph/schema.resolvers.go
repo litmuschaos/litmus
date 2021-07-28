@@ -79,6 +79,10 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid *
 	return wfHandler.DeleteWorkflow(ctx, workflowid, workflowRunID, data_store.Store)
 }
 
+func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error) {
+	return wfHandler.TerminateWorkflow(ctx, workflowid, workflowRunID, data_store.Store)
+}
+
 func (r *mutationResolver) SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error) {
 	return wfHandler.SyncWorkflowRun(ctx, workflowid, workflowRunID, data_store.Store)
 }
