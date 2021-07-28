@@ -10,8 +10,6 @@ info:
     title: Litmus Portal API Documentation
     description: |
       Litmus Portal provides console and UI experience for managing, monitoring, and events around chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
-      <br/>
-      <b>Note:</b> Litmus Portal Authentication APIs are available <a href="https://litmuschaos.github.io/litmus/auth/api.html" target="_blank"> here. </a>
 domains:
   - name: Cluster
     description: |
