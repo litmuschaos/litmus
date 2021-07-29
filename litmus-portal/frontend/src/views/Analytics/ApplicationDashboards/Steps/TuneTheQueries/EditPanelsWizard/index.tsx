@@ -250,7 +250,18 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
     return newPanel;
   };
 
-  const handleCreatePanel = () => {};
+  const handleCreatePanel = () => {
+    const existingPanels: PanelDetails[] =
+      dashboardDetails.selectedPanels ?? [];
+    const newPanel = getNewPanel();
+    existingPanels.push(newPanel);
+    setDashboardDetails({
+      ...dashboardDetails,
+      selectedPanels: existingPanels,
+    });
+    generatePanelGroupsList(existingPanels);
+    setUpdate(true);
+  };
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     if (newValue === dashboardDetails.selectedPanels?.length) {
