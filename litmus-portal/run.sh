@@ -14,14 +14,15 @@ export EVENT_TRACKER_IMAGE=litmuschaos/litmusportal-event-tracker:ci
 export CONTAINER_RUNTIME_EXECUTOR=k8sapi
 export ARGO_WORKFLOW_CONTROLLER_IMAGE=argoproj/workflow-controller:v2.11.0
 export ARGO_WORKFLOW_EXECUTOR_IMAGE=argoproj/argoexec:v2.11.0
-export LITMUS_CHAOS_OPERATOR_IMAGE=litmuschaos/chaos-operator:1.13.6
-export LITMUS_CHAOS_RUNNER_IMAGE=litmuschaos/chaos-runner:1.13.6
-export LITMUS_CHAOS_EXPORTER_IMAGE=litmuschaos/chaos-exporter:1.13.6
+export LITMUS_CHAOS_OPERATOR_IMAGE=litmuschaos/chaos-operator:1.13.8
+export LITMUS_CHAOS_RUNNER_IMAGE=litmuschaos/chaos-runner:1.13.8
+export LITMUS_CHAOS_EXPORTER_IMAGE=litmuschaos/chaos-exporter:1.13.8
 export ADMIN_USERNAME=admin
 export ADMIN_PASSWORD=litmus
 export DB_USER=admin
 export DB_PASSWORD=1234
 export HUB_BRANCH_NAME=v1.13.x
+export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]" 
 # Dependency Checks
 dir=($(pwd | tr "/" "\n"))
 count=${#dir[@]}
