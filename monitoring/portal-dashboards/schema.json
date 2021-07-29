@@ -186,7 +186,7 @@
                         "type": "boolean",
                         "title": "The line schema",
                         "description": "Line graph type of metric visualization for the query's response.",
-                        "default": false
+                        "default": true
                       },
                       "close_area": {
                         "type": "boolean",
@@ -213,13 +213,13 @@
                       "type": "boolean",
                       "title": "The grids schema",
                       "description": "Enable or disable grid behind the graph plot.",
-                      "default": false
+                      "default": true
                     },
                     "left_axis": {
                       "type": "boolean",
                       "title": "The left_axis schema",
                       "description": "Enable or disable the y-axis label.",
-                      "default": false
+                      "default": true
                     }
                   }
                 },
