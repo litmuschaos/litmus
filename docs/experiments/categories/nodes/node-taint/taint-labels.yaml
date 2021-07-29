@@ -14,6 +14,6 @@ spec:
         env:
         # label and effect to be tainted on the targeted node
         - name: TAINT_LABEL
-          value: '2'
+          value: 'key=value:effect'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
