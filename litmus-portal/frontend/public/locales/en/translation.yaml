@@ -365,7 +365,7 @@ analyticsDashboard:
         addApplication: Add application
     selectTheMetrics:
       header: Select metrics
-      description: Based on the selected dashboard type these are the possible metrics that can be plotted.
+      description: Based upon the selected dashboard type these are the possible metrics that can be plotted.
       errorMessage: No panel groups or panels were found. Re-upload the dashboard.
     tuneTheQueries:
       header: Tune the queries
