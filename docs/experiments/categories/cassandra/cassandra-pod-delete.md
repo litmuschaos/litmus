@@ -1,6 +1,6 @@
 ## Cassandra pod delete
 
-It deleted the cassandra pods with namespace, labels, and kind provided at `spec.appinfo` in chaosengine for the `TOTAL_CHAOS_DURATION`. 
+It deletes the Cassandra pods with matching namespace, labels, and kind provided at `spec.appinfo` in chaosengine for the `TOTAL_CHAOS_DURATION` duration. 
 
 ### Cassandra App Details
 
@@ -18,9 +18,9 @@ Use the following example to tune this:
 
 ### Liveness check of cassandra
 
-The cassandra liveness can be tuned with `CASSANDRA_LIVENESS_CHECK` env. Provide `CASSANDRA_LIVENESS_CHECK` as `enabled` to enable the liveness check and provide `CASSANDRA_LIVENESS_CHECK` as `disabled` to skip the liveness check.
-The cassandra liveness image can be provided at `CASSANDRA_LIVENESS_IMAGE`.
-The cassandra liveness pod performs the CRUD operations to verify the liveness of cassandra. It creates the keyspace with `KEYSPACE_REPLICATION_FACTOR` keyspace factor.
+- The cassandra liveness can be tuned with `CASSANDRA_LIVENESS_CHECK` env. Provide `CASSANDRA_LIVENESS_CHECK` as `enabled` to enable the liveness check and provide `CASSANDRA_LIVENESS_CHECK` as `disabled` to skip the liveness check. The default value is disabled.
+- The cassandra liveness image can be provided at `CASSANDRA_LIVENESS_IMAGE`.
+- The cassandra liveness pod performs the CRUD operations to verify the liveness of cassandra. It creates the keyspace with `KEYSPACE_REPLICATION_FACTOR` keyspace factor.
 
 Use the following example to tune this:
 <references to the sample manifest>

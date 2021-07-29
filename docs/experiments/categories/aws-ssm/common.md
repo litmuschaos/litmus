@@ -1,6 +1,6 @@
-# AWS-SSM experiments tunables
+## AWS-SSM experiments tunable
 
-It contains the aws-ssm pecfic experiment tunables.
+It contains the aws-ssm specific experiment tunables.
 
 ### CPU Cores
 
@@ -18,7 +18,7 @@ Use the following example to tune this:
 
 ### SSM Docs
 
-It contains the details of the ssm docs i.e, `name, type, format of ssm-docs`.
+It contains the details of the SSM docs i.e, `name, type, the format of ssm-docs`.
 
 Use the following example to tune this:
 <references to the sample manifest>

@@ -1,10 +1,10 @@
-## AWS experiments tunnables
+## AWS experiments tunable
 
-It contains the aws specfic experiment tunables.
+It contains the AWS specific experiment tunables.
 
 ### Managed Nodegroup
 
-It specify whether aws instances are part of managed nodeGroups. If instances belongs to the managed nodeGroups then provide `MANAGED_NODEGROUP` as `enable` else provide it as `disable`. The default value is `disbable`.
+It specifies whether aws instances are part of managed nodeGroups. If instances belong to the managed nodeGroups then provide `MANAGED_NODEGROUP` as `enable` else provide it as `disable`. The default value is `disabled`.
 
 Use the following example to tune this:
 <references to the sample manifest>
