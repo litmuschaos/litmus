@@ -371,8 +371,6 @@ analyticsDashboard:
       header: Tune the queries
       description: Edit queries in the panels for fetching the relevant metrics.
       addPanel: + Add Panel
-      untitledPanel: Untitled Panel
-      untitledPanelGroup: Untitled Panel Group
       query: Query
       queries: Queries
       visualization: Visualization

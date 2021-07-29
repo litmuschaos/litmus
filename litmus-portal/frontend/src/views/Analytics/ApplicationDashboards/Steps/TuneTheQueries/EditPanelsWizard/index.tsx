@@ -221,9 +221,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       panel_id: '',
       panel_group_id: '',
       created_at: '',
-      panel_group_name: t(
-        'analyticsDashboard.applicationDashboards.tuneTheQueries.untitledPanelGroup'
-      ),
+      panel_group_name: 'Untitled Panel Group',
       ds_url: dashboardVars.dataSourceURL ?? '',
       prom_queries: [
         {
@@ -242,9 +240,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
         grids: true,
         left_axis: true,
       },
-      panel_name: t(
-        'analyticsDashboard.applicationDashboards.tuneTheQueries.untitledPanel'
-      ),
+      panel_name: 'Untitled Panel',
       y_axis_left: '',
       y_axis_right: '',
       x_axis_down: '',
@@ -254,18 +250,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
     return newPanel;
   };
 
-  const handleCreatePanel = () => {
-    const existingPanels: PanelDetails[] =
-      dashboardDetails.selectedPanels ?? [];
-    const newPanel = getNewPanel();
-    existingPanels.push(newPanel);
-    setDashboardDetails({
-      ...dashboardDetails,
-      selectedPanels: existingPanels,
-    });
-    generatePanelGroupsList(existingPanels);
-    setUpdate(true);
-  };
+  const handleCreatePanel = () => {};
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     if (newValue === dashboardDetails.selectedPanels?.length) {
