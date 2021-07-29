@@ -365,12 +365,14 @@ analyticsDashboard:
         addApplication: Add application
     selectTheMetrics:
       header: Select metrics
-      description: Based on the namespaces and application these are the possible metrics that can be plotted.
+      description: Based on the selected dashboard type these are the possible metrics that can be plotted.
       errorMessage: No panel groups or panels were found. Re-upload the dashboard.
     tuneTheQueries:
       header: Tune the queries
-      description: Edit queries to the data source for fetching relevant metrics.
-      addMetric: + Add Metric
+      description: Edit queries in the panels for fetching the relevant metrics.
+      addPanel: + Add Panel
+      untitledPanel: Untitled Panel
+      untitledPanelGroup: Untitled Panel Group
       query: Query
       queries: Queries
       visualization: Visualization
