@@ -119,10 +119,11 @@ const ScheduleAndRunStats: React.FC = () => {
             showTips
             showMultiToolTip
             yLabelOffset={35}
+            yLabel={activeTab === 0 ? 'No. of Runs' : 'No. of Schedules'}
             xAxistimeFormat={xAxisTimeFormat(filters)}
             margin={{
               top: 20,
-              left: 35,
+              left: 55,
               bottom: 30,
               right: 20,
             }}

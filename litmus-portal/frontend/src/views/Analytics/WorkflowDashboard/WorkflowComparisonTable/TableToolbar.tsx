@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   FormControl,
   IconButton,
@@ -222,18 +221,25 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
       <div className={classes.featureButtons}>
         {compare === false || comparisonState === false ? (
-          <ButtonOutlined disabled={!(numSelected > 1)} onClick={handleClick}>
-            <Typography className={classes.dateRangeDefault}>
-              {t('analytics.compareWorkflows')}
-            </Typography>
+          <ButtonOutlined
+            disabled={!(numSelected > 1)}
+            onClick={handleClick}
+            className={classes.dateRangeDefault}
+          >
+            <Typography>{t('analytics.compareWorkflows')}</Typography>
           </ButtonOutlined>
         ) : (
-          <ButtonOutlined onClick={handleExport} disabled={false}>
+          <ButtonOutlined
+            onClick={handleExport}
+            disabled={false}
+            className={classes.dateRangeDefault}
+          >
             <div className={classes.export}>
-              <Avatar className={classes.exportIcon}>
-                <DescriptionOutlinedIcon htmlColor={palette.primary.main} />
-              </Avatar>
-              <Typography className={classes.dateRangeDefault} display="inline">
+              <DescriptionOutlinedIcon
+                htmlColor={palette.primary.main}
+                className={classes.exportIcon}
+              />
+              <Typography display="inline">
                 {t('analytics.exportPDF')}
               </Typography>
             </div>

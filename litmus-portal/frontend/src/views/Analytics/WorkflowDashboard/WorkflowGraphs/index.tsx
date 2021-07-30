@@ -66,7 +66,11 @@ const WorkflowGraphs: React.FC = () => {
               <RadialChart
                 radialData={graphData}
                 legendTableHeight={105}
-                heading="Workflows"
+                heading={
+                  data?.getWorkflowRunStats.total_workflow_runs !== 1
+                    ? 'Workflow Runs'
+                    : 'Workflow Run'
+                }
                 showCenterHeading
               />
             )}
