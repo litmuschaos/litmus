@@ -65,15 +65,12 @@ const LoginPage: React.FC = () => {
     <div className={classes.rootContainer}>
       <Center>
         <div className={classes.rootDiv}>
-          <div>
-            <img src="./icons/LitmusLogoLight.svg" alt="litmus logo" />
-            <Typography className={classes.HeaderText}>
-              {t('login.heading')}
-            </Typography>
-            <Typography className={classes.litmusText}>
-              {t('login.subHeading1')}
-            </Typography>
-          </div>
+          <Typography className={classes.heading}>
+            {t('login.heading')}
+          </Typography>
+          <Typography className={classes.subheading}>
+            {t('login.subHeading1')}
+          </Typography>
           <form
             id="login-form"
             autoComplete="on"
@@ -119,15 +116,6 @@ const LoginPage: React.FC = () => {
               />
             </div>
             <div className={classes.buttonGroup}>
-              <ButtonFilled
-                className={classes.loginButton}
-                type="submit"
-                disabled={isLoading}
-              >
-                <div data-cy="loginButton">
-                  {isLoading ? <Loader size={loaderSize} /> : 'Login'}
-                </div>
-              </ButtonFilled>
               <Tooltip
                 classes={{
                   tooltip: classes.tooltip,
@@ -137,12 +125,26 @@ const LoginPage: React.FC = () => {
                 title={<Typography>{t('login.tooltipText')}</Typography>}
               >
                 <Typography className={classes.forgetPwdText}>
-                  {t('login.forgetPassword')}
+                  {t('login.forgotPassword')}
                 </Typography>
               </Tooltip>
+              <ButtonFilled
+                className={classes.loginButton}
+                type="submit"
+                disabled={isLoading}
+              >
+                <div data-cy="loginButton">
+                  {isLoading ? <Loader size={loaderSize} /> : 'Login'}
+                </div>
+              </ButtonFilled>
             </div>
           </form>
         </div>
+        <img
+          className={classes.logo}
+          src="./icons/LitmusLogoLight.svg"
+          alt="Litmus Logo"
+        />
       </Center>
     </div>
   );

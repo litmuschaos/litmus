@@ -14,10 +14,10 @@ getStarted:
     desc: Choose an appropriate name for your project. This project name will be used when collaborating with your team members.
   password:
     name: password
-    label: Password
+    label: New Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
-    info: Set your new Password
+    info: Set a new Password
     desc: Use the new password at your next login.
 
 ###########################################
@@ -25,7 +25,9 @@ getStarted:
 ###########################################
 
 sidebar:
-  title: Litmus
+  title: Chaos Center
+  version: Litmus Version
+  time: Build Time
 
 header:
   projectDropdown:
@@ -65,8 +67,8 @@ customWorkflowCard:
 
 workflowStepper:
   continueError: To continue, please check the error in code.
-  scheduleNewChaosWorkflow: Schedule a new chaos workflow
-  aNewChaosWorkflow: A new chaos workflow,
+  scheduleNewChaosWorkflow: Schedule a new Litmus workflow
+  aNewChaosWorkflow: A new Litmus workflow,
   successful: is successfully created!
   congratulationsSub1: Congratulations on creating your workflow! Now information about
   congratulationsSub2: it will be displayed on the workflow schedules.
@@ -99,11 +101,11 @@ home:
   heading: Welcome,
 
 login:
-  heading: Chaos Engineering for your Cloud Native applications
-  subHeading1: Create, orchestrate, analyze and collaborate your Chaos Workflows.
+  heading: Welcome to Chaos Center
+  subHeading1: Login to create, orchestrate, analyze and collaborate your Litmus workflows.
   subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
   wrongCredentials: Wrong Credentials - Try again with correct username or password
-  forgetPassword: Forgot your password?
+  forgotPassword: Forgot your password?
   tooltipText: You need to contact your admin to reset your password.
 
 schedule:
@@ -363,12 +365,12 @@ analyticsDashboard:
         addApplication: Add application
     selectTheMetrics:
       header: Select metrics
-      description: Based on the namespaces and application these are the possible metrics that can be plotted.
+      description: Based upon the selected dashboard type these are the possible metrics that can be plotted.
       errorMessage: No panel groups or panels were found. Re-upload the dashboard.
     tuneTheQueries:
       header: Tune the queries
-      description: Edit queries to the data source for fetching relevant metrics.
-      addMetric: + Add Metric
+      description: Edit queries in the panels for fetching the relevant metrics.
+      addPanel: + Add Panel
       query: Query
       queries: Queries
       visualization: Visualization
@@ -574,7 +576,7 @@ homeViews:
   agentConfiguredHome:
     error: Error fetching the data!
     noWorkflow:
-      heading: Schedule your first workflow
+      heading: Schedule your first Litmus workflow
       description: Now it is successfully running on your Kubernetes cluster. Once you schedule chaos workflows, reliability analytics will be displayed here.
       schedule: Schedule a workflow
       explore: Explore pre defined workflows
@@ -920,13 +922,13 @@ workflowDetailsView:
 
 createWorkflow:
   chooseWorkflow:
-    title: Start creating your chaos workflow
+    title: Start creating your Litmus workflow
     subtitle: Simulate the workflow run and see the suggested reliability score
     optionA: Create a new workflow from one of the pre-defined chaos workflow templates
     optionB: Create a new workflow by cloning an existing workflow
     optionC: Create a new workflow using the experiments from
     optionD: Import a workflow using YAML
-    myHubs: MyHub
+    myHubs: ChaosHubs
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
@@ -935,7 +937,7 @@ createWorkflow:
     descriptionB: You have selected an existing workflow
     descriptionC: You have selected a MyHub workflow
     descriptionD: You have imported a workflow YAML
-    description2: Provide a name and description to the new workflow.
+    description2: Provide a name and description to the new Litmus workflow.
     edit: Edit Photo
     changeImage: Change workflow logo
     changeImgDescription: You can choose a logo from given below
@@ -957,7 +959,7 @@ createWorkflow:
       head3: Namespace
       head4: Application
       head5: Probes
-    selectMyHub: Select MyHub
+    selectMyHub: Select ChaosHub
     label:
       workflowName: Workflow name
       desc: Description
@@ -972,9 +974,10 @@ createWorkflow:
     addPredefined: Add a pre-defined workflow to continue scheduling.
     searchTerm: Enter a correct search term
   reliabilityScore:
-    header: Adjust the weights of the experiments in the workflow
+    header: Adjust the weights of the experiments in the Litmus workflow
     info: You have selected
-    infoNext: tests in the “Kubernetes conformance test” workflow. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weightage against.
+    tests: tests in the
+    infoNext: workflow. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weightage against.
     infoNextStrong: These weights are used to calculate the resiliency score at the end of test.
     testInfo: Compare the importance of the items above and launch a demo version of Kubernetes conformance test to see how it works.
     button:
@@ -995,7 +998,7 @@ createWorkflow:
         testPoints: Test Points
   scheduleWorkflow:
     header: Choose a chaos schedule
-    info: Choose the right time to start your first workflow. Below your first workflow. Below you can find any option convenient for you.
+    info: Choose the right time to start your first Litmus workflow. Below your first workflow. Below you can find any option convenient for you.
     min: min
     mins: mins
     at: at
@@ -1167,7 +1170,7 @@ createWorkflow:
 
 targets:
   connectHome:
-    head: Agents
+    head: Litmus Agents
     connectText: Connect the Agent
   copy:
     copy: Copy
@@ -1231,8 +1234,8 @@ workflowCluster:
       back: Back
 workflowAgent:
   header:
-    chooseAgent: Choose Agent to send the chaos workflow to
-    creatingNew: You are creating a new chaos workflow
+    chooseAgent: Choose Agent to send the Litmus workflow to
+    creatingNew: You are creating a new Litmus workflow
     selectAgent: Select a target Kubernetes cluster to run this workflow
   search:
     placeholder: Search
