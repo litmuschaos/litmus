@@ -121,10 +121,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
         ...probeData,
         'k8sProbe/inputs': {
           ...probeData['k8sProbe/inputs'],
-          command: {
-            ...probeData['k8sProbe/inputs'].command,
-            [e.target.name]: e.target.value,
-          },
+          [e.target.name]: e.target.value,
         },
       });
     }
@@ -542,6 +539,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 id="data"
                 name="data"
                 type="text"
+                multiline
                 value={probeData['k8sProbe/inputs']?.data}
                 onChange={handleK8s}
               />
