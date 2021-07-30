@@ -1626,7 +1626,6 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 
 	// Iterates through WorkflowRuns to group the data for each day
 	for _, workflowRun := range WorkflowRuns {
-		fmt.Println(workflowRun.Completed)
 		i, err := strconv.ParseInt(workflowRun.LastUpdated, 10, 64)
 		if err != nil {
 			fmt.Println("error", err)
