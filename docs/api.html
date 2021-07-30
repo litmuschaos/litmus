@@ -22,6 +22,7 @@
         <nav id="nav" role="navigation">
           <h5>Topics</h5>
           <a href="#introduction">Introduction</a>
+          <a href="https://litmuschaos.github.io/litmus/auth/api.html" target="_blank">Authentication</a>
           <h5>Operations</h5>
           <section>
             <a href="#tag-Cluster">Cluster</a>
@@ -180,6 +181,59 @@
               </li>
               <li>
                 <a href="#operation-delete_image_registry-post"> Delete Image Registry </a>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <a href="#tag-Analytics">Analytics</a>
+            <ul>
+              <li>
+                <a href="#operation-get_heatmap_data-post"> Get HeatMap Data </a>
+              </li>
+              <li>
+                <a href="#operation-get_workflow_stats-post"> Get Workflow Stats </a>
+              </li>
+              <li>
+                <a href="#operation-get_workflow_run_stats-post"> Get Workflow Run Stats </a>
+              </li>
+              <li>
+                <a href="#operation-list_datasource-post"> List DataSource </a>
+              </li>
+              <li>
+                <a href="#operation-get_prom_query-post"> Get Prom Query </a>
+              </li>
+              <li>
+                <a href="#operation-get_prom_label_names_and_values-post"> Get Prom Label names and values </a>
+              </li>
+              <li>
+                <a href="#operation-get_prom_series_list-post"> Get Prom Series List </a>
+              </li>
+              <li>
+                <a href="#operation-list_dashboard-post"> List Dashboard </a>
+              </li>
+              <li>
+                <a href="#operation-portal_dashboard_data-post"> Portal Dashboard Data </a>
+              </li>
+              <li>
+                <a href="#operation-create_datasource-post"> Create DataSource </a>
+              </li>
+              <li>
+                <a href="#operation-create_dashboard-post"> Create Dashboard </a>
+              </li>
+              <li>
+                <a href="#operation-update_datasource-post"> Update DataSource </a>
+              </li>
+              <li>
+                <a href="#operation-update_dashboard-post"> Update Dashboard </a>
+              </li>
+              <li>
+                <a href="#operation-update_panel-post"> Update Panel </a>
+              </li>
+              <li>
+                <a href="#operation-delete_dashboard-post"> Delete Dashboard </a>
+              </li>
+              <li>
+                <a href="#operation-delete_datasource-post"> Delete DataSource </a>
               </li>
             </ul>
           </section>
@@ -1182,45 +1236,7 @@ http://localhost:8080/query
                       <td>Optional</td>
                     </tr>
                   </table>
-                  <h6>Example Body:</h6> {
-                  <br/>
-                  <p style="margin-left: 40px">
-                    <b>"project_id"</b>: "5fd7d9212c9f32447e28317b",
-                    <br/>
-                    <b>"workflow_ids"</b>: ["3gr3f492146f53d4g3e283re"],
-                    <br/>
-                    <b>"workflow_run_ids"</b>:["32433d454ft452421dff55"],
-                    <br/>
-                    <b>"pagination"</b>:{
-                    <br/>
-                    <b>"page"</b>:"1"
-                    <br/>
-                    <b>"limit"</b>:"10"
-                    <br/> },
-                    <br/>
-                    <b>"sort"</b>:{
-                    <br/>
-                    <b>"field"</b>:"name"
-                    <br/>
-                    <b>"descending"</b>:true
-                    <br/> },
-                    <br/>
-                    <b>"filter"</b>:{
-                    <br/>
-                    <b>"workflow_name"</b>:"name",
-                    <br/>
-                    <b>"cluster_name"</b>:"Self-Cluster",
-                    <br/>
-                    <b>"workflow_status"</b>: "Running"
-                    <br/>
-                    <b> "date_range":</b> {
-                    <br/>
-                    <b>"start_date"</b>: 191323221,
-                    <br/>
-                    <b>"end_date"</b>: 189890087,
-                    <br/> }
-                    <br/> },
-                    <br/> </p> } </section>
+                </section>
               </div>
             </div>
             <div class="doc-row">
@@ -3601,7 +3617,7 @@ http://localhost:8080/query
                     <tr>
                       <td>FileType</td>
                       <td>-</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                   </table>
                 </section>
@@ -3764,7 +3780,7 @@ http://localhost:8080/query
                     <tr>
                       <td>FileType</td>
                       <td>-</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                   </table>
                 </section>
@@ -4061,7 +4077,7 @@ http://localhost:8080/query
                     <tr>
                       <td>FileType</td>
                       <td>-</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                   </table>
                 </section>
@@ -7702,6 +7718,2820 @@ http://localhost:8080/query
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;data&quot;</span>: {
     <span class="hljs-attr">&quot;deleteImageRegistry&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <h1 id="tag-Analytics" class="swagger-summary-tag" data-traverse-target="tag-Analytics">Analytics</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>Analytics allows user to visualize the chaos metrics with the help of different dashboards and graphs present in the Litmus Portal.</p>
+            </div>
+          </div>
+          <div id="operation-get_heatmap_data-post" class="operation panel" data-traverse-target="operation-get_heatmap_data-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get HeatMap Data</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to get year-wise calendar heatmap of daily average resilience scores for workflow runs.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>workflow_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>year</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">project_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">workflow_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">year:
+                        <span class="prop-type">
+                          <div class="json-property-type">integer</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> getHeatmapData<span class="hljs-tag">(<span class="hljs-code">$project_id</span>:<span class="hljs-type"> String!</span>, <span class="hljs-code">$workflow_id</span>:<span class="hljs-type"> String!</span>, <span class="hljs-code">$year</span>:<span class="hljs-type"> Int!</span>)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">getHeatmapData<span class="hljs-tag">(project_id: <span class="hljs-code">$project_id</span>, workflow_id: <span class="hljs-code">$workflow_id</span>, year: <span class="hljs-code">$year</span>)</span><span class="hljs-tag">{
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;workflow_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;year&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20getHeatmapData(%24project_id%3A%20String!%2C%20%24workflow_id%3A%20String!%2C%20%24year%3A%20Int!)%7B%0A%20%20getHeatmapData(project_id%3A%20%24project_id%2C%20workflow_id%3A%20%24workflow_id%2C%20year%3A%20%24year)%7B%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/HeatmapData">HeatmapData</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;getHeatmapData&quot;</span>: [
+      {}
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-get_workflow_stats-post" class="operation panel" data-traverse-target="operation-get_workflow_stats-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get Workflow Stats</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to get monthly, daily and hourly workflow schedule and run statistics as a time series.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>filter</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>show_workflow_runs</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">project_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">filter:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/TimeFrequency">TimeFrequency</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">show_workflow_runs:
+                        <span class="prop-type">
+                          <div class="json-property-type">boolean</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> getWorkflowStats<span class="hljs-tag">(<span class="hljs-code">$project_id</span>: ID!, <span class="hljs-code">$filter</span>:<span class="hljs-type"> TimeFrequency!</span>, <span class="hljs-code">$show_workflow_runs</span>:<span class="hljs-type"> Boolean!</span>)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">getWorkflowStats<span class="hljs-tag">(project_id: <span class="hljs-code">$project_id</span>, filter: <span class="hljs-code">$filter</span>, show_workflow_runs: <span class="hljs-code">$show_workflow_runs</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">date</span>
+    <span class="hljs-symbol">value</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;filter&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;show_workflow_runs&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20getWorkflowStats(%24project_id%3A%20ID!%2C%20%24filter%3A%20TimeFrequency!%2C%20%24show_workflow_runs%3A%20Boolean!)%7B%0A%20%20getWorkflowStats(project_id%3A%20%24project_id%2C%20filter%3A%20%24filter%2C%20show_workflow_runs%3A%20%24show_workflow_runs)%7B%0A%20%20%20%20date%0A%20%20%20%20value%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/WorkflowStats">WorkflowStats</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;getWorkflowStats&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;date&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>
+      }
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-get_workflow_run_stats-post" class="operation panel" data-traverse-target="operation-get_workflow_run_stats-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get Workflow Run Stats</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to get aggregated workflow and experiment statistics for completed runs of selected schedules.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>workflow_ids</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">workflowRunStatsRequest:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/WorkflowRunStatsRequest">WorkflowRunStatsRequest</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> getWorkflowRunStats<span class="hljs-tag">(<span class="hljs-code">$workflowRunStatsRequest</span>:<span class="hljs-type"> WorkflowRunStatsRequest!</span>)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">getWorkflowRunStats<span class="hljs-tag">(workflowRunStatsRequest: <span class="hljs-code">$workflowRunStatsRequest</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">total_workflow_runs</span>
+    <span class="hljs-symbol">succeeded_workflow_runs</span>
+    <span class="hljs-symbol">failed_workflow_runs</span>
+    <span class="hljs-symbol">running_workflow_runs</span>
+    <span class="hljs-symbol">average_resiliency_score</span>
+    <span class="hljs-symbol">total_experiments</span>
+    <span class="hljs-symbol">experiments_passed</span>
+    <span class="hljs-symbol">experiments_failed</span>
+    <span class="hljs-symbol">experiments_awaited</span>
+    <span class="hljs-symbol">experiments_stopped</span>
+    <span class="hljs-symbol">experiments_na</span>
+    <span class="hljs-symbol">passed_percentage</span>
+    <span class="hljs-symbol">failed_percentage</span>
+    <span class="hljs-symbol">workflow_run_succeeded_percentage</span>
+    <span class="hljs-symbol">workflow_run_failed_percentage</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;workflowRunStatsRequest&quot;</span>: {
+    <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
+    <span class="hljs-attr">&quot;workflow_ids&quot;</span>: [
+      <span class="hljs-string">&quot;object&quot;</span>
+    ]
+  }
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20getWorkflowRunStats(%24workflowRunStatsRequest%3A%20WorkflowRunStatsRequest!)%7B%0A%20%20getWorkflowRunStats(workflowRunStatsRequest%3A%20%24workflowRunStatsRequest)%7B%0A%20%20%20%20total_workflow_runs%0A%20%20%20%20succeeded_workflow_runs%0A%20%20%20%20failed_workflow_runs%0A%20%20%20%20running_workflow_runs%0A%20%20%20%20average_resiliency_score%0A%20%20%20%20total_experiments%0A%20%20%20%20experiments_passed%0A%20%20%20%20experiments_failed%0A%20%20%20%20experiments_awaited%0A%20%20%20%20experiments_stopped%0A%20%20%20%20experiments_na%0A%20%20%20%20passed_percentage%0A%20%20%20%20failed_percentage%0A%20%20%20%20workflow_run_succeeded_percentage%0A%20%20%20%20workflow_run_failed_percentage%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="">
+                          <a class="json-schema-ref" href="#/definitions/WorkflowRunStatsResponse">WorkflowRunStatsResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;getWorkflowRunStats&quot;</span>: {
+      <span class="hljs-attr">&quot;total_workflow_runs&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;succeeded_workflow_runs&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;failed_workflow_runs&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;running_workflow_runs&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;average_resiliency_score&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+      <span class="hljs-attr">&quot;total_experiments&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;experiments_passed&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;experiments_failed&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;experiments_awaited&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;experiments_stopped&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;experiments_na&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;passed_percentage&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+      <span class="hljs-attr">&quot;failed_percentage&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+      <span class="hljs-attr">&quot;workflow_run_succeeded_percentage&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+      <span class="hljs-attr">&quot;workflow_run_failed_percentage&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-list_datasource-post" class="operation panel" data-traverse-target="operation-list_datasource-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">List DataSource</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to list all connected data sources in a project.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">project_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> ListDataSource<span class="hljs-tag">(<span class="hljs-code">$project_id</span>:<span class="hljs-type"> String!</span>)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">ListDataSource<span class="hljs-tag">(project_id: <span class="hljs-code">$project_id</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">ds_id</span>
+    <span class="hljs-symbol">ds_name</span>
+    <span class="hljs-symbol">ds_type</span>
+    <span class="hljs-symbol">ds_url</span>
+    <span class="hljs-symbol">access_type</span>
+    <span class="hljs-symbol">auth_type</span>
+    <span class="hljs-symbol">basic_auth_username</span>
+    <span class="hljs-symbol">basic_auth_password</span>
+    <span class="hljs-symbol">scrape_interval</span>
+    <span class="hljs-symbol">query_timeout</span>
+    <span class="hljs-symbol">http_method</span>
+    <span class="hljs-symbol">project_id</span>
+    <span class="hljs-symbol">health_status</span>
+    <span class="hljs-symbol">created_at</span>
+    <span class="hljs-symbol">updated_at</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20ListDataSource(%24project_id%3A%20String!)%7B%0A%20%20ListDataSource(project_id%3A%20%24project_id)%7B%0A%20%20%20%20ds_id%0A%20%20%20%20ds_name%0A%20%20%20%20ds_type%0A%20%20%20%20ds_url%0A%20%20%20%20access_type%0A%20%20%20%20auth_type%0A%20%20%20%20basic_auth_username%0A%20%20%20%20basic_auth_password%0A%20%20%20%20scrape_interval%0A%20%20%20%20query_timeout%0A%20%20%20%20http_method%0A%20%20%20%20project_id%0A%20%20%20%20health_status%0A%20%20%20%20created_at%0A%20%20%20%20updated_at%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/DSResponse">DSResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;ListDataSource&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;ds_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;ds_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;ds_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;access_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;auth_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;basic_auth_username&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;basic_auth_password&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;scrape_interval&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+        <span class="hljs-attr">&quot;query_timeout&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+        <span class="hljs-attr">&quot;http_method&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;health_status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+      }
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-get_prom_query-post" class="operation panel" data-traverse-target="operation-get_prom_query-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get Prom Query</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to get prometheus time series data from promQL queries and data source details.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">query:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/promInput">promInput</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> GetPromQuery<span class="hljs-tag">(<span class="hljs-code">$query</span>: promInput)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">GetPromQuery<span class="hljs-tag">(query: <span class="hljs-code">$query</span>)</span><span class="hljs-tag">{
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;query&quot;</span>: {
+    <span class="hljs-attr">&quot;queries&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;queryid&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;query&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;legend&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;resolution&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;minstep&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;ds_details&quot;</span>: {
+      <span class="hljs-attr">&quot;url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;start&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;end&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20GetPromQuery(%24query%3A%20promInput)%7B%0A%20%20GetPromQuery(query%3A%20%24query)%7B%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="">
+                          <a class="json-schema-ref" href="#/definitions/promResponse">promResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;GetPromQuery&quot;</span>: {}
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-get_prom_label_names_and_values-post" class="operation panel" data-traverse-target="operation-get_prom_label_names_and_values-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get Prom Label names and values</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to get labels and values associated with a prometheus metric and a given data source.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>series</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_details.url</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_details.start</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_details.end</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">series:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/promSeriesInput">promSeriesInput</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> GetPromLabelNamesAndValues<span class="hljs-tag">(<span class="hljs-code">$series</span>: promSeriesInput)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">GetPromLabelNamesAndValues<span class="hljs-tag">(series: <span class="hljs-code">$series</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">series</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;series&quot;</span>: {
+    <span class="hljs-attr">&quot;series&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;ds_details&quot;</span>: {
+      <span class="hljs-attr">&quot;url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;start&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;end&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20GetPromLabelNamesAndValues(%24series%3A%20promSeriesInput)%7B%0A%20%20GetPromLabelNamesAndValues(series%3A%20%24series)%7B%0A%20%20%20%20series%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="">
+                          <a class="json-schema-ref" href="#/definitions/promSeriesResponse">promSeriesResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;GetPromLabelNamesAndValues&quot;</span>: {
+      <span class="hljs-attr">&quot;series&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-get_prom_series_list-post" class="operation panel" data-traverse-target="operation-get_prom_series_list-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get Prom Series List</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to get a list of all time series metric names available on a prometheus data source.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>url</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>start</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>end</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">ds_details:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/dsDetails">dsDetails</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> GetPromSeriesList<span class="hljs-tag">(<span class="hljs-code">$ds_details</span>: dsDetails)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">GetPromSeriesList<span class="hljs-tag">(ds_details: <span class="hljs-code">$ds_details</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">seriesList</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;ds_details&quot;</span>: {
+    <span class="hljs-attr">&quot;url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;start&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;end&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  }
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20GetPromSeriesList(%24ds_details%3A%20dsDetails)%7B%0A%20%20GetPromSeriesList(ds_details%3A%20%24ds_details)%7B%0A%20%20%20%20seriesList%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="">
+                          <a class="json-schema-ref" href="#/definitions/promSeriesListResponse">promSeriesListResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;GetPromSeriesList&quot;</span>: {
+      <span class="hljs-attr">&quot;seriesList&quot;</span>: [
+        <span class="hljs-string">&quot;string&quot;</span>
+      ]
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-list_dashboard-post" class="operation panel" data-traverse-target="operation-list_dashboard-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">List Dashboard</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to list all dashboards created in a project.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>cluster_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>db_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">project_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">cluster_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">db_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> ListDashboard<span class="hljs-tag">(<span class="hljs-code">$project_id</span>:<span class="hljs-type"> String!</span>, <span class="hljs-code">$cluster_id</span>:<span class="hljs-type"> String,</span> <span class="hljs-code">$db_id</span>:<span class="hljs-type"> String)</span>{
+ <span class="hljs-type"> ListDashboard(</span>project_id: <span class="hljs-code">$project_id</span>, cluster_id: <span class="hljs-code">$cluster_id</span>, db_id: <span class="hljs-code">$db_id</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">ds_id</span>
+    <span class="hljs-symbol">db_id</span>
+    <span class="hljs-symbol">db_name</span>
+    <span class="hljs-symbol">db_type_id</span>
+    <span class="hljs-symbol">db_type_name</span>
+    <span class="hljs-symbol">db_information</span>
+    <span class="hljs-symbol">chaos_event_query_template</span>
+    <span class="hljs-symbol">chaos_verdict_query_template</span>
+    <span class="hljs-symbol">cluster_name</span>
+    <span class="hljs-symbol">ds_name</span>
+    <span class="hljs-symbol">ds_type</span>
+    <span class="hljs-symbol">ds_url</span>
+    <span class="hljs-symbol">ds_health_status</span>
+    <span class="hljs-symbol">end_time</span>
+    <span class="hljs-symbol">start_time</span>
+    <span class="hljs-symbol">refresh_rate</span>
+    <span class="hljs-symbol">project_id</span>
+    <span class="hljs-symbol">cluster_id</span>
+    <span class="hljs-symbol">created_at</span>
+    <span class="hljs-symbol">updated_at</span>
+    <span class="hljs-symbol">viewed_at</span>
+  }</span></span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;cluster_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;db_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20ListDashboard(%24project_id%3A%20String!%2C%20%24cluster_id%3A%20String%2C%20%24db_id%3A%20String)%7B%0A%20%20ListDashboard(project_id%3A%20%24project_id%2C%20cluster_id%3A%20%24cluster_id%2C%20db_id%3A%20%24db_id)%7B%0A%20%20%20%20ds_id%0A%20%20%20%20db_id%0A%20%20%20%20db_name%0A%20%20%20%20db_type_id%0A%20%20%20%20db_type_name%0A%20%20%20%20db_information%0A%20%20%20%20chaos_event_query_template%0A%20%20%20%20chaos_verdict_query_template%0A%20%20%20%20cluster_name%0A%20%20%20%20ds_name%0A%20%20%20%20ds_type%0A%20%20%20%20ds_url%0A%20%20%20%20ds_health_status%0A%20%20%20%20end_time%0A%20%20%20%20start_time%0A%20%20%20%20refresh_rate%0A%20%20%20%20project_id%0A%20%20%20%20cluster_id%0A%20%20%20%20created_at%0A%20%20%20%20updated_at%0A%20%20%20%20viewed_at%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/listDashboardResponse">listDashboardResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;ListDashboard&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;db_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;db_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;db_type_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;db_type_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;db_information&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;chaos_event_query_template&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;chaos_verdict_query_template&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;cluster_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;ds_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;ds_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;ds_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;ds_health_status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;end_time&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;start_time&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;refresh_rate&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;cluster_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;viewed_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+      }
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-portal_dashboard_data-post" class="operation panel" data-traverse-target="operation-portal_dashboard_data-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Portal Dashboard Data</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This query is used to list all pre-configured dashboard templates available in litmus center.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>hub_name</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">project_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">hub_name:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">query</span> PortalDashboardData<span class="hljs-tag">(<span class="hljs-code">$project_id</span>:<span class="hljs-type"> String!</span>, <span class="hljs-code">$hub_name</span>:<span class="hljs-type"> String!</span>)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">PortalDashboardData<span class="hljs-tag">(project_id: <span class="hljs-code">$project_id</span>, hub_name: <span class="hljs-code">$hub_name</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">name</span>
+    <span class="hljs-symbol">dashboard_data</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;hub_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=query%20PortalDashboardData(%24project_id%3A%20String!%2C%20%24hub_name%3A%20String!)%7B%0A%20%20PortalDashboardData(project_id%3A%20%24project_id%2C%20hub_name%3A%20%24hub_name)%7B%0A%20%20%20%20name%0A%20%20%20%20dashboard_data%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/PortalDashboardData">PortalDashboardData</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;PortalDashboardData&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;dashboard_data&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+      }
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-create_datasource-post" class="operation panel" data-traverse-target="operation-create_datasource-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create DataSource</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This mutation is used to add a prometheus data source to the project which serves as a metrics collector for agent clusters.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>ds_name</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_url</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>access_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>auth_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>basic_auth_username</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>basic_auth_password</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>scrape_interval</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>query_timeout</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>http_method</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                  <h6>Example Body:</h6> {
+                  <br/>
+                  <p style="margin-left: 40px">
+                    <b>"ds_name"</b>: "sample data source",
+                    <br/>
+                    <b>"ds_type"</b>: "Prometheus",
+                    <br/>
+                    <b>"access_type"</b>: "Server (Default)",
+                    <br/>
+                    <b>"auth_type"</b>: "no auth",
+                    <br/>
+                    <b>"basic_auth_password"</b>: "",
+                    <br/>
+                    <b>"basic_auth_username"</b>: "",
+                    <br/>
+                    <b>"ds_url"</b>: "https://demo.com:9090",
+                    <br/>
+                    <b>"http_method"</b>: "POST",
+                    <br/>
+                    <b>"project_id"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",
+                    <br/>
+                    <b>"query_timeout"</b>: "30",
+                    <br/>
+                    <b>"scrape_interval"</b>: "15",
+                    <br/> </p> } </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">datasource:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/DSInput">DSInput</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> createDataSource<span class="hljs-tag">(<span class="hljs-code">$datasource</span>: DSInput)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">createDataSource<span class="hljs-tag">(datasource: <span class="hljs-code">$datasource</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">ds_id</span>
+    <span class="hljs-symbol">ds_name</span>
+    <span class="hljs-symbol">ds_type</span>
+    <span class="hljs-symbol">ds_url</span>
+    <span class="hljs-symbol">access_type</span>
+    <span class="hljs-symbol">auth_type</span>
+    <span class="hljs-symbol">basic_auth_username</span>
+    <span class="hljs-symbol">basic_auth_password</span>
+    <span class="hljs-symbol">scrape_interval</span>
+    <span class="hljs-symbol">query_timeout</span>
+    <span class="hljs-symbol">http_method</span>
+    <span class="hljs-symbol">project_id</span>
+    <span class="hljs-symbol">health_status</span>
+    <span class="hljs-symbol">created_at</span>
+    <span class="hljs-symbol">updated_at</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;datasource&quot;</span>: {
+    <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;ds_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;ds_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;ds_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;access_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;auth_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;basic_auth_username&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;basic_auth_password&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;scrape_interval&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+    <span class="hljs-attr">&quot;query_timeout&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+    <span class="hljs-attr">&quot;http_method&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  }
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20createDataSource(%24datasource%3A%20DSInput)%7B%0A%20%20createDataSource(datasource%3A%20%24datasource)%7B%0A%20%20%20%20ds_id%0A%20%20%20%20ds_name%0A%20%20%20%20ds_type%0A%20%20%20%20ds_url%0A%20%20%20%20access_type%0A%20%20%20%20auth_type%0A%20%20%20%20basic_auth_username%0A%20%20%20%20basic_auth_password%0A%20%20%20%20scrape_interval%0A%20%20%20%20query_timeout%0A%20%20%20%20http_method%0A%20%20%20%20project_id%0A%20%20%20%20health_status%0A%20%20%20%20created_at%0A%20%20%20%20updated_at%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="">
+                          <a class="json-schema-ref" href="#/definitions/DSResponse">DSResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;createDataSource&quot;</span>: {
+      <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;access_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;auth_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;basic_auth_username&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;basic_auth_password&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;scrape_interval&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;query_timeout&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;http_method&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;health_status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-create_dashboard-post" class="operation panel" data-traverse-target="operation-create_dashboard-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create Dashboard</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This mutation is used to create an application dashboard providing agent information, data source details and prometheus queries.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">dashboard:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/createDBInput">createDBInput</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> createDashBoard<span class="hljs-tag">(<span class="hljs-code">$dashboard</span>: createDBInput)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">createDashBoard<span class="hljs-tag">(dashboard: <span class="hljs-code">$dashboard</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">ds_id</span>
+    <span class="hljs-symbol">db_id</span>
+    <span class="hljs-symbol">db_name</span>
+    <span class="hljs-symbol">db_type_id</span>
+    <span class="hljs-symbol">db_type_name</span>
+    <span class="hljs-symbol">db_information</span>
+    <span class="hljs-symbol">chaos_event_query_template</span>
+    <span class="hljs-symbol">chaos_verdict_query_template</span>
+    <span class="hljs-symbol">cluster_name</span>
+    <span class="hljs-symbol">ds_name</span>
+    <span class="hljs-symbol">ds_type</span>
+    <span class="hljs-symbol">ds_url</span>
+    <span class="hljs-symbol">ds_health_status</span>
+    <span class="hljs-symbol">end_time</span>
+    <span class="hljs-symbol">start_time</span>
+    <span class="hljs-symbol">refresh_rate</span>
+    <span class="hljs-symbol">project_id</span>
+    <span class="hljs-symbol">cluster_id</span>
+    <span class="hljs-symbol">created_at</span>
+    <span class="hljs-symbol">updated_at</span>
+    <span class="hljs-symbol">viewed_at</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;dashboard&quot;</span>: {
+    <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;db_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;db_type_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;db_type_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;db_information&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;chaos_event_query_template&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;chaos_verdict_query_template&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;application_metadata_map&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;namespace&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;applications&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;kind&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;names&quot;</span>: [
+              <span class="hljs-string">&quot;string&quot;</span>
+            ]
+          }
+        ]
+      }
+    ],
+    <span class="hljs-attr">&quot;panel_groups&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;panels&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;panel_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;db_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;y_axis_left&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;y_axis_right&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;x_axis_down&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;unit&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;panel_group_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;prom_queries&quot;</span>: [
+              {
+                <span class="hljs-attr">&quot;queryid&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;prom_query_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;legend&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;resolution&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;minstep&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;line&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+                <span class="hljs-attr">&quot;close_area&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+              }
+            ],
+            <span class="hljs-attr">&quot;panel_options&quot;</span>: {
+              <span class="hljs-attr">&quot;points&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+              <span class="hljs-attr">&quot;grids&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+              <span class="hljs-attr">&quot;left_axis&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+            },
+            <span class="hljs-attr">&quot;panel_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+          }
+        ],
+        <span class="hljs-attr">&quot;panel_group_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;end_time&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;start_time&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
+    <span class="hljs-attr">&quot;cluster_id&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
+    <span class="hljs-attr">&quot;refresh_rate&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  }
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20createDashBoard(%24dashboard%3A%20createDBInput)%7B%0A%20%20createDashBoard(dashboard%3A%20%24dashboard)%7B%0A%20%20%20%20ds_id%0A%20%20%20%20db_id%0A%20%20%20%20db_name%0A%20%20%20%20db_type_id%0A%20%20%20%20db_type_name%0A%20%20%20%20db_information%0A%20%20%20%20chaos_event_query_template%0A%20%20%20%20chaos_verdict_query_template%0A%20%20%20%20cluster_name%0A%20%20%20%20ds_name%0A%20%20%20%20ds_type%0A%20%20%20%20ds_url%0A%20%20%20%20ds_health_status%0A%20%20%20%20end_time%0A%20%20%20%20start_time%0A%20%20%20%20refresh_rate%0A%20%20%20%20project_id%0A%20%20%20%20cluster_id%0A%20%20%20%20created_at%0A%20%20%20%20updated_at%0A%20%20%20%20viewed_at%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="">
+                          <a class="json-schema-ref" href="#/definitions/listDashboardResponse">listDashboardResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;createDashBoard&quot;</span>: {
+      <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;db_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;db_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;db_type_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;db_type_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;db_information&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;chaos_event_query_template&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;chaos_verdict_query_template&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;cluster_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_health_status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;end_time&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;start_time&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;refresh_rate&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;cluster_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;viewed_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-update_datasource-post" class="operation panel" data-traverse-target="operation-update_datasource-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update DataSource</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This mutation is used to update a conncted data source&#39;s information.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>ds_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_name</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_url</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>access_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>auth_type</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>basic_auth_username</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>basic_auth_password</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>scrape_interval</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>query_timeout</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>http_method</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                  <h6>Example Body:</h6> {
+                  <br/>
+                  <p style="margin-left: 40px">
+                    <b>"ds_id"</b>: "sample data source",
+                    <br/>
+                    <b>"ds_name"</b>: "sample data source",
+                    <br/>
+                    <b>"ds_type"</b>: "Prometheus",
+                    <br/>
+                    <b>"access_type"</b>: "Server (Default)",
+                    <br/>
+                    <b>"auth_type"</b>: "no auth",
+                    <br/>
+                    <b>"basic_auth_password"</b>: "",
+                    <br/>
+                    <b>"basic_auth_username"</b>: "",
+                    <br/>
+                    <b>"ds_url"</b>: "https://demo.com:9090",
+                    <br/>
+                    <b>"http_method"</b>: "POST",
+                    <br/>
+                    <b>"project_id"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",
+                    <br/>
+                    <b>"query_timeout"</b>: "30",
+                    <br/>
+                    <b>"scrape_interval"</b>: "15",
+                    <br/> </p> } </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">datasource:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/DSInput">DSInput</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> updateDataSource<span class="hljs-tag">(<span class="hljs-code">$datasource</span>: DSInput!)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">updateDataSource<span class="hljs-tag">(datasource: <span class="hljs-code">$datasource</span>)</span><span class="hljs-tag">{
+    <span class="hljs-symbol">ds_id</span>
+    <span class="hljs-symbol">ds_name</span>
+    <span class="hljs-symbol">ds_type</span>
+    <span class="hljs-symbol">ds_url</span>
+    <span class="hljs-symbol">access_type</span>
+    <span class="hljs-symbol">auth_type</span>
+    <span class="hljs-symbol">basic_auth_username</span>
+    <span class="hljs-symbol">basic_auth_password</span>
+    <span class="hljs-symbol">scrape_interval</span>
+    <span class="hljs-symbol">query_timeout</span>
+    <span class="hljs-symbol">http_method</span>
+    <span class="hljs-symbol">project_id</span>
+    <span class="hljs-symbol">health_status</span>
+    <span class="hljs-symbol">created_at</span>
+    <span class="hljs-symbol">updated_at</span>
+  }</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;datasource&quot;</span>: {
+    <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;ds_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;ds_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;ds_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;access_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;auth_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;basic_auth_username&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;basic_auth_password&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;scrape_interval&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+    <span class="hljs-attr">&quot;query_timeout&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
+    <span class="hljs-attr">&quot;http_method&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  }
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20updateDataSource(%24datasource%3A%20DSInput!)%7B%0A%20%20updateDataSource(datasource%3A%20%24datasource)%7B%0A%20%20%20%20ds_id%0A%20%20%20%20ds_name%0A%20%20%20%20ds_type%0A%20%20%20%20ds_url%0A%20%20%20%20access_type%0A%20%20%20%20auth_type%0A%20%20%20%20basic_auth_username%0A%20%20%20%20basic_auth_password%0A%20%20%20%20scrape_interval%0A%20%20%20%20query_timeout%0A%20%20%20%20http_method%0A%20%20%20%20project_id%0A%20%20%20%20health_status%0A%20%20%20%20created_at%0A%20%20%20%20updated_at%0A%20%20%7D%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">
+                        <div class="">
+                          <a class="json-schema-ref" href="#/definitions/DSResponse">DSResponse</a>
+                        </div>
+                      </div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;updateDataSource&quot;</span>: {
+      <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;ds_url&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;access_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;auth_type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;basic_auth_username&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;basic_auth_password&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;scrape_interval&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;query_timeout&quot;</span>: <span class="hljs-string">&quot;integer&quot;</span>,
+      <span class="hljs-attr">&quot;http_method&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;project_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;health_status&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-update_dashboard-post" class="operation panel" data-traverse-target="operation-update_dashboard-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update Dashboard</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This mutation is used to update a dashboard&#39;s information and details.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">dashboard:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/updateDBInput">updateDBInput</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">chaosQueryUpdate:
+                        <span class="prop-type">
+                          <div class="json-property-type">boolean</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> updateDashboard<span class="hljs-tag">(<span class="hljs-code">$dashboard</span>: updateDBInput!, <span class="hljs-code">$chaosQueryUpdate</span>:<span class="hljs-type"> Boolean!</span>)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">updateDashboard<span class="hljs-tag">(dashboard: <span class="hljs-code">$dashboard</span>, chaosQueryUpdate: <span class="hljs-code">$chaosQueryUpdate</span>)</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;dashboard&quot;</span>: {
+    <span class="hljs-attr">&quot;db_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;db_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;db_type_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;db_type_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;db_information&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;chaos_event_query_template&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;chaos_verdict_query_template&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;application_metadata_map&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;namespace&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;applications&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;kind&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;names&quot;</span>: [
+              <span class="hljs-string">&quot;string&quot;</span>
+            ]
+          }
+        ]
+      }
+    ],
+    <span class="hljs-attr">&quot;panel_groups&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;panel_group_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;panel_group_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+        <span class="hljs-attr">&quot;panels&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;panel_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;db_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;y_axis_left&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;y_axis_right&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;x_axis_down&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;unit&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;panel_group_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+            <span class="hljs-attr">&quot;prom_queries&quot;</span>: [
+              {
+                <span class="hljs-attr">&quot;queryid&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;prom_query_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;legend&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;resolution&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;minstep&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                <span class="hljs-attr">&quot;line&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+                <span class="hljs-attr">&quot;close_area&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+              }
+            ],
+            <span class="hljs-attr">&quot;panel_options&quot;</span>: {
+              <span class="hljs-attr">&quot;points&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+              <span class="hljs-attr">&quot;grids&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+              <span class="hljs-attr">&quot;left_axis&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+            },
+            <span class="hljs-attr">&quot;panel_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+          }
+        ]
+      }
+    ],
+    <span class="hljs-attr">&quot;end_time&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;start_time&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+    <span class="hljs-attr">&quot;cluster_id&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
+    <span class="hljs-attr">&quot;refresh_rate&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  },
+  <span class="hljs-attr">&quot;chaosQueryUpdate&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20updateDashboard(%24dashboard%3A%20updateDBInput!%2C%20%24chaosQueryUpdate%3A%20Boolean!)%7B%0A%20%20updateDashboard(dashboard%3A%20%24dashboard%2C%20chaosQueryUpdate%3A%20%24chaosQueryUpdate)%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">string</div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;updateDashboard&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-update_panel-post" class="operation panel" data-traverse-target="operation-update_panel-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update Panel</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This mutation is used to update prometheus queries and panel details for selected panels.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">panelInput:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="json-schema-ref-array">
+                              <a class="json-schema-ref" href="#/definitions/panel">panel</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> updatePanel<span class="hljs-tag">(<span class="hljs-code">$panelInput</span>: [panel])</span><span class="hljs-tag">{
+  <span class="hljs-symbol">updatePanel<span class="hljs-tag">(panelInput: <span class="hljs-code">$panelInput</span>)</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;panelInput&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;panel_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;db_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;y_axis_left&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;y_axis_right&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;x_axis_down&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;unit&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;panel_group_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+      <span class="hljs-attr">&quot;prom_queries&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;queryid&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+          <span class="hljs-attr">&quot;prom_query_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+          <span class="hljs-attr">&quot;legend&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+          <span class="hljs-attr">&quot;resolution&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+          <span class="hljs-attr">&quot;minstep&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+          <span class="hljs-attr">&quot;line&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+          <span class="hljs-attr">&quot;close_area&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+        }
+      ],
+      <span class="hljs-attr">&quot;panel_options&quot;</span>: {
+        <span class="hljs-attr">&quot;points&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+        <span class="hljs-attr">&quot;grids&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+        <span class="hljs-attr">&quot;left_axis&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+      },
+      <span class="hljs-attr">&quot;panel_name&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+    }
+  ]
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20updatePanel(%24panelInput%3A%20%5Bpanel%5D)%7B%0A%20%20updatePanel(panelInput%3A%20%24panelInput)%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">string</div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;updatePanel&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-delete_dashboard-post" class="operation panel" data-traverse-target="operation-delete_dashboard-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Delete Dashboard</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This mutation is used to delete a dashboard from a project.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>db_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">db_id:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> deleteDashboard<span class="hljs-tag">(<span class="hljs-code">$db_id</span>:<span class="hljs-type"> String)</span>{
+  deleteDashboard(db_id: <span class="hljs-code">$db_id</span>)</span></span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;db_id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20deleteDashboard(%24db_id%3A%20String)%7B%0A%20%20deleteDashboard(db_id%3A%20%24db_id)%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">boolean</div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;deleteDashboard&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-delete_datasource-post" class="operation panel" data-traverse-target="operation-delete_datasource-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Analytics">Analytics</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Delete DataSource</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Disconnect a data source from a project</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>force_delete</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>ds_id</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">input:
+                        <span class="prop-type">
+                          <div class="json-property-type">
+                            <div class="">
+                              <a class="json-schema-ref" href="#/definitions/deleteDSInput">deleteDSInput</a>
+                            </div>
+                          </div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> deleteDataSource<span class="hljs-tag">(<span class="hljs-code">$input</span>: deleteDSInput!)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">deleteDataSource<span class="hljs-tag">(input: <span class="hljs-code">$input</span>)</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;input&quot;</span>: {
+    <span class="hljs-attr">&quot;force_delete&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+    <span class="hljs-attr">&quot;ds_id&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>
+  }
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20deleteDataSource(%24input%3A%20deleteDSInput!)%7B%0A%20%20deleteDataSource(input%3A%20%24input)%0A%7D" target="_blank">Try it now
+                      <a/> </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">boolean</div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;deleteDataSource&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
   }
 }
 </code></pre> </body>

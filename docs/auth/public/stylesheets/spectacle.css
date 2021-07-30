@@ -33,7 +33,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     text-transform: uppercase;
     font-size: 0.9rem; }
   #spectacle .swagger-request-body:before {
-    content: "";
+    content: "Request body";
     display: block;
     margin-bottom: 0.5em;
     color: #f68b1f;
@@ -1068,7 +1068,8 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
       width: 100%; }
     #spectacle article code {
       font-size: 0.9em;
-      border-radius: 3px; }
+      border-radius: 3px;
+      overflow-wrap: break-word; }
     #spectacle article p:last-child:first-child {
       margin-bottom: 0; }
     #spectacle article h1 {

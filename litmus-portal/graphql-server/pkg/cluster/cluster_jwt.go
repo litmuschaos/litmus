@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 )
 
 var secret = os.Getenv("JWT_SECRET")

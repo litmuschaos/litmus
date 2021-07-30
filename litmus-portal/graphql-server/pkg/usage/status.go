@@ -104,10 +104,13 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 		},
 		bson.D{
 			{"$lookup", bson.M{
-				"from":         "workflow-collection",
-				"localField":   "_id",
-				"foreignField": "project_id",
-				"as":           "wfData",
+				"from": "workflow-collection",
+				"let":  bson.M{"projectId": "$_id"},
+				"pipeline": bson.A{
+					bson.M{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$project_id", "$$projectId"}}}},
+					bson.M{"$project": bson.M{"created_at": 1, "workflow_runs.total_experiments": 1, "workflow_runs.last_updated": 1}},
+				},
+				"as": "wfData",
 			}}},
 		bson.D{{"$addFields", bson.M{
 			"workflows": bson.M{
@@ -266,7 +269,7 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 							"expRuns":   "$expRuns",
 						}, "_id": 0}}}}}},
 	}
-	cursor, err := dbOperationsProject.GetAggregateProjects(ctx, pipeline)
+	cursor, err := dbOperationsProject.GetAggregateProjects(ctx, pipeline, nil)
 	if err != nil {
 		return AggregateData{}, err
 	}
