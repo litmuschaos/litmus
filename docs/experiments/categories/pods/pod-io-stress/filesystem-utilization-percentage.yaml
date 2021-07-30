@@ -20,6 +20,6 @@ spec:
         env:
         # percentage of free space of file system, need to be stressed
         - name: FILESYSTEM_UTILIZATION_PERCENTAGE
-          value: '10'
+          value: '10' #in GB
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

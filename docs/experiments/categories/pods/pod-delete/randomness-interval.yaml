@@ -22,6 +22,7 @@ spec:
           value: 'true'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
-        # chaos interval range, it will select a random interval within this range
+        # it will select a random interval within this range
+        # if only one value is provided then it will select a random interval within 0-CHAOS_INTERVAL range
         - name: CHAOS_INTERVAL
           value: '5-10' 

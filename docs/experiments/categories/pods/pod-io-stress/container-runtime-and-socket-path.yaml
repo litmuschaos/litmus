@@ -1,5 +1,4 @@
 ## provide the container runtime and socket file path
-## it is applicable for the [container-kill, network-experiments, pod-cpu-hog, pod-memory-hog, pod-io-stress, pod-dns-experiments]
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -11,9 +10,9 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: container-kill-sa
+  chaosServiceAccount: pod-io-stress-sa
   experiments:
-  - name: container-kill
+  - name: pod-io-stress
     spec:
       components:
         env:

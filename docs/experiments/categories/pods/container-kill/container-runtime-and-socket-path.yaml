@@ -1,4 +1,4 @@
-# specific linux signal passed while kiiling container
+## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -16,9 +16,12 @@ spec:
     spec:
       components:
         env:
-        # signal passed while killing container
-        # defaults to SIGTERM
-        - name: SIGNAL
-          value: 'SIGKILL'
+        # runtime for the container
+        # supports docker, containerd, crio
+        - name: CONTAINER_RUNTIME
+          value: 'docker'
+        # path of the socket file
+        - name: SOCKET_PATH
+          value: '/var/run/docker.sock'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

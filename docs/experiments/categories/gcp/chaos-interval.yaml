@@ -1,6 +1,4 @@
 # defines delay between each successive iteration of the chaos
-# supported in [pod-delete, container-kill, aws-experiments, gcp-experiment, aws-experiment, 
-# -- kafka-pod-delete, cassandra-pod-delete] experiments
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -8,13 +6,9 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  appinfo:
-    appns: "default"
-    applabel: "app=nginx"
-    appkind: "deployment"
-  chaosServiceAccount: pod-delete-sa
+  chaosServiceAccount: gcp-vm-disk-loss-sa
   experiments:
-  - name: pod-delete
+  - name: gcp-vm-disk-loss
     spec:
       components:
         env:
@@ -24,3 +18,12 @@ spec:
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
+        - name: DISK_VOLUME_NAMES
+          value: 'disk-01,disk-02'
+        - name: DISK_ZONES
+          value: 'zone-01,zone-02'
+        - name: DEVICE_NAMES
+          value: 'device-01,device-02'
+        - name: GCP_PROJECT_ID
+          value: 'project-id'
+        
