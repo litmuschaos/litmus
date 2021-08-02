@@ -263,14 +263,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           nodeSelection.selectNode({
             pod_name: '',
           });
-          if (
-            data.phase?.toLowerCase() !== 'notavailable' &&
-            data.phase?.toLowerCase() !== 'terminated'
-          )
-            history.push({
-              pathname: `/workflows/${data.workflow_run_id}`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
+          history.push({
+            pathname: `/workflows/${data.workflow_run_id}`,
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
         }}
       >
         <Typography className={classes.boldText} data-cy="workflowName">
@@ -404,14 +400,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               nodeSelection.selectNode({
                 pod_name: '',
               });
-              if (
-                data.phase?.toLowerCase() !== 'notavailable' &&
-                data.phase?.toLowerCase() !== 'terminated'
-              )
-                history.push({
-                  pathname: `/workflows/${data.workflow_run_id}`,
-                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                });
+              history.push({
+                pathname: `/workflows/${data.workflow_run_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
@@ -428,14 +420,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           <MenuItem
             value="Analysis"
             onClick={() => {
-              if (
-                data.phase?.toLowerCase() !== 'notavailable' &&
-                data.phase?.toLowerCase() !== 'terminated'
-              )
-                history.push({
-                  pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
-                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                });
+              history.push({
+                pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowAnalytics">

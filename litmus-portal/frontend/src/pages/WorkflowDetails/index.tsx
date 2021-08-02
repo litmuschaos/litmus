@@ -253,6 +253,7 @@ const WorkflowDetails: React.FC = () => {
                         <WorkflowInfo
                           tab={1}
                           setIsInfoToggled={setIsInfoToggled}
+                          workflow_phase={workflowRun.phase}
                           cluster_name={workflowRun.cluster_name}
                           data={
                             JSON.parse(
@@ -272,6 +273,7 @@ const WorkflowDetails: React.FC = () => {
                 {/* Workflow Info */}
                 <WorkflowInfo
                   tab={2}
+                  workflow_phase={workflowRun.phase}
                   cluster_name={workflowRun.cluster_name}
                   data={JSON.parse(workflowRun.execution_data) as ExecutionData}
                   resiliency_score={workflowRun.resiliency_score}

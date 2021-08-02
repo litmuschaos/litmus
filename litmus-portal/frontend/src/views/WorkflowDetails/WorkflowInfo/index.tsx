@@ -4,12 +4,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import TimePopOver from '../../../components/TimePopOver';
 import { ExecutionData } from '../../../models/graphql/workflowData';
+import WorkflowStatusText from '../WorkflowStatus/statusText';
 import useStyles from './styles';
 
 interface WorkflowInfoProps {
   setIsInfoToggled?: React.Dispatch<React.SetStateAction<boolean>>;
   tab: number;
   data: ExecutionData;
+  workflow_phase: string;
   resiliency_score?: number;
   cluster_name: string;
 }
@@ -18,6 +20,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
   setIsInfoToggled,
   tab,
   data,
+  workflow_phase,
   resiliency_score,
   cluster_name,
 }) => {
@@ -49,7 +52,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
         )}
       </div>
 
-      {/* Body Section divided in 3 parts */}
+      {/* Body Section divided in 4 parts */}
       <div className={classes.section}>
         {/* 1. Resiliency Score Sub Section */}
         <div className={classes.subSection}>
@@ -64,7 +67,15 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           </Typography>
         </div>
 
-        {/* 2. Run Time Sub Section */}
+        {/* 2. Workflow Status Sub Section */}
+        <div className={classes.subSection}>
+          <Typography className={classes.subSectionTitle}>
+            {t('workflowDetailsView.workflowInfo.status')}
+          </Typography>
+          <WorkflowStatusText phase={workflow_phase} />
+        </div>
+
+        {/* 3. Run Time Sub Section */}
         <div className={classes.subSection}>
           <Typography className={classes.subSectionTitle}>
             {t('workflowDetailsView.workflowInfo.runTime.runTimeHeader')}
@@ -91,7 +102,7 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           </div>
         </div>
 
-        {/* 3. Target Sub Section */}
+        {/* 4. Target Sub Section */}
         <div className={classes.subSection}>
           <Typography className={classes.subSectionTitle}>
             {t('workflowDetailsView.workflowInfo.targets.targetsHeader')}

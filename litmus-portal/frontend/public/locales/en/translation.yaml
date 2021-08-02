@@ -890,6 +890,7 @@ workflowDetailsView:
     header: Overall Workflow Description
     resilienceScore: Resilience Score
     Completed: Completed
+    status: Workflow Status 
     runTime:
       runTimeHeader: Run Time
       startTime: 'Start Time :'
@@ -1227,6 +1228,7 @@ workflowCluster:
       time: Time
       run: Last Workflow run
       agentType: Agent Type
+      agentScope: Agent Scope
       connectionDate: Connection Date
       noWorkflows: No. of Workflows
       noSchedules: No. of Schedules
