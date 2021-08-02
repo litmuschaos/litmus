@@ -648,6 +648,7 @@ chaosWorkflows:
     min: mins.
     sync: Sync Workflow
     terminate: Terminate Workflow
+    delete: Delete Workflow
     tableData:
       overallRR: 'Overall RR : '
       experimentsPassed: 'Experiments Passed : '
@@ -1097,6 +1098,7 @@ createWorkflow:
         interval: Interval
         polling: Polling interval
         initialDelay: Initial Delay Seconds
+        stop: stopOnFailure
         url: URL
       button:
         cancel: Cancel

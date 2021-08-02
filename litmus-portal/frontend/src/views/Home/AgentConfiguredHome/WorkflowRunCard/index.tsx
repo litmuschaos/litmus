@@ -16,6 +16,7 @@ import {
   PENDING,
   RUNNING,
   SUCCEEDED,
+  TERMINATED,
 } from '../../../WorkflowDetails/workflowConstants';
 import useStyles from './styles';
 
@@ -44,6 +45,8 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
         return 'status-pending.svg';
       case NOTAVAILABLE:
         return 'status-NotAvailable.svg';
+      case TERMINATED:
+        return 'status-terminated.svg';
       default:
         return '';
     }
@@ -67,10 +70,11 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
         nodeSelection.selectNode({
           pod_name: '',
         });
-        history.push({
-          pathname: `/workflows/${data.workflow_run_id}`,
-          search: `?projectID=${projectID}&projectRole=${projectRole}`,
-        });
+        if (data.phase?.toLowerCase() !== 'terminated')
+          history.push({
+            pathname: `/workflows/${data.workflow_run_id}`,
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
       }}
       title={t(
         'homeViews.agentConfiguredHome.recentWorkflowRuns.workflowRunCard.cardTitle'
