@@ -2,7 +2,7 @@ It contains tunables to execute the `pod-io-stress` experiment. This experiment 
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common.md) and [Pod specific tunable](common.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
 
 ### Filesystem Utilization Percentage
 

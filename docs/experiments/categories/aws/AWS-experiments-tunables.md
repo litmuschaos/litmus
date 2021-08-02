@@ -1,5 +1,3 @@
-## AWS experiments tunable
-
 It contains the AWS specific experiment tunables.
 
 ### Managed Nodegroup

@@ -2,7 +2,7 @@ It deletes the Kafka pods with matching namespace, labels, and kind provided at 
 
 ### Common Experiment Tunables
 
-Refer the [common attributes](../common/common.md) to tune the common tunables for all the experiments.
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) to tune the common tunables for all the experiments.
 
 ### Kafka And Zookeeper App Details
 

@@ -2,7 +2,7 @@ It contains tunables to execute the `aws-ssm-chaos-by-tag` experiment. This expe
 
 ### Common and AWS-SSM specific tunables
 
-Refer the [common attributes](../common/common.md) and [AWS-SSM specific tunable](common.md) to tune the common tunables for all experiments and aws-ssm specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [AWS-SSM specific tunable](AWS-SSM-experiments-tunables.md) to tune the common tunables for all experiments and aws-ssm specific tunables.  
 
 ### Target single instance
 

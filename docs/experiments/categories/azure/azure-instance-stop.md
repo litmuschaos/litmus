@@ -2,7 +2,7 @@ It contains tunables to execute the `azure-instance-stop` experiment. This exper
 
 ### Common Experiment Tunables
 
-Refer the [common attributes](../common/common.md) to tune the common tunables for all the experiments.
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) to tune the common tunables for all the experiments.
 
 ### Stop Instances By Name
 

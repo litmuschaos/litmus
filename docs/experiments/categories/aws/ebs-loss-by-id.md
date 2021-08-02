@@ -2,7 +2,7 @@ It contains tunables to execute the `ebs-loss-by-id` experiment. This experiment
 
 ### Common and AWS specific tunables
 
-Refer the [common attributes](../common/common.md) and [AWS specific tunable](common.md) to tune the common tunables for all experiments and aws specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [AWS specific tunable](AWS-experiments-tunables.md) to tune the common tunables for all experiments and aws specific tunables.  
 
 ### Detach Volumes By ID
 

@@ -1,5 +1,3 @@
-## Common Tunables For All Experiments
-
 It contains tunables, which are common for all the experiments. These tunables can be provided at `.spec.experiment[*].spec.components.env` in chaosengine.
 
 ### Duration of the chaos

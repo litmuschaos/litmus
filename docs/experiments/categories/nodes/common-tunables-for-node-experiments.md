@@ -1,5 +1,3 @@
-## Common Tunables For Node Experiments
-
 It contains tunables, which are common for all the node experiments. These tunables can be provided at `.spec.experiment[*].spec.components.env` in chaosengine.
 
 ### Target Single Node

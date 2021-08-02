@@ -1,5 +1,3 @@
-## Common Tunables For Pod Experiments
-
 It contains tunables, which are common for all pod-level experiments. These tunables can be provided at `.spec.experiment[*].spec.components.env` in chaosengine.
 
 ### Target Specific Pods

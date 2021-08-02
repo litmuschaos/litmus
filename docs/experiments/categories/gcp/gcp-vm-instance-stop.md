@@ -2,7 +2,7 @@ It contains tunables to execute the `gcp-vm-instance-stop` experiment. This expe
 
 ### Common Experiment Tunables
 
-Refer the [common attributes](../common/common.md) to tune the common tunables for all the experiments.
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) to tune the common tunables for all the experiments.
 
 ### Target GCP Instances
 

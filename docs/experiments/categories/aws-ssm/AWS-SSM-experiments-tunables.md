@@ -1,5 +1,3 @@
-## AWS-SSM experiments tunable
-
 It contains the aws-ssm specific experiment tunables.
 
 ### CPU Cores

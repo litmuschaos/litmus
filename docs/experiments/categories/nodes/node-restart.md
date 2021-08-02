@@ -2,7 +2,7 @@ It contains tunables to execute the `node-restart` experiment. This experiment r
 
 ### Common and Node specific tunables
 
-Refer the [common attributes](../common/common.md) and [Node specific tunable](common.md) to tune the common tunables for all experiments and node specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.  
 
 ### Reboot Command
 

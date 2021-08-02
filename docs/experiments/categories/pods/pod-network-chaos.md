@@ -3,7 +3,7 @@ It injects chaos for both `Ingress` and `Egress` traffics.
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common.md) and [Pod specific tunable](common.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
 
 ### Network Packet Loss
 

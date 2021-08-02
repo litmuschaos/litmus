@@ -2,7 +2,7 @@ It contains tunables to execute the `ec2-terminate-by-id` experiment. This exper
 
 ### Common and AWS specific tunables
 
-Refer the [common attributes](../common/common.md) and [AWS specific tunable](common.md) to tune the common tunables for all experiments and aws specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [AWS specific tunable](AWS-experiments-tunables.md) to tune the common tunables for all experiments and aws specific tunables.  
 
 ### Stop Instances By ID
 
