@@ -1,5 +1,3 @@
-## Pod DNS Error
-
 It contains tunables to execute the `pod-dns-error` experiment. This experiment disrupts DNS resolution of the targeted pods for the specified `TOTAL_CHAOS_DURATION` duration. 
 
 ### Common and Pod specific tunables

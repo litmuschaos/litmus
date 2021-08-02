@@ -1,5 +1,3 @@
-## Experiment Tunables
-
 It contains all the experiment tunables provided at `.spec.experiments[].spec.components` inside chaosengine. 
 
 ### Experiment Annotations

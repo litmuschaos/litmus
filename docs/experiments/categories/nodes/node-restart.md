@@ -1,5 +1,3 @@
-## Node Restart
-
 It contains tunables to execute the `node-restart` experiment. This experiment restarts the given node for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and Node specific tunables

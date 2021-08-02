@@ -1,5 +1,3 @@
-## Pod Delete
-
 It contains tunables to execute the `pod-delete` experiment. This experiment deletes the targeted pods for the specified `TOTAL_CHAOS_DURATION` duration. 
 
 ### Common and Pod specific tunables

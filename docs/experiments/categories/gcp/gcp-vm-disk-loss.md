@@ -1,5 +1,3 @@
-## GCP VM Disk Loss
-
 It contains tunables to execute the `gcp-vm-disk-loss` experiment. It will detach all the disks matched by disk names.  It reattached the disks after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common Experiment Tunables

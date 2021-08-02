@@ -1,5 +1,3 @@
-## Node IO Stress
-
 It contains tunables to execute the `node-io-stress` experiment. This experiment stresses the i/o of the given node for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and Node specific tunables

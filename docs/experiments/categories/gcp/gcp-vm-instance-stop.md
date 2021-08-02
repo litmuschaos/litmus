@@ -1,5 +1,3 @@
-## GCP VM Instance Stop
-
 It contains tunables to execute the `gcp-vm-instance-stop` experiment. This experiment stops the given gcp instances and restarts them after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common Experiment Tunables

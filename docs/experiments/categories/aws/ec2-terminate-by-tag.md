@@ -1,5 +1,3 @@
-## EC2 Terminate By Tag
-
 It contains tunables to execute the `ec2-terminate-by-tag` experiment. This experiment stops the given ec2 instance and restarts them after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and AWS specific tunables

@@ -1,5 +1,3 @@
-## ChaosEngine Spec Tunables
-
 It contains all the tunables provided at `.spec` inside chaosengine. 
 
 ### Application Under Test

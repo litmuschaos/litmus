@@ -1,5 +1,3 @@
-## Disk Fill
-
 It contains tunables to execute the `disk-fill` experiment. This experiment fills the ephemeral storage of the targeted pod for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and Pod specific tunables

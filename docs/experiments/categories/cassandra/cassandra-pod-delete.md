@@ -1,5 +1,3 @@
-## Cassandra pod delete
-
 It deletes the Cassandra pods with matching namespace, labels, and kind provided at `spec.appinfo` in chaosengine for the `TOTAL_CHAOS_DURATION` duration. 
 
 ### Common Experiment Tunables

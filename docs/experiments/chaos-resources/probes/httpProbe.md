@@ -1,5 +1,3 @@
-## HTTP Probe
-
 The http probe allows developers to specify a URL which the experiment uses to gauge health/service availability (or other custom conditions) as part of the entry/exit criteria. The received status code is mapped against an expected status. It supports http Get and Post methods.
 It can be executed by setting `type` as `httpProbe` inside `.spec.experiments[].spec.probe`.
 

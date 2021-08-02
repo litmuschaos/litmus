@@ -1,5 +1,3 @@
-## AWS-SSM Chaos By Tag
-
 It contains tunables to execute the `aws-ssm-chaos-by-tag` experiment. This experiment stresses the given ec2 instance for the `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and AWS-SSM specific tunables

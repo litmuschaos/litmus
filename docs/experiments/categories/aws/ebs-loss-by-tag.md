@@ -1,5 +1,3 @@
-## EBS Loss By Tag
-
 It contains tunables to execute the `ebs-loss-by-tag` experiment. This experiment detaches the given ebs volumes and reattached them after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and AWS specific tunables

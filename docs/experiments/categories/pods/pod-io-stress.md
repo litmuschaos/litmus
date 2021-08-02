@@ -1,5 +1,3 @@
-## Pod IO Stress
-
 It contains tunables to execute the `pod-io-stress` experiment. This experiment stresses the i/o of the given pod for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and Pod specific tunables

@@ -1,5 +1,3 @@
-## Pod Memory Hog Exec
-
 It contains tunables to execute the `pod-memory-hog-exec` experiment. This experiment stresses the memory of the given pod for the specified `TOTAL_CHAOS_DURATION` duration. 
 
 ### Common and Pod specific tunables

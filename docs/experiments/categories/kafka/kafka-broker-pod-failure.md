@@ -1,5 +1,3 @@
-## Kafka Broker Pod Failure
-
 It deletes the Kafka pods with matching namespace, labels, and kind provided at `spec.appinfo` in chaosengine for the `TOTAL_CHAOS_DURATION` duration. 
 
 ### Common Experiment Tunables

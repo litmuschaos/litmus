@@ -1,5 +1,3 @@
-## Prometheus Probe
-
 The prometheus probe allows users to run Prometheus queries and match the resulting output against specific conditions. The intent behind this probe is to allow users to define metrics-based SLOs in a declarative way and determine the experiment verdict based on its success. The probe runs the query on a Prometheus server defined by the endpoint, and checks whether the output satisfies the specified criteria.
 It can be executed by setting `type` as `promProbe` inside `.spec.experiments[].spec.probe`.
 

@@ -1,5 +1,3 @@
-## Pod CPU Hog Exec
-
 It contains tunables to execute the `pod-cpu-hog-exec` experiment. This experiment stresses the cpu of the given pod for the specified `TOTAL_CHAOS_DURATION` duration. 
 
 ### Common and Pod specific tunables

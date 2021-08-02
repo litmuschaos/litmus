@@ -1,5 +1,3 @@
-## Node Taint
-
 It contains tunables to execute the `node-taint` experiment. This experiment tainted the given node for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and Node specific tunables

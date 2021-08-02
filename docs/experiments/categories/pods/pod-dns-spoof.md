@@ -1,5 +1,3 @@
-## Pod DNS Spoof
-
 It contains tunables to execute the `pod-dns-spoof` experiment. This experiment spoof the DNS resolution of the targeted pods for the specified `TOTAL_CHAOS_DURATION` duration. 
 
 ### Common and Pod specific tunables

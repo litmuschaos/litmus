@@ -1,5 +1,3 @@
-## Pod Autoscaler
-
 It contains tunables to execute the `pod-autoscaler` experiment. This experiment scales up/down the replicas of the targeted resources with matching namespace, labels, and kind provided at `spec.appinfo` in chaosengine for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and Pod specific tunables

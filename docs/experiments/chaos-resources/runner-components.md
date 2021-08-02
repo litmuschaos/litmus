@@ -1,5 +1,3 @@
-## Chaos Runner Tunables
-
 It contains all the chaos-runner tunables provided at `.spec.components.runner` inside chaosengine. 
 
 ### ChaosRunner Annotations

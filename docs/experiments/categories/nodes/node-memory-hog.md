@@ -1,5 +1,3 @@
-## Node Memory Hog
-
 It contains tunables to execute the `node-memory-hog` experiment. This experiment stresses the memory of the given node for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and Node specific tunables

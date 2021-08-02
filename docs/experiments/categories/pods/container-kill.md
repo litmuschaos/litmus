@@ -1,5 +1,3 @@
-## Container Kill
-
 It contains tunables to execute the `container-kill` experiment. This experiment kills the target container of the targeted pods for the specified `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and Pod specific tunables

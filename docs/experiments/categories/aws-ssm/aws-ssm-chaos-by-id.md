@@ -1,5 +1,3 @@
-## AWS-SSM Chaos By ID
-
 It contains tunables to execute the `aws-ssm-chaos-by-id` experiment. This experiment stresses the ec2 instance matched by `EC2_INSTANCE_ID` and `REGION` for the `TOTAL_CHAOS_DURATION` duration.
 
 ### Common and AWS-SSM specific tunables

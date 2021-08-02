@@ -1,5 +1,3 @@
-## Pod Network Chaos
-
 It contains tunables to execute the pod network experiment. This experiment interrupts the network of the given pod for the specified `TOTAL_CHAOS_DURATION` duration. 
 It injects chaos for both `Ingress` and `Egress` traffics.
 
