@@ -9,7 +9,7 @@ spec:
   chaosServiceAccount: aws-ssm-chaos-by-id-sa
   experiments:
   - name: aws-ssm-chaos-by-id
-    specEC2_INSTANCE_ID:
+    spec:
       components:
         env:
         # cpu cores for the stress
