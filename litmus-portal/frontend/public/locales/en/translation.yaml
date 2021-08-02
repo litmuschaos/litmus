@@ -1172,7 +1172,7 @@ createWorkflow:
 
 targets:
   connectHome:
-    head: Litmus Agents
+    head: ChaosAgents
     connectText: Connect the Agent
   copy:
     copy: Copy
@@ -1225,6 +1225,7 @@ workflowCluster:
       name: Name
       time: Time
       run: Last Workflow run
+      agentType: Agent Type
       connectionDate: Connection Date
       noWorkflows: No. of Workflows
       noSchedules: No. of Schedules
@@ -1440,7 +1441,7 @@ usage:
     projectHeader: Projects
     projectSubtitle: Total number of Litmus projects.
     agentHeader: Agents
-    agentSubtitle: Total number of Litmus agents connected to Litmus center.
+    agentSubtitle: Total number of ChaosAgents connected to ChaosCenter.
     agentClusterScope: cluster scope
     agentNamespaceScope: namespace scope
     workflowScheduleHeader: Workflow Schedules
