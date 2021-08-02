@@ -615,6 +615,7 @@ chaosWorkflows:
     regularity: Regularity
     startingDate: Starting Date
     lastRun: Last Run
+    lastUpdated: Last Updated
     regularityOnce: Once
     showExperiments: Show Experiments
     showSchedule: Show Schedule
@@ -648,6 +649,7 @@ chaosWorkflows:
     min: mins.
     sync: Sync Workflow
     terminate: Terminate Workflow
+    delete: Delete Workflow
     tableData:
       overallRR: 'Overall RR : '
       experimentsPassed: 'Experiments Passed : '
@@ -1097,6 +1099,7 @@ createWorkflow:
         interval: Interval
         polling: Polling interval
         initialDelay: Initial Delay Seconds
+        stop: stopOnFailure
         url: URL
       button:
         cancel: Cancel
@@ -1170,7 +1173,7 @@ createWorkflow:
 
 targets:
   connectHome:
-    head: Litmus Agents
+    head: ChaosAgents
     connectText: Connect the Agent
   copy:
     copy: Copy
@@ -1223,6 +1226,7 @@ workflowCluster:
       name: Name
       time: Time
       run: Last Workflow run
+      agentType: Agent Type
       connectionDate: Connection Date
       noWorkflows: No. of Workflows
       noSchedules: No. of Schedules
@@ -1438,7 +1442,7 @@ usage:
     projectHeader: Projects
     projectSubtitle: Total number of Litmus projects.
     agentHeader: Agents
-    agentSubtitle: Total number of Litmus agents connected to Litmus center.
+    agentSubtitle: Total number of ChaosAgents connected to ChaosCenter.
     agentClusterScope: cluster scope
     agentNamespaceScope: namespace scope
     workflowScheduleHeader: Workflow Schedules

@@ -109,7 +109,7 @@ const SideBar: React.FC = () => {
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
-          label="Litmus Agents"
+          label="ChaosAgents"
           selected={['targets', 'target-connect'].includes(pathName)}
         >
           <TargetsIcon />
