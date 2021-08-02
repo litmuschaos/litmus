@@ -105,13 +105,15 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             </Typography>
             <Typography>
               Next Run :{' '}
-              {data.ListWorkflow.workflows[0].cronSyntax !== undefined && (
+              {data.ListWorkflow.workflows[0].cronSyntax ? (
                 <span className={classes.infoHint}>
                   {parser
                     .parseExpression(data.ListWorkflow.workflows[0].cronSyntax)
                     .next()
                     .toString()}
                 </span>
+              ) : (
+                <span className={classes.infoHint}>Non cron workflow</span>
               )}
             </Typography>
           </div>
