@@ -13,7 +13,7 @@ interface WorkFlowTests {
   test_result: string;
   test_weight: number;
   resulting_points: number;
-  last_run: string;
+  last_updated: string;
   context: string;
 }
 interface TableDataProps {
@@ -37,7 +37,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         </Typography>
         {data?.context !== '' ? (
           <Typography variant="body2" className={classes.context}>
-            context: {data.context}
+            context: {data.context ? data.context : 'N/A'}
           </Typography>
         ) : (
           <></>
@@ -45,16 +45,12 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </StyledTableCell>
       <StyledTableCell>
         <Typography variant="body2">
-          <strong>{data.exp_name}</strong>
+          <strong>{data.exp_name ? data.exp_name : 'N/A'}</strong>
         </Typography>
       </StyledTableCell>
       <StyledTableCell>
         <ExperimentStatus
-          status={
-            data.test_result !== 'Awaited' && data.test_result !== 'N/A'
-              ? `${data.test_result}ed`
-              : data.test_result
-          }
+          status={data.test_result ? data.test_result : 'N/A'}
         />
       </StyledTableCell>
 
@@ -79,7 +75,9 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </StyledTableCell>
 
       <StyledTableCell>
-        <Typography>{formatDate(data.last_run)}</Typography>
+        <Typography>
+          {data.last_updated ? formatDate(data.last_updated) : 'N/A'}
+        </Typography>
       </StyledTableCell>
     </>
   );

@@ -1142,21 +1142,25 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 			{"isRemoved", 1},
 		}
 
-		// Filter the available workflows where isRemoved is false
-		matchWfRunIsRemovedStage := bson.D{
+		// Filter the available workflows where workflow run is Terminated, isRemoved is false, Completed is false
+		matchWfRunFiltersStage := bson.D{
 			{"$project", append(includeAllFromWorkflow,
 				bson.E{Key: "workflow_runs", Value: bson.D{
 					{"$filter", bson.D{
 						{"input", "$workflow_runs"},
 						{"as", "wfRun"},
 						{"cond", bson.D{
-							{"$eq", bson.A{"$$wfRun.isRemoved", false}},
+							{"$and", bson.A{
+								bson.D{{"$ne", bson.A{"$$wfRun.phase", "Running"}}},
+								bson.D{{"$ne", bson.A{"$$wfRun.isRemoved", true}}},
+								bson.D{{"$ne", bson.A{"$$wfRun.completed", false}}},
+							}},
 						}},
 					}},
 				}},
 			)},
 		}
-		pipeline = append(pipeline, matchWfRunIsRemovedStage)
+		pipeline = append(pipeline, matchWfRunFiltersStage)
 
 		// Flatten out the workflow runs
 		unwindStage := bson.D{
@@ -1345,21 +1349,25 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 		{"isRemoved", 1},
 	}
 
-	// Filter the available workflows where isRemoved is false
-	matchWfRunIsRemovedStage := bson.D{
+	// Filter the available workflows where workflow run is Terminated, isRemoved is false, Completed is false
+	matchWfRunFiltersStage := bson.D{
 		{"$project", append(includeAllFromWorkflow,
 			bson.E{Key: "workflow_runs", Value: bson.D{
 				{"$filter", bson.D{
 					{"input", "$workflow_runs"},
 					{"as", "wfRun"},
 					{"cond", bson.D{
-						{"$eq", bson.A{"$$wfRun.isRemoved", false}},
+						{"$and", bson.A{
+							bson.D{{"$ne", bson.A{"$$wfRun.phase", "Running"}}},
+							bson.D{{"$ne", bson.A{"$$wfRun.isRemoved", true}}},
+							bson.D{{"$ne", bson.A{"$$wfRun.completed", false}}},
+						}},
 					}},
 				}},
 			}},
 		)},
 	}
-	pipeline = append(pipeline, matchWfRunIsRemovedStage)
+	pipeline = append(pipeline, matchWfRunFiltersStage)
 
 	// Flatten out the workflow runs
 	unwindStage := bson.D{
@@ -1586,6 +1594,9 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 					{"cond", bson.D{
 						{"$and", bson.A{
 							bson.D{{"$ne", bson.A{"$$wfRun.phase", "Running"}}},
+							bson.D{{"$ne", bson.A{"$$wfRun.phase", "Terminated"}}},
+							bson.D{{"$ne", bson.A{"$$wfRun.isRemoved", true}}},
+							bson.D{{"$ne", bson.A{"$$wfRun.completed", false}}},
 							bson.D{{"$lte", bson.A{"$$wfRun.last_updated", strconv.FormatInt(endTimeStamp, 10)}}},
 							bson.D{{"$gte", bson.A{"$$wfRun.last_updated", strconv.FormatInt(startTimeStamp, 10)}}},
 						}},
@@ -1598,18 +1609,18 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 
 	// Call aggregation on pipeline
 	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
-	var chaosWorkflowRuns []dbSchemaWorkflow.ChaosWorkFlowInput
+	var chaosWorkflows []dbSchemaWorkflow.ChaosWorkFlowInput
 
 	// Result array
 	result := make([]*model.HeatmapData, 0, noOfDays)
-	if err = workflowsCursor.All(context.Background(), &chaosWorkflowRuns); err != nil {
+	if err = workflowsCursor.All(context.Background(), &chaosWorkflows); err != nil {
 		fmt.Println(err)
 		return result, nil
 	}
 
 	// WorkflowRuns stores the workflow runs retrieved from database
 	var WorkflowRuns []*dbSchemaWorkflow.ChaosWorkflowRun
-	for _, workflow := range chaosWorkflowRuns {
+	for _, workflow := range chaosWorkflows {
 		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
 	}
 

@@ -182,7 +182,7 @@ analytics:
   workflowRunDetailsTable:
     tableHead0: Test Name
     tableHead1: Experiment Name
-    tableHead2: Test Result
+    tableHead2: Experiment Verdict
     tableHead3: Weight of the test
     tableHead4: Resulting Points
     tableHead5: Last run

@@ -56,7 +56,7 @@ interface WorkFlowTests {
   context: string;
   test_weight: number;
   resulting_points: number;
-  last_run: string;
+  last_updated: string;
 }
 
 interface WorkflowRunTableProps {
@@ -195,7 +195,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
                           parseInt(chaosData.probeSuccessPercentage, 10)) /
                         100
                       : 0,
-                  last_run: chaosData.lastUpdatedAt,
+                  last_updated: chaosData.lastUpdatedAt,
                   context: chaosData.engineContext,
                 });
               }
@@ -247,9 +247,9 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
               : sortNumDesc(x, y);
           }
           if (filter.sortData.lastRun.sort) {
-            const x = parseInt(a.last_run, 10);
+            const x = parseInt(a.last_updated, 10);
 
-            const y = parseInt(b.last_run, 10);
+            const y = parseInt(b.last_updated, 10);
 
             return filter.sortData.lastRun.ascending
               ? sortNumAsc(y, x)

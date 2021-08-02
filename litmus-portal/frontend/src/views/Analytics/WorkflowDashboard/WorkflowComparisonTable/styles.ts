@@ -181,10 +181,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   dateRangeDefault: {
-    height: '2rem',
-    textDecoration: 'none',
+    height: '2.8rem',
     textTransform: 'none',
-    padding: theme.spacing(1),
   },
 
   checkbox: {
@@ -295,11 +293,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   export: {
-    verticalAlign: 'middle',
-    display: 'inline-flex',
-    textAlign: 'center',
+    alignItems: 'center',
+    display: 'flex',
     borderRadius: 3,
-    paddingBottom: theme.spacing(1),
   },
 
   noData: {
@@ -312,13 +308,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   exportIcon: {
-    marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    display: 'block',
-    backgroundColor: theme.palette.background.paper,
-    width: '1.5rem',
-    height: '1.5rem',
   },
 
   regularityData: {
