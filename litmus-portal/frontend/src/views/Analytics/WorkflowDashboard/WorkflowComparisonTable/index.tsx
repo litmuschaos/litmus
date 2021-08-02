@@ -188,7 +188,7 @@ const WorkflowComparisonTable = () => {
         let totalValidRuns: number = 0;
         const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
         const timeSeriesArray: DatedResilienceScore[][] = [];
-        const runs = data?.getWorkflowRuns.workflow_runs;
+        const runs = data?.getWorkflowRuns?.workflow_runs;
         const workflowTimeSeriesData: DatedResilienceScore[] = [];
         let isWorkflowValid: boolean = false;
         selectedWorkflows.forEach((workflowID) => {
@@ -287,7 +287,7 @@ const WorkflowComparisonTable = () => {
             }
           });
           if (isWorkflowValid) {
-            plotData.labels.push(selectedRuns[0].workflow_name ?? '');
+            plotData.labels.push(selectedRuns[0]?.workflow_name ?? '');
             plotData.colors.push(`#${randomColor()}`);
             timeSeriesArray.push(workflowTimeSeriesData);
           }
@@ -433,7 +433,7 @@ const WorkflowComparisonTable = () => {
     selectedWorkflows.forEach((workflow) => {
       displayData.forEach((displayWorkflow, i) => {
         if (displayWorkflow.workflow_id === workflow && data) {
-          payload.push(data?.ListWorkflow.workflows[i]);
+          payload.push(data && data.ListWorkflow.workflows[i]);
         }
       });
     });

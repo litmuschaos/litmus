@@ -172,36 +172,38 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
         );
         const { nodes } = executionData;
         let index: number = 1;
-        for (const key of Object.keys(nodes)) {
-          const node = nodes[key];
-          if (node.chaosData) {
-            const { chaosData } = node;
-            const weightageMap: WeightageMap[] = weightageDetail
-              ? weightageDetail?.ListWorkflow.workflows[0]?.weightages
-              : [];
-            /* eslint-disable no-loop-func */
-            weightageMap.forEach((weightage) => {
-              if (weightage.experiment_name === node.name) {
-                workflowTestsArray.push({
-                  test_id: index,
-                  test_name: node.name,
-                  exp_name: chaosData.experimentName,
-                  test_result: chaosData.experimentVerdict,
-                  test_weight: weightage.weightage,
-                  resulting_points:
-                    chaosData.experimentVerdict === 'Pass' ||
-                    chaosData.experimentVerdict === 'Fail'
-                      ? (weightage.weightage *
-                          parseInt(chaosData.probeSuccessPercentage, 10)) /
-                        100
-                      : 0,
-                  last_updated: chaosData.lastUpdatedAt,
-                  context: chaosData.engineContext,
-                });
-              }
-            });
+        if (executionData.finishedAt !== '') {
+          for (const key of Object.keys(nodes)) {
+            const node = nodes[key];
+            if (node.chaosData) {
+              const { chaosData } = node;
+              const weightageMap: WeightageMap[] = weightageDetail
+                ? weightageDetail?.ListWorkflow.workflows[0]?.weightages
+                : [];
+              /* eslint-disable no-loop-func */
+              weightageMap.forEach((weightage) => {
+                if (weightage.experiment_name === node.name) {
+                  workflowTestsArray.push({
+                    test_id: index,
+                    test_name: node.name,
+                    exp_name: chaosData.experimentName,
+                    test_result: chaosData.experimentVerdict,
+                    test_weight: weightage.weightage,
+                    resulting_points:
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                        ? (weightage.weightage *
+                            parseInt(chaosData.probeSuccessPercentage, 10)) /
+                          100
+                        : 0,
+                    last_updated: chaosData.lastUpdatedAt,
+                    context: chaosData.engineContext,
+                  });
+                }
+              });
+            }
+            index += 1;
           }
-          index += 1;
         }
       }
       setWfRunData(workflowTestsArray);

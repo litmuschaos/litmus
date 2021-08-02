@@ -5219,9 +5219,11 @@ type Mutation {
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
+  # removes workflow from cluster and db
   deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
     @authorized
 
+  # removes workflow run from the cluster only
   terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
 
   syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
@@ -5445,6 +5447,7 @@ input UpdateUserInput {
   Failed
   Running
   Succeeded
+  Terminated
 }
 
 input DateRange {
