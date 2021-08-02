@@ -145,6 +145,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(0.375),
   },
 
+  terminateImg: {
+    marginTop: theme.spacing(0.375),
+  },
+
+  deleteIcon: {
+    color: theme.palette.primary.main,
+  },
+
   btnText: {
     paddingLeft: theme.spacing(1.625),
   },
