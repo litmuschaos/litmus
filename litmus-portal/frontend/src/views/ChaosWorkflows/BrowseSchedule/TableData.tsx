@@ -304,7 +304,7 @@ const TableData: React.FC<TableDataProps> = ({
             </Typography>
             <Typography className={classes.scheduleDetailsFlex}>
               <span className={classes.boldText}>
-                {t('chaosWorkflows.browseSchedules.lastRun')} :
+                {t('chaosWorkflows.browseSchedules.lastUpdated')} :
               </span>
               <span className={classes.scheduleDetailsValue}>
                 {timeDifferenceForDate(data.updated_at)}

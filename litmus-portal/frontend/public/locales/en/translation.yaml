@@ -615,6 +615,7 @@ chaosWorkflows:
     regularity: Regularity
     startingDate: Starting Date
     lastRun: Last Run
+    lastUpdated: Last Updated
     regularityOnce: Once
     showExperiments: Show Experiments
     showSchedule: Show Schedule
