@@ -308,6 +308,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           data.experiments_passed === null ||
           data.total_experiments === undefined ||
           data.total_experiments === null ||
+          data.total_experiments === 0 ||
           data.resiliency_score === undefined ||
           data.resiliency_score === null ? (
             <span className={classes.less}>

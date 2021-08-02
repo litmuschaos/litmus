@@ -15,21 +15,21 @@ const ExperimentStatus: React.FC<StatusProps> = ({ status }) => {
   return (
     <LightPills
       variant={
-        status === 'Passed'
+        status === 'Passed' || status === 'Pass'
           ? 'success'
-          : status === 'Failed'
+          : status === 'Failed' || status === 'Fail'
           ? 'danger'
           : 'warning'
       }
       label={status}
       avatar={
-        status === 'Passed' ? (
+        status === 'Passed' || status === 'Pass' ? (
           <Avatar className={classes.miniIcons}>
             <CheckCircleSharpIcon
               className={`${classes.checkIcon} ${classes.stateIcon}`}
             />
           </Avatar>
-        ) : status === 'Failed' ? (
+        ) : status === 'Failed' || status === 'Fail' ? (
           <Avatar className={classes.miniIcons}>
             <CancelSharpIcon
               className={`${classes.cancelIcon} ${classes.stateIcon}`}

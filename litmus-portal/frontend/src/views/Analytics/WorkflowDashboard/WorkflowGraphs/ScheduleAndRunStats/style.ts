@@ -11,5 +11,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '320px',
     margin: theme.spacing(2.5, 0, 0, -6.25),
   },
+  formControl: {
+    margin: theme.spacing(1, 2, 0, 0),
+    float: 'right',
+    '& fieldset': {
+      height: '3.1875rem',
+    },
+  },
+  selectText: {
+    height: '2.5rem',
+    color: theme.palette.text.primary,
+    padding: theme.spacing(0.5),
+  },
 }));
 export default useStyles;

@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { CalendarHeatmap, CalendarHeatmapTooltipProps } from 'litmus-ui';
+import moment from 'moment';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
@@ -33,13 +34,21 @@ import WorkflowRunTable from './WorkflowRunTable';
 const TestCalendarHeatmapTooltip = ({
   tooltipData,
 }: CalendarHeatmapTooltipProps): React.ReactElement => {
+  // Function to convert UNIX time in format of DD MMM YYY
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('DD MMM, HH:mm');
+    return resDate;
+  };
   return (
     <div>
       <div style={{ marginBottom: '0.2rem' }}>
         {tooltipData?.data?.bin?.bin.value ?? 0}% Average Resiliency
       </div>
       <div>
-        {tooltipData?.data?.bin?.bin.workflowRunDetail.no_of_runs ?? 0} runs
+        {tooltipData?.data?.bin?.bin.workflowRunDetail.no_of_runs ?? 0} runs on{' '}
+        {formatDate(tooltipData?.data?.bin?.bin.workflowRunDetail.date_stamp) ??
+          ''}
       </div>
     </div>
   );

@@ -1,7 +1,15 @@
 import { useQuery } from '@apollo/client';
-import { Paper, Tabs, useTheme } from '@material-ui/core';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Tabs,
+  useTheme,
+} from '@material-ui/core';
 import { GraphMetric, LineAreaGraph } from 'litmus-ui';
-import React from 'react';
+import React, { useState } from 'react';
 import Loader from '../../../../../components/Loader';
 import { StyledTab } from '../../../../../components/Tabs';
 import Center from '../../../../../containers/layouts/Center';
@@ -22,13 +30,7 @@ function tabProps(index: any) {
   };
 }
 
-interface ScheduleAndRunStatsProps {
-  filter: Filter;
-}
-
-const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
-  filter,
-}) => {
+const ScheduleAndRunStats: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
   const theme = useTheme();
@@ -37,11 +39,13 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
     setActiveTab(actTab);
   };
 
+  const [filters, setFilters] = useState<Filter>(Filter.Monthly);
+
   const { data, loading } = useQuery<WorkflowStatsResponse, WorkflowStatsVars>(
     WORKFLOW_STATS,
     {
       variables: {
-        filter,
+        filter: filters,
         project_id: projectID,
         show_workflow_runs: activeTab === 0,
       },
@@ -72,6 +76,20 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
 
   return (
     <Paper elevation={0} className={classes.workflowGraphs}>
+      <FormControl variant="outlined" className={classes.formControl}>
+        <InputLabel className={classes.selectText} />
+        <Select
+          value={filters}
+          onChange={(event) => {
+            setFilters(event.target.value as Filter);
+          }}
+          className={classes.selectText}
+        >
+          <MenuItem value={Filter.Monthly}>Monthly</MenuItem>
+          <MenuItem value={Filter.Daily}>Daily</MenuItem>
+          <MenuItem value={Filter.Hourly}>Hourly</MenuItem>
+        </Select>
+      </FormControl>
       <Tabs
         value={activeTab}
         onChange={handleChange}
@@ -101,10 +119,11 @@ const ScheduleAndRunStats: React.FC<ScheduleAndRunStatsProps> = ({
             showTips
             showMultiToolTip
             yLabelOffset={35}
-            xAxistimeFormat={xAxisTimeFormat(filter)}
+            yLabel={activeTab === 0 ? 'No. of Runs' : 'No. of Schedules'}
+            xAxistimeFormat={xAxisTimeFormat(filters)}
             margin={{
               top: 20,
-              left: 35,
+              left: 55,
               bottom: 30,
               right: 20,
             }}

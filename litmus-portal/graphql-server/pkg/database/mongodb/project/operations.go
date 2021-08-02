@@ -208,8 +208,8 @@ func UpdateProjectName(ctx context.Context, projectID string, projectName string
 }
 
 // GetAggregateProjects takes a mongo pipeline to retrieve the project details from the database
-func GetAggregateProjects(ctx context.Context, pipeline mongo.Pipeline) (*mongo.Cursor, error) {
-	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ProjectCollection, pipeline)
+func GetAggregateProjects(ctx context.Context, pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
+	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ProjectCollection, pipeline, opts)
 	if err != nil {
 		return nil, err
 	}
