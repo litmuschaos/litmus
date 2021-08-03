@@ -7,11 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	v1 "k8s.io/api/core/v1"
 
 	"github.com/jmespath/go-jmespath"
 	litmuschaosv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -130,7 +131,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 		expr := strings.ToLower(resourceType)
 		switch expr {
 		case "deployment":
-			deps := obj.(*v1.Deployment)
+			deps := obj.(*appsv1.Deployment)
 			resourceName = deps.GetName()
 			mar, err := json.Marshal(deps)
 			if err != nil {
@@ -139,7 +140,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 
 			err = json.Unmarshal(mar, &dataInterface)
 		case "statefulset":
-			sts := obj.(*v1.StatefulSet)
+			sts := obj.(*appsv1.StatefulSet)
 			resourceName = sts.GetName()
 			mar, err := json.Marshal(sts)
 			if err != nil {
@@ -148,7 +149,7 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 
 			err = json.Unmarshal(mar, &dataInterface)
 		case "daemonset":
-			sts := obj.(*v1.DaemonSet)
+			sts := obj.(*appsv1.DaemonSet)
 			resourceName = sts.GetName()
 			mar, err := json.Marshal(sts)
 			if err != nil {
@@ -200,29 +201,37 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 	return nil
 }
 
-func getAgentConfigMapData() (string, string, string, error) {
+func GetAgentConfigMapData() (*v1.ConfigMap, error) {
 	clientset, err := k8s.K8sClient()
 	if err != nil {
-		return "", "", "", err
+		return &v1.ConfigMap{}, err
 	}
 
 	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(context.TODO(), ExternAgentConfigName, metav1.GetOptions{})
 	if k8sErrors.IsNotFound(err) {
-		return "", "", "", errors.New(ExternAgentConfigName + " configmap not found")
-	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
-		return getCM.Data["ACCESS_KEY"], getCM.Data["CLUSTER_ID"], getCM.Data["SERVER_ADDR"], nil
+		return &v1.ConfigMap{}, errors.New(ExternAgentConfigName + " configmap not found")
 	} else if err != nil {
-		return "", "", "", err
+		return &v1.ConfigMap{},  err
 	}
 
-	return "", "", "", nil
+	return getCM, nil
 }
 
 // Function to send request to litmus graphql server
 func SendRequest(workflowID string) (string, error) {
-	accessKey, clusterID, serverAddr, err := getAgentConfigMapData()
+	getCM, err := GetAgentConfigMapData()
 	if err != nil {
 		return "", err
+	}
+
+	var (
+		accessKey, clusterID, serverAddr string
+	)
+
+	if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
+		accessKey = getCM.Data["ACCESS_KEY"]
+		clusterID = getCM.Data["CLUSTER_ID"]
+		serverAddr = getCM.Data["SERVER_ADDR"]
 	}
 
 	payload := `{"query": "mutation { gitopsNotifer(clusterInfo: { cluster_id: \"` + clusterID + `\", access_key: \"` + accessKey + `\"}, workflow_id: \"` + workflowID + `\")\n}"}`
