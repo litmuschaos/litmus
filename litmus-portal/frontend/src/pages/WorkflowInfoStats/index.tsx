@@ -46,7 +46,8 @@ const TestCalendarHeatmapTooltip = ({
         {tooltipData?.data?.bin?.bin.value ?? 0}% Average Resiliency
       </div>
       <div>
-        {tooltipData?.data?.bin?.bin.workflowRunDetail.no_of_runs ?? 0} runs on{' '}
+        {tooltipData?.data?.bin?.bin.workflowRunDetail.no_of_runs ?? 0}{' '}
+        completed runs on{' '}
         {formatDate(tooltipData?.data?.bin?.bin.workflowRunDetail.date_stamp) ??
           ''}
       </div>
@@ -100,7 +101,7 @@ const WorkflowInfoStats: React.FC = () => {
   );
 
   const workflowRunID =
-    workflowRunData?.getWorkflowRuns.workflow_runs[0].workflow_run_id ?? '';
+    workflowRunData?.getWorkflowRuns?.workflow_runs[0]?.workflow_run_id ?? '';
 
   const presentYear = new Date().getFullYear();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -178,14 +179,16 @@ const WorkflowInfoStats: React.FC = () => {
       </div>
 
       {/* Information and stats */}
-      {data && workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs && (
-        <InfoSection
-          data={data}
-          workflowRunLength={
-            workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
-          }
-        />
-      )}
+      {data &&
+        workflowRunData &&
+        workflowRunData.getWorkflowRuns.total_no_of_workflow_runs > 0 && (
+          <InfoSection
+            data={data}
+            workflowRunLength={
+              workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
+            }
+          />
+        )}
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
