@@ -1227,7 +1227,6 @@ workflowCluster:
       name: Name
       time: Time
       run: Last Workflow run
-      agentType: Agent Type
       agentScope: Agent Scope
       connectionDate: Connection Date
       noWorkflows: No. of Workflows
