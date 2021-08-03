@@ -20,7 +20,6 @@ import (
 	"flag"
 	"log"
 	"os"
-	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
@@ -30,13 +29,15 @@ import (
 
 	rt "runtime"
 
-	"k8s.io/apimachinery/pkg/runtime"
+	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
+
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/controllers"
 	// +kubebuilder:scaffold:imports
 )
