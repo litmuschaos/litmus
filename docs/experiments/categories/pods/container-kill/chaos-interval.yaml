@@ -1,0 +1,24 @@
+# defines delay between each successive iteration of the chaos
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: container-kill-sa
+  experiments:
+  - name: container-kill
+    spec:
+      components:
+        env:
+        # delay between each iteration of chaos
+        - name: CHAOS_INTERVAL
+          value: '15'
+        # time duration for the chaos execution
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

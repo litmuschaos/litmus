@@ -1,0 +1,20 @@
+## provide the labels of the targeted nodes
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-cpu-hog-sa
+  experiments:
+  - name: node-cpu-hog
+    spec:
+      components:
+        env:
+        # labels of the targeted node
+        # it will derive the target nodes if TARGET_NODE(S) ENV is not set
+        - name: NODE_LABEL
+          value: 'key=value'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

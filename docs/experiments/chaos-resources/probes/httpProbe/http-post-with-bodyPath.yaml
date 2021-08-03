@@ -1,0 +1,39 @@
+# contains the http probes with post method and verify the response code
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "check-frontend-access-url"
+        type: "httpProbe"
+        httpProbe/inputs:
+          url: "<url>"
+          method:
+            # call http post method and verify the response code
+            post: 
+              # the configMap should be mounted to the experiment which contains http body
+              # use the mounted path here
+              bodyPath: "/mnt/body.yml"
+              # http body content type
+              contentType: "application/json; charset=UTF-8"
+              # criteria which should be matched
+              criteria: "==" # ==, !=, oneof
+              # exepected response code for the http request, which should follow the specified criteria
+              responseCode: "200"
+        mode: "Continuous"
+        runProperties:
+          probeTimeout: 5 
+          interval: 2 
+          retry: 1
+          probePollingInterval: 2
+         

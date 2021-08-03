@@ -1,0 +1,47 @@
+# chaining enables reuse of probe's result (represented by the template function {{ <probeName>.probeArtifact.Register}}) 
+#-- in subsequent "downstream" probes defined in the ChaosEngine.
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "probe1"
+        type: "cmdProbe"
+        cmdProbe/inputs:
+          command: "<command>"
+          comparator:
+            type: "string"
+            criteria: "equals"
+            value: "<value-for-criteria-match>"
+          source: "inline"
+        mode: "SOT"
+        runProperties:
+          probeTimeout: 5
+          interval: 5
+          retry: 1
+      - name: "probe2"
+        type: "cmdProbe"
+        cmdProbe/inputs:
+          ## probe1's result being used as one of the args in probe2
+          command: "<commmand> {{ .probe1.ProbeArtifacts.Register }} <arg2>"
+          comparator:
+            type: "string"
+            criteria: "equals"
+            value: "<value-for-criteria-match>"
+          source: "inline"
+        mode: "SOT"
+        runProperties:
+          probeTimeout: 5
+          interval: 5
+          retry: 1
+          

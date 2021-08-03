@@ -1,0 +1,40 @@
+# delete the resource matched with the given inputs
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "delete-percona-pvc"
+        type: "k8sProbe"
+        k8sProbe/inputs:
+          # group of the resource
+          group: ""
+          # version of the resource
+          version: "v1"
+          # name of the resource
+          resource: "persistentvolumeclaims"
+          # namespace of the instance, which needs to be deleted
+          namespace: "default"
+          # labels selectors for the k8s resource, which needs to be deleted
+          labelSelector: "openebs.io/target-affinity=percona"
+          # fieldselector for the k8s resource, which needs to be deleted
+          fieldSelector: ""
+          # type of operation
+          # supports: create, delete, present, absent
+          operation: "delete"
+        mode: "EOT"
+        runProperties:
+          probeTimeout: 5 
+          interval: 2 
+          retry: 1
+         

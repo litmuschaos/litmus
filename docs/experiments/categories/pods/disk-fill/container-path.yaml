@@ -1,0 +1,23 @@
+# path inside node/vm where containers are present 
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: disk-fill-sa
+  experiments:
+  - name: disk-fill
+    spec:
+      components:
+        env:
+        # storage location of the containers
+        - name: CONTAINER_PATH
+          value: '/var/lib/docker/containers'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

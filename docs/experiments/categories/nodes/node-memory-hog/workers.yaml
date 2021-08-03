@@ -1,0 +1,19 @@
+# provide for the workers count for the stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-memory-hog-sa
+  experiments:
+  - name: node-memory-hog
+    spec:
+      components:
+        env:
+        # total number of workers involved in stress
+        - name: NUMBER_OF_WORKERS
+          value: '1' 
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
