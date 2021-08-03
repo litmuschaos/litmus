@@ -2,23 +2,11 @@ import { makeStyles } from '@material-ui/core/styles';
 
 // Component styles
 const useStyles = makeStyles((theme) => ({
-  rootContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    overflowX: 'hidden',
-    msOverflowX: 'hidden',
-  },
-
   root: {
-    overflowY: 'hidden',
-    msOverflowY: 'hidden',
-    msOverflowStyle: 'none' /* Internet Explorer 10+ */,
     scrollbarWidth: 'none' /* Firefox */,
     '&::-webkit-scrollbar': {
       display: 'none' /* Safari and Chrome */,
     },
-    marginBottom: theme.spacing(2.5),
   },
 
   center: {
