@@ -68,6 +68,6 @@ nav:
         - K8S Probe:  experiments/chaos-resources/probes/k8sProbe.md
         - Prometheus Probe:  experiments/chaos-resources/probes/promProbe.md
     - Releases ⧉: https://github.com/litmuschaos/litmus/releases
-    - Roadmap: resources/Cloud_Native_Chaos_Engineering.md
+    - Roadmap: ROADMAP.md
     - Slack ⧉: https://kubernetes.slack.com/messages/CNXNB0ZTN
     - Twitter ⧉: https://twitter.com/litmuschaos
