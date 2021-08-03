@@ -211,7 +211,7 @@ func GetAgentConfigMapData() (*v1.ConfigMap, error) {
 	if k8sErrors.IsNotFound(err) {
 		return &v1.ConfigMap{}, errors.New(ExternAgentConfigName + " configmap not found")
 	} else if err != nil {
-		return &v1.ConfigMap{},  err
+		return &v1.ConfigMap{}, err
 	}
 
 	return getCM, nil

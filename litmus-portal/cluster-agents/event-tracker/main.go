@@ -67,7 +67,7 @@ func init() {
 
 	var (
 		agent_scope = os.Getenv("AGENT_SCOPE")
-		factory informers.SharedInformerFactory
+		factory     informers.SharedInformerFactory
 	)
 
 	if agent_scope == "cluster" {
@@ -93,11 +93,10 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
-
 	var (
 		agent_scope = os.Getenv("AGENT_SCOPE")
-		mgr manager.Manager
-		err error
+		mgr         manager.Manager
+		err         error
 	)
 
 	if agent_scope == "namespace" {
@@ -105,7 +104,7 @@ func main() {
 			Scheme:             scheme,
 			MetricsBindAddress: metricsAddr,
 			Port:               9443,
-			Namespace:  os.Getenv("AGENT_NAMESPACE"),
+			Namespace:          os.Getenv("AGENT_NAMESPACE"),
 			LeaderElection:     enableLeaderElection,
 			LeaderElectionID:   "2b79cec3.litmuschaos.io",
 		})
