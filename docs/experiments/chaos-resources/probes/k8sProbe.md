@@ -3,7 +3,7 @@ It can be executed by setting `type` as `k8sProbe` inside `.spec.experiments[].s
 
 ### Common Probe Tunables
 
-Refer the [common attributes](common.md) to tune the common tunables for all the probes.
+Refer the [common attributes](litmus-probes.md) to tune the common tunables for all the probes.
 
 ### Create Operation
 
