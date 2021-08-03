@@ -46,7 +46,7 @@ const Settings: React.FC = () => {
 
   return (
     <Wrapper>
-      <Typography variant="h3" className={classes.Head}>
+      <Typography variant="h3" className={classes.head}>
         Settings
       </Typography>
       <Paper className={classes.root} elevation={0}>
