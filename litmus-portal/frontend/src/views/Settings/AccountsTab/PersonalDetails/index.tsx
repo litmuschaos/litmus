@@ -89,7 +89,6 @@ const PersonalDetails: React.FC = () => {
         Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify({
-        username,
         name: personaData.fullName,
         email: personaData.email,
       }),

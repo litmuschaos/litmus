@@ -6,6 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
@@ -50,6 +51,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 };
 
 const SideBar: React.FC = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
@@ -93,12 +95,25 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="Workflows"
+            label="Litmus Workflows"
             selected={['workflows', 'create-workflow'].includes(pathName)}
           >
             <WorkflowsIcon />
           </CustomisedListItem>
         </div>
+        <CustomisedListItem
+          key="targets"
+          handleClick={() => {
+            history.push({
+              pathname: `/targets`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
+          }}
+          label="ChaosAgents"
+          selected={['targets', 'target-connect'].includes(pathName)}
+        >
+          <TargetsIcon />
+        </CustomisedListItem>
         <div data-cy="myHub">
           <CustomisedListItem
             key="myhub"
@@ -114,19 +129,6 @@ const SideBar: React.FC = () => {
             <MyHubIcon />
           </CustomisedListItem>
         </div>
-        <CustomisedListItem
-          key="targets"
-          handleClick={() => {
-            history.push({
-              pathname: `/targets`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
-          label="Agents"
-          selected={['targets', 'target-connect'].includes(pathName)}
-        >
-          <TargetsIcon />
-        </CustomisedListItem>
         <CustomisedListItem
           key="analytics"
           handleClick={() => {
@@ -208,8 +210,8 @@ const SideBar: React.FC = () => {
         </CustomisedListItem>
       </List>
       <Typography className={classes.versionDiv}>
-        <b>Version: </b> {version} <br />
-        <b>Build Time: </b> {buildTime}
+        <b>{t('sidebar.version')}: </b> {version} <br />
+        <b>{t('sidebar.time')}: </b> {buildTime}
       </Typography>
     </Drawer>
   );

@@ -221,7 +221,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       panel_id: '',
       panel_group_id: '',
       created_at: '',
-      panel_group_name: 'Untitled Group name',
+      panel_group_name: 'Untitled Panel Group',
       ds_url: dashboardVars.dataSourceURL ?? '',
       prom_queries: [
         {
@@ -240,7 +240,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
         grids: true,
         left_axis: true,
       },
-      panel_name: 'Untitled Metric',
+      panel_name: 'Untitled Panel',
       y_axis_left: '',
       y_axis_right: '',
       x_axis_down: '',
@@ -496,10 +496,9 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
           ))}
           <StyledTab
             label={t(
-              'analyticsDashboard.applicationDashboards.tuneTheQueries.addMetric'
+              'analyticsDashboard.applicationDashboards.tuneTheQueries.addPanel'
             )}
             {...a11yProps(dashboardDetails.selectedPanels?.length)}
-            key="tab-addMetric"
           />
         </Tabs>
       </AppBar>

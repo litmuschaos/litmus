@@ -70,7 +70,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
       value: isSingleRun
         ? data?.getWorkflowRunStats.experiments_passed ?? 0
         : data?.getWorkflowRunStats.succeeded_workflow_runs ?? 0,
-      label: isSingleRun ? 'Passed' : 'Completed',
+      label: isSingleRun ? 'Passed' : 'Succeeded',
       baseColor: theme.palette.status.experiment.completed,
     },
     {
@@ -133,7 +133,13 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
               <RadialChart
                 legendTableHeight={isSingleRun ? 160 : NaN}
                 radialData={graphData}
-                heading={isSingleRun ? 'Experiments' : 'Workflows'}
+                heading={
+                  isSingleRun
+                    ? 'Experiments'
+                    : data?.getWorkflowRunStats.total_workflow_runs !== 1
+                    ? 'Runs'
+                    : 'Run'
+                }
                 showCenterHeading
                 alignLegendTable="right"
               />

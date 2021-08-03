@@ -1,0 +1,891 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Litmus Portal Authentication API | API Reference</title>
+    <link rel="stylesheet" href="public/stylesheets/foundation.min.css" />
+    <link rel="stylesheet" href="public/stylesheets/spectacle.min.css" />
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!-- <script src="javascripts/foundation.js"></script> -->
+    <script src="javascripts/spectacle.min.js"></script>
+    <link rel="icon" type="image/png" href="../images/logo.png"/>
+  </head>
+  <body id="spectacle">
+    <div id="page" class="drawer-layout drawer-slide-right-large">
+      <div id="sidebar">
+        <button class="close-button" aria-label="Close menu" type="button" data-drawer-close>
+          <span aria-hidden="true">×</span>
+        </button>
+        <div id="logo">
+          <img src="../images/logo.png" title="Litmus Portal API Documentation" /> </div>
+        <nav id="nav" role="navigation">
+          <h5>Topics</h5>
+          <a href="#introduction">Authentication</a>
+          <a href="https://litmuschaos.github.io/litmus/api.html" target="_blank">GraphQL APIs</a>
+          <h5>Paths</h5>
+          <!-- <section>
+                <a href="#path--status">/status</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--status-get"> GET /status </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--login">/login</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--login-post"> POST /login </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--users">/users</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--users-get"> GET /users </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--update-password">/update/password</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--update-password-post"> POST /update/password </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--create">/create</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--create-post"> POST /create </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--reset-password">/reset/password</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--reset-password-post"> POST /reset/password </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--update-details">/update/details</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--update-details-post"> POST /update/details </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--updatestate">/updatestate</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--updatestate-post"> POST /updatestate </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+        </nav>
+      </div>
+      <div id="docs" class="row collapse expanded drawer" data-drawer>
+        <button class="floating-menu-icon" type="button" data-drawer-slide="right">
+          <span class="hamburger"></span>
+        </button>
+        <div class="example-box doc-content"></div>
+        <article>
+          <h1 class="doc-title">Litmus Portal Authentication API
+            <span>API Reference</span>
+          </h1>
+          <div id="introduction" data-traverse-target="introduction">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p>Litmus Portal Authentication APIs are used to authenticate the idenity of a user and to perform several user-specific tasks like:
+                  <li>Update Profile</li>
+                  <li>Change Password</li>
+                  <li>Reset Password</li>
+                  <li>Create new users etc.</li>
+                </p>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>API Endpoint</h5>
+                  <!-- <div class="hljs"> --><pre><code>https://localhost:3000</code></pre>
+                  <!-- </div> -->
+                  <h5>Schemes:
+                    <span>https, http</span>
+                  </h5>
+                </section>
+              </div>
+            </div>
+          </div>
+          <h1>Paths</h1>
+          <span id="path--status"></span>
+          <div id="operation--status-get" class="operation panel" data-traverse-target="operation--status-get">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">GET</span>
+                <span class="operation-path">/status</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to check the status of the server.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"up"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--login"></span>
+          <div id="operation--login-post" class="operation panel" data-traverse-target="operation--login-post">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/login</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to login into auth server.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>username</td>
+                      <td>admin</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>password</td>
+                      <td>pass123</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"admin"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">401 Unauthorized</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Unauthorized</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"access_token"</span>: <span class="hljs-string">"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjcxMjY4MjMsInJvbGUiOiJhZG1pbiIsInVpZCI6ImY4MDM2YzUxLTBkNzktNGNkNy1hN2QwLTQ1ZGNhZGI4MGVlYiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.zNIMwocHgmguwtGFupV54UfcfwEdaRO1_xB2ilalqn0fp-JE0ujkHT3gDyepnEGSRm2j1eTopPgtvyRVPb7gGA"</span>,
+  <span class="hljs-attr">"expires_in"</span>: <span class="hljs-number">86400</span>,
+  <span class="hljs-attr">"type"</span>: <span class="hljs-string">"Bearer"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+                <section>
+                  <h5>Response Example
+                    <span>(401 Unauthorized)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"error"</span>: <span class="hljs-string">"unauthorized"</span>,
+  <span class="hljs-attr">"error_description"</span>: <span class="hljs-string">"The user does not have requested authorization to access this resource"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--users"></span>
+          <div id="operation--users-get" class="operation panel" data-traverse-target="operation--users-get">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">GET</span>
+                <span class="operation-path">/users</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to get the list of users</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">[
+  {
+    <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
+    <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
+    <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
+    <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040098"</span>
+  }
+]
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--update-password"></span>
+          <div id="operation--update-password-post" class="operation panel" data-traverse-target="operation--update-password-post">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/update/password</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to update the password</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>username</td>
+                      <td>admin</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>old_password</td>
+                      <td>pass123</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>new_password</td>
+                      <td>pass1234</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"old_password"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"litmus"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"password has been reset"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--create"></span>
+          <div id="operation--create-post" class="operation panel" data-traverse-target="operation--create-post">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/create</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to create a new user.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>username</td>
+                      <td>admin</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>password</td>
+                      <td>pass123</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>role</td>
+                      <td>admin</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>email</td>
+                      <td>admin</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>name</td>
+                      <td>admin</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
+  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"test1"</span>,
+  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test1@litmus.com"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Test Account"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"5873815a-1535-4b1c-8766-2fe53c726276"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test1@litmus.com"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Test Account"</span>,
+  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040799"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--reset-password"></span>
+          <div id="operation--reset-password-post" class="operation panel" data-traverse-target="operation--reset-password-post">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/reset/password</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to reset the password of a user.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>username</td>
+                      <td>test1</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>new_password</td>
+                      <td>pass1234</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
+  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"test2"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"password has been reset successfully"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--update-details"></span>
+          <div id="operation--update-details-post" class="operation panel" data-traverse-target="operation--update-details-post">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/update/details</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to update the details of a user.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>name</td>
+                      <td>test1</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>email</td>
+                      <td>test1@test.com</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>role</td>
+                      <td>admin</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>username</td>
+                      <td>test1</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Administrator"</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"admin@litmus.com"</span>,
+  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"admin@litmus.com"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Administrator"</span>,
+  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--updatestate"></span>
+          <div id="operation--updatestate-post" class="operation panel" data-traverse-target="operation--updatestate-post">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/updatestate</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to update the state of a user.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">""</span>: <span class="hljs-string">""</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful response</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+              </div>
+            </div>
+          </div>
+          <div class="doc-row no-margin">
+            <div class="doc-copy doc-separator">
+              <a class="powered-by" href="https://sourcey.com/spectacle">Documentation by
+                <span>Spectacle</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

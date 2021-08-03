@@ -108,6 +108,32 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 	return false, err
 }
 
+func TerminateWorkflow(ctx context.Context, workflow_id *string, workflowRunID *string, r *store.StateData) (bool, error) {
+	query := bson.D{{"workflow_id", workflow_id}}
+	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	if err != nil {
+		return false, err
+	}
+
+	if *workflow_id != "" && *workflowRunID != "" {
+		for _, workflow_run := range workflow.WorkflowRuns {
+			if workflow_run.WorkflowRunID == *workflowRunID {
+				workflow_run.Completed = true
+				workflow_run.Phase = "Terminated"
+			}
+		}
+
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, r)
+		if err != nil {
+			return false, err
+		}
+
+		return true, nil
+
+	}
+	return false, errors.New("invalid input, workflow and workflow run id cannot be empty")
+}
+
 func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
 	input, wfType, err := ops.ProcessWorkflow(input)
 	if err != nil {
