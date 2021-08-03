@@ -3,12 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 // Community Component Styling
 const useStyles = makeStyles((theme) => ({
   root: {
-    margin: theme.spacing(1, 0, 1.5, 0),
     overflowX: 'hidden',
   },
   mainHeader: {
     color: theme.palette.text.primary,
-    margin: theme.spacing(0, 0, 2.5, 0),
+    marginBottom: theme.spacing(2.5),
   },
 
   LitmusAnalyticsBlock: {

@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   content: {
     gridArea: 'content',
-    padding: theme.spacing(5, 7.5),
+    padding: theme.spacing(5, 7.5, 10),
     overflowY: 'auto',
   },
   sidebar: {

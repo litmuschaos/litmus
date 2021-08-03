@@ -8,8 +8,8 @@ const useStyles = makeStyles((theme: Theme) => ({
       width: '100%',
     },
   },
-  Head: {
-    margin: theme.spacing(1, 0, 2.5),
+  head: {
+    marginBottom: theme.spacing(2.5),
   },
 }));
 export default useStyles;
