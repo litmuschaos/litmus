@@ -1,0 +1,324 @@
+---
+swagger: '2.0'
+host: 'localhost:3000'
+schemes:
+- https
+- http
+info:
+  title: Litmus Portal Authentication API
+  description: |
+   Litmus Portal Authentication APIs are used to authenticate the idenity of a user and to perform several user-specific tasks like:
+    <li>Update Profile</li>
+    <li>Change Password</li>
+    <li>Reset Password</li>
+    <li>Create new users etc.</li>
+paths:
+  "/status":
+    get:
+      description: This API is used to check the status of the server.
+      responses:
+        '200':
+          description: OK
+          examples:
+            application/json:
+              status: up
+          schema:
+            type: object
+      parameters: []
+      produces:
+      - application/json
+  "/login":
+    post:
+      description: |
+        This API is used to login into auth server.
+        <table>
+          <tr>
+          <th>Field</th>
+          <th>Possible values</th>
+          <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>username</td>
+            <td>admin</td>
+            <td>Mandatory</td>
+           </tr>
+           <tr>
+            <td>password</td>
+            <td>pass123</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        '200':
+          description: OK
+          examples:
+            application/json:
+              access_token: eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjcxMjY4MjMsInJvbGUiOiJhZG1pbiIsInVpZCI6ImY4MDM2YzUxLTBkNzktNGNkNy1hN2QwLTQ1ZGNhZGI4MGVlYiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.zNIMwocHgmguwtGFupV54UfcfwEdaRO1_xB2ilalqn0fp-JE0ujkHT3gDyepnEGSRm2j1eTopPgtvyRVPb7gGA
+              expires_in: 86400
+              type: Bearer
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+          examples:
+            application/json:
+              error: unauthorized
+              error_description: The user does not have requested authorization to
+                access this resource
+          schema:
+            type: object
+      parameters:
+      - name: body
+        in: body
+        schema:
+          type: object
+          example:
+            username: admin
+            password: admin
+      consumes:
+      - application/json
+      produces:
+      - application/json
+  "/users":
+    get:
+      description: This API is used to get the list of users
+      responses:
+        '200':
+          description: OK
+          examples:
+            application/json:
+            - _id: f8036c51-0d79-4cd7-a7d0-45dcadb80eeb
+              username: admin
+              role: admin
+              created_at: '1627040098'
+          schema:
+            type: object
+      parameters: []
+      produces:
+      - application/json
+  "/update/password":
+    post:
+      description: |
+        This API is used to update the password
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>username</td>
+            <td>admin</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>old_password</td>
+            <td>pass123</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>new_password</td>
+            <td>pass1234</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        '200':
+          description: OK
+          examples:
+            application/json:
+              message: password has been reset
+          schema:
+            type: object
+      parameters:
+      - name: body
+        in: body
+        schema:
+          type: object
+          example:
+            username: admin
+            old_password: admin
+            new_password: litmus
+      consumes:
+      - application/json
+      produces:
+      - application/json
+  "/create":
+    post:
+      description: |
+        This API is used to create a new user.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>username</td>
+            <td>admin</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>password</td>
+            <td>pass123</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>role</td>
+            <td>admin</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>email</td>
+            <td>admin</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>admin</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        '200':
+          description: OK
+          examples:
+            application/json:
+              _id: 5873815a-1535-4b1c-8766-2fe53c726276
+              username: test1
+              email: test1@litmus.com
+              name: Test Account
+              role: admin
+              created_at: '1627040799'
+          schema:
+            type: object
+      parameters:
+      - name: body
+        in: body
+        schema:
+          type: object
+          example:
+            username: test1
+            password: test1
+            role: admin
+            email: test1@litmus.com
+            name: Test Account
+      consumes:
+      - application/json
+      produces:
+      - application/json
+  "/reset/password":
+    post:
+      description: |
+        This API is used to reset the password of a user.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>username</td>
+            <td>test1</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>new_password</td>
+            <td>pass1234</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        '200':
+          description: OK
+          examples:
+            application/json:
+              message: password has been reset successfully
+          schema:
+            type: object
+      parameters:
+      - name: body
+        in: body
+        schema:
+          type: object
+          example:
+            username: test1
+            new_password: test2
+      consumes:
+      - application/json
+      produces:
+      - application/json
+  "/update/details":
+    post:
+      description: |
+        This API is used to update the details of a user.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>test1</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>email</td>
+            <td>test1@test.com</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>role</td>
+            <td>admin</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>username</td>
+            <td>test1</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        '200':
+          description: OK
+          examples:
+            application/json:
+              _id: f8036c51-0d79-4cd7-a7d0-45dcadb80eeb
+              username: admin
+              email: admin@litmus.com
+              name: Administrator
+              role: admin
+          schema:
+            type: object
+      parameters:
+      - name: body
+        in: body
+        schema:
+          type: object
+          example:
+            name: Administrator
+            email: admin@litmus.com
+            role: admin
+            username: admin
+      consumes:
+      - application/json
+      produces:
+      - application/json
+  "/updatestate":
+    post:
+      description: This API is used to update the state of a user.
+      responses:
+        '200':
+          description: Successful response
+      parameters:
+      - name: body
+        in: body
+        schema:
+          type: object
+          example:
+            '': ''
+      consumes:
+      - application/json
+      produces:
+      - application/json

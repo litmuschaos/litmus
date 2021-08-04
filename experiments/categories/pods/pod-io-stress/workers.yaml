@@ -1,0 +1,23 @@
+# number of workers for the stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-io-stress-sa
+  experiments:
+  - name: pod-io-stress
+    spec:
+      components:
+        env:
+        # number of io workers 
+        - name: NUMBER_OF_WORKERS
+          value: '4'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

@@ -1,0 +1,23 @@
+# contains the spoof map for the dns spoofing
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-dns-spoof-sa
+  experiments:
+  - name: pod-dns-spoof
+    spec:
+      components:
+        env:
+        # map of host names
+        - name: SPOOF_MAP
+          value: '{"abc.com":"spoofabc.com"}'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

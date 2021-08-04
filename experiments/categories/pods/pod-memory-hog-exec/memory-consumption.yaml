@@ -1,0 +1,24 @@
+# memory to be stressed in MB
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-memory-hog-sa
+  experiments:
+  - name: pod-memory-hog
+    spec:
+      components:
+        env:
+        # memory consuption value in MB
+        # it is limited to 2000MB
+        - name: MEMORY_CONSUMPTION
+          value: '500' #in MB
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

@@ -1,0 +1,27 @@
+# provide the chaos kill, used to kill the chaos process
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-cpu-hog-exec-sa
+  experiments:
+  - name: pod-cpu-hog-exec
+    spec:
+      components:
+        env:
+        # command to create the md5sum process to stress the cpu
+        - name: CHAOS_INJECT_COMMAND
+          value: 'md5sum /dev/zero'
+        # command to kill the md5sum process
+        # alternative command: "kill -9 $(ps afx | grep \"[md5sum] /dev/zero\" | awk '{print$1}' | tr '\n' ' ')"
+        - name: CHAOS_KILL_COMMAND
+          value: "kill $(find /proc -name exe -lname '*/md5sum' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}')"
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

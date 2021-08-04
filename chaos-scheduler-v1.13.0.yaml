@@ -1,0 +1,522 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: litmus
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: scheduler
+  namespace: litmus
+  labels:
+    name: scheduler
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: scheduler
+  labels:
+    name: scheduler
+rules:
+- apiGroups: ["","apps","batch","litmuschaos.io","argoproj.io"]
+  resources: ["pods","jobs","deployments","daemonsets","statefulsets","events","configmaps","services","chaosengines","chaosexperiments","chaosresults","chaosschedules","rollouts"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: scheduler
+  labels:
+    name: scheduler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: scheduler
+subjects:
+- kind: ServiceAccount
+  name: scheduler
+  namespace: litmus
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chaos-scheduler
+  namespace: litmus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: chaos-scheduler
+  template:
+    metadata:
+      labels:
+        name: chaos-scheduler
+    spec:
+      serviceAccountName: scheduler
+      containers:
+        - name: chaos-scheduler
+          image: litmuschaos/chaos-scheduler:1.13.0
+          command:
+          - chaos-scheduler
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "chaos-scheduler"
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: chaosschedules.litmuschaos.io
+spec:
+  group: litmuschaos.io
+  names:
+    kind: ChaosSchedule
+    listKind: ChaosScheduleList
+    plural: chaosschedules
+    singular: chaosschedule
+  scope: Namespaced
+  subresources:
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          type: object
+          properties:
+            engineTemplateSpec:
+              type: object
+              properties:
+                monitoring:
+                  type: boolean
+                jobCleanUpPolicy:
+                  type: string
+                  pattern: ^(delete|retain)$
+                  # alternate ways to do this in case of complex pattern matches
+                  #oneOf:
+                  #  - pattern: '^delete$'
+                  #  - pattern: '^retain$'
+                annotationCheck:
+                  type: string
+                  pattern: ^(true|false)$
+                appinfo:
+                  type: object
+                  properties:
+                    appkind:
+                      type: string
+                      pattern: ^(^$|deployment|statefulset|daemonset|deploymentconfig|rollout)$
+                    applabel:
+                      type: string
+                    appns:
+                      type: string
+                auxiliaryAppInfo:
+                  type: string
+                engineState:
+                  type: string
+                  pattern: ^(active|stop)$
+                chaosServiceAccount:
+                  type: string
+                components:
+                  type: object
+                  properties:
+                    runner:
+                      type: object
+                      properties:
+                        image:
+                          type: string
+                        type:
+                          type: string
+                          pattern: ^(go)$
+                        runnerannotation:
+                          type: object
+                          additionalProperties:
+                            type: string
+                            properties:
+                              key:
+                                type: string
+                                minLength: 1
+                              value:
+                                type: string
+                                minLength: 1
+                experiments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      spec:
+                        type: object
+                        properties:
+                          probe:
+                            type: array
+                            items:
+                              type: object
+                              required:
+                                - runProperties
+                              properties:
+                                name:
+                                  type: string
+                                type:
+                                  type: string
+                                  minLength: 1
+                                  pattern: ^(k8sProbe|httpProbe|cmdProbe|promProbe)$
+                                k8sProbe/inputs:
+                                  type: object
+                                  properties:
+                                    command:
+                                      type: object
+                                      properties:
+                                        group:
+                                          type: string
+                                        version:
+                                          type: string
+                                        resource:
+                                          type: string
+                                        namespace:
+                                          type: string
+                                        fieldSelector:
+                                          type: string
+                                        labelSelector:
+                                          type: string
+                                cmdProbe/inputs:
+                                  type: object
+                                  properties:
+                                    command:
+                                      type: string
+                                      minLength: 1
+                                    comparator:
+                                      type: object
+                                      properties:
+                                        type:
+                                          type: string
+                                          minLength: 1
+                                          pattern: ^(int|float|string)$
+                                        criteria:
+                                          type: string
+                                        value:
+                                          type: string
+                                    source:
+                                      type: string
+                                      minLength: 1
+                                httpProbe/inputs:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                                      minLength: 1
+                                    insecureSkipVerify:
+                                      type: boolean
+                                      minLength: 1
+                                    method:
+                                      type: object
+                                      minProperties: 1
+                                      properties:
+                                        get:
+                                          type: object
+                                          properties:
+                                            criteria:
+                                              type: string
+                                              minLength: 1
+                                            responseCode:
+                                              type: string
+                                              minLength: 1
+                                        post:
+                                          type: object
+                                          properties:
+                                            contentType:
+                                              type: string
+                                              minLength: 1
+                                            body:
+                                              type: string
+                                            bodyPath: 
+                                              type: string
+                                            criteria:
+                                              type: string
+                                              minLength: 1
+                                            responseCode:
+                                              type: string
+                                              minLength: 1 
+                                promProbe/inputs:
+                                  type: object
+                                  properties:
+                                    endpoint:
+                                      type: string
+                                    query:
+                                      type: string
+                                    queryPath:
+                                      type: string
+                                    comparator:
+                                      type: object
+                                      properties:
+                                        criteria:
+                                          type: string
+                                        value:
+                                          type: string
+                                runProperties:
+                                  type: object
+                                  minProperties: 3
+                                  required:
+                                    - probeTimeout
+                                    - interval
+                                    - retry
+                                  properties:
+                                    probeTimeout:
+                                      type: integer
+                                    interval:
+                                      type: integer
+                                    retry: 
+                                      type: integer
+                                    probePollingInterval:
+                                      type: integer
+                                    initialDelaySeconds:
+                                      type: integer
+                                mode:
+                                  type: string
+                                  pattern: ^(SOT|EOT|Edge|Continuous|OnChaos)$
+                                  minLength: 1
+                                operation:
+                                  type: string
+                                  pattern: ^(present|absent|create|delete)$
+                                  minLength: 1
+                                data:
+                                  type: string
+                          components:
+                            type: object
+                            properties:
+                              statusCheckTimeouts:
+                                type: object
+                                properties:
+                                  delay:
+                                    type: integer
+                                  timeout:
+                                    type: integer
+                              nodeSelector:
+                                type: object
+                                minLength: 1
+                              experimentImage:
+                                type: string
+                              env:
+                                type: array
+                                items:
+                                  description: EnvVar represents an environment variable
+                                    present in a Container.
+                                  properties:
+                                    name:
+                                      description: Name of the environment variable.
+                                        Must be a C_IDENTIFIER.
+                                      type: string
+                                    value:
+                                      description: 'Variable references $(VAR_NAME)
+                                        are expanded using the previous defined environment
+                                        variables in the container and any service environment
+                                        variables. If a variable cannot be resolved,
+                                        the reference in the input string will be unchanged.
+                                        The $(VAR_NAME) syntax can be escaped with a
+                                        double $$, ie: $$(VAR_NAME). Escaped references
+                                        will never be expanded, regardless of whether
+                                        the variable exists or not. Defaults to "".'
+                                      type: string
+                                    valueFrom:
+                                      description: Source for the environment variable's
+                                        value. Cannot be used if value is not empty.
+                                      properties:
+                                        configMapKeyRef:
+                                          description: Selects a key of a ConfigMap.
+                                          properties:
+                                            key:
+                                              description: The key to select.
+                                              type: string
+                                            name:
+                                              description: 'Name of the referent. More
+                                                info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                                TODO: Add other useful fields. apiVersion,
+                                                kind, uid?'
+                                              type: string
+                                            optional:
+                                              description: Specify whether the ConfigMap
+                                                or its key must be defined
+                                              type: boolean
+                                          required:
+                                            - key
+                                          type: object
+                                        fieldRef:
+                                          description: 'Selects a field of the pod:
+                                            supports metadata.name, metadata.namespace,
+                                            metadata.labels, metadata.annotations, spec.nodeName,
+                                            spec.serviceAccountName, status.hostIP,
+                                            status.podIP.'
+                                          properties:
+                                            apiVersion:
+                                              description: Version of the schema the
+                                                FieldPath is written in terms of, defaults
+                                                to "v1".
+                                              type: string
+                                            fieldPath:
+                                              description: Path of the field to select
+                                                in the specified API version.
+                                              type: string
+                                          required:
+                                            - fieldPath
+                                          type: object
+                                        resourceFieldRef:
+                                          description: 'Selects a resource of the container:
+                                            only resources limits and requests (limits.cpu,
+                                            limits.memory, limits.ephemeral-storage,
+                                            requests.cpu, requests.memory and requests.ephemeral-storage)
+                                            are currently supported.'
+                                          properties:
+                                            containerName:
+                                              description: 'Container name: required
+                                                for volumes, optional for env vars'
+                                              type: string
+                                            divisor:
+                                              anyOf:
+                                                - type: integer
+                                                - type: string
+                                              description: Specifies the output format
+                                                of the exposed resources, defaults to
+                                                "1"
+                                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            resource:
+                                              description: 'Required: resource to select'
+                                              type: string
+                                          required:
+                                            - resource
+                                          type: object
+                                        secretKeyRef:
+                                          description: Selects a key of a secret in
+                                            the pod's namespace
+                                          properties:
+                                            key:
+                                              description: The key of the secret to
+                                                select from.  Must be a valid secret
+                                                key.
+                                              type: string
+                                            name:
+                                              description: 'Name of the referent. More
+                                                info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                                TODO: Add other useful fields. apiVersion,
+                                                kind, uid?'
+                                              type: string
+                                            optional:
+                                              description: Specify whether the Secret
+                                                or its key must be defined
+                                              type: boolean
+                                          required:
+                                            - key
+                                          type: object
+                                      type: object
+                                  required:
+                                    - name
+                                  type: object
+                              configMaps:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    mountPath:
+                                      type: string
+                              secrets:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    mountPath:
+                                      type: string
+                              experimentannotation:
+                                type: object
+                                additionalProperties:
+                                  type: string
+                                  properties:
+                                    key:
+                                      type: string
+                                      minLength: 1
+                                      allowEmptyValue: false
+                                    value:
+                                      type: string
+                                      minLength: 1
+                                      allowEmptyValue: false
+            schedule:
+              oneOf:
+              - required:
+                - now
+              - required:
+                - once
+              - required:
+                - repeat
+              properties:
+                now:
+                  type: boolean
+                once:
+                  properties:
+                    executionTime:
+                      format: date-time
+                      type: date
+                  type: object
+                repeat:
+                  properties:
+                    timeRange:
+                      properties:
+                        endTime:
+                          format: date-time
+                          type: date
+                        startTime:
+                          format: date-time
+                          type: date
+                      type: object
+                    workkHours:
+                      properties:
+                        includedHours:
+                          type: string
+                      type: object
+                      required:
+                      - includedHours
+                    workDays:
+                      properties:
+                        includedDays:
+                          pattern: ((Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,))*(Mon|Tue|Wed|Thu|Fri|Sat|Sun)
+                          type: string
+                      type: object
+                      required:
+                      - includedDays
+                    properties:
+                      properties:
+                        minChaosInterval:
+                          pattern: (([1-6][0-9]|[1-9])m)|(\d+h)
+                          type: string
+                        random:
+                          type: boolean
+                      type: object
+                      required:
+                      - minChaosInterval
+                  type: object
+                  required:
+                  - properties
+              type: object
+        status:
+          type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
