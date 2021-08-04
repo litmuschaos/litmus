@@ -187,7 +187,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
         }
       });
     });
-    const filteredOptions = options.filter((opt) => opt.name !== '') ?? [];
+    const filteredOptions = options.filter((opt) => opt.name !== '');
     const newOptionsSet = Array.from(
       new Set(filteredOptions.map((opt) => opt.name))
     );
