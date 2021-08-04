@@ -66,26 +66,29 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
                 (panel) =>
                   selectedPanels && selectedPanels.includes(panel.panel_id)
               )
-              .map((panel: PanelResponse) => (
-                <DashboardPanel
-                  key={panel.panel_id}
-                  data-cy="dashboardPanel"
-                  panel_id={panel.panel_id}
-                  centralAllowGraphUpdate={centralAllowGraphUpdate}
-                  centralBrushPosition={centralBrushPosition}
-                  handleCentralBrushPosition={handleCentralBrushPosition}
-                  created_at={panel.created_at}
-                  panel_name={panel.panel_name}
-                  panel_options={panel.panel_options}
-                  y_axis_left={panel.y_axis_left}
-                  y_axis_right={panel.y_axis_right}
-                  x_axis_down={panel.x_axis_down}
-                  unit={panel.unit}
-                  prom_queries={panel.prom_queries}
-                  metricDataForPanel={getPanelMetricsData(panel.panel_id)}
-                  chaosData={chaosData}
-                />
-              ))}
+              .map(
+                (panel: PanelResponse) =>
+                  panel && (
+                    <DashboardPanel
+                      key={panel.panel_id}
+                      data-cy="dashboardPanel"
+                      panel_id={panel.panel_id}
+                      centralAllowGraphUpdate={centralAllowGraphUpdate}
+                      centralBrushPosition={centralBrushPosition}
+                      handleCentralBrushPosition={handleCentralBrushPosition}
+                      created_at={panel.created_at}
+                      panel_name={panel.panel_name}
+                      panel_options={panel.panel_options}
+                      y_axis_left={panel.y_axis_left}
+                      y_axis_right={panel.y_axis_right}
+                      x_axis_down={panel.x_axis_down}
+                      unit={panel.unit}
+                      prom_queries={panel.prom_queries}
+                      metricDataForPanel={getPanelMetricsData(panel.panel_id)}
+                      chaosData={chaosData}
+                    />
+                  )
+              )}
         </AccordionDetails>
       </Accordion>
     </div>
