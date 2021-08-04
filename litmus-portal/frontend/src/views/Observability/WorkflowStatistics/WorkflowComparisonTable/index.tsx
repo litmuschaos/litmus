@@ -434,7 +434,7 @@ const WorkflowComparisonTable = () => {
     selectedWorkflows.forEach((workflow) => {
       displayData.forEach((displayWorkflow, i) => {
         if (displayWorkflow.workflow_id === workflow && data) {
-          payload.push(data && data.ListWorkflow.workflows[i]);
+          payload.push(data.ListWorkflow.workflows[i]);
         }
       });
     });
