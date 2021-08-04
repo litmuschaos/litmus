@@ -464,6 +464,7 @@ data:
   JWTSecret: "litmus-portal@123"
   DB_USER: "admin"
   DB_PASSWORD: "1234"
+  VERSION: "ci"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -528,8 +529,13 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: gdsoumya/litmusportal-server:ci
           env:
+            - name: VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: VERSION
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
@@ -569,7 +575,7 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "gdsoumya/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE

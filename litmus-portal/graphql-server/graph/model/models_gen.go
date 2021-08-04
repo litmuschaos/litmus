@@ -134,6 +134,7 @@ type ClusterEventInput struct {
 type ClusterIdentity struct {
 	ClusterID string `json:"cluster_id"`
 	AccessKey string `json:"access_key"`
+	Version   string `json:"version"`
 }
 
 type ClusterInput struct {
