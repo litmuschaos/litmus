@@ -529,7 +529,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: gdsoumya/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:ci
           env:
             - name: VERSION
               valueFrom:
@@ -575,7 +575,7 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "gdsoumya/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE

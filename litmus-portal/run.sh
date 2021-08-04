@@ -22,6 +22,7 @@ export ADMIN_PASSWORD=litmus
 export DB_USER=admin
 export DB_PASSWORD=1234
 export HUB_BRANCH_NAME=v1.13.x
+export VERSION=ci
 export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]" 
 # Dependency Checks
 dir=($(pwd | tr "/" "\n"))

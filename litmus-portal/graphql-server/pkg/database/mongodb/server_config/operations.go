@@ -37,7 +37,7 @@ func GetConfig(ctx context.Context, key string) (*ServerConfig, error) {
 	return &config, nil
 }
 
-// UpdateConfig returns the requested server config
+// UpdateConfig updates the required server config
 func UpdateConfig(ctx context.Context, key string, value interface{}) error {
 	query := bson.D{
 		{"key", key},
