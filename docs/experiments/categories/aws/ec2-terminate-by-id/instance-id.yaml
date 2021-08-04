@@ -1,0 +1,22 @@
+# contains the instance id, to be terminated/stopped
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: ec2-terminate-by-id-sa
+  experiments:
+  - name: ec2-terminate-by-id
+    spec:
+      components:
+        env:
+        # id of the ec2 instance
+        - name: EC2_INSTANCE_ID
+          value: 'instance-1'
+        # region for the ec2 instance
+        - name: REGION
+          value: '<region for EC2_INSTANCE_ID>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

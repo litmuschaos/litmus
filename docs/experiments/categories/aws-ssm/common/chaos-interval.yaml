@@ -1,0 +1,26 @@
+# defines delay between each successive iteration of the chaos
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: aws-ssm-chaos-by-id-sa
+  experiments:
+  - name: aws-ssm-chaos-by-id
+    specEC2_INSTANCE_ID:
+      components:
+        env:
+        # delay between each iteration of chaos
+        - name: CHAOS_INTERVAL
+          value: '15'
+        # time duration for the chaos execution
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+        - name: CPU_CORE
+          value: '1'
+        - name: EC2_INSTANCE_ID
+          value: 'instance-01'
+        - name: REGION
+          value: '<region of the EC2_INSTANCE_ID>'

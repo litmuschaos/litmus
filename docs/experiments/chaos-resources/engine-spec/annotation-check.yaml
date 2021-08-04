@@ -1,0 +1,18 @@
+# checks the AUT for the annoations. The AUT should be annotated with `litmuschaos.io/chaos: true` if provided as true
+# supports: true, false. default: false
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  # annotaionCheck details
+  annotationCheck: "true"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+  

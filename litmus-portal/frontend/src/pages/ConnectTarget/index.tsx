@@ -12,7 +12,7 @@ const ConnectTarget: React.FC = () => {
 
   return (
     <Wrapper>
-      <section className={classes.root}>
+      <section>
         <BackButton />
         <div className={classes.container}>
           <Typography variant="h3">

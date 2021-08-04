@@ -1,0 +1,23 @@
+# size of the data block used to fill the disk
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: disk-fill-sa
+  experiments:
+  - name: disk-fill
+    spec:
+      components:
+        env:
+        ## size of data block used to fill the disk
+        - name: DATA_BLOCK_SIZE
+          value: '256' #in KB
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

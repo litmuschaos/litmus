@@ -1,0 +1,24 @@
+# contains the target host names for the dns error
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-dns-error-sa
+  experiments:
+  - name: pod-dns-error
+    spec:
+      components:
+        env:
+        ## comma separated list of host names
+        ## if not provided, all hostnames/domains will be targeted
+        - name: TARGET_HOSTNAMES
+          value: '["litmuschaos","chaosnative.com"]'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
