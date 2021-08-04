@@ -9,7 +9,7 @@ import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 
-type Variant = 'homePage' | 'returningHome' | 'analytics' | 'community';
+type Variant = 'homePage' | 'returningHome' | 'observability' | 'community';
 
 interface LocalQuickActionCardProps {
   variant?: Variant;
@@ -26,7 +26,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
   const userRole = getProjectRole();
   const homePage = variant === 'homePage';
   const returningHome = variant === 'returningHome';
-  const analytics = variant === 'analytics';
+  const observability = variant === 'observability';
   const community = variant === 'community';
   const emptyData: QuickActionCardProps = {
     src: '',
@@ -34,13 +34,13 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     text: '',
   };
   const quickActionData: Array<QuickActionCardProps> = [
-    analytics
+    observability
       ? {
           src: './icons/addDataSource.svg',
           alt: 'data source',
           onClick: () =>
             history.push({
-              pathname: '/analytics/datasource/select',
+              pathname: '/observability/datasource/select',
               search: `?projectID=${projectID}&projectRole=${userRole}`,
             }),
           text: t('quickActionCard.addDataSource'),
@@ -58,7 +58,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
           text: t('quickActionCard.scheduleWorkflow'),
         }
       : emptyData,
-    homePage || returningHome || analytics
+    homePage || returningHome || observability
       ? {
           src: './icons/target.svg',
           alt: 'agent',
@@ -72,7 +72,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
       : emptyData,
 
     // TODO: settings only accessible by Owner
-    (homePage || returningHome || community || analytics) &&
+    (homePage || returningHome || community || observability) &&
     getProjectRole() === Role.owner
       ? {
           src: './icons/teamMember.svg',
@@ -95,7 +95,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
           text: t('quickActionCard.quickSurvey'),
         }
       : emptyData,
-    homePage || community || analytics
+    homePage || community || observability
       ? {
           src: './icons/docs.svg',
           alt: 'docs',

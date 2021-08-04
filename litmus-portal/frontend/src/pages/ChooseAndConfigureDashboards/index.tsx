@@ -32,7 +32,7 @@ import useActions from '../../redux/actions';
 import * as AlertActions from '../../redux/actions/alert';
 import { RootState } from '../../redux/reducers';
 import { getProjectID } from '../../utils/getSearchParams';
-import DashboardStepper from '../../views/Analytics/ApplicationDashboards/Stepper';
+import DashboardStepper from '../../views/Observability/MonitoringDashboards/Stepper';
 import useStyles from './styles';
 
 interface ChooseAndConfigureDashboardsProps {
@@ -215,9 +215,9 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
             <Loader />
             <Typography className={classes.loading}>
               {configure
-                ? t('analyticsDashboard.applicationDashboards.loadingDashboard')
+                ? t('monitoringDashboard.monitoringDashboards.loadingDashboard')
                 : t(
-                    'analyticsDashboard.applicationDashboards.loadingDataSources'
+                    'monitoringDashboard.monitoringDashboards.loadingDataSources'
                   )}
             </Typography>
           </div>
@@ -225,7 +225,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
           <div className={classes.center}>
             <Typography className={classes.error}>
               {t(
-                'analyticsDashboard.applicationDashboards.errorFetchingDashboard'
+                'monitoringDashboard.monitoringDashboards.errorFetchingDashboard'
               )}
             </Typography>
           </div>
@@ -233,7 +233,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
           <div className={classes.center}>
             <Typography className={classes.error}>
               {t(
-                'analyticsDashboard.applicationDashboards.errorFetchingDataSources'
+                'monitoringDashboard.monitoringDashboards.errorFetchingDataSources'
               )}
             </Typography>
           </div>

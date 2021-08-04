@@ -6,7 +6,7 @@ const initialState: TabState = {
   workflows: 0,
   settings: 0,
   node: 0,
-  analytics: 0,
+  observability: 0,
   myhub: 0,
 };
 
@@ -35,7 +35,7 @@ export const tabNumber = createReducer<TabState>(initialState, {
   ) {
     return {
       ...state,
-      analytics: action.payload,
+      observability: action.payload,
     };
   },
   [TabActions.CHANGE_HUB_TABS](state: TabState, action: TabAction) {
