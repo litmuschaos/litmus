@@ -1,0 +1,34 @@
+## provide the details of the ssm document details
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: aws-ssm-chaos-by-id-sa
+  experiments:
+  - name: aws-ssm-chaos-by-id
+    spec:
+      components:
+        env:
+        # name of the ssm docs
+        - name: DOCUMENT_NAME
+          value: 'AWS-SSM-Doc'
+        # format of the ssm docs
+        - name: DOCUMENT_FORMAT
+          value: 'YAML'
+        # type of the ssm docs
+        - name: DOCUMENT_TYPE
+          value: 'command'
+        # path of the ssm docs
+        - name: DOCUMENT_PATH
+          value: ''
+        # id of the ec2 instance
+        - name: EC2_INSTANCE_ID
+          value: 'instance-01'
+        # region of the ec2 instance
+        - name: REGION
+          value: '<region of the EC2_INSTANCE_ID>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

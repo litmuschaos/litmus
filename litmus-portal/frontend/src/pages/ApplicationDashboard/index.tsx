@@ -368,7 +368,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Wrapper>
-      <div className={classes.rootContainer}>
+      <div>
         {errorFetchingDashboards ||
           selectedDashboard.selectedDashboardID === '' ||
           (selectedDashboard.selectedAgentID === '' && <BackButton />)}

@@ -19,6 +19,7 @@ interface RunProperties {
   interval: string;
   probePollingInterval?: string;
   initialDelaySeconds?: string;
+  stopOnFailure: boolean;
 }
 
 const AddProbe: React.FC<AddProbeProps> = ({
@@ -40,6 +41,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
     interval: '',
     probePollingInterval: '',
     initialDelaySeconds: '',
+    stopOnFailure: false,
   });
   const [probeData, setProbeData] = React.useState({
     name: '',
@@ -57,11 +59,9 @@ const AddProbe: React.FC<AddProbeProps> = ({
     });
   };
 
-  const renameKey = (object: any, key: string, newKey: string) => {
+  const renameKey = (object: any, key: string) => {
     const clonedObj = { ...object };
-    const targetKey = clonedObj[key];
     delete clonedObj[key];
-    clonedObj[newKey] = targetKey;
     return clonedObj;
   };
 
@@ -72,7 +72,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
     }>
   ) => {
     const newProbe = `${e.target.value}/inputs`;
-    const a = renameKey(probeData, probeType, newProbe);
+    const a = renameKey(probeData, probeType);
     setProbeData({
       ...a,
       type: e.target.value as string,
@@ -95,8 +95,10 @@ const AddProbe: React.FC<AddProbeProps> = ({
       interval: '',
       probePollingInterval: '',
       initialDelaySeconds: '',
+      stopOnFailure: false,
     });
     setProbeType('httpProbe/inputs');
+    (document.getElementById('probes-form') as HTMLFormElement).reset();
   };
 
   const handleAddProbe = (event: React.FormEvent<HTMLFormElement>) => {
@@ -132,7 +134,12 @@ const AddProbe: React.FC<AddProbeProps> = ({
       }}
     >
       <div className={classes.modal}>
-        <form onSubmit={handleAddProbe} className={classes.form} action="#">
+        <form
+          onSubmit={handleAddProbe}
+          className={classes.form}
+          action="#"
+          id="probes-form"
+        >
           <div className={classes.heading}>
             {t('createWorkflow.tuneWorkflow.addProbe.heading')}
             <strong>
@@ -249,6 +256,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="timeout">
                 {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}(sec)
+                <span className={classes.required}>*</span>
               </InputLabel>
               <InputField
                 variant="primary"
@@ -264,6 +272,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="retry">
                 {t('createWorkflow.tuneWorkflow.addProbe.labels.retry')}(times)
+                <span className={classes.required}>*</span>
               </InputLabel>
               <InputField
                 variant="primary"
@@ -281,6 +290,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="interval">
                 {t('createWorkflow.tuneWorkflow.addProbe.labels.interval')}(sec)
+                <span className={classes.required}>*</span>
               </InputLabel>
               <InputField
                 variant="primary"
@@ -293,35 +303,66 @@ const AddProbe: React.FC<AddProbeProps> = ({
                 onChange={handleRunProps}
               />
             </div>
+            {probeData.mode === 'Continuous' || probeData.mode === 'OnChaos' ? (
+              <div className={classes.formField}>
+                <InputLabel className={classes.formLabel} htmlFor="polling">
+                  {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}
+                  (sec)
+                </InputLabel>
+                <InputField
+                  variant="primary"
+                  width="50%"
+                  id="polling"
+                  name="probePollingInterval"
+                  type="number"
+                  value={runProperties.probePollingInterval}
+                  onChange={handleRunProps}
+                />
+              </div>
+            ) : (
+              <div className={classes.formField} />
+            )}
+          </div>
+          <div className={classes.detailContainer}>
             <div className={classes.formField}>
-              <InputLabel className={classes.formLabel} htmlFor="polling">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}(sec)
+              <InputLabel className={classes.formLabel} htmlFor="initial-delay">
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.initialDelay')}
+                (sec)
               </InputLabel>
               <InputField
                 variant="primary"
                 width="50%"
-                id="polling"
-                name="probePollingInterval"
+                id="initial-delay"
+                name="initialDelaySeconds"
                 type="number"
-                value={runProperties.probePollingInterval}
+                value={runProperties.initialDelaySeconds}
                 onChange={handleRunProps}
               />
             </div>
-          </div>
-          <div className={classes.delayField}>
-            <InputLabel className={classes.formLabel} htmlFor="initial-delay">
-              {t('createWorkflow.tuneWorkflow.addProbe.labels.initialDelay')}
-              (sec)
-            </InputLabel>
-            <InputField
-              variant="primary"
-              width="50%"
-              id="initial-delay"
-              name="initialDelaySeconds"
-              type="number"
-              value={runProperties.initialDelaySeconds}
-              onChange={handleRunProps}
-            />
+            <div className={classes.formField}>
+              <InputLabel className={classes.formLabel} htmlFor="stopOnFailure">
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.stop')}
+              </InputLabel>
+              <Select
+                style={{ width: '50%' }}
+                value={runProperties.stopOnFailure}
+                className={classes.select}
+                variant="outlined"
+                onChange={(e) =>
+                  setRunProperties({
+                    ...runProperties,
+                    stopOnFailure: e.target.value === 'true',
+                  })
+                }
+                inputProps={{
+                  id: 'stopOnFailure',
+                  name: 'stopOnFailure',
+                }}
+              >
+                <MenuItem value="true">true</MenuItem>
+                <MenuItem value="false">false</MenuItem>
+              </Select>
+            </div>
           </div>
           <hr className={classes.line} />
           <div className={classes.subHeading}>

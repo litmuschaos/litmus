@@ -129,12 +129,12 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
           setAvailableHubs(hubDetails);
         }
         data.getHubStatus.forEach((hubData) => {
-          if (hubData.HubName.toLowerCase() === 'chaos hub') {
-            setSelectedHub('Chaos Hub');
-            localforage.setItem('selectedHub', 'Chaos Hub');
+          if (hubData.HubName.toLowerCase() === 'litmus chaoshub') {
+            setSelectedHub('Litmus ChaosHub');
+            localforage.setItem('selectedHub', 'Litmus ChaosHub');
             getPredefinedWorkflow({
               variables: {
-                hubname: 'Chaos Hub',
+                hubname: 'Litmus ChaosHub',
                 projectid: selectedProjectID,
               },
             });

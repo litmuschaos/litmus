@@ -1,0 +1,23 @@
+# provide to append user-defined suffix in the end of chaosresult name
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        # user-defined string appended as suffix in the chaosresult name
+        - name: INSTANCE_ID
+          value: '123'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

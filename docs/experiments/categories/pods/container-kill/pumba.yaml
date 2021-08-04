@@ -1,0 +1,24 @@
+# pumba chaoslib used to kill the container
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: container-kill-sa
+  experiments:
+  - name: container-kill
+    spec:
+      components:
+        env:
+        # name of the lib
+        # supoorts pumba and litmus
+        - name: LIB
+          value: 'pumba'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

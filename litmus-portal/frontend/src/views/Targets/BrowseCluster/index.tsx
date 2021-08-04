@@ -283,45 +283,45 @@ const BrowseCluster: React.FC = () => {
                     </IconButton>
                   </div>
                 </TableCell>
+                {/* Agent Type */}
+                <TableCell>
+                  <Typography>
+                    {t('workflowCluster.header.formControl.agentScope')}
+                  </Typography>
+                </TableCell>
                 {/* Target Cluster */}
                 <TableCell>
-                  <Typography className={classes.targetCluster}>
+                  <Typography>
                     {t('workflowCluster.header.formControl.connectionDate')}
                   </Typography>
                 </TableCell>
 
                 {/* No of Workflows */}
-                <TableCell className={classes.headData}>
+                <TableCell>
                   <Typography>
                     {t('workflowCluster.header.formControl.noWorkflows')}
                   </Typography>
                 </TableCell>
 
                 {/* No of Schedules */}
-                <TableCell className={classes.headData}>
-                  <div className={classes.tableCell}>
-                    <Typography>
-                      {t('workflowCluster.header.formControl.noSchedules')}
-                    </Typography>
-                  </div>
+                <TableCell>
+                  <Typography>
+                    {t('workflowCluster.header.formControl.noSchedules')}
+                  </Typography>
                 </TableCell>
 
                 {/* Last Run */}
-                <TableCell className={classes.headData}>
-                  <div className={classes.tableCell}>
-                    <Typography>
-                      {t('workflowCluster.header.formControl.run')}
-                    </Typography>
-                  </div>
+                <TableCell>
+                  <Typography>
+                    {t('workflowCluster.header.formControl.run')}
+                  </Typography>
                 </TableCell>
 
                 {/* Delete Cluster */}
-                <TableCell className={classes.headData}>
-                  <div className={classes.tableCell}>
-                    <Typography>
-                      {t('workflowCluster.header.formControl.disconnect')}
-                    </Typography>
-                  </div>
+                <TableCell>
+                  <Typography>
+                    {t('workflowCluster.header.formControl.disconnect')}
+                  </Typography>
                 </TableCell>
               </TableRow>
             </TableHead>

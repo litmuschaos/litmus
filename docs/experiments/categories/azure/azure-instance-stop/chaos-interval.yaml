@@ -1,0 +1,24 @@
+# defines delay between each successive iteration of the chaos
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: azure-instance-stop-sa
+  experiments:
+  - name: azure-instance-stop
+    spec:
+      components:
+        env:
+        # delay between each iteration of chaos
+        - name: CHAOS_INTERVAL
+          value: '10'
+         # time duration for the chaos execution
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+        - name: AZURE_INSTANCE_NAME
+          value: 'instance-01,instance-02'
+        - name: RESOURCE_GROUP
+          value: '<resource group of AZURE_INSTANCE_NAME>'

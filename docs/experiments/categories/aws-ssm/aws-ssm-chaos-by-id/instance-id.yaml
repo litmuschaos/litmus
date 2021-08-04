@@ -1,0 +1,22 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: aws-ssm-chaos-by-id-sa
+  experiments:
+  - name: aws-ssm-chaos-by-id
+    spec:
+      components:
+        env:
+        # comma separated list of ec2 instance id(s)
+        # all instances should belongs to the same region(REGION)
+        - name: EC2_INSTANCE_ID
+          value: 'instance-01,instance-02'
+        # region of the ec2 instance
+        - name: REGION
+          value: '<region of the EC2_INSTANCE_ID>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

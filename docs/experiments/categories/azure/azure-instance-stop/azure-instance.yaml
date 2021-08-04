@@ -1,0 +1,22 @@
+## contains the azure instance details
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: azure-instance-stop-sa
+  experiments:
+  - name: azure-instance-stop
+    spec:
+      components:
+        env:
+        # comma separated list of azore instance names
+        - name: AZURE_INSTANCE_NAME
+          value: 'instance-01,instance-02'
+        # name of the resource group
+        - name: RESOURCE_GROUP
+          value: '<resource group of AZURE_INSTANCE_NAME>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
