@@ -860,7 +860,7 @@ const DashboardPage: React.FC = () => {
                         }}
                         panel_group_id={panelGroup.panel_group_id}
                         panel_group_name={panelGroup.panel_group_name}
-                        panels={panelGroup.panels ?? panelGroup.panels}
+                        panels={panelGroup.panels ?? []}
                         selectedPanels={selectedPanels}
                         metricDataForGroup={
                           promData.panelGroupQueryMap[index]
