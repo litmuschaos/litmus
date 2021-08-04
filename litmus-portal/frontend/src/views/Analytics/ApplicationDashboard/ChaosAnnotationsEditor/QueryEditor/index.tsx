@@ -122,7 +122,11 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
     return options;
   };
 
-  const getSelectedValuesForLabel = (label: string, queryString: string) => {
+  const getSelectedValuesForLabel = (
+    label: string,
+    queryString: string,
+    setValue: boolean
+  ) => {
     const labelValuesList: QueryLabelValue[] = getLabelsAndValues(queryString);
     const options: Array<Option> = [];
     labelValuesList.forEach((labelValue) => {
@@ -132,7 +136,18 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
         });
       }
     });
-    setSelectedValuesForLabel(options);
+    const filteredOptions = options.filter((opt) => opt.name !== '') ?? [];
+    const newOptionsSet = Array.from(
+      new Set(filteredOptions.map((opt) => opt.name))
+    );
+    const newOptions: Array<Option> = newOptionsSet.map((optionName) => {
+      return { name: optionName };
+    });
+    if (setValue) {
+      setSelectedValuesForLabel(newOptions);
+      return null;
+    }
+    return newOptions;
   };
 
   useEffect(() => {
@@ -237,10 +252,44 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   value={selectedLabel}
                   onChange={(event: any) => {
                     setSelectedLabel(event.target.value as string);
+                    const selectedValues: Array<Option> =
+                      getSelectedValuesForLabel(
+                        event.target.value as string,
+                        localQuery.prom_query_name,
+                        false
+                      ) ?? [];
+                    const existingLabelValuesList: QueryLabelValue[] =
+                      localQuery.labels_and_values_list ?? [];
+                    let updateStatus = false;
+                    existingLabelValuesList.forEach((labelValue, index) => {
+                      if (labelValue.label === (event.target.value as string)) {
+                        existingLabelValuesList[index].value =
+                          selectedValues.map((option) => option.name);
+                        updateStatus = true;
+                      }
+                    });
+                    if (!updateStatus) {
+                      existingLabelValuesList.push({
+                        label: event.target.value as string,
+                        value: selectedValues.map((option) => option.name),
+                      });
+                    }
+                    const newPromQueryName = setLabelsAndValues(
+                      localQuery.base_query ?? '',
+                      localQuery.prom_query_name ?? '',
+                      existingLabelValuesList
+                    );
+                    setLocalQuery({
+                      ...localQuery,
+                      prom_query_name: newPromQueryName,
+                      labels_and_values_list: existingLabelValuesList,
+                    });
                     getSelectedValuesForLabel(
                       event.target.value as string,
-                      localQuery.prom_query_name
+                      localQuery.prom_query_name,
+                      true
                     );
+                    setUpdate(true);
                   }}
                   label={t(
                     'analyticsDashboard.applicationDashboards.tuneTheQueries.selectKey'
@@ -304,7 +353,8 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   });
                   getSelectedValuesForLabel(
                     selectedLabel ?? '',
-                    newPromQueryName
+                    newPromQueryName,
+                    true
                   );
                   setUpdate(true);
                 }}
@@ -374,14 +424,17 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   labels_and_values_list: getLabelsAndValues(updatedQuery),
                   prom_query_name: updatedQuery,
                 });
-                if (
-                  existingBaseQuery !== newBaseQuery &&
-                  localQuery.base_query !== '' &&
-                  dsURL !== '' &&
-                  open
-                ) {
-                  setSelectedValuesForLabel([]);
-                  refetch();
+                if (localQuery.base_query !== '' && dsURL !== '' && open) {
+                  if (existingBaseQuery !== newBaseQuery) {
+                    setSelectedValuesForLabel([]);
+                    refetch();
+                  } else if (existingBaseQuery === newBaseQuery) {
+                    getSelectedValuesForLabel(
+                      selectedLabel ?? '',
+                      updatedQuery,
+                      true
+                    );
+                  }
                 }
                 setUpdate(true);
               }}

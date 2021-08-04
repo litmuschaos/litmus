@@ -144,7 +144,11 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
     return options;
   };
 
-  const getSelectedValuesForLabel = (label: string, queryString: string) => {
+  const getSelectedValuesForLabel = (
+    label: string,
+    queryString: string,
+    setValue: boolean
+  ) => {
     const allOptions: string[] = getAvailableValues(label).map(
       (option) => option.name
     );
@@ -164,23 +168,37 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
           label.toLowerCase().includes(appRes.kind.toLowerCase())
         ) {
           appRes.names.forEach((name) => {
-            if (allOptions.includes(name)) {
+            if (allOptions.includes(name) && !options.includes({ name })) {
               options.push({ name });
             }
           });
         }
         if (label === 'job') {
           appRes.names.forEach((name) => {
-            if (allOptions.includes(name)) {
+            if (allOptions.includes(name) && !options.includes({ name })) {
               options.push({ name });
-            } else if (allOptions.includes(`${app.namespace}/${name}`)) {
+            } else if (
+              allOptions.includes(`${app.namespace}/${name}`) &&
+              !options.includes({ name: `${app.namespace}/${name}` })
+            ) {
               options.push({ name: `${app.namespace}/${name}` });
             }
           });
         }
       });
     });
-    setSelectedValuesForLabel(options);
+    const filteredOptions = options.filter((opt) => opt.name !== '') ?? [];
+    const newOptionsSet = Array.from(
+      new Set(filteredOptions.map((opt) => opt.name))
+    );
+    const newOptions: Array<Option> = newOptionsSet.map((optionName) => {
+      return { name: optionName };
+    });
+    if (setValue) {
+      setSelectedValuesForLabel(newOptions);
+      return null;
+    }
+    return newOptions;
   };
 
   useEffect(() => {
@@ -359,10 +377,44 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   value={selectedLabel}
                   onChange={(event: any) => {
                     setSelectedLabel(event.target.value as string);
+                    const selectedValues: Array<Option> =
+                      getSelectedValuesForLabel(
+                        event.target.value as string,
+                        localQuery.prom_query_name,
+                        false
+                      ) ?? [];
+                    const existingLabelValuesList: QueryLabelValue[] =
+                      localQuery.labels_and_values_list ?? [];
+                    let updateStatus = false;
+                    existingLabelValuesList.forEach((labelValue, index) => {
+                      if (labelValue.label === (event.target.value as string)) {
+                        existingLabelValuesList[index].value =
+                          selectedValues.map((option) => option.name);
+                        updateStatus = true;
+                      }
+                    });
+                    if (!updateStatus) {
+                      existingLabelValuesList.push({
+                        label: event.target.value as string,
+                        value: selectedValues.map((option) => option.name),
+                      });
+                    }
+                    const newPromQueryName = setLabelsAndValues(
+                      localQuery.base_query ?? '',
+                      localQuery.prom_query_name ?? '',
+                      existingLabelValuesList
+                    );
+                    setLocalQuery({
+                      ...localQuery,
+                      prom_query_name: newPromQueryName,
+                      labels_and_values_list: existingLabelValuesList,
+                    });
                     getSelectedValuesForLabel(
                       event.target.value as string,
-                      localQuery.prom_query_name
+                      localQuery.prom_query_name,
+                      true
                     );
+                    setUpdate(true);
                   }}
                   label={t(
                     'analyticsDashboard.applicationDashboards.tuneTheQueries.selectKey'
@@ -417,7 +469,8 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   });
                   getSelectedValuesForLabel(
                     selectedLabel ?? '',
-                    newPromQueryName
+                    newPromQueryName,
+                    true
                   );
                   setUpdate(true);
                 }}
@@ -487,14 +540,17 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   labels_and_values_list: getLabelsAndValues(updatedQuery),
                   prom_query_name: updatedQuery,
                 });
-                if (
-                  existingBaseQuery !== newBaseQuery &&
-                  localQuery.base_query !== '' &&
-                  dsURL !== '' &&
-                  open
-                ) {
-                  setSelectedValuesForLabel([]);
-                  refetch();
+                if (localQuery.base_query !== '' && dsURL !== '' && open) {
+                  if (existingBaseQuery !== newBaseQuery) {
+                    setSelectedValuesForLabel([]);
+                    refetch();
+                  } else if (existingBaseQuery === newBaseQuery) {
+                    getSelectedValuesForLabel(
+                      selectedLabel ?? '',
+                      updatedQuery,
+                      true
+                    );
+                  }
                 }
                 setUpdate(true);
               }}
@@ -656,6 +712,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   className={classes.formControl}
                   style={{ width: '8.5rem' }}
                   color="primary"
+                  disabled
                 >
                   <InputLabel className={classes.selectTextLabel}>
                     {t(

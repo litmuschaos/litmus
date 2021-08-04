@@ -264,8 +264,10 @@ const DashboardPage: React.FC = () => {
             dashboardListForAgent: dashboards.ListDashboard,
             metaData: selectedDashboard,
             closedAreaQueryIDs: (selectedDashboard.panel_groups ?? [])
-              .flatMap((panelGroup) => panelGroup.panels)
-              .flatMap((panel) => panel.prom_queries)
+              .flatMap((panelGroup) =>
+                panelGroup ? panelGroup.panels ?? [] : []
+              )
+              .flatMap((panel) => (panel ? panel.prom_queries ?? [] : []))
               .filter((query) => query.close_area)
               .map((query) => query.queryid),
             dashboardKey: selectedDashboardInformation.id,
@@ -858,7 +860,7 @@ const DashboardPage: React.FC = () => {
                         }}
                         panel_group_id={panelGroup.panel_group_id}
                         panel_group_name={panelGroup.panel_group_name}
-                        panels={panelGroup.panels}
+                        panels={panelGroup.panels ?? panelGroup.panels}
                         selectedPanels={selectedPanels}
                         metricDataForGroup={
                           promData.panelGroupQueryMap[index]

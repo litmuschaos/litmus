@@ -172,13 +172,13 @@ analytics:
   lowestScore: "Lowest Score:"
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
-  targetCluster: Target cluster
+  targetCluster: Target agent
   workflowSelected: workflow selected
   workflowsSelected: workflows selected
   tableHead1: Workflow Name
   tableHead2: Starting Date
   tableHead3: Regularity
-  tableHead4: Cluster
+  tableHead4: Agent
   workflowRunDetailsTable:
     tableHead0: Test Name
     tableHead1: Experiment Name
@@ -275,7 +275,7 @@ analyticsDashboard:
     tab3: Monthly
     tab4: Yearly
     worflowSchedulesTitle: Workflow Schedules
-    clusterCountTitle: Clusters
+    clusterCountTitle: Agents
     timeSelectionMessage: Overview of latest
     timeSelection0: Hour
     timeSelection1: Day
@@ -894,7 +894,7 @@ workflowDetailsView:
       endTime: "End Time :"
     targets:
       targetsHeader: Target
-      cluster: "Cluster :"
+      cluster: "Agent :"
       namespace: "Workflow Namespace :"
   workflowNodeInfo:
     name: Name
@@ -1159,9 +1159,9 @@ createWorkflow:
       disabled: Currently Disabled
       schedulingNow: Scheduling now
       adjustedWeights: Adjusted Weights
-      clustername: Cluster Name
+      clustername: Agent Name
   workflowCluster:
-    activeCluster: Choose an active cluster
+    activeCluster: Choose an active agent
     none: None
 
 ######################################
@@ -1206,9 +1206,9 @@ workflowCluster:
     creatingNew: You are creating a
     creatingNewBold: new chaos workflow.
     selectAgent: Select a target Kubernetes Agent to run this workflow.
-    selectCluster: Choose Active Cluster
+    selectCluster: Choose Active Agent
     select: Select and Continue
-    snackbar: No Cluster Registered With Your Project ID, Please Wait...
+    snackbar: No Agent Registered With Your Project ID, Please Wait...
     formControl:
       # For Header
       menu: All
@@ -1229,8 +1229,8 @@ workflowCluster:
       fetchingError: Unable to fetch data
       recordAvailable: No records available
       disconnect: Disconnect
-      clusterInfo: Cluster information
-      about: About Litmus Cluster
+      clusterInfo: Agent information
+      about: About Litmus Agent
       back: Back
 workflowAgent:
   header:
