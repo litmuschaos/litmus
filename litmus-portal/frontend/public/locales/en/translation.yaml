@@ -195,7 +195,7 @@ observability:
     experimentVerdict: Experiment Verdict
 
 monitoringDashboard:
-  heading: Analytics
+  heading: Observability
   overview: Overview
   monitoringDashboardPage:
     loadingText: Loading monitoring dashboard ...
