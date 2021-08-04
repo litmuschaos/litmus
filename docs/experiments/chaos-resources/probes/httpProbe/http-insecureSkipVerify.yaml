@@ -1,0 +1,34 @@
+# skip the certificate checks for the httpProbe
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "check-frontend-access-url"
+        type: "httpProbe"
+        httpProbe/inputs:
+          url: "<url>"
+          # skip certificate checks for the httpProbe
+          # supports: true, false. default: false
+          insecureSkipVerify: "true"
+          method:
+            get: 
+              criteria: == 
+              responseCode: "<response code>"
+        mode: "Continuous"
+        runProperties:
+          probeTimeout: 5 
+          interval: 2 
+          retry: 1
+          probePollingInterval: 2
+         

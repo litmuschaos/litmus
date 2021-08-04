@@ -1,0 +1,24 @@
+# use the pumba lib for io stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-io-stress-sa
+  experiments:
+  - name: pod-io-stress
+    spec:
+      components:
+        env:
+        # name of lib
+        # it supports litmus and pumba lib
+        - name: LIB
+          value: 'pumba'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

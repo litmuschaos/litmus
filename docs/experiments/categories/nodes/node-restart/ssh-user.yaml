@@ -1,0 +1,22 @@
+# name of the ssh user used to ssh into targeted node
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-restart-sa
+  experiments:
+  - name: node-restart
+    spec:
+      components:
+        env:
+        # name of the ssh user
+        - name: SSH_USER
+          value: 'root'
+        # name of the target node
+        - name: TARGET_NODE
+          value: 'node01'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

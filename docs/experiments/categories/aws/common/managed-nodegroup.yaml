@@ -1,0 +1,27 @@
+# it provided as enable if instances are part of self managed groups
+# it is applicable for [ec2-terminate-by-id, ec2-terminate-by-tag]
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: ec2-terminate-by-tag-sa
+  experiments:
+  - name: ec2-terminate-by-tag
+    spec:
+      components:
+        env:
+        # if instance is part of a managed node-group
+        # supports enable and disable values, default value: disable
+        - name: MANAGED_NODEGROUP
+          value: 'enable'
+        # region for the ec2 instance
+        - name: REGION
+          value: '<region for instances>'
+        # tag of the ec2 instance
+        - name: INSTANCE_TAG
+          value: 'key:value'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

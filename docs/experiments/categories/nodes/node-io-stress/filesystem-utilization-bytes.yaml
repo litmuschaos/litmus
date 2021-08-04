@@ -1,0 +1,21 @@
+# stress the i/o of the targeted node with given FILESYSTEM_UTILIZATION_BYTES
+# it is mutually exclusive with the FILESYSTEM_UTILIZATION_PERCENTAGE.
+# if both are provided then it will use FILESYSTEM_UTILIZATION_PERCENTAGE for stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-io-stress-sa
+  experiments:
+  - name: node-io-stress
+    spec:
+      components:
+        env:
+        # file system to be stress in GB
+        - name: FILESYSTEM_UTILIZATION_BYTES
+          value: '500' # in GB
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
