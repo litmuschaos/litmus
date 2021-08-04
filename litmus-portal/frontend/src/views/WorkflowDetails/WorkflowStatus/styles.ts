@@ -47,6 +47,10 @@ const useStyles = makeStyles((theme) => ({
     animation: 'runningNodeSpinAnimationSmall 2s ease-in-out infinite',
   },
 
+  statusText: {
+    fontSize: '1.5rem',
+  },
+
   '@global': {
     '@keyframes runningNodeSpinAnimationSmall': {
       from: {

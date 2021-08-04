@@ -1,0 +1,24 @@
+# ephemeral storage which needs to fill in will application
+# if ephemeral-storage limits is not specified inside target application
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: disk-fill-sa
+  experiments:
+  - name: disk-fill
+    spec:
+      components:
+        env:
+        ## ephemeral storage size, which needs to be filled
+        - name: EPHEMERAL_STORAGE_MEBIBYTES
+          value: '256' #in MiBi
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

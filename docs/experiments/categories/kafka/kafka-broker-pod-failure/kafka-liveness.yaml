@@ -1,0 +1,47 @@
+## checks the kafka message liveness while injecting chaos
+## sets the consumer timeout
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "kafka"
+    applabel: "app=cp-kafka"
+    appkind: "statefulset"
+  chaosServiceAccount: kafka-broker-pod-failure-sa
+  experiments:
+  - name: kafka-broker-pod-failure
+    spec:
+      components:
+        env:
+        # check for the kafa liveness message stream during chaos
+        # supports: enable, disable. default value: disable
+        - name: KAFKA_LIVENESS_STREAM
+          value: 'enable'
+        # timeout of the kafka consumer
+        - name: KAFKA_CONSUMER_TIMEOUT
+          value: '30000' # in ms
+        # image of the kafka liveness pod
+        - name: KAFKA_LIVENESS_IMAGE
+          value: ''
+        - name: KAFKA_NAMESPACE
+          value: 'kafka'
+        - name: KAFKA_LABEL
+          value: 'app=cp-kafka'
+        - name: KAFKA_SERVICE
+          value: 'kafka-cp-kafka-headless'
+        - name: KAFKA_PORT
+          value: '9092'
+        - name: ZOOKEEPER_NAMESPACE
+          value: 'default'
+        - name: ZOOKEEPER_LABEL
+          value: 'app=cp-zookeeper'
+        - name: ZOOKEEPER_SERVICE
+          value: 'kafka-cp-zookeeper-headless'
+        - name: ZOOKEEPER_PORT
+          value: '2181'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

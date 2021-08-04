@@ -1,0 +1,73 @@
+site_name: Litmus Experiments
+repo_url: https://github.com/litmuschaos/litmus
+theme: 
+  name: material
+  font:
+    text: Work Sans
+  highlightjs: true
+  logo: images/litmus.png
+  hljs_languages:
+    - yaml
+markdown_extensions:
+  - codehilite
+  - admonition
+  - pymdownx.superfences
+  - pymdownx.details
+  - toc:
+      permalink: true
+nav:
+    - Getting Started with Litmus: index.md
+    - Experiments:
+      - Kubernetes Experiments:
+        - Generic:
+          - Pods Specific:
+            - Container Kill: experiments/categories/pods/container-kill.md
+            - Disk Fill: experiments/categories/pods/disk-fill.md
+            - Pod Autoscaler: experiments/categories/pods/pod-autoscaler.md
+            - Pod CPU Hog Exec: experiments/categories/pods/pod-cpu-hog-exec.md
+            - Pod CPU HOg: experiments/categories/pods/pod-cpu-hog.md
+            - Pod Delete: experiments/categories/pods/pod-delete.md
+            - Pod Dns Error: experiments/categories/pods/pod-dns-error.md
+            - Pod Dns Spoof: experiments/categories/pods/pod-dns-spoof.md
+            - Pod Memory Hog Exec: experiments/categories/pods/pod-memory-hog-exec.md
+            - Pod Memory Hog: experiments/categories/pods/pod-memory-hog.md
+            - Pod Network Chaos: experiments/categories/pods/pod-network-chaos.md
+          - Nodes Specific:
+            - Node CPU Hog: experiments/categories/nodes/node-cpu-hog.md
+            - Node IO Stress: experiments/categories/nodes/node-io-stress.md
+            - Node Memory Hog: experiments/categories/nodes/node-memory-hog.md
+            - Node Restart: experiments/categories/nodes/node-restart.md
+            - Node Taint: experiments/categories/nodes/node-taint.md
+        - Kafka:
+            - Kafka Broker Pod Failure: experiments/categories/kafka/kafka-broker-pod-failure.md
+        - Cassandra:
+            - Cassandra Pod Delete: experiments/categories/cassandra/cassandra-pod-delete.md
+      - Non-Kubernetes Experiments:
+        - AWS: 
+            - EC2 Terminate By ID: experiments/categories/aws/ec2-terminate-by-id.md
+            - EC2 Terminate By Tag: experiments/categories/aws/ec2-terminate-by-tag.md
+            - EBS Loss By ID: experiments/categories/aws/ebs-loss-by-id.md
+            - EBS Loss By Tag: experiments/categories/aws/ebs-loss-by-tag.md
+        - AWS SSM: 
+            - AWS SSM Chaos By ID: experiments/categories/aws-ssm/aws-ssm-chaos-by-id.md
+            - AWS SSM Chaos By Tag: experiments/categories/aws-ssm/aws-ssm-chaos-by-tag.md
+        - VMWare:
+            - VM Poweroff: experiments/categories/vmware/vm-poweroff.md
+        - Azure:
+            - Azure Instance Stop: experiments/categories/azure/azure-instance-stop.md
+        - GCP:
+            - GCP Instance Stop: experiments/categories/gcp/gcp-vm-instance-stop.md
+            - GCP Disk Loss: experiments/categories/gcp/gcp-vm-disk-loss.md
+    - Chaos Resources:
+      - ChaosEngine Spec Tunables: experiments/chaos-resources/engine-spec.md
+      - Experiment Tunables: experiments/chaos-resources/experiment-components.md
+      - Runner Tunables: experiments/chaos-resources/runner-components.md
+      - Probes:
+        - Command Probe:  experiments/chaos-resources/probes/cmdProbe.md
+        - HTTP Probe:  experiments/chaos-resources/probes/httpProbe.md
+        - K8S Probe:  experiments/chaos-resources/probes/k8sProbe.md
+        - Prometheus Probe:  experiments/chaos-resources/probes/promProbe.md
+    - Releases ⧉: https://github.com/litmuschaos/litmus/releases
+    - Roadmap: ROADMAP.md
+    - Slack ⧉: https://kubernetes.slack.com/messages/CNXNB0ZTN
+    - Twitter ⧉: https://twitter.com/litmuschaos

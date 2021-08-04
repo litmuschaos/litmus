@@ -1,0 +1,40 @@
+# verify the existance of the resource matched with the given inputs inside cluster
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "check-percona-pvc-presence"
+        type: "k8sProbe"
+        k8sProbe/inputs:
+          # group of the resource
+          group: ""
+          # version of the resource
+          version: "v1"
+          # name of the resource
+          resource: "persistentvolumeclaims"
+          # namespace where the instance of resource
+          namespace: "default"
+          # labels selectors for the k8s resource
+          labelSelector: "openebs.io/target-affinity=percona"
+          # fieldselector for the k8s resource
+          fieldSelector: ""
+          # type of operation
+          # supports: create, delete, present, absent
+          operation: "present"
+        mode: "SOT"
+        runProperties:
+          probeTimeout: 5 
+          interval: 2 
+          retry: 1
+         
