@@ -52,7 +52,7 @@ func init() {
 	logrus.Info("Go Version: ", rt.Version())
 	logrus.Info("Go OS/Arch: ", rt.GOOS, "/", rt.GOARCH)
 
-	if os.Getenv("IS_CLUSTER_CONFIRMED") == "" || os.Getenv("ACCESS_KEY") == "" || os.Getenv("CLUSTER_ID") == "" || os.Getenv("SERVER_ADDR") == "" || os.Getenv("AGENT_NAMESPACE") == "" {
+	if os.Getenv("AGENT_SCOPE") == "" || os.Getenv("IS_CLUSTER_CONFIRMED") == "" || os.Getenv("ACCESS_KEY") == "" || os.Getenv("CLUSTER_ID") == "" || os.Getenv("SERVER_ADDR") == "" || os.Getenv("AGENT_NAMESPACE") == "" {
 		logrus.Fatal("Some environment variable are not setup")
 	}
 
