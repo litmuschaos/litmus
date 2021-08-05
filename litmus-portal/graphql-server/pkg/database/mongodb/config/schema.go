@@ -1,4 +1,4 @@
-package server_config
+package config
 
 // ServerConfig stores any server specific configuration in the db
 type ServerConfig struct {

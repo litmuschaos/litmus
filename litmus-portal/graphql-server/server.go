@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/server_config"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -42,12 +42,12 @@ func init() {
 
 func validateVersion() error {
 	currentVersion := os.Getenv("VERSION")
-	dbVersion, err := server_config.GetConfig(context.Background(), "version")
+	dbVersion, err := config.GetConfig(context.Background(), "version")
 	if err != nil {
 		return fmt.Errorf("failed to get version from db, error = %w", err)
 	}
 	if dbVersion == nil {
-		err := server_config.CreateConfig(context.Background(), &server_config.ServerConfig{Key: "version", Value: currentVersion})
+		err := config.CreateConfig(context.Background(), &config.ServerConfig{Key: "version", Value: currentVersion})
 		if err != nil {
 			return fmt.Errorf("failed to insert current version in db, error = %w", err)
 		}

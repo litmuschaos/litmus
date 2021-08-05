@@ -1,4 +1,4 @@
-package server_config
+package config
 
 import (
 	"context"
