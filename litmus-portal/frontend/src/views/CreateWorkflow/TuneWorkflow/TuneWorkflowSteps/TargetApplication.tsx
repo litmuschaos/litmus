@@ -89,11 +89,11 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
     jobCleanUpPolicy: engineManifest.spec.jobCleanUpPolicy ?? 'retain',
   });
   const [addNodeSelector, setAddNodeSelector] = useState<boolean>(
-    !!engineManifest.spec.experiments[0].spec.components['nodeSelectors']
+    !!engineManifest.spec.experiments[0].spec.components['nodeSelector']
   );
   const [nodeSelector, setNodeSelector] = useState(
-    engineManifest.spec.experiments[0].spec.components.nodeSelectors
-      ? engineManifest.spec.experiments[0].spec.components.nodeSelectors[
+    engineManifest.spec.experiments[0].spec.components.nodeSelector
+      ? engineManifest.spec.experiments[0].spec.components.nodeSelector[
           'kubernetes.io/hostname'
         ]
       : ''
@@ -142,16 +142,14 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
      * else if the addNodeSelector is false and it exists, the value is removed
      */
     if (addNodeSelector) {
-      engineManifest.spec.experiments[0].spec.components['nodeSelectors'] = {
+      engineManifest.spec.experiments[0].spec.components['nodeSelector'] = {
         'kubernetes.io/hostname': nodeSelector,
       };
     } else if (
       !addNodeSelector &&
-      engineManifest.spec.experiments[0].spec.components['nodeSelectors']
+      engineManifest.spec.experiments[0].spec.components['nodeSelector']
     ) {
-      delete engineManifest.spec.experiments[0].spec.components[
-        'nodeSelectors'
-      ];
+      delete engineManifest.spec.experiments[0].spec.components['nodeSelector'];
     }
     engineManifest.spec.jobCleanUpPolicy = targetApp.jobCleanUpPolicy;
 
