@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql-exporter
+  labels:
+    release: prometheus-stack
   namespace: monitoring
 spec:
   replicas: 1
@@ -12,21 +14,22 @@ spec:
     metadata:
       labels:
         k8s-app: mysql-exporter
+        release: prometheus-stack
       name: mysql-exporter
     spec:
       containers:
         - image: prom/mysqld-exporter:latest
-          imagePullPolicy: "Always"
+          imagePullPolicy: 'Always'
           env:
             - name: DATA_SOURCE_NAME
-              value: "root:root_password@(cluster1-haproxy.pxc.svc.cluster.local:3306)/"
+              value: 'root:root_password@(cluster1-haproxy.pxc.svc.cluster.local:3306)/'
           args:
-            - "--collect.info_schema.processlist"
-            - "--collect.info_schema.innodb_metrics"
-            - "--collect.info_schema.tablestats"
-            - "--collect.info_schema.userstats"
-            - "--collect.engine_innodb_status"
-            - "--collect.slave_hosts"
+            - '--collect.info_schema.processlist'
+            - '--collect.info_schema.innodb_metrics'
+            - '--collect.info_schema.tablestats'
+            - '--collect.info_schema.userstats'
+            - '--collect.engine_innodb_status'
+            - '--collect.slave_hosts'
           name: mysql-exporter
           ports:
             - containerPort: 9104

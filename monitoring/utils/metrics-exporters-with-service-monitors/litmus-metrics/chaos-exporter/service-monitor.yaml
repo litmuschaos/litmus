@@ -4,6 +4,7 @@ metadata:
   name: chaos-exporter
   labels:
     k8s-app: chaos-exporter
+    release: prometheus-stack
   namespace: litmus
 spec:
   jobLabel: app
