@@ -19,6 +19,7 @@ import {
   getUserId,
   getUsername,
   getUserRole,
+  logout,
 } from '../../utils/auth';
 import { validateConfirmPassword } from '../../utils/validate';
 import useStyles from './styles';
@@ -52,6 +53,31 @@ const GetStarted: React.FC = () => {
   const username = getUsername();
 
   const [loading, setIsLoading] = useState<boolean>(false);
+
+  // Checking if token is valid or not by finding the uid in database
+  const ValidateUser = () => {
+    fetch(`${config.auth.url}/getUser/${getUserId()}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error('User not found');
+          logout();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        logout();
+      });
+    return true;
+  };
+
+  ValidateUser();
 
   // Mutation to create project for a user
   const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
@@ -190,8 +216,10 @@ const GetStarted: React.FC = () => {
                   title="Skip for now"
                   variant="highlight"
                   onClick={() => {
-                    setIsLoading(true);
-                    getUserInfo();
+                    if (ValidateUser()) {
+                      setIsLoading(true);
+                      getUserInfo();
+                    }
                   }}
                 >
                   {loading ? (
