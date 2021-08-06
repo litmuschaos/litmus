@@ -3,6 +3,7 @@ enum WorkflowRunStatus {
   Failed
   Running
   Succeeded
+  Terminated
 }
 
 input DateRange {

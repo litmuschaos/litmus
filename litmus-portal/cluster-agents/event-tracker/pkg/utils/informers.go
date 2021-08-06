@@ -49,7 +49,7 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 				if depNewObj.GetResourceVersion() != depOldObj.GetResourceVersion() && !reflect.DeepEqual(newDep, oldDep) {
 					var worflowid = depNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 					if depNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-						log.Print("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depNewObj.Name, depNewObj.Namespace)
+						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depNewObj.Name, depNewObj.Namespace)
 						err := PolicyAuditor("Deployment", depNewObj, worflowid)
 						if err != nil {
 							log.Print(err)
@@ -104,7 +104,7 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 				if stsNewObj.GetResourceVersion() != stsOldObj.GetResourceVersion() && !reflect.DeepEqual(newSts, oldSts) {
 					var worflowid = stsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 					if stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-						log.Print("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsNewObj.Name, stsNewObj.Namespace)
+						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsNewObj.Name, stsNewObj.Namespace)
 						err := PolicyAuditor("StateFulSet", stsNewObj, worflowid)
 						if err != nil {
 							log.Print(err)
@@ -160,7 +160,7 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 				if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion() && !reflect.DeepEqual(newDm, oldDm) {
 					var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 					if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-						log.Print("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
+						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
 						err := PolicyAuditor("DaemonSet", dsNewObj, worflowid)
 						if err != nil {
 							log.Print(err)

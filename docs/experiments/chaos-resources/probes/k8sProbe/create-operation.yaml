@@ -1,0 +1,51 @@
+# create the given resource provided inside data field
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "create-percona-pvc"
+        type: "k8sProbe"
+        k8sProbe/inputs:
+          # group of the resource
+          group: ""
+          # version of the resource
+          version: "v1"
+          # name of the resource
+          resource: "persistentvolumeclaims"
+          # namespace where the instance of resource should be created
+          namespace: "default"
+          # type of operation
+          # supports: create, delete, present, absent
+          operation: "create"
+        mode: "SOT"
+        runProperties:
+          probeTimeout: 5 
+          interval: 2 
+          retry: 1
+        # contains manifest, which can be used to create the resource
+        data: |
+          kind: PersistentVolumeClaim
+          apiVersion: v1
+          metadata:
+            name: percona-mysql-claim
+            labels:
+              openebs.io/target-affinity: percona
+          spec:
+            storageClassName: standard
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 100Mi
+         

@@ -1,0 +1,24 @@
+# provide the chaos kill command used to kill the chaos process
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-memory-hog-exec-sa
+  experiments:
+  - name: pod-memory-hog-exec
+    spec:
+      components:
+        env:
+        # command to kill the dd process
+        # alternative command: "kill -9 $(ps afx | grep \"[dd] if=/dev/zero\" | awk '{print $1}' | tr '\n' ' ')"
+        - name: CHAOS_KILL_COMMAND
+          value: "kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)"
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

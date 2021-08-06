@@ -149,7 +149,7 @@ community:
   heading: 'Litmus Insights'
   headingDesc: 'Stats for the Litmus community'
   analyticDesc: 'Periodic growth of Litmus'
-  statsHeading: 'Litmus users around the world:'
+  statsHeading: 'Litmus users around the world'
   litmusChaos: Litmuschaos
   follow: Follow
   feedback:
@@ -172,13 +172,13 @@ analytics:
   lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
-  targetCluster: Target cluster
+  targetCluster: Target agent
   workflowSelected: workflow selected
   workflowsSelected: workflows selected
   tableHead1: Workflow Name
   tableHead2: Starting Date
   tableHead3: Regularity
-  tableHead4: Cluster
+  tableHead4: Agent
   workflowRunDetailsTable:
     tableHead0: Test Name
     tableHead1: Experiment Name
@@ -275,7 +275,7 @@ analyticsDashboard:
     tab3: Monthly
     tab4: Yearly
     worflowSchedulesTitle: Workflow Schedules
-    clusterCountTitle: Clusters
+    clusterCountTitle: Agents
     timeSelectionMessage: Overview of latest
     timeSelection0: Hour
     timeSelection1: Day
@@ -615,6 +615,7 @@ chaosWorkflows:
     regularity: Regularity
     startingDate: Starting Date
     lastRun: Last Run
+    lastUpdated: Last Updated
     regularityOnce: Once
     showExperiments: Show Experiments
     showSchedule: Show Schedule
@@ -648,6 +649,7 @@ chaosWorkflows:
     min: mins.
     sync: Sync Workflow
     terminate: Terminate Workflow
+    delete: Delete Workflow
     tableData:
       overallRR: 'Overall RR : '
       experimentsPassed: 'Experiments Passed : '
@@ -888,13 +890,14 @@ workflowDetailsView:
     header: Overall Workflow Description
     resilienceScore: Resilience Score
     Completed: Completed
+    status: Workflow Status
     runTime:
       runTimeHeader: Run Time
       startTime: 'Start Time :'
       endTime: 'End Time :'
     targets:
       targetsHeader: Target
-      cluster: 'Cluster :'
+      cluster: 'Agent :'
       namespace: 'Workflow Namespace :'
   workflowNodeInfo:
     name: Name
@@ -1097,6 +1100,7 @@ createWorkflow:
         interval: Interval
         polling: Polling interval
         initialDelay: Initial Delay Seconds
+        stop: stopOnFailure
         url: URL
       button:
         cancel: Cancel
@@ -1159,9 +1163,9 @@ createWorkflow:
       disabled: Currently Disabled
       schedulingNow: Scheduling now
       adjustedWeights: Adjusted Weights
-      clustername: Cluster Name
+      clustername: Agent Name
   workflowCluster:
-    activeCluster: Choose an active cluster
+    activeCluster: Choose an active agent
     none: None
 
 ######################################
@@ -1170,7 +1174,7 @@ createWorkflow:
 
 targets:
   connectHome:
-    head: Litmus Agents
+    head: ChaosAgents
     connectText: Connect the Agent
   copy:
     copy: Copy
@@ -1206,9 +1210,9 @@ workflowCluster:
     creatingNew: You are creating a
     creatingNewBold: new chaos workflow.
     selectAgent: Select a target Kubernetes Agent to run this workflow.
-    selectCluster: Choose Active Cluster
+    selectCluster: Choose Active Agent
     select: Select and Continue
-    snackbar: No Cluster Registered With Your Project ID, Please Wait...
+    snackbar: No Agent Registered With Your Project ID, Please Wait...
     formControl:
       # For Header
       menu: All
@@ -1223,14 +1227,15 @@ workflowCluster:
       name: Name
       time: Time
       run: Last Workflow run
+      agentScope: Agent Scope
       connectionDate: Connection Date
       noWorkflows: No. of Workflows
       noSchedules: No. of Schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
       disconnect: Disconnect
-      clusterInfo: Cluster information
-      about: About Litmus Cluster
+      clusterInfo: Agent information
+      about: About Litmus Agent
       back: Back
 workflowAgent:
   header:
@@ -1438,7 +1443,7 @@ usage:
     projectHeader: Projects
     projectSubtitle: Total number of Litmus projects.
     agentHeader: Agents
-    agentSubtitle: Total number of Litmus agents connected to Litmus center.
+    agentSubtitle: Total number of ChaosAgents connected to ChaosCenter.
     agentClusterScope: cluster scope
     agentNamespaceScope: namespace scope
     workflowScheduleHeader: Workflow Schedules

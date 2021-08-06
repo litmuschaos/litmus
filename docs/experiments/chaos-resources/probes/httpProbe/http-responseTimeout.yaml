@@ -1,0 +1,33 @@
+# defines the response timeout for the http probe
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "check-frontend-access-url"
+        type: "httpProbe"
+        httpProbe/inputs:
+          url: "<url>"
+          # timeout for the http requests
+          responseTimeout: 100 #in ms
+          method:
+            get: 
+              criteria: == # ==, !=, oneof
+              responseCode: "<response code>"
+        mode: "Continuous"
+        runProperties:
+          probeTimeout: 5 
+          interval: 2 
+          retry: 1
+          probePollingInterval: 2
+         

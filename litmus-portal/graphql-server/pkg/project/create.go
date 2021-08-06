@@ -75,7 +75,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, userID strin
 	}
 
 	defaultHub := model.CreateMyHub{
-		HubName:    "Chaos Hub",
+		HubName:    "Litmus ChaosHub",
 		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
 		RepoBranch: os.Getenv("HUB_BRANCH_NAME"),
 	}

@@ -14,10 +14,12 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { ButtonFilled, OutlinedPills } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import TimePopOver from '../../../components/TimePopOver';
 import {
   DELETE_WORKFLOW,
   SYNC_WORKFLOW,
+  TERMINATE_WORKFLOW,
   WORKFLOW_LIST_DETAILS,
 } from '../../../graphql';
 import { WorkflowRun } from '../../../models/graphql/workflowData';
@@ -103,7 +105,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
    */
   const [syncWorkflow] = useMutation(SYNC_WORKFLOW, {
     onCompleted: (data) => {
-      if (data.syncWorkflow) {
+      if (data?.syncWorkflow) {
         handleWarningPopOverClose();
         refetchQuery();
       }
@@ -115,8 +117,19 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
    */
   const [deleteWorkflow] = useMutation(DELETE_WORKFLOW, {
     onCompleted: (data) => {
-      if (data.deleteChaosWorkflow) {
+      if (data?.deleteChaosWorkflow) {
         handleWarningPopOverClose();
+        refetchQuery();
+      }
+    },
+  });
+
+  /**
+   * Terminate workflow terminates the workflow from the cluster
+   */
+  const [terminateWorkflow] = useMutation(TERMINATE_WORKFLOW, {
+    onCompleted: (data) => {
+      if (data?.terminateChaosWorkflow) {
         refetchQuery();
       }
     },
@@ -227,9 +240,9 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 }}
                 className={classes.terminateText}
               >
-                <img src="./icons/terminate-wf.svg" alt="terminate" />
+                <DeleteForeverIcon className={classes.deleteIcon} />
                 <Typography className={classes.waitingBtnText}>
-                  {t('chaosWorkflows.browseWorkflows.terminate')}
+                  {t('chaosWorkflows.browseWorkflows.delete')}
                 </Typography>
               </ButtonFilled>
             </div>
@@ -250,11 +263,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           nodeSelection.selectNode({
             pod_name: '',
           });
-          if (data.phase?.toLowerCase() !== 'notavailable')
-            history.push({
-              pathname: `/workflows/${data.workflow_run_id}`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
+          history.push({
+            pathname: `/workflows/${data.workflow_run_id}`,
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
         }}
       >
         <Typography className={classes.boldText} data-cy="workflowName">
@@ -388,11 +400,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               nodeSelection.selectNode({
                 pod_name: '',
               });
-              if (data.phase?.toLowerCase() !== 'notavailable')
-                history.push({
-                  pathname: `/workflows/${data.workflow_run_id}`,
-                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                });
+              history.push({
+                pathname: `/workflows/${data.workflow_run_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
@@ -409,11 +420,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           <MenuItem
             value="Analysis"
             onClick={() => {
-              if (data.phase?.toLowerCase() !== 'notavailable')
-                history.push({
-                  pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
-                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                });
+              history.push({
+                pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowAnalytics">
@@ -427,9 +437,30 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               </Typography>
             </div>
           </MenuItem>
-          {/* <MenuItem value="Scheduler" onClick={handleMenu}>
-            Show the scheduler
-          </MenuItem> */}
+          {data.phase?.toLowerCase() === 'running' && (
+            <MenuItem
+              value="Terminate"
+              onClick={() => {
+                terminateWorkflow({
+                  variables: {
+                    workflowid: data.workflow_id,
+                    workflow_run_id: data.workflow_run_id,
+                  },
+                });
+              }}
+            >
+              <div className={classes.expDiv} data-cy="terminateWorkflow">
+                <img
+                  src="./icons/terminate-wf-dark.svg"
+                  alt="Terminate Workflow"
+                  className={classes.terminateImg}
+                />
+                <Typography className={classes.btnText}>
+                  {t('chaosWorkflows.browseWorkflows.terminate')}
+                </Typography>
+              </div>
+            </MenuItem>
+          )}
         </Menu>
       </TableCell>
     </>

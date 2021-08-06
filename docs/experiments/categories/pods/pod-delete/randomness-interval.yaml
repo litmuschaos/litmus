@@ -1,0 +1,28 @@
+# contains random chaos interval with lower and upper bound of range i.e [l,r]
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        # randomness enables iterations at random time interval
+        # it supports true and false value
+        - name: RANDOMNESS
+          value: 'true'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+        # it will select a random interval within this range
+        # if only one value is provided then it will select a random interval within 0-CHAOS_INTERVAL range
+        - name: CHAOS_INTERVAL
+          value: '5-10' 

@@ -30,7 +30,6 @@ func GetProject(ctx context.Context, query bson.D) (*Project, error) {
 	var project = new(Project)
 	result, err := mongodb.Operator.Get(ctx, mongodb.ProjectCollection, query)
 	if err != nil {
-		log.Print("Error getting project with query: ", query, "\nError message: ", err)
 		return nil, err
 	}
 	err = result.Decode(project)

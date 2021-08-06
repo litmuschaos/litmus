@@ -348,3 +348,12 @@ export const DELETE_WORKFLOW = gql`
     )
   }
 `;
+
+export const TERMINATE_WORKFLOW = gql`
+  mutation terminateWorkflow($workflowid: String!, $workflow_run_id: String) {
+    terminateChaosWorkflow(
+      workflowid: $workflowid
+      workflow_run_id: $workflow_run_id
+    )
+  }
+`;

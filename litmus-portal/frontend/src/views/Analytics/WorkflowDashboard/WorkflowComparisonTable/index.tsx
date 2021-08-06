@@ -188,7 +188,7 @@ const WorkflowComparisonTable = () => {
         let totalValidRuns: number = 0;
         const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
         const timeSeriesArray: DatedResilienceScore[][] = [];
-        const runs = data?.getWorkflowRuns.workflow_runs;
+        const runs = data?.getWorkflowRuns?.workflow_runs;
         const workflowTimeSeriesData: DatedResilienceScore[] = [];
         let isWorkflowValid: boolean = false;
         selectedWorkflows.forEach((workflowID) => {
@@ -286,8 +286,8 @@ const WorkflowComparisonTable = () => {
               console.error(error);
             }
           });
-          if (isWorkflowValid) {
-            plotData.labels.push(selectedRuns[0].workflow_name ?? '');
+          if (isWorkflowValid && selectedRuns.length) {
+            plotData.labels.push(selectedRuns[0]?.workflow_name ?? '');
             plotData.colors.push(`#${randomColor()}`);
             timeSeriesArray.push(workflowTimeSeriesData);
           }
@@ -427,13 +427,14 @@ const WorkflowComparisonTable = () => {
   };
 
   const CallbackForComparing = (compareWorkflows: boolean) => {
+    setIsDataAvailable(true);
     getWorkflowRun();
     setCompare(compareWorkflows);
     const payload: ScheduledWorkflow[] = [];
     selectedWorkflows.forEach((workflow) => {
       displayData.forEach((displayWorkflow, i) => {
         if (displayWorkflow.workflow_id === workflow && data) {
-          payload.push(data?.ListWorkflow.workflows[i]);
+          payload.push(data && data.ListWorkflow.workflows[i]);
         }
       });
     });
@@ -444,7 +445,7 @@ const WorkflowComparisonTable = () => {
     if (document.getElementById('analytics')) {
       const heads = [
         {
-          cluster_name: 'Cluster Name',
+          cluster_name: 'Agent Name',
           workflow_name: 'Workflow Name',
           run_date: 'Date-Time',
           tests_passed: '#Expts. Passed',
@@ -486,7 +487,7 @@ const WorkflowComparisonTable = () => {
         doc.setFontSize(10);
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(0, 0, 0);
-        doc.text(`Litmus Portal Report Version: ${version}`, 10, 10);
+        doc.text(`Chaos Center Report Version: ${version}`, 10, 10);
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
         doc.text(
@@ -562,7 +563,7 @@ const WorkflowComparisonTable = () => {
           imgWidth,
           imgHeight
         );
-        doc.save('litmus-portal-analytics.pdf'); // Generated PDF
+        doc.save('chaos-center-analytics.pdf'); // Generated PDF
       });
     }
   };
@@ -832,7 +833,7 @@ const WorkflowComparisonTable = () => {
                     <strong>
                       {` ${t(
                         'chaosWorkflows.browseAnalytics.workFlowComparisonTable.showSelectedWorkflows'
-                      )} ${selectedWorkflows.length} `}
+                      )} ${selectedWorkflows.length}`}
                     </strong>
                   </Typography>
                 </Paper>
@@ -841,45 +842,41 @@ const WorkflowComparisonTable = () => {
           </section>
         </div>
       </div>
-      {isDataAvailable === true ? (
-        <div>
-          {compare === true ? (
-            <Paper variant="outlined" className={classes.backgroundFix}>
-              <div className={classes.comparisonHeadingFix}>
-                <Typography className={classes.heading}>
-                  <strong>
-                    {t(
-                      'chaosWorkflows.browseAnalytics.workFlowComparisonTable.resilienceScoreComparison'
-                    )}
-                  </strong>
-                </Typography>
-                <Typography className={classes.description}>
-                  {t(
-                    'chaosWorkflows.browseAnalytics.workFlowComparisonTable.comparativeResults'
-                  )}
-                </Typography>
-                {plotDataForComparison ? (
-                  <ResilienceScoreComparisonPlot
-                    xData={plotDataForComparison.xData}
-                    yData={plotDataForComparison.yData}
-                    labels={plotDataForComparison.labels}
-                    colors={plotDataForComparison.colors}
-                  />
-                ) : (
-                  <div />
+      {compare === true && isDataAvailable === true ? (
+        <Paper variant="outlined" className={classes.backgroundFix}>
+          <div className={classes.comparisonHeadingFix}>
+            <Typography className={classes.heading}>
+              <strong>
+                {t(
+                  'chaosWorkflows.browseAnalytics.workFlowComparisonTable.resilienceScoreComparison'
                 )}
-              </div>
-            </Paper>
-          ) : (
-            <div />
-          )}
-        </div>
-      ) : (
-        <Paper variant="outlined" className={classes.noData}>
-          <Typography variant="h5" align="center" className={classes.error}>
-            {t('chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRuns')}
-          </Typography>{' '}
+              </strong>
+            </Typography>
+            <Typography className={classes.description}>
+              {t(
+                'chaosWorkflows.browseAnalytics.workFlowComparisonTable.comparativeResults'
+              )}
+            </Typography>
+            {plotDataForComparison && (
+              <ResilienceScoreComparisonPlot
+                xData={plotDataForComparison.xData}
+                yData={plotDataForComparison.yData}
+                labels={plotDataForComparison.labels}
+                colors={plotDataForComparison.colors}
+              />
+            )}
+          </div>
         </Paper>
+      ) : (
+        compare === true && (
+          <Paper variant="outlined" className={classes.noData}>
+            <Typography variant="h5" align="center" className={classes.error}>
+              {t(
+                'chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRuns'
+              )}
+            </Typography>
+          </Paper>
+        )
       )}
     </div>
   );

@@ -1,0 +1,25 @@
+# provide the cpu cores to stress the ec2 instance
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: aws-ssm-chaos-by-id-sa
+  experiments:
+  - name: aws-ssm-chaos-by-id
+    spec:
+      components:
+        env:
+        # cpu cores for the stress
+        - name: CPU_CORE
+          value: '1'
+        # id of the ec2 instance
+        - name: EC2_INSTANCE_ID
+          value: 'instance-01'
+        # region of the ec2 instance
+        - name: REGION
+          value: '<region of the EC2_INSTANCE_ID>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

@@ -1,0 +1,34 @@
+# contains the prom probe which execute the query and match for the expected criteria
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "check-probe-success"
+        type: "promProbe"
+        promProbe/inputs:
+          # endpoint for the promethus service
+          endpoint: "<prometheus-endpoint>"
+          # promql query, which should be executed
+          query: "<promql-query>"
+          comparator:
+            # criteria which should be followed by the actual output and the expected output
+            #supports >=,<=,>,<,==,!= comparision
+            criteria: "==" 
+            # expected value, which should follow the specified criteria
+            value: "<value-for-criteria-match>"
+        mode: "Edge"
+        runProperties:
+          probeTimeout: 5
+          interval: 5
+          retry: 1
