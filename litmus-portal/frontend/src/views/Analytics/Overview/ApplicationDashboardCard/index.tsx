@@ -111,7 +111,8 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
     }
 
     const exportedDashboard: DashboardExport = {
-      dashboardID: data.db_type_id,
+      dashboardID:
+        data.db_type_id !== 'custom' ? data.db_type_id : 'custom-downloaded',
       name: data.db_name,
       information: data.db_information,
       chaosEventQueryTemplate: data.chaos_event_query_template,
@@ -143,7 +144,11 @@ const ApplicationDashboardCard: React.FC<ApplicationDashboardCardProps> = ({
           <div>
             <div className={classes.statusDiv}>
               <img
-                src={`./icons/${data.db_type_id}_dashboard.svg`}
+                src={`./icons/${
+                  data.db_type_id.includes('custom')
+                    ? 'custom'
+                    : data.db_type_id
+                }_dashboard.svg`}
                 alt="k8s"
                 title={data.db_type}
               />

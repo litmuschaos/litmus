@@ -5,6 +5,7 @@ metadata:
     app.kubernetes.io/name: node-exporter
     app.kubernetes.io/version: latest
     k8s-app: node-exporter
+    release: prometheus-stack
   name: node-exporter
   namespace: monitoring
 spec:

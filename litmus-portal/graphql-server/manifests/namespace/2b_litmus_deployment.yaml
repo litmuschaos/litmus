@@ -53,13 +53,14 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
-              value: "chaos-operator"
+              value: 'chaos-operator'
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: chaos-exporter
+    release: prometheus-stack
   name: chaos-exporter
   namespace: #{AGENT-NAMESPACE}
 spec:
@@ -71,13 +72,19 @@ spec:
     metadata:
       labels:
         app: chaos-exporter
+        release: prometheus-stack
     spec:
       #{nodeselector}
       containers:
         - image: #{LITMUS-CHAOS-EXPORTER}
           imagePullPolicy: Always
           name: chaos-exporter
+          ports:
+            - containerPort: 8080
+              name: tcp
           env:
+            - name: TSDB_SCRAPE_INTERVAL
+              value: '10'
             - name: WATCH_NAMESPACE
               value: #{AGENT-NAMESPACE}
       serviceAccountName: litmus-namespace-scope

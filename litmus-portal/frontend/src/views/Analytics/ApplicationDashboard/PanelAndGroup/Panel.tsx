@@ -113,17 +113,20 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
           disableBackdropClick
           disableEscapeKeyDown
           modalActions={
-            <ButtonOutlined onClick={() => setPopOut(false)}>
+            <ButtonOutlined
+              className={classes.closeButton}
+              onClick={() => setPopOut(false)}
+            >
               &#x2715;
             </ButtonOutlined>
           }
-          height="95% !important"
+          height="95%"
           width="95%"
         >
           <div className={classes.popOutModal}>
             <Typography className={classes.title}>{panel_name}</Typography>
             <LineAreaGraph
-              legendTableHeight={120}
+              legendTableHeight={150}
               openSeries={metricDataForPanel?.seriesData}
               closedSeries={metricDataForPanel?.closedAreaData}
               eventSeries={chaosData}
@@ -137,7 +140,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
               unit={unit}
               yLabel={y_axis_left}
               yLabelOffset={55}
-              margin={{ left: 75, right: 20, top: 20, bottom: 30 }}
+              margin={{ left: 75, right: 20, top: 20, bottom: 40 }}
             />
           </div>
         </Modal>

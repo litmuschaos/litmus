@@ -124,7 +124,8 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
     });
 
     const exportedDashboard: DashboardExport = {
-      dashboardID: dashboardTypeID,
+      dashboardID:
+        dashboardTypeID !== 'custom' ? dashboardTypeID : 'custom-downloaded',
       name: dashboardData.name,
       information: dashboardData.information,
       chaosEventQueryTemplate: dashboardData.chaosEventQueryTemplate,
