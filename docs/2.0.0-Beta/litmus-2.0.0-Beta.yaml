@@ -116,7 +116,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.13.6
+    app.kubernetes.io/version: v2.0.0-RC1
     app.kubernetes.io/component: operator-clusterrole
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -143,6 +143,9 @@ rules:
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: [apiextensions.k8s.io]
+    resources: [customresourcedefinitions]
+    verbs: [list, get]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -152,7 +155,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.13.6
+    app.kubernetes.io/version: v2.0.0-RC1
     app.kubernetes.io/component: operator-clusterrolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -439,6 +442,7 @@ subjects:
   - kind: ServiceAccount
     name: litmus-server-account
     namespace: litmus
+## Control plane manifests
 ---
 apiVersion: v1
 kind: Namespace
@@ -483,7 +487,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:2.0.0-Beta9
+          image: litmuschaos/litmusportal-frontend:2.0.0-RC1
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -527,7 +531,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:2.0.0-Beta9
+          image: litmuschaos/litmusportal-server:2.0.0-RC1
           env:
             - name: DB_SERVER
               valueFrom:
@@ -568,21 +572,23 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:2.0.0-Beta9"
+              value: "litmuschaos/litmusportal-subscriber:2.0.0-RC1"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:2.0.0-Beta9"
+              value: "litmuschaos/litmusportal-event-tracker:2.0.0-RC1"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v2.11.0"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v2.11.0"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.13.6"
+              value: "litmuschaos/chaos-operator:2.0.0-RC1"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.13.6"
+              value: "litmuschaos/chaos-runner:2.0.0-RC1"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:1.13.6"
+              value: "litmuschaos/chaos-exporter:2.0.0-RC1"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
+            - name: AGENT_DEPLOYMENTS
+              value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
@@ -594,13 +600,15 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v1.13.x"
+              value: "v2.0.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:2.0.0-Beta9
+          image: litmuschaos/litmusportal-auth-server:2.0.0-RC1
           env:
+            - name: STRICT_PASSWORD_POLICY
+              value: "false"
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
