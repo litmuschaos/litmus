@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   popOutModal: {
-    width: '85%',
+    width: '92.5%',
     height: '95%',
     padding: theme.spacing(4),
   },
@@ -89,6 +89,13 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
     display: 'flex',
     padding: theme.spacing(0.5, 0.5, 0, 0.5),
+  },
+
+  closeButton: {
+    borderColor: theme.palette.border.main,
+    color: theme.palette.border.main,
+    padding: theme.spacing(0.25, 2),
+    minWidth: 0,
   },
 }));
 

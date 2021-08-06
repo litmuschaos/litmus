@@ -148,7 +148,8 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
     }
 
     const exportedDashboard: DashboardExport = {
-      dashboardID: data.db_type_id,
+      dashboardID:
+        data.db_type_id !== 'custom' ? data.db_type_id : 'custom-downloaded',
       name: data.db_name,
       information: data.db_information,
       chaosEventQueryTemplate: data.chaos_event_query_template,
@@ -214,7 +215,9 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           style={{ maxWidth: '7rem' }}
         >
           <img
-            src={`./icons/${data.db_type_id}_dashboard.svg`}
+            src={`./icons/${
+              data.db_type_id.includes('custom') ? 'custom' : data.db_type_id
+            }_dashboard.svg`}
             alt={data.db_type_name}
             className={classes.inlineTypeIcon}
           />
