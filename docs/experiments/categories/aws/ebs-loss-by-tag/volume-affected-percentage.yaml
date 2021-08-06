@@ -1,0 +1,25 @@
+# target percentage of the ebs volumes with the provided tag
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: ebs-loss-by-tag-sa
+  experiments:
+  - name: ebs-loss-by-tag
+    spec:
+      components:
+        env:
+        # percentage of ebs volumes filter by tag
+        - name: VOLUME_AFFECTED_PERC
+          value: '100'
+        # tag of the ebs volume
+        - name: EBS_VOLUME_TAG
+          value: 'key:value'
+        # region for the ebs volume
+        - name: REGION
+          value: '<region for EBS_VOLUME_TAG>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus-blackbox-exporter
+  namespace: monitoring
+  labels:
+    app: prometheus-blackbox-exporter
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9115
+      protocol: TCP
+  selector:
+    app: prometheus-blackbox-exporter

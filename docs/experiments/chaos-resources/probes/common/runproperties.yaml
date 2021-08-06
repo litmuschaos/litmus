@@ -1,0 +1,39 @@
+# contains the common attributes or run properties
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "check-frontend-access-url"
+        type: "httpProbe"
+        httpProbe/inputs:
+          url: "<url>"
+          insecureSkipVerify: false
+          responseTimeout: <value>
+          method:
+            get: 
+              criteria: ==
+              responseCode: "<response code>"
+        mode: "Continuous"
+        # contains runProperties for the probes
+        runProperties:
+          # time limit for the probe to execute the specified check
+          probeTimeout: 5 #in seconds
+          # the time period between subsequent retries
+          interval: 2 #in seconds
+          # number of times a check is re-run upon failure before declaring the probe status as failed
+          retry: 1
+          #time interval for which continuous probe should wait after each iteration
+          # applicable for onChaos and Continuous probes
+          probePollingInterval: 2
+          

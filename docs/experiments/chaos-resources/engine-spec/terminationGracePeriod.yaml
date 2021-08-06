@@ -1,0 +1,18 @@
+# contains flag to control the terminationGracePeriodSeconds for the chaos pod(abort case)
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  # contains terminationGracePeriodSeconds for the chaos pods
+  terminationGracePeriodSeconds: 100
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+  

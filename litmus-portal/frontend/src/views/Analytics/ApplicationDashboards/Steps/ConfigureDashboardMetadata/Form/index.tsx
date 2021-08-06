@@ -397,6 +397,12 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   };
 
   useEffect(() => {
+    if (configure && !selectedNamespaceList.length) {
+      setSelectedNamespaceList(getSelectedAppNamespaces());
+    }
+  }, [dashboardDetails.applicationMetadataMap]);
+
+  useEffect(() => {
     if (configure) {
       setDashboardDetails({
         ...dashboardVars,

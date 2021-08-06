@@ -72,16 +72,8 @@ const CommunityCards: React.FC = () => {
         role="button"
         tabIndex={0}
         className={`${classes.communityEvents} ${classes.joinCard}`}
-        onClick={() =>
-          window.open(
-            'https://www.meetup.com/Kubernetes-Chaos-Engineering-Meetup-Group'
-          )
-        }
-        onKeyDown={() =>
-          window.open(
-            'https://www.meetup.com/Kubernetes-Chaos-Engineering-Meetup-Group'
-          )
-        }
+        onClick={() => window.open('https://litmuschaos.io/community')}
+        onKeyDown={() => window.open('https://litmuschaos.io/community')}
       >
         <div className={classes.textImageWrapper}>
           <img

@@ -63,7 +63,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         <Typography>{data.cluster_name}</Typography>
       </TableCell>
       <TableCell>
-        <Typography>{capitalize(data.cluster_type)}</Typography>
+        <Typography>{capitalize(data.agent_scope)}</Typography>
       </TableCell>
       <TableCell>{formatDate(data.updated_at)}</TableCell>
       <TableCell>

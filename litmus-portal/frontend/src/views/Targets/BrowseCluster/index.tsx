@@ -286,7 +286,7 @@ const BrowseCluster: React.FC = () => {
                 {/* Agent Type */}
                 <TableCell>
                   <Typography>
-                    {t('workflowCluster.header.formControl.agentType')}
+                    {t('workflowCluster.header.formControl.agentScope')}
                   </Typography>
                 </TableCell>
                 {/* Target Cluster */}

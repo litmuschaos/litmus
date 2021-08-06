@@ -70,11 +70,11 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
         nodeSelection.selectNode({
           pod_name: '',
         });
-        if (data.phase?.toLowerCase() !== 'terminated')
-          history.push({
-            pathname: `/workflows/${data.workflow_run_id}`,
-            search: `?projectID=${projectID}&projectRole=${projectRole}`,
-          });
+
+        history.push({
+          pathname: `/workflows/${data.workflow_run_id}`,
+          search: `?projectID=${projectID}&projectRole=${projectRole}`,
+        });
       }}
       title={t(
         'homeViews.agentConfiguredHome.recentWorkflowRuns.workflowRunCard.cardTitle'

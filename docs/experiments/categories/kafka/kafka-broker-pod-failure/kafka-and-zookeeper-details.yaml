@@ -1,0 +1,51 @@
+## details of the kafka and zookeeper
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "kafka"
+    applabel: "app=cp-kafka"
+    appkind: "statefulset"
+  chaosServiceAccount: kafka-broker-pod-failure-sa
+  experiments:
+  - name: kafka-broker-pod-failure
+    spec:
+      components:
+        env:
+        # namespace where kafka installed
+        - name: KAFKA_NAMESPACE
+          value: 'kafka'
+        # labels of the kafka
+        - name: KAFKA_LABEL
+          value: 'app=cp-kafka'
+        # name of the kafka service
+        - name: KAFKA_SERVICE
+          value: 'kafka-cp-kafka-headless'
+        # kafka port number
+        - name: KAFKA_PORT
+          value: '9092'
+        # namespace of the zookeeper
+        - name: ZOOKEEPER_NAMESPACE
+          value: 'default'
+        # labels of the zookeeper
+        - name: ZOOKEEPER_LABEL
+          value: 'app=cp-zookeeper'
+        # name of the zookeeper service
+        - name: ZOOKEEPER_SERVICE
+          value: 'kafka-cp-zookeeper-headless'
+        # port of the zookeeper service
+        - name: ZOOKEEPER_PORT
+          value: '2181'
+        # name of the kafka broker
+        - name: KAFKA_BROKER
+          value: 'kafka-0'
+        # kafka replication factor
+        - name: KAFKA_REPLICATION_FACTOR
+          value: '3'
+        # duration of the chaos
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

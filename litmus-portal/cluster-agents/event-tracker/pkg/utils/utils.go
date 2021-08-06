@@ -14,6 +14,7 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
@@ -105,6 +106,11 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace(AgentNamespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
+	}
+
+	if len(deploymentConfigList.Items) == 0 {
+		log.Print("No event-tracker policy(s) found")
+		return nil
 	}
 
 	for _, ep := range deploymentConfigList.Items {
