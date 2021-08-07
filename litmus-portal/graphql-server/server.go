@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"runtime"
@@ -67,7 +66,7 @@ func main() {
 	mongodb.Client = mongodb.Client.Initialize()
 
 	if err := validateVersion(); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
