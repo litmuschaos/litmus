@@ -474,6 +474,7 @@ data:
   JWTSecret: "litmus-portal@123"
   DB_USER: "admin"
   DB_PASSWORD: "1234"
+  VERSION: "ci"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -537,6 +538,11 @@ spec:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:2.0.0-RC1
           env:
+            - name: VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: VERSION
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
