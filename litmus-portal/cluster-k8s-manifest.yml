@@ -116,7 +116,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.13.8
+    app.kubernetes.io/version: v2.0.0-RC1
     app.kubernetes.io/component: operator-clusterrole
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -143,6 +143,9 @@ rules:
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: [apiextensions.k8s.io]
+    resources: [customresourcedefinitions]
+    verbs: [list, get]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -152,7 +155,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.13.8
+    app.kubernetes.io/version: v2.0.0-RC1
     app.kubernetes.io/component: operator-clusterrolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -577,11 +580,11 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v2.11.0"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.13.8"
+              value: "litmuschaos/chaos-operator:2.0.0-RC1"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.13.8"
+              value: "litmuschaos/chaos-runner:2.0.0-RC1"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:1.13.8"
+              value: "litmuschaos/chaos-exporter:2.0.0-RC1"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: AGENT_DEPLOYMENTS
@@ -597,7 +600,7 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v1.13.x"
+              value: "v2.0.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
