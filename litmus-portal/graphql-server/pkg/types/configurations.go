@@ -14,4 +14,5 @@ type SubscriberConfigurationVars struct {
 	ChaosExporterImage       string
 	ContainerRuntimeExecutor string
 	AgentDeployments         string
+	Version                  string
 }

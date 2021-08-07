@@ -206,10 +206,10 @@ func SendWorkflowUpdates(clusterData map[string]string, event types.WorkflowEven
 	eventMap[event.UID] = event
 
 	// generate graphql payload
-	payload, err := GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "false", event)
+	payload, err := GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], clusterData["VERSION"], "false", event)
 
 	if event.FinishedAt != "" {
-		payload, err = GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], "true", event)
+		payload, err = GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], clusterData["VERSION"], "true", event)
 		delete(eventMap, event.UID)
 	}
 

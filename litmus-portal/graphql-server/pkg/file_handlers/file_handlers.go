@@ -26,6 +26,7 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	ChaosRunnerImage:         os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
 	ChaosExporterImage:       os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE"),
 	ContainerRuntimeExecutor: os.Getenv("CONTAINER_RUNTIME_EXECUTOR"),
+	Version:                  os.Getenv("VERSION"),
 }
 
 // FileHandler dynamically generates the manifest file and sends it as a response

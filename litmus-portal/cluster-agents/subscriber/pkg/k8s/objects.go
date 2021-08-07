@@ -107,8 +107,8 @@ func GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface,
 	return kubeObjects, nil
 }
 
-func GenerateKubeObject(cid string, accessKey string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
-	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
+func GenerateKubeObject(cid string, accessKey, version string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
+	clusterID := `{cluster_id: \"` + cid + `\", version: \"` + version + `\", access_key: \"` + accessKey + `\"}`
 	kubeObj, err := GetKubernetesObjects(kubeobjectrequest)
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func GenerateKubeObject(cid string, accessKey string, kubeobjectrequest types.Ku
 //SendKubeObjects generates graphql mutation to send kubernetes objects data to graphql server
 func SendKubeObjects(clusterData map[string]string, kubeobjectrequest types.KubeObjRequest) error {
 	// generate graphql payload
-	payload, err := GenerateKubeObject(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], kubeobjectrequest)
+	payload, err := GenerateKubeObject(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], clusterData["VERSION"], kubeobjectrequest)
 	if err != nil {
 		logrus.WithError(err).Print("Error while getting KubeObject Data")
 		return err
