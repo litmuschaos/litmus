@@ -109,6 +109,11 @@ func PolicyAuditor(resourceType string, obj interface{}, workflowid string) erro
 		return err
 	}
 
+	if len(deploymentConfigList.Items) == 0 {
+		log.Print("No event-tracker policy(s) found")
+		return nil
+	}
+
 	for _, ep := range deploymentConfigList.Items {
 
 		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace(AgentNamespace).Get(context.TODO(), ep.GetName(), metav1.GetOptions{})
