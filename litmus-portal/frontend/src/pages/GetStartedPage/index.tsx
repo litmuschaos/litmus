@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, InputField, TextButton } from 'litmus-ui';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import config from '../../config';
@@ -19,6 +19,7 @@ import {
   getUserId,
   getUsername,
   getUserRole,
+  logout,
 } from '../../utils/auth';
 import { validateConfirmPassword } from '../../utils/validate';
 import useStyles from './styles';
@@ -52,6 +53,34 @@ const GetStarted: React.FC = () => {
   const username = getUsername();
 
   const [loading, setIsLoading] = useState<boolean>(false);
+
+  // Checking if token is valid or not by finding the uid in database
+  const ValidateUser = () => {
+    fetch(`${config.auth.url}/getUser/${getUserId()}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+          window.alert('Token expired, please login again');
+          logout();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        logout();
+      });
+    return true;
+  };
+
+  useEffect(() => {
+    ValidateUser();
+  }, []);
 
   // Mutation to create project for a user
   const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
@@ -101,7 +130,7 @@ const GetStarted: React.FC = () => {
     },
   });
 
-  // Submit entered data to /update endpoint
+  // Submit entered data to /update/details endpoint
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
@@ -146,7 +175,11 @@ const GetStarted: React.FC = () => {
           <form
             id="login-form"
             className={classes.inputDiv}
-            onSubmit={handleSubmit}
+            onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+              if (ValidateUser()) {
+                handleSubmit(event);
+              }
+            }}
           >
             <InputField
               data-cy="inputPassword"
@@ -190,8 +223,10 @@ const GetStarted: React.FC = () => {
                   title="Skip for now"
                   variant="highlight"
                   onClick={() => {
-                    setIsLoading(true);
-                    getUserInfo();
+                    if (ValidateUser()) {
+                      setIsLoading(true);
+                      getUserInfo();
+                    }
                   }}
                 >
                   {loading ? (
