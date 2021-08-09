@@ -351,7 +351,7 @@ rules:
   verbs: [get, list]
 - apiGroups: [apps]
   resources: [deployments, daemonsets, replicasets, statefulsets]
-  verbs: [get, list]
+  verbs: [get, list, delete]
 - apiGroups: [argoproj.io]
   resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, rollouts]
   verbs: [get, list, create, delete, update, watch]
