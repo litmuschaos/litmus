@@ -29,6 +29,7 @@ import (
 
 var (
 	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
+	Version        = os.Getenv("VERSION")
 )
 
 const (
@@ -231,7 +232,7 @@ func SendRequest(workflowID string) (string, error) {
 		return "", err
 	}
 
-	payload := `{"query": "mutation { gitopsNotifer(clusterInfo: { cluster_id: \"` + clusterID + `\", access_key: \"` + accessKey + `\"}, workflow_id: \"` + workflowID + `\")\n}"}`
+	payload := `{"query": "mutation { gitopsNotifer(clusterInfo: { cluster_id: \"` + clusterID + `\", version: \"` + Version + `\", access_key: \"` + accessKey + `\"}, workflow_id: \"` + workflowID + `\")\n}"}`
 	req, err := http.NewRequest("POST", serverAddr, bytes.NewBuffer([]byte(payload)))
 	if err != nil {
 		return "", err

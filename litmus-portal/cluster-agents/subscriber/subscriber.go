@@ -26,6 +26,7 @@ var (
 		"AGENT_SCOPE":          os.Getenv("AGENT_SCOPE"),
 		"COMPONENTS":           os.Getenv("COMPONENTS"),
 		"AGENT_NAMESPACE":      os.Getenv("AGENT_NAMESPACE"),
+		"VERSION":              os.Getenv("VERSION"),
 	}
 
 	err error
