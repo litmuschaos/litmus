@@ -188,7 +188,7 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="litmusAPIDocs"
           handleClick={() => {
-            window.open('https://litmuschaos.github.io/litmus/api.html');
+            window.open('https://litmuschaos.github.io/litmus/api-v2.0.0.html');
           }}
           label="Litmus API Docs"
           selected={pathName === 'docs'}
