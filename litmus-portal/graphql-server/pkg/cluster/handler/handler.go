@@ -156,20 +156,20 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 
 	requests := []string{
 		`{
-			"apiVersion": "apps/v1",
-			"kind": "Deployment",
-			"metadata": {
-				"name": "subscriber",
-				"namespace": ` + *cluster.AgentNamespace + `
-			}
-		}`,
-		`{
 		   "apiVersion": "v1",
 		   "kind": "ConfigMap",
 		   "metadata": {
 			  "name": "agent-config",
 			  "namespace": ` + *cluster.AgentNamespace + `
 		   }
+		}`,
+		`{
+			"apiVersion": "apps/v1",
+			"kind": "Deployment",
+			"metadata": {
+				"name": "subscriber",
+				"namespace": ` + *cluster.AgentNamespace + `
+			}
 		}`,
 	}
 

@@ -29,7 +29,7 @@ rules:
 
   - apiGroups: ["apps"]
     resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
-    verbs: ["get", "list"]
+    verbs: ["get", "list", "delete"]
 
   - apiGroups: ["argoproj.io"]
     resources:
