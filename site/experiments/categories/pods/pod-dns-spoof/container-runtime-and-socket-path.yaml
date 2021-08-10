@@ -1,0 +1,30 @@
+## provide the container runtime and socket file path
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-dns-spoof-sa
+  experiments:
+  - name: pod-dns-spoof
+    spec:
+      components:
+        env:
+        # runtime for the container
+        # supports docker
+        - name: CONTAINER_RUNTIME
+          value: 'docker'
+        # path of the socket file
+        - name: SOCKET_PATH
+          value: '/var/run/docker.sock'
+        # map of host names
+        - name: SPOOF_MAP
+          value: '{"abc.com":"spoofabc.com"}'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

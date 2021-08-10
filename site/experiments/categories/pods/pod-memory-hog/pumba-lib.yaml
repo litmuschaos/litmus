@@ -1,0 +1,27 @@
+# use the pumba lib for the memory stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-memory-hog-sa
+  experiments:
+  - name: pod-memory-hog
+    spec:
+      components:
+        env:
+        # name of chaoslib
+        # it supports litmus and pumba lib
+        - name: LIB
+          value: 'pumba'
+        # stress image - applicable for pumba lib only
+        - name: STRESS_IMAGE
+          value: 'alexeiled/stress-ng:latest-ubuntu'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

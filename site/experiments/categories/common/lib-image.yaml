@@ -1,0 +1,25 @@
+# it contains the lib image used for the helper pod
+# it support [container-kill, network-experiments, stress-experiments, dns-experiments, disk-fill,
+# kubelet-service-kill, docker-service-kill, node-restart] experiments
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: container-kill-sa
+  experiments:
+  - name: container-kill
+    spec:
+      components:
+        env:
+        # nane of the lib image
+        - name: LIB_IMAGE
+          value: 'litmuschaos/go-runner:latest'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
