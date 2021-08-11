@@ -17,7 +17,32 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>node-restart</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-restart/experiment.yaml">here</a> 
+    - Ensure that the <code>node-restart</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-restart/experiment.yaml">here</a>
+    - Create a Kubernetes secret named `id-rsa` where the experiment will run, where its contents will be the private SSH key for `SSH_USER` used to connect to the node that hosts the target pod in the secret field `ssh-privatekey`. A sample secret is shown below:
+
+        ```yaml
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: id-rsa
+        type: kubernetes.io/ssh-auth
+        stringData:
+          ssh-privatekey: |-
+            # SSH private key for ssh contained here
+        ```
+
+    Creating the RSA key pair for remote SSH access should be a trivial exercise for those who are already familiar with an ssh client, which entails the following actions:
+        
+    1. Create a new key pair and store the keys in a file named `my-id-rsa-key` and `my-id-rsa-key.pub` for the private and public keys respectively: 
+        ```
+        ssh-keygen -f ~/my-id-rsa-key -t rsa -b 4096
+        ```
+    2. For each node available, run this following command to copy the public key of `my-id-rsa-key`:
+        ```
+        ssh-copy-id -i my-id-rsa-key user@node
+        ```
+        
+    For further details, please check this [documentation](https://www.ssh.com/ssh/keygen/). Once you have copied the public key to all nodes and created the secret described earlier, you are ready to start your experiment.
     
 ## Default Validations
 
@@ -28,68 +53,60 @@
 
 ??? note "View the Minimal RBAC permissions"
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-restart/rbac.yaml yaml)
-```yaml
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
-rules:
-- apiGroups: [""]
-  resources: ["pods","events"]
-  verbs: ["create","list","get","patch","update","delete","deletecollection"]
-- apiGroups: [""]
-  resources: ["pods/exec","pods/log","replicationcontrollers"]
-  verbs: ["create","list","get"]
-- apiGroups: ["batch"]
-  resources: ["jobs"]
-  verbs: ["create","list","get","delete","deletecollection"]
-- apiGroups: ["apps"]
-  resources: ["deployments","statefulsets","daemonsets","replicasets"]
-  verbs: ["list","get"]
-- apiGroups: ["apps.openshift.io"]
-  resources: ["deploymentconfigs"]
-  verbs: ["list","get"]
-- apiGroups: ["argoproj.io"]
-  resources: ["rollouts"]
-  verbs: ["list","get"]
-- apiGroups: ["litmuschaos.io"]
-  resources: ["chaosengines","chaosexperiments","chaosresults"]
-  verbs: ["create","list","get","patch","update"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: pod-cpu-hog-sa
-subjects:
-- kind: ServiceAccount
-  name: pod-cpu-hog-sa
-  namespace: default
-```
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-restart/rbac.yaml yaml)
+    ```yaml
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: node-restart-sa
+      namespace: default
+      labels:
+        name: node-restart-sa
+        app.kubernetes.io/part-of: litmus
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: node-restart-sa
+      labels:
+        name: node-restart-sa
+        app.kubernetes.io/part-of: litmus
+    rules:
+    - apiGroups: [""]
+      resources: ["pods","events","secrets"]
+      verbs: ["create","list","get","patch","update","delete","deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/exec","pods/log"]
+      verbs: ["create","list","get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs"]
+      verbs: ["create","list","get","delete","deletecollection"]
+    - apiGroups: ["litmuschaos.io"]
+      resources: ["chaosengines","chaosexperiments","chaosresults"]
+      verbs: ["create","list","get","patch","update"]
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get","list"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: node-restart-sa
+      labels:
+        name: node-restart-sa
+        app.kubernetes.io/part-of: litmus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: node-restart-sa
+    subjects:
+    - kind: ServiceAccount
+      name: node-restart-sa
+      namespace: default
+    ```
 
-Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 

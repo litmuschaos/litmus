@@ -28,68 +28,60 @@
 
 ??? note "View the Minimal RBAC permissions"
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-io-stress/rbac.yaml yaml)
-```yaml
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
-rules:
-- apiGroups: [""]
-  resources: ["pods","events"]
-  verbs: ["create","list","get","patch","update","delete","deletecollection"]
-- apiGroups: [""]
-  resources: ["pods/exec","pods/log","replicationcontrollers"]
-  verbs: ["create","list","get"]
-- apiGroups: ["batch"]
-  resources: ["jobs"]
-  verbs: ["create","list","get","delete","deletecollection"]
-- apiGroups: ["apps"]
-  resources: ["deployments","statefulsets","daemonsets","replicasets"]
-  verbs: ["list","get"]
-- apiGroups: ["apps.openshift.io"]
-  resources: ["deploymentconfigs"]
-  verbs: ["list","get"]
-- apiGroups: ["argoproj.io"]
-  resources: ["rollouts"]
-  verbs: ["list","get"]
-- apiGroups: ["litmuschaos.io"]
-  resources: ["chaosengines","chaosexperiments","chaosresults"]
-  verbs: ["create","list","get","patch","update"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: pod-cpu-hog-sa
-subjects:
-- kind: ServiceAccount
-  name: pod-cpu-hog-sa
-  namespace: default
-```
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-io-stress/rbac.yaml yaml)
+    ```yaml
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: node-io-stress-sa
+      namespace: default
+      labels:
+        name: node-io-stress-sa
+        app.kubernetes.io/part-of: litmus
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: node-io-stress-sa
+      labels:
+        name: node-io-stress-sa
+        app.kubernetes.io/part-of: litmus
+    rules:
+    - apiGroups: [""]
+      resources: ["pods","events"]
+      verbs: ["create","list","get","patch","update","delete","deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/exec","pods/log"]
+      verbs: ["create","list","get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs"]
+      verbs: ["create","list","get","delete","deletecollection"]
+    - apiGroups: ["litmuschaos.io"]
+      resources: ["chaosengines","chaosexperiments","chaosresults"]
+      verbs: ["create","list","get","patch","update"]
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get","list"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: node-io-stress-sa
+      labels:
+        name: node-io-stress-sa
+        app.kubernetes.io/part-of: litmus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: node-io-stress-sa
+    subjects:
+    - kind: ServiceAccount
+      name: node-io-stress-sa
+      namespace: default
+    ```
 
-Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 

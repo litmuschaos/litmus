@@ -1,4 +1,172 @@
-It contains tunables to execute the `gcp-vm-instance-stop` experiment. This experiment stops the given gcp instances and restarts them after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
+## Introduction
+
+- It causes power-off of a GCP VM instance by instance name or list of instance names before bringing it back to the running state after the specified chaos duration.
+- It helps to check the performance of the application/process running on the VM instance.
+- When the `AUTO_SCALING_GROUP` is enable then the experiment will not try to start the instance post chaos, instead it will check the addition of the new node instances to the cluster.
+
+!!! tip "Scenario: stop the gcp vm"    
+    ![GCP VM Instance Stop](../../images/gcp-vm-instance-stop.png)
+
+## Uses
+
+??? info "View the uses of the experiment" 
+    coming soon
+
+## Prerequisites
+
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code>gcp-vm-instance-stop</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/experiment.yaml">here</a>
+    - Ensure that you have sufficient GCP permissions to stop and start the GCP VM instances. 
+    - Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:
+
+        ```yaml
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: cloud-secret
+        type: Opaque
+        stringData:
+          type: 
+          project_id: 
+          private_key_id: 
+          private_key: 
+          client_email: 
+          client_id: 
+          auth_uri: 
+          token_uri: 
+          auth_provider_x509_cert_url: 
+          client_x509_cert_url: 
+        ``` 
+    
+## Default Validations
+
+??? info "View the default validations" 
+    - VM instance should be in healthy state.
+
+## Minimal RBAC configuration example (optional)
+
+??? note "View the Minimal RBAC permissions"
+
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/gcp/gcp-vm-instance-stop/rbac.yaml yaml)
+    ```yaml
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: gcp-vm-instance-stop-sa
+      namespace: default
+      labels:
+        name: gcp-vm-instance-stop-sa
+        app.kubernetes.io/part-of: litmus
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: gcp-vm-instance-stop-sa
+      labels:
+        name: gcp-vm-instance-stop-sa
+        app.kubernetes.io/part-of: litmus
+    rules:
+    - apiGroups: [""]
+      resources: ["pods","events","secrets"]
+      verbs: ["create","list","get","patch","update","delete","deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/exec","pods/log"]
+      verbs: ["create","list","get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs"]
+      verbs: ["create","list","get","delete","deletecollection"]
+    - apiGroups: ["litmuschaos.io"]
+      resources: ["chaosengines","chaosexperiments","chaosresults"]
+      verbs: ["create","list","get","patch","update"]
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get","list"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: gcp-vm-instance-stop-sa
+      labels:
+        name: gcp-vm-instance-stop-sa
+        app.kubernetes.io/part-of: litmus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: gcp-vm-instance-stop-sa
+    subjects:
+    - kind: ServiceAccount
+      name: gcp-vm-instance-stop-sa
+      namespace: default
+    ```
+    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+
+## Experiment tunables
+
+??? info "check the experiment tunables"
+    <h2>Mandatory Fields</h2>
+
+    <table>
+      <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+      </tr>
+      <tr> 
+        <td> GCP_PROJECT_ID </td>
+        <td> GCP project ID to which the VM instances belong </td>
+        <td> All the VM instances must belong to a single GCP project </td>
+      </tr>
+      <tr> 
+        <td> VM_INSTANCE_NAMES </td>
+        <td> Name of target VM instances </td>
+        <td> Multiple instance names can be provided as instance1,instance2,... </td>
+      </tr>
+      <tr>
+        <td> INSTANCE_ZONES </td>
+        <td> The zones of the target VM instances </td>
+        <td> Zone for every instance name has to be provided as zone1,zone2,... in the same order of <code>VM_INSTANCE_NAMES</code> </td>
+      </tr>
+    </table>
+    
+    <h2>Optional Fields</h2>
+
+    <table>
+      <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+      </tr>
+      <tr> 
+        <td> TOTAL_CHAOS_DURATION </td>
+        <td> The total time duration for chaos insertion (sec) </td>
+        <td> Defaults to 30s </td>
+      </tr>
+       <tr> 
+        <td> CHAOS_INTERVAL </td>
+        <td> The interval (in sec) between successive instance termination </td>
+        <td> Defaults to 30s </td>
+      </tr>  
+      <tr> 
+        <td> AUTO_SCALING_GROUP </td>
+        <td> Set to <code>enable</code> if the target instance is the part of a auto-scaling group </td>
+        <td> Defaults to <code>disable</code> </td>
+      </tr>  
+      <tr>
+        <td> SEQUENCE </td>
+        <td> It defines sequence of chaos execution for multiple instance </td>
+        <td> Default value: parallel. Supported: serial, parallel </td>
+      </tr> 
+      <tr>
+        <td> RAMP_TIME </td>
+        <td> Period to wait before and after injection of chaos in sec </td>
+        <td> </td>
+      </tr>
+    </table>
+
+## Experiment Examples
 
 ### Common Experiment Tunables
 

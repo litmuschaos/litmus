@@ -17,7 +17,10 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>kubelet-service-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/kubelet-service-kill/experiment.yaml">here</a> 
+    - Ensure that the <code>kubelet-service-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/kubelet-service-kill/experiment.yaml">here</a>
+    - Ensure that the node specified in the experiment ENV variable <code>TARGET_NODE</code> (the node for which kubelet service need to be killed) should be cordoned before execution of the chaos experiment (before applying the chaosengine manifest) to ensure that the litmus experiment runner pods are not scheduled on it / subjected to eviction. This can be achieved with the following steps:
+        - Get node names against the applications pods: <code>kubectl get pods -o wide</code>
+        - Cordon the node <code>kubectl cordon &lt;nodename&gt;</code>
     
 ## Default Validations
 
@@ -28,68 +31,60 @@
 
 ??? note "View the Minimal RBAC permissions"
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/kubelet-service-killt/rbac.yaml yaml)
-```yaml
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
-rules:
-- apiGroups: [""]
-  resources: ["pods","events"]
-  verbs: ["create","list","get","patch","update","delete","deletecollection"]
-- apiGroups: [""]
-  resources: ["pods/exec","pods/log","replicationcontrollers"]
-  verbs: ["create","list","get"]
-- apiGroups: ["batch"]
-  resources: ["jobs"]
-  verbs: ["create","list","get","delete","deletecollection"]
-- apiGroups: ["apps"]
-  resources: ["deployments","statefulsets","daemonsets","replicasets"]
-  verbs: ["list","get"]
-- apiGroups: ["apps.openshift.io"]
-  resources: ["deploymentconfigs"]
-  verbs: ["list","get"]
-- apiGroups: ["argoproj.io"]
-  resources: ["rollouts"]
-  verbs: ["list","get"]
-- apiGroups: ["litmuschaos.io"]
-  resources: ["chaosengines","chaosexperiments","chaosresults"]
-  verbs: ["create","list","get","patch","update"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: pod-cpu-hog-sa
-  namespace: default
-  labels:
-    name: pod-cpu-hog-sa
-    app.kubernetes.io/part-of: litmus
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: pod-cpu-hog-sa
-subjects:
-- kind: ServiceAccount
-  name: pod-cpu-hog-sa
-  namespace: default
-```
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/kubelet-service-kill/rbac.yaml yaml)
+    ```yaml
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: kubelet-service-kill-sa
+      namespace: default
+      labels:
+        name: kubelet-service-kill-sa
+        app.kubernetes.io/part-of: litmus
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: kubelet-service-kill-sa
+      labels:
+        name: kubelet-service-kill-sa
+        app.kubernetes.io/part-of: litmus
+    rules:
+    - apiGroups: [""]
+      resources: ["pods","events"]
+      verbs: ["create","list","get","patch","update","delete","deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/exec","pods/log"]
+      verbs: ["create","list","get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs"]
+      verbs: ["create","list","get","delete","deletecollection"]
+    - apiGroups: ["litmuschaos.io"]
+      resources: ["chaosengines","chaosexperiments","chaosresults"]
+      verbs: ["create","list","get","patch","update"]
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get","list"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: kubelet-service-kill-sa
+      labels:
+        name: kubelet-service-kill-sa
+        app.kubernetes.io/part-of: litmus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: kubelet-service-kill-sa
+    subjects:
+    - kind: ServiceAccount
+      name: kubelet-service-kill-sa
+      namespace: default
+    ```
 
-Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 
@@ -156,9 +151,9 @@ It contains name of target node subjected to the chaos. It can be tuned via `TAR
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/experiments-by-example/docs/experiments/categories/nodes/kubelet-service-kill/kubelet-service-kill.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/experiment-docs/docs/experiments/categories/nodes/kubelet-service-kill/kubelet-service-kill.yaml yaml)
 ```yaml
-# node tainted with provided key and effect
+# kill the kubelet service of the target node
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -166,15 +161,15 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  chaosServiceAccount: node-taint-sa
+  chaosServiceAccount: kubelet-service-kill-sa
   experiments:
-  - name: node-taint
+  - name: kubelet-service-kill
     spec:
       components:
         env:
-        # label and effect to be tainted on the targeted node
-        - name: TAINT_LABEL
-          value: 'key=value:effect'
+        # name of the target node
+        - name: TARGET_NODE
+          value: 'node01'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```

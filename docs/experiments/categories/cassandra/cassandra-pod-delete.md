@@ -1,4 +1,166 @@
-It deletes the Cassandra pods with matching namespace, labels, and kind provided at `spec.appinfo` in chaosengine for the `TOTAL_CHAOS_DURATION` duration. 
+## Introduction
+
+- It causes (forced/graceful) pod failure of specific/random replicas of an cassandra statefulset
+- It tests cassandra sanity (replica availability & uninterrupted service) and recovery workflow of the cassandra statefulset.
+
+!!! tip "Scenario: Deletes cassandra pod"    
+    ![Cassandra Pod Delete](../../images/cassandra-pod-delete.png)
+
+## Uses
+
+??? info "View the uses of the experiment" 
+    coming soon
+
+## Prerequisites
+
+
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code> cassandra-pod-delete </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/cassandra/cassandra-pod-delete/experiment.yaml">here</a>
+    
+## Default Validations
+
+??? info "View the default validations" 
+    - Cassandra pods are healthy before chaos injection
+    - The load should be distributed on the each replicas.
+
+## Minimal RBAC configuration example (optional)
+
+??? note "View the Minimal RBAC permissions"
+
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/cassandra/cassandra-pod-delete/rbac.yaml yaml)
+    ```yaml
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: kafka-broker-pod-failure-sa
+      namespace: default
+      labels:
+        name: kafka-broker-pod-failure-sa
+        app.kubernetes.io/part-of: litmus
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: kafka-broker-pod-failure-sa
+      labels:
+        name: kafka-broker-pod-failure-sa
+        app.kubernetes.io/part-of: litmus
+    rules:
+    - apiGroups: [""]
+      resources: ["pods","events"]
+      verbs: ["create","list","get","patch","update","delete","deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/exec","pods/log"]
+      verbs: ["create","list","get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs"]
+      verbs: ["create","list","get","delete","deletecollection"]
+    - apiGroups: ["apps"]
+      resources: ["deployments","statefulsets"]
+      verbs: ["list","get"]
+    - apiGroups: ["litmuschaos.io"]
+      resources: ["chaosengines","chaosexperiments","chaosresults"]
+      verbs: ["create","list","get","patch","update"]
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get","list"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: kafka-broker-pod-failure-sa
+      labels:
+        name: kafka-broker-pod-failure-sa
+        app.kubernetes.io/part-of: litmus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: kafka-broker-pod-failure-sa
+    subjects:
+    - kind: ServiceAccount
+      name: kafka-broker-pod-failure-sa
+      namespace: default
+    ```
+    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+
+## Experiment tunables
+
+??? info "check the experiment tunables"
+    
+    <h2>Optional Fields</h2>
+
+    <table>
+      <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+      </tr>
+      <tr>
+        <td> CASSANDRA_SVC_NAME </td>
+        <td> Cassandra Service Name </td>
+        <td> Defaults value: cassandra </td>
+      </tr>
+      <tr>
+        <td> KEYSPACE_REPLICATION_FACTOR </td>
+        <td> Value of the Replication factor for the cassandra liveness deploy</td>
+        <td> It needs to create keyspace while checking the livenss of cassandra</td>
+      </tr>
+      <tr>
+        <td> CASSANDRA_PORT </td>
+        <td> Port of the cassandra statefulset </td>
+        <td> Defaults value: 9042 </td>
+      </tr>
+      <tr>
+        <td> CASSANDRA_LIVENESS_CHECK </td>
+        <td> It allows to check the liveness of the cassandra statefulset </td>
+        <td> It can be <code>enabled</code> or <code>disabled</code> </td>
+      </tr>
+      <tr>
+        <td> CASSANDRA_LIVENESS_IMAGE </td>
+        <td> Image of the cassandra liveness deployment </td>
+        <td> Default value: litmuschaos/cassandra-client:latest </td>
+      </tr>
+      <tr>
+        <td> SEQUENCE </td>
+        <td> It defines sequence of chaos execution for multiple target pods </td>
+        <td> Default value: parallel. Supported: serial, parallel </td>
+      </tr>
+      <tr>
+        <td> TOTAL_CHAOS_DURATION </td>
+        <td> The time duration for chaos insertion (seconds) </td>
+        <td> Defaults to 15s </td>
+      </tr>
+      <tr>
+        <td> PODS_AFFECTED_PERC </td>
+        <td> The Percentage of total pods to target  </td>
+        <td> Defaults to 0% (corresponds to 1 replica) </td>
+      </tr> 
+      <tr>
+        <td> CHAOS_INTERVAL </td>
+        <td> Time interval b/w two successive pod failures (sec) </td>
+        <td> Defaults to 5s </td>
+      </tr>
+      <tr>
+        <td> LIB </td>
+        <td> The chaos lib used to inject the chaos </td>
+        <td> Defaults to <code>litmus</code>. Supported <code>litmus</code> only </td>
+      </tr>
+      <tr>
+        <td> FORCE  </td>
+        <td> Application Pod deletion mode. <code>False</code> indicates graceful deletion with default termination period of 30s. <code>true</code> indicates an immediate forceful deletion with 0s grace period </td>
+        <td> Default to <code>true</code>, With <code>terminationGracePeriodSeconds=0</code>  </td>
+      </tr>
+      <tr>
+        <td> RAMP_TIME </td>
+        <td> Period to wait before injection of chaos in sec </td>
+        <td> </td>
+      </tr>
+    </table>
+
+## Experiment Examples
 
 ### Common Experiment Tunables
 

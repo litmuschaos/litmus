@@ -76,7 +76,7 @@ markdown_extensions:
 nav:
     - Home: index.md
     - Experiments:
-      - experiments/categories/getting-started-with-litmus.md
+      - Contents: experiments/categories/getstarted.md
       - Kubernetes:
         - Generic:
           - Pod Chaos:
@@ -96,7 +96,10 @@ nav:
             - Pod Network Latency: experiments/categories/pods/pod-network-latency.md
             - Pod Network Loss: experiments/categories/pods/pod-network-loss.md
           - Node Chaos:
+            - Docker Service Kill: experiments/categories/nodes/docker-service-kill.md
+            - Kubelet Service Kill: experiments/categories/nodes/kubelet-service-kill.md
             - Node CPU Hog: experiments/categories/nodes/node-cpu-hog.md
+            - Node Drain: experiments/categories/nodes/node-drain.md
             - Node IO Stress: experiments/categories/nodes/node-io-stress.md
             - Node Memory Hog: experiments/categories/nodes/node-memory-hog.md
             - Node Restart: experiments/categories/nodes/node-restart.md
@@ -124,14 +127,20 @@ nav:
             - GCP Instance Stop: experiments/categories/gcp/gcp-vm-instance-stop.md
             - GCP Disk Loss: experiments/categories/gcp/gcp-vm-disk-loss.md
     - Chaos Resources:
-      - ChaosEngine Spec Tunables: experiments/chaos-resources/engine-spec.md
-      - Experiment Tunables: experiments/chaos-resources/experiment-components.md
-      - Runner Tunables: experiments/chaos-resources/runner-components.md
+      - Contents: experiments/chaos-resources/chaos-resources.md
+      - ChaosEngine Specifications:
+        - State Specifications: experiments/chaos-resources/engine-state.md
+        - Application Specifications: experiments/chaos-resources/application-details.md
+        - RBAC Specifications: experiments/chaos-resources/rbac-details.md
+        - Runtime Specifications: experiments/chaos-resources/runtime-details.md
+        - Runner Specifications: experiments/chaos-resources/runner-components.md
+        - Experiment Specifications: experiments/chaos-resources/experiment-components.md
       - Probes:
         - Command Probe:  experiments/chaos-resources/probes/cmdProbe.md
         - HTTP Probe:  experiments/chaos-resources/probes/httpProbe.md
         - K8S Probe:  experiments/chaos-resources/probes/k8sProbe.md
         - Prometheus Probe:  experiments/chaos-resources/probes/promProbe.md
     - Chaos Hub: https://hub.litmuschaos.io/
+    - Platform Docs: https://litmusdocs-beta.netlify.app/
     - Releases ⧉: https://github.com/litmuschaos/litmus/releases
     - Roadmap: ROADMAP.md
