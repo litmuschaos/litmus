@@ -6,8 +6,12 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="It contains litmus chaos experiments docs">
       
       
+      
+      
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/common/common-tunables-for-all-experiments/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.3">
@@ -47,13 +51,17 @@
   
     
     
+      
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
     <script>function __prefix(e){return new URL("../../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+      <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -97,6 +105,28 @@
       </div>
     </div>
     
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C9.76 2 7.78 3.05 6.5 4.68l9.81 9.82C17.94 13.21 19 11.24 19 9a7 7 0 0 0-7-7M3.28 4 2 5.27 5.04 8.3C5 8.53 5 8.76 5 9c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h5.73l4 4L20 20.72 3.28 4M9 20v1a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 6a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V19a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1.8c-1.79-1.04-3-2.98-3-5.2a6 6 0 0 1 6-6m2 15v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1h4m6-10h3v2h-3v-2M1 11h3v2H1v-2M13 1v3h-2V1h2M4.92 3.5l2.13 2.14-1.42 1.41L3.5 4.93 4.92 3.5m12.03 2.13 2.12-2.13 1.43 1.43-2.13 2.12-1.42-1.42z"/></svg>
+            </label>
+          
+        
+      </form>
+    
     
     
       <label class="md-header__button md-icon" for="__search">
@@ -114,10 +144,16 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
+          <a href="javascript:void(0)" class="md-search__icon md-icon" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08z"/></svg>
+          </a>
+        
         <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -142,7 +178,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
-    GitHub
+    litmuschaos/litmus
   </div>
 </a>
       </div>
@@ -153,6 +189,107 @@
     <div class="md-container" data-md-component="container">
       
       
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getstarted/" class="md-tabs__link">
+        Experiments
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../chaos-resources/chaos-resources/" class="md-tabs__link">
+        Chaos Resources
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://hub.litmuschaos.io/" class="md-tabs__link">
+      Chaos Hub
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://litmusdocs-beta.netlify.app/" class="md-tabs__link">
+      Platform Docs
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://github.com/litmuschaos/litmus/releases" class="md-tabs__link">
+      Releases ⧉
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../../ROADMAP/" class="md-tabs__link">
+      Roadmap
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
         
       
       <main class="md-main" data-md-component="main">
@@ -165,8 +302,10 @@
                   <div class="md-sidebar__inner">
                     
 
+  
 
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
       
@@ -184,7 +323,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
-    GitHub
+    litmuschaos/litmus
   </div>
 </a>
     </div>
@@ -200,7 +339,7 @@
   
     <li class="md-nav__item">
       <a href="../../../.." class="md-nav__link">
-        Getting Started with Litmus
+        Home
       </a>
     </li>
   
@@ -234,20 +373,32 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../getstarted/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
       
-      <label class="md-nav__link" for="__nav_2_1">
-        Kubernetes Experiments
+      <label class="md-nav__link" for="__nav_2_2">
+        Kubernetes
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Kubernetes Experiments" data-md-level="2">
-        <label class="md-nav__title" for="__nav_2_1">
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
           <span class="md-nav__icon md-icon"></span>
-          Kubernetes Experiments
+          Kubernetes
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -259,14 +410,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_1" type="checkbox" id="__nav_2_1_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1" type="checkbox" id="__nav_2_2_1" >
       
-      <label class="md-nav__link" for="__nav_2_1_1">
+      <label class="md-nav__link" for="__nav_2_2_1">
         Generic
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Generic" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_1">
+        <label class="md-nav__title" for="__nav_2_2_1">
           <span class="md-nav__icon md-icon"></span>
           Generic
         </label>
@@ -280,16 +431,16 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_1_1" type="checkbox" id="__nav_2_1_1_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1_1" type="checkbox" id="__nav_2_2_1_1" >
       
-      <label class="md-nav__link" for="__nav_2_1_1_1">
-        Pods Specific
+      <label class="md-nav__link" for="__nav_2_2_1_1">
+        Pod Chaos
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Pods Specific" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_1_1">
+      <nav class="md-nav" aria-label="Pod Chaos" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_2_1_1">
           <span class="md-nav__icon md-icon"></span>
-          Pods Specific
+          Pod Chaos
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -347,7 +498,7 @@
   
     <li class="md-nav__item">
       <a href="../../pods/pod-cpu-hog/" class="md-nav__link">
-        Pod CPU HOg
+        Pod CPU Hog
       </a>
     </li>
   
@@ -394,6 +545,18 @@
   
   
     <li class="md-nav__item">
+      <a href="../../pods/pod-io-stress/" class="md-nav__link">
+        Pod IO Stress
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../pods/pod-memory-hog-exec/" class="md-nav__link">
         Pod Memory Hog Exec
       </a>
@@ -418,8 +581,44 @@
   
   
     <li class="md-nav__item">
-      <a href="../../pods/pod-network-chaos/" class="md-nav__link">
-        Pod Network Chaos
+      <a href="../../pods/pod-network-corruption/" class="md-nav__link">
+        Pod Network Corruption
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-duplication/" class="md-nav__link">
+        Pod Network Duplication
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-latency/" class="md-nav__link">
+        Pod Network Latency
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-loss/" class="md-nav__link">
+        Pod Network Loss
       </a>
     </li>
   
@@ -439,16 +638,16 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_1_2" type="checkbox" id="__nav_2_1_1_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1_2" type="checkbox" id="__nav_2_2_1_2" >
       
-      <label class="md-nav__link" for="__nav_2_1_1_2">
-        Nodes Specific
+      <label class="md-nav__link" for="__nav_2_2_1_2">
+        Node Chaos
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Nodes Specific" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_1_2">
+      <nav class="md-nav" aria-label="Node Chaos" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_2_1_2">
           <span class="md-nav__icon md-icon"></span>
-          Nodes Specific
+          Node Chaos
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -457,8 +656,44 @@
   
   
     <li class="md-nav__item">
+      <a href="../../nodes/docker-service-kill/" class="md-nav__link">
+        Docker Service Kill
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nodes/kubelet-service-kill/" class="md-nav__link">
+        Kubelet Service Kill
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../nodes/node-cpu-hog/" class="md-nav__link">
         Node CPU Hog
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nodes/node-drain/" class="md-nav__link">
+        Node Drain
       </a>
     </li>
   
@@ -532,14 +767,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_2" type="checkbox" id="__nav_2_1_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_2" type="checkbox" id="__nav_2_2_2" >
       
-      <label class="md-nav__link" for="__nav_2_1_2">
+      <label class="md-nav__link" for="__nav_2_2_2">
         Kafka
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Kafka" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_2">
+        <label class="md-nav__title" for="__nav_2_2_2">
           <span class="md-nav__icon md-icon"></span>
           Kafka
         </label>
@@ -571,14 +806,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3" type="checkbox" id="__nav_2_1_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_3" type="checkbox" id="__nav_2_2_3" >
       
-      <label class="md-nav__link" for="__nav_2_1_3">
+      <label class="md-nav__link" for="__nav_2_2_3">
         Cassandra
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Cassandra" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_3">
+        <label class="md-nav__title" for="__nav_2_2_3">
           <span class="md-nav__icon md-icon"></span>
           Cassandra
         </label>
@@ -616,16 +851,16 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
       
-      <label class="md-nav__link" for="__nav_2_2">
-        Non-Kubernetes Experiments
+      <label class="md-nav__link" for="__nav_2_3">
+        Cloud-Platform
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Non-Kubernetes Experiments" data-md-level="2">
-        <label class="md-nav__title" for="__nav_2_2">
+      <nav class="md-nav" aria-label="Cloud-Platform" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
           <span class="md-nav__icon md-icon"></span>
-          Non-Kubernetes Experiments
+          Cloud-Platform
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -637,16 +872,37 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1" type="checkbox" id="__nav_2_2_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1" type="checkbox" id="__nav_2_3_1" >
       
-      <label class="md-nav__link" for="__nav_2_2_1">
+      <label class="md-nav__link" for="__nav_2_3_1">
         AWS
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="AWS" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_1">
+        <label class="md-nav__title" for="__nav_2_3_1">
           <span class="md-nav__icon md-icon"></span>
           AWS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_1" type="checkbox" id="__nav_2_3_1_1" >
+      
+      <label class="md-nav__link" for="__nav_2_3_1_1">
+        EC2
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="EC2" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          EC2
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -673,6 +929,33 @@
     </li>
   
 
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_2" type="checkbox" id="__nav_2_3_1_2" >
+      
+      <label class="md-nav__link" for="__nav_2_3_1_2">
+        EBS
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="EBS" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          EBS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
             
   
@@ -712,14 +995,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_2" type="checkbox" id="__nav_2_2_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_3" type="checkbox" id="__nav_2_3_1_3" >
       
-      <label class="md-nav__link" for="__nav_2_2_2">
+      <label class="md-nav__link" for="__nav_2_3_1_3">
         AWS SSM
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="AWS SSM" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_2">
+      <nav class="md-nav" aria-label="AWS SSM" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_3">
           <span class="md-nav__icon md-icon"></span>
           AWS SSM
         </label>
@@ -755,6 +1038,12 @@
   
 
           
+        </ul>
+      </nav>
+    </li>
+  
+
+          
             
   
   
@@ -763,14 +1052,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_3" type="checkbox" id="__nav_2_2_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_2" type="checkbox" id="__nav_2_3_2" >
       
-      <label class="md-nav__link" for="__nav_2_2_3">
+      <label class="md-nav__link" for="__nav_2_3_2">
         VMWare
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="VMWare" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_3">
+        <label class="md-nav__title" for="__nav_2_3_2">
           <span class="md-nav__icon md-icon"></span>
           VMWare
         </label>
@@ -802,14 +1091,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_4" type="checkbox" id="__nav_2_2_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_3" type="checkbox" id="__nav_2_3_3" >
       
-      <label class="md-nav__link" for="__nav_2_2_4">
+      <label class="md-nav__link" for="__nav_2_3_3">
         Azure
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Azure" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_4">
+        <label class="md-nav__title" for="__nav_2_3_3">
           <span class="md-nav__icon md-icon"></span>
           Azure
         </label>
@@ -841,14 +1130,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_5" type="checkbox" id="__nav_2_2_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4" type="checkbox" id="__nav_2_3_4" >
       
-      <label class="md-nav__link" for="__nav_2_2_5">
+      <label class="md-nav__link" for="__nav_2_3_4">
         GCP
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="GCP" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_5">
+        <label class="md-nav__title" for="__nav_2_3_4">
           <span class="md-nav__icon md-icon"></span>
           GCP
         </label>
@@ -925,32 +1214,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../chaos-resources/engine-spec/" class="md-nav__link">
-        ChaosEngine Spec Tunables
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../chaos-resources/experiment-components/" class="md-nav__link">
-        Experiment Tunables
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../chaos-resources/runner-components/" class="md-nav__link">
-        Runner Tunables
+      <a href="../../../chaos-resources/chaos-resources/" class="md-nav__link">
+        Contents
       </a>
     </li>
   
@@ -964,14 +1229,113 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
       
-      <label class="md-nav__link" for="__nav_3_4">
+      <label class="md-nav__link" for="__nav_3_2">
+        ChaosEngine Specifications
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="ChaosEngine Specifications" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          ChaosEngine Specifications
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/engine-state/" class="md-nav__link">
+        State Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/application-details/" class="md-nav__link">
+        Application Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/rbac-details/" class="md-nav__link">
+        RBAC Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/runtime-details/" class="md-nav__link">
+        Runtime Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/runner-components/" class="md-nav__link">
+        Runner Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/experiment-components/" class="md-nav__link">
+        Experiment Specifications
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      <label class="md-nav__link" for="__nav_3_3">
         Probes
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Probes" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_4">
+        <label class="md-nav__title" for="__nav_3_3">
           <span class="md-nav__icon md-icon"></span>
           Probes
         </label>
@@ -1045,6 +1409,36 @@
   
   
     <li class="md-nav__item">
+      <a href="https://hub.litmuschaos.io/" class="md-nav__link">
+        Chaos Hub
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://litmusdocs-beta.netlify.app/" class="md-nav__link">
+        Platform Docs
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="https://github.com/litmuschaos/litmus/releases" class="md-nav__link">
         Releases ⧉
       </a>
@@ -1062,36 +1456,6 @@
     <li class="md-nav__item">
       <a href="../../../../ROADMAP/" class="md-nav__link">
         Roadmap
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="https://kubernetes.slack.com/messages/CNXNB0ZTN" class="md-nav__link">
-        Slack ⧉
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="https://twitter.com/litmuschaos" class="md-nav__link">
-        Twitter ⧉
       </a>
     </li>
   
@@ -1363,19 +1727,22 @@ It is supported by [container-kill, network-experiments, stress-experiments, dns
       </main>
       
         
+
+<!-- Footer -->
 <footer class="md-footer">
-  
+
+
+    <!-- Link to previous and/or next page -->
+    
+
+  <!-- Further information -->
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
       <div class="md-footer-copyright">
-        
-        Made with
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-          Material for MkDocs
-        </a>
-        
+        <p style="font-size: 14px; margin-top: 15px; margin-left: 10px; color: #777288;">Copyright © 2021 LitmusChaos Authors. All rights reserved.</p>
       </div>
-      
     </div>
   </div>
 </footer>
@@ -1384,11 +1751,14 @@ It is supported by [container-kill, network-experiments, stress-experiments, dns
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
     
     
+  
       <script src="../../../../assets/javascripts/bundle.29db7785.min.js"></script>
       
     
+
+
   </body>
 </html>

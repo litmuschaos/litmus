@@ -6,8 +6,12 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="It contains litmus chaos experiments docs">
       
       
+      
+      
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/aws-ssm/aws-ssm-chaos-by-tag/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.3">
@@ -47,13 +51,17 @@
   
     
     
+      
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
     <script>function __prefix(e){return new URL("../../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+      <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -61,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#common-and-aws-ssm-specific-tunables" class="md-skip">
+        <a href="#introduction" class="md-skip">
           Skip to content
         </a>
       
@@ -97,6 +105,28 @@
       </div>
     </div>
     
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C9.76 2 7.78 3.05 6.5 4.68l9.81 9.82C17.94 13.21 19 11.24 19 9a7 7 0 0 0-7-7M3.28 4 2 5.27 5.04 8.3C5 8.53 5 8.76 5 9c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h5.73l4 4L20 20.72 3.28 4M9 20v1a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 6a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V19a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1.8c-1.79-1.04-3-2.98-3-5.2a6 6 0 0 1 6-6m2 15v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1h4m6-10h3v2h-3v-2M1 11h3v2H1v-2M13 1v3h-2V1h2M4.92 3.5l2.13 2.14-1.42 1.41L3.5 4.93 4.92 3.5m12.03 2.13 2.12-2.13 1.43 1.43-2.13 2.12-1.42-1.42z"/></svg>
+            </label>
+          
+        
+      </form>
+    
     
     
       <label class="md-header__button md-icon" for="__search">
@@ -114,10 +144,16 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
+          <a href="javascript:void(0)" class="md-search__icon md-icon" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08z"/></svg>
+          </a>
+        
         <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -142,7 +178,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
-    GitHub
+    litmuschaos/litmus
   </div>
 </a>
       </div>
@@ -153,6 +189,109 @@
     <div class="md-container" data-md-component="container">
       
       
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getstarted/" class="md-tabs__link md-tabs__link--active">
+        Experiments
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../chaos-resources/chaos-resources/" class="md-tabs__link">
+        Chaos Resources
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://hub.litmuschaos.io/" class="md-tabs__link">
+      Chaos Hub
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://litmusdocs-beta.netlify.app/" class="md-tabs__link">
+      Platform Docs
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://github.com/litmuschaos/litmus/releases" class="md-tabs__link">
+      Releases ⧉
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../../ROADMAP/" class="md-tabs__link">
+      Roadmap
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
         
       
       <main class="md-main" data-md-component="main">
@@ -165,8 +304,10 @@
                   <div class="md-sidebar__inner">
                     
 
+  
 
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
       
@@ -184,7 +325,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
-    GitHub
+    litmuschaos/litmus
   </div>
 </a>
     </div>
@@ -200,7 +341,7 @@
   
     <li class="md-nav__item">
       <a href="../../../.." class="md-nav__link">
-        Getting Started with Litmus
+        Home
       </a>
     </li>
   
@@ -236,20 +377,32 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../getstarted/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
       
-      <label class="md-nav__link" for="__nav_2_1">
-        Kubernetes Experiments
+      <label class="md-nav__link" for="__nav_2_2">
+        Kubernetes
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Kubernetes Experiments" data-md-level="2">
-        <label class="md-nav__title" for="__nav_2_1">
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
           <span class="md-nav__icon md-icon"></span>
-          Kubernetes Experiments
+          Kubernetes
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -261,14 +414,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_1" type="checkbox" id="__nav_2_1_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1" type="checkbox" id="__nav_2_2_1" >
       
-      <label class="md-nav__link" for="__nav_2_1_1">
+      <label class="md-nav__link" for="__nav_2_2_1">
         Generic
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Generic" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_1">
+        <label class="md-nav__title" for="__nav_2_2_1">
           <span class="md-nav__icon md-icon"></span>
           Generic
         </label>
@@ -282,16 +435,16 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_1_1" type="checkbox" id="__nav_2_1_1_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1_1" type="checkbox" id="__nav_2_2_1_1" >
       
-      <label class="md-nav__link" for="__nav_2_1_1_1">
-        Pods Specific
+      <label class="md-nav__link" for="__nav_2_2_1_1">
+        Pod Chaos
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Pods Specific" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_1_1">
+      <nav class="md-nav" aria-label="Pod Chaos" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_2_1_1">
           <span class="md-nav__icon md-icon"></span>
-          Pods Specific
+          Pod Chaos
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -349,7 +502,7 @@
   
     <li class="md-nav__item">
       <a href="../../pods/pod-cpu-hog/" class="md-nav__link">
-        Pod CPU HOg
+        Pod CPU Hog
       </a>
     </li>
   
@@ -396,6 +549,18 @@
   
   
     <li class="md-nav__item">
+      <a href="../../pods/pod-io-stress/" class="md-nav__link">
+        Pod IO Stress
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../pods/pod-memory-hog-exec/" class="md-nav__link">
         Pod Memory Hog Exec
       </a>
@@ -420,8 +585,44 @@
   
   
     <li class="md-nav__item">
-      <a href="../../pods/pod-network-chaos/" class="md-nav__link">
-        Pod Network Chaos
+      <a href="../../pods/pod-network-corruption/" class="md-nav__link">
+        Pod Network Corruption
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-duplication/" class="md-nav__link">
+        Pod Network Duplication
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-latency/" class="md-nav__link">
+        Pod Network Latency
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-loss/" class="md-nav__link">
+        Pod Network Loss
       </a>
     </li>
   
@@ -441,16 +642,16 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_1_2" type="checkbox" id="__nav_2_1_1_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1_2" type="checkbox" id="__nav_2_2_1_2" >
       
-      <label class="md-nav__link" for="__nav_2_1_1_2">
-        Nodes Specific
+      <label class="md-nav__link" for="__nav_2_2_1_2">
+        Node Chaos
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Nodes Specific" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_1_2">
+      <nav class="md-nav" aria-label="Node Chaos" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_2_1_2">
           <span class="md-nav__icon md-icon"></span>
-          Nodes Specific
+          Node Chaos
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -459,8 +660,44 @@
   
   
     <li class="md-nav__item">
+      <a href="../../nodes/docker-service-kill/" class="md-nav__link">
+        Docker Service Kill
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nodes/kubelet-service-kill/" class="md-nav__link">
+        Kubelet Service Kill
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../nodes/node-cpu-hog/" class="md-nav__link">
         Node CPU Hog
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nodes/node-drain/" class="md-nav__link">
+        Node Drain
       </a>
     </li>
   
@@ -534,14 +771,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_2" type="checkbox" id="__nav_2_1_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_2" type="checkbox" id="__nav_2_2_2" >
       
-      <label class="md-nav__link" for="__nav_2_1_2">
+      <label class="md-nav__link" for="__nav_2_2_2">
         Kafka
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Kafka" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_2">
+        <label class="md-nav__title" for="__nav_2_2_2">
           <span class="md-nav__icon md-icon"></span>
           Kafka
         </label>
@@ -573,14 +810,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3" type="checkbox" id="__nav_2_1_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_3" type="checkbox" id="__nav_2_2_3" >
       
-      <label class="md-nav__link" for="__nav_2_1_3">
+      <label class="md-nav__link" for="__nav_2_2_3">
         Cassandra
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Cassandra" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_3">
+        <label class="md-nav__title" for="__nav_2_2_3">
           <span class="md-nav__icon md-icon"></span>
           Cassandra
         </label>
@@ -620,16 +857,39 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" checked>
       
-      <label class="md-nav__link" for="__nav_2_2">
-        Non-Kubernetes Experiments
+      <label class="md-nav__link" for="__nav_2_3">
+        Cloud-Platform
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Non-Kubernetes Experiments" data-md-level="2">
-        <label class="md-nav__title" for="__nav_2_2">
+      <nav class="md-nav" aria-label="Cloud-Platform" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
           <span class="md-nav__icon md-icon"></span>
-          Non-Kubernetes Experiments
+          Cloud-Platform
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1" type="checkbox" id="__nav_2_3_1" checked>
+      
+      <label class="md-nav__link" for="__nav_2_3_1">
+        AWS
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="AWS" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          AWS
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -641,16 +901,16 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1" type="checkbox" id="__nav_2_2_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_1" type="checkbox" id="__nav_2_3_1_1" >
       
-      <label class="md-nav__link" for="__nav_2_2_1">
-        AWS
+      <label class="md-nav__link" for="__nav_2_3_1_1">
+        EC2
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="AWS" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_1">
+      <nav class="md-nav" aria-label="EC2" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_1">
           <span class="md-nav__icon md-icon"></span>
-          AWS
+          EC2
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -677,6 +937,33 @@
     </li>
   
 
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_2" type="checkbox" id="__nav_2_3_1_2" >
+      
+      <label class="md-nav__link" for="__nav_2_3_1_2">
+        EBS
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="EBS" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          EBS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
             
   
@@ -718,14 +1005,14 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_2" type="checkbox" id="__nav_2_2_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_3" type="checkbox" id="__nav_2_3_1_3" checked>
       
-      <label class="md-nav__link" for="__nav_2_2_2">
+      <label class="md-nav__link" for="__nav_2_3_1_3">
         AWS SSM
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="AWS SSM" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_2">
+      <nav class="md-nav" aria-label="AWS SSM" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_3">
           <span class="md-nav__icon md-icon"></span>
           AWS SSM
         </label>
@@ -777,23 +1064,78 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-validations" class="md-nav__link">
+    Default Validations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
+    Minimal RBAC configuration example (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-tunables" class="md-nav__link">
+    Experiment tunables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-examples" class="md-nav__link">
+    Experiment Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiment Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#common-and-aws-ssm-specific-tunables" class="md-nav__link">
     Common and AWS-SSM specific tunables
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#target-single-instance" class="md-nav__link">
     Target single instance
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#target-percent-of-instances" class="md-nav__link">
     Target Percent of instances
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -801,6 +1143,12 @@
   
 </nav>
       
+    </li>
+  
+
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -819,14 +1167,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_3" type="checkbox" id="__nav_2_2_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_2" type="checkbox" id="__nav_2_3_2" >
       
-      <label class="md-nav__link" for="__nav_2_2_3">
+      <label class="md-nav__link" for="__nav_2_3_2">
         VMWare
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="VMWare" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_3">
+        <label class="md-nav__title" for="__nav_2_3_2">
           <span class="md-nav__icon md-icon"></span>
           VMWare
         </label>
@@ -858,14 +1206,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_4" type="checkbox" id="__nav_2_2_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_3" type="checkbox" id="__nav_2_3_3" >
       
-      <label class="md-nav__link" for="__nav_2_2_4">
+      <label class="md-nav__link" for="__nav_2_3_3">
         Azure
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Azure" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_4">
+        <label class="md-nav__title" for="__nav_2_3_3">
           <span class="md-nav__icon md-icon"></span>
           Azure
         </label>
@@ -897,14 +1245,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_5" type="checkbox" id="__nav_2_2_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4" type="checkbox" id="__nav_2_3_4" >
       
-      <label class="md-nav__link" for="__nav_2_2_5">
+      <label class="md-nav__link" for="__nav_2_3_4">
         GCP
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="GCP" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_5">
+        <label class="md-nav__title" for="__nav_2_3_4">
           <span class="md-nav__icon md-icon"></span>
           GCP
         </label>
@@ -981,32 +1329,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../chaos-resources/engine-spec/" class="md-nav__link">
-        ChaosEngine Spec Tunables
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../chaos-resources/experiment-components/" class="md-nav__link">
-        Experiment Tunables
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../chaos-resources/runner-components/" class="md-nav__link">
-        Runner Tunables
+      <a href="../../../chaos-resources/chaos-resources/" class="md-nav__link">
+        Contents
       </a>
     </li>
   
@@ -1020,14 +1344,113 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
       
-      <label class="md-nav__link" for="__nav_3_4">
+      <label class="md-nav__link" for="__nav_3_2">
+        ChaosEngine Specifications
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="ChaosEngine Specifications" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          ChaosEngine Specifications
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/engine-state/" class="md-nav__link">
+        State Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/application-details/" class="md-nav__link">
+        Application Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/rbac-details/" class="md-nav__link">
+        RBAC Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/runtime-details/" class="md-nav__link">
+        Runtime Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/runner-components/" class="md-nav__link">
+        Runner Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../chaos-resources/experiment-components/" class="md-nav__link">
+        Experiment Specifications
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      <label class="md-nav__link" for="__nav_3_3">
         Probes
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Probes" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_4">
+        <label class="md-nav__title" for="__nav_3_3">
           <span class="md-nav__icon md-icon"></span>
           Probes
         </label>
@@ -1101,6 +1524,36 @@
   
   
     <li class="md-nav__item">
+      <a href="https://hub.litmuschaos.io/" class="md-nav__link">
+        Chaos Hub
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://litmusdocs-beta.netlify.app/" class="md-nav__link">
+        Platform Docs
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="https://github.com/litmuschaos/litmus/releases" class="md-nav__link">
         Releases ⧉
       </a>
@@ -1118,36 +1571,6 @@
     <li class="md-nav__item">
       <a href="../../../../ROADMAP/" class="md-nav__link">
         Roadmap
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="https://kubernetes.slack.com/messages/CNXNB0ZTN" class="md-nav__link">
-        Slack ⧉
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="https://twitter.com/litmuschaos" class="md-nav__link">
-        Twitter ⧉
       </a>
     </li>
   
@@ -1177,23 +1600,78 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-validations" class="md-nav__link">
+    Default Validations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
+    Minimal RBAC configuration example (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-tunables" class="md-nav__link">
+    Experiment tunables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-examples" class="md-nav__link">
+    Experiment Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiment Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#common-and-aws-ssm-specific-tunables" class="md-nav__link">
     Common and AWS-SSM specific tunables
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#target-single-instance" class="md-nav__link">
     Target single instance
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#target-percent-of-instances" class="md-nav__link">
     Target Percent of instances
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1216,7 +1694,201 @@
                 
                   <h1>AWS SSM Chaos By Tag</h1>
                 
-                <p>It contains tunables to execute the <code>aws-ssm-chaos-by-tag</code> experiment. This experiment stresses the given ec2 instance for the <code>TOTAL_CHAOS_DURATION</code> duration.</p>
+                <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<ul>
+<li>AWS SSM Chaos By Tag contains chaos to disrupt the state of infra resources. The experiment can induce chaos on AWS EC2 instance using Amazon SSM Run Command This is carried out by using SSM Docs that defines the actions performed by Systems Manager on your managed instances (having SSM agent installed) which let you perform chaos experiments on the instances.</li>
+<li>It causes chaos (like stress, network, disk or IO) on AWS EC2 instances with given instance Tag using SSM docs for a certain chaos duration.</li>
+<li>For the default execution the experiment uses SSM docs for stress-chaos while you can add your own SSM docs using configMap (.spec.definition.configMaps) in ChaosExperiment CR.</li>
+<li>It tests deployment sanity (replica availability &amp; uninterrupted service) and recovery workflows of the target application pod(if provided).</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Scenario: AWS SSM Chaos</p>
+<p><img alt="AWS SSM Chaos By Tag" src="../../../images/ssm-chaos.png" /></p>
+</div>
+<h2 id="uses">Uses<a class="headerlink" href="#uses" title="Permanent link">&para;</a></h2>
+<details class="info"><summary>View the uses of the experiment</summary><p>coming soon</p>
+</details>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<details class="info"><summary>Verify the prerequisites</summary><ul>
+<li>Ensure that Kubernetes Version &gt; 1.16 </li>
+<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
+<li>Ensure that the <code>aws-ssm-chaos-by-tag</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/aws-ssm/aws-ssm-chaos-by-tag/experiment.yaml">here</a></li>
+<li>Ensure that you have the required AWS access and your target EC2 instances have attached an IAM instance profile. To know more checkout <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-launch-managed-instance.html">Systems Manager Docs</a>.</li>
+<li>
+<p>Ensure to create a Kubernetes secret having the AWS access configuration(key) in the <code>CHAOS_NAMESPACE</code>. A sample secret file looks like:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cloud-secret</span>
+<span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+<span class="nt">stringData</span><span class="p">:</span>
+  <span class="nt">cloud_config.yml</span><span class="p">:</span> <span class="p p-Indicator">|-</span>
+    <span class="no"># Add the cloud AWS credentials respectively</span>
+    <span class="no">[default]</span>
+    <span class="no">aws_access_key_id = XXXXXXXXXXXXXXXXXXX</span>
+    <span class="no">aws_secret_access_key = XXXXXXXXXXXXXXX</span>
+</code></pre></div>
+</li>
+<li>
+<p>If you change the secret key name (from <code>cloud_config.yml</code>) please also update the <code>AWS_SHARED_CREDENTIALS_FILE</code> 
+ENV value on <code>experiment.yaml</code>with the same name.</p>
+</li>
+</ul>
+</details>
+<h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
+<details class="info"><summary>View the default validations</summary><ul>
+<li>EC2 instance should be in healthy state.</li>
+</ul>
+</details>
+<h2 id="minimal-rbac-configuration-example-optional">Minimal RBAC configuration example (optional)<a class="headerlink" href="#minimal-rbac-configuration-example-optional" title="Permanent link">&para;</a></h2>
+<details class="note"><summary>View the Minimal RBAC permissions</summary><p><div class="highlight"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-ssm-chaos-by-tag-sa</span>
+  <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="nt">labels</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-ssm-chaos-by-tag-sa</span>
+    <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-ssm-chaos-by-tag-sa</span>
+  <span class="nt">labels</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-ssm-chaos-by-tag-sa</span>
+    <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">apiGroups</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">resources</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;pods&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;events&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;secrets&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;configmaps&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">verbs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;patch&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;update&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;delete&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;deletecollection&quot;</span><span class="p p-Indicator">]</span>
+<span class="p p-Indicator">-</span> <span class="nt">apiGroups</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">resources</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;pods/exec&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;pods/log&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">verbs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span>
+<span class="p p-Indicator">-</span> <span class="nt">apiGroups</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;batch&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">resources</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;jobs&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">verbs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;delete&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;deletecollection&quot;</span><span class="p p-Indicator">]</span>
+<span class="p p-Indicator">-</span> <span class="nt">apiGroups</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;litmuschaos.io&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">resources</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;chaosengines&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;chaosexperiments&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;chaosresults&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">verbs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;patch&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;update&quot;</span><span class="p p-Indicator">]</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ClusterRoleBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-ssm-chaos-by-tag-sa</span>
+  <span class="nt">labels</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-ssm-chaos-by-tag-sa</span>
+    <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
+<span class="nt">roleRef</span><span class="p">:</span>
+  <span class="nt">apiGroup</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+  <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-ssm-chaos-by-tag-sa</span>
+<span class="nt">subjects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-ssm-chaos-by-tag-sa</span>
+  <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+</code></pre></div>
+Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.</p>
+</details>
+<h2 id="experiment-tunables">Experiment tunables<a class="headerlink" href="#experiment-tunables" title="Permanent link">&para;</a></h2>
+<details class="info"><summary>check the experiment tunables</summary><p><h2>Mandatory Fields</h2></p>
+<p><table>
+  <tr>
+    <th> Variables </th>
+    <th> Description </th>
+    <th> Notes </th>
+  </tr>
+  <tr> 
+    <td> EC2_INSTANCE_TAG </td>
+    <td> Instance Tag to filter the target ec2 instance</td>
+    <td> The EC2_INSTANCE_TAG should be provided as <code>key:value</code> ex: <code>chaos:ssm</code> </td>
+  </tr>
+</table></p>
+<p><h2>Optional Fields</h2></p>
+<p><table>
+  <tr>
+    <th> Variables </th>
+    <th> Description </th>
+    <th> Notes </th>
+  </tr>
+  <tr> 
+    <td> INSTANCE_AFFECTED_PERC </td>
+    <td> The Percentage of total ec2 instance to target </td>
+    <td> Defaults to 0 (corresponds to 1 instance), provide numeric value only </td>
+  </tr>
+  <tr> 
+    <td> TOTAL_CHAOS_DURATION </td>
+    <td> The total time duration for chaos insertion (sec) </td>
+    <td> Defaults to 30s </td>
+  </tr>
+  <tr> 
+    <td> CHAOS_INTERVAL </td>
+    <td> The interval (in sec) between successive chaos injection</td>
+    <td> Defaults to 60s </td>
+  </tr><br />
+  <tr> 
+    <td> AWS_SHARED_CREDENTIALS_FILE </td>
+    <td> Provide the path for aws secret credentials</td>
+    <td> Defaults to <code>/tmp/cloud_config.yml</code> </td>
+  </tr>
+  <tr> 
+    <td> DOCUMENT_NAME </td>
+    <td> Provide the name of addded ssm docs (if not using the default docs)</td>
+    <td> Default to LitmusChaos-AWS-SSM-Doc</td>
+  </tr>
+  <tr> 
+    <td> DOCUMENT_FORMAT </td>
+    <td> Provide the format of the ssm docs. It can be YAML or JSON</td>
+    <td> Defaults to <code>YAML</code> </td>
+  </tr>
+  <tr> 
+    <td> DOCUMENT_TYPE </td>
+    <td> Provide the document type of added ssm docs (if not using the default docs)</td>
+    <td> Defaults to <code>Command</code> </td>
+  </tr>
+  <tr> 
+    <td> DOCUMENT_PATH </td>
+    <td> Provide the document path if added using configmaps</td>
+    <td> Defaults to the litmus ssm docs path </td>
+  </tr>
+  <tr> 
+    <td> INSTALL_DEPENDENCIES </td>
+    <td> Select to install dependencies used to run stress-ng with default docs. It can be either True or False</td>
+    <td> Defaults to True </td>
+  </tr>
+  <tr> 
+    <td> NUMBER_OF_WORKERS </td>
+    <td> Provide the number of workers to run stress-chaos with default ssm docs</td>
+    <td> Defaults to 1 </td>
+  </tr>
+  <tr> 
+    <td> MEMORY_PERCENTAGE </td>
+    <td> Provide the memory consumption in percentage on the instance for default ssm docs</td>
+    <td> Defaults to 80 </td>
+  </tr>
+  <tr> 
+    <td> CPU_CORE </td>
+    <td> Provide the number of cpu cores to run stress-chaos on EC2 with default ssm docs</td>
+    <td> Defaults to 0. It means it'll consume all the available cpu cores on the instance </td>
+  </tr>
+  <tr>
+    <td> SEQUENCE </td>
+    <td> It defines sequence of chaos execution for multiple instance</td>
+    <td> Default value: parallel. Supported: serial, parallel </td>
+  </tr>
+  <tr>
+    <td> RAMP_TIME </td>
+    <td> Period to wait before and after injection of chaos in sec </td>
+    <td> </td>
+  </tr>  <br />
+  <tr>
+    <td> REGION </td>
+    <td> The region name of the target instace</td>
+    <td> </td>
+  </tr> 
+</table></p>
+</details>
+<h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
 <h3 id="common-and-aws-ssm-specific-tunables">Common and AWS-SSM specific tunables<a class="headerlink" href="#common-and-aws-ssm-specific-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../AWS-SSM-experiments-tunables/">AWS-SSM specific tunable</a> to tune the common tunables for all experiments and aws-ssm specific tunables.  </p>
 <h3 id="target-single-instance">Target single instance<a class="headerlink" href="#target-single-instance" title="Permanent link">&para;</a></h3>
@@ -1286,54 +1958,70 @@
       </main>
       
         
+
+<!-- Footer -->
 <footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
+
+
+    <!-- Link to previous and/or next page -->
+    
+    <nav
+        class="md-footer__inner md-grid"
+        aria-label="Footer"
+    >
+
+        <!-- Link to previous page -->
         
-        <a href="../aws-ssm-chaos-by-id/" class="md-footer__link md-footer__link--prev" aria-label="Previous: AWS SSM Chaos By ID" rel="prev">
-          <div class="md-footer__button md-icon">
+        <a
+            href="../aws-ssm-chaos-by-id/"
+            class="md-footer__link md-footer__link--prev"
+            rel="prev"
+        >
+            <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-          </div>
-          <div class="md-footer__title">
+            </div>
+            <div class="md-footer__title">
             <div class="md-ellipsis">
-              <span class="md-footer__direction">
+                <span class="md-footer__direction">
                 Previous
-              </span>
-              AWS SSM Chaos By ID
+                </span>
+                AWS SSM Chaos By ID
             </div>
-          </div>
+            </div>
         </a>
-      
-      
         
-        <a href="../../vmware/vm-poweroff/" class="md-footer__link md-footer__link--next" aria-label="Next: VM Poweroff" rel="next">
-          <div class="md-footer__title">
+
+        <!-- Link to next page -->
+        
+        <a
+            href="../../vmware/vm-poweroff/"
+            class="md-footer__link md-footer__link--next"
+            rel="next"
+        >
+            <div class="md-footer__title">
             <div class="md-ellipsis">
-              <span class="md-footer__direction">
+                <span class="md-footer__direction">
                 Next
-              </span>
-              VM Poweroff
+                </span>
+                VM Poweroff
             </div>
-          </div>
-          <div class="md-footer__button md-icon">
+            </div>
+            <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
+            </div>
         </a>
-      
+        
     </nav>
-  
+    
+
+  <!-- Further information -->
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
       <div class="md-footer-copyright">
-        
-        Made with
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-          Material for MkDocs
-        </a>
-        
+        <p style="font-size: 14px; margin-top: 15px; margin-left: 10px; color: #777288;">Copyright © 2021 LitmusChaos Authors. All rights reserved.</p>
       </div>
-      
     </div>
   </div>
 </footer>
@@ -1342,11 +2030,14 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
     
     
+  
       <script src="../../../../assets/javascripts/bundle.29db7785.min.js"></script>
       
     
+
+
   </body>
 </html>

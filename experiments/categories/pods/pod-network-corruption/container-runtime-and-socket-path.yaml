@@ -10,9 +10,9 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-network-loss-sa
+  chaosServiceAccount: pod-network-corruption-sa
   experiments:
-  - name: pod-network-loss
+  - name: pod-network-corruption
     spec:
       components:
         env:
@@ -23,7 +23,5 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
-        - name: NETWORK_PACKET_LOSS_PERCENTAGE
-          value: '100'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
