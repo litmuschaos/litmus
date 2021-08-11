@@ -1,0 +1,23 @@
+# provide the number of replicas 
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-autoscaler-sa
+  experiments:
+  - name: pod-autoscaler
+    spec:
+      components:
+        env:
+        # number of replica, needs to scale
+        - name: REPLICA_COUNT
+          value: '3'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

@@ -1,0 +1,24 @@
+## it contains percentage of application pods to be targeted with matching labels or names in the application namespace
+## supported for all pod-level experiment expect pod-autoscaler
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        # percentage of application pods
+        - name: PODS_AFFECTED_PERC
+          value: '100'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

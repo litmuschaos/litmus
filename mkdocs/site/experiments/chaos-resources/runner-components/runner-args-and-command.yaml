@@ -1,0 +1,29 @@
+# contains args and command for the chaos runner
+# it will be useful for the cases where custom image of the chaos-runner is used, which supports args and commands
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  components:
+    # override the args and command for the chaos-runner 
+    runner: 
+      # name of the custom image 
+      image: "<your repo>/chaos-runner:ci"
+      # args for the image
+      args: 
+      - "/bin/sh"
+      # command for the image
+      command:
+      - "-c"
+      - "<custom-command>"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+  

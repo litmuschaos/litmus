@@ -1,0 +1,23 @@
+# it inject the network-latency for the ingrees and egress traffic
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-latency-sa
+  experiments:
+  - name: pod-network-latency
+    spec:
+      components:
+        env:
+        # network latency to be injected
+        - name: NETWORK_LATENCY
+          value: '2000' #in ms
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

@@ -1,0 +1,41 @@
+# execute the command inside the experiment pod itself
+# cases where command doesn't need any extra binaries which is not available in litmsuchaos/go-runner image
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "check-database-integrity"
+        type: "cmdProbe"
+        cmdProbe/inputs:
+          # command which needs to run in cmdProbe
+          command: "<command>"
+          comparator:
+            # output type for the above command
+            # supports: string, int, float
+            type: "string"
+            # criteria which should be followed by the actual output and the expected output
+            #supports [>=, <=, >, <, ==, !=] for int and float
+            # supports [contains, equal, notEqual, matches, notMatches] for string values
+            criteria: "contains"
+            # expected value, which should follow the specified criteria
+            value: "<value-for-criteria-match>"
+          # source for the cmdProbe
+          # it can be “inline” or any image
+          source: "inline" 
+        mode: "Edge"
+        runProperties:
+          probeTimeout: 5
+          interval: 5
+          retry: 1
+          initialDelaySeconds: 5

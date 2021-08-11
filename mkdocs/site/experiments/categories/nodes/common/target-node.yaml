@@ -1,0 +1,20 @@
+## provide the target node name
+## it is applicable for the [node-drain, node-taint, node-restart, kubelet-service-kill, docker-service-kill]
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-drain-sa
+  experiments:
+  - name: node-drain
+    spec:
+      components:
+        env:
+        # name of the target node
+        - name: TARGET_NODE
+          value: 'node01'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

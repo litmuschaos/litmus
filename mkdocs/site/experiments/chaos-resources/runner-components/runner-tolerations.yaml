@@ -1,0 +1,25 @@
+# contains the tolerations for the chaos-runner
+# it will schedule the chaos-runner on the tainted node
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  components:
+    runner:
+      # tolerations for the runner pod
+      tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "Schedule"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+  
