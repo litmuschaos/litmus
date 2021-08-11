@@ -107,10 +107,7 @@ const MyHub = () => {
                   <div>
                     <div className={classes.note}>PRE-REQUISITE:</div>
                     <div className={classes.linkText}>
-                      <a
-                        href="https://docs.litmuschaos.io/docs/getstarted/"
-                        target="_"
-                      >
+                      <a href="https://docs.litmuschaos.io/" target="_">
                         Install Litmus Operator
                       </a>
                       : a tool for injecting Chaos Experiments

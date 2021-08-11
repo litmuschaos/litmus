@@ -20,6 +20,7 @@ type Repository interface {
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
+	GetUser(uid string) (*entities.User, error)
 	GetUsers() (*[]entities.User, error)
 	UpdateUserState(username string, isDeactivate bool) error
 }
@@ -101,6 +102,19 @@ func (r repository) UpdateUser(user *entities.UserDetails) error {
 	}
 
 	return nil
+}
+
+// GetUser fetches the user from database that matches the passed uid
+func (r repository) GetUser(uid string) (*entities.User, error) {
+	var result = entities.User{}
+	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
+		"_id": uid,
+	}).Decode(&result)
+
+	if findOneErr != nil {
+		return nil, findOneErr
+	}
+	return &(*result.SanitizedUser()), nil
 }
 
 // GetUsers fetches all the users from the database

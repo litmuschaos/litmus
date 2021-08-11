@@ -12,6 +12,7 @@ type Service interface {
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
+	GetUser(uid string) (*entities.User, error)
 	GetUsers() (*[]entities.User, error)
 	UpdateUserState(username string, isDeactivate bool) error
 }
@@ -43,6 +44,11 @@ func (s service) CreateUser(user *entities.User) (*entities.User, error) {
 // UpdateUser updates user details in the database
 func (s service) UpdateUser(user *entities.UserDetails) error {
 	return s.repository.UpdateUser(user)
+}
+
+// GetUser fetches user details for the given user id
+func (s service) GetUser(uid string) (*entities.User, error) {
+	return s.repository.GetUser(uid)
 }
 
 // GetUsers fetches all the users from the database

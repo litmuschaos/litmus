@@ -55,4 +55,5 @@ spec:
           - user
           - chaos-exporter
           - mysql-exporter
+          - prometheus-blackbox-exporter
   version: v2.25.0
