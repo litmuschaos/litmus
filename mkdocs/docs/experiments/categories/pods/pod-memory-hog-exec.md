@@ -1,0 +1,225 @@
+## Introduction
+
+- This experiment consumes the Memory resources on the application container on specified memory in megabytes.
+
+- It simulates conditions where app pods experience Memory spikes either due to expected/undesired processes thereby testing how the overall application stack behaves when this occurs.
+
+!!! tip "Scenario: Stress the Memory"    
+    ![Pod Memory Hog Exec](../../images/pod-stress.png)
+
+## Uses
+
+??? info "View the uses of the experiment" 
+    coming soon
+
+## Prerequisites
+
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    - Ensure that the <code>pod-memory-hog-exec</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-cpu-memory-exec/experiment.yaml">here</a> 
+    
+## Default Validations
+
+??? info "View the default validations" 
+    The application pods should be in running state before and after chaos injection.
+
+## Minimal RBAC configuration example (optional)
+
+??? note "View the Minimal RBAC permissions"
+
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-memory-hog-exec/rbac.yaml yaml)
+    ```yaml
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: pod-memory-hog-exec-sa
+      namespace: default
+      labels:
+        name: pod-memory-hog-exec-sa
+        app.kubernetes.io/part-of: litmus
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: pod-memory-hog-exec-sa
+      namespace: default
+      labels:
+        name: pod-memory-hog-exec-sa
+        app.kubernetes.io/part-of: litmus
+    rules:
+    - apiGroups: [""]
+      resources: ["pods","events"]
+      verbs: ["create","list","get","patch","update","delete","deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/exec","pods/log","replicationcontrollers"]
+      verbs: ["create","list","get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs"]
+      verbs: ["create","list","get","delete","deletecollection"]
+    - apiGroups: ["apps"]
+      resources: ["deployments","statefulsets","daemonsets","replicasets"]
+      verbs: ["list","get"]
+    - apiGroups: ["apps.openshift.io"]
+      resources: ["deploymentconfigs"]
+      verbs: ["list","get"]
+    - apiGroups: ["argoproj.io"]
+      resources: ["rollouts"]
+      verbs: ["list","get"]
+    - apiGroups: ["litmuschaos.io"]
+      resources: ["chaosengines","chaosexperiments","chaosresults"]
+      verbs: ["create","list","get","patch","update"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: pod-memory-hog-exec-sa
+      namespace: default
+      labels:
+        name: pod-memory-hog-exec-sa
+        app.kubernetes.io/part-of: litmus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: pod-memory-hog-exec-sa
+    subjects:
+    - kind: ServiceAccount
+      name: pod-memory-hog-exec-sa
+      namespace: default
+    ```
+    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+
+## Experiment tunables
+
+??? info "check the experiment tunables"
+    <h2>Optional Fields</h2>
+
+    <table>
+      <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+      </tr>
+      <tr>
+        <td> MEMORY_CONSUMPTION </td>
+        <td>  The amount of memory used of hogging a Kubernetes pod (megabytes)</td>
+        <td> Defaults to 500MB (Up to 2000MB)</td>
+      </tr>
+      <tr>
+        <td> TOTAL_CHAOS_DURATION </td>
+        <td> The time duration for chaos insertion (seconds)  </td>
+        <td> Defaults to 60s </td>
+      </tr>
+        <td> LIB  </td>
+        <td> The chaos lib used to inject the chaos. Available libs are <code>litmus</code></td>
+        <td> Defaults to <code>litmus</code> </td>
+      </tr>
+      <tr>
+        <td> TARGET_PODS </td>
+        <td> Comma separated list of application pod name subjected to pod memory hog chaos</td>
+        <td> If not provided, it will select target pods randomly based on provided appLabels</td>
+      </tr>
+      <tr> 
+        <td> TARGET_CONTAINER </td>
+        <td> Name of the target container under chaos </td>
+        <td> If not provided, it will select the first container of the target pod </td>
+      </tr> 
+      <tr>
+        <td> CHAOS_KILL_COMMAND </td>
+        <td> The command to kill the chaos process </td>
+        <td> Defaults to <code>kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)</code>. Another useful one that generally works (in case the default doesn't) is <code>kill -9 $(ps afx | grep \"[dd] if=/dev/zero\" | awk '{print $1}' | tr '\n' ' ')</code>. In case neither works, please check whether the target pod's base image offers a shell. If yes, identify appropriate shell command to kill the chaos process </td>
+      </tr>
+      <tr>
+        <td> PODS_AFFECTED_PERC </td>
+        <td> The Percentage of total pods to target  </td>
+        <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
+      </tr>
+      <tr>
+        <td> RAMP_TIME </td>
+        <td> Period to wait before injection of chaos in sec </td>
+        <td> </td>
+      </tr>
+      <tr>
+        <td> SEQUENCE </td>
+        <td> It defines sequence of chaos execution for multiple target pods </td>
+        <td> Default value: parallel. Supported: serial, parallel </td>
+      </tr>
+    </table>
+
+## Experiment Examples  
+
+### Common and Pod specific tunables
+
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+
+### Memory Consumption
+
+It stresses the `MEMORY_CONSUMPTION` MB memory of the targeted pod for the `TOTAL_CHAOS_DURATION` duration.
+The memory consumption limit is 2000MB
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-memory-hog-exec/memory-consumption.yaml yaml)
+```yaml
+# memory to be stressed in MB
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-memory-hog-sa
+  experiments:
+  - name: pod-memory-hog
+    spec:
+      components:
+        env:
+        # memory consuption value in MB
+        # it is limited to 2000MB
+        - name: MEMORY_CONSUMPTION
+          value: '500' #in MB
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+```
+
+### Chaos Kill Commands
+
+It defines the `CHAOS_KILL_COMMAND` ENV to set the chaos kill command.
+Default values of `CHAOS_KILL_COMMAND` command:
+- `CHAOS_KILL_COMMAND`: "kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)"
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-memory-hog-exec/kill-command.yaml yaml)
+```yaml
+# provide the chaos kill command used to kill the chaos process
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-memory-hog-exec-sa
+  experiments:
+  - name: pod-memory-hog-exec
+    spec:
+      components:
+        env:
+        # command to kill the dd process
+        # alternative command: "kill -9 $(ps afx | grep \"[dd] if=/dev/zero\" | awk '{print $1}' | tr '\n' ' ')"
+        - name: CHAOS_KILL_COMMAND
+          value: "kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)"
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+```

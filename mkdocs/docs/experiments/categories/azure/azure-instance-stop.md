@@ -1,0 +1,232 @@
+## Introduction
+
+- It causes PowerOff an Azure instance before bringing it back to running state after the specified chaos duration.
+- It helps to check the performance of the application/process running on the instance.
+
+!!! tip "Scenario: Stop the azure instance"    
+    ![Azure Instance Stop](../../images/azure-instance-stop.png)
+
+## Uses
+
+??? info "View the uses of the experiment" 
+    coming soon
+
+## Prerequisites
+
+
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code>azure-instance-stop</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/experiment.yaml">here</a>
+    - Ensure that you have sufficient Azure access to stop and start the an instance. 
+    - We will use azure [ file-based authentication ](https://docs.microsoft.com/en-us/azure/developer/go/azure-sdk-authorization#use-file-based-authentication) to connect with the instance using azure GO SDK in the experiment. For generating auth file run `az ad sp create-for-rbac --sdk-auth > azure.auth` Azure CLI command.
+    - Ensure to create a Kubernetes secret having the auth file created in the step in `CHAOS_NAMESPACE`. A sample secret file looks like:
+
+        ```yaml
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: cloud-secret
+        type: Opaque
+        stringData:
+          azure.auth: |-
+            {
+              "clientId": "XXXXXXXXX",
+              "clientSecret": "XXXXXXXXX",
+              "subscriptionId": "XXXXXXXXX",
+              "tenantId": "XXXXXXXXX",
+              "activeDirectoryEndpointUrl": "XXXXXXXXX",
+              "resourceManagerEndpointUrl": "XXXXXXXXX",
+              "activeDirectoryGraphResourceId": "XXXXXXXXX",
+              "sqlManagementEndpointUrl": "XXXXXXXXX",
+              "galleryEndpointUrl": "XXXXXXXXX",
+              "managementEndpointUrl": "XXXXXXXXX"
+            }
+        ```
+    - If you change the secret key name (from `azure.auth`) please also update the `AZURE_AUTH_LOCATION` 
+    ENV value on `experiment.yaml`with the same name.
+    
+## Default Validations
+
+??? info "View the default validations" 
+    - Azure instance should be in healthy state.
+
+## Minimal RBAC configuration example (optional)
+
+??? note "View the Minimal RBAC permissions"
+
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/azure/azure-instance-stop/rbac.yaml yaml)
+    ```yaml
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: azure-instance-stop-sa
+      namespace: default
+      labels:
+        name: azure-instance-stop-sa
+        app.kubernetes.io/part-of: litmus
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: azure-instance-stop-sa
+      labels:
+        name: azure-instance-stop-sa
+        app.kubernetes.io/part-of: litmus
+    rules:
+    - apiGroups: [""]
+      resources: ["pods","events","secrets"]
+      verbs: ["create","list","get","patch","update","delete","deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/exec","pods/log"]
+      verbs: ["create","list","get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs"]
+      verbs: ["create","list","get","delete","deletecollection"]
+    - apiGroups: ["litmuschaos.io"]
+      resources: ["chaosengines","chaosexperiments","chaosresults"]
+      verbs: ["create","list","get","patch","update"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: azure-instance-stop-sa
+      labels:
+        name: azure-instance-stop-sa
+        app.kubernetes.io/part-of: litmus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: azure-instance-stop-sa
+    subjects:
+    - kind: ServiceAccount
+      name: azure-instance-stop-sa
+      namespace: default
+    ```
+    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+
+## Experiment tunables
+
+??? info "check the experiment tunables"
+    <h2>Mandatory Fields</h2>
+
+    <table>
+      <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+      </tr>
+      <tr> 
+        <td> AZURE_INSTANCE_NAME </td>
+        <td> Instance name of the target azure instance</td>
+        <td> </td>
+      </tr>
+      <tr>
+        <td> RESOURCE_GROUP </td>
+        <td> The resource group of the target instance</td>
+        <td> </td>
+      </tr> 
+    </table>
+    
+    <h2>Optional Fields</h2>
+
+    <table>
+      <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+      </tr>
+      <tr> 
+        <td> TOTAL_CHAOS_DURATION </td>
+        <td> The total time duration for chaos insertion (sec) </td>
+        <td> Defaults to 30s </td>
+      </tr>
+      <tr> 
+        <td> CHAOS_INTERVAL </td>
+        <td> The interval (in sec) between successive instance poweroff.</td>
+        <td> Defaults to 30s </td>
+      </tr>
+      <tr>
+        <td> SEQUENCE </td>
+        <td> It defines sequence of chaos execution for multiple instance</td>
+        <td> Default value: parallel. Supported: serial, parallel </td>
+      </tr>
+      <tr>
+        <td> RAMP_TIME </td>
+        <td> Period to wait before and after injection of chaos in sec </td>
+        <td> </td>
+      </tr>
+    </table>
+
+## Experiment Examples
+
+### Common Experiment Tunables
+
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) to tune the common tunables for all the experiments.
+
+### Stop Instances By Name
+
+It contains comma separated list of instance names subjected to instance stop chaos. It can be tuned via `AZURE_INSTANCE_NAME` ENV.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-instance-stop/azure-instance.yaml yaml)
+```yaml
+## contains the azure instance details
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: azure-instance-stop-sa
+  experiments:
+  - name: azure-instance-stop
+    spec:
+      components:
+        env:
+        # comma separated list of azore instance names
+        - name: AZURE_INSTANCE_NAME
+          value: 'instance-01,instance-02'
+        # name of the resource group
+        - name: RESOURCE_GROUP
+          value: '<resource group of AZURE_INSTANCE_NAME>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+```
+
+### Mutiple Iterations Of Chaos
+
+The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. Which defines the delay between each iteration of chaos.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-instance-stop/chaos-interval.yaml yaml)
+```yaml
+# defines delay between each successive iteration of the chaos
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: azure-instance-stop-sa
+  experiments:
+  - name: azure-instance-stop
+    spec:
+      components:
+        env:
+        # delay between each iteration of chaos
+        - name: CHAOS_INTERVAL
+          value: '10'
+         # time duration for the chaos execution
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+        - name: AZURE_INSTANCE_NAME
+          value: 'instance-01,instance-02'
+        - name: RESOURCE_GROUP
+          value: '<resource group of AZURE_INSTANCE_NAME>'
+```
