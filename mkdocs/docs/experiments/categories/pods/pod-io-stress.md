@@ -178,7 +178,7 @@ It stresses the `FILESYSTEM_UTILIZATION_PERCENTAGE` percentage of total free spa
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-io-stress/filesystem-utilization-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-io-stress/filesystem-utilization-percentage.yaml yaml)
 ```yaml
 # stress the i/o of the targeted pod with FILESYSTEM_UTILIZATION_PERCENTAGE of total free space 
 # it is mutually exclusive with the FILESYSTEM_UTILIZATION_BYTES.
@@ -214,7 +214,7 @@ It is mutually exclusive with the `FILESYSTEM_UTILIZATION_PERCENTAGE` ENV. If `F
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-io-stress/filesystem-utilization-bytes.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-io-stress/filesystem-utilization-bytes.yaml yaml)
 ```yaml
 # stress the i/o of the targeted pod with given FILESYSTEM_UTILIZATION_BYTES
 # it is mutually exclusive with the FILESYSTEM_UTILIZATION_PERCENTAGE.
@@ -251,7 +251,7 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-io-stress/container-runtime-and-socket-path.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-io-stress/container-runtime-and-socket-path.yaml yaml)
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -288,7 +288,7 @@ The volume mount path, which needs to be filled. It can be tuned with `VOLUME_MO
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-io-stress/mount-path.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-io-stress/mount-path.yaml yaml)
 ```yaml
 # provide the volume mount path, which needs to be filled
 apiVersion: litmuschaos.io/v1alpha1
@@ -321,7 +321,7 @@ The worker's count for the stress can be tuned with `NUMBER_OF_WORKERS` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-io-stress/workers.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-io-stress/workers.yaml yaml)
 ```yaml
 # number of workers for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -354,7 +354,7 @@ It specifies the Pumba chaos library for the chaos injection. It can be tuned vi
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-io-stress/pumba.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-io-stress/pumba.yaml yaml)
 ```yaml
 # use the pumba lib for io stress
 apiVersion: litmuschaos.io/v1alpha1

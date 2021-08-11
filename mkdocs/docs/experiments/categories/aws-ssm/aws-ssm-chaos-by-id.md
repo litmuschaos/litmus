@@ -208,7 +208,7 @@ It contains comma separated list of instances IDs subjected to ec2 stop chaos. I
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws-ssm/aws-ssm-chaos-by-id/instance-id.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws-ssm/aws-ssm-chaos-by-id/instance-id.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine

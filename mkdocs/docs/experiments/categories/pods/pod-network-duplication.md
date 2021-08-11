@@ -190,7 +190,7 @@ It defines the network packet duplication percentage to be injected in the targe
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-network-duplication/network-duplication.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-duplication/network-duplication.yaml yaml)
 ```yaml
 # it inject the network-duplication for the ingrees and egress traffic
 apiVersion: litmuschaos.io/v1alpha1
@@ -225,7 +225,7 @@ The network experiments interrupt traffic for all the IPs/hosts by default. The 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-network-duplication/destination-ips-and-hosts.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-duplication/destination-ips-and-hosts.yaml yaml)
 ```yaml
 # it inject the chaos for the ingrees and egress traffic for specific ips/hosts
 apiVersion: litmuschaos.io/v1alpha1
@@ -261,7 +261,7 @@ The defined name of the ethernet interface, which is considered for shaping traf
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-network-duplication/network-interface.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-duplication/network-interface.yaml yaml)
 ```yaml
 # provide the network interface
 apiVersion: litmuschaos.io/v1alpha1
@@ -296,7 +296,7 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-network-duplication/container-runtime-and-socket-path.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-duplication/container-runtime-and-socket-path.yaml yaml)
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -334,7 +334,7 @@ Provide the traffic control image via `TC_IMAGE` ENV for the pumba library.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-network-duplication/pumba-lib.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-duplication/pumba-lib.yaml yaml)
 ```yaml
 # use pumba chaoslib for the network chaos
 apiVersion: litmuschaos.io/v1alpha1

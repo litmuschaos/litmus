@@ -146,7 +146,7 @@ It contains moid of the vm instance. It can be tuned via `APP_VM_MOID` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/vmware/vm-poweroff/app-vm-moid.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/vmware/vm-poweroff/app-vm-moid.yaml yaml)
 ```yaml
 # power-off the vmware vm
 apiVersion: litmuschaos.io/v1alpha1

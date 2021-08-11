@@ -224,7 +224,7 @@ It contains kafka and zookeeper application details:
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/kafka/kafka-broker-pod-failure/kafka-and-zookeeper-details.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/kafka/kafka-broker-pod-failure/kafka-and-zookeeper-details.yaml yaml)
 ```yaml
 ## details of the kafka and zookeeper
 apiVersion: litmuschaos.io/v1alpha1
@@ -287,7 +287,7 @@ spec:
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/kafka/kafka-broker-pod-failure/kafka-liveness.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/kafka/kafka-broker-pod-failure/kafka-liveness.yaml yaml)
 ```yaml
 ## checks the kafka message liveness while injecting chaos
 ## sets the consumer timeout
@@ -344,7 +344,7 @@ The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/kafka/kafka-broker-pod-failure/chaos-interval.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/kafka/kafka-broker-pod-failure/chaos-interval.yaml yaml)
 ```yaml
 # defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1

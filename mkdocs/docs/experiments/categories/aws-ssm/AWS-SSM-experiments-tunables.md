@@ -6,7 +6,7 @@ It stressed the `CPU_CORE` cpu cores of the `EC2_INSTANCE_ID` ec2 instance and `
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws-ssm/common/cpu-cores.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws-ssm/common/cpu-cores.yaml yaml)
 ```yaml
 # provide the cpu cores to stress the ec2 instance
 apiVersion: litmuschaos.io/v1alpha1
@@ -41,7 +41,7 @@ It stressed the `MEMORY_PERCENTAGE` percentage of free space of the `EC2_INSTANC
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws-ssm/common/memory-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws-ssm/common/memory-percentage.yaml yaml)
 ```yaml
 # provide the memory pecentage to stress the instance memory
 apiVersion: litmuschaos.io/v1alpha1
@@ -76,7 +76,7 @@ It contains the details of the SSM docs i.e, `name, type, the format of ssm-docs
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws-ssm/common/ssm-document-details.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws-ssm/common/ssm-document-details.yaml yaml)
 ```yaml
 ## provide the details of the ssm document details
 apiVersion: litmuschaos.io/v1alpha1
@@ -120,7 +120,7 @@ It contains the `NUMBER_OF_WORKERS` workers for the stress.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws-ssm/common/workers.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws-ssm/common/workers.yaml yaml)
 ```yaml
 # workers details used to stress the instance
 apiVersion: litmuschaos.io/v1alpha1
@@ -155,7 +155,7 @@ The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws-ssm/common/chaos-interval.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws-ssm/common/chaos-interval.yaml yaml)
 ```yaml
 # defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1

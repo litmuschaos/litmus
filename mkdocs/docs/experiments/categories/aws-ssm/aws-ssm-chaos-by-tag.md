@@ -213,7 +213,7 @@ It will stress a random single ec2 instance with the given `EC2_INSTANCE_TAG` ta
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws-ssm/aws-ssm-chaos-by-tag/instance-tag.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws-ssm/aws-ssm-chaos-by-tag/instance-tag.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
@@ -244,7 +244,7 @@ It will stress the `INSTANCE_AFFECTED_PERC` percentage of ec2 instances with the
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws-ssm/aws-ssm-chaos-by-tag/instance-affected-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws-ssm/aws-ssm-chaos-by-tag/instance-affected-percentage.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine

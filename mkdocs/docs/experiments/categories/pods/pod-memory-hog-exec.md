@@ -160,7 +160,7 @@ The memory consumption limit is 2000MB
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-memory-hog-exec/memory-consumption.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-memory-hog-exec/memory-consumption.yaml yaml)
 ```yaml
 # memory to be stressed in MB
 apiVersion: litmuschaos.io/v1alpha1
@@ -196,7 +196,7 @@ Default values of `CHAOS_KILL_COMMAND` command:
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-memory-hog-exec/kill-command.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-memory-hog-exec/kill-command.yaml yaml)
 ```yaml
 # provide the chaos kill command used to kill the chaos process
 apiVersion: litmuschaos.io/v1alpha1

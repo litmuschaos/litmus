@@ -7,7 +7,7 @@ It defines the name of the target node subjected to chaos. The target node can b
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/common/target-node.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/common/target-node.yaml yaml)
 ```yaml
 ## provide the target node name
 ## it is applicable for the [node-drain, node-taint, node-restart, kubelet-service-kill, docker-service-kill]
@@ -38,7 +38,7 @@ It defines the comma-separated name of the target nodes subjected to chaos. The 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/common/target-nodes.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/common/target-nodes.yaml yaml)
 ```yaml
 ## provide the comma separated target node names
 ## it is applicable for the [node-cpu-hog, node-memory-hog, node-io-stress]
@@ -69,7 +69,7 @@ It is mutually exclusive with the `TARGET_NODE(S)` ENV. If `TARGET_NODE(S)` ENV 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/common/target-label.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/common/target-label.yaml yaml)
 ```yaml
 ## provide the labels of the targeted nodes
 apiVersion: litmuschaos.io/v1alpha1
@@ -100,7 +100,7 @@ It is supported by [node-cpu-hog, node-memory-hog, node-io-stress] experiments. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/common/node-affected-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/common/node-affected-percentage.yaml yaml)
 ```yaml
 ## provide the percentage of nodes to be targeted with matching labels
 ## it is applicable for the [node-cpu-hog, node-memory-hog, node-io-stress]

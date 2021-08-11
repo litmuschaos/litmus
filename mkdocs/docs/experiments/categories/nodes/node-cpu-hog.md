@@ -165,7 +165,7 @@ It contains number of cores of node CPU to be consumed. It can be tuned via `NOD
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-core.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-core.yaml yaml)
 ```yaml
 # stress the cpu of the targeted nodes
 apiVersion: litmuschaos.io/v1alpha1

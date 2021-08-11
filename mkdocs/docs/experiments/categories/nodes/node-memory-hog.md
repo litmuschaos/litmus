@@ -182,7 +182,7 @@ It stresses the `MEMORY_CONSUMPTION_PERCENTAGE` percentage of total node capacit
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-memory-hog/memory-consumption-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/memory-consumption-percentage.yaml yaml)
 ```yaml
 # stress the memory of the targeted node with MEMORY_CONSUMPTION_PERCENTAGE of node capacity
 # it is mutually exclusive with the MEMORY_CONSUMPTION_MEBIBYTES.
@@ -214,7 +214,7 @@ It is mutually exclusive with the `MEMORY_CONSUMPTION_PERCENTAGE` ENV. If `MEMOR
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-memory-hog/memory-consumption-mebibytes.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/memory-consumption-mebibytes.yaml yaml)
 ```yaml
 # stress the memory of the targeted node with given MEMORY_CONSUMPTION_MEBIBYTES
 # it is mutually exclusive with the MEMORY_CONSUMPTION_PERCENTAGE.
@@ -245,7 +245,7 @@ The workers count for the stress can be tuned with `NUMBER_OF_WORKERS` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-memory-hog/workers.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/workers.yaml yaml)
 ```yaml
 # provide for the workers count for the stress
 apiVersion: litmuschaos.io/v1alpha1

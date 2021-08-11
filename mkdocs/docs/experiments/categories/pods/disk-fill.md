@@ -212,7 +212,7 @@ It fills the `FILL_PERCENTAGE` percentage of the ephemeral-storage limit specifi
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/disk-fill/fill-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/fill-percentage.yaml yaml)
 ```yaml
 ## percentage of ephemeral storage limit specified at `resource.limits.ephemeral-storage` inside target application 
 apiVersion: litmuschaos.io/v1alpha1
@@ -246,7 +246,7 @@ It is mutually exclusive with the `FILL_PERCENTAGE` ENV. If `FILL_PERCENTAGE` EN
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/disk-fill/ephemeral-storage-mebibytes.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/ephemeral-storage-mebibytes.yaml yaml)
 ```yaml
 # ephemeral storage which needs to fill in will application
 # if ephemeral-storage limits is not specified inside target application
@@ -281,7 +281,7 @@ The default value of `DATA_BLOCK_SIZE` is `256`.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/disk-fill/data-block-size.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/data-block-size.yaml yaml)
 ```yaml
 # size of the data block used to fill the disk
 apiVersion: litmuschaos.io/v1alpha1
@@ -314,7 +314,7 @@ It defines the storage location of the containers inside the host(node/VM). It c
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/disk-fill/container-path.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/container-path.yaml yaml)
 ```yaml
 # path inside node/vm where containers are present 
 apiVersion: litmuschaos.io/v1alpha1

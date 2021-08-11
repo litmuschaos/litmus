@@ -163,7 +163,7 @@ It contains comma separated list of volume IDs subjected to ebs detach chaos. It
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws/ebs-loss-by-id/ebs-volume-id.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ebs-loss-by-id/ebs-volume-id.yaml yaml)
 ```yaml
 # contains ebs volume id 
 apiVersion: litmuschaos.io/v1alpha1

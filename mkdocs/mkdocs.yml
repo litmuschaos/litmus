@@ -140,7 +140,7 @@ nav:
         - HTTP Probe:  experiments/chaos-resources/probes/httpProbe.md
         - K8S Probe:  experiments/chaos-resources/probes/k8sProbe.md
         - Prometheus Probe:  experiments/chaos-resources/probes/promProbe.md
-    - Chaos Hub: https://hub.litmuschaos.io/
-    - Platform Docs: https://litmusdocs-beta.netlify.app/
+    - Chaos Hub ⧉: https://hub.litmuschaos.io/
+    - Platform Docs ⧉: https://litmusdocs-beta.netlify.app/
     - Releases ⧉: https://github.com/litmuschaos/litmus/releases
     - Roadmap: ROADMAP.md

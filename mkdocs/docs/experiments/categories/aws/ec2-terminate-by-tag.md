@@ -181,7 +181,7 @@ It will stop a random single ec2 instance with the given `INSTANCE_TAG` tag and 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws/ec2-terminate-by-tag/instance-tag.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-terminate-by-tag/instance-tag.yaml yaml)
 ```yaml
 # target the ec2 instances with matching tag
 apiVersion: litmuschaos.io/v1alpha1
@@ -213,7 +213,7 @@ It will stop the `INSTANCE_AFFECTED_PERC` percentage of ec2 instances with the g
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws/ec2-terminate-by-tag/instance-affected-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-terminate-by-tag/instance-affected-percentage.yaml yaml)
 ```yaml
 # percentage of ec2 instances, needs to terminate with provided tags
 apiVersion: litmuschaos.io/v1alpha1

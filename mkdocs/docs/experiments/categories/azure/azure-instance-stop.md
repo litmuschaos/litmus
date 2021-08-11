@@ -171,7 +171,7 @@ It contains comma separated list of instance names subjected to instance stop ch
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/azure/azure-instance-stop/azure-instance.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-instance-stop/azure-instance.yaml yaml)
 ```yaml
 ## contains the azure instance details
 apiVersion: litmuschaos.io/v1alpha1
@@ -203,7 +203,7 @@ The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/azure/azure-instance-stop/chaos-interval.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-instance-stop/chaos-interval.yaml yaml)
 ```yaml
 # defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1

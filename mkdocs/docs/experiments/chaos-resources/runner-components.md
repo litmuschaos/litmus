@@ -6,7 +6,7 @@ It allows developers to specify the custom annotations for the runner pod. It ca
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/runner-components/runner-annotations.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/runner-components/runner-annotations.yaml yaml)
 ```yaml
 # contains annotations for the chaos runner pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -39,7 +39,7 @@ It defines the `args` and `command` to set the args and command of the chaos-run
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/runner-components/runner-args-and-command.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/runner-components/runner-args-and-command.yaml yaml)
 ```yaml
 # contains args and command for the chaos runner
 # it will be useful for the cases where custom image of the chaos-runner is used, which supports args and commands
@@ -80,7 +80,7 @@ It defines the `configMaps` and `secrets` to set the configmaps and secrets moun
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/runner-components/runner-configmaps-and-secrets.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/runner-components/runner-configmaps-and-secrets.yaml yaml)
 ```yaml
 # contains configmaps and secrets for the chaos-runner
 apiVersion: litmuschaos.io/v1alpha1
@@ -118,7 +118,7 @@ It defines the `image` and `imagePullPolicy` to set the image and imagePullPolic
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/runner-components/runner-image-and-pullPolicy.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/runner-components/runner-image-and-pullPolicy.yaml yaml)
 ```yaml
 # contains the image and imagePullPolicy of the chaos-runner
 apiVersion: litmuschaos.io/v1alpha1
@@ -152,7 +152,7 @@ It allows developers to specify the imagePullSecret name for the ChaosRunner. It
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/runner-components/runner-imagePullSecrets.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/runner-components/runner-imagePullSecrets.yaml yaml)
 ```yaml
 # contains the imagePullSecrets for the chaos-runner
 apiVersion: litmuschaos.io/v1alpha1
@@ -183,7 +183,7 @@ The nodeselector contains labels of the node on which runner pod should be sched
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/runner-components/runner-nodeSelectors.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/runner-components/runner-nodeSelectors.yaml yaml)
 ```yaml
 # contains the node-selector for the chaos-runner
 # it will schedule the chaos-runner on the coresponding node with matching labels
@@ -215,7 +215,7 @@ It contains the resource requirements for the ChaosRunner Pod, where we can prov
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/runner-components/runner-resources.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/runner-components/runner-resources.yaml yaml)
 ```yaml
 # contains the resource requirements for the runner pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -251,7 +251,7 @@ It provides tolerations for the runner pod so that it can be scheduled on the re
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/runner-components/runner-tolerations.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/runner-components/runner-tolerations.yaml yaml)
 ```yaml
 # contains the tolerations for the chaos-runner
 # it will schedule the chaos-runner on the tainted node

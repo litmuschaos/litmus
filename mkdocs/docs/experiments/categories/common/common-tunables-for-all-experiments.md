@@ -6,7 +6,7 @@ It defines the total time duration of the chaos injection. It can be tuned with 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/common/chaos-duration.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/common/chaos-duration.yaml yaml)
 ```yaml
 # define the total chaos duration
 apiVersion: litmuschaos.io/v1alpha1
@@ -37,7 +37,7 @@ It defines the period to wait before and after the injection of chaos. It can be
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/common/ramp-time.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/common/ramp-time.yaml yaml)
 ```yaml
 # waits for the ramp time before and after injection of chaos 
 apiVersion: litmuschaos.io/v1alpha1
@@ -73,7 +73,7 @@ The default value of `SEQUENCE` is `parallel`.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/common/sequence.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/common/sequence.yaml yaml)
 ```yaml
 # define the order of execution of chaos in case of multiple targets
 apiVersion: litmuschaos.io/v1alpha1
@@ -107,7 +107,7 @@ It defines the name of the chaos library used for the chaos injection. It can be
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/common/lib.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/common/lib.yaml yaml)
 ```yaml
 # lib for the chaos injection
 apiVersion: litmuschaos.io/v1alpha1
@@ -140,7 +140,7 @@ It defines a user-defined string that holds metadata/info about the current run/
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/common/instance-id.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/common/instance-id.yaml yaml)
 ```yaml
 # provide to append user-defined suffix in the end of chaosresult name
 apiVersion: litmuschaos.io/v1alpha1
@@ -174,7 +174,7 @@ It is supported by [container-kill, network-experiments, stress-experiments, dns
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/common/lib-image.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/common/lib-image.yaml yaml)
 ```yaml
 # it contains the lib image used for the helper pod
 # it support [container-kill, network-experiments, stress-experiments, dns-experiments, disk-fill,

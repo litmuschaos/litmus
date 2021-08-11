@@ -183,7 +183,7 @@ It stresses the `FILESYSTEM_UTILIZATION_PERCENTAGE` percentage of total free spa
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-io-stress/filesystem-utilization-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/filesystem-utilization-percentage.yaml yaml)
 ```yaml
 # stress the i/o of the targeted node with FILESYSTEM_UTILIZATION_PERCENTAGE of total free space 
 # it is mutually exclusive with the FILESYSTEM_UTILIZATION_BYTES.
@@ -215,7 +215,7 @@ It is mutually exclusive with the `FILESYSTEM_UTILIZATION_PERCENTAGE` ENV. If `F
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-io-stress/filesystem-utilization-bytes.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/filesystem-utilization-bytes.yaml yaml)
 ```yaml
 # stress the i/o of the targeted node with given FILESYSTEM_UTILIZATION_BYTES
 # it is mutually exclusive with the FILESYSTEM_UTILIZATION_PERCENTAGE.
@@ -245,7 +245,7 @@ spec:
 The CPU usage can be limit to `CPU` cpu while performing io stress. It can be tuned via `CPU` ENV.
 
 Use the following example to tune this:
- [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-io-stress/cpu.yaml yaml)
+ [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/cpu.yaml yaml)
 
 ### Workers For Stress
 
@@ -253,7 +253,7 @@ The i/o and VM workers count for the stress can be tuned with `NUMBER_OF_WORKERS
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-io-stress/workers.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/workers.yaml yaml)
 ```yaml
 # define the workers count for the i/o and vm
 apiVersion: litmuschaos.io/v1alpha1

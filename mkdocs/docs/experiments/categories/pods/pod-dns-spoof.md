@@ -165,7 +165,7 @@ It defines the map of the target hostnames eg. '{"abc.com":"spoofabc.com"}' wher
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-dns-spoof/spoof-map.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-dns-spoof/spoof-map.yaml yaml)
 ```yaml
 # contains the spoof map for the dns spoofing
 apiVersion: litmuschaos.io/v1alpha1
@@ -200,7 +200,7 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-dns-spoof/container-runtime-and-socket-path.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-dns-spoof/container-runtime-and-socket-path.yaml yaml)
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1

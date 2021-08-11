@@ -180,7 +180,7 @@ It will stop all the instances with the given `VM_INSTANCE_NAMES` instance names
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/gcp/gcp-vm-instance-stop/gcp-instance.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop/gcp-instance.yaml yaml)
 ```yaml
 ## details of the gcp instance
 apiVersion: litmuschaos.io/v1alpha1
@@ -216,7 +216,7 @@ If vm instances belong to the autoscaling group then provide the `AUTO_SCALING_G
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/gcp/gcp-vm-instance-stop/auto-scaling.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop/auto-scaling.yaml yaml)
 ```yaml
 ## scale up and down to maintain the available instance counts
 apiVersion: litmuschaos.io/v1alpha1
@@ -256,7 +256,7 @@ The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/gcp/gcp-vm-instance-stop/chaos-interval.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop/chaos-interval.yaml yaml)
 ```yaml
 # defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1

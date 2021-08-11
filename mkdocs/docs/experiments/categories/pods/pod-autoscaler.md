@@ -136,7 +136,7 @@ It defines the number of replicas, which should be present in the targeted appli
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-autoscaler/replica-count.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-autoscaler/replica-count.yaml yaml)
 ```yaml
 # provide the number of replicas 
 apiVersion: litmuschaos.io/v1alpha1

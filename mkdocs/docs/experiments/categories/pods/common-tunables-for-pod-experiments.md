@@ -6,7 +6,7 @@ It defines the comma-separated name of the target pods subjected to chaos. The t
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/common/target-pods.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/target-pods.yaml yaml)
 ```yaml
 ## it contains comma separated target pod names
 apiVersion: litmuschaos.io/v1alpha1
@@ -39,7 +39,7 @@ It defines the percentage of pods subjected to chaos with matching labels provid
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/common/pod-affected-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/pod-affected-percentage.yaml yaml)
 ```yaml
 ## it contains percentage of application pods to be targeted with matching labels or names in the application namespace
 ## supported for all pod-level experiment expect pod-autoscaler
@@ -73,7 +73,7 @@ It defines the name of the targeted container subjected to chaos. It can be tune
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/common/target-container.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/target-container.yaml yaml)
 ```yaml
 ## name of the target container
 ## it will use first container as target container if TARGET_CONTAINER is provided as empty

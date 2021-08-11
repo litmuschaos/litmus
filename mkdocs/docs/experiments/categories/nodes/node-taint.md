@@ -152,7 +152,7 @@ It contains label and effect to be tainted on application node. It can be tuned 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-taint/taint-labels.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-taint/taint-labels.yaml yaml)
 ```yaml
 # node tainted with provided key and effect
 apiVersion: litmuschaos.io/v1alpha1

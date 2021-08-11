@@ -165,7 +165,7 @@ It stresses the `CPU_CORE` cpu cores of the targeted pod for the `TOTAL_CHAOS_DU
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-cpu-hog-exec/cpu-cores.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog-exec/cpu-cores.yaml yaml)
 ```yaml
 # cpu cores for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -201,7 +201,7 @@ Default values of commands:
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-cpu-hog-exec/inject-and-kill-commands.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog-exec/inject-and-kill-commands.yaml yaml)
 ```yaml
 # provide the chaos kill, used to kill the chaos process
 apiVersion: litmuschaos.io/v1alpha1

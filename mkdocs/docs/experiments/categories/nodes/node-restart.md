@@ -188,7 +188,7 @@ It defines the command used to restart the targeted node. It can be tuned via `R
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-restart/reboot-command.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-restart/reboot-command.yaml yaml)
 ```yaml
 # provide the reboot command
 apiVersion: litmuschaos.io/v1alpha1
@@ -220,7 +220,7 @@ It defines the name of the SSH user for the targeted node. It can be tuned via `
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-restart/ssh-user.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-restart/ssh-user.yaml yaml)
 ```yaml
 # name of the ssh user used to ssh into targeted node
 apiVersion: litmuschaos.io/v1alpha1
@@ -252,7 +252,7 @@ It defines the internal IP of the targeted node. It is an optional field, if int
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/node-restart/target-node-ip.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-restart/target-node-ip.yaml yaml)
 ```yaml
 # internal ip of the targeted node
 apiVersion: litmuschaos.io/v1alpha1

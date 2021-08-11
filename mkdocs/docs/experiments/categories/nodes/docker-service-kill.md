@@ -137,7 +137,7 @@ It contains name of target node subjected to the chaos. It can be tuned via `TAR
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/nodes/docker-service-kill/docker-service-kill.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/docker-service-kill/docker-service-kill.yaml yaml)
 ```yaml
 # kill the docker service of the target node
 apiVersion: litmuschaos.io/v1alpha1

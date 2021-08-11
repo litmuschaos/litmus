@@ -167,7 +167,7 @@ It will detach a random single ebs volume with the given `EBS_VOLUME_TAG` tag an
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws/ebs-loss-by-tag/ebs-volume-tag.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ebs-loss-by-tag/ebs-volume-tag.yaml yaml)
 ```yaml
 # contains the tags for the ebs volumes 
 apiVersion: litmuschaos.io/v1alpha1
@@ -199,7 +199,7 @@ It will detach the `VOLUME_AFFECTED_PERC` percentage of ebs volumes with the giv
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/aws/ebs-loss-by-tag/volume-affected-percentage.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ebs-loss-by-tag/volume-affected-percentage.yaml yaml)
 ```yaml
 # target percentage of the ebs volumes with the provided tag
 apiVersion: litmuschaos.io/v1alpha1

@@ -4,7 +4,7 @@ It is mandatory for the pod-level experiments and optional for the rest of the e
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/engine-spec/app-info.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/engine-spec/app-info.yaml yaml)
 ```yaml
 # contains details of the AUT(application under test)
 # appns: name of the application
@@ -36,7 +36,7 @@ It can be tuned via `auxiliaryAppInfo` field. It supports input the below format
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/chaos-resources/engine-spec/auxiliary-appinfo.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/engine-spec/auxiliary-appinfo.yaml yaml)
 ```yaml
 # contains the comma seperated list of auxiliary applications details
 # it is provide in `<key1>=<value1>:<namespace1>,<key2>=<value2>:<namespace2>` format

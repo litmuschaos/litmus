@@ -172,7 +172,7 @@ It tunes the cassandra service name at `CASSANDRA_SVC_NAME` and cassandra port a
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/cassandra/cassandra-pod-delete/cassandra-app-details.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/cassandra/cassandra-pod-delete/cassandra-app-details.yaml yaml)
 ```yaml
 ## contains details of cassandra application
 apiVersion: litmuschaos.io/v1alpha1
@@ -211,7 +211,7 @@ The cassandra pod can be deleted `forcefully` or `gracefully`. It can be tuned w
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/cassandra/cassandra-pod-delete/force-delete.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/cassandra/cassandra-pod-delete/force-delete.yaml yaml)
 ```yaml
 ## force env provided to forcefully or gracefully delete the pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -247,7 +247,7 @@ spec:
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/cassandra/cassandra-pod-delete/liveness-check.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/cassandra/cassandra-pod-delete/liveness-check.yaml yaml)
 ```yaml
 ## enable the cassandra liveness check, while injecting chaos
 ## it continuosly performs cassandra database operations(with cqlsh command) to vefify the liveness status
@@ -288,7 +288,7 @@ The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/cassandra/cassandra-pod-delete/chaos-interval.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/cassandra/cassandra-pod-delete/chaos-interval.yaml yaml)
 ```yaml
 # defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1

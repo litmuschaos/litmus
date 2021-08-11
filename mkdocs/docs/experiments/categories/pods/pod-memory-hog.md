@@ -178,7 +178,7 @@ It stresses the `MEMORY_CONSUMPTION` MB memory of the targeted pod for the `TOTA
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-memory-hog/memory-consumption.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-memory-hog/memory-consumption.yaml yaml)
 ```yaml
 # define the memory consumption in MB
 apiVersion: litmuschaos.io/v1alpha1
@@ -211,7 +211,7 @@ The worker's count for the stress can be tuned with `NUMBER_OF_WORKERS` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-memory-hog/workers.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-memory-hog/workers.yaml yaml)
 ```yaml
 # number of workers used for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -251,7 +251,7 @@ Provide the stress image via `STRESS_IMAGE` ENV for the pumba library.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-memory-hog/pumba-lib.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-memory-hog/pumba-lib.yaml yaml)
 ```yaml
 # use the pumba lib for the memory stress
 apiVersion: litmuschaos.io/v1alpha1

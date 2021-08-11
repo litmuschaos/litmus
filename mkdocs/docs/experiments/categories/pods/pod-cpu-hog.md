@@ -176,7 +176,7 @@ It stresses the `CPU_CORE` cpu cores of the targeted pod for the `TOTAL_CHAOS_DU
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-cpu-hog/cpu-cores.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/cpu-cores.yaml yaml)
 ```yaml
 # cpu cores for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -211,7 +211,7 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-cpu-hog/container-runtime-and-socket-path.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/container-runtime-and-socket-path.yaml yaml)
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -249,7 +249,7 @@ Provide the stress image via `STRESS_IMAGE` ENV for the pumba library.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/docs/experiments/categories/pods/pod-cpu-hog/pumba-lib.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/pumba-lib.yaml yaml)
 ```yaml
 # use pumba chaoslib for the stress
 apiVersion: litmuschaos.io/v1alpha1
