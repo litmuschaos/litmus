@@ -1,0 +1,137 @@
+{% extends "main.html" %}
+
+{% block tabs %}
+{{ super() }}
+
+<!-- Additional styles for landing page -->
+<style>
+    /* Application header should be static for the landing page */
+    .md-header {
+      position: initial;
+    }
+  
+    /* Remove spacing, as we cannot hide it completely */
+    .md-main__inner {
+      margin: 0;
+    }
+  
+    /* Hide main content for now */
+    .md-content {
+      display: none;
+    }
+  
+    /* Hide table of contents */
+    @media screen and (min-width: 60em) {
+      .md-sidebar--secondary {
+        display: none;
+      }
+    }
+  
+    /* Hide navigation */
+    @media screen and (min-width: 76.25em) {
+      .md-sidebar--primary {
+        display: none;
+      }
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet"/>  
+    <link rel="icon" type="image/png" href="litmus.svg"/>
+    <title>LitmusChaos Experiment Docs</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            }
+    </style>
+</head>
+
+<!-- Header Section -->
+<div style="margin: 0%; padding-top: 100px;">
+    <div style="display: flex;">
+        <div style="margin: auto;">
+            <h1 style="width:400px;font-size: 40px">
+                Experiments in LitmusChaos
+            </h1>
+            <p style="font-size: 20px; color: #777288; width: 480px">
+                Litmus experiments for chaos injection
+            </p>
+            <button
+                onclick="window.location.href = 'experiments/categories/getstarted/';"
+                style="width: 190px; 
+                height: 55px; 
+                background: linear-gradient(133.06deg, #7C6AC8 1.78%, #5B44BA 64.41%); 
+                color: #FFFFFF; border-radius: 4px; 
+                border:1px solid;
+                cursor: pointer;
+                font-size: 15px;">
+                Start Learning To Experiment
+            </button>
+        </div>
+        <div style="margin: auto;">
+            <img src="exp-docs-icons/cloud-provider.svg" style="height:400px;" alt="cloud provider" />
+        </div>
+    </div>
+    <div style="margin: 0%;">
+        <div style="display: flex; padding:20px 0px">
+            <div style="margin: auto;">
+                <h3 style="font-size: 22px;">
+                    Do you like our Litmus Docs?
+                </h3>
+                <p style="font-size: 16px; color: #777288; width: 400px">
+                    We are always trying to improve our docs. If you like the documentation we would want you to become our stargazer.
+                </p>
+                <button
+                    onclick="window.location.href = 'https://github.com/litmuschaos/litmus';"
+                    style="width: 210px;
+                    height: 40px; background:
+                    linear-gradient(133.06deg, #7C6AC8 1.78%, #5B44BA 64.41%);
+                    color: #FFFFFF; 
+                    border-radius: 4px; 
+                    border:1px solid;
+                    cursor: pointer;">
+                    <div style="display: inline-flex; margin: -5px;">
+                        <img src="exp-docs-icons/github-white.svg" alt="github"/> 
+                        <p style="margin-left:10px; font-size: 14px;">Become our stargazer</p> 
+                    </div> 
+                </button>
+            </div>
+            <div style=" display: inline-flex; margin: auto;">
+                <img src="exp-docs-icons/chaos-bird.svg" alt="chaos-bird"  />
+                <div style="margin-left: 40px;">
+                    <img src="exp-docs-icons/cncf.svg" alt="cncf" />
+                    <p style="text-align: center;font-size: 16px;">
+                        We are a <a href="https://www.cncf.io/" target="_", style="color: blue; text-decoration: underline; cursor: pointer;">CNCF</a> Sandbox project.</p>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <br><br><br>
+        <hr style="height: 1px; border: 2; border-top: 2px solid #E6E8F0;"/>
+        <br>
+        <div style="display: flex;padding:15px 0px">
+            <div style="display: flex;margin-left: 12%;">
+                <img src="exp-docs-icons/litmus.svg" alt="litmus"/>
+                <p style="font-size: 14px; margin-top: 15px; margin-left: 10px; color: #777288;"> © 2021 LitmusChaos Authors</p>
+            </div>
+            <div style="display: inline-flex;margin-left: auto; margin-right: 200px;">
+                <p style="font-size: 14px;margin-top:0.5px; color: #777288;"> Follow us on:</p>
+                <a target="_" href="https://slack.litmuschaos.io/"><img src="exp-docs-icons/Slack.svg" alt="slack" style="margin-left: 10px;"/></a>
+                <a target="_" href="https://github.com/litmuschaos/litmus"><img src="exp-docs-icons/Github.svg" alt="github" style="margin-left: 10px;"/></a>
+                <a target="_" href="https://dev.to/t/litmuschaos/latest"><img src="exp-docs-icons/Dev.svg" alt="dev" style="margin-left: 10px;"/></a>
+                <a target="_" href="https://twitter.com/LitmusChaos"><img src="exp-docs-icons/Twitter.svg" alt="twitter" style="margin-left: 10px;"/></a>
+                <a target="_" href="https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw"><img src="exp-docs-icons/Youtube.svg" alt="youtube" style="margin-left: 10px;"/></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Application footer -->
+{% block footer %}
+<div style="padding-bottom: 0px;"></div>
+{% endblock %}

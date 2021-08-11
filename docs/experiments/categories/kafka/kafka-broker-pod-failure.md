@@ -1,4 +1,207 @@
-It deletes the Kafka pods with matching namespace, labels, and kind provided at `spec.appinfo` in chaosengine for the `TOTAL_CHAOS_DURATION` duration. 
+## Introduction
+
+- It causes (forced/graceful) pod failure of specific/random Kafka broker pods
+- It tests deployment sanity (replica availability & uninterrupted service) and recovery workflows of the Kafka cluster
+- It tests unbroken message stream when KAFKA_LIVENESS_STREAM experiment environment variable is set to enabled
+
+!!! tip "Scenario: Deletes kafka broker pod"    
+    ![Kafka Broker Pod Delete](../../images/kafka-pod-delete.png)
+
+## Uses
+
+??? info "View the uses of the experiment" 
+    coming soon
+
+## Prerequisites
+
+
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code> kafka-broker-pod-failure </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/kafka/kafka-broker-pod-failure/experiment.yaml">here</a>
+    - Ensure that Kafka & Zookeeper are deployed as Statefulsets
+    - If Confluent/Kudo Operators have been used to deploy Kafka, note the instance name, which will be 
+      used as the value of `KAFKA_INSTANCE_NAME` experiment environment variable 
+        - In case of Confluent, specified by the `--name` flag
+        - In case of Kudo, specified by the `--instance` flag
+      Zookeeper uses this to construct a path in which kafka cluster data is stored. 
+
+## Default Validations
+
+??? info "View the default validations" 
+    - Kafka Cluster (comprising the Kafka-broker & Zookeeper Statefulsets) is healthy
+    - Kafka Message stream (if enabled) is unbroken
+
+## Minimal RBAC configuration example (optional)
+
+??? note "View the Minimal RBAC permissions"
+
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/kafka/kafka-broker-pod-failure/rbac.yaml yaml)
+    ```yaml
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: kafka-broker-pod-failure-sa
+      namespace: default
+      labels:
+        name: kafka-broker-pod-failure-sa
+        app.kubernetes.io/part-of: litmus
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: kafka-broker-pod-failure-sa
+      labels:
+        name: kafka-broker-pod-failure-sa
+        app.kubernetes.io/part-of: litmus
+    rules:
+    - apiGroups: [""]
+      resources: ["pods","events"]
+      verbs: ["create","list","get","patch","update","delete","deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/exec","pods/log"]
+      verbs: ["create","list","get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs"]
+      verbs: ["create","list","get","delete","deletecollection"]
+    - apiGroups: ["apps"]
+      resources: ["deployments","statefulsets"]
+      verbs: ["list","get"]
+    - apiGroups: ["litmuschaos.io"]
+      resources: ["chaosengines","chaosexperiments","chaosresults"]
+      verbs: ["create","list","get","patch","update"]
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get","list"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: kafka-broker-pod-failure-sa
+      labels:
+        name: kafka-broker-pod-failure-sa
+        app.kubernetes.io/part-of: litmus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: kafka-broker-pod-failure-sa
+    subjects:
+    - kind: ServiceAccount
+      name: kafka-broker-pod-failure-sa
+      namespace: default
+    ```
+    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+
+## Experiment tunables
+
+??? info "check the experiment tunables"
+    <h2>Mandatory Fields</h2>
+
+    <table>
+      <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+      </tr>
+      <tr>
+        <td> KAFKA_NAMESPACE </td>
+        <td> Namespace of Kafka Brokers </td>
+        <td> May be same as value for <code>spec.appinfo.appns</code> </td>
+      </tr>
+      <tr>
+        <td> KAFKA_LABEL </td>
+        <td> Unique label of Kafka Brokers </td>
+        <td> May be same as value for <code>spec.appinfo.applabel</code> </td>
+      </tr>
+      <tr>
+        <td> KAFKA_SERVICE </td>
+        <td> Headless service of the Kafka Statefulset </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td> KAFKA_PORT </td>
+        <td> Port of the Kafka ClusterIP service </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td> ZOOKEEPER_NAMESPACE </td>
+        <td> Namespace of Zookeeper Cluster </td>
+        <td> May be same as value for KAFKA_NAMESPACE or other </td>
+      </tr>
+      <tr>
+        <td> ZOOKEEPER_LABEL </td>
+        <td> Unique label of Zokeeper statefulset </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td> ZOOKEEPER_SERVICE </td>
+        <td> Headless service of the Zookeeper Statefulset </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td> ZOOKEEPER_PORT </td>
+        <td> Port of the Zookeeper ClusterIP service </td>
+        <td>  </td>
+      </tr>
+    </table>
+
+    <h2>Optional Fields</h2>
+
+    <table>
+      <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+      </tr>
+      <tr>
+        <td> KAFKA_BROKER </td>
+        <td> Kafka broker pod (name) to be deleted </td>
+        <td> A target selection mode (random/liveness-based/specific) </td>
+      </tr>
+      <tr>
+        <td> KAFKA_KIND </td>
+        <td> Kafka deployment type </td>
+        <td> Same as <code>spec.appinfo.appkind</code>. Supported: <code>statefulset</code> </td>
+      </tr>
+      <tr>
+        <td> KAFKA_LIVENESS_STREAM </td>
+        <td> Kafka liveness message stream </td>
+        <td> Supported: <code>enabled</code>, <code>disabled</code> </td>
+      </tr>
+      <tr>
+        <td> KAFKA_LIVENESS_IMAGE </td>
+        <td> Image used for liveness message stream </td>
+        <td> Set the liveness image as &lt;registry_url&gt;/&lt;repository&gt;:&lt;image-tag&gt; </td>
+      </tr>
+      <tr>
+        <td> KAFKA_REPLICATION_FACTOR </td>
+        <td> Number of partition replicas for liveness topic partition </td>
+        <td> Necessary if KAFKA_LIVENESS_STREAM is  <code>enabled</code>. The replication factor should be less than or equal to number of Kafka brokers </td>
+      </tr>
+      <tr>
+        <td> KAFKA_INSTANCE_NAME </td>
+        <td> Name of the Kafka chroot path on zookeeper </td>
+        <td> Necessary if installation involves use of such path </td>
+      </tr>
+      <tr>
+        <td> KAFKA_CONSUMER_TIMEOUT </td>
+        <td> Kafka consumer message timeout, post which it terminates </td>
+        <td> Defaults to 30000ms, Recommended timeout for EKS platform: 60000 ms </td>
+      </tr>
+      <tr>
+        <td> TOTAL_CHAOS_DURATION </td>
+        <td> The time duration for chaos insertion (seconds) </td>
+        <td> Defaults to 15s </td>
+      </tr>
+      <tr>
+        <td> CHAOS_INTERVAL </td>
+        <td> Time interval b/w two successive broker failures (sec) </td>
+        <td> Defaults to 5s </td>
+      </tr>
+    </table>
+
+## Experiment Examples
 
 ### Common Experiment Tunables
 
