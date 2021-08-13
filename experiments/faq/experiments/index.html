@@ -1,0 +1,2492 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="It contains litmus chaos experiments docs">
+      
+      
+      
+      
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/faq/experiments/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
+    
+    
+      
+        <title>Experiments - Litmus Experiments</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.f7f47774.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,400i,700%7C&display=fallback">
+        <style>:root{--md-text-font-family:"Work Sans";--md-code-font-family:""}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+      <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-what-why-how-of-litmus" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Litmus Experiments" class="md-header__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
+      
+  <img src="../../../images/litmus.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Litmus Experiments
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Experiments
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C9.76 2 7.78 3.05 6.5 4.68l9.81 9.82C17.94 13.21 19 11.24 19 9a7 7 0 0 0-7-7M3.28 4 2 5.27 5.04 8.3C5 8.53 5 8.76 5 9c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h5.73l4 4L20 20.72 3.28 4M9 20v1a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 6a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V19a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1.8c-1.79-1.04-3-2.98-3-5.2a6 6 0 0 1 6-6m2 15v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1h4m6-10h3v2h-3v-2M1 11h3v2H1v-2M13 1v3h-2V1h2M4.92 3.5l2.13 2.14-1.42 1.41L3.5 4.93 4.92 3.5m12.03 2.13 2.12-2.13 1.43 1.43-2.13 2.12-1.42-1.42z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/litmuschaos/litmus/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    litmuschaos/litmus
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../categories/getstarted/" class="md-tabs__link">
+        Experiments
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../chaos-resources/contents/" class="md-tabs__link">
+        Chaos Resources
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="./" class="md-tabs__link md-tabs__link--active">
+        Litmus FAQ
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://hub.litmuschaos.io/" class="md-tabs__link">
+      Chaos Hub ⧉
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://litmusdocs-beta.netlify.app/" class="md-tabs__link">
+      Platform Docs ⧉
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://github.com/litmuschaos/litmus/releases" class="md-tabs__link">
+      Releases ⧉
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../ROADMAP/" class="md-tabs__link">
+      Roadmap
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
+      
+  <img src="../../../images/litmus.png" alt="logo">
+
+    </a>
+    Litmus Experiments
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/litmuschaos/litmus/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    litmuschaos/litmus
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      <label class="md-nav__link" for="__nav_2">
+        Experiments
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Experiments" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Experiments
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/getstarted/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      <label class="md-nav__link" for="__nav_2_2">
+        Kubernetes
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1" type="checkbox" id="__nav_2_2_1" >
+      
+      <label class="md-nav__link" for="__nav_2_2_1">
+        Generic
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Generic" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Generic
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1_1" type="checkbox" id="__nav_2_2_1_1" >
+      
+      <label class="md-nav__link" for="__nav_2_2_1_1">
+        Pod Chaos
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Pod Chaos" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_2_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          Pod Chaos
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/container-kill/" class="md-nav__link">
+        Container Kill
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/disk-fill/" class="md-nav__link">
+        Disk Fill
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-autoscaler/" class="md-nav__link">
+        Pod Autoscaler
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-cpu-hog-exec/" class="md-nav__link">
+        Pod CPU Hog Exec
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-cpu-hog/" class="md-nav__link">
+        Pod CPU Hog
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-delete/" class="md-nav__link">
+        Pod Delete
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-dns-error/" class="md-nav__link">
+        Pod Dns Error
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-dns-spoof/" class="md-nav__link">
+        Pod Dns Spoof
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-io-stress/" class="md-nav__link">
+        Pod IO Stress
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-memory-hog-exec/" class="md-nav__link">
+        Pod Memory Hog Exec
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-memory-hog/" class="md-nav__link">
+        Pod Memory Hog
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-network-corruption/" class="md-nav__link">
+        Pod Network Corruption
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-network-duplication/" class="md-nav__link">
+        Pod Network Duplication
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-network-latency/" class="md-nav__link">
+        Pod Network Latency
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-network-loss/" class="md-nav__link">
+        Pod Network Loss
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1_2" type="checkbox" id="__nav_2_2_1_2" >
+      
+      <label class="md-nav__link" for="__nav_2_2_1_2">
+        Node Chaos
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Node Chaos" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_2_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          Node Chaos
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/nodes/docker-service-kill/" class="md-nav__link">
+        Docker Service Kill
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/nodes/kubelet-service-kill/" class="md-nav__link">
+        Kubelet Service Kill
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/nodes/node-cpu-hog/" class="md-nav__link">
+        Node CPU Hog
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/nodes/node-drain/" class="md-nav__link">
+        Node Drain
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/nodes/node-io-stress/" class="md-nav__link">
+        Node IO Stress
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/nodes/node-memory-hog/" class="md-nav__link">
+        Node Memory Hog
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/nodes/node-restart/" class="md-nav__link">
+        Node Restart
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/nodes/node-taint/" class="md-nav__link">
+        Node Taint
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_2" type="checkbox" id="__nav_2_2_2" >
+      
+      <label class="md-nav__link" for="__nav_2_2_2">
+        Kafka
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Kafka" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Kafka
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/kafka/kafka-broker-pod-failure/" class="md-nav__link">
+        Kafka Broker Pod Failure
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_3" type="checkbox" id="__nav_2_2_3" >
+      
+      <label class="md-nav__link" for="__nav_2_2_3">
+        Cassandra
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Cassandra" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cassandra
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/cassandra/cassandra-pod-delete/" class="md-nav__link">
+        Cassandra Pod Delete
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      <label class="md-nav__link" for="__nav_2_3">
+        Cloud Infrastructure
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Cloud Infrastructure" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cloud Infrastructure
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1" type="checkbox" id="__nav_2_3_1" >
+      
+      <label class="md-nav__link" for="__nav_2_3_1">
+        AWS
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="AWS" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          AWS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_1" type="checkbox" id="__nav_2_3_1_1" >
+      
+      <label class="md-nav__link" for="__nav_2_3_1_1">
+        EC2
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="EC2" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          EC2
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/aws/ec2-terminate-by-id/" class="md-nav__link">
+        EC2 Terminate By ID
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/aws/ec2-terminate-by-tag/" class="md-nav__link">
+        EC2 Terminate By Tag
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_2" type="checkbox" id="__nav_2_3_1_2" >
+      
+      <label class="md-nav__link" for="__nav_2_3_1_2">
+        EBS
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="EBS" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          EBS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/aws/ebs-loss-by-id/" class="md-nav__link">
+        EBS Loss By ID
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/aws/ebs-loss-by-tag/" class="md-nav__link">
+        EBS Loss By Tag
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_1_3" type="checkbox" id="__nav_2_3_1_3" >
+      
+      <label class="md-nav__link" for="__nav_2_3_1_3">
+        AWS SSM
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="AWS SSM" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          AWS SSM
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/aws-ssm/aws-ssm-chaos-by-id/" class="md-nav__link">
+        AWS SSM Chaos By ID
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/aws-ssm/aws-ssm-chaos-by-tag/" class="md-nav__link">
+        AWS SSM Chaos By Tag
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_2" type="checkbox" id="__nav_2_3_2" >
+      
+      <label class="md-nav__link" for="__nav_2_3_2">
+        VMWare
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="VMWare" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          VMWare
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/vmware/vm-poweroff/" class="md-nav__link">
+        VM Poweroff
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_3" type="checkbox" id="__nav_2_3_3" >
+      
+      <label class="md-nav__link" for="__nav_2_3_3">
+        Azure
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Azure" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Azure
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/azure/azure-instance-stop/" class="md-nav__link">
+        Azure Instance Stop
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4" type="checkbox" id="__nav_2_3_4" >
+      
+      <label class="md-nav__link" for="__nav_2_3_4">
+        GCP
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="GCP" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          GCP
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/gcp/gcp-vm-instance-stop/" class="md-nav__link">
+        GCP Instance Stop
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/gcp/gcp-vm-disk-loss/" class="md-nav__link">
+        GCP Disk Loss
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      <label class="md-nav__link" for="__nav_3">
+        Chaos Resources
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Chaos Resources" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Chaos Resources
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/contents/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      <label class="md-nav__link" for="__nav_3_2">
+        ChaosEngine
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="ChaosEngine" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          ChaosEngine
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-engine/contents/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-engine/engine-state/" class="md-nav__link">
+        State Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-engine/application-details/" class="md-nav__link">
+        Application Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-engine/rbac-details/" class="md-nav__link">
+        RBAC Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-engine/runtime-details/" class="md-nav__link">
+        Runtime Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-engine/runner-components/" class="md-nav__link">
+        Runner Specifications
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-engine/experiment-components/" class="md-nav__link">
+        Experiment Specifications
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      <label class="md-nav__link" for="__nav_3_3">
+        ChaosExperiment
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="ChaosExperiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          ChaosExperiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-experiment/contents/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      <label class="md-nav__link" for="__nav_3_4">
+        ChaosResult
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="ChaosResult" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          ChaosResult
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-result/contents/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+      
+      <label class="md-nav__link" for="__nav_3_5">
+        ChaosScheduler
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="ChaosScheduler" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          ChaosScheduler
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-scheduler/contents/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_6" type="checkbox" id="__nav_3_6" >
+      
+      <label class="md-nav__link" for="__nav_3_6">
+        Probes
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Probes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_6">
+          <span class="md-nav__icon md-icon"></span>
+          Probes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/probes/contents/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/probes/cmdProbe/" class="md-nav__link">
+        Command Probe
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/probes/httpProbe/" class="md-nav__link">
+        HTTP Probe
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/probes/k8sProbe/" class="md-nav__link">
+        K8S Probe
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/probes/promProbe/" class="md-nav__link">
+        Prometheus Probe
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      <label class="md-nav__link" for="__nav_4">
+        Litmus FAQ
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Litmus FAQ" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Litmus FAQ
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
+      
+      <label class="md-nav__link" for="__nav_4_1">
+        General
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="General" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          General
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Experiments
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Experiments
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#node-memory-hog-experiments-pod-oom-killed-even-before-the-kubelet-sees-the-memory-stress" class="md-nav__link">
+    Node memory hog experiment's pod OOM Killed even before the kubelet sees the memory stress?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pod-network-corruption-and-pod-network-loss-both-experiments-force-network-packet-loss-is-it-worthwhile-trying-out-both-experiments-in-a-scheduled-chaos-test" class="md-nav__link">
+    Pod-network-corruption and pod-network-loss both experiments force network packet loss - is it worthwhile trying out both experiments in a scheduled chaos test?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-is-the-packet-loss-achieved-in-pod-network-loss-and-corruption-experiments-what-are-the-internals-of-it" class="md-nav__link">
+    How is the packet loss achieved in pod-network loss and corruption experiments? What are the internals of it?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-difference-between-pod-memorycpu-hog-vs-pod-memorycpu-hog-exec" class="md-nav__link">
+    What's the difference between pod-memory/cpu-hog vs pod-memory/cpu-hog-exec?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-are-the-typical-probes-used-for-pod-network-related-experiments" class="md-nav__link">
+    What are the typical probes used for pod-network related experiments?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#litmus-provides-multiple-libs-to-run-some-chaos-experiments-like-stress-chaos-and-network-chaos-so-which-library-should-be-preferred-to-use" class="md-nav__link">
+    Litmus provides multiple libs to run some chaos experiments like stress-chaos and network chaos so which library should be preferred to use?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-run-chaos-experiment-programatically-using-apis" class="md-nav__link">
+    How to run chaos experiment programatically using apis?
+  </a>
+  
+    <nav class="md-nav" aria-label="How to run chaos experiment programatically using apis?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-chaosengine" class="md-nav__link">
+    Create ChaosEngine:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-chaosengine-status" class="md-nav__link">
+    Read ChaosEngine status:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-chaosengine-spec" class="md-nav__link">
+    Update ChaosEngine Spec:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-the-chaosengine-resource" class="md-nav__link">
+    Delete the ChaosEngine resource:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#similarly-to-check-the-resultsverdict-of-the-experiment-from-chaosresult-you-could-use" class="md-nav__link">
+    Similarly, to check the results/verdict of the experiment from ChaosResult, you could use:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes-by-default-has-built-in-features-like-replicasetdeployment-to-prevent-service-unavailability-continuous-curl-from-the-httpprobe-on-litmus-should-not-fail-in-case-of-container-kill-pod-delete-and-oom-due-to-pod-memory-hog-then-why-do-we-need-cpu-io-and-network-related-chaos-experiments" class="md-nav__link">
+    Kubernetes by default has built-in features like replicaset/deployment to prevent service unavailability (continuous curl from the httpProbe on litmus should not fail) in case of container kill, pod delete and OOM due to pod-memory-hog then why do we need CPU, IO and network related chaos experiments?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-experiment-is-not-targeting-all-pods-with-the-given-label-it-just-selects-only-one-pod-by-default" class="md-nav__link">
+    The experiment is not targeting all pods with the given label, it just selects only one pod by default.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-we-have-a-way-to-see-what-pods-are-targeted-when-users-use-percentages" class="md-nav__link">
+    Do we have a way to see what pods are targeted when users use percentages?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-function-of-specdefinitionscope-of-a-chaosexperiment-cr" class="md-nav__link">
+    What is the function of spec.definition.scope of a ChaosExperiment CR?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-pod-network-latency-i-have-pod-a-talking-to-pod-b-over-service-b-and-i-want-to-introduce-latency-between-pod-a-and-service-b-what-would-go-into-specappinfo-section-pod-a-namespace-label-selector-and-kind-what-will-go-into-destination_ip-and-destination_host-service-b-details-what-are-the-target_pods" class="md-nav__link">
+    In Pod network latency - I have pod A talking to Pod B over Service B. and I want to introduce latency between Pod A and Service B. What would go into spec.appInfo section? Pod A namespace, label selector and kind? What will go into DESTINATION_IP and DESTINATION_HOST? Service B details? What are the TARGET_PODS?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-check-the-network_interface-and-socket_path-variable" class="md-nav__link">
+    How to check the NETWORK_INTERFACE and SOCKET_PATH variable?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-are-the-different-ways-to-target-the-pods-and-nodes-for-chaos" class="md-nav__link">
+    What are the different ways to target the pods and nodes for chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-the-pod-affected-percentage-select-the-random-set-of-pods-from-the-total-pods-under-chaos" class="md-nav__link">
+    Does the pod affected percentage select the random set of pods from the total pods under chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-extract-the-chaos-start-time-and-end-time" class="md-nav__link">
+    How to extract the chaos start time and end time?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-we-check-the-mttr-mean-time-to-recovery-for-an-application-post-chaos" class="md-nav__link">
+    How do we check the MTTR (Mean time to recovery) for an application post chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-difference-between-ramp-time-and-chaos-interval" class="md-nav__link">
+    What is the difference between Ramp Time and Chaos Interval?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error" class="md-nav__link">
+    When I’m executing an experiment the experiment's pod failed with the exec format error
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        Install
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portal/" class="md-nav__link">
+        Portal
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        Security
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      <label class="md-nav__link" for="__nav_4_2">
+        Troubleshooting
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Troubleshooting" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Troubleshooting
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/experiments/" class="md-nav__link">
+        Experiments
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/install/" class="md-nav__link">
+        Install
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/portal/" class="md-nav__link">
+        Portal
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://hub.litmuschaos.io/" class="md-nav__link">
+        Chaos Hub ⧉
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://litmusdocs-beta.netlify.app/" class="md-nav__link">
+        Platform Docs ⧉
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/litmuschaos/litmus/releases" class="md-nav__link">
+        Releases ⧉
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ROADMAP/" class="md-nav__link">
+        Roadmap
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#node-memory-hog-experiments-pod-oom-killed-even-before-the-kubelet-sees-the-memory-stress" class="md-nav__link">
+    Node memory hog experiment's pod OOM Killed even before the kubelet sees the memory stress?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pod-network-corruption-and-pod-network-loss-both-experiments-force-network-packet-loss-is-it-worthwhile-trying-out-both-experiments-in-a-scheduled-chaos-test" class="md-nav__link">
+    Pod-network-corruption and pod-network-loss both experiments force network packet loss - is it worthwhile trying out both experiments in a scheduled chaos test?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-is-the-packet-loss-achieved-in-pod-network-loss-and-corruption-experiments-what-are-the-internals-of-it" class="md-nav__link">
+    How is the packet loss achieved in pod-network loss and corruption experiments? What are the internals of it?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-difference-between-pod-memorycpu-hog-vs-pod-memorycpu-hog-exec" class="md-nav__link">
+    What's the difference between pod-memory/cpu-hog vs pod-memory/cpu-hog-exec?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-are-the-typical-probes-used-for-pod-network-related-experiments" class="md-nav__link">
+    What are the typical probes used for pod-network related experiments?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#litmus-provides-multiple-libs-to-run-some-chaos-experiments-like-stress-chaos-and-network-chaos-so-which-library-should-be-preferred-to-use" class="md-nav__link">
+    Litmus provides multiple libs to run some chaos experiments like stress-chaos and network chaos so which library should be preferred to use?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-run-chaos-experiment-programatically-using-apis" class="md-nav__link">
+    How to run chaos experiment programatically using apis?
+  </a>
+  
+    <nav class="md-nav" aria-label="How to run chaos experiment programatically using apis?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-chaosengine" class="md-nav__link">
+    Create ChaosEngine:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-chaosengine-status" class="md-nav__link">
+    Read ChaosEngine status:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-chaosengine-spec" class="md-nav__link">
+    Update ChaosEngine Spec:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-the-chaosengine-resource" class="md-nav__link">
+    Delete the ChaosEngine resource:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#similarly-to-check-the-resultsverdict-of-the-experiment-from-chaosresult-you-could-use" class="md-nav__link">
+    Similarly, to check the results/verdict of the experiment from ChaosResult, you could use:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes-by-default-has-built-in-features-like-replicasetdeployment-to-prevent-service-unavailability-continuous-curl-from-the-httpprobe-on-litmus-should-not-fail-in-case-of-container-kill-pod-delete-and-oom-due-to-pod-memory-hog-then-why-do-we-need-cpu-io-and-network-related-chaos-experiments" class="md-nav__link">
+    Kubernetes by default has built-in features like replicaset/deployment to prevent service unavailability (continuous curl from the httpProbe on litmus should not fail) in case of container kill, pod delete and OOM due to pod-memory-hog then why do we need CPU, IO and network related chaos experiments?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-experiment-is-not-targeting-all-pods-with-the-given-label-it-just-selects-only-one-pod-by-default" class="md-nav__link">
+    The experiment is not targeting all pods with the given label, it just selects only one pod by default.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-we-have-a-way-to-see-what-pods-are-targeted-when-users-use-percentages" class="md-nav__link">
+    Do we have a way to see what pods are targeted when users use percentages?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-function-of-specdefinitionscope-of-a-chaosexperiment-cr" class="md-nav__link">
+    What is the function of spec.definition.scope of a ChaosExperiment CR?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-pod-network-latency-i-have-pod-a-talking-to-pod-b-over-service-b-and-i-want-to-introduce-latency-between-pod-a-and-service-b-what-would-go-into-specappinfo-section-pod-a-namespace-label-selector-and-kind-what-will-go-into-destination_ip-and-destination_host-service-b-details-what-are-the-target_pods" class="md-nav__link">
+    In Pod network latency - I have pod A talking to Pod B over Service B. and I want to introduce latency between Pod A and Service B. What would go into spec.appInfo section? Pod A namespace, label selector and kind? What will go into DESTINATION_IP and DESTINATION_HOST? Service B details? What are the TARGET_PODS?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-check-the-network_interface-and-socket_path-variable" class="md-nav__link">
+    How to check the NETWORK_INTERFACE and SOCKET_PATH variable?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-are-the-different-ways-to-target-the-pods-and-nodes-for-chaos" class="md-nav__link">
+    What are the different ways to target the pods and nodes for chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-the-pod-affected-percentage-select-the-random-set-of-pods-from-the-total-pods-under-chaos" class="md-nav__link">
+    Does the pod affected percentage select the random set of pods from the total pods under chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-extract-the-chaos-start-time-and-end-time" class="md-nav__link">
+    How to extract the chaos start time and end time?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-we-check-the-mttr-mean-time-to-recovery-for-an-application-post-chaos" class="md-nav__link">
+    How do we check the MTTR (Mean time to recovery) for an application post chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-difference-between-ramp-time-and-chaos-interval" class="md-nav__link">
+    What is the difference between Ramp Time and Chaos Interval?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error" class="md-nav__link">
+    When I’m executing an experiment the experiment's pod failed with the exec format error
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/faq/experiments.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="the-what-why-how-of-litmus">The What, Why &amp; How of Litmus<a class="headerlink" href="#the-what-why-how-of-litmus" title="Permanent link">&para;</a></h1>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><a href="#node-memory-hog-experiments-pod-oom-killed-even-before-the-kubelet-sees-the-memory-stress">Node memory hog experiment's pod OOM Killed even before the kubelet sees the memory stress?</a></p>
+</li>
+<li>
+<p><a href="#pod-network-corruption-and-pod-network-loss-both-experiments-force-network-packet-loss-is-it-worthwhile-trying-out-both-experiments-in-a-scheduled-chaos-test">Pod-network-corruption and pod-network-loss both experiments force network packet loss - is it worthwhile trying out both experiments in a scheduled chaos test?</a></p>
+</li>
+<li>
+<p><a href="#how-is-the-packet-loss-achieved-in-pod-network-loss-and-corruption-experiments-what-are-the-internals-of-it">How is the packet loss achieved in pod-network loss and corruption experiments? What are the internals of it?</a></p>
+</li>
+<li>
+<p><a href="#whats-the-difference-between-pod-memorycpu-hog-vs-pod-memorycpu-hog-exec">What's the difference between pod-memory/cpu-hog vs pod-memory/cpu-hog-exec?</a></p>
+</li>
+<li>
+<p><a href="#what-are-the-typical-probes-used-for-pod-network-related-experiments">What are the typical probes used for pod-network related experiments?</a></p>
+</li>
+<li>
+<p><a href="#litmus-provides-multiple-libs-to-run-some-chaos-experiments-like-stress-chaos-and-network-chaos-so-which-library-should-be-preferred-to-use">Litmus provides multiple libs to run some chaos experiments like stress-chaos and network chaos so which library should be preferred to use?</a></p>
+</li>
+<li>
+<p><a href="#how-to-run-chaos-experiment-programatically-using-apis">How to run chaos experiment programatically using apis?</a></p>
+</li>
+<li>
+<p><a href="#kubernetes-by-default-has-built-in-features-like-replicasetdeployment-to-prevent-service-unavailability-continuous-curl-from-the-httpprobe-on-litmus-should-not-fail-in-case-of-container-kill-pod-delete-and-oom-due-to-pod-memory-hog-then-why-do-we-need-cpu-io-and-network-related-chaos-experiments">Kubernetes by default has built-in features like replicaset/deployment to prevent service unavailability (continuous curl from the httpProbe on litmus should not fail) in case of container kill, pod delete and OOM due to pod-memory-hog then why do we need CPU, IO and network related chaos experiments?</a></p>
+</li>
+<li>
+<p><a href="#the-experiment-is-not-targeting-all-pods-with-the-given-label-it-just-selects-only-one-pod-by-default">The experiment is not targeting all pods with the given label, it just selects only one pod by default</a></p>
+</li>
+<li>
+<p><a href="#do-we-have-a-way-to-see-what-pods-are-targeted-when-users-use-percentages">Do we have a way to see what pods are targeted when users use percentages?</a></p>
+</li>
+<li>
+<p><a href="#what-is-the-function-of-specdefinitionscope-of-a-chaosexperiment-cr">What is the function of spec.definition.scope of a ChaosExperiment CR?</a></p>
+</li>
+<li>
+<p><a href="#pod-network-latency-i-have-pod-a-talking-to-pod-b-over-service-b-and-i-want-to-introduce-latency-between-pod-a-and-service-b-what-would-go-into-specappinfo-section-pod-a-namespace-label-selector-and-kind-what-will-go-into-destination_ip-and-destination_host-service-b-details-what-are-the-target_pods">Pod network latency -- I have pod A talking to Pod B over Service B. and I want to introduce latency between Pod A and Service B. What would go into spec.appInfo section? Pod A namespace, label selector and kind? What will go into DESTINATION_IP and DESTINATION_HOST? Service B details? What are the TARGET_PODS?</a></p>
+</li>
+<li>
+<p><a href="#how-to-check-the-network_interface-and-socket_path-variable">How to check the NETWORK_INTERFACE and SOCKET_PATH variable?</a></p>
+</li>
+<li>
+<p><a href="#what-are-the-different-ways-to-target-the-pods-and-nodes-for-chaos">What are the different ways to target the pods and nodes for chaos?</a></p>
+</li>
+<li>
+<p><a href="#does-the-pod-affected-perc-select-the-random-set-of-pods-from-the-total-pods-under-chaos">Does the pod affected perc select the random set of pods from the total pods under chaos?</a></p>
+</li>
+<li>
+<p><a href="#how-to-extract-the-chaos-start-time-and-end-time">How to extract the chaos start time and end time?</a></p>
+</li>
+<li>
+<p><a href="#how-do-we-check-the-mttr-mean-time-to-recovery-for-an-application-post-chaos">How do we check the MTTR (Mean time to recovery) for an application post chaos?</a></p>
+</li>
+<li>
+<p><a href="#what-is-the-difference-between-ramp-time-and-chaos-interval">What is the difference between Ramp Time and Chaos Interval?</a></p>
+</li>
+<li>
+<p><a href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error">When I’m executing an experiment the experiment's pod failed with the exec format error</a></p>
+</li>
+</ol>
+<hr>
+
+<h3 id="node-memory-hog-experiments-pod-oom-killed-even-before-the-kubelet-sees-the-memory-stress">Node memory hog experiment's pod OOM Killed even before the kubelet sees the memory stress?<a class="headerlink" href="#node-memory-hog-experiments-pod-oom-killed-even-before-the-kubelet-sees-the-memory-stress" title="Permanent link">&para;</a></h3>
+<p>The experiment takes a percentage of the total memory capacity of the Node. The helper pod runs on the target node to stress the resources of that node. So The experiment will not consume/hog the memory resources greater than the total memory available on Node. In other words there will always be an upper limit for the amount of memory to be consumed, which equal to the total available memory. Please refer to this <a href="https://dev.to/uditgaurav/litmuschaos-node-memory-hog-experiment-2nj6">blog</a> for more details.</p>
+<h3 id="pod-network-corruption-and-pod-network-loss-both-experiments-force-network-packet-loss-is-it-worthwhile-trying-out-both-experiments-in-a-scheduled-chaos-test">Pod-network-corruption and pod-network-loss both experiments force network packet loss - is it worthwhile trying out both experiments in a scheduled chaos test?<a class="headerlink" href="#pod-network-corruption-and-pod-network-loss-both-experiments-force-network-packet-loss-is-it-worthwhile-trying-out-both-experiments-in-a-scheduled-chaos-test" title="Permanent link">&para;</a></h3>
+<p>Yes, ultimately these are different ways to simulate a degraded network. Both cases are expected to typically cause retransmissions (for tcp). The extent of degradation depends on the percentage of loss/corruption</p>
+<h3 id="how-is-the-packet-loss-achieved-in-pod-network-loss-and-corruption-experiments-what-are-the-internals-of-it">How is the packet loss achieved in pod-network loss and corruption experiments? What are the internals of it?<a class="headerlink" href="#how-is-the-packet-loss-achieved-in-pod-network-loss-and-corruption-experiments-what-are-the-internals-of-it" title="Permanent link">&para;</a></h3>
+<p>The experiment causes network degradation without the pod being marked unhealthy/unworthy of traffic by kube-proxy (unless you have a liveness probe of sorts that measures latency and restarts/crashes the container)
+The idea of this exp is to simulate issues within your pod-network OR microservice communication across services in different availability zones/regions etc..,
+Mitigation (in this case keep the timeout i.e., access latency low) could be via some middleware that can switch traffic based on some SLOs/perf parameters. If such an arrangement is not available - the next best thing would be to verify if such a degradation is highlighted via notification/alerts etc,. so the admin/SRE has the opportunity to investigate and fix things.
+Another utility of the test would be to see what the extent of impact caused to the end-user OR the last point in the app stack on account of degradation in access to a downstream/dependent microservice. Whether it is acceptable OR breaks the system to an unacceptable degree.</p>
+<p>The args passed to the tc netem command run against the target container changes depending on the type of n/w fault</p>
+<h3 id="whats-the-difference-between-pod-memorycpu-hog-vs-pod-memorycpu-hog-exec">What's the difference between pod-memory/cpu-hog vs pod-memory/cpu-hog-exec?<a class="headerlink" href="#whats-the-difference-between-pod-memorycpu-hog-vs-pod-memorycpu-hog-exec" title="Permanent link">&para;</a></h3>
+<p>The pod cpu and memory chaos experiment till now (version 1.13.7) was using an exec mode of execution which means - we were execing inside the specified target container and launching process like <code>md5sum</code> and <code>dd</code> to consume the cpu and memory respectively. This is done by providing <code>CHAOS_INJECT_COMMAND</code> and <code>CHAOS-KILL-COMMAND</code> in chaosengine CR. But we have some limitations of using this method. Those were:
+    - The chaos inject and kill command are highly dependent on the base image of the target container and may work for some and for others you may have to derive it manually and use it.
+    - For scratch images that don't expose shells we couldn't execute the chaos.</p>
+<p>To overcome this - The stress-chaos experiments (cpu, memory and io) are enhanced to use a non exec mode of chaos execution. It makes use of target container cgroup for the resource allocation and container pid namespace for showing the stress-ng process in target container. This <code>stress-ng</code> process will consume the resources on the target container without doing an exec. The new enhanced experiments are available from litmus 1.13.8 version.</p>
+<h3 id="what-are-the-typical-probes-used-for-pod-network-related-experiments">What are the typical probes used for pod-network related experiments?<a class="headerlink" href="#what-are-the-typical-probes-used-for-pod-network-related-experiments" title="Permanent link">&para;</a></h3>
+<p>Precisely the role of the experiment. Cause n/w degradation w/o the pod being marked unhealthy/unworthy of traffic by kube-proxy (unless you have a liveness probe of sorts that measures latency and restarts/crashes the container)
+The idea of this exp is to simulate issues within your pod-network OR microservice communication across services in diff availability zones/regions etc..,</p>
+<p>Mitigation (in this case keep the timeout i.e., access latency low) could be via some middleware that can switch traffic based on some SLOs/perf parameters. If such an arrangement is not available - the next best thing would be to verify if such a degradation is highlighted via notification/alerts etc,. so the admin/SRE has the opportunity to investigate and fix things.</p>
+<p>Another utility of the test would be to see what the extent of impact caused to the end-user OR the last point in the app stack on account of degradation in access to a downstream/dependent microservice. Whether it is acceptable OR breaks the system to an unacceptable degree</p>
+<h3 id="litmus-provides-multiple-libs-to-run-some-chaos-experiments-like-stress-chaos-and-network-chaos-so-which-library-should-be-preferred-to-use">Litmus provides multiple libs to run some chaos experiments like stress-chaos and network chaos so which library should be preferred to use?<a class="headerlink" href="#litmus-provides-multiple-libs-to-run-some-chaos-experiments-like-stress-chaos-and-network-chaos-so-which-library-should-be-preferred-to-use" title="Permanent link">&para;</a></h3>
+<p>The optional libs (like Pumba) is more of an illustration of how you can use 3<sup>rd</sup> party tools with litmus. Called the BYOC (Bring Your Own Chaos). The preferred LIB is <code>litmus</code>.</p>
+<h3 id="how-to-run-chaos-experiment-programatically-using-apis">How to run chaos experiment programatically using apis?<a class="headerlink" href="#how-to-run-chaos-experiment-programatically-using-apis" title="Permanent link">&para;</a></h3>
+<p>To directly consume/manipulate the chaos resources (i.e., chaosexperiment, chaosengine or chaosresults) via API - you can directly use the kube API. The CRDs by default provide us with an API endpoint. You can use any generic client implementation (go/python are most used ones) to access them. In case you use go, there is a clientset available as well: <a href="https://github.com/litmuschaos/chaos-operator/tree/master/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1">go-client</a></p>
+<p>Here are some simple CRUD ops against chaosresources you could construct with curl (I have used kubectl proxy, one could use an auth token instead)- just for illustration purposes.</p>
+<h4 id="create-chaosengine">Create ChaosEngine:<a class="headerlink" href="#create-chaosengine" title="Permanent link">&para;</a></h4>
+<p>For example, assume this is the <a href="https://gist.github.com/ksatchit/7426f2c24a48e3aedbe79b5547d817b3">engine spec</a></p>
+<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines -XPOST -H &#39;Content-Type: application/json&#39; -d@pod-delete-chaosengine-trigger.json</span>
+</code></pre></div>
+<h4 id="read-chaosengine-status">Read ChaosEngine status:<a class="headerlink" href="#read-chaosengine-status" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/nginx-chaos | jq &#39;.status.engineStatus, .status.experiments[].verdict&#39;</span>
+</code></pre></div>
+<h4 id="update-chaosengine-spec">Update ChaosEngine Spec:<a class="headerlink" href="#update-chaosengine-spec" title="Permanent link">&para;</a></h4>
+<p>(say, this is the patch: <a href="https://gist.github.com/ksatchit/be54955a1f4231314797f25361ac488d">https://gist.github.com/ksatchit/be54955a1f4231314797f25361ac488d</a>)</p>
+<div class="highlight"><pre><span></span><code><span class="go">curl --header &quot;Content-Type: application/json-patch+json&quot; --request PATCH --data &#39;[{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;/spec/engineState&quot;, &quot;value&quot;: &quot;stop&quot;}]&#39; http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/nginx-chaos</span>
+</code></pre></div>
+<h4 id="delete-the-chaosengine-resource">Delete the ChaosEngine resource:<a class="headerlink" href="#delete-the-chaosengine-resource" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="go">curl -X DELETE localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/nginx-chaos \</span>
+<span class="go">-d &#39;{&quot;kind&quot;:&quot;DeleteOptions&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,&quot;propagationPolicy&quot;:&quot;Foreground&quot;}&#39; \</span>
+<span class="go">-H &quot;Content-Type: application/json&quot;</span>
+</code></pre></div>
+<h4 id="similarly-to-check-the-resultsverdict-of-the-experiment-from-chaosresult-you-could-use">Similarly, to check the results/verdict of the experiment from ChaosResult, you could use:<a class="headerlink" href="#similarly-to-check-the-resultsverdict-of-the-experiment-from-chaosresult-you-could-use" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosresults/nginx-chaos-pod-delete | jq &#39;.status.experimentStatus.verdict, .status.experimentStatus.probeSuccessPercentage&#39;</span>
+</code></pre></div>
+<h3 id="kubernetes-by-default-has-built-in-features-like-replicasetdeployment-to-prevent-service-unavailability-continuous-curl-from-the-httpprobe-on-litmus-should-not-fail-in-case-of-container-kill-pod-delete-and-oom-due-to-pod-memory-hog-then-why-do-we-need-cpu-io-and-network-related-chaos-experiments">Kubernetes by default has built-in features like replicaset/deployment to prevent service unavailability (continuous curl from the httpProbe on litmus should not fail) in case of container kill, pod delete and OOM due to pod-memory-hog then why do we need CPU, IO and network related chaos experiments?<a class="headerlink" href="#kubernetes-by-default-has-built-in-features-like-replicasetdeployment-to-prevent-service-unavailability-continuous-curl-from-the-httpprobe-on-litmus-should-not-fail-in-case-of-container-kill-pod-delete-and-oom-due-to-pod-memory-hog-then-why-do-we-need-cpu-io-and-network-related-chaos-experiments" title="Permanent link">&para;</a></h3>
+<p>There are some scenarios that can still occur despite whatever availability aids K8s provides. For example, take disk usage or CPU hogs -- problems you would generally refer to as "Noisy Neighbour"  problems.
+Stressing the disk w/ continuous and heavy I/O for example can cause degradation in reads and  writes performed by other microservices that use this shared disk - for example. (modern storage solutions for Kubernetes use the concept of storage pools out of which virtual volumes/devices are carved out).  Another issue is the amount of scratch space eaten up on a node - leading to lack of space for newer containers to get scheduled (kubernetes too gives up by applying an "eviction" taint like "disk-pressure") and causes a wholesale movement of all pods to other nodes.
+Similarly w/ CPU chaos -- by injecting a rogue process into a target container, we starve the main microservice process (typically pid 1) of the resources allocated to it (where limits are defined) causing slowness in app traffic OR in other cases unrestrained use can cause node to exhaust resources leading to eviction of all pods.</p>
+<h3 id="the-experiment-is-not-targeting-all-pods-with-the-given-label-it-just-selects-only-one-pod-by-default">The experiment is not targeting all pods with the given label, it just selects only one pod by default.<a class="headerlink" href="#the-experiment-is-not-targeting-all-pods-with-the-given-label-it-just-selects-only-one-pod-by-default" title="Permanent link">&para;</a></h3>
+<p>Yes. You can use either <code>the PODS_AFFECTED_PERCENTAGE</code> or <code>TARGET_PODS</code> env to select multiple pods. Refer: <a href="https://docs.litmuschaos.io/docs/pod-network-loss/#supported-experiment-tunables">experiment tunable envs</a>.</p>
+<h3 id="do-we-have-a-way-to-see-what-pods-are-targeted-when-users-use-percentages">Do we have a way to see what pods are targeted when users use percentages?<a class="headerlink" href="#do-we-have-a-way-to-see-what-pods-are-targeted-when-users-use-percentages" title="Permanent link">&para;</a></h3>
+<p>We can view the target pods from the experiment logs or inside chaos results.</p>
+<h3 id="what-is-the-function-of-specdefinitionscope-of-a-chaosexperiment-cr">What is the function of spec.definition.scope of a ChaosExperiment CR?<a class="headerlink" href="#what-is-the-function-of-specdefinitionscope-of-a-chaosexperiment-cr" title="Permanent link">&para;</a></h3>
+<p>The <code>spec.definition.scope</code> &amp; <code>.spec.definition.permissions</code> is mostly for indicative/illustration purposes (for external tools to identify and validate what are the permissions associated to run the exp). By itself, it doesn't influence how and where an exp can be used.One could remove these fields if needed (of course along w/ the crd validation) and store these manifests if desired.</p>
+<h3 id="in-pod-network-latency-i-have-pod-a-talking-to-pod-b-over-service-b-and-i-want-to-introduce-latency-between-pod-a-and-service-b-what-would-go-into-specappinfo-section-pod-a-namespace-label-selector-and-kind-what-will-go-into-destination_ip-and-destination_host-service-b-details-what-are-the-target_pods">In Pod network latency - I have pod A talking to Pod B over Service B. and I want to introduce latency between Pod A and Service B. What would go into spec.appInfo section? Pod A namespace, label selector and kind? What will go into DESTINATION_IP and DESTINATION_HOST? Service B details? What are the TARGET_PODS?<a class="headerlink" href="#in-pod-network-latency-i-have-pod-a-talking-to-pod-b-over-service-b-and-i-want-to-introduce-latency-between-pod-a-and-service-b-what-would-go-into-specappinfo-section-pod-a-namespace-label-selector-and-kind-what-will-go-into-destination_ip-and-destination_host-service-b-details-what-are-the-target_pods" title="Permanent link">&para;</a></h3>
+<p>It will target the <code>[1:total_replicas]</code>(based on PODS_AFFECTED_PERC) numbers of random pods with matching labels(appinfo.applabel) and namespace(appinfo.appns). But if you want to target a specific pod then you can provide their names as a comma separated list inside <code>TARGET_PODS</code>.
+Yes, you can provide service B details inside <code>DESTINATION_IPS</code> or <code>DESTINATION_HOSTS</code>. The <code>NETWORK_INTERFACE</code> should be <code>eth0</code>.</p>
+<h3 id="how-to-check-the-network_interface-and-socket_path-variable">How to check the NETWORK_INTERFACE and SOCKET_PATH variable?<a class="headerlink" href="#how-to-check-the-network_interface-and-socket_path-variable" title="Permanent link">&para;</a></h3>
+<p>The <code>NETWORK_INTERFACE</code> is the interface name inside the pod/container that needs to be targeted. You can find it by execing into the target pod and checking the available interfaces. You can try <code>ip link</code>, <code>iwconfig</code> , <code>ifconfig</code> depending on the tools installed in the pod either of those could work.</p>
+<p>The <code>SOCKET_PATH</code> by default takes the docker socket path. If you are using something else like containerd, crio or have a different socket path by any chance you can specify it. This is required to communicate with the container runtime of your cluster. 
+In addition to this if container-runtime is different then provide the name of container runtime inside <code>CONTAINER_RUNTIME</code> ENV. It supports <code>docker</code>, <code>containerd</code>, and <code>crio</code> runtimes.    </p>
+<h3 id="what-are-the-different-ways-to-target-the-pods-and-nodes-for-chaos">What are the different ways to target the pods and nodes for chaos?<a class="headerlink" href="#what-are-the-different-ways-to-target-the-pods-and-nodes-for-chaos" title="Permanent link">&para;</a></h3>
+<p>The different ways are: </p>
+<p>Pod Chaos: 
+    - <code>Appinfo</code>: Provide the target pod labels in the chaos engine appinfo section.
+    - <code>TARGET_PODS</code>: You can provide the target pod names as a Comma Separated Variable. Like pod1,pod2.</p>
+<p>Node Chaos:
+    - <code>TARGET_NODE</code> or <code>TARGET_NODES</code>: Provide the target node or nodes in these envs.
+    - <code>NODE_LABEL</code>: Provide the label of the target nodes.</p>
+<h3 id="does-the-pod-affected-percentage-select-the-random-set-of-pods-from-the-total-pods-under-chaos">Does the pod affected percentage select the random set of pods from the total pods under chaos?<a class="headerlink" href="#does-the-pod-affected-percentage-select-the-random-set-of-pods-from-the-total-pods-under-chaos" title="Permanent link">&para;</a></h3>
+<p>Yes, it selects the random pods based on the <code>POD_AFFACTED_PERC</code> ENV. In pod-delete experiment it selects random pods for each iterations of chaos. But for rest of the experiments(if it supports iterations) then it will select random pods once and use the same set of pods for remaining iterations.</p>
+<h3 id="how-to-extract-the-chaos-start-time-and-end-time">How to extract the chaos start time and end time?<a class="headerlink" href="#how-to-extract-the-chaos-start-time-and-end-time" title="Permanent link">&para;</a></h3>
+<p>We can use the Chaos exporter metrics for the same. One can also visualise these events along with time in chaos engine events.</p>
+<h3 id="how-do-we-check-the-mttr-mean-time-to-recovery-for-an-application-post-chaos">How do we check the MTTR (Mean time to recovery) for an application post chaos?<a class="headerlink" href="#how-do-we-check-the-mttr-mean-time-to-recovery-for-an-application-post-chaos" title="Permanent link">&para;</a></h3>
+<p>The MTTR can be validated by using statusCheck Timeout in the chaos engine. By default its value will be 180 seconds. We can also overwrite this using ChaosEngine. For more details refer <a href="https://litmuschaos.github.io/litmus/experiments/chaos-resources/experiment-components/#experiment-status-check-timeout">this</a></p>
+<h3 id="what-is-the-difference-between-ramp-time-and-chaos-interval">What is the difference between Ramp Time and Chaos Interval?<a class="headerlink" href="#what-is-the-difference-between-ramp-time-and-chaos-interval" title="Permanent link">&para;</a></h3>
+<p>The ramp time is the time duration to wait before and after injection of chaos in seconds. While the chaos interval is the time interval (in second) between successive chaos iterations.</p>
+<h3 id="when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error">When I’m executing an experiment the experiment's pod failed with the exec format error<a class="headerlink" href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error" title="Permanent link">&para;</a></h3>
+<details class="info"><summary>View the error message</summary><div class="highlight"><pre><span></span><code>standard_init_linux.go:211: exec user process caused &quot;exec format error&quot;:
+</code></pre></div>
+</details>
+<p>There could be multiple reasons for this. The most common one is mismatched in the binary and the platform on which it is running, try to check out the image binary you're using should have the support for the platform on which you’re trying to run the experiment.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+
+<!-- Footer -->
+<footer class="md-footer">
+
+
+    <!-- Link to previous and/or next page -->
+    
+    <nav
+        class="md-footer__inner md-grid"
+        aria-label="Footer"
+    >
+
+        <!-- Link to previous page -->
+        
+        <a
+            href="../../chaos-resources/probes/promProbe/"
+            class="md-footer__link md-footer__link--prev"
+            rel="prev"
+        >
+            <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer__title">
+            <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                Previous
+                </span>
+                Prometheus Probe
+            </div>
+            </div>
+        </a>
+        
+
+        <!-- Link to next page -->
+        
+        <a
+            href="../install/"
+            class="md-footer__link md-footer__link--next"
+            rel="next"
+        >
+            <div class="md-footer__title">
+            <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                Next
+                </span>
+                Install
+            </div>
+            </div>
+            <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+        </a>
+        
+    </nav>
+    
+
+  <!-- Further information -->
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
+      <div class="md-footer-copyright">
+        <p style="font-size: 14px; margin-top: 15px; margin-left: 10px; color: #777288;">Copyright © 2021 LitmusChaos Authors. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    
+    
+  
+      <script src="../../../assets/javascripts/bundle.febc23d1.min.js"></script>
+      
+    
+
+
+  </body>
+</html>
