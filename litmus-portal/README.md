@@ -21,9 +21,9 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 ## **Installation**
 
 #### Applying k8s manifest
-> Litmus-2.0.0-Beta9 (Stable)
+> Litmus-2.0.0 (Stable)
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0-Beta9/docs/2.0.0-Beta/litmus-2.0.0-Beta.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0/docs/2.0.0/litmus-2.0.0.yaml
 ```
 
 Or
@@ -40,7 +40,7 @@ Or
 export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
-curl https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0-Beta9/docs/2.0.0-Beta/litmus-namespaced-2.0.0-Beta.yaml --output litmus-portal-namespaced-k8s-template.yml
+curl https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0/docs/2.0.0/litmus-namespaced-2.0.0.yaml --output litmus-portal-namespaced-k8s-template.yml
 envsubst < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
@@ -88,9 +88,9 @@ View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)</b>
 
 ### **Uninstallation**
 
-> Litmus-2.0.0-Beta9 (Stable)
+> Litmus-2.0.0 (Stable)
 ```bash
-kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0/docs/2.0.0/litmus-2.0.0.yaml
 ```
 
 Or
