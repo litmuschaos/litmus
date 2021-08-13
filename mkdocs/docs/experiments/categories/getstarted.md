@@ -1,3 +1,9 @@
+# Experiments
+
+The experiment execution is triggered upon creation of the ChaosEngine resource (various examples of which are provided under the respective experiments). Typically, these chaosengines are embedded within the 'steps' of a Litmus Chaos Workflow [here](https://litmusdocs-beta.netlify.app/). However, one may also create the chaos engines directly by hand, and the chaos-operator reconciles this resource and triggers the experiment execution.
+
+Provided below are tables with links to the individual experiment docs for easy navigation
+
 ## Kubernetes Experiments
 
 It contains chaos experiments which apply on the resources, which are running on the kubernetes cluster. It contains <code>Generic</code>, <code>Kafka</code>, <code>Cassandra</code> experiments.
@@ -32,7 +38,7 @@ Chaos actions that apply to generic Kubernetes resources are classified into thi
   </tr>
   <tr>
     <td>Pod CPU Hog Exec</td>
-    <td>Consumes CPU resources on the application container</td>
+    <td>Consumes CPU resources on the application container by invoking a utility within the app container base image</td>
     <td><a href="/litmus/experiments/categories/pods/pod-cpu-hog-exec">pod-cpu-hog-exec</a></td>
   </tr>
   <tr>
@@ -62,7 +68,7 @@ Chaos actions that apply to generic Kubernetes resources are classified into thi
   </tr>
   <tr>
     <td>Pod Memory Hog Exec</td>
-    <td>Consumes Memory resources on the application container</td>
+    <td>Consumes Memory resources on the application container by invoking a utility within the app container base image</td>
     <td><a href="/litmus/experiments/categories/pods/pod-memory-hog-exec">pod-memory-hog-exec</a></td>
   </tr>
   <tr>
@@ -166,7 +172,7 @@ While Chaos Experiments under the Generic category offer the ability to induce c
 
 <hr/>
 
-## Cloud Platforms
+##  Cloud Infrastructure
 
 Chaos experiments that inject chaos into the platform resources of Kubernetes are classified into this category. Management of platform resources vary significantly from each other, Chaos Charts may be maintained separately for each platform (For example, AWS, GCP, Azure, etc)
 
