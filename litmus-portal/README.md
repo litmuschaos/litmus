@@ -16,7 +16,7 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 
 ## **Pre-requisites**
 
--   Kubernetes 1.15 or later.
+-   Kubernetes 1.17 or later.
 
 ## **Installation**
 
@@ -84,7 +84,7 @@ Note: Default `username: admin` and `password: litmus`
 
 Litmus-Portal provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
-View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)</b>
+View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
 ### **Uninstallation**
 
@@ -108,10 +108,6 @@ export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
-
-### Build custom images
-
-- To build custom docker images for portal component refer the [build image guide](./BUILD_IMAGE.md).
 
 ##### **Additional information**
 
