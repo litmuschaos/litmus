@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#the-what-why-how-of-litmus" class="md-skip">
+        <a href="#litmus-experiments" class="md-skip">
           Skip to content
         </a>
       
@@ -216,7 +216,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../categories/getstarted/" class="md-tabs__link">
+      <a href="../../categories/content/" class="md-tabs__link">
         Experiments
       </a>
     </li>
@@ -249,18 +249,11 @@
   
   
   
-    
-
-  
-  
-  
     <li class="md-tabs__item">
-      <a href="./" class="md-tabs__link md-tabs__link--active">
+      <a href="../content/" class="md-tabs__link md-tabs__link--active">
         Litmus FAQ
       </a>
     </li>
-  
-
   
 
       
@@ -282,7 +275,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="https://litmusdocs-beta.netlify.app/" class="md-tabs__link">
+    <a href="https://docs.litmuschaos.io/" class="md-tabs__link">
       Platform Docs ⧉
     </a>
   </li>
@@ -312,6 +305,18 @@
   </li>
 
       
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../api/contents/" class="md-tabs__link">
+      API Docs
+    </a>
+  </li>
+
+      
     </ul>
   </div>
 </nav>
@@ -321,6 +326,8 @@
         <div class="md-main__inner md-grid">
           
             
+              
+                
               
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
@@ -399,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../categories/getstarted/" class="md-nav__link">
+      <a href="../../categories/content/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1596,6 +1603,18 @@
             
   
   
+  
+    <li class="md-nav__item">
+      <a href="../content/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
     
   
   
@@ -1603,18 +1622,30 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" checked>
       
-      <label class="md-nav__link" for="__nav_4_1">
-        General
+      <label class="md-nav__link" for="__nav_4_2">
+        FAQ
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="General" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_1">
+      <nav class="md-nav" aria-label="FAQ" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
           <span class="md-nav__icon md-icon"></span>
-          General
+          FAQ
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        Install
+      </a>
+    </li>
+  
+
           
             
   
@@ -1829,8 +1860,127 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error" class="md-nav__link">
-    When I’m executing an experiment the experiment's pod failed with the exec format error
+  <a href="#can-the-appkind-be-a-pod" class="md-nav__link">
+    Can the appkind be a pod?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-type-of-chaos-experiments-are-supported-by-litmus" class="md-nav__link">
+    What type of chaos experiments are supported by Litmus?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-are-the-permissions-required-to-run-litmus-chaos-experiments" class="md-nav__link">
+    What are the permissions required to run Litmus Chaos Experiments?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-scope-of-a-litmus-chaos-experiment" class="md-nav__link">
+    What is the scope of a Litmus Chaos Experiment?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to-get-started-with-running-chaos-experiments-using-litmus" class="md-nav__link">
+    To get started with running chaos experiments using Litmus?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-view-and-interpret-the-results-of-a-chaos-experiment" class="md-nav__link">
+    How to view and interpret the results of a chaos experiment?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-chaos-experiments-run-as-a-standard-set-of-pods" class="md-nav__link">
+    Do chaos experiments run as a standard set of pods?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-it-mandatory-to-annotate-application-deployments-for-chaos" class="md-nav__link">
+    Is it mandatory to annotate application deployments for chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-add-custom-annotations-as-chaos-filters" class="md-nav__link">
+    How to add Custom Annotations as chaos filters?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-it-mandatory-for-the-chaosengine-and-chaos-experiment-resources-to-exist-in-the-same-namespace" class="md-nav__link">
+    Is it mandatory for the chaosengine and chaos experiment resources to exist in the same namespace?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-the-chaos-logs-in-litmus" class="md-nav__link">
+    How to get the chaos logs in Litmus?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-litmus-support-generation-of-events-during-chaos" class="md-nav__link">
+    Does Litmus support generation of events during chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-stop-or-abort-a-chaos-experiment" class="md-nav__link">
+    How to stop or abort a chaos experiment?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-a-chaos-experiment-be-resumed-once-stopped-or-aborted" class="md-nav__link">
+    Can a chaos experiment be resumed once stopped or aborted?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-restart-chaosengine-after-graceful-completion" class="md-nav__link">
+    How to restart chaosengine after graceful completion?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-litmus-support-any-chaos-metrics-for-experiments" class="md-nav__link">
+    Does Litmus support any chaos metrics for experiments?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-litmus-track-any-usage-metrics-on-the-test-clusters" class="md-nav__link">
+    Does Litmus track any usage metrics on the test clusters?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-choose-between-minchaosinterval-and-instancecount" class="md-nav__link">
+    What to choose between minChaosInterval and instanceCount?
   </a>
   
 </li>
@@ -1853,18 +2003,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/" class="md-nav__link">
-        Install
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../portal/" class="md-nav__link">
         Portal
       </a>
@@ -1877,8 +2015,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler/" class="md-nav__link">
+        Scheduler
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../security/" class="md-nav__link">
         Security
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ci-cd/" class="md-nav__link">
+        CI/CD
       </a>
     </li>
   
@@ -1898,30 +2060,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
       
-      <label class="md-nav__link" for="__nav_4_2">
+      <label class="md-nav__link" for="__nav_4_3">
         Troubleshooting
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Troubleshooting" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_2">
+        <label class="md-nav__title" for="__nav_4_3">
           <span class="md-nav__icon md-icon"></span>
           Troubleshooting
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../troubleshooting/experiments/" class="md-nav__link">
-        Experiments
-      </a>
-    </li>
-  
-
           
             
   
@@ -1940,8 +2090,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../troubleshooting/experiments/" class="md-nav__link">
+        Experiments
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../troubleshooting/portal/" class="md-nav__link">
         Portal
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/scheduler/" class="md-nav__link">
+        Scheduler
       </a>
     </li>
   
@@ -1982,7 +2156,7 @@
   
   
     <li class="md-nav__item">
-      <a href="https://litmusdocs-beta.netlify.app/" class="md-nav__link">
+      <a href="https://docs.litmuschaos.io/" class="md-nav__link">
         Platform Docs ⧉
       </a>
     </li>
@@ -2019,6 +2193,21 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/contents/" class="md-nav__link">
+        API Docs
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -2027,7 +2216,9 @@
             
             
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -2220,8 +2411,127 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error" class="md-nav__link">
-    When I’m executing an experiment the experiment's pod failed with the exec format error
+  <a href="#can-the-appkind-be-a-pod" class="md-nav__link">
+    Can the appkind be a pod?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-type-of-chaos-experiments-are-supported-by-litmus" class="md-nav__link">
+    What type of chaos experiments are supported by Litmus?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-are-the-permissions-required-to-run-litmus-chaos-experiments" class="md-nav__link">
+    What are the permissions required to run Litmus Chaos Experiments?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-scope-of-a-litmus-chaos-experiment" class="md-nav__link">
+    What is the scope of a Litmus Chaos Experiment?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to-get-started-with-running-chaos-experiments-using-litmus" class="md-nav__link">
+    To get started with running chaos experiments using Litmus?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-view-and-interpret-the-results-of-a-chaos-experiment" class="md-nav__link">
+    How to view and interpret the results of a chaos experiment?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-chaos-experiments-run-as-a-standard-set-of-pods" class="md-nav__link">
+    Do chaos experiments run as a standard set of pods?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-it-mandatory-to-annotate-application-deployments-for-chaos" class="md-nav__link">
+    Is it mandatory to annotate application deployments for chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-add-custom-annotations-as-chaos-filters" class="md-nav__link">
+    How to add Custom Annotations as chaos filters?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-it-mandatory-for-the-chaosengine-and-chaos-experiment-resources-to-exist-in-the-same-namespace" class="md-nav__link">
+    Is it mandatory for the chaosengine and chaos experiment resources to exist in the same namespace?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-the-chaos-logs-in-litmus" class="md-nav__link">
+    How to get the chaos logs in Litmus?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-litmus-support-generation-of-events-during-chaos" class="md-nav__link">
+    Does Litmus support generation of events during chaos?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-stop-or-abort-a-chaos-experiment" class="md-nav__link">
+    How to stop or abort a chaos experiment?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-a-chaos-experiment-be-resumed-once-stopped-or-aborted" class="md-nav__link">
+    Can a chaos experiment be resumed once stopped or aborted?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-restart-chaosengine-after-graceful-completion" class="md-nav__link">
+    How to restart chaosengine after graceful completion?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-litmus-support-any-chaos-metrics-for-experiments" class="md-nav__link">
+    Does Litmus support any chaos metrics for experiments?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-litmus-track-any-usage-metrics-on-the-test-clusters" class="md-nav__link">
+    Does Litmus track any usage metrics on the test clusters?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-choose-between-minchaosinterval-and-instancecount" class="md-nav__link">
+    What to choose between minChaosInterval and instanceCount?
   </a>
   
 </li>
@@ -2248,7 +2558,7 @@
                   </a>
                 
                 
-                <h1 id="the-what-why-how-of-litmus">The What, Why &amp; How of Litmus<a class="headerlink" href="#the-what-why-how-of-litmus" title="Permanent link">&para;</a></h1>
+                <h1 id="litmus-experiments">Litmus Experiments<a class="headerlink" href="#litmus-experiments" title="Permanent link">&para;</a></h1>
 <h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
 <ol>
 <li>
@@ -2285,7 +2595,7 @@
 <p><a href="#what-is-the-function-of-specdefinitionscope-of-a-chaosexperiment-cr">What is the function of spec.definition.scope of a ChaosExperiment CR?</a></p>
 </li>
 <li>
-<p><a href="#pod-network-latency-i-have-pod-a-talking-to-pod-b-over-service-b-and-i-want-to-introduce-latency-between-pod-a-and-service-b-what-would-go-into-specappinfo-section-pod-a-namespace-label-selector-and-kind-what-will-go-into-destination_ip-and-destination_host-service-b-details-what-are-the-target_pods">Pod network latency -- I have pod A talking to Pod B over Service B. and I want to introduce latency between Pod A and Service B. What would go into spec.appInfo section? Pod A namespace, label selector and kind? What will go into DESTINATION_IP and DESTINATION_HOST? Service B details? What are the TARGET_PODS?</a></p>
+<p><a href="#in-pod-network-latency-i-have-pod-a-talking-to-pod-b-over-service-b-and-i-want-to-introduce-latency-between-pod-a-and-service-b-what-would-go-into-specappinfo-section-pod-a-namespace-label-selector-and-kind-what-will-go-into-destination_ip-and-destination_host-service-b-details-what-are-the-target_pods">Pod network latency -- I have pod A talking to Pod B over Service B. and I want to introduce latency between Pod A and Service B. What would go into spec.appInfo section? Pod A namespace, label selector and kind? What will go into DESTINATION_IP and DESTINATION_HOST? Service B details? What are the TARGET_PODS?</a></p>
 </li>
 <li>
 <p><a href="#how-to-check-the-network_interface-and-socket_path-variable">How to check the NETWORK_INTERFACE and SOCKET_PATH variable?</a></p>
@@ -2294,7 +2604,7 @@
 <p><a href="#what-are-the-different-ways-to-target-the-pods-and-nodes-for-chaos">What are the different ways to target the pods and nodes for chaos?</a></p>
 </li>
 <li>
-<p><a href="#does-the-pod-affected-perc-select-the-random-set-of-pods-from-the-total-pods-under-chaos">Does the pod affected perc select the random set of pods from the total pods under chaos?</a></p>
+<p><a href="#does-the-pod-affected-percentage-select-the-random-set-of-pods-from-the-total-pods-under-chaos">Does the pod affected perc select the random set of pods from the total pods under chaos?</a></p>
 </li>
 <li>
 <p><a href="#how-to-extract-the-chaos-start-time-and-end-time">How to extract the chaos start time and end time?</a></p>
@@ -2306,7 +2616,58 @@
 <p><a href="#what-is-the-difference-between-ramp-time-and-chaos-interval">What is the difference between Ramp Time and Chaos Interval?</a></p>
 </li>
 <li>
-<p><a href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error">When I’m executing an experiment the experiment's pod failed with the exec format error</a></p>
+<p><a href="#can-the-appkind-be-a-pod">Can the appkind be a pod?</a></p>
+</li>
+<li>
+<p><a href="#what-type-of-chaos-experiments-are-supported-by-litmus">What type of chaos experiments are supported by Litmus?</a></p>
+</li>
+<li>
+<p><a href="#what-are-the-permissions-required-to-run-litmus-chaos-experiments">What are the permissions required to run Litmus Chaos Experiments?</a></p>
+</li>
+<li>
+<p><a href="#what-is-the-scope-of-a-litmus-chaos-experiment">What is the scope of a Litmus Chaos Experiment?</a></p>
+</li>
+<li>
+<p><a href="#to-get-started-with-running-chaos-experiments-using-litmus">To get started with running chaos experiments using Litmus?</a></p>
+</li>
+<li>
+<p><a href="#how-to-view-and-interpret-the-results-of-a-chaos-experiment">How to view and interpret the results of a chaos experiment?</a></p>
+</li>
+<li>
+<p><a href="#do-chaos-experiments-run-as-a-standard-set-of-pods">Do chaos experiments run as a standard set of pods?</a></p>
+</li>
+<li>
+<p><a href="#is-it-mandatory-to-annotate-application-deployments-for-chaos">Is it mandatory to annotate application deployments for chaos?</a></p>
+</li>
+<li>
+<p><a href="#how-to-add-custom-annotations-as-chaos-filters">How to add Custom Annotations as chaos filters?</a></p>
+</li>
+<li>
+<p><a href="#is-it-mandatory-for-the-chaosengine-and-chaos-experiment-resources-to-exist-in-the-same-namespace">Is it mandatory for the chaosengine and chaos experiment resources to exist in the same namespace?</a></p>
+</li>
+<li>
+<p><a href="#how-to-get-the-chaos-logs-in-litmus">How to get the chaos logs in Litmus?</a></p>
+</li>
+<li>
+<p><a href="#does-litmus-support-generation-of-events-during-chaos">Does Litmus support generation of events during chaos?</a></p>
+</li>
+<li>
+<p><a href="#how-to-stop-or-abort-a-chaos-experiment">How to stop or abort a chaos experiment?</a></p>
+</li>
+<li>
+<p><a href="#can-a-chaos-experiment-be-resumed-once-stopped-or-aborted">Can a chaos experiment be resumed once stopped or aborted?</a></p>
+</li>
+<li>
+<p><a href="#how-to-restart-chaosengine-after-graceful-completion">How to restart chaosengine after graceful completion?</a></p>
+</li>
+<li>
+<p><a href="#does-litmus-support-any-chaos-metrics-for-experiments">Does Litmus support any chaos metrics for experiments?</a></p>
+</li>
+<li>
+<p><a href="#does-litmus-track-any-usage-metrics-on-the-test-clusters">Does Litmus track any usage metrics on the test clusters?</a></p>
+</li>
+<li>
+<p><a href="#what-to-choose-between-minchaosinterval-and-instancecount">What to choose between minChaosInterval and instanceCount?</a></p>
 </li>
 </ol>
 <hr>
@@ -2388,11 +2749,114 @@ In addition to this if container-runtime is different then provide the name of c
 <p>The MTTR can be validated by using statusCheck Timeout in the chaos engine. By default its value will be 180 seconds. We can also overwrite this using ChaosEngine. For more details refer <a href="https://litmuschaos.github.io/litmus/experiments/chaos-resources/experiment-components/#experiment-status-check-timeout">this</a></p>
 <h3 id="what-is-the-difference-between-ramp-time-and-chaos-interval">What is the difference between Ramp Time and Chaos Interval?<a class="headerlink" href="#what-is-the-difference-between-ramp-time-and-chaos-interval" title="Permanent link">&para;</a></h3>
 <p>The ramp time is the time duration to wait before and after injection of chaos in seconds. While the chaos interval is the time interval (in second) between successive chaos iterations.</p>
-<h3 id="when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error">When I’m executing an experiment the experiment's pod failed with the exec format error<a class="headerlink" href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><div class="highlight"><pre><span></span><code>standard_init_linux.go:211: exec user process caused &quot;exec format error&quot;:
+<h3 id="can-the-appkind-be-a-pod">Can the appkind be a pod?<a class="headerlink" href="#can-the-appkind-be-a-pod" title="Permanent link">&para;</a></h3>
+<p>The appkind as pod is not supported explicitly. The supported appkind are <code>deployment</code>, <code>statefulset</code>, <code>replicaset</code>, <code>daemonset</code>, <code>rollout</code>, and <code>deploymentconfig</code>. 
+But we can target the pods by following ways:
+    - provide labels and namespace at <code>spec.appinfo.applabel</code> and <code>spec.appinfo.appns</code> respectively and provide <code>spec.appinfo.appkind</code> as empty. 
+    - provide pod names at <code>TARGET_PODS</code> ENV and provide <code>spec.appinfo</code> as nil
+<code>NOTE</code>: The <code>annotationCheck</code> should be provided as false</p>
+<h3 id="what-type-of-chaos-experiments-are-supported-by-litmus">What type of chaos experiments are supported by Litmus?<a class="headerlink" href="#what-type-of-chaos-experiments-are-supported-by-litmus" title="Permanent link">&para;</a></h3>
+<p>Litmus broadly defines Kubernetes chaos experiments into two categories: application or pod-level chaos experiments and platform or infra-level chaos experiments. The former includes pod-delete, container-kill, pod-cpu-hog, pod-network-loss etc., while the latter includes node-drain, disk-loss, node-cpu-hog etc., The infra chaos experiments typically have a higher blast radius and impacts more than one application deployed on the Kubernetes cluster. Litmus also categorizes experiments on the basis of the applications, with the experiments consisting of app-specific health checks. For example, OpenEBS, Kafka, CoreDNS.
+For a full list of supported chaos experiments, visit: <a href="https://hub.litmuschaos.io">https://hub.litmuschaos.io</a></p>
+<h3 id="what-are-the-permissions-required-to-run-litmus-chaos-experiments">What are the permissions required to run Litmus Chaos Experiments?<a class="headerlink" href="#what-are-the-permissions-required-to-run-litmus-chaos-experiments" title="Permanent link">&para;</a></h3>
+<p>By default, the Litmus operator uses the “litmus” serviceaccount that is bound to a ClusterRole, in order to watch for the ChaosEngine resource across namespaces. However, the experiments themselves are associated with “chaosServiceAccounts” which are created by the developers with bare-minimum permissions necessary to execute the experiment in question. Visit the <a href="https://github.com/litmuschaos/chaos-charts">chaos-charts</a> repo to view the experiment-specific rbac permissions. For example, here are the <a href="https://github.com/litmuschaos/chaos-charts/blob/master/charts/generic/container-kill/rbac.yaml">permissions</a> for container-kill chaos.</p>
+<h3 id="what-is-the-scope-of-a-litmus-chaos-experiment">What is the scope of a Litmus Chaos Experiment?<a class="headerlink" href="#what-is-the-scope-of-a-litmus-chaos-experiment" title="Permanent link">&para;</a></h3>
+<p>The chaos CRs (chaosexperiment, chaosengine, chaosresults) themselves are namespace scoped and are installed in the same namespace as that of the target application. While most of the experiments can be executed with service accounts mapped to namespaced roles, some infra chaos experiments typically perform health checks of applications across namespaces &amp; therefore need their serviceaccounts mapped to ClusterRoles.</p>
+<h3 id="to-get-started-with-running-chaos-experiments-using-litmus">To get started with running chaos experiments using Litmus?<a class="headerlink" href="#to-get-started-with-running-chaos-experiments-using-litmus" title="Permanent link">&para;</a></h3>
+<p>Litmus has a low entry barrier and is easy to install/use. Typically, it involves installing the chaos-operator, chaos experiment CRs from the <a href="https://hub.litmuschaos.io/">charthub</a>, annotating an application for chaos and creating a chaosengine CR to map your application instance with a desired chaos experiment. Refer to the <a href="https://docs.litmuschaos.io/docs/getstarted/">getting started</a> documentation to learn more on how to run a simple chaos experiment.</p>
+<h3 id="how-to-view-and-interpret-the-results-of-a-chaos-experiment">How to view and interpret the results of a chaos experiment?<a class="headerlink" href="#how-to-view-and-interpret-the-results-of-a-chaos-experiment" title="Permanent link">&para;</a></h3>
+<p>The results of a chaos experiment can be obtained from the verdict property of the chaosresult custom resource. If the verdict is Pass, it means that the application under test is resilient to the chaos injected. Alternatively, Fail reflects that the application is not resilient enough to the injected chaos, and indicates the need for a relook into the deployment sanity or possible application bugs/issues.</p>
+<p><div class="highlight"><pre><span></span><code>kubectl describe chaosresult &lt;chaosengine-name&gt;-&lt;chaos-experiment&gt; -n &lt;namespace&gt;
+</code></pre></div>
+The status of the experiment can also be gauged by the “status” property of the ChaosEngine.</p>
+<div class="highlight"><pre><span></span><code>Kubectl describe chaosengine &lt;chaosengne-name&gt; -n &lt;namespace&gt;
+</code></pre></div>
+<h3 id="do-chaos-experiments-run-as-a-standard-set-of-pods">Do chaos experiments run as a standard set of pods?<a class="headerlink" href="#do-chaos-experiments-run-as-a-standard-set-of-pods" title="Permanent link">&para;</a></h3>
+<p>The chaos experiment (triggered after creation of the ChaosEngine resource) workflow consists of launching the “chaos-runner” pod, which is an umbrella executor of different chaos experiments listed in the engine. The chaos-runner creates one pod (job) per each experiment to run the actual experiment business logic, and also manages the lifecycle of these experiment pods (performs functions such as experiment dependencies validation, job cleanup, patching of status back into ChaosEngine etc.,). Optionally, a monitor pod is created to export the chaos metrics. Together, these 3 pods are a standard set created upon execution of the experiment. The experiment job, in turn may spawn dependent (helper) resources if necessary to run the experiments, but this depends on the experiment selected, chaos libraries chosen etc.,</p>
+<h3 id="is-it-mandatory-to-annotate-application-deployments-for-chaos">Is it mandatory to annotate application deployments for chaos?<a class="headerlink" href="#is-it-mandatory-to-annotate-application-deployments-for-chaos" title="Permanent link">&para;</a></h3>
+<p>Typically applications are expected to be annotated with litmuschaos.io/chaos="true" to lend themselves to chaos. This is in order to support selection of the right applications with similar labels in a namespaces, thereby isolating the application under test (AUT) &amp; reduce the blast radius. It is also helpful for supporting automated execution (say, via cron) as a background service. However, in cases where the app deployment specifications are sacrosanct and not expected to be modified, or in cases where annotating a single application for chaos when the experiment itself is known to have a higher blast radius doesn’t make sense (ex: infra chaos), the annotationCheck can be disabled via the ChaosEngine tunable annotationCheck (<code>.spec.annotationCheck: false</code>).</p>
+<h3 id="how-to-add-custom-annotations-as-chaos-filters">How to add Custom Annotations as chaos filters?<a class="headerlink" href="#how-to-add-custom-annotations-as-chaos-filters" title="Permanent link">&para;</a></h3>
+<p>Currently Litmus allows you to set your own/custom keys for Annotation filters, the value being true/false. To use your custom annotation, add this key under an ENV named as CUSTOM_ANNOTATION in ChaosOperator deployment. A sample chaos-operator deployment spec is provided here for reference:</p>
+<details class="info"><summary>view the manifest</summary><div class="highlight"><pre><span></span><code>---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+name: chaos-operator-ce
+namespace: litmus
+spec:
+replicas: 1
+selector:
+    matchLabels:
+    name: chaos-operator
+template:
+    metadata:
+    labels:
+        name: chaos-operator
+    spec:
+    serviceAccountName: litmus
+    containers:
+        - name: chaos-operator
+        # &#39;latest&#39; tag corresponds to the latest released image
+        image: litmuschaos/chaos-operator:latest
+        command:
+        - chaos-operator
+        imagePullPolicy: Always
+        env:
+            - name: CUSTOM_ANNOTATION
+            value: &quot;mayadata.io/chaos&quot;
+            - name: CHAOS_RUNNER_IMAGE
+            value: &quot;litmuschaos/chaos-runner:latest&quot;
+            - name: WATCH_NAMESPACE
+            value: 
+            - name: POD_NAME
+            valueFrom:
+                fieldRef:
+                fieldPath: metadata.name
+            - name: OPERATOR_NAME
+          value: &quot;chaos-operator&quot;
 </code></pre></div>
 </details>
-<p>There could be multiple reasons for this. The most common one is mismatched in the binary and the platform on which it is running, try to check out the image binary you're using should have the support for the platform on which you’re trying to run the experiment.</p>
+<h3 id="is-it-mandatory-for-the-chaosengine-and-chaos-experiment-resources-to-exist-in-the-same-namespace">Is it mandatory for the chaosengine and chaos experiment resources to exist in the same namespace?<a class="headerlink" href="#is-it-mandatory-for-the-chaosengine-and-chaos-experiment-resources-to-exist-in-the-same-namespace" title="Permanent link">&para;</a></h3>
+<p>Yes. As of today, the chaos resources are expected to co-exist in the same namespace, which typically is also the application's (AUT) namespace.</p>
+<h3 id="how-to-get-the-chaos-logs-in-litmus">How to get the chaos logs in Litmus?<a class="headerlink" href="#how-to-get-the-chaos-logs-in-litmus" title="Permanent link">&para;</a></h3>
+<p>The chaos logs can be viewed in the following manner.
+To view the successful launch/removal of chaos resources upon engine creation, for identification of application under test (AUT) etc., view the chaos-operator logs:
+<div class="highlight"><pre><span></span><code>kubectl logs -f &lt;chaos-operator-(hash)-(hash)&gt; -n &lt;chaos_namespace&gt;
+</code></pre></div>
+To view lifecycle management logs of a given (or set of) chaos experiments, view the chaos-runner logs:
+<div class="highlight"><pre><span></span><code>kubectl logs -f &lt;chaosengine_name&gt;-runner -n &lt;chaos_namespace&gt;
+</code></pre></div>
+To view the chaos logs itself (details of experiment chaos injection, application health checks et al), view the experiment pod logs:
+<div class="highlight"><pre><span></span><code>kubectl logs -f &lt;experiment_name_(hash)_(hash)&gt; -n &lt;chaos_namespace&gt;
+</code></pre></div></p>
+<h3 id="does-litmus-support-generation-of-events-during-chaos">Does Litmus support generation of events during chaos?<a class="headerlink" href="#does-litmus-support-generation-of-events-during-chaos" title="Permanent link">&para;</a></h3>
+<p>The chaos-operator generates Kubernetes events to signify the creation of removal of chaos resources over the course of a chaos experiment, which can be obtained by running the following command:
+<div class="highlight"><pre><span></span><code>kubectl describe chaosengine &lt;chaosengine-name&gt; -n &lt;namespace&gt;
+</code></pre></div>
+<code>Note:</code> Efforts are underway to add more events around chaos injection in subsequent releases.</p>
+<h3 id="how-to-stop-or-abort-a-chaos-experiment">How to stop or abort a chaos experiment?<a class="headerlink" href="#how-to-stop-or-abort-a-chaos-experiment" title="Permanent link">&para;</a></h3>
+<p>A chaos experiment can be stopped/aborted inflight by patching the .spec.engineState property of the chaosengine to stop . This will delete all the chaos resources associated with the engine/experiment at once.
+<div class="highlight"><pre><span></span><code>kubectl patch chaosengine &lt;chaosengine-name&gt; -n &lt;namespace&gt; --type merge --patch &#39;{&quot;spec&quot;:{&quot;engineState&quot;:&quot;stop&quot;}}&#39;
+</code></pre></div>
+The same effect will be caused by deleting the respective chaosengine resource.</p>
+<h3 id="can-a-chaos-experiment-be-resumed-once-stopped-or-aborted">Can a chaos experiment be resumed once stopped or aborted?<a class="headerlink" href="#can-a-chaos-experiment-be-resumed-once-stopped-or-aborted" title="Permanent link">&para;</a></h3>
+<p>Once stopped/aborted, patching the chaosengine .spec.engineState with active causes the experiment to be re-executed. Another way is to re-apply the ChaosEngine YAML, this will delete all stale chaos resources, and restart ChaosEngine lifecycle. However, support is yet to be added for saving state and resuming an in-flight experiment (i.e., execute pending iterations etc.,)
+<div class="highlight"><pre><span></span><code>kubectl patch chaosengine &lt;chaosengine-name&gt; -n &lt;namespace&gt; --type merge --patch &#39;{&quot;spec&quot;:{&quot;engineState&quot;:&quot;active&quot;}}&#39;
+</code></pre></div></p>
+<h3 id="how-to-restart-chaosengine-after-graceful-completion">How to restart chaosengine after graceful completion?<a class="headerlink" href="#how-to-restart-chaosengine-after-graceful-completion" title="Permanent link">&para;</a></h3>
+<p>To restart chaosengine, check the .spec.engineState, which should be equal to stop, which means your chaosengine has gracefully completed, or forcefully aborted. In this case, restart is quite easy, as you can re-apply the chaosengine YAML to restart it. This will remove all stale chaos resources linked to this chaosengine, and restart its own lifecycle.</p>
+<h3 id="does-litmus-support-any-chaos-metrics-for-experiments">Does Litmus support any chaos metrics for experiments?<a class="headerlink" href="#does-litmus-support-any-chaos-metrics-for-experiments" title="Permanent link">&para;</a></h3>
+<p>Litmus provides a basic set of prometheus metrics indicating the total count of chaos experiments, passed/failed experiments and individual status of experiments specified in the ChaosEngine, which can be queried against the monitor pod. Work to enhance and improve this is underway.</p>
+<h3 id="does-litmus-track-any-usage-metrics-on-the-test-clusters">Does Litmus track any usage metrics on the test clusters?<a class="headerlink" href="#does-litmus-track-any-usage-metrics-on-the-test-clusters" title="Permanent link">&para;</a></h3>
+<p>By default, the installation count of chaos-operator &amp; run count of a given chaos experiment is collected as part of general analytics to gauge user adoption &amp; chaos trends. However, if you wish to inhibit this, please use the following ENV setting on the chaos-operator deployment:
+<div class="highlight"><pre><span></span><code>env: 
+  name: ANALYTICS
+  value: &#39;FALSE&#39;
+</code></pre></div></p>
+<h3 id="what-to-choose-between-minchaosinterval-and-instancecount">What to choose between minChaosInterval and instanceCount?<a class="headerlink" href="#what-to-choose-between-minchaosinterval-and-instancecount" title="Permanent link">&para;</a></h3>
+<p>Only one should be chosen ideally between minChaosInterval and instanceCount. However if both are specified minChaosInterval will be given priority. minChaosInterval specifies the minimum interval that should be present between the launch of 2 chaosengines and instanceCount specifies the exact number of chaosengines to be launched between the range (start and end time). SO we can choose depending on our requirements.</p>
+                
+                  
                 
               
               
@@ -2422,7 +2886,7 @@ In addition to this if container-runtime is different then provide the name of c
         <!-- Link to previous page -->
         
         <a
-            href="../../chaos-resources/probes/promProbe/"
+            href="../install/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -2434,7 +2898,7 @@ In addition to this if container-runtime is different then provide the name of c
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Prometheus Probe
+                Install
             </div>
             </div>
         </a>
@@ -2443,7 +2907,7 @@ In addition to this if container-runtime is different then provide the name of c
         <!-- Link to next page -->
         
         <a
-            href="../install/"
+            href="../portal/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -2452,7 +2916,7 @@ In addition to this if container-runtime is different then provide the name of c
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Install
+                Portal
             </div>
             </div>
             <div class="md-footer__button md-icon">

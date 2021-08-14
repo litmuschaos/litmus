@@ -68,6 +68,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#install" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -211,7 +216,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../categories/getstarted/" class="md-tabs__link">
+      <a href="../../categories/content/" class="md-tabs__link">
         Experiments
       </a>
     </li>
@@ -244,18 +249,11 @@
   
   
   
-    
-
-  
-  
-  
     <li class="md-tabs__item">
-      <a href="../experiments/" class="md-tabs__link md-tabs__link--active">
+      <a href="../content/" class="md-tabs__link md-tabs__link--active">
         Litmus FAQ
       </a>
     </li>
-  
-
   
 
       
@@ -277,7 +275,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="https://litmusdocs-beta.netlify.app/" class="md-tabs__link">
+    <a href="https://docs.litmuschaos.io/" class="md-tabs__link">
       Platform Docs ⧉
     </a>
   </li>
@@ -307,6 +305,18 @@
   </li>
 
       
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../api/contents/" class="md-tabs__link">
+      API Docs
+    </a>
+  </li>
+
+      
     </ul>
   </div>
 </nav>
@@ -316,6 +326,8 @@
         <div class="md-main__inner md-grid">
           
             
+              
+                
               
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
@@ -394,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../categories/getstarted/" class="md-nav__link">
+      <a href="../../categories/content/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1591,6 +1603,18 @@
             
   
   
+  
+    <li class="md-nav__item">
+      <a href="../content/" class="md-nav__link">
+        Contents
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
     
   
   
@@ -1598,30 +1622,18 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" checked>
       
-      <label class="md-nav__link" for="__nav_4_1">
-        General
+      <label class="md-nav__link" for="__nav_4_2">
+        FAQ
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="General" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_1">
+      <nav class="md-nav" aria-label="FAQ" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
           <span class="md-nav__icon md-icon"></span>
-          General
+          FAQ
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../experiments/" class="md-nav__link">
-        Experiments
-      </a>
-    </li>
-  
-
           
             
   
@@ -1634,11 +1646,124 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Install
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         Install
       </a>
       
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#i-encountered-the-concept-of-namespace-and-cluster-scope-during-the-installation-what-is-meant-by-the-scopes-and-how-does-it-affect-experiments-to-be-performed-outside-or-inside-the-litmus-namespace" class="md-nav__link">
+    I encountered the concept of namespace and cluster scope during the installation. What is meant by the scopes, and how does it affect experiments to be performed outside or inside the litmus Namespace?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-litmus-20-maintain-backward-compatibility-with-kubernetes" class="md-nav__link">
+    Does Litmus 2.0 maintain backward compatibility with Kubernetes?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-litmuschaos-outside-of-my-kubernetes-clusters" class="md-nav__link">
+    Can I run LitmusChaos Outside of my Kubernetes clusters?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-minimum-system-requirement-to-run-portal-and-agent-together" class="md-nav__link">
+    What is the minimum system requirement to run Portal and agent together?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-litmuschaos-in-production" class="md-nav__link">
+    Can I use LitmusChaos in Production?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-should-i-use-litmus-what-is-its-distinctive-feature" class="md-nav__link">
+    Why should I use Litmus? What is its distinctive feature?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-licensing-model-does-litmus-use" class="md-nav__link">
+    What licensing model does Litmus use?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-are-the-prerequisites-to-get-started-with-litmus" class="md-nav__link">
+    What are the prerequisites to get started with Litmus?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-install-litmus-on-the-kubernetes-cluster" class="md-nav__link">
+    How to Install Litmus on the Kubernetes Cluster?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/" class="md-nav__link">
+        Experiments
+      </a>
     </li>
   
 
@@ -1660,8 +1785,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler/" class="md-nav__link">
+        Scheduler
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../security/" class="md-nav__link">
         Security
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ci-cd/" class="md-nav__link">
+        CI/CD
       </a>
     </li>
   
@@ -1681,30 +1830,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
       
-      <label class="md-nav__link" for="__nav_4_2">
+      <label class="md-nav__link" for="__nav_4_3">
         Troubleshooting
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="Troubleshooting" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_2">
+        <label class="md-nav__title" for="__nav_4_3">
           <span class="md-nav__icon md-icon"></span>
           Troubleshooting
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../troubleshooting/experiments/" class="md-nav__link">
-        Experiments
-      </a>
-    </li>
-  
-
           
             
   
@@ -1723,8 +1860,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../troubleshooting/experiments/" class="md-nav__link">
+        Experiments
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../troubleshooting/portal/" class="md-nav__link">
         Portal
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/scheduler/" class="md-nav__link">
+        Scheduler
       </a>
     </li>
   
@@ -1765,7 +1926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="https://litmusdocs-beta.netlify.app/" class="md-nav__link">
+      <a href="https://docs.litmuschaos.io/" class="md-nav__link">
         Platform Docs ⧉
       </a>
     </li>
@@ -1802,12 +1963,130 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/contents/" class="md-nav__link">
+        API Docs
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
                 </div>
               </div>
             
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#i-encountered-the-concept-of-namespace-and-cluster-scope-during-the-installation-what-is-meant-by-the-scopes-and-how-does-it-affect-experiments-to-be-performed-outside-or-inside-the-litmus-namespace" class="md-nav__link">
+    I encountered the concept of namespace and cluster scope during the installation. What is meant by the scopes, and how does it affect experiments to be performed outside or inside the litmus Namespace?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-litmus-20-maintain-backward-compatibility-with-kubernetes" class="md-nav__link">
+    Does Litmus 2.0 maintain backward compatibility with Kubernetes?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-litmuschaos-outside-of-my-kubernetes-clusters" class="md-nav__link">
+    Can I run LitmusChaos Outside of my Kubernetes clusters?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-minimum-system-requirement-to-run-portal-and-agent-together" class="md-nav__link">
+    What is the minimum system requirement to run Portal and agent together?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-litmuschaos-in-production" class="md-nav__link">
+    Can I use LitmusChaos in Production?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-should-i-use-litmus-what-is-its-distinctive-feature" class="md-nav__link">
+    Why should I use Litmus? What is its distinctive feature?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-licensing-model-does-litmus-use" class="md-nav__link">
+    What licensing model does Litmus use?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-are-the-prerequisites-to-get-started-with-litmus" class="md-nav__link">
+    What are the prerequisites to get started with Litmus?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-install-litmus-on-the-kubernetes-cluster" class="md-nav__link">
+    How to Install Litmus on the Kubernetes Cluster?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
             
           
           <div class="md-content" data-md-component="content">
@@ -1819,9 +2098,61 @@
                   </a>
                 
                 
-                  <h1>Install</h1>
+                <h1 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h1>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><a href="#i-encountered-the-concept-of-namespace-and-cluster-scope-during-the-installation-what-is-meant-by-the-scopes-and-how-does-it-affect-experiments-to-be-performed-outside-or-inside-the-litmus-namespace">I encountered the concept of namespace and cluster scope during the installation. What is meant by the scopes, and how does it affect experiments to be performed outside or inside the litmus Namespace?</a></p>
+</li>
+<li>
+<p><a href="#does-litmus-20-maintain-backward-compatibility-with-kubernetes">Does Litmus 2.0 maintain backward compatibility with Kubernetes?</a></p>
+</li>
+<li>
+<p><a href="#can-i-run-litmuschaos-outside-of-my-kubernetes-clusters">Can I run LitmusChaos Outside of my Kubernetes clusters?</a></p>
+</li>
+<li>
+<p><a href="#what-is-the-minimum-system-requirement-to-run-portal-and-agent-together">What is the minimum system requirement to run Portal and agent together?</a></p>
+</li>
+<li>
+<p><a href="#can-i-use-litmuschaos-in-production">Can I use LitmusChaos in Production?</a></p>
+</li>
+<li>
+<p><a href="#why-should-i-use-litmus-what-is-its-distinctive-feature">Why should I use Litmus? What is its distinctive feature?</a></p>
+</li>
+<li>
+<p><a href="#what-licensing-model-does-litmus-use">What licensing model does Litmus use?</a></p>
+</li>
+<li>
+<p><a href="#what-are-the-prerequisites-to-get-started-with-litmus">What are the prerequisites to get started with Litmus?</a></p>
+</li>
+<li>
+<p><a href="#how-to-install-litmus-on-the-kubernetes-cluster">How to Install Litmus on the Kubernetes Cluster?</a></p>
+</li>
+</ol>
+<hr/>
+
+<h3 id="i-encountered-the-concept-of-namespace-and-cluster-scope-during-the-installation-what-is-meant-by-the-scopes-and-how-does-it-affect-experiments-to-be-performed-outside-or-inside-the-litmus-namespace">I encountered the concept of namespace and cluster scope during the installation. What is meant by the scopes, and how does it affect experiments to be performed outside or inside the litmus Namespace?<a class="headerlink" href="#i-encountered-the-concept-of-namespace-and-cluster-scope-during-the-installation-what-is-meant-by-the-scopes-and-how-does-it-affect-experiments-to-be-performed-outside-or-inside-the-litmus-namespace" title="Permanent link">&para;</a></h3>
+<p>The scope of portal control plane (portal) installation tuned by the env PORTAL_SCOPE of litmusportal-server deployment can be kept as a namespace if you want to provide very restricted access to litmus; It's useful in dev environments like Okteto cloud etc. That restricts portal installation along with its agent to a single namespace and the chaos operator, exporter all get installed in a single namespace and can only perform and monitor chaos in that namespace. Other than that there is another key in the control plane’s configmap litmus-portal-admin-config called AgentScope, this is given to allow users to restrict access to the litmus self-agent components self-agent is the agent for your control plane cluster (exporter, operator, etc), you can use both of them in a way to give access as per the requirement. The above holds for the control plane and self agent, for the external agents which can be connected using the litmusctl CLI you can provide the scope of the agent while using the utility to connect your other cluster to the control plane with access to just a single namespace or cluster-wide access. Using a combination of AgentScope: cluster and PORTAL_SCOPE env set to cluster would give you cluster-admin privileges to inject chaos on all namespaces where the control plane/portal is installed. For external agents just selecting the scope of installation as cluster would be sufficient via litmusctl.</p>
+<h3 id="does-litmus-20-maintain-backward-compatibility-with-kubernetes">Does Litmus 2.0 maintain backward compatibility with Kubernetes?<a class="headerlink" href="#does-litmus-20-maintain-backward-compatibility-with-kubernetes" title="Permanent link">&para;</a></h3>
+<p>Yes Litmus maintains a separate CRD manifest to support backward compatibility.</p>
+<h3 id="can-i-run-litmuschaos-outside-of-my-kubernetes-clusters">Can I run LitmusChaos Outside of my Kubernetes clusters?<a class="headerlink" href="#can-i-run-litmuschaos-outside-of-my-kubernetes-clusters" title="Permanent link">&para;</a></h3>
+<p>You can run the chaos experiments outside of the k8s cluster(as a container) which is dockerized. But other components such as chaos-operator,chaos-exporter, and runner are Kubernetes native. They require k8s cluster to run on it.</p>
+<h3 id="what-is-the-minimum-system-requirement-to-run-portal-and-agent-together">What is the minimum system requirement to run Portal and agent together?<a class="headerlink" href="#what-is-the-minimum-system-requirement-to-run-portal-and-agent-together" title="Permanent link">&para;</a></h3>
+<p>To run LitmusPortal you need to have a minimum of 1 GiB memory and 1 core of CPU free.</p>
+<h3 id="can-i-use-litmuschaos-in-production">Can I use LitmusChaos in Production?<a class="headerlink" href="#can-i-use-litmuschaos-in-production" title="Permanent link">&para;</a></h3>
+<p>Yes, you can use Litmuschaos in production. Litmus has a wide variety of experiments and is designed as per the principles of chaos. But, if you are new to Chaos Engineering, we would recommend you to first try Litmus on your dev environment, and then after getting the confidence, you should use it in Production. </p>
+<h3 id="why-should-i-use-litmus-what-is-its-distinctive-feature">Why should I use Litmus? What is its distinctive feature?<a class="headerlink" href="#why-should-i-use-litmus-what-is-its-distinctive-feature" title="Permanent link">&para;</a></h3>
+<p>Litmus is a toolset to do cloud-native Chaos Engineering. Litmus provides tools to orchestrate chaos on Kubernetes to help developers and SREs find weaknesses in their application deployments. Litmus can be used to run chaos experiments initially in the staging environment and eventually in production to find bugs, vulnerabilities. Fixing the weaknesses leads to increased resilience of the system. Litmus adopts a “Kubernetes-native” approach to define chaos intent in a declarative manner via custom resources.</p>
+<h3 id="what-licensing-model-does-litmus-use">What licensing model does Litmus use?<a class="headerlink" href="#what-licensing-model-does-litmus-use" title="Permanent link">&para;</a></h3>
+<p>Litmus is developed under Apache License 2.0 license at the project level. Some components of the projects are derived from the other Open Source projects and are distributed under their respective licenses.</p>
+<h3 id="what-are-the-prerequisites-to-get-started-with-litmus">What are the prerequisites to get started with Litmus?<a class="headerlink" href="#what-are-the-prerequisites-to-get-started-with-litmus" title="Permanent link">&para;</a></h3>
+<p>For getting started with Litmus the only prerequisites is to have Kubernetes 1.11+ cluster. While most pod/container level experiments are supported on any Kubernetes platform, some of the infrastructure chaos experiments are supported on specific platforms. To find the list of supported platforms for an experiment, view the "Platforms" section on the sidebar in the experiment page.</p>
+<h3 id="how-to-install-litmus-on-the-kubernetes-cluster">How to Install Litmus on the Kubernetes Cluster?<a class="headerlink" href="#how-to-install-litmus-on-the-kubernetes-cluster" title="Permanent link">&para;</a></h3>
+<p>You can install/deploy stable litmus using this command:</p>
+<div class="highlight"><pre><span></span><code>kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-latest.yaml
+</code></pre></div>
                 
-                
+                  
                 
               
               
@@ -1851,7 +2182,7 @@
         <!-- Link to previous page -->
         
         <a
-            href="../experiments/"
+            href="../content/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -1863,7 +2194,7 @@
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Experiments
+                Contents
             </div>
             </div>
         </a>
@@ -1872,7 +2203,7 @@
         <!-- Link to next page -->
         
         <a
-            href="../portal/"
+            href="../experiments/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -1881,7 +2212,7 @@
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Portal
+                Experiments
             </div>
             </div>
             <div class="md-footer__button md-icon">

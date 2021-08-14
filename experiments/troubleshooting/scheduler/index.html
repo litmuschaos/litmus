@@ -11,21 +11,21 @@
       
       
       
-        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/engine-state/">
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/troubleshooting/scheduler/">
       
-      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
     
     
       
-        <title>State Specifications - Litmus Experiments</title>
+        <title>Scheduler - Litmus Experiments</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.f7f47774.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.f7f47774.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.3f5d1f46.min.css">
         
       
     
@@ -59,7 +59,7 @@
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
-    <script>function __prefix(e){return new URL("../../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
       <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
@@ -68,6 +68,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#chaos-scheduler" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -75,9 +80,9 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../.." title="Litmus Experiments" class="md-header__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
+    <a href="../../.." title="Litmus Experiments" class="md-header__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
       
-  <img src="../../../../images/litmus.png" alt="logo">
+  <img src="../../../images/litmus.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -93,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              State Specifications
+              Scheduler
             
           </span>
         </div>
@@ -196,7 +201,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../.." class="md-tabs__link">
+    <a href="../../.." class="md-tabs__link">
       Home
     </a>
   </li>
@@ -211,8 +216,24 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../categories/content/" class="md-tabs__link">
+      <a href="../../categories/content/" class="md-tabs__link">
         Experiments
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../chaos-resources/contents/" class="md-tabs__link">
+        Chaos Resources
       </a>
     </li>
   
@@ -229,23 +250,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../contents/" class="md-tabs__link md-tabs__link--active">
-        Chaos Resources
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../../faq/content/" class="md-tabs__link">
+      <a href="../../faq/content/" class="md-tabs__link md-tabs__link--active">
         Litmus FAQ
       </a>
     </li>
@@ -294,7 +299,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../../ROADMAP/" class="md-tabs__link">
+    <a href="../../../ROADMAP/" class="md-tabs__link">
       Roadmap
     </a>
   </li>
@@ -306,7 +311,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../api/contents/" class="md-tabs__link">
+    <a href="../../api/contents/" class="md-tabs__link">
       API Docs
     </a>
   </li>
@@ -322,6 +327,8 @@
           
             
               
+                
+              
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -332,9 +339,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
+    <a href="../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
       
-  <img src="../../../../images/litmus.png" alt="logo">
+  <img src="../../../images/litmus.png" alt="logo">
 
     </a>
     Litmus Experiments
@@ -363,7 +370,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         Home
       </a>
     </li>
@@ -399,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/content/" class="md-nav__link">
+      <a href="../../categories/content/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -474,7 +481,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/container-kill/" class="md-nav__link">
+      <a href="../../categories/pods/container-kill/" class="md-nav__link">
         Container Kill
       </a>
     </li>
@@ -486,7 +493,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/disk-fill/" class="md-nav__link">
+      <a href="../../categories/pods/disk-fill/" class="md-nav__link">
         Disk Fill
       </a>
     </li>
@@ -498,7 +505,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-autoscaler/" class="md-nav__link">
+      <a href="../../categories/pods/pod-autoscaler/" class="md-nav__link">
         Pod Autoscaler
       </a>
     </li>
@@ -510,7 +517,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-cpu-hog-exec/" class="md-nav__link">
+      <a href="../../categories/pods/pod-cpu-hog-exec/" class="md-nav__link">
         Pod CPU Hog Exec
       </a>
     </li>
@@ -522,7 +529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-cpu-hog/" class="md-nav__link">
+      <a href="../../categories/pods/pod-cpu-hog/" class="md-nav__link">
         Pod CPU Hog
       </a>
     </li>
@@ -534,7 +541,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-delete/" class="md-nav__link">
+      <a href="../../categories/pods/pod-delete/" class="md-nav__link">
         Pod Delete
       </a>
     </li>
@@ -546,7 +553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-dns-error/" class="md-nav__link">
+      <a href="../../categories/pods/pod-dns-error/" class="md-nav__link">
         Pod Dns Error
       </a>
     </li>
@@ -558,7 +565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-dns-spoof/" class="md-nav__link">
+      <a href="../../categories/pods/pod-dns-spoof/" class="md-nav__link">
         Pod Dns Spoof
       </a>
     </li>
@@ -570,7 +577,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-io-stress/" class="md-nav__link">
+      <a href="../../categories/pods/pod-io-stress/" class="md-nav__link">
         Pod IO Stress
       </a>
     </li>
@@ -582,7 +589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-memory-hog-exec/" class="md-nav__link">
+      <a href="../../categories/pods/pod-memory-hog-exec/" class="md-nav__link">
         Pod Memory Hog Exec
       </a>
     </li>
@@ -594,7 +601,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-memory-hog/" class="md-nav__link">
+      <a href="../../categories/pods/pod-memory-hog/" class="md-nav__link">
         Pod Memory Hog
       </a>
     </li>
@@ -606,7 +613,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-network-corruption/" class="md-nav__link">
+      <a href="../../categories/pods/pod-network-corruption/" class="md-nav__link">
         Pod Network Corruption
       </a>
     </li>
@@ -618,7 +625,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-network-duplication/" class="md-nav__link">
+      <a href="../../categories/pods/pod-network-duplication/" class="md-nav__link">
         Pod Network Duplication
       </a>
     </li>
@@ -630,7 +637,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-network-latency/" class="md-nav__link">
+      <a href="../../categories/pods/pod-network-latency/" class="md-nav__link">
         Pod Network Latency
       </a>
     </li>
@@ -642,7 +649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/pods/pod-network-loss/" class="md-nav__link">
+      <a href="../../categories/pods/pod-network-loss/" class="md-nav__link">
         Pod Network Loss
       </a>
     </li>
@@ -681,7 +688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/nodes/docker-service-kill/" class="md-nav__link">
+      <a href="../../categories/nodes/docker-service-kill/" class="md-nav__link">
         Docker Service Kill
       </a>
     </li>
@@ -693,7 +700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/nodes/kubelet-service-kill/" class="md-nav__link">
+      <a href="../../categories/nodes/kubelet-service-kill/" class="md-nav__link">
         Kubelet Service Kill
       </a>
     </li>
@@ -705,7 +712,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/nodes/node-cpu-hog/" class="md-nav__link">
+      <a href="../../categories/nodes/node-cpu-hog/" class="md-nav__link">
         Node CPU Hog
       </a>
     </li>
@@ -717,7 +724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/nodes/node-drain/" class="md-nav__link">
+      <a href="../../categories/nodes/node-drain/" class="md-nav__link">
         Node Drain
       </a>
     </li>
@@ -729,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/nodes/node-io-stress/" class="md-nav__link">
+      <a href="../../categories/nodes/node-io-stress/" class="md-nav__link">
         Node IO Stress
       </a>
     </li>
@@ -741,7 +748,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/nodes/node-memory-hog/" class="md-nav__link">
+      <a href="../../categories/nodes/node-memory-hog/" class="md-nav__link">
         Node Memory Hog
       </a>
     </li>
@@ -753,7 +760,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/nodes/node-restart/" class="md-nav__link">
+      <a href="../../categories/nodes/node-restart/" class="md-nav__link">
         Node Restart
       </a>
     </li>
@@ -765,7 +772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/nodes/node-taint/" class="md-nav__link">
+      <a href="../../categories/nodes/node-taint/" class="md-nav__link">
         Node Taint
       </a>
     </li>
@@ -810,7 +817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/kafka/kafka-broker-pod-failure/" class="md-nav__link">
+      <a href="../../categories/kafka/kafka-broker-pod-failure/" class="md-nav__link">
         Kafka Broker Pod Failure
       </a>
     </li>
@@ -849,7 +856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/cassandra/cassandra-pod-delete/" class="md-nav__link">
+      <a href="../../categories/cassandra/cassandra-pod-delete/" class="md-nav__link">
         Cassandra Pod Delete
       </a>
     </li>
@@ -936,7 +943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/aws/ec2-terminate-by-id/" class="md-nav__link">
+      <a href="../../categories/aws/ec2-terminate-by-id/" class="md-nav__link">
         EC2 Terminate By ID
       </a>
     </li>
@@ -948,7 +955,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/aws/ec2-terminate-by-tag/" class="md-nav__link">
+      <a href="../../categories/aws/ec2-terminate-by-tag/" class="md-nav__link">
         EC2 Terminate By Tag
       </a>
     </li>
@@ -987,7 +994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/aws/ebs-loss-by-id/" class="md-nav__link">
+      <a href="../../categories/aws/ebs-loss-by-id/" class="md-nav__link">
         EBS Loss By ID
       </a>
     </li>
@@ -999,7 +1006,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/aws/ebs-loss-by-tag/" class="md-nav__link">
+      <a href="../../categories/aws/ebs-loss-by-tag/" class="md-nav__link">
         EBS Loss By Tag
       </a>
     </li>
@@ -1038,7 +1045,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/aws-ssm/aws-ssm-chaos-by-id/" class="md-nav__link">
+      <a href="../../categories/aws-ssm/aws-ssm-chaos-by-id/" class="md-nav__link">
         AWS SSM Chaos By ID
       </a>
     </li>
@@ -1050,7 +1057,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/aws-ssm/aws-ssm-chaos-by-tag/" class="md-nav__link">
+      <a href="../../categories/aws-ssm/aws-ssm-chaos-by-tag/" class="md-nav__link">
         AWS SSM Chaos By Tag
       </a>
     </li>
@@ -1095,7 +1102,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/vmware/vm-poweroff/" class="md-nav__link">
+      <a href="../../categories/vmware/vm-poweroff/" class="md-nav__link">
         VM Poweroff
       </a>
     </li>
@@ -1134,7 +1141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/azure/azure-instance-stop/" class="md-nav__link">
+      <a href="../../categories/azure/azure-instance-stop/" class="md-nav__link">
         Azure Instance Stop
       </a>
     </li>
@@ -1173,7 +1180,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/gcp/gcp-vm-instance-stop/" class="md-nav__link">
+      <a href="../../categories/gcp/gcp-vm-instance-stop/" class="md-nav__link">
         GCP Instance Stop
       </a>
     </li>
@@ -1185,7 +1192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/gcp/gcp-vm-disk-loss/" class="md-nav__link">
+      <a href="../../categories/gcp/gcp-vm-disk-loss/" class="md-nav__link">
         GCP Disk Loss
       </a>
     </li>
@@ -1216,14 +1223,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
       
       <label class="md-nav__link" for="__nav_3">
         Chaos Resources
@@ -1241,7 +1246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contents/" class="md-nav__link">
+      <a href="../../chaos-resources/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1251,14 +1256,12 @@
             
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
       
       <label class="md-nav__link" for="__nav_3_2">
         ChaosEngine
@@ -1276,7 +1279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contents/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1286,19 +1289,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-engine/engine-state/" class="md-nav__link">
         State Specifications
       </a>
-      
     </li>
   
 
@@ -1308,7 +1303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../application-details/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/application-details/" class="md-nav__link">
         Application Specifications
       </a>
     </li>
@@ -1320,7 +1315,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rbac-details/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/rbac-details/" class="md-nav__link">
         RBAC Specifications
       </a>
     </li>
@@ -1332,7 +1327,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../runtime-details/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/runtime-details/" class="md-nav__link">
         Runtime Specifications
       </a>
     </li>
@@ -1344,7 +1339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../runner-components/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/runner-components/" class="md-nav__link">
         Runner Specifications
       </a>
     </li>
@@ -1356,7 +1351,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../experiment-components/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/experiment-components/" class="md-nav__link">
         Experiment Specifications
       </a>
     </li>
@@ -1395,7 +1390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-experiment/contents/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-experiment/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1434,7 +1429,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-result/contents/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-result/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1473,7 +1468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-scheduler/contents/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-scheduler/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1512,7 +1507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/contents/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1524,7 +1519,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/cmdProbe/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/cmdProbe/" class="md-nav__link">
         Command Probe
       </a>
     </li>
@@ -1536,7 +1531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/httpProbe/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/httpProbe/" class="md-nav__link">
         HTTP Probe
       </a>
     </li>
@@ -1548,7 +1543,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/k8sProbe/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/k8sProbe/" class="md-nav__link">
         K8S Probe
       </a>
     </li>
@@ -1560,7 +1555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/promProbe/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/promProbe/" class="md-nav__link">
         Prometheus Probe
       </a>
     </li>
@@ -1585,12 +1580,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
       
       <label class="md-nav__link" for="__nav_4">
         Litmus FAQ
@@ -1608,7 +1605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../faq/content/" class="md-nav__link">
+      <a href="../../faq/content/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1641,7 +1638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../faq/install/" class="md-nav__link">
+      <a href="../../faq/install/" class="md-nav__link">
         Install
       </a>
     </li>
@@ -1653,7 +1650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../faq/experiments/" class="md-nav__link">
+      <a href="../../faq/experiments/" class="md-nav__link">
         Experiments
       </a>
     </li>
@@ -1665,7 +1662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../faq/portal/" class="md-nav__link">
+      <a href="../../faq/portal/" class="md-nav__link">
         Portal
       </a>
     </li>
@@ -1677,7 +1674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../faq/scheduler/" class="md-nav__link">
+      <a href="../../faq/scheduler/" class="md-nav__link">
         Scheduler
       </a>
     </li>
@@ -1689,7 +1686,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../faq/security/" class="md-nav__link">
+      <a href="../../faq/security/" class="md-nav__link">
         Security
       </a>
     </li>
@@ -1701,7 +1698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../faq/ci-cd/" class="md-nav__link">
+      <a href="../../faq/ci-cd/" class="md-nav__link">
         CI/CD
       </a>
     </li>
@@ -1717,12 +1714,14 @@
             
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" checked>
       
       <label class="md-nav__link" for="__nav_4_3">
         Troubleshooting
@@ -1740,7 +1739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../troubleshooting/install/" class="md-nav__link">
+      <a href="../install/" class="md-nav__link">
         Install
       </a>
     </li>
@@ -1752,7 +1751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../troubleshooting/experiments/" class="md-nav__link">
+      <a href="../experiments/" class="md-nav__link">
         Experiments
       </a>
     </li>
@@ -1764,7 +1763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../troubleshooting/portal/" class="md-nav__link">
+      <a href="../portal/" class="md-nav__link">
         Portal
       </a>
     </li>
@@ -1774,11 +1773,64 @@
             
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../../troubleshooting/scheduler/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Scheduler
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Scheduler
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scheduler-not-creating-chaosengines-for-typerepeat" class="md-nav__link">
+    Scheduler not creating chaosengines for type=repeat?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1848,7 +1900,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../ROADMAP/" class="md-nav__link">
+      <a href="../../../ROADMAP/" class="md-nav__link">
         Roadmap
       </a>
     </li>
@@ -1863,7 +1915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api/contents/" class="md-nav__link">
+      <a href="../../api/contents/" class="md-nav__link">
         API Docs
       </a>
     </li>
@@ -1877,39 +1929,74 @@
               </div>
             
             
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scheduler-not-creating-chaosengines-for-typerepeat" class="md-nav__link">
+    Scheduler not creating chaosengines for type=repeat?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/chaos-resources/chaos-engine/engine-state.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/troubleshooting/scheduler.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                  <h1>State Specifications</h1>
+                <h1 id="chaos-scheduler">Chaos Scheduler<a class="headerlink" href="#chaos-scheduler" title="Permanent link">&para;</a></h1>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#scheduler-not-creating-chaosengines-for-typerepeat">Scheduler not creating chaosengines for type=repeat?</a></li>
+</ol>
+<h3 id="scheduler-not-creating-chaosengines-for-typerepeat">Scheduler not creating chaosengines for type=repeat?<a class="headerlink" href="#scheduler-not-creating-chaosengines-for-typerepeat" title="Permanent link">&para;</a></h3>
+<p>If the ChaosSchedule has been created successfully created in the cluster and ChaosEngine is not being formed, the most common problem is that either start or 
+end time has been wrongly specified. We should verify the times. We can identify if this is the problem or not by changing to <code>type=now</code>. If the ChaosEngine is 
+formed successfully then the problem is with the specified time ranges, if ChaosEngine is still not formed, then the problem is with <code>engineSpec</code>. </p>
                 
-                <p>It is a user-defined flag to trigger chaos. Setting it to <code>active</code> ensures the successful execution of chaos. Patching it with <code>stop</code> aborts ongoing experiments. It has a corresponding flag in the chaosengine status field, called <code>engineStatus</code> which is updated by the controller based on the actual state of the ChaosEngine.
-It can be tuned via <code>engineState</code> field. It supports <code>active</code> and <code>stop</code> values. </p>
-<p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the chaosengine state</span>
-<span class="c1"># supports: active and stop states</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="c1"># contains the state of engine </span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-</code></pre></div>
+                  
                 
               
               
@@ -1939,7 +2026,7 @@ It can be tuned via <code>engineState</code> field. It supports <code>active</co
         <!-- Link to previous page -->
         
         <a
-            href="../contents/"
+            href="../portal/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -1951,7 +2038,7 @@ It can be tuned via <code>engineState</code> field. It supports <code>active</co
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Contents
+                Portal
             </div>
             </div>
         </a>
@@ -1960,7 +2047,7 @@ It can be tuned via <code>engineState</code> field. It supports <code>active</co
         <!-- Link to next page -->
         
         <a
-            href="../application-details/"
+            href="../../../ROADMAP/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -1969,7 +2056,7 @@ It can be tuned via <code>engineState</code> field. It supports <code>active</co
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Application Specifications
+                Roadmap
             </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1996,11 +2083,11 @@ It can be tuned via <code>engineState</code> field. It supports <code>active</co
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
     
     
   
-      <script src="../../../../assets/javascripts/bundle.febc23d1.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.febc23d1.min.js"></script>
       
     
 
