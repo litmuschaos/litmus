@@ -235,8 +235,9 @@ spec:
 ### Container Runtime Socket Path
 
 It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container runtime and socket file path.
+
 - `CONTAINER_RUNTIME`: It supports `docker` runtime only.
-`SOCKET_PATH`: It contains path of docker socket file by default(`/var/run/docker.sock`).
+- `SOCKET_PATH`: It contains path of docker socket file by default(`/var/run/docker.sock`).
 
 Use the following example to tune this:
 

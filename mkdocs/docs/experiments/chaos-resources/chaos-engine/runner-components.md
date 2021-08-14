@@ -333,6 +333,7 @@ spec:
 ### ChaosRunner Args And Command
 
 It defines the `args` and `command` to set the args and command of the chaos-runner respectively.
+
 - `args`: It allows developers to specify their own debug runner args.
 - `command`: It allows developers to specify their own debug runner commands.
 
@@ -374,6 +375,7 @@ spec:
 ### ChaosRunner Configmaps And Secrets
 
 It defines the `configMaps` and `secrets` to set the configmaps and secrets mounted to the chaos-runner respectively.
+
 - `configMaps`: It provides for a means to insert config information into the runner pod.
 - `secrets`: It provides for a means to push secrets (typically project ids, access credentials, etc.,) into the chaos runner pod. These are especially useful in the case of platform-level/infra-level chaos experiments.
 
@@ -412,6 +414,7 @@ spec:
 ### ChaosRunner Image and ImagePullPoicy
 
 It defines the `image` and `imagePullPolicy` to set the image and imagePullPolicy for the chaos-runner respectively.
+
 - `image`: It allows developers to specify their own debug runner images. Defaults for the runner image can be enforced via the operator env `CHAOS_RUNNER_IMAGE`. 
 - `imagePullPolicy`: It allows developers to specify the pull policy for chaos-runner. Set to Always during debug/test.
 
