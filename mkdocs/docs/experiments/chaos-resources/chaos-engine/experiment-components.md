@@ -279,6 +279,7 @@ spec:
 ### Experiment Configmaps And Secrets
 
 It defines the `configMaps` and `secrets` to set the configmaps and secrets mounted to the experiment pod respectively.
+
 - `configMaps`: It provides for a means to insert config information into the experiment. The configmaps definition is validated for the correctness and those specified are checked for availability (in the cluster/namespace) before being mounted into the experiment pods.
 - `secrets`: It provides for a means to push secrets (typically project ids, access credentials, etc.,) into the experiment pods. These are especially useful in the case of platform-level/infra-level chaos experiments. The secrets definition is validated for the correctness and those specified are checked for availability (in the cluster/namespace) before being mounted into the experiment pods.
 

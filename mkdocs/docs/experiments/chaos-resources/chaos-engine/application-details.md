@@ -113,6 +113,7 @@ It contains AUT and auxiliary applications details provided at `spec.appinfo` an
 ## Application Under Test
 
 It defines the `appns`, `applabel`, and `appkind` to set the namespace, labels, and kind of the application under test.
+
 - `appkind`: It supports `deployment`, `statefulset`, `daemonset`, `deploymentconfig`, and `rollout`. 
 It is mandatory for the pod-level experiments and optional for the rest of the experiments.
 

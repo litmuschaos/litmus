@@ -20,6 +20,8 @@ hide:
 
 1. [Unable to Install Litmus portal using helm. Server pod and mongo pod are in CrashLoopBackOff state. Got this error while checking the logs of mongo container chown: changing ownership of '/data/db/.snapshot': Read-only file system](#unable-to-install-litmus-portal-using-helm-server-pod-and-mongo-pod-are-in-crashloopbackoff-state-got-this-error-while-checking-the-logs-of-mongo-container-chown-changing-ownership-of-datadbsnapshot-read-only-file-system)
 
+1. [Pre-defined workflow Bank Of Anthos showing bus error for accounts-db or ledger-db pod?](#pre-defined-workflow-bank-of-anthos-showing-bus-error-for-accounts-db-or-ledger-db-pod)
+
 ### We were setting up a Litmus Portal, however, Self-Agent status is showing pending. Any idea why is happening?
 
 The litmusportal-server-service might not be reachable due to inbound rules. You can enable the traffic to it if on GKE/EKS/AKS (by adding the port to inbound rules for traffic). You have to check the logs of the subscriber pod and expose the port mentioned for communication with the server.
@@ -58,3 +60,14 @@ These are agent components, which are launched by the control plane server, so f
 ### Unable to Install Litmus portal using helm. Server pod and mongo pod are in CrashLoopBackOff state. Got this error while checking the logs of mongo container chown: changing ownership of '/data/db/.snapshot': Read-only file system
 
 It seems the directory somehow existed before litmus installation and might be used by some other application. You have to change the mount path from /consul/config to /consul/myconfig in mongo statefulset then you can successfully deploy the litmus.
+
+### Pre-defined workflow Bank Of Anthos showing bus error for accounts-db or ledger-db pod?
+
+Bank of anthos is using PostgreSQL and wouldn't fall back properly to not using huge pages. 
+With given possible solution if same scenario occur can be resolve.
+ - Modify the docker image to be able to set huge_pages = off in /usr/share/postgresql/postgresql.conf.sample before initdb was ran (this is what I did).
+ - Turn off huge page support on the system (vm.nr_hugepages = 0 in /etc/sysctl.conf).
+ - Fix Postgres's fallback mechanism when huge_pages = try is set (the default).
+ - Modify the k8s manifest to enable huge page support (https://kubernetes.io/docs/tasks/manage-hugepages/scheduling-hugepages/).
+ - Modify k8s to show that huge pages are not supported on the system, when they are not enabled for a specific container.
+ 

@@ -20,8 +20,6 @@ hide:
 
 1. [How is resilience score is Calculated?](#how-is-resilience-score-is-calculated)
 
-1. [Pre-defined workflow Bank Of Anthos showing bus error for accounts-db or ledger-db pod?](#pre-defined-workflow-bank-of-anthos-showing-bus-error-for-accounts-db-or-ledger-db-pod)
-
 ### Can we host MongoDB outside the cluster? What connection string is supported? Is SSL connection supported? 
 
 Yes we can host Mongodb outside the cluster, the mongo string can be updated accordingly DataBaseServer: "mongodb://mongo-service:27017"
@@ -52,13 +50,3 @@ For now you can create agents and projects, also you can get the agents and proj
 ### How is resilience score is Calculated?
 
 The Resilience score is calculated on the basis of the weightage and the Probe Success Percentage of the experiment. Resilience for one single experiment is the multiplication of the weight given to that experiment and the Probe Success Percentage. Then we get the total test result by adding the resilience score of all the experiments. The Final Resilience Score is calculated by dividing the total test result by the sum of the weights of all the experiments combined in the single workflow. For more detail refer to [this](https://dev.to/litmus-chaos/how-the-resilience-score-algorithm-works-in-litmus-1d22) blog.
-
-### Pre-defined workflow Bank Of Anthos showing bus error for accounts-db or ledger-db pod?
-
-Bank of anthos is using PostgreSQL and wouldn't fall back properly to not using huge pages. 
-With given possible solution if same scenario occur can be resolve.
- - Modify the docker image to be able to set huge_pages = off in /usr/share/postgresql/postgresql.conf.sample before initdb was ran (this is what I did).
- - Turn off huge page support on the system (vm.nr_hugepages = 0 in /etc/sysctl.conf).
- - Fix Postgres's fallback mechanism when huge_pages = try is set (the default).
- - Modify the k8s manifest to enable huge page support (https://kubernetes.io/docs/tasks/manage-hugepages/scheduling-hugepages/).
- - Modify k8s to show that huge pages are not supported on the system, when they are not enabled for a specific container.

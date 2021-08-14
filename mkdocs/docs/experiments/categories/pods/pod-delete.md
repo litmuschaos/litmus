@@ -224,6 +224,7 @@ spec:
 
 The randomness in the chaos interval can be enabled via setting `RANDOMNESS` ENV to `true`. It supports boolean values. The default value is `false`.
 The chaos interval can be tuned via `CHAOS_INTERVAL` ENV. 
+
 - If `CHAOS_INTERVAL` is set in the form of `l-r` i.e, `5-10` then it will select a random interval between l & r.
 - If `CHAOS_INTERVAL` is set in the form of `value` i.e, `10` then it will select a random interval between 0 & value.
 
