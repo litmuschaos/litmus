@@ -76,7 +76,7 @@ markdown_extensions:
 nav:
     - Home: index.md
     - Experiments:
-      - Contents: experiments/categories/content.md
+      - Contents: experiments/categories/contents.md
       - Kubernetes: 
         - Generic:
           - Pod Chaos:
