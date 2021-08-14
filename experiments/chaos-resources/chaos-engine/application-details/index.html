@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#auxiliary-application-info" class="md-skip">
+        <a href="#application-under-test" class="md-skip">
           Skip to content
         </a>
       
@@ -216,7 +216,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../categories/content/" class="md-tabs__link">
+      <a href="../../../categories/contents/" class="md-tabs__link">
         Experiments
       </a>
     </li>
@@ -404,7 +404,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/content/" class="md-nav__link">
+      <a href="../../../categories/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1334,6 +1334,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#application-under-test" class="md-nav__link">
+    Application Under Test
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#auxiliary-application-info" class="md-nav__link">
     Auxiliary Application Info
   </a>
@@ -1927,6 +1934,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#application-under-test" class="md-nav__link">
+    Application Under Test
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#auxiliary-application-info" class="md-nav__link">
     Auxiliary Application Info
   </a>
@@ -1952,7 +1966,114 @@
                 
                   <h1>Application Specifications</h1>
                 
-                <p>It defines the <code>appns</code>, <code>applabel</code>, and <code>appkind</code> to set the namespace, labels, and kind of the application under test.
+                <p>It contains AUT and auxiliary applications details provided at <code>spec.appinfo</code> and <code>spec.auxiliaryAppInfo</code> respectively inside chaosengine.</p>
+<details class="info"><summary>View the application specification schema</summary><p><table>
+  <tr>
+    <th>Field</th>
+    <td><code>.spec.appinfo.appns</code></td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>Flag to specify namespace of application under test</td>
+  </tr>
+  <tr>
+    <th>Type</th>
+    <td>Optional</td>
+  </tr>
+  <tr>
+    <th>Range</th>
+    <td><i>user-defined</i> (type: string)</td>
+  </tr>
+  <tr>
+    <th>Default</th>
+    <td><i>n/a</i></td>
+  </tr>
+  <tr>
+    <th>Notes</th>
+    <td>The <code>appns</code> in the spec specifies the namespace of the AUT. Usually provided as a quoted string. It is optional for the infra chaos.</td>
+  </tr>
+  </table></p>
+<p><table>
+  <tr>
+    <th>Field</th>
+    <td><code>.spec.appinfo.applabel</code></td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>Flag to specify unique label of application under test</td>
+  </tr>
+  <tr>
+    <th>Type</th>
+    <td>Optional</td>
+  </tr>
+  <tr>
+    <th>Range</th>
+    <td><i>user-defined</i> (type: string)(pattern: "label_key=label_value")</td>
+  </tr>
+  <tr>
+    <th>Default</th>
+    <td><i>n/a</i></td>
+  </tr>
+  <tr>
+    <th>Notes</th>
+    <td>The <code>applabel</code> in the spec specifies a unique label of the AUT. Usually provided as a quoted string of pattern key=value. Note that if multiple applications share the same label within a given namespace, the AUT is filtered based on the presence of the chaos annotation <code>litmuschaos.io/chaos: "true"</code>. If, however, the <code>annotationCheck</code> is disabled, then a random application (pod) sharing the specified label is selected for chaos. It is optional for the infra chaos.</td>
+  </tr>
+  </table></p>
+<p><table>
+  <tr>
+    <th>Field</th>
+    <td><code>.spec.appinfo.appkind</code></td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>Flag to specify resource kind of application under test</td>
+  </tr>
+  <tr>
+    <th>Type</th>
+    <td>Optional</td>
+  </tr>
+  <tr>
+    <th>Range</th>
+    <td><code>deployment</code>, <code>statefulset</code>, <code>daemonset</code>, <code>deploymentconfig</code>, <code>rollout</code></td>
+  </tr>
+  <tr>
+    <th>Default</th>
+    <td><i>n/a</i> (depends on app type)</td>
+  </tr>
+  <tr>
+    <th>Notes</th>
+    <td>The <code>appkind</code> in the spec specifies the Kubernetes resource type of the app deployment. The Litmus ChaosOperator supports chaos on deployments, statefulsets and daemonsets. Application health check routines are dependent on the resource types, in case of some experiments. It is optional for the infra chaos</td>
+  </tr>
+  </table></p>
+<p><table>
+  <tr>
+    <th>Field</th>
+    <td><code>.spec.auxiliaryAppInfo</code></td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>Flag to specify one or more app namespace-label pairs whose health is also monitored as part of the chaos experiment, in addition to a primary application specified in the <code>.spec.appInfo</code>. <b>NOTE</b>: If the auxiliary applications are deployed in namespaces other than the AUT, ensure that the chaosServiceAccount is bound to a cluster role and has adequate permissions to list pods on other namespaces. </td>
+  </tr>
+  <tr>
+    <th>Type</th>
+    <td>Optional</td>
+  </tr>
+  <tr>
+    <th>Range</th>
+    <td><i>user-defined</i> (type: string)(pattern: "namespace:label_key=label_value").</td>
+  </tr>
+  <tr>
+    <th>Default</th>
+    <td><i>n/a</i></td>
+  </tr>
+  <tr>
+    <th>Notes</th>
+    <td>The <code>auxiliaryAppInfo</code> in the spec specifies a (comma-separated) list of namespace-label pairs for downstream (dependent) apps of the primary app specified in <code>.spec.appInfo</code> in case of pod-level chaos experiments. In case of infra-level chaos experiments, this flag specifies those apps that may be directly impacted by chaos and upon which health checks are necessary.</td>
+  </tr>
+  </table></p>
+</details>
+<h2 id="application-under-test">Application Under Test<a class="headerlink" href="#application-under-test" title="Permanent link">&para;</a></h2>
+<p>It defines the <code>appns</code>, <code>applabel</code>, and <code>appkind</code> to set the namespace, labels, and kind of the application under test.
 - <code>appkind</code>: It supports <code>deployment</code>, <code>statefulset</code>, <code>daemonset</code>, <code>deploymentconfig</code>, and <code>rollout</code>. 
 It is mandatory for the pod-level experiments and optional for the rest of the experiments.</p>
 <p>Use the following example to tune this:</p>

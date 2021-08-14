@@ -211,7 +211,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../categories/content/" class="md-tabs__link">
+      <a href="../../../categories/contents/" class="md-tabs__link">
         Experiments
       </a>
     </li>
@@ -399,7 +399,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/content/" class="md-nav__link">
+      <a href="../../../categories/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1890,7 +1890,34 @@
                   <h1>State Specifications</h1>
                 
                 <p>It is a user-defined flag to trigger chaos. Setting it to <code>active</code> ensures the successful execution of chaos. Patching it with <code>stop</code> aborts ongoing experiments. It has a corresponding flag in the chaosengine status field, called <code>engineStatus</code> which is updated by the controller based on the actual state of the ChaosEngine.
-It can be tuned via <code>engineState</code> field. It supports <code>active</code> and <code>stop</code> values. </p>
+It can be tuned via <code>engineState</code> field. It supports <code>active</code> and <code>stop</code> values.</p>
+<details class="info"><summary>View the state specification schema</summary><p><table>
+<tr>
+  <th>Field</th>
+  <td><code>.spec.engineState</code></td>
+</tr>
+<tr>
+  <th>Description</th>
+  <td>Flag to control the state of the chaosengine</td>
+</tr>
+<tr>
+  <th>Type</th>
+  <td>Mandatory</td>
+</tr>
+<tr>
+  <th>Range</th>
+  <td><code>active</code>, <code>stop</code></td>
+</tr>
+<tr>
+  <th>Default</th>
+  <td><code>active</code></td>
+</tr>
+<tr>
+  <th>Notes</th>
+  <td>The <code>engineState</code> in the spec is a user defined flag to trigger chaos. Setting it to <code>active</code> ensures successful execution of chaos. Patching it with <code>stop</code> aborts ongoing experiments. It has a corresponding flag in the chaosengine status field, called <code>engineStatus</code> which is updated by the controller based on actual state of the ChaosEngine.</td>
+</tr>
+</table></p>
+</details>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains the chaosengine state</span>
 <span class="c1"># supports: active and stop states</span>

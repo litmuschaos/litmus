@@ -211,7 +211,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../categories/content/" class="md-tabs__link">
+      <a href="../../../categories/contents/" class="md-tabs__link">
         Experiments
       </a>
     </li>
@@ -399,7 +399,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../categories/content/" class="md-nav__link">
+      <a href="../../../categories/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1891,6 +1891,33 @@
                 
                 <p>It specifies the name of the serviceaccount mapped to a role/clusterRole with enough permissions to execute the desired chaos experiment. The minimum permissions needed for any given experiment are provided in the <code>.spec.definition.permissions</code> field of the respective chaosexperiment CR.
 It can be tuned via <code>chaosServiceAccount</code> field.</p>
+<details class="info"><summary>View the RBAC specification schema</summary><p><table>
+  <tr>
+    <th>Field</th>
+    <td><code>.spec.chaosServiceAccount</code></td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>Flag to specify serviceaccount used for chaos experiment</td>
+  </tr>
+  <tr>
+    <th>Type</th>
+    <td>Mandatory</td>
+  </tr>
+  <tr>
+    <th>Range</th>
+    <td><i>user-defined</i> (type: string)</td>
+  </tr>
+  <tr>
+    <th>Default</th>
+    <td><i>n/a</i></td>
+  </tr>
+  <tr>
+    <th>Notes</th>
+    <td>The <code>chaosServiceAccount</code> in the spec specifies the name of the serviceaccount mapped to a role/clusterRole with enough permissions to execute the desired chaos experiment. The minimum permissions needed for any given experiment is provided in the <code>.spec.definition.permissions</code> field of the respective <b>chaosexperiment</b> CR.</td>
+  </tr>
+</table></p>
+</details>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains name of the serviceAccount which contains all the RBAC permissions required for the experiment</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
