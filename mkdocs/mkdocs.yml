@@ -76,8 +76,8 @@ markdown_extensions:
 nav:
     - Home: index.md
     - Experiments:
-      - Contents: experiments/categories/getstarted.md
-      - Kubernetes:
+      - Contents: experiments/categories/content.md
+      - Kubernetes: 
         - Generic:
           - Pod Chaos:
             - Container Kill: experiments/categories/pods/container-kill.md
@@ -144,21 +144,26 @@ nav:
         - Contents: experiments/chaos-resources/chaos-scheduler/contents.md
       - Probes:
         - Contents: experiments/chaos-resources/probes/contents.md
-        - Command Probe:  experiments/chaos-resources/probes/cmdProbe.md
-        - HTTP Probe:  experiments/chaos-resources/probes/httpProbe.md
-        - K8S Probe:  experiments/chaos-resources/probes/k8sProbe.md
-        - Prometheus Probe:  experiments/chaos-resources/probes/promProbe.md
+        - Command Probe: experiments/chaos-resources/probes/cmdProbe.md
+        - HTTP Probe: experiments/chaos-resources/probes/httpProbe.md
+        - K8S Probe: experiments/chaos-resources/probes/k8sProbe.md
+        - Prometheus Probe: experiments/chaos-resources/probes/promProbe.md
     - Litmus FAQ:
-      - General: 
-        - Experiments: experiments/faq/experiments.md
+      - Contents: experiments/faq/content.md
+      - FAQ: 
         - Install: experiments/faq/install.md 
+        - Experiments: experiments/faq/experiments.md
         - Portal: experiments/faq/portal.md
+        - Scheduler: experiments/faq/scheduler.md
         - Security: experiments/faq/security.md
+        - CI/CD: experiments/faq/ci-cd.md
       - Troubleshooting:
-        - Experiments: experiments/troubleshooting/experiments.md
         - Install: experiments/troubleshooting/install.md 
+        - Experiments: experiments/troubleshooting/experiments.md
         - Portal: experiments/troubleshooting/portal.md
+        - Scheduler: experiments/troubleshooting/scheduler.md
     - Chaos Hub ⧉: https://hub.litmuschaos.io/
-    - Platform Docs ⧉: https://litmusdocs-beta.netlify.app/
+    - Platform Docs ⧉: https://docs.litmuschaos.io/
     - Releases ⧉: https://github.com/litmuschaos/litmus/releases
     - Roadmap: ROADMAP.md
+    - API Docs: experiments/api/contents.md

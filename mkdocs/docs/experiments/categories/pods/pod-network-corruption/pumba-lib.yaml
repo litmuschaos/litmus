@@ -23,6 +23,6 @@ spec:
         # image used for the traffic control in linux
         # applicable for pumba lib only
         - name: TC_IMAGE
-          value: ''
+          value: 'gaiadocker/iproute2'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
