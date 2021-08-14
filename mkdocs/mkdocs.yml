@@ -136,12 +136,14 @@ nav:
         - Runtime Specifications: experiments/chaos-resources/chaos-engine/runtime-details.md
         - Runner Specifications: experiments/chaos-resources/chaos-engine/runner-components.md
         - Experiment Specifications: experiments/chaos-resources/chaos-engine/experiment-components.md
-      - ChaosExperiment:
-        - Contents: experiments/chaos-resources/chaos-experiment/contents.md
-      - ChaosResult:
-        - Contents: experiments/chaos-resources/chaos-result/contents.md
+      - ChaosExperiment: experiments/chaos-resources/chaos-experiment/contents.md
+      - ChaosResult: experiments/chaos-resources/chaos-result/contents.md
       - ChaosScheduler:
         - Contents: experiments/chaos-resources/chaos-scheduler/contents.md
+        - Schedule Once: experiments/chaos-resources/chaos-scheduler/schedule-once.md
+        - Schedule Repeat: experiments/chaos-resources/chaos-scheduler/schedule-repeat.md
+        - Schedule State: experiments/chaos-resources/chaos-scheduler/state.md
+        - Engine Specifications: experiments/chaos-resources/chaos-scheduler/engine-specification.md
       - Probes:
         - Contents: experiments/chaos-resources/probes/contents.md
         - Command Probe: experiments/chaos-resources/probes/cmdProbe.md
