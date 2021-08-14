@@ -37,9 +37,7 @@ hide:
 ### When I’m executing an experiment the experiment's pod failed with the exec format error
 
 ??? info "View the error message" 
-    ```
     standard_init_linux.go:211: exec user process caused "exec format error":
-    ```
     
 There could be multiple reasons for this. The most common one is mismatched in the binary and the platform on which it is running, try to check out the image binary you're using should have the support for the platform on which you’re trying to run the experiment.
 
@@ -174,16 +172,12 @@ For the above commands to execute successfully, you should simply wait for the e
 ### The helper pod is getting in a failed state due to container runtime issue
 
 ??? info "View the error message"
-    ```
-    time="2021-07-15T10:26:04Z" level=fatal msg="helper pod failed, err: Unable to run command, err: exit status 1; error output: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?\n"
-    ```
+    time="2021-07-15T10:26:04Z" level=fatal msg="helper pod failed, err: Unable to run command, err: exit status 1; error output: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?"
 
-    OR
+    <center>OR</center>
 
-    ```
     time="2021-07-16T22:21:02Z" level=error msg="[docker]: Failed to run docker inspect: []\nError: No such object: 1807fec21ccad1101bbb63a7d412be15414f807316572f9e043b9f4a3e7c4acc\n"
     time="2021-07-16T22:21:02Z" level=fatal msg="helper pod failed, err: exit status 1"
-    ```
 
 The default values for `CONTAINER_RUNTIME` & `SOCKET_PATH` env is for `docker` runtime. Please check if the cluster runtime is other than docker i.e, containerd then update above ENVs as follow:
 
@@ -200,19 +194,16 @@ The default values for `CONTAINER_RUNTIME` & `SOCKET_PATH` env is for `docker` r
 ### Disk Fill fail with the error message
 
 ??? info "View the error message"
-    ```
     time="2021-08-12T05:27:39Z" level=fatal msg="helper pod failed, err: either provide ephemeral storage limit inside target container or define EPHEMERAL_STORAGE_MEBIBYTES ENV"
-    ```
+
 The disk fill experiment needs to have either ephemeral storage limit defined in the application or you can provide the value in mebibytes using 
 `EPHEMERAL_STORAGE_MEBIBYTES` ENV in the chaos engine. Either of them is required. For more details refer: [FILL_PERCENTAGE](https://litmuschaos.github.io/litmus/experiments/categories/pods/disk-fill/#disk-fill-percentage) and [EPHEMERAL_STORAGE_MEBIBYTES](https://litmuschaos.github.io/litmus/experiments/categories/pods/disk-fill/#disk-fill-mebibytes)
 
 ### Disk Fill failed with error:
 
 ??? info "View the error message"
-    ```
     time="2021-08-12T05:41:45Z" level=error msg="du: /diskfill/8a1088e3fd50a31d5f0d383ae2258d9975f1df152ff92b3efd570a44e952a732: No such file or directory\n"
     time="2021-08-12T05:41:45Z" level=fatal msg="helper pod failed, err: exit status 1"
-    ```
 
 This could be due to multiple issues in filling the disk of a container the most common one is invalid CONTAINER_PATH env set in the chaosengine. The default container path env is common for most of the use-cases and that is `/var/lib/docker/containers` 
 
@@ -227,12 +218,11 @@ Ans: These are the infra level experiments, we need to cordon the target node so
 ### AWS experiments failed with the following error
 
 ??? info "View the error message"
-    ```
     time="2021-08-12T10:25:57Z" level=error msg="failed perform ssm api calls, err: UnrecognizedClientException: The security token included in the request is invalid.\n\tstatus code: 400, request id: 68f0c2e8-a7ed-4576-8c75-0a3ed497efb9" 
-    ```
+
 The AWS experiment needs authentication to connect & perform actions on the aws services we can provide this with the help of the secret as shown below:
 
-??? info "View the secret manifest"
+??? note "View the secret manifest"
     ```
     apiVersion: v1
     kind: Secret
@@ -253,9 +243,7 @@ If you are running the experiment in an EKS cluster then you have one more optio
 ### In AWS SSM Chaos I have provided the aws in secret but still not able to inject the SSM chaos on the target instance
 
 ??? info "View the error message"
-    ```
     time='2021-08-13T09:30:47Z' level=error msg='failed perform ssm api calls, err: error: the instance id-qqw2-123-12- might not have suitable permission or IAM attached to it. use \'aws ssm describe-instance-information\' to check the available instances'
-    ```
 
 Ensure that you have the required AWS access and your target EC2 instances have attached an IAM instance profile. To know more checkout [Systems Manager Docs](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-launch-managed-instance.html)
 
@@ -266,7 +254,6 @@ The GCP VM Disk Loss experiment requires a GCP Service Account having a Project 
 ### In pod level stress chaos experiments like pod memory hog or pod io stress after the chaos is injected successfully the helper fails with an error message
 
 ??? info "View the error message"
-    ```
     Error: process exited before the actual cleanup
-    ```
+
 The error message indicates that the stress process inside the target container is somehow removed before the actual cleanup. There could be multiple reasons for this: the target container might have just got restarted due to excessive load on the container which it can’t handle and the kubelet terminated that replica and launches a new one (if applicable) and reports an OOM event on the older one.
