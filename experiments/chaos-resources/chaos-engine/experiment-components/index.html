@@ -2311,9 +2311,11 @@
           <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">chaos-experiment</span>
 </code></pre></div>
 <h3 id="experiment-configmaps-and-secrets">Experiment Configmaps And Secrets<a class="headerlink" href="#experiment-configmaps-and-secrets" title="Permanent link">&para;</a></h3>
-<p>It defines the <code>configMaps</code> and <code>secrets</code> to set the configmaps and secrets mounted to the experiment pod respectively.
-- <code>configMaps</code>: It provides for a means to insert config information into the experiment. The configmaps definition is validated for the correctness and those specified are checked for availability (in the cluster/namespace) before being mounted into the experiment pods.
-- <code>secrets</code>: It provides for a means to push secrets (typically project ids, access credentials, etc.,) into the experiment pods. These are especially useful in the case of platform-level/infra-level chaos experiments. The secrets definition is validated for the correctness and those specified are checked for availability (in the cluster/namespace) before being mounted into the experiment pods.</p>
+<p>It defines the <code>configMaps</code> and <code>secrets</code> to set the configmaps and secrets mounted to the experiment pod respectively.</p>
+<ul>
+<li><code>configMaps</code>: It provides for a means to insert config information into the experiment. The configmaps definition is validated for the correctness and those specified are checked for availability (in the cluster/namespace) before being mounted into the experiment pods.</li>
+<li><code>secrets</code>: It provides for a means to push secrets (typically project ids, access credentials, etc.,) into the experiment pods. These are especially useful in the case of platform-level/infra-level chaos experiments. The secrets definition is validated for the correctness and those specified are checked for availability (in the cluster/namespace) before being mounted into the experiment pods.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains configmaps and secrets for the experiment pod</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>

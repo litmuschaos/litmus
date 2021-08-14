@@ -2336,9 +2336,11 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
           <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="destination-ips-and-destination-hosts">Destination IPs And Destination Hosts<a class="headerlink" href="#destination-ips-and-destination-hosts" title="Permanent link">&para;</a></h3>
-<p>The network experiments interrupt traffic for all the IPs/hosts by default. The interruption of specific IPs/Hosts can be tuned via <code>DESTINATION_IPS</code> and <code>DESTINATION_HOSTS</code> ENV.
-<code>DESTINATION_IPS</code>: It contains the IP addresses of the services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted.
-<code>DESTINATION_HOSTS</code>: It contains the DNS Names/FQDN names of the services, the accessibility to which, is impacted.</p>
+<p>The network experiments interrupt traffic for all the IPs/hosts by default. The interruption of specific IPs/Hosts can be tuned via <code>DESTINATION_IPS</code> and <code>DESTINATION_HOSTS</code> ENV.</p>
+<ul>
+<li><code>DESTINATION_IPS</code>: It contains the IP addresses of the services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted.</li>
+<li><code>DESTINATION_HOSTS</code>: It contains the DNS Names/FQDN names of the services, the accessibility to which, is impacted.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># it inject the chaos for the ingrees and egress traffic for specific ips/hosts</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
@@ -2395,9 +2397,11 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
           <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="container-runtime-socket-path">Container Runtime Socket Path<a class="headerlink" href="#container-runtime-socket-path" title="Permanent link">&para;</a></h3>
-<p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.
-- <code>CONTAINER_RUNTIME</code>: It supports <code>docker</code>, <code>containerd</code>, and <code>crio</code> runtimes. The default value is <code>docker</code>.
-<code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/var/run/docker.sock</code>). For other runtimes provide the appropriate path.</p>
+<p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.</p>
+<ul>
+<li><code>CONTAINER_RUNTIME</code>: It supports <code>docker</code>, <code>containerd</code>, and <code>crio</code> runtimes. The default value is <code>docker</code>.</li>
+<li><code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/var/run/docker.sock</code>). For other runtimes provide the appropriate path.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## provide the container runtime and socket file path</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>

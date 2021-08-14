@@ -2317,9 +2317,11 @@ If <code>TARGET_HOSTNAMES</code>not provided then all hostnames/domains will be 
           <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="container-runtime-socket-path">Container Runtime Socket Path<a class="headerlink" href="#container-runtime-socket-path" title="Permanent link">&para;</a></h3>
-<p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.
-- <code>CONTAINER_RUNTIME</code>: It supports <code>docker</code> runtime only.
-<code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/var/run/docker.sock</code>).</p>
+<p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.</p>
+<ul>
+<li><code>CONTAINER_RUNTIME</code>: It supports <code>docker</code> runtime only.</li>
+<li><code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/var/run/docker.sock</code>).</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## provide the container runtime and socket file path</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>

@@ -2363,9 +2363,11 @@
   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 </code></pre></div>
 <h3 id="chaosrunner-args-and-command">ChaosRunner Args And Command<a class="headerlink" href="#chaosrunner-args-and-command" title="Permanent link">&para;</a></h3>
-<p>It defines the <code>args</code> and <code>command</code> to set the args and command of the chaos-runner respectively.
-- <code>args</code>: It allows developers to specify their own debug runner args.
-- <code>command</code>: It allows developers to specify their own debug runner commands.</p>
+<p>It defines the <code>args</code> and <code>command</code> to set the args and command of the chaos-runner respectively.</p>
+<ul>
+<li><code>args</code>: It allows developers to specify their own debug runner args.</li>
+<li><code>command</code>: It allows developers to specify their own debug runner commands.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains args and command for the chaos runner</span>
 <span class="c1"># it will be useful for the cases where custom image of the chaos-runner is used, which supports args and commands</span>
@@ -2397,9 +2399,11 @@
   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 </code></pre></div>
 <h3 id="chaosrunner-configmaps-and-secrets">ChaosRunner Configmaps And Secrets<a class="headerlink" href="#chaosrunner-configmaps-and-secrets" title="Permanent link">&para;</a></h3>
-<p>It defines the <code>configMaps</code> and <code>secrets</code> to set the configmaps and secrets mounted to the chaos-runner respectively.
-- <code>configMaps</code>: It provides for a means to insert config information into the runner pod.
-- <code>secrets</code>: It provides for a means to push secrets (typically project ids, access credentials, etc.,) into the chaos runner pod. These are especially useful in the case of platform-level/infra-level chaos experiments.</p>
+<p>It defines the <code>configMaps</code> and <code>secrets</code> to set the configmaps and secrets mounted to the chaos-runner respectively.</p>
+<ul>
+<li><code>configMaps</code>: It provides for a means to insert config information into the runner pod.</li>
+<li><code>secrets</code>: It provides for a means to push secrets (typically project ids, access credentials, etc.,) into the chaos runner pod. These are especially useful in the case of platform-level/infra-level chaos experiments.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains configmaps and secrets for the chaos-runner</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
@@ -2428,9 +2432,11 @@
   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 </code></pre></div>
 <h3 id="chaosrunner-image-and-imagepullpoicy">ChaosRunner Image and ImagePullPoicy<a class="headerlink" href="#chaosrunner-image-and-imagepullpoicy" title="Permanent link">&para;</a></h3>
-<p>It defines the <code>image</code> and <code>imagePullPolicy</code> to set the image and imagePullPolicy for the chaos-runner respectively.
-- <code>image</code>: It allows developers to specify their own debug runner images. Defaults for the runner image can be enforced via the operator env <code>CHAOS_RUNNER_IMAGE</code>. 
-- <code>imagePullPolicy</code>: It allows developers to specify the pull policy for chaos-runner. Set to Always during debug/test.</p>
+<p>It defines the <code>image</code> and <code>imagePullPolicy</code> to set the image and imagePullPolicy for the chaos-runner respectively.</p>
+<ul>
+<li><code>image</code>: It allows developers to specify their own debug runner images. Defaults for the runner image can be enforced via the operator env <code>CHAOS_RUNNER_IMAGE</code>. </li>
+<li><code>imagePullPolicy</code>: It allows developers to specify the pull policy for chaos-runner. Set to Always during debug/test.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains the image and imagePullPolicy of the chaos-runner</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>

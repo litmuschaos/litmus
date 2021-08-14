@@ -2303,9 +2303,11 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 </code></pre></div>
 <h3 id="random-interval">Random Interval<a class="headerlink" href="#random-interval" title="Permanent link">&para;</a></h3>
 <p>The randomness in the chaos interval can be enabled via setting <code>RANDOMNESS</code> ENV to <code>true</code>. It supports boolean values. The default value is <code>false</code>.
-The chaos interval can be tuned via <code>CHAOS_INTERVAL</code> ENV. 
-- If <code>CHAOS_INTERVAL</code> is set in the form of <code>l-r</code> i.e, <code>5-10</code> then it will select a random interval between l &amp; r.
-- If <code>CHAOS_INTERVAL</code> is set in the form of <code>value</code> i.e, <code>10</code> then it will select a random interval between 0 &amp; value.</p>
+The chaos interval can be tuned via <code>CHAOS_INTERVAL</code> ENV. </p>
+<ul>
+<li>If <code>CHAOS_INTERVAL</code> is set in the form of <code>l-r</code> i.e, <code>5-10</code> then it will select a random interval between l &amp; r.</li>
+<li>If <code>CHAOS_INTERVAL</code> is set in the form of <code>value</code> i.e, <code>10</code> then it will select a random interval between 0 &amp; value.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains random chaos interval with lower and upper bound of range i.e [l,r]</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>

@@ -2274,9 +2274,11 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 </code></pre></div>
 <h3 id="chaos-inject-and-kill-commands">Chaos Inject and Kill Commands<a class="headerlink" href="#chaos-inject-and-kill-commands" title="Permanent link">&para;</a></h3>
 <p>It defines the <code>CHAOS_INJECT_COMMAND</code> and <code>CHAOS_KILL_COMMAND</code> ENV to set the chaos inject and chaos kill commands respectively.
-Default values of commands:
-- <code>CHAOS_INJECT_COMMAND</code>: "md5sum /dev/zero"
-- <code>CHAOS_KILL_COMMAND</code>: "kill $(find /proc -name exe -lname '*/md5sum' 2&gt;&amp;1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}')"</p>
+Default values of commands:</p>
+<ul>
+<li><code>CHAOS_INJECT_COMMAND</code>: "md5sum /dev/zero"</li>
+<li><code>CHAOS_KILL_COMMAND</code>: "kill $(find /proc -name exe -lname '*/md5sum' 2&gt;&amp;1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}')"</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># provide the chaos kill, used to kill the chaos process</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>

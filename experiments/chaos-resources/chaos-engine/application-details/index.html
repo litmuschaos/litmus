@@ -2073,9 +2073,11 @@
   </table></p>
 </details>
 <h2 id="application-under-test">Application Under Test<a class="headerlink" href="#application-under-test" title="Permanent link">&para;</a></h2>
-<p>It defines the <code>appns</code>, <code>applabel</code>, and <code>appkind</code> to set the namespace, labels, and kind of the application under test.
-- <code>appkind</code>: It supports <code>deployment</code>, <code>statefulset</code>, <code>daemonset</code>, <code>deploymentconfig</code>, and <code>rollout</code>. 
-It is mandatory for the pod-level experiments and optional for the rest of the experiments.</p>
+<p>It defines the <code>appns</code>, <code>applabel</code>, and <code>appkind</code> to set the namespace, labels, and kind of the application under test.</p>
+<ul>
+<li><code>appkind</code>: It supports <code>deployment</code>, <code>statefulset</code>, <code>daemonset</code>, <code>deploymentconfig</code>, and <code>rollout</code>. 
+It is mandatory for the pod-level experiments and optional for the rest of the experiments.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains details of the AUT(application under test)</span>
 <span class="c1"># appns: name of the application</span>
