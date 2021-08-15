@@ -221,107 +221,112 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/contents/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/psp/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/application-details/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/contents/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/contents/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/application-details/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/engine-state/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/contents/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/experiment-components/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/engine-state/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/rbac-details/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/experiment-components/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/runner-components/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/rbac-details/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/runtime-details/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/runner-components/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-experiment/contents/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/runtime-details/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-result/contents/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-experiment/contents/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-scheduler/contents/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-result/contents/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-scheduler/engine-specification/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-scheduler/contents/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-scheduler/schedule-once/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-scheduler/engine-specification/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-scheduler/schedule-repeat/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-scheduler/schedule-once/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-scheduler/state/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-scheduler/schedule-repeat/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/probes/cmdProbe/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-scheduler/state/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/probes/contents/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/cmdProbe/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/probes/httpProbe/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/contents/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/probes/k8sProbe/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/httpProbe/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/probes/litmus-probes/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/k8sProbe/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/chaos-resources/probes/promProbe/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/litmus-probes/</loc>
+         <lastmod>2021-08-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/promProbe/</loc>
          <lastmod>2021-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
