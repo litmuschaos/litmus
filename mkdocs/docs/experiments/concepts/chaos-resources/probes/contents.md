@@ -11,21 +11,21 @@ Litmus probes are pluggable checks that can be defined within the ChaosEngine fo
   <tr>
   <td>Command Probe</td>
   <td>It defines the command probes</td>
-  <td><a href="/litmus/experiments/chaos-resources/probes/cmdProbe">Command Probe</a></td>
+  <td><a href="/litmus/experiments/concepts/chaos-resources/probes/cmdProbe">Command Probe</a></td>
   </tr>
    <tr>
   <td>HTTP Probe</td>
   <td>It defines the http probes</td>
-  <td><a href="/litmus/experiments/chaos-resources/probes/httpProbe">HTTP Probe</a></td>
+  <td><a href="/litmus/experiments/concepts/chaos-resources/probes/httpProbe">HTTP Probe</a></td>
   </tr>
    <tr>
   <td>K8S Probe</td>
   <td>It defines the k8s probes</td>
-  <td><a href="/litmus/experiments/chaos-resources/probes/k8sProbe">K8S Probe</a></td>
+  <td><a href="/litmus/experiments/concepts/chaos-resources/probes/k8sProbe">K8S Probe</a></td>
   </tr>
    <tr>
   <td>Prometheus Probe</td>
   <td>It defines the prometheus probes</td>
-  <td><a href="/litmus/experiments/chaos-resources/probes/promProbe">Prometheus Probe</a></td>
+  <td><a href="/litmus/experiments/concepts/chaos-resources/probes/promProbe">Prometheus Probe</a></td>
   </tr>
 </table>
