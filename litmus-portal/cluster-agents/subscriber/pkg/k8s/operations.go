@@ -156,6 +156,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		"AGENT_SCOPE":          clusterData["AGENT_SCOPE"],
 		"COMPONENTS":           clusterData["COMPONENTS"],
 		"START_TIME":           clusterData["START_TIME"],
+		"VERSION":              clusterData["VERSION"],
 	}
 
 	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(&corev1.ConfigMap{
@@ -285,7 +286,7 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 }
 
 func ClusterConfirm(clusterData map[string]string) ([]byte, error) {
-	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey cluster_id}}"}`
+	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey cluster_id}}"}`
 	resp, err := graphql.SendRequest(clusterData["SERVER_ADDR"], []byte(payload))
 	if err != nil {
 		return nil, err

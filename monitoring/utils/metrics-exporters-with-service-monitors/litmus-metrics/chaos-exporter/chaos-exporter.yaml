@@ -4,6 +4,7 @@ kind: Deployment
 metadata:
   labels:
     app: chaos-exporter
+    release: prometheus-stack
   name: chaos-exporter
   namespace: litmus
 spec:
@@ -15,15 +16,21 @@ spec:
     metadata:
       labels:
         app: chaos-exporter
+        release: prometheus-stack
     spec:
       containers:
-        - image: litmuschaos/chaos-exporter:1.13.3
+        - image: litmuschaos/chaos-exporter:1.13.6
           imagePullPolicy: Always
           name: chaos-exporter
+          ports:
+            - containerPort: 8080
+              name: tcp
+          env:
+            - name: TSDB_SCRAPE_INTERVAL
+              value: '10'
           # uncomment the following lines to use the litmuschaos exporter for monitoring the chaos events and chaosresults for a selected namespace
-          # env:
-          #   - name: WATCH_NAMESPACE
-          #     value: "litmus"
+          # - name: WATCH_NAMESPACE
+          #   value: 'litmus'
       # to use with litmus portal in cluster scope change service account name to 'litmus-cluster-scope' and for using litmus portal in namespaced scope change to 'litmus-namespace-scope'
       serviceAccountName: litmus
 ---

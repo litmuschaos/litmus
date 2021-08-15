@@ -24,6 +24,7 @@ const (
 	PanelCollection
 	DashboardCollection
 	ImageRegistryCollection
+	ServerConfigCollection
 )
 
 // MongoInterface requires a MongoClient that implements the Initialize method to create the Mongo DB client
@@ -47,6 +48,7 @@ type MongoClient struct {
 	PanelCollection            *mongo.Collection
 	DashboardCollection        *mongo.Collection
 	ImageRegistryCollection    *mongo.Collection
+	ServerConfigCollection     *mongo.Collection
 }
 
 var (
@@ -64,6 +66,7 @@ var (
 		PanelCollection:            "panel-collection",
 		DashboardCollection:        "dashboard-collection",
 		ImageRegistryCollection:    "image-registry-collection",
+		ServerConfigCollection:     "server-config-collection",
 	}
 
 	dbName            = "litmus"
@@ -153,4 +156,16 @@ func (m *MongoClient) initAllCollection() {
 	m.PanelCollection = m.Database.Collection(collections[PanelCollection])
 	m.DashboardCollection = m.Database.Collection(collections[DashboardCollection])
 	m.ImageRegistryCollection = m.Database.Collection(collections[ImageRegistryCollection])
+	m.ServerConfigCollection = m.Database.Collection(collections[ServerConfigCollection])
+	_, err = m.ServerConfigCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
+		{
+			Keys: bson.M{
+				"key": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+	})
+	if err != nil {
+		logrus.Fatal("Error Creating Index for Server Config Collection : ", err)
+	}
 }

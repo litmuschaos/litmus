@@ -2,6 +2,8 @@ package cluster
 
 import (
 	"errors"
+	"fmt"
+	"os"
 
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
@@ -11,6 +13,10 @@ import (
 
 // VerifyCluster utils function used to verify cluster identity
 func VerifyCluster(identity model.ClusterIdentity) (*dbSchemaCluster.Cluster, error) {
+	currentVersion := os.Getenv("VERSION")
+	if currentVersion != identity.Version {
+		return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v got %v)", currentVersion, identity.Version)
+	}
 	cluster, err := dbOperationsCluster.GetCluster(identity.ClusterID)
 	if err != nil {
 		return nil, err

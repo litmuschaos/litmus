@@ -146,8 +146,8 @@ func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 }
 
 // generate graphql mutation payload for events event
-func GenerateWorkflowPayload(cid, accessKey, completed string, wfEvent types.WorkflowEvent) ([]byte, error) {
-	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
+func GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent types.WorkflowEvent) ([]byte, error) {
+	clusterID := `{cluster_id: \"` + cid + `\", version: \"` + version + `\", access_key: \"` + accessKey + `\"}`
 
 	for id, event := range wfEvent.Nodes {
 		event.Message = strings.Replace(event.Message, `"`, ``, -1)
