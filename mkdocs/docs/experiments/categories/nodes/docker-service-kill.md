@@ -29,53 +29,56 @@
 
 ## Minimal RBAC configuration example (optional)
 
-??? note "View the Minimal RBAC permissions"
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
-    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/docker-service-kill/rbac.yaml yaml)
-    ```yaml
-    ---
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: docker-service-kill-sa
-      namespace: default
-      labels:
-        name: docker-service-kill-sa
-        app.kubernetes.io/part-of: litmus
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRole
-    metadata:
-      name: docker-service-kill-sa
-      labels:
-        name: docker-service-kill-sa
-        app.kubernetes.io/part-of: litmus
-    rules:
-    - apiGroups: ["","litmuschaos.io","batch","apps"]
-      resources: ["pods","jobs","pods/log","events","chaosengines","chaosexperiments","chaosresults"]
-      verbs: ["create","list","get","patch","update","delete"]
-    - apiGroups: [""]
-      resources: ["nodes"]
-      verbs: ["get","list"]
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
-    metadata:
-      name: docker-service-kill-sa
-      labels:
-        name: docker-service-kill-sa
-        app.kubernetes.io/part-of: litmus
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: docker-service-kill-sa
-    subjects:
-    - kind: ServiceAccount
-      name: docker-service-kill-sa
-      namespace: default
-    ```
+    ??? note "View the Minimal RBAC permissions"
 
-    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/docker-service-kill/rbac.yaml yaml)
+        ```yaml
+        ---
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: docker-service-kill-sa
+          namespace: default
+          labels:
+            name: docker-service-kill-sa
+            app.kubernetes.io/part-of: litmus
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: docker-service-kill-sa
+          labels:
+            name: docker-service-kill-sa
+            app.kubernetes.io/part-of: litmus
+        rules:
+        - apiGroups: ["","litmuschaos.io","batch","apps"]
+          resources: ["pods","jobs","pods/log","events","chaosengines","chaosexperiments","chaosresults"]
+          verbs: ["create","list","get","patch","update","delete"]
+        - apiGroups: [""]
+          resources: ["nodes"]
+          verbs: ["get","list"]
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: docker-service-kill-sa
+          labels:
+            name: docker-service-kill-sa
+            app.kubernetes.io/part-of: litmus
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: docker-service-kill-sa
+        subjects:
+        - kind: ServiceAccount
+          name: docker-service-kill-sa
+          namespace: default
+        ```
+
+        Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 

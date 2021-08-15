@@ -13,21 +13,21 @@ This section describes the fields in the ChaosScheduler and the possible values 
   <tr>
   <td>Schedule Once</td>
   <td>Schedule chaos once on specified time or now</td>
-  <td><a href="/litmus/experiments/chaos-resources/chaos-scheduler/schedule-once">Schedule Once</a></td>
+  <td><a href="/litmus/experiments/concepts/chaos-resources/chaos-scheduler/schedule-once">Schedule Once</a></td>
   </tr>
   <tr>
   <td>Repeat Schedule</td>
   <td>Schedule chaos in repeat mode</td>
-  <td><a href="/litmus/experiments/chaos-resources/chaos-scheduler/schedule-repeat">Repeat Schedule</a></td>
+  <td><a href="/litmus/experiments/concepts/chaos-resources/chaos-scheduler/schedule-repeat">Repeat Schedule</a></td>
   </tr>
   <tr>
   <td>Schedule State</td>
   <td>Defines the state of the schedule</td>
-  <td><a href="/litmus/experiments/chaos-resources/chaos-scheduler/state">Schedule State</a></td>
+  <td><a href="/litmus/experiments/concepts/chaos-resources/chaos-scheduler/state">Schedule State</a></td>
   </tr>
    <tr>
   <td>Engine Specifications</td>
   <td>Defines the chaosengine specifications</td>
-  <td><a href="/litmus/experiments/chaos-resources/chaos-scheduler/engine-specification">Engine Specifications</a></td>
+  <td><a href="/litmus/experiments/concepts/chaos-resources/chaos-scheduler/engine-specification">Engine Specifications</a></td>
   </tr>
 </table>

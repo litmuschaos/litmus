@@ -13,7 +13,6 @@
 
 ## Prerequisites
 
-
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
@@ -53,58 +52,61 @@
 
 ## Minimal RBAC configuration example (optional)
 
-??? note "View the Minimal RBAC permissions"
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
-    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/azure/azure-instance-stop/rbac.yaml yaml)
-    ```yaml
-    ---
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: azure-instance-stop-sa
-      namespace: default
-      labels:
-        name: azure-instance-stop-sa
-        app.kubernetes.io/part-of: litmus
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRole
-    metadata:
-      name: azure-instance-stop-sa
-      labels:
-        name: azure-instance-stop-sa
-        app.kubernetes.io/part-of: litmus
-    rules:
-    - apiGroups: [""]
-      resources: ["pods","events","secrets"]
-      verbs: ["create","list","get","patch","update","delete","deletecollection"]
-    - apiGroups: [""]
-      resources: ["pods/exec","pods/log"]
-      verbs: ["create","list","get"]
-    - apiGroups: ["batch"]
-      resources: ["jobs"]
-      verbs: ["create","list","get","delete","deletecollection"]
-    - apiGroups: ["litmuschaos.io"]
-      resources: ["chaosengines","chaosexperiments","chaosresults"]
-      verbs: ["create","list","get","patch","update"]
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
-    metadata:
-      name: azure-instance-stop-sa
-      labels:
-        name: azure-instance-stop-sa
-        app.kubernetes.io/part-of: litmus
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: azure-instance-stop-sa
-    subjects:
-    - kind: ServiceAccount
-      name: azure-instance-stop-sa
-      namespace: default
-    ```
-    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+    ??? note "View the Minimal RBAC permissions"
+
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/azure/azure-instance-stop/rbac.yaml yaml)
+        ```yaml
+        ---
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: azure-instance-stop-sa
+          namespace: default
+          labels:
+            name: azure-instance-stop-sa
+            app.kubernetes.io/part-of: litmus
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: azure-instance-stop-sa
+          labels:
+            name: azure-instance-stop-sa
+            app.kubernetes.io/part-of: litmus
+        rules:
+        - apiGroups: [""]
+          resources: ["pods","events","secrets"]
+          verbs: ["create","list","get","patch","update","delete","deletecollection"]
+        - apiGroups: [""]
+          resources: ["pods/exec","pods/log"]
+          verbs: ["create","list","get"]
+        - apiGroups: ["batch"]
+          resources: ["jobs"]
+          verbs: ["create","list","get","delete","deletecollection"]
+        - apiGroups: ["litmuschaos.io"]
+          resources: ["chaosengines","chaosexperiments","chaosresults"]
+          verbs: ["create","list","get","patch","update"]
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: azure-instance-stop-sa
+          labels:
+            name: azure-instance-stop-sa
+            app.kubernetes.io/part-of: litmus
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: azure-instance-stop-sa
+        subjects:
+        - kind: ServiceAccount
+          name: azure-instance-stop-sa
+          namespace: default
+        ```
+        Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 
