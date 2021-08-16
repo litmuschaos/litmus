@@ -35,7 +35,7 @@ At a high-level, Litmus comprises of:
 - **Chaos Execution Plane Services**: Made up of a chaos agent and multiple operators that execute & monitor the experiment within a defined 
   target Kubernetes environment. 
 
-![Architecture_Summary](https://github.com/litmuschaos/litmus-docs/blob/master/website/docs/assets/architecture-summary.png)
+![architecture summary](/images/litmus-control-and-execution-plane-overview.png)
 
 At the heart of the platform are the following chaos custom resources. embedded within a Workflow object that can string together one or more experiments
 in a desired order.
@@ -59,7 +59,7 @@ ChaosExperiment CRs are hosted on <a href="https://hub.litmuschaos.io" target="_
 application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications 
 in production.
 
-![Litmus workflow](/images/litmus-arch_1.png)
+![chaos-operator-flow](/images/chaos-operator-flow.png)
 
 ## Use cases
 
