@@ -37,17 +37,14 @@ At a high-level, Litmus comprises of:
 
 ![architecture summary](/images/litmus-control-and-execution-plane-overview.png)
 
-At the heart of the platform are the following chaos custom resources. embedded within a Workflow object that can string together one or more experiments
-in a desired order.
-
-Chaos is orchestrated using the following Kubernetes Custom Resource Definitions (**CRDs**):
+At the heart of the platform are the following chaos custom resources: 
 
 - **ChaosExperiment**: A resource to group the configuration parameters of a particular fault. ChaosExperiment CRs are essentially installable templates 
   that describe the library carrying out the fault, indicate permissions needed to run it & the defaults it will operate with. Through the ChaosExperiment,  Litmus supports BYOC (bring-your-own-chaos) that helps integrate (optional) any third-party tooling to perform the fault injection. 
 
 - **ChaosEngine**: A resource to link a Kubernetes application workload/service, node or an infra component to a fault described by the ChaosExperiment. 
-  It also provides options to tune the run properties and specify the steady state validation constraints using probes. ChaosEngine is watched by the 
-  Chaos-Operator and reconciles it (triggers experiment execution) via runners. 
+  It also provides options to tune the run properties and specify the steady state validation constraints using 'probes'. ChaosEngine is watched by the 
+  Chaos-Operator, which reconciles it (triggers experiment execution) via runners. 
 
 The ChaosExperiment & ChaosEngine CRs are embedded within a Workflow object that can string together one or more experiments in a desired order.
 
@@ -64,8 +61,9 @@ in production.
 ## Use cases
 
 - **For Developers**: To run chaos experiments during application development as an extension of unit testing or integration testing.
-- **For CI pipeline builders**: To run chaos as a pipeline stage to find bugs when the application is subjected to fail paths in a pipeline.
-- **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases resilience.
+- **For CI/CD pipeline builders**: To run chaos as a pipeline stage to find bugs when the application is subjected to fail paths in a pipeline.
+- **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses 
+  in the deployment system and increases resilience.
 
 ## Getting Started with Litmus
 
