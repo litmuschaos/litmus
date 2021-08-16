@@ -31,8 +31,8 @@ custom resources to define the chaos intent, as well as the steady state hypothe
 
 At a high-level, Litmus comprises of:  
 
-- The chaos control plane: A centralized chaos management tool called chaos-center, which helps construct, schedule and visualize Litmus chaos workflows  
-- The chaos execution plane services: Made up of a chaos agent and multiple operators that execute & monitor the experiment within a defined 
+- **Chaos Control Plane**: A centralized chaos management tool called chaos-center, which helps construct, schedule and visualize Litmus chaos workflows  
+- **Chaos Execution Plane Services**: Made up of a chaos agent and multiple operators that execute & monitor the experiment within a defined 
   target Kubernetes environment. 
 
 ![Architecture_Summary](https://github.com/litmuschaos/litmus-docs/blob/master/website/docs/assets/architecture-summary.png)
