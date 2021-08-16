@@ -40,7 +40,12 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
                     size="lg"
                     color={theme.palette.primary.main}
                   />
-                  <a href={docs} className={classes.guideLink} target="_">
+                  <a
+                    href={docs}
+                    className={classes.guideLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Developer&#39;s guide
                   </a>
                 </div>

@@ -18,7 +18,7 @@
           <span aria-hidden="true">×</span>
         </button>
         <div id="logo">
-          <img src="../logo.png" title="Litmus Portal API Documentation" /> </div>
+          <img src="../logo.png" title="Litmus Portal API Documentation" alt="litmus logo" /> </div>
         <nav id="nav" role="navigation">
           <h5>Topics</h5>
           <a href="#introduction">Authentication</a>
@@ -102,18 +102,18 @@
           <div id="introduction" data-traverse-target="introduction">
             <div class="doc-row">
               <div class="doc-copy">
-                <p>Litmus Portal Authentication APIs are used to authenticate the idenity of a user and to perform several user-specific tasks like:
+                <p>Litmus Portal Authentication APIs are used to authenticate the idenity of a user and to perform several user-specific tasks like:</p>
+                <ul>
                   <li>Update Profile</li>
                   <li>Change Password</li>
                   <li>Reset Password</li>
                   <li>Create new users etc.</li>
-                </p>
+                </ul>
               </div>
               <div class="doc-examples">
                 <section>
                   <h5>API Endpoint</h5>
-                  <!-- <div class="hljs"> --><pre><code>https://localhost:3000</code></pre>
-                  <!-- </div> -->
+                  <pre><code>https://localhost:3000</code></pre>
                   <h5>Schemes:
                     <span>https, http</span>
                   </h5>
@@ -171,15 +171,10 @@
                   <h5>Response Example
                     <span>(200 OK)</span>
                   </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"status"</span>: <span class="hljs-string">"up"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -226,16 +221,11 @@
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"password"</span>: <span class="hljs-string">"admin"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -286,32 +276,22 @@
                   <h5>Response Example
                     <span>(200 OK)</span>
                   </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"access_token"</span>: <span class="hljs-string">"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjcxMjY4MjMsInJvbGUiOiJhZG1pbiIsInVpZCI6ImY4MDM2YzUxLTBkNzktNGNkNy1hN2QwLTQ1ZGNhZGI4MGVlYiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.zNIMwocHgmguwtGFupV54UfcfwEdaRO1_xB2ilalqn0fp-JE0ujkHT3gDyepnEGSRm2j1eTopPgtvyRVPb7gGA"</span>,
   <span class="hljs-attr">"expires_in"</span>: <span class="hljs-number">86400</span>,
   <span class="hljs-attr">"type"</span>: <span class="hljs-string">"Bearer"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
                 <section>
                   <h5>Response Example
                     <span>(401 Unauthorized)</span>
                   </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"error"</span>: <span class="hljs-string">"unauthorized"</span>,
   <span class="hljs-attr">"error_description"</span>: <span class="hljs-string">"The user does not have requested authorization to access this resource"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -364,11 +344,7 @@
                 <section>
                   <h5>Response Example
                     <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">[
+                  </h5><pre><code class="hljs language-json">[
   {
     <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
     <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
@@ -376,9 +352,7 @@
     <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040098"</span>
   }
 ]
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -430,17 +404,12 @@
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"old_password"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"litmus"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -474,15 +443,10 @@
                   <h5>Response Example
                     <span>(200 OK)</span>
                   </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"password has been reset"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -544,19 +508,14 @@
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
   <span class="hljs-attr">"password"</span>: <span class="hljs-string">"test1"</span>,
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test1@litmus.com"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Test Account"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -590,10 +549,7 @@
                   <h5>Response Example
                     <span>(200 OK)</span>
                   </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"5873815a-1535-4b1c-8766-2fe53c726276"</span>,
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test1@litmus.com"</span>,
@@ -601,9 +557,7 @@
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040799"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -650,16 +604,11 @@
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
   <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"test2"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -693,15 +642,10 @@
                   <h5>Response Example
                     <span>(200 OK)</span>
                   </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"password has been reset successfully"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -758,18 +702,13 @@
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Administrator"</span>,
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"admin@litmus.com"</span>,
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -803,19 +742,14 @@
                   <h5>Response Example
                     <span>(200 OK)</span>
                   </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"admin@litmus.com"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Administrator"</span>,
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>
@@ -845,15 +779,10 @@
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                  <pre><code class="hljs language-json">{
   <span class="hljs-attr">""</span>: <span class="hljs-string">""</span>
 }
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
+</code></pre>
                 </section>
               </div>
             </div>

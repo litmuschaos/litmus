@@ -447,7 +447,8 @@ const ImageRegistry = () => {
                               {t('settings.imageRegistry.provideInfo')}{' '}
                               <a
                                 href="https://kubernetes.io/docs/concepts/configuration/secret/"
-                                target="_"
+                                target="_blank"
+                                rel="noopener noreferrer"
                               >
                                 {t('settings.imageRegistry.visit')}
                               </a>
