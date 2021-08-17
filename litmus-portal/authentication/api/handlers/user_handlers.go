@@ -110,6 +110,21 @@ func UpdateUser(service user.Service) gin.HandlerFunc {
 		c.JSON(200, gin.H{"message": "User details updated successfully"})
 	}
 }
+
+// GetUser returns the user that matches the uid passed in parameter
+func GetUser(service user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid := c.Param("uid")
+		user, err := service.GetUser(uid)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
+			return
+		}
+		c.JSON(200, user)
+	}
+}
+
 func FetchUsers(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		users, err := service.GetUsers()

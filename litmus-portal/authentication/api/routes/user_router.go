@@ -17,6 +17,7 @@ func UserRouter(router *gin.Engine, service user.Service) {
 	router.POST("/reset/password", handlers.ResetPassword(service))
 	router.POST("/create", handlers.CreateUser(service))
 	router.POST("/update/details", handlers.UpdateUser(service))
+	router.GET("/getUser/:uid", handlers.GetUser(service))
 	router.GET("/users", handlers.FetchUsers(service))
 	router.POST("/updatestate", handlers.UpdateUserState(service))
 }

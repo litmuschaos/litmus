@@ -19,7 +19,7 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
   const handleClose = () => {
     setDisplay(false);
   };
-  const docs = 'https://docs.litmuschaos.io/docs/getstarted/';
+  const docs = 'https://docs.litmuschaos.io/';
 
   const classes = useStyles();
   return (

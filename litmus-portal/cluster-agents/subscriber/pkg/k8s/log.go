@@ -95,7 +95,7 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 //SendPodLogs generates graphql mutation to send events updates to graphql server
 func SendPodLogs(clusterData map[string]string, podLog types.PodLogRequest) {
 	// generate graphql payload
-	payload, err := GenerateLogPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], podLog)
+	payload, err := GenerateLogPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], clusterData["VERSION"], podLog)
 	if err != nil {
 		logrus.WithError(err).Print("ERROR GETTING WORKFLOW LOG")
 	}
@@ -106,8 +106,8 @@ func SendPodLogs(clusterData map[string]string, podLog types.PodLogRequest) {
 	logrus.Print("RESPONSE ", body)
 }
 
-func GenerateLogPayload(cid, accessKey string, podLog types.PodLogRequest) ([]byte, error) {
-	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
+func GenerateLogPayload(cid, accessKey, version string, podLog types.PodLogRequest) ([]byte, error) {
+	clusterID := `{cluster_id: \"` + cid + `\", version: \"` + version + `\", access_key: \"` + accessKey + `\"}`
 	processed := " Could not get logs "
 
 	// get the logs

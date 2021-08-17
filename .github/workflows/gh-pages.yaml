@@ -16,6 +16,7 @@ jobs:
           python-version: 3.x
       - name: build docs
         run: |
+          cd mkdocs
           pip install mkdocs mkdocs_material
           mkdocs build
       - name: deploy docs
@@ -23,4 +24,4 @@ jobs:
         env:
           PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
           PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: ./site
+          PUBLISH_DIR: ./mkdocs/site
