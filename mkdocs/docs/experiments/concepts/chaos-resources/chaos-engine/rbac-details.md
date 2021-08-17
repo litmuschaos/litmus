@@ -31,7 +31,7 @@ It can be tuned via `chaosServiceAccount` field.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/engine-spec/service-account.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/engine-spec/service-account.yaml yaml)
 ```yaml
 # contains name of the serviceAccount which contains all the RBAC permissions required for the experiment
 apiVersion: litmuschaos.io/v1alpha1
