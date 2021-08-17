@@ -2126,7 +2126,7 @@ It can be tuned via <code>annotationCheck</code> field. It supports the boolean 
 </code></pre></div>
 <h2 id="jobcleanup-policy">Jobcleanup Policy<a class="headerlink" href="#jobcleanup-policy" title="Permanent link">&para;</a></h2>
 <p>It controls whether or not the experiment pods are removed once execution completes. Set to <code>retain</code> for debug purposes (in the absence of standard logging mechanisms).
-It can be tuned via <code>jobCleanupPolicy</code> fields. It supports <code>retain</code> and <code>delete</code>. The default value is <code>retain</code>.</p>
+It can be tuned via <code>jobCleanUpPolicy</code> fields. It supports <code>retain</code> and <code>delete</code>. The default value is <code>retain</code>.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># flag to delete or retain the chaos resources after completions of chaosengine</span>
 <span class="c1"># supports: delete, retain. default: retain</span>
@@ -2166,7 +2166,7 @@ It can be tuned via <code>terminationGracePeriodSeconds</code> field.</p>
     <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
   <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
   <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span> 
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 </code></pre></div>
                 
               
