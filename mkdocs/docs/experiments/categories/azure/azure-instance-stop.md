@@ -122,8 +122,13 @@
       <tr> 
         <td> AZURE_INSTANCE_NAME </td>
         <td> Instance name of the target azure instance</td>
-        <td> </td>
+        <td> For AKS ndoes, the instance name is from the scale set section in Azure and not the node name from AKS node pool </td>
       </tr>
+      <tr>
+        <td> SCALE_SET </td>
+        <td> Whether instance is part of Scale set</td>
+        <td> Accepts "enable"/"disable". Default is "disable"</td>
+      </tr> 
       <tr>
         <td> RESOURCE_GROUP </td>
         <td> The resource group of the target instance</td>
@@ -195,6 +200,44 @@ spec:
         # name of the resource group
         - name: RESOURCE_GROUP
           value: '<resource group of AZURE_INSTANCE_NAME>'
+        # accepts enable/disable value. default is disable
+        - name: SCALE_SET
+          value: 'disable'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+```
+
+### Scale Set Instances
+
+It contains comma separated list of instance names subjected to instance stop chaos belonging to Scale Set or AKS. It can be tuned via `SCALE_SET` ENV.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-instance-stop/azure-instance.yaml yaml)
+```yaml
+## contains the azure instance details
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: azure-instance-stop-sa
+  experiments:
+  - name: azure-instance-stop
+    spec:
+      components:
+        env:
+        # comma separated list of azore instance names
+        - name: AZURE_INSTANCE_NAME
+          value: 'instance-01,instance-02'
+        # name of the resource group
+        - name: RESOURCE_GROUP
+          value: '<resource group of Scale Set>'
+        # accepts enable/disable value. default is disable
+        - name: SCALE_SET
+          value: 'enable'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
