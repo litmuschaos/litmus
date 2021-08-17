@@ -381,7 +381,7 @@ It creates kubernetes resource based on the data provided inside `probe.data` fi
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/k8sProbe/create-operation.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/k8sProbe/create-operation.yaml yaml)
 ```yaml
 # create the given resource provided inside data field
 apiVersion: litmuschaos.io/v1alpha1
@@ -442,7 +442,7 @@ It deletes matching kubernetes resources via GVR and filters (field selectors/la
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/k8sProbe/delete-operation.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/k8sProbe/delete-operation.yaml yaml)
 ```yaml
 # delete the resource matched with the given inputs
 apiVersion: litmuschaos.io/v1alpha1
@@ -492,7 +492,7 @@ It checks for the presence of kubernetes resource based on GVR and filters (fiel
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/k8sProbe/present-operation.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/k8sProbe/present-operation.yaml yaml)
 ```yaml
 # verify the existance of the resource matched with the given inputs inside cluster
 apiVersion: litmuschaos.io/v1alpha1
@@ -542,7 +542,7 @@ It checks for the absence of kubernetes resource based on GVR and filters (field
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/k8sProbe/absent-operation.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/k8sProbe/absent-operation.yaml yaml)
 ```yaml
 # verify that the no resource should be present in cluster with the given inputs
 apiVersion: litmuschaos.io/v1alpha1

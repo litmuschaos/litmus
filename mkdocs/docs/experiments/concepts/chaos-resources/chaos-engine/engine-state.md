@@ -32,7 +32,7 @@ It can be tuned via `engineState` field. It supports `active` and `stop` values.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/engine-spec/engine-state.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/engine-spec/engine-state.yaml yaml)
 ```yaml
 # contains the chaosengine state
 # supports: active and stop states

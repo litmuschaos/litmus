@@ -35,7 +35,7 @@ It embeds the ChaosEngine as a template inside schedule CR. Which contains the c
 
 Specify the chaosengine details at `spec.engineTemplateSpec` inside schedule CR
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/repeat/basic-schema.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/basic-schema.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule

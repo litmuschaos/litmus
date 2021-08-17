@@ -451,7 +451,7 @@ It can be executed by setting `httpProbe/inputs.method.get` field.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/httpProbe/http-get.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/httpProbe/http-get.yaml yaml)
 ```yaml
 # contains the http probes with get method and verify the response code
 apiVersion: litmuschaos.io/v1alpha1
@@ -496,7 +496,7 @@ It can be executed by setting `httpProbe/inputs.method.post.body` field.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/httpProbe/http-post-with-body.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/httpProbe/http-post-with-body.yaml yaml)
 ```yaml
 # contains the http probes with post method and verify the response code
 apiVersion: litmuschaos.io/v1alpha1
@@ -547,7 +547,7 @@ It can be executed by setting `httpProbe/inputs.method.post.body` field.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/httpProbe/http-post-with-bodyPath.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/httpProbe/http-post-with-bodyPath.yaml yaml)
 ```yaml
 # contains the http probes with post method and verify the response code
 apiVersion: litmuschaos.io/v1alpha1
@@ -597,7 +597,7 @@ It is an optional field and its unit is milliseconds.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/httpProbe/http-responseTimeout.yaml yaml) 
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/httpProbe/http-responseTimeout.yaml yaml) 
 ```yaml
 # defines the response timeout for the http probe
 apiVersion: litmuschaos.io/v1alpha1
@@ -641,7 +641,7 @@ It supports boolean values. Provide it to `true` to skip the certificate checks.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/httpProbe/http-insecureSkipVerify.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/httpProbe/http-insecureSkipVerify.yaml yaml)
 ```yaml
 # skip the certificate checks for the httpProbe
 apiVersion: litmuschaos.io/v1alpha1
