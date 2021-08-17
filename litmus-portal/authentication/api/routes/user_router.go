@@ -12,6 +12,8 @@ import (
 func UserRouter(router *gin.Engine, service user.Service) {
 	router.GET("/status", handlers.Status(service))
 	router.POST("/login", handlers.LoginUser(service))
+        router.GET("/oidc/login", handlers.LoginOIDC(service))
+        router.GET("/oidc/callback", handlers.CallBackOIDC(service))
 	router.Use(middleware.JwtMiddleware())
 	router.POST("/update/password", handlers.UpdatePassword(service))
 	router.POST("/reset/password", handlers.ResetPassword(service))

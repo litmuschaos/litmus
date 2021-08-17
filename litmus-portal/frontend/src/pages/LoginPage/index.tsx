@@ -139,6 +139,7 @@ const LoginPage: React.FC = () => {
               </ButtonFilled>
             </div>
           </form>
+        <a href=/auth/oidc/login>OpenID Connect</a>
         </div>
         <img
           className={classes.logo}

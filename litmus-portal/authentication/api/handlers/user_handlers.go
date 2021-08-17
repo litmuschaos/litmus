@@ -12,7 +12,93 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
+
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
+	"io"
+
+	"net/http"
+	"os"
+
+        "strings"
+
+	"github.com/coreos/go-oidc/v3/oidc"
+	"golang.org/x/oauth2"
 )
+
+var (
+	providerURL  = os.Getenv("OIDC_PROVIDER_URL")
+	callbackURL = os.Getenv("OIDC_CALLBACK_URL")
+	clientID     = os.Getenv("OIDC_CLIENT_ID")
+	clientSecret = os.Getenv("OIDC_CLIENT_SECRET")
+)
+
+func getHost(r *http.Request) string {
+    if r.URL.IsAbs() {
+        host := r.Host
+        // Slice off any port information.
+        if i := strings.Index(host, ":"); i != -1 {
+            host = host[:i]
+        }
+        return host
+    }
+    return r.URL.Host
+}
+
+func randString(nByte int) (string, error) {
+	b := make([]byte, nByte)
+	if _, err := io.ReadFull(rand.Reader, b); err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(b), nil
+}
+
+func setCallbackCookie(
+    c *gin.Context,
+    name string,
+    value string,
+) {
+    http.SetCookie(c.Writer, &http.Cookie{
+        Name:     name,
+        Value:    value,
+        MaxAge:   int(time.Hour.Seconds()),
+        Path:     "/",
+        Domain:   getHost(c.Request),
+        Secure:   c.Request.TLS != nil,
+        HttpOnly: true,
+    })
+}
+
+func setJWTCookie(
+    c *gin.Context,
+    name string,
+    value string,
+) {
+    http.SetCookie(c.Writer, &http.Cookie{
+        Name:     name,
+        Value:    value,
+        MaxAge:   int(time.Duration(utils.JWTExpiryDuration) * 60),
+        Path:     "/",
+        Domain:   getHost(c.Request),
+        Secure:   c.Request.TLS != nil,
+        HttpOnly: false,
+    })
+}
+
+func Cookie(
+    c *gin.Context,
+    name string,
+) (string, error) {
+    cookie, err := c.Request.Cookie(name)
+    if err != nil {
+        return "", err
+    }
+    val := cookie.Value
+    return val, nil
+}
+
+
 
 // Status will request users list and return, if successful,
 // an http code 200
@@ -26,6 +112,152 @@ func Status(service user.Service) gin.HandlerFunc {
 		}
 		c.JSON(200, entities.APIStatus{"up"})
 	}
+}
+
+// Status will request users list and return, if successful,
+// an http code 200
+func LoginOIDC(service user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		provider, err := oidc.NewProvider(c, providerURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+
+		config := oauth2.Config{
+			ClientID:     clientID,
+			ClientSecret: clientSecret,
+			Endpoint:     provider.Endpoint(),
+			RedirectURL:  callbackURL,
+			Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
+		}
+
+		state, err := randString(16)
+		if err != nil {
+			http.Error(c.Writer, "Internal error", http.StatusInternalServerError)
+			return
+		}
+
+		nonce, err := randString(16)
+		if err != nil {
+			http.Error(c.Writer, "Internal error", http.StatusInternalServerError)
+			return
+		}
+
+		setCallbackCookie(c, "state", state)
+		setCallbackCookie(c, "nonce", nonce)
+
+		c.Redirect(http.StatusFound, config.AuthCodeURL(state, oidc.Nonce(nonce)))
+	}
+}
+
+// LoginOIDC will initiate the login process
+// and redirect user to third party oidc server
+func CallBackOIDC(service user.Service) gin.HandlerFunc {
+        return func(c *gin.Context) {
+		provider, err := oidc.NewProvider(c, providerURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		oidcConfig := &oidc.Config{
+			ClientID: clientID,
+		}
+		verifier := provider.Verifier(oidcConfig)
+
+		config := oauth2.Config{
+			ClientID:     clientID,
+			ClientSecret: clientSecret,
+			Endpoint:     provider.Endpoint(),
+			RedirectURL:  callbackURL,
+			Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
+		}
+
+		state, err := Cookie(c, "state")
+		if err != nil {
+			http.Error(c.Writer, "state not found", http.StatusBadRequest)
+			return
+		}
+		if c.Request.URL.Query().Get("state") != state {
+			http.Error(c.Writer, "state did not match", http.StatusBadRequest)
+			return
+		}
+
+		oauth2Token, err := config.Exchange(c, c.Request.URL.Query().Get("code"))
+		if err != nil {
+			http.Error(c.Writer, "Failed to exchange token: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
+		if !ok {
+			http.Error(c.Writer, "No id_token field in oauth2 token.", http.StatusInternalServerError)
+			return
+		}
+		idToken, err := verifier.Verify(c, rawIDToken)
+		if err != nil {
+			http.Error(c.Writer, "Failed to verify ID Token: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		nonce, err := c.Request.Cookie("nonce")
+		if err != nil {
+			http.Error(c.Writer, "nonce not found", http.StatusBadRequest)
+			return
+		}
+		if idToken.Nonce != nonce.Value {
+			http.Error(c.Writer, "nonce did not match", http.StatusBadRequest)
+			return
+		}
+
+                var rawUserInfos json.RawMessage
+                if err := idToken.Claims(&rawUserInfos); err != nil {
+                        http.Error(c.Writer, err.Error(), http.StatusInternalServerError)
+                        return
+                }
+                var userInfos map[string]interface{}
+                if err := json.Unmarshal(rawUserInfos, &userInfos); err != nil {
+                  panic(err)
+                }
+
+
+//                var userOIDCDefault string
+//                userOIDCDefault = "never"
+//                userOIDC := &entities.User{
+//                  ID: userInfos["nonce"].(string),
+//                  UserName: userInfos["nickname"].(string),
+//                  Password: "none",
+//                  Email: userInfos["email"].(string),
+//                  Name: userInfos["name"].(string),
+//                  Role: "admin",
+//                  CreatedAt: &userOIDCDefault,
+//                  UpdatedAt: &userOIDCDefault,
+//                  DeactivatedAt: &userOIDCDefault,
+//                }
+
+                userOIDC, err := service.FindUser("admin")
+                token, err := userOIDC.GetSignedJWT()
+                if err != nil {
+                        log.Error(err)
+                        c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+                        return
+                }
+
+//		oauth2Token.AccessToken = token
+//
+//		resp := struct {
+//			OAuth2Token   *oauth2.Token
+//			IDTokenClaims *json.RawMessage // ID Token payload is just JSON.
+//		}{oauth2Token, rawUserInfos}
+
+//		data, err := json.MarshalIndent(resp, "", "    ")
+//		if err != nil {
+//			http.Error(c.Writer, err.Error(), http.StatusInternalServerError)
+//			return
+//		}
+
+//		expiryTime := time.Duration(utils.JWTExpiryDuration) * 60
+                setJWTCookie(c, "token", token)
+                c.Redirect(http.StatusFound, "/")
+        }
 }
 
 func CreateUser(service user.Service) gin.HandlerFunc {
