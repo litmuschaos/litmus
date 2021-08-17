@@ -33,7 +33,7 @@ interface PanelGroup {
   panels: Panel[];
 }
 
-export interface ApplicationDashboard {
+export interface MonitoringDashboard {
   dashboardID: string;
   name: string;
   information: string;

@@ -337,7 +337,7 @@ It can be tuned by setting `source` as `inline`.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/cmdProbe/inline-mode.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/cmdProbe/inline-mode.yaml yaml)
 ```yaml
 # execute the command inside the experiment pod itself
 # cases where command doesn't need any extra binaries which is not available in litmsuchaos/go-runner image
@@ -389,7 +389,7 @@ It can be tuned by setting `source` as `<source-image>`.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/cmdProbe/source-mode.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/cmdProbe/source-mode.yaml yaml)
 ```yaml
 # it launches the external pod with the source image and run the command inside the same pod
 # cases where command needs an extra binaries which is not available in litmsuchaos/go-runner image

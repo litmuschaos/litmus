@@ -65,7 +65,7 @@ It schedule the chaos once either on the specified time or immediately after cre
 
 It schedule the chaos immediately after creation of the chaos-schedule CR. It can be tuned via setting `spec.schedule.now` to `true`.
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/once/immediate.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/once/immediate.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
@@ -105,7 +105,7 @@ spec:
 
 It schedule the chaos once at the specified time. It can be tuned via setting `spec.schedule.once.executionTime`. The execution time should be in `UTC Timezone`. 
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/once/specific-time.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/once/specific-time.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule

@@ -1,9 +1,9 @@
 import { Typography } from '@material-ui/core';
 import moment from 'moment';
 import React from 'react';
-import AnalyticsLinearProgressBar from '../../../components/ProgressBar/AnalyticsLinearProgressBar';
 import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
-import ExperimentStatus from '../../../views/Analytics/WorkflowDashboard/ExperimentStatus';
+import StatisticsLinearProgressBar from '../../../components/ProgressBar/StatisticsLinearProgressBar';
+import ExperimentStatus from '../../../views/Observability/WorkflowStatistics/ExperimentStatus';
 import useStyles, { StyledTableCell } from './styles';
 
 interface WorkFlowTests {
@@ -59,7 +59,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           {data.test_weight} Points
         </Typography>
         <div className={classes.progressBar}>
-          <AnalyticsLinearProgressBar
+          <StatisticsLinearProgressBar
             value={data.test_weight ?? 0}
             maxValue={10}
             isInTable

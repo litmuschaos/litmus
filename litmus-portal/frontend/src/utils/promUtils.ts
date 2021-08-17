@@ -27,7 +27,7 @@ import {
   DEFAULT_TSDB_SCRAPE_INTERVAL,
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
   TIME_THRESHOLD_FOR_TSDB,
-} from '../pages/ApplicationDashboard/constants';
+} from '../pages/MonitoringDashboard/constants';
 
 const labelMatchOperators = ['==', '!=', '<=', '<', '>=', '>', '=~', '!~', '='];
 
