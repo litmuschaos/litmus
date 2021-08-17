@@ -30,14 +30,16 @@ const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
 const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
 const WorkflowInfoStats = lazy(() => import('../../pages/WorkflowInfoStats'));
-const AnalyticsDashboard = lazy(() => import('../../pages/AnalyticsPage'));
+const ObservabilityDashboard = lazy(
+  () => import('../../pages/ObservabilityPage')
+);
 const DataSourceConfigurePage = lazy(
   () => import('../../pages/ConfigureDataSources')
 );
 const ChooseAndConfigureDashboards = lazy(
   () => import('../../pages/ChooseAndConfigureDashboards')
 );
-const DashboardPage = lazy(() => import('../../pages/ApplicationDashboard'));
+const DashboardPage = lazy(() => import('../../pages/MonitoringDashboard'));
 const MyHub = lazy(() => import('../../pages/ChaosHub'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
@@ -147,32 +149,36 @@ const Routes: React.FC = () => {
               <Route exact path="/home" component={HomePage} />
               <Redirect exact path="/" to="/home" />
               <Route exact path="/workflows" component={Workflows} />
-              <Route exact path="/analytics" component={AnalyticsDashboard} />
               <Route
                 exact
-                path="/analytics/datasource/create"
+                path="/observability"
+                component={ObservabilityDashboard}
+              />
+              <Route
+                exact
+                path="/observability/datasource/create"
                 component={() => <DataSourceConfigurePage configure={false} />}
               />
               <Route
                 exact
-                path="/analytics/datasource/configure"
+                path="/observability/datasource/configure"
                 component={() => <DataSourceConfigurePage configure />}
               />
               <Route
                 exact
-                path="/analytics/dashboard/create"
+                path="/observability/dashboard/create"
                 component={() => (
                   <ChooseAndConfigureDashboards configure={false} />
                 )}
               />
               <Route
                 exact
-                path="/analytics/dashboard/configure"
+                path="/observability/dashboard/configure"
                 component={() => <ChooseAndConfigureDashboards configure />}
               />
               <Route
                 exact
-                path="/analytics/application-dashboard"
+                path="/observability/monitoring-dashboard"
                 component={() => <DashboardPage />}
               />
               <Route exact path="/create-workflow" component={CreateWorkflow} />
@@ -193,7 +199,7 @@ const Routes: React.FC = () => {
               />
               <Route
                 exact
-                path="/analytics/workflowdashboard/:workflowId"
+                path="/observability/workflowStatistics/:workflowId"
                 component={WorkflowInfoStats}
               />
               <Route exact path="/community" component={Community} />
@@ -231,14 +237,26 @@ const Routes: React.FC = () => {
               <Redirect exact path="/getStarted" to="/home" />
               <Redirect exact path="/workflows/schedule" to="/workflows" />
               <Redirect exact path="/workflows/template" to="/workflows" />
-              <Redirect exact path="/analytics/overview" to="/analytics" />
               <Redirect
                 exact
-                path="/analytics/litmusdashboard"
-                to="/analytics"
+                path="/observability/overview"
+                to="/observability"
               />
-              <Redirect exact path="/analytics/datasource" to="/analytics" />
-              <Redirect exact path="/analytics/dashboard" to="/analytics" />
+              <Redirect
+                exact
+                path="/observability/litmusdashboard"
+                to="/observability"
+              />
+              <Redirect
+                exact
+                path="/observability/datasource"
+                to="/observability"
+              />
+              <Redirect
+                exact
+                path="/observability/dashboard"
+                to="/observability"
+              />
               <Redirect exact path="/api-doc" to="/api-doc/index.html" />
               <Redirect to="/404" />
             </Switch>

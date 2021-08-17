@@ -161,11 +161,11 @@ community:
     subHeading: Explore about monthly community sync ups, Kubernetes meetups and other events in CNCF
   footerText: Follow us on other platforms
 
-analytics:
-  workflowAnalytics: Workflow Analytics
+observability:
+  workflowStatistics: Workflow Statistics
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
-  comingSoon: Analytics Coming Soon !
+  comingSoon: Statistics Coming Soon !
   waitingMessage: Waiting for workflow to start running !
   chaosCompleteWaitingMessage: Waiting for chaos experiment to finish !
   highestScore: 'Highest Score:'
@@ -194,13 +194,13 @@ analytics:
     probeSuccessPercentage: Probe Success Percentage
     experimentVerdict: Experiment Verdict
 
-analyticsDashboard:
-  heading: Analytics
+monitoringDashboard:
+  heading: Observability
   overview: Overview
   monitoringDashboardPage:
-    loadingText: Loading application dashboard ...
+    loadingText: Loading monitoring dashboard ...
     metricsLoadingText: Fetching metrics ...
-    errorText: Error while loading the application dashboard
+    errorText: Error while loading the monitoring dashboard
     tryAgain: Try again
     goBack: Go back
     dataSourceError: Reconfigure this dashboard with a different data source or update data source information.
@@ -211,7 +211,7 @@ analyticsDashboard:
     headerInfoText: "View the chaos events and metrics in a given \n time interval by selecting a time interval."
     infoButtonText: Info
     infoDropdown:
-      header: Application Dashboard Information
+      header: Monitoring Dashboard Information
       close: Close Info
       subHeading1: Dashboard Configuration Details
       subHeading2: Selected Applications
@@ -260,7 +260,7 @@ analyticsDashboard:
       updateSuccess: Successfully updated the chaos annotations
       updateError: Error updating the chaos annotations
     dashboardCloneModal:
-      heading: Clone the application dashboard
+      heading: Clone the monitoring dashboard
       cancel: Cancel
       ok: OK
       error: Error cloning dashboard
@@ -283,7 +283,7 @@ analyticsDashboard:
     scheduleWorkflowMessage: Schedule my first workflow
   seeAll: See All
   seeDetails: See Details
-  seeAnalytics: See Analytics
+  seeStatistics: See Statistics
   workflowStats:
     title: Workflow stats
     workflowPassed: Passed
@@ -292,13 +292,13 @@ analyticsDashboard:
   workflowScheduleTable:
     title: Workflow Schedules
     noRecordMessage: No workflow has been schedule
-  workflowDashboard: Workflow dashboards
+  workflowStatistics: Workflow statistics
   overviewTabdataSourceTable: Connected Data Sources
-  applicationDashboard: Application dashboards
-  applicationDashboardTable:
+  monitoringDashboard: Monitoring dashboards
+  monitoringDashboardTable:
     warning:
-      noActiveDataSource: No active data source found for creating an application dashboard.
-      noAvailableDataSource: No data source available. To create an Application dashboard you need to add a data source.
+      noActiveDataSource: No active data source found for creating a monitoring dashboard.
+      noAvailableDataSource: No data source available. To create a monitoring dashboard you need to add a data source.
       configureExisting: Configure an existing data source
       addNew: Add data source
       or: or
@@ -314,7 +314,7 @@ analyticsDashboard:
     tableHead5: Last viewed
     createDashboard: Create dashboard
     dashboards: Dashboards
-    title: Application Dashboard
+    title: Monitoring Dashboard
     view: View
     configure: Configure
     json: JSON
@@ -327,7 +327,7 @@ analyticsDashboard:
       removeDashboardConfirmation: Are you sure you want to remove the dashboard
       cancel: Cancel
       delete: Delete
-  applicationDashboards:
+  monitoringDashboards:
     loadingDashboard: Loading dashboard configuration ...
     loadingDataSources: Loading available data sources ...
     errorFetchingDashboard: Error loading dashboard configuration
@@ -477,7 +477,7 @@ analyticsDashboard:
     all: All
     warning:
       text: Unexpected bad things will happen if you don’t read this!
-      info: The data source seems to be connected to following Application dashboards. Dashboards will be unable to show metrics if the data source is deleted.
+      info: The data source seems to be connected to following monitoring dashboards. Dashboards will be unable to show metrics if the data source is deleted.
       connectedDashboards: 'Connected Dashboards :'
       showLess: Show Less Dashboards
       dashboards: Dashboards
@@ -516,10 +516,10 @@ analyticsDashboard:
   configureBanner:
     case-0:
       heading: No data source is configured yet for any agent
-      description: To configure your first application dashboard you need to connect a data source. Select "Add a data source" to connect.
+      description: To configure your first monitoring dashboard you need to connect a data source. Select "Add a data source" to connect.
     case-1:
       heading: Data source(s) has been added, now configure a dashboard
-      description: To configure your first application dashboard use the connect data sources of this project.
+      description: To configure your first monitoring dashboard use the connect data sources of this project.
   timeText:
     lastRun: Last run
     lastOpened: Last opened
@@ -577,7 +577,7 @@ homeViews:
     error: Error fetching the data!
     noWorkflow:
       heading: Schedule your first Litmus workflow
-      description: Now it is successfully running on your Kubernetes cluster. Once you schedule chaos workflows, reliability analytics will be displayed here.
+      description: Now it is successfully running on your Kubernetes cluster. Once you schedule chaos workflows, reliability statistics will be displayed here.
       schedule: Schedule a workflow
       explore: Explore pre defined workflows
     recentWorkflowRuns:
@@ -585,7 +585,7 @@ homeViews:
         cardTitle: Browse workflow
         resilienceRate: 'Overall resilience rate:'
         lastRun: 'Last Run:'
-        showAnalytics: Show the analytics
+        showStatistics: Show the statistics
         downloadManifest: Download manifest
       heading: Recent Workflow runs
       viewAll: View all workflows
@@ -596,7 +596,7 @@ homeViews:
       deploy: Deploy a new Agent
 
 chaosWorkflows:
-  browseAnalytics:
+  browseStatistics:
     workFlowComparisonTable:
       unableToFetch: Unable to fetch data
       noRecords: No records available
@@ -605,7 +605,7 @@ chaosWorkflows:
       resilienceScoreComparison: Resilience score comparison
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
-      seeAnalytics: See analytics
+      seeStatistics: See statistics
   browseSchedules:
     name: Name
     agent: Agent
@@ -655,7 +655,7 @@ chaosWorkflows:
       experimentsPassed: 'Experiments Passed : '
       showExperiments: Show Experiments
       showTheWorkflow: Show the workflow
-      showTheAnalytics: Show the analytics
+      showTheStatistics: Show the statistics
       na: NA
 
 settings:
@@ -874,7 +874,7 @@ settings:
 
 workflowDetailsView:
   logs: Logs
-  headerDesc: Workflow dashboard of
+  headerDesc: Workflow statistics of
   headerMiniDesc: Description of the workflow
   argoWorkflow:
     loading: Loading Graph...
@@ -1252,7 +1252,6 @@ workflows:
   runs: Runs
   schedules: Schedules
   templates: Templates
-  analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
 
 browseTemplate:

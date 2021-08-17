@@ -169,7 +169,7 @@ const WorkflowInfoStats: React.FC = () => {
             {data?.ListWorkflow.workflows[0].workflow_name}
           </Typography>
           <Typography className={classes.subHeading}>
-            Here’s the analytics of the selected workflow
+            Here’s the statistics of the selected workflow
           </Typography>
         </div>
         {/* For later: */}
@@ -198,7 +198,7 @@ const WorkflowInfoStats: React.FC = () => {
         <div className={classes.heatmapArea}>
           <div className={classes.heatmapAreaHeading}>
             <Typography className={classes.sectionHeading}>
-              Analytics
+              Statistics
             </Typography>
             {/* Year selection filter */}
           </div>
