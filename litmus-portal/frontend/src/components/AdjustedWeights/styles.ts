@@ -16,14 +16,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   points: {
     color: theme.palette.primary.dark,
   },
-  experimentIcon: {
-    marginRight: theme.spacing(0.5),
-  },
-  typoSpaced: {
-    width: '17rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
   progressbarDiv: {
     marginRight: theme.spacing(1.25),
   },

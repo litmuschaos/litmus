@@ -1,6 +1,6 @@
-import { Typography } from '@material-ui/core';
+import { Typography, useTheme } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
-import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Icon } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
@@ -11,6 +11,7 @@ interface AgentDeployModalProps {
 
 const AgentDeployModal: React.FC<AgentDeployModalProps> = ({ handleClose }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const { t } = useTranslation();
 
   const [copying, setCopying] = useState<boolean>(false);
@@ -36,8 +37,14 @@ const AgentDeployModal: React.FC<AgentDeployModalProps> = ({ handleClose }) => {
   return (
     <div className={classes.modalContainer}>
       <div className={classes.heading}>
-        <img src="./icons/agentDeployModal.svg" alt="Target Connect" />
-        <Typography>
+        <div className={classes.iconWrapper}>
+          <Icon
+            name="clusters"
+            size="lg"
+            color={theme.palette.background.paper}
+          />
+        </div>
+        <Typography className={classes.space}>
           {t('homeViews.landingHome.agentDeployModal.heading')}
         </Typography>
       </div>
@@ -73,8 +80,8 @@ const AgentDeployModal: React.FC<AgentDeployModalProps> = ({ handleClose }) => {
             <DoneIcon />
           ) : (
             <>
-              <img src="./icons/copy.svg" alt="copy" />
-              <Typography>
+              <Icon name="copy" size="lg" color={theme.palette.primary.main} />
+              <Typography className={classes.space}>
                 {t('homeViews.landingHome.agentDeployModal.copy')}
               </Typography>
             </>
