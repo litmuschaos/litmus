@@ -12,7 +12,7 @@ spec:
     spec:
       components:
         env:
-        # comma separated list of azore instance names
+        # comma separated list of azure instance names
         - name: AZURE_INSTANCE_NAME
           value: 'instance-01,instance-02'
         # name of the resource group

@@ -122,7 +122,7 @@
       <tr> 
         <td> AZURE_INSTANCE_NAME </td>
         <td> Instance name of the target azure instance</td>
-        <td> For AKS ndoes, the instance name is from the scale set section in Azure and not the node name from AKS node pool </td>
+        <td> For AKS nodes, the instance name is from the scale set section in Azure and not the node name from AKS node pool </td>
       </tr>
       <tr>
         <td> RESOURCE_GROUP </td>
@@ -151,7 +151,7 @@
       </tr>
       <tr> 
         <td> CHAOS_INTERVAL </td>
-        <td> The interval (in sec) between successive instance poweroff.</td>
+        <td> The interval (in sec) between successive instance power off.</td>
         <td> Defaults to 30s </td>
       </tr>
       <tr>
@@ -194,15 +194,12 @@ spec:
     spec:
       components:
         env:
-        # comma separated list of azore instance names
+        # comma separated list of azure instance names
         - name: AZURE_INSTANCE_NAME
           value: 'instance-01,instance-02'
         # name of the resource group
         - name: RESOURCE_GROUP
           value: '<resource group of AZURE_INSTANCE_NAME>'
-        # accepts enable/disable value. default is disable
-        - name: SCALE_SET
-          value: 'disable'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
@@ -215,7 +212,7 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-instance-stop/azure-scale-set-instance.yaml yaml)
 ```yaml
-## contains the azure instance details
+## contains the azure instance details for scale set instances or AKS nodes
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -229,20 +226,21 @@ spec:
     spec:
       components:
         env:
-        # comma separated list of azore instance names
+        # comma separated list of azure instance names
         - name: AZURE_INSTANCE_NAME
           value: 'instance-01,instance-02'
         # name of the resource group
         - name: RESOURCE_GROUP
-          value: '<resource group of Scale Set>'
+          value: '<resource group of Scale set>'
         # accepts enable/disable value. default is disable
         - name: SCALE_SET
           value: 'enable'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
+
 ```
 
-### Mutiple Iterations Of Chaos
+### Multiple Iterations Of Chaos
 
 The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. Which defines the delay between each iteration of chaos.
 
