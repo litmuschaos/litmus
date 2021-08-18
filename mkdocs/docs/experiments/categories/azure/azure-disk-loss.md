@@ -171,7 +171,7 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-disk-loss/azure-disks.yaml yaml)
 ```yaml
-# multiple disks 
+# detach multiple azure disks by their names 
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -185,19 +185,18 @@ spec:
     spec:
       components:
         env:
-         # time duration for the chaos execution
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+        # comma separated names of the azure disks attached to VMs
         - name: VIRTUAL_DISK_NAMES
           value: 'disk-01,disk-02'
+        # name of the resource group
         - name: RESOURCE_GROUP
           value: '<resource group of VIRTUAL_DISK_NAMES>'
-        - name: SCALE_SET
-          value: 'disable'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```
 
 
-### Detach Virtual Disks By Name Attached to Scale Set Instances
+### Detach Virtual Disks Attached to Scale Set Instances By Name
 
 It contains comma separated list of disk names attached to scale set instances subjected to disk loss chaos. It can be tuned via `VIRTUAL_DISK_NAMES` and `SCALE_SET` ENV.
 
@@ -205,7 +204,7 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-disk-loss/azure-scale-set-disk.yaml yaml)
 ```yaml
-# multiple disks 
+# detach multiple azure disks attached to scale set VMs by their names
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -219,6 +218,44 @@ spec:
     spec:
       components:
         env:
+        # comma separated names of the azure disks attached to scale set VMs
+        - name: VIRTUAL_DISK_NAMES
+          value: 'disk-01,disk-02'
+        # name of the resource group
+        - name: RESOURCE_GROUP
+          value: '<resource group of VIRTUAL_DISK_NAMES>'
+        # VM belongs to scale set or not
+        - name: SCALE_SET
+          value: 'enable'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+```
+
+### Multiple Iterations Of Chaos
+
+The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. Which defines the delay between each iteration of chaos.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-disk-loss/chaos-interval.yaml yaml)
+```yaml
+# defines delay between each successive iteration of the chaos
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: azure-disk-loss-sa
+  experiments:
+  - name: azure-disk-loss
+    spec:
+      components:
+        env:
+        # delay between each iteration of chaos
+        - name: CHAOS_INTERVAL
+          value: '10'
          # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
@@ -226,6 +263,4 @@ spec:
           value: 'disk-01,disk-02'
         - name: RESOURCE_GROUP
           value: '<resource group of VIRTUAL_DISK_NAMES>'
-        - name: SCALE_SET
-          value: 'enable'
 ```
