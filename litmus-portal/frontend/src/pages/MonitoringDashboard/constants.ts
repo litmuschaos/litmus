@@ -17,5 +17,5 @@ export const TIME_THRESHOLD_FOR_TSDB: number = 1;
 export const DEFAULT_CHAOS_EVENT_QUERY_ID: string = 'chaos-event';
 export const DEFAULT_CHAOS_VERDICT_QUERY_ID: string = 'chaos-verdict';
 export const DEFAULT_HUB_NAME: string = 'Litmus ChaosHub';
-export const DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY: string = `litmuschaos_awaited_experiments{job="chaos-exporter", chaos_injection_time!=""}`;
-export const DEFAULT_CHAOS_VERDICT_PROMETHEUS_QUERY: string = `litmuschaos_experiment_verdict{job="chaos-exporter", chaosresult_verdict!="Awaited"}`;
+export const DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY: string = `litmuschaos_awaited_experiments{job="chaos-exporter", chaos_injection_time!="", instance="chaos-exporter-service"}`;
+export const DEFAULT_CHAOS_VERDICT_PROMETHEUS_QUERY: string = `litmuschaos_experiment_verdict{job="chaos-exporter", chaosresult_verdict!="Awaited", instance="chaos-exporter-service"}`;

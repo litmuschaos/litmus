@@ -13,6 +13,9 @@ data:
       - job_name: 'chaos-exporter'
         static_configs:
           - targets: ['chaos-exporter.litmus.svc.cluster.local:8080']
+        relabel_configs:
+          - target_label: instance
+            replacement: 'chaos-exporter-service'
       - job_name: 'mysql_server1'
         static_configs:
           - targets: ['mysql-exporter.monitoring.svc.cluster.local:9104']
