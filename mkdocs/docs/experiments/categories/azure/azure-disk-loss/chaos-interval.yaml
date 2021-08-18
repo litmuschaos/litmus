@@ -22,5 +22,3 @@ spec:
           value: 'disk-01,disk-02'
         - name: RESOURCE_GROUP
           value: '<resource group of VIRTUAL_DISK_NAMES>'
-        - name: SCALE_SET
-          value: 'disable'

@@ -1,4 +1,4 @@
-# multiple disks 
+# detach multiple azure disks by their names 
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -12,12 +12,11 @@ spec:
     spec:
       components:
         env:
-         # time duration for the chaos execution
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+        # comma separated names of the azure disks attached to VMs
         - name: VIRTUAL_DISK_NAMES
           value: 'disk-01,disk-02'
+        # name of the resource group
         - name: RESOURCE_GROUP
           value: '<resource group of VIRTUAL_DISK_NAMES>'
-        - name: SCALE_SET
-          value: 'disable'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
