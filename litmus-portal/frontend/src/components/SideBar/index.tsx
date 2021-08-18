@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
-import { ReactComponent as AnalyticsIcon } from '../../svg/analytics-sidebar.svg';
+import { ReactComponent as ObservabilityIcon } from '../../svg/observability-sidebar.svg';
 import { ReactComponent as CodeIcon } from '../../svg/code.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
@@ -130,17 +130,17 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         </div>
         <CustomisedListItem
-          key="analytics"
+          key="observability"
           handleClick={() => {
             history.push({
-              pathname: `/analytics`,
+              pathname: `/observability`,
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
-          label="Analytics"
-          selected={pathName === 'analytics'}
+          label="Observability"
+          selected={pathName === 'observability'}
         >
-          <AnalyticsIcon />
+          <ObservabilityIcon />
         </CustomisedListItem>
 
         {projectRole === 'Owner' && (
@@ -178,7 +178,7 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="litmusDocs"
           handleClick={() => {
-            window.open('https://docs.litmuschaos.io/docs/getstarted');
+            window.open('https://docs.litmuschaos.io/');
           }}
           label="Litmus Docs"
           selected={pathName === 'docs'}
@@ -188,7 +188,9 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="litmusAPIDocs"
           handleClick={() => {
-            window.open('https://litmuschaos.github.io/litmus/api.html');
+            window.open(
+              'https://litmuschaos.github.io/litmus/graphql/v2.0.0/api.html'
+            );
           }}
           label="Litmus API Docs"
           selected={pathName === 'docs'}

@@ -16,14 +16,14 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 
 ## **Pre-requisites**
 
--   Kubernetes 1.15 or later.
+-   Kubernetes 1.17 or later.
 
 ## **Installation**
 
 #### Applying k8s manifest
-> Litmus-2.0.0-Beta9 (Stable)
+> Litmus-2.0.0 (Stable)
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0-Beta9/docs/2.0.0-Beta/litmus-2.0.0-Beta.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0/docs/2.0.0/litmus-2.0.0.yaml
 ```
 
 Or
@@ -40,7 +40,7 @@ Or
 export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
-curl https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0-Beta9/docs/2.0.0-Beta/litmus-namespaced-2.0.0-Beta.yaml --output litmus-portal-namespaced-k8s-template.yml
+curl https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0/docs/2.0.0/litmus-namespaced-2.0.0.yaml --output litmus-portal-namespaced-k8s-template.yml
 envsubst < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
@@ -84,13 +84,13 @@ Note: Default `username: admin` and `password: litmus`
 
 Litmus-Portal provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
-View the User Guide <b>[here](https://litmusdocs-beta.netlify.app/)</b>
+View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
 ### **Uninstallation**
 
-> Litmus-2.0.0-Beta9 (Stable)
+> Litmus-2.0.0 (Stable)
 ```bash
-kubectl delete -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0/docs/2.0.0/litmus-2.0.0.yaml
 ```
 
 Or
@@ -108,10 +108,6 @@ export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
-
-### Build custom images
-
-- To build custom docker images for portal component refer the [build image guide](./BUILD_IMAGE.md).
 
 ##### **Additional information**
 
