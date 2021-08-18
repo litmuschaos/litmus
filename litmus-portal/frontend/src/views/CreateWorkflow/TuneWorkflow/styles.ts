@@ -93,6 +93,7 @@ const useStyles = makeStyles((theme) => ({
   },
   key: {
     margin: theme.spacing(1, 2),
+    display: 'flex',
   },
   selection: {
     cursor: 'pointer',
@@ -224,6 +225,13 @@ const useStyles = makeStyles((theme) => ({
   },
   experimentName: {
     fontSize: '1rem',
+  },
+  infoText: {
+    padding: theme.spacing(2),
+    width: '15.625rem',
+  },
+  iconBtn: {
+    marginTop: theme.spacing(-1.5),
   },
 }));
 
