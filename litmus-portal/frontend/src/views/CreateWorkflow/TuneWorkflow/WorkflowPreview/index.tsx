@@ -170,8 +170,11 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
            */
           for (let j = 0; j < updatedSteps[i].length; j++) {
             data.links.push({
-              source: (nodeID + j + 1).toString(),
-              target: (nodeID + updatedSteps[i].length + 1).toString(),
+              source: (i === 0 ? nodeID + j : nodeID + j + 1).toString(),
+              target: (i === 0
+                ? nodeID + updatedSteps[i].length
+                : nodeID + updatedSteps[i].length + 1
+              ).toString(),
               class: 'succeeded',
               config: {
                 arrowhead:
@@ -181,7 +184,10 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
               },
             });
           }
-          nodeID = nodeID + updatedSteps[i].length + 1;
+          nodeID =
+            i === 0
+              ? nodeID + updatedSteps[i].length
+              : nodeID + updatedSteps[i].length + 1;
         } else {
           /**
            * Else connect the parent node to the child node in a one-to-one mapping.
