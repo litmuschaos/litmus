@@ -125,11 +125,6 @@
         <td> For AKS ndoes, the instance name is from the scale set section in Azure and not the node name from AKS node pool </td>
       </tr>
       <tr>
-        <td> SCALE_SET </td>
-        <td> Whether instance is part of Scale set</td>
-        <td> Accepts "enable"/"disable". Default is "disable"</td>
-      </tr> 
-      <tr>
         <td> RESOURCE_GROUP </td>
         <td> The resource group of the target instance</td>
         <td> </td>
@@ -144,6 +139,11 @@
         <th> Description </th>
         <th> Notes </th>
       </tr>
+      <tr>
+        <td> SCALE_SET </td>
+        <td> Whether instance is part of Scale set</td>
+        <td> Accepts "enable"/"disable". Default is "disable"</td>
+      </tr> 
       <tr> 
         <td> TOTAL_CHAOS_DURATION </td>
         <td> The total time duration for chaos insertion (sec) </td>
@@ -207,13 +207,13 @@ spec:
           VALUE: '60'
 ```
 
-### Scale Set Instances
+### Stop Scale Set Instances
 
 It contains comma separated list of instance names subjected to instance stop chaos belonging to Scale Set or AKS. It can be tuned via `SCALE_SET` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-instance-stop/azure-instance.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/azure/azure-instance-stop/azure-scale-set-instance.yaml yaml)
 ```yaml
 ## contains the azure instance details
 apiVersion: litmuschaos.io/v1alpha1
