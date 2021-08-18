@@ -110,11 +110,6 @@
             <th> Description </th>
             <th> Notes </th>
         </tr>
-        <tr>
-            <td> SCALE_SET </td>
-            <td> Whether disk is connected to Scale set instance</td>
-            <td> Accepts "enable"/"disable". Default is "disable"</td>
-        </tr>
         <tr> 
             <td> VIRTUAL_DISK_NAMES </td>
             <td> Name of virtual disks to target.</td>
@@ -134,6 +129,11 @@
             <th> Variables </th>
             <th> Description </th>
             <th> Notes </th>
+        </tr>
+        <tr>
+            <td> SCALE_SET </td>
+            <td> Whether disk is connected to Scale set instance</td>
+            <td> Accepts "enable"/"disable". Default is "disable"</td>
         </tr>
         <tr> 
             <td> TOTAL_CHAOS_DURATION </td>
