@@ -1245,8 +1245,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mutiple-iterations-of-chaos" class="md-nav__link">
-    Mutiple Iterations Of Chaos
+  <a href="#stop-scale-set-instances" class="md-nav__link">
+    Stop Scale Set Instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-iterations-of-chaos" class="md-nav__link">
+    Multiple Iterations Of Chaos
   </a>
   
 </li>
@@ -2102,8 +2109,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mutiple-iterations-of-chaos" class="md-nav__link">
-    Mutiple Iterations Of Chaos
+  <a href="#stop-scale-set-instances" class="md-nav__link">
+    Stop Scale Set Instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-iterations-of-chaos" class="md-nav__link">
+    Multiple Iterations Of Chaos
   </a>
   
 </li>
@@ -2250,7 +2264,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
   <tr> 
     <td> AZURE_INSTANCE_NAME </td>
     <td> Instance name of the target azure instance</td>
-    <td> </td>
+    <td> For AKS nodes, the instance name is from the scale set section in Azure and not the node name from AKS node pool </td>
   </tr>
   <tr>
     <td> RESOURCE_GROUP </td>
@@ -2265,6 +2279,11 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <th> Description </th>
     <th> Notes </th>
   </tr>
+  <tr>
+    <td> SCALE_SET </td>
+    <td> Whether instance is part of Scale set</td>
+    <td> Accepts "enable"/"disable". Default is "disable"</td>
+  </tr> 
   <tr> 
     <td> TOTAL_CHAOS_DURATION </td>
     <td> The total time duration for chaos insertion (sec) </td>
@@ -2272,7 +2291,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
   </tr>
   <tr> 
     <td> CHAOS_INTERVAL </td>
-    <td> The interval (in sec) between successive instance poweroff.</td>
+    <td> The interval (in sec) between successive instance power off.</td>
     <td> Defaults to 30s </td>
   </tr>
   <tr>
@@ -2307,7 +2326,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <span class="nt">spec</span><span class="p">:</span>
       <span class="nt">components</span><span class="p">:</span>
         <span class="nt">env</span><span class="p">:</span>
-        <span class="c1"># comma separated list of azore instance names</span>
+        <span class="c1"># comma separated list of azure instance names</span>
         <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AZURE_INSTANCE_NAME</span>
           <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;instance-01,instance-02&#39;</span>
         <span class="c1"># name of the resource group</span>
@@ -2316,7 +2335,36 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
         <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
           <span class="nt">VALUE</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
 </code></pre></div>
-<h3 id="mutiple-iterations-of-chaos">Mutiple Iterations Of Chaos<a class="headerlink" href="#mutiple-iterations-of-chaos" title="Permanent link">&para;</a></h3>
+<h3 id="stop-scale-set-instances">Stop Scale Set Instances<a class="headerlink" href="#stop-scale-set-instances" title="Permanent link">&para;</a></h3>
+<p>It contains comma separated list of instance names subjected to instance stop chaos belonging to Scale Set or AKS. It can be tuned via <code>SCALE_SET</code> ENV.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## contains the azure instance details for scale set instances or AKS nodes</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
+  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
+  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-instance-stop-sa</span>
+  <span class="nt">experiments</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-instance-stop</span>
+    <span class="nt">spec</span><span class="p">:</span>
+      <span class="nt">components</span><span class="p">:</span>
+        <span class="nt">env</span><span class="p">:</span>
+        <span class="c1"># comma separated list of azure instance names</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AZURE_INSTANCE_NAME</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;instance-01,instance-02&#39;</span>
+        <span class="c1"># name of the resource group</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RESOURCE_GROUP</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&lt;resource</span><span class="nv"> </span><span class="s">group</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Scale</span><span class="nv"> </span><span class="s">set&gt;&#39;</span>
+        <span class="c1"># accepts enable/disable value. default is disable</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SCALE_SET</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;enable&#39;</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
+          <span class="nt">VALUE</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
+</code></pre></div>
+<h3 id="multiple-iterations-of-chaos">Multiple Iterations Of Chaos<a class="headerlink" href="#multiple-iterations-of-chaos" title="Permanent link">&para;</a></h3>
 <p>The multiple iterations of chaos can be tuned via setting <code>CHAOS_INTERVAL</code> ENV. Which defines the delay between each iteration of chaos.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># defines delay between each successive iteration of the chaos</span>
