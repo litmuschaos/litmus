@@ -6,6 +6,18 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(6.5, 6),
     textAlign: 'left',
   },
+  iconWrapper: {
+    width: '2rem',
+    height: '2rem',
+    borderRadius: '1rem',
+    backgroundColor: theme.palette.primary.main,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  space: {
+    marginLeft: theme.spacing(2),
+  },
   heading: {
     display: 'flex',
 
