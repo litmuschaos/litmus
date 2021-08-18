@@ -251,7 +251,7 @@ It allows developers to specify the custom annotations for the experiment pod. I
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/experiment-components/experiment-annotations.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-annotations.yaml yaml)
 ```yaml
 # contains annotations for the chaos runner pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -285,7 +285,7 @@ It defines the `configMaps` and `secrets` to set the configmaps and secrets moun
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/experiment-components/experiment-configmaps-and-secrets.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-configmaps-and-secrets.yaml yaml)
 ```yaml
 # contains configmaps and secrets for the experiment pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -321,7 +321,7 @@ It overrides the experiment image for the chaosexperiment. It allows developers 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/experiment-components/experiment-image.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-image.yaml yaml)
 ```yaml
 # contains the custom image for the experiment pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -351,7 +351,7 @@ It allows developers to specify the imagePullSecret name for ChaosExperiment. It
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/experiment-components/experiment-imagePullSecrets.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-imagePullSecrets.yaml yaml)
 ```yaml
 # contains the imagePullSecrets for the experiment pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -383,7 +383,7 @@ The nodeselector contains labels of the node on which experiment pod should be s
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/experiment-components/experiment-nodeSelectors.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-nodeSelectors.yaml yaml)
 ```yaml
 # contains the node-selector for the experiment pod
 # it will schedule the experiment pod on the coresponding node with matching labels
@@ -415,7 +415,7 @@ It contains the resource requirements for the ChaosExperiment Pod, where we can 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/experiment-components/experiment-resources.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-resources.yaml yaml)
 ```yaml
 # contains the resource requirements for the experiment pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -451,7 +451,7 @@ It provides tolerations for the experiment pod so that it can be scheduled on th
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/experiment-components/experiment-tolerations.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-tolerations.yaml yaml)
 ```yaml
 # contains the tolerations for the experiment pod
 # it will schedule the experiment pod on the tainted node
@@ -486,7 +486,7 @@ It overrides the status timeouts inside chaosexperiments. It contains timeout & 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/experiment-components/experiment-statusCheckTimeout.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-statusCheckTimeout.yaml yaml)
 ```yaml
 # contains status check timeout for the experiment pod
 # it will set this timeout as upper bound while checking application status, node status in experiments

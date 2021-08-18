@@ -11,10 +11,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4.75),
   },
 
-  analyticsDiv: {
-    paddingRight: theme.spacing(3.75),
-  },
-
   headerSection: {
     display: 'flex',
     alignItems: 'center',

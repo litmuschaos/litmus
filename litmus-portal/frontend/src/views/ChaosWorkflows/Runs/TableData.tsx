@@ -421,19 +421,21 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             value="Analysis"
             onClick={() => {
               history.push({
-                pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
+                pathname: `/observability/workflowStatistics/${data.workflow_id}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
           >
-            <div className={classes.expDiv} data-cy="workflowAnalytics">
+            <div className={classes.expDiv} data-cy="workflowStatistics">
               <img
-                src="./icons/show-analytics.svg"
-                alt="Display Analytics"
+                src="./icons/show-statistics.svg"
+                alt="Display Statistics"
                 className={classes.btnImg}
               />
               <Typography className={classes.btnText}>
-                {t('chaosWorkflows.browseWorkflows.tableData.showTheAnalytics')}
+                {t(
+                  'chaosWorkflows.browseWorkflows.tableData.showTheStatistics'
+                )}
               </Typography>
             </div>
           </MenuItem>

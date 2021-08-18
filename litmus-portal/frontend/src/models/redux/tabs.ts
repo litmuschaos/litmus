@@ -2,7 +2,7 @@ export interface TabState {
   workflows: number;
   settings: number;
   node: number;
-  analytics: number;
+  observability: number;
   myhub: number;
 }
 

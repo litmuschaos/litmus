@@ -337,7 +337,7 @@ It can be executed by setting `.promProbe/inputs.query` field.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/promProbe/prom-probe-with-query.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/promProbe/prom-probe-with-query.yaml yaml)
 ```yaml
 # contains the prom probe which execute the query and match for the expected criteria
 apiVersion: litmuschaos.io/v1alpha1
@@ -384,7 +384,7 @@ It can be executed by setting `promProbe/inputs.queryPath` field.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/chaos-resources/probes/promProbe/prom-probe-with-queryPath.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/promProbe/prom-probe-with-queryPath.yaml yaml)
 ```yaml
 # contains the prom probe which execute the query and match for the expected criteria
 apiVersion: litmuschaos.io/v1alpha1

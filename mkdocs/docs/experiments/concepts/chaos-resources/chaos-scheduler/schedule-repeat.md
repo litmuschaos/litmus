@@ -146,7 +146,7 @@ It schedule the chaos in the repeat mode. There are various ways we can set up t
 
 This will keep on executing the schedule and creating engines for an indefinite amount of time.
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/repeat/basic-schema.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/basic-schema.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
@@ -189,7 +189,7 @@ spec:
 
 This will manipulate the schedule to be started and ended according to our definition.
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/repeat/time-range.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/time-range.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
@@ -236,7 +236,7 @@ spec:
 
 Assumes the custom resource creation timestamp as the StartTime
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/repeat/just-endtime.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/just-endtime.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
@@ -282,7 +282,7 @@ spec:
 
 Executes chaos indefinitely (until the ChaosSchedule CR is removed) starting from the specified timestamp
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/repeat/just-starttime.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/just-starttime.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
@@ -328,7 +328,7 @@ spec:
 ### Specifying Work Hours
 This ensures chaos execution within the specified hours of the day, everyday.
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/repeat/work-hours.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/work-hours.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
@@ -377,7 +377,7 @@ spec:
 ### Specifying work days
 This executes chaos on specified days of the week, with the specified minimum interval.
 
-[embedmd]:# (https://raw.githubusercontent.com/ispeakc0de/litmus/scheduler/mkdocs/docs/experiments/chaos-resources/chaos-scheduler/repeat/work-days.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/work-days.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
