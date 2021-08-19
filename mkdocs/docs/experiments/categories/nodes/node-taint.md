@@ -27,65 +27,68 @@
 
 ## Minimal RBAC configuration example (optional)
 
-??? note "View the Minimal RBAC permissions"
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
-    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-taint/rbac.yaml yaml)
-    ```yaml
-    ---
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: node-taint-sa
-      namespace: default
-      labels:
-        name: node-taint-sa
-        app.kubernetes.io/part-of: litmus
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRole
-    metadata:
-      name: node-taint-sa
-      labels:
-        name: node-taint-sa
-        app.kubernetes.io/part-of: litmus
-    rules:
-    - apiGroups: [""]
-      resources: ["pods","events"]
-      verbs: ["create","list","get","patch","update","delete","deletecollection"]
-    - apiGroups: [""]
-      resources: ["pods/exec","pods/log","pods/eviction"]
-      verbs: ["create","list","get"]
-    - apiGroups: ["batch"]
-      resources: ["jobs"]
-      verbs: ["create","list","get","delete","deletecollection"]
-    - apiGroups: ["apps"]
-      resources: ["daemonsets"]
-      verbs: ["list","get","delete"]
-    - apiGroups: ["litmuschaos.io"]
-      resources: ["chaosengines","chaosexperiments","chaosresults"]
-      verbs: ["create","list","get","patch","update"]
-    - apiGroups: [""]
-      resources: ["nodes"]
-      verbs: ["patch","get","list","update"]
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
-    metadata:
-      name: node-taint-sa
-      labels:
-        name: node-taint-sa
-        app.kubernetes.io/part-of: litmus
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: node-taint-sa
-    subjects:
-    - kind: ServiceAccount
-      name: node-taint-sa
-      namespace: default
-    ```
+    ??? note "View the Minimal RBAC permissions"
 
-    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-taint/rbac.yaml yaml)
+        ```yaml
+        ---
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: node-taint-sa
+          namespace: default
+          labels:
+            name: node-taint-sa
+            app.kubernetes.io/part-of: litmus
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: node-taint-sa
+          labels:
+            name: node-taint-sa
+            app.kubernetes.io/part-of: litmus
+        rules:
+        - apiGroups: [""]
+          resources: ["pods","events"]
+          verbs: ["create","list","get","patch","update","delete","deletecollection"]
+        - apiGroups: [""]
+          resources: ["pods/exec","pods/log","pods/eviction"]
+          verbs: ["create","list","get"]
+        - apiGroups: ["batch"]
+          resources: ["jobs"]
+          verbs: ["create","list","get","delete","deletecollection"]
+        - apiGroups: ["apps"]
+          resources: ["daemonsets"]
+          verbs: ["list","get","delete"]
+        - apiGroups: ["litmuschaos.io"]
+          resources: ["chaosengines","chaosexperiments","chaosresults"]
+          verbs: ["create","list","get","patch","update"]
+        - apiGroups: [""]
+          resources: ["nodes"]
+          verbs: ["patch","get","list","update"]
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: node-taint-sa
+          labels:
+            name: node-taint-sa
+            app.kubernetes.io/part-of: litmus
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: node-taint-sa
+        subjects:
+        - kind: ServiceAccount
+          name: node-taint-sa
+          namespace: default
+        ```
+
+        Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 

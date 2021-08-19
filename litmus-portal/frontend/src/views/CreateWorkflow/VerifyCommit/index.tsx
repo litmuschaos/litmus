@@ -522,8 +522,6 @@ const VerifyCommit = forwardRef(
                               'createWorkflow.verifyCommit.test'
                             )}`}
                             testValue={Test.weight}
-                            spacing={false}
-                            icon={false}
                           />
                         ))}
                       </div>

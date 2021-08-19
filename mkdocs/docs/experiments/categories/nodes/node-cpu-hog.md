@@ -26,62 +26,65 @@ Application implies services. Can be reframed as: Tests application resiliency u
 
 ## Minimal RBAC configuration example (optional)
 
-??? note "View the Minimal RBAC permissions"
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
-    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-cpu-hog/rbac.yaml yaml)
-    ```yaml
-    ---
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: node-cpu-hog-sa
-      namespace: default
-      labels:
-        name: node-cpu-hog-sa
-        app.kubernetes.io/part-of: litmus
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRole
-    metadata:
-      name: node-cpu-hog-sa
-      labels:
-        name: node-cpu-hog-sa
-        app.kubernetes.io/part-of: litmus
-    rules:
-    - apiGroups: [""]
-      resources: ["pods","events"]
-      verbs: ["create","list","get","patch","update","delete","deletecollection"]
-    - apiGroups: [""]
-      resources: ["pods/exec","pods/log"]
-      verbs: ["list","get","create"]
-    - apiGroups: ["batch"]
-      resources: ["jobs"]
-      verbs: ["create","list","get","delete","deletecollection"]
-    - apiGroups: ["litmuschaos.io"]
-      resources: ["chaosengines","chaosexperiments","chaosresults"]
-      verbs: ["create","list","get","patch","update"]
-    - apiGroups: [""]
-      resources: ["nodes"]
-      verbs: ["get","list"]
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
-    metadata:
-      name: node-cpu-hog-sa
-      labels:
-        name: node-cpu-hog-sa
-        app.kubernetes.io/part-of: litmus
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: node-cpu-hog-sa
-    subjects:
-    - kind: ServiceAccount
-      name: node-cpu-hog-sa
-      namespace: default
-    ```
+    ??? note "View the Minimal RBAC permissions"
 
-    Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-cpu-hog/rbac.yaml yaml)
+        ```yaml
+        ---
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: node-cpu-hog-sa
+          namespace: default
+          labels:
+            name: node-cpu-hog-sa
+            app.kubernetes.io/part-of: litmus
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: node-cpu-hog-sa
+          labels:
+            name: node-cpu-hog-sa
+            app.kubernetes.io/part-of: litmus
+        rules:
+        - apiGroups: [""]
+          resources: ["pods","events"]
+          verbs: ["create","list","get","patch","update","delete","deletecollection"]
+        - apiGroups: [""]
+          resources: ["pods/exec","pods/log"]
+          verbs: ["list","get","create"]
+        - apiGroups: ["batch"]
+          resources: ["jobs"]
+          verbs: ["create","list","get","delete","deletecollection"]
+        - apiGroups: ["litmuschaos.io"]
+          resources: ["chaosengines","chaosexperiments","chaosresults"]
+          verbs: ["create","list","get","patch","update"]
+        - apiGroups: [""]
+          resources: ["nodes"]
+          verbs: ["get","list"]
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: node-cpu-hog-sa
+          labels:
+            name: node-cpu-hog-sa
+            app.kubernetes.io/part-of: litmus
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: node-cpu-hog-sa
+        subjects:
+        - kind: ServiceAccount
+          name: node-cpu-hog-sa
+          namespace: default
+        ```
+
+        Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 

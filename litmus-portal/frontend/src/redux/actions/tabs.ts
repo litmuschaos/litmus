@@ -21,7 +21,7 @@ export function changeWorkflowDetailsTabs(tabNumber: number): TabAction {
   };
 }
 
-export function changeAnalyticsDashboardTabs(tabNumber: number): TabAction {
+export function changeObservabilityDashboardTabs(tabNumber: number): TabAction {
   return {
     type: TabActions.CHANGE_ANALYTICS_DASHBOARD_TAB,
     payload: tabNumber,
