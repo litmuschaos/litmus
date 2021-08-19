@@ -93,6 +93,9 @@ const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: 'fit-content',
   },
+  required: {
+    color: theme.palette.error.main,
+  },
 }));
 
 export default useStyles;

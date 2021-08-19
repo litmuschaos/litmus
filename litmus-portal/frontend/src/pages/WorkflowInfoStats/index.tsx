@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { CalendarHeatmap, CalendarHeatmapTooltipProps } from 'litmus-ui';
+import moment from 'moment';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
@@ -33,13 +34,22 @@ import WorkflowRunTable from './WorkflowRunTable';
 const TestCalendarHeatmapTooltip = ({
   tooltipData,
 }: CalendarHeatmapTooltipProps): React.ReactElement => {
+  // Function to convert UNIX time in format of DD MMM YYY
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('DD MMM, HH:mm');
+    return resDate;
+  };
   return (
     <div>
       <div style={{ marginBottom: '0.2rem' }}>
         {tooltipData?.data?.bin?.bin.value ?? 0}% Average Resiliency
       </div>
       <div>
-        {tooltipData?.data?.bin?.bin.workflowRunDetail.no_of_runs ?? 0} runs
+        {tooltipData?.data?.bin?.bin.workflowRunDetail.no_of_runs ?? 0}{' '}
+        completed runs on{' '}
+        {formatDate(tooltipData?.data?.bin?.bin.workflowRunDetail.date_stamp) ??
+          ''}
       </div>
     </div>
   );
@@ -91,7 +101,7 @@ const WorkflowInfoStats: React.FC = () => {
   );
 
   const workflowRunID =
-    workflowRunData?.getWorkflowRuns.workflow_runs[0].workflow_run_id ?? '';
+    workflowRunData?.getWorkflowRuns?.workflow_runs[0]?.workflow_run_id ?? '';
 
   const presentYear = new Date().getFullYear();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -159,7 +169,7 @@ const WorkflowInfoStats: React.FC = () => {
             {data?.ListWorkflow.workflows[0].workflow_name}
           </Typography>
           <Typography className={classes.subHeading}>
-            Here’s the analytics of the selected workflow
+            Here’s the statistics of the selected workflow
           </Typography>
         </div>
         {/* For later: */}
@@ -169,14 +179,16 @@ const WorkflowInfoStats: React.FC = () => {
       </div>
 
       {/* Information and stats */}
-      {data && workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs && (
-        <InfoSection
-          data={data}
-          workflowRunLength={
-            workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
-          }
-        />
-      )}
+      {data &&
+        workflowRunData &&
+        workflowRunData.getWorkflowRuns.total_no_of_workflow_runs > 0 && (
+          <InfoSection
+            data={data}
+            workflowRunLength={
+              workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
+            }
+          />
+        )}
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
@@ -186,7 +198,7 @@ const WorkflowInfoStats: React.FC = () => {
         <div className={classes.heatmapArea}>
           <div className={classes.heatmapAreaHeading}>
             <Typography className={classes.sectionHeading}>
-              Analytics
+              Statistics
             </Typography>
             {/* Year selection filter */}
           </div>

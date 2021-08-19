@@ -25,8 +25,9 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
 
   // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
   const formatDate = (date: string) => {
-    const day = moment(date).format('Do MMM, YYYY LT');
-    return day;
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('DD MMM YYYY, HH:mm');
+    return resDate;
   };
 
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();

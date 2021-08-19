@@ -4,6 +4,7 @@ metadata:
   name: chaos-exporter
   labels:
     k8s-app: chaos-exporter
+    release: prometheus-stack
   namespace: litmus
 spec:
   jobLabel: app
@@ -16,3 +17,6 @@ spec:
   endpoints:
     - port: tcp
       interval: 1s
+      metricRelabelings:
+        - targetLabel: instance
+          replacement: 'chaos-exporter-service'

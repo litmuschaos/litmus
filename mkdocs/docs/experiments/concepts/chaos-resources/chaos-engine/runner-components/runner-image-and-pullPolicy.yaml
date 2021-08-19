@@ -1,0 +1,24 @@
+# contains the image and imagePullPolicy of the chaos-runner
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  components:
+    runner:
+      # override the image of the chaos-runner
+      # by default it is used the image based on the litmus version 
+      image: "litmuschaos/chaos-runner:latest"
+      # imagePullPolicy for the runner image
+      # supports: Always, IfNotPresent. default: IfNotPresent
+      imagePullPolicy: "Always"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+  

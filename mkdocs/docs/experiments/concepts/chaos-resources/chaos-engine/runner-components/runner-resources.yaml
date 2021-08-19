@@ -1,0 +1,26 @@
+# contains the resource requirements for the runner pod
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  components:
+    runner:
+      # resource requirements for the runner pod
+      resources:
+        requests:
+          cpu: "250m"
+          memory: "64Mi"
+        limits:
+         cpu: "500m"
+         memory: "128Mi"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+  

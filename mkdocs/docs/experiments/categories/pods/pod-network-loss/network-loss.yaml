@@ -1,0 +1,23 @@
+# it inject the network-loss for the ingrees and egress traffic
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-loss-sa
+  experiments:
+  - name: pod-network-loss
+    spec:
+      components:
+        env:
+        # network packet loss percentage
+        - name: NETWORK_PACKET_LOSS_PERCENTAGE
+          value: '100'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

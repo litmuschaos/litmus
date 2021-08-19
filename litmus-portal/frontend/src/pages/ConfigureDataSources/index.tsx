@@ -25,7 +25,7 @@ import {
 import useStyles from './styles';
 
 const ConfigurePrometheus = lazy(
-  () => import('../../views/Analytics/DataSources/Forms/prometheus')
+  () => import('../../views/Observability/DataSources/Forms/prometheus')
 );
 
 interface DataSourceConfigurePageProps {
@@ -190,7 +190,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
               <BackButton />
             </div>
             <Typography className={classes.heading}>
-              {t('analyticsDashboard.dataSourceForm.headingAdd')}
+              {t('monitoringDashboard.dataSourceForm.headingAdd')}
             </Typography>
             <ConfigurePrometheus
               configure={configure}
@@ -206,7 +206,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
               <BackButton />
             </div>
             <Typography className={classes.heading}>
-              {t('analyticsDashboard.dataSourceForm.headingConfigure')} /
+              {t('monitoringDashboard.dataSourceForm.headingConfigure')} /
               {` ${selectedDataSourceName}`}
             </Typography>
             {dataSourceID ? (
@@ -230,15 +230,15 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
           {page === 2 && (
             <ButtonOutlined onClick={() => setPage(1)} disabled={false}>
               <Typography>
-                {t('analyticsDashboard.dataSourceForm.back')}
+                {t('monitoringDashboard.dataSourceForm.back')}
               </Typography>
             </ButtonOutlined>
           )}
           <div className={classes.saveButton}>
             <Typography className={classes.stepText}>
-              {t('analyticsDashboard.dataSourceForm.step')}
+              {t('monitoringDashboard.dataSourceForm.step')}
               <strong>{` ${page} `}</strong>
-              {t('analyticsDashboard.dataSourceForm.of2')}
+              {t('monitoringDashboard.dataSourceForm.of2')}
             </Typography>
             <ButtonFilled
               disabled={
@@ -259,10 +259,10 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
                 {page === 2
                   ? mutate
                     ? !configure
-                      ? t('analyticsDashboard.dataSourceForm.adding')
-                      : t('analyticsDashboard.dataSourceForm.updating')
-                    : t('analyticsDashboard.dataSourceForm.saveChanges')
-                  : t('analyticsDashboard.dataSourceForm.next')}
+                      ? t('monitoringDashboard.dataSourceForm.adding')
+                      : t('monitoringDashboard.dataSourceForm.updating')
+                    : t('monitoringDashboard.dataSourceForm.saveChanges')
+                  : t('monitoringDashboard.dataSourceForm.next')}
               </Typography>
               {mutate && <Loader size={20} />}
             </ButtonFilled>
@@ -277,7 +277,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
             setIsAlertOpen(false);
             if (success) {
               history.push({
-                pathname: '/analytics',
+                pathname: '/observability',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }
@@ -288,7 +288,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
               setIsAlertOpen(false);
               if (success) {
                 history.push({
-                  pathname: '/analytics',
+                  pathname: '/observability',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }
@@ -297,11 +297,11 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
           >
             {!configure
               ? success
-                ? t('analyticsDashboard.dataSourceForm.connectionSuccess')
-                : t('analyticsDashboard.dataSourceForm.connectionError')
+                ? t('monitoringDashboard.dataSourceForm.connectionSuccess')
+                : t('monitoringDashboard.dataSourceForm.connectionError')
               : success
-              ? t('analyticsDashboard.dataSourceForm.updateSuccess')
-              : t('analyticsDashboard.dataSourceForm.updateError')}
+              ? t('monitoringDashboard.dataSourceForm.updateSuccess')
+              : t('monitoringDashboard.dataSourceForm.updateError')}
           </Alert>
         </Snackbar>
       )}

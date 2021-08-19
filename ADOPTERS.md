@@ -19,6 +19,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[Lenskart](https://www.lenskart.com/)|Chaos Engineering for better Resiliency | [Our Story](adopters/organizations/lenskart.md)|
 |[Mercedes](https://www.mercedes-benz.com/)|Resiliency validation for applications|[Our Story](adopters/organizations/mercedes.md)|
 |[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
+|[Klanik](https://www.klanik.com)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/klanik.md)|
 
 ### Cloud-Native Vendors
 
@@ -57,5 +58,7 @@ existing functions.
 |[Keptn](https://keptn.sh)|[Chaos Engineering integration in CD](https://www.youtube.com/watch?v=aa5SzQmv4EQ)|[Our Story](https://medium.com/keptn/part-2-evaluating-application-resiliency-with-keptn-and-litmuschaos-use-case-and-demo-f43b264a2294)|
 |[KubeFlare](https://github.com/raspbernetes)|Resilience of microservices on ARM64 (Raspberry Pi) based clusters|[Our Story](adopters/organizations/raspbernetes.md)|
 |[OpenEBS](https://openebs.io/)|[Openebs-CI](https://openebs.ci/)|[Our Story](adopters/organizations/openebs.md)|
+|[Pravega](https://pravega.io/)|To inject faults while exercising quality tests on our product|[Our Story](adopters/organizations/pravega.md)|
+|[Red Hat](https://www.redhat.com/en)|[Chaos Engineering with Kraken](https://github.com/cloud-bulldozer/kraken)|[Our Story](adopters/organizations/redhat_kraken.md)|
 
 

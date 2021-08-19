@@ -134,6 +134,7 @@ type ClusterEventInput struct {
 type ClusterIdentity struct {
 	ClusterID string `json:"cluster_id"`
 	AccessKey string `json:"access_key"`
+	Version   string `json:"version"`
 }
 
 type ClusterInput struct {
@@ -1160,10 +1161,11 @@ func (e UsageSort) MarshalGQL(w io.Writer) {
 type WorkflowRunStatus string
 
 const (
-	WorkflowRunStatusAll       WorkflowRunStatus = "All"
-	WorkflowRunStatusFailed    WorkflowRunStatus = "Failed"
-	WorkflowRunStatusRunning   WorkflowRunStatus = "Running"
-	WorkflowRunStatusSucceeded WorkflowRunStatus = "Succeeded"
+	WorkflowRunStatusAll        WorkflowRunStatus = "All"
+	WorkflowRunStatusFailed     WorkflowRunStatus = "Failed"
+	WorkflowRunStatusRunning    WorkflowRunStatus = "Running"
+	WorkflowRunStatusSucceeded  WorkflowRunStatus = "Succeeded"
+	WorkflowRunStatusTerminated WorkflowRunStatus = "Terminated"
 )
 
 var AllWorkflowRunStatus = []WorkflowRunStatus{
@@ -1171,11 +1173,12 @@ var AllWorkflowRunStatus = []WorkflowRunStatus{
 	WorkflowRunStatusFailed,
 	WorkflowRunStatusRunning,
 	WorkflowRunStatusSucceeded,
+	WorkflowRunStatusTerminated,
 }
 
 func (e WorkflowRunStatus) IsValid() bool {
 	switch e {
-	case WorkflowRunStatusAll, WorkflowRunStatusFailed, WorkflowRunStatusRunning, WorkflowRunStatusSucceeded:
+	case WorkflowRunStatusAll, WorkflowRunStatusFailed, WorkflowRunStatusRunning, WorkflowRunStatusSucceeded, WorkflowRunStatusTerminated:
 		return true
 	}
 	return false

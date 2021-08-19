@@ -116,7 +116,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.13.6
+    app.kubernetes.io/version: v2.0.0
     app.kubernetes.io/component: operator-clusterrole
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -143,6 +143,9 @@ rules:
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: [apiextensions.k8s.io]
+    resources: [customresourcedefinitions]
+    verbs: [list, get]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -152,7 +155,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.13.6
+    app.kubernetes.io/version: v2.0.0
     app.kubernetes.io/component: operator-clusterrolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -300,13 +303,13 @@ rules:
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: [""]
-    resources: [pods/log]
-    verbs: [get, watch]
+    resources: [pods/log, secrets, configmaps]
+    verbs: [get, watch, create, delete, patch]
 
   # for creation & deletion of application in predefined workflows
   - apiGroups: [apps]
     resources: [deployments, statefulsets]
-    verbs: [get, watch, patch , create, delete]
+    verbs: [get, watch, patch, create, delete]
     
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: [litmuschaos.io]
@@ -351,7 +354,7 @@ rules:
   verbs: [get, list]
 - apiGroups: [apps]
   resources: [deployments, daemonsets, replicasets, statefulsets]
-  verbs: [get, list]
+  verbs: [get, list, delete]
 - apiGroups: [argoproj.io]
   resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, rollouts]
   verbs: [get, list, create, delete, update, watch]
@@ -405,7 +408,7 @@ kind: ClusterRole
 metadata:
   name: litmus-server-cr
 rules:
-  - apiGroups: [networking.k8s.io/v1, extensions/v1beta1]
+  - apiGroups: [networking.k8s.io, extensions]
     resources: [ingresses]
     verbs: [get]
   - apiGroups: [""]
@@ -464,6 +467,7 @@ data:
   JWTSecret: "litmus-portal@123"
   DB_USER: "admin"
   DB_PASSWORD: "1234"
+  VERSION: "ci"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -530,6 +534,11 @@ spec:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
           env:
+            - name: VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: VERSION
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
@@ -577,13 +586,15 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v2.11.0"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.13.6"
+              value: "litmuschaos/chaos-operator:2.0.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.13.6"
+              value: "litmuschaos/chaos-runner:2.0.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:1.13.6"
+              value: "litmuschaos/chaos-exporter:2.0.0"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
+            - name: AGENT_DEPLOYMENTS
+              value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
@@ -595,7 +606,7 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v1.13.x"
+              value: "v2.0.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -82,6 +83,11 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 
 // ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
 func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateData) (*model.ClusterConfirmResponse, error) {
+	currentVersion := os.Getenv("VERSION")
+	if currentVersion != identity.Version {
+		return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v got %v)", currentVersion, identity.Version)
+	}
+
 	cluster, err := dbOperationsCluster.GetCluster(identity.ClusterID)
 	if err != nil {
 		return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
@@ -150,20 +156,20 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 
 	requests := []string{
 		`{
-			"apiVersion": "apps/v1",
-			"kind": "Deployment",
-			"metadata": {
-				"name": "subscriber",
-				"namespace": ` + *cluster.AgentNamespace + `
-			}
-		}`,
-		`{
 		   "apiVersion": "v1",
 		   "kind": "ConfigMap",
 		   "metadata": {
 			  "name": "agent-config",
 			  "namespace": ` + *cluster.AgentNamespace + `
 		   }
+		}`,
+		`{
+			"apiVersion": "apps/v1",
+			"kind": "Deployment",
+			"metadata": {
+				"name": "subscriber",
+				"namespace": ` + *cluster.AgentNamespace + `
+			}
 		}`,
 	}
 

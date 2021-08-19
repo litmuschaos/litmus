@@ -17,6 +17,7 @@ import (
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	AgentNamespace:           os.Getenv("AGENT_NAMESPACE"),
 	AgentScope:               os.Getenv("AGENT_SCOPE"),
+	AgentDeployments:         os.Getenv("AGENT_DEPLOYMENTS"),
 	SubscriberImage:          os.Getenv("SUBSCRIBER_IMAGE"),
 	EventTrackerImage:        os.Getenv("EVENT_TRACKER_IMAGE"),
 	WorkflowControllerImage:  os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
@@ -25,6 +26,7 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	ChaosRunnerImage:         os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
 	ChaosExporterImage:       os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE"),
 	ContainerRuntimeExecutor: os.Getenv("CONTAINER_RUNTIME_EXECUTOR"),
+	Version:                  os.Getenv("VERSION"),
 }
 
 // FileHandler dynamically generates the manifest file and sends it as a response

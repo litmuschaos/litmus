@@ -9,9 +9,10 @@ data:
   CLUSTER_ID: #{CLUSTER_ID}
   ACCESS_KEY: #{ACCESS_KEY}
   AGENT_SCOPE: #{AGENT-SCOPE}
+  VERSION: #{VERSION}
   IS_CLUSTER_CONFIRMED: "false"
   COMPONENTS: |
-    DEPLOYMENTS: ["app=chaos-exporter", "name=chaos-operator", "app=event-tracker", "app=workflow-controller"]
+    DEPLOYMENTS: #{AGENT-DEPLOYMENTS}
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -1,0 +1,23 @@
+# kill the specific target container
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: container-kill-sa
+  experiments:
+  - name: container-kill
+    spec:
+      components:
+        env:
+        # name of the target container
+        - name: TARGET_CONTAINER
+          value: 'nginx'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

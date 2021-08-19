@@ -276,6 +276,7 @@ type ComplexityRoot struct {
 		SendInvitation         func(childComplexity int, member model.MemberInput) int
 		SyncHub                func(childComplexity int, id string) int
 		SyncWorkflow           func(childComplexity int, workflowid string, workflowRunID string) int
+		TerminateChaosWorkflow func(childComplexity int, workflowid *string, workflowRunID *string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
 		UpdateDashboard        func(childComplexity int, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
 		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
@@ -703,6 +704,7 @@ type MutationResolver interface {
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error)
 	DeleteChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error)
+	TerminateChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error)
 	SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error)
 	SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error)
 	AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error)
@@ -2045,6 +2047,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.SyncWorkflow(childComplexity, args["workflowid"].(string), args["workflow_run_id"].(string)), true
+
+	case "Mutation.terminateChaosWorkflow":
+		if e.complexity.Mutation.TerminateChaosWorkflow == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_terminateChaosWorkflow_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.TerminateChaosWorkflow(childComplexity, args["workflowid"].(*string), args["workflow_run_id"].(*string)), true
 
 	case "Mutation.updateChaosWorkflow":
 		if e.complexity.Mutation.UpdateChaosWorkflow == nil {
@@ -4950,6 +4964,7 @@ input ClusterEventInput {
 input ClusterIdentity {
   cluster_id: String!
   access_key: String!
+  version: String!
 }
 
 type ClusterConfirmResponse {
@@ -5205,8 +5220,12 @@ type Mutation {
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
+  # removes workflow from cluster and db
   deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
     @authorized
+
+  # removes workflow run from the cluster only
+  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
 
   syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
     @authorized
@@ -5429,6 +5448,7 @@ input UpdateUserInput {
   Failed
   Running
   Succeeded
+  Terminated
 }
 
 input DateRange {
@@ -6042,6 +6062,28 @@ func (ec *executionContext) field_Mutation_syncWorkflow_args(ctx context.Context
 	var arg1 string
 	if tmp, ok := rawArgs["workflow_run_id"]; ok {
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflow_run_id"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_terminateChaosWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["workflowid"]; ok {
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflowid"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["workflow_run_id"]; ok {
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -11395,6 +11437,67 @@ func (ec *executionContext) _Mutation_deleteChaosWorkflow(ctx context.Context, f
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().DeleteChaosWorkflow(rctx, args["workflowid"].(*string), args["workflow_run_id"].(*string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_terminateChaosWorkflow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_terminateChaosWorkflow_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().TerminateChaosWorkflow(rctx, args["workflowid"].(*string), args["workflow_run_id"].(*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -24512,6 +24615,12 @@ func (ec *executionContext) unmarshalInputClusterIdentity(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
+		case "version":
+			var err error
+			it.Version, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -27539,6 +27648,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteChaosWorkflow":
 			out.Values[i] = ec._Mutation_deleteChaosWorkflow(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "terminateChaosWorkflow":
+			out.Values[i] = ec._Mutation_terminateChaosWorkflow(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

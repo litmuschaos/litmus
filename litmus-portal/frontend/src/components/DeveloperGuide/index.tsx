@@ -1,5 +1,5 @@
-import { IconButton, Typography } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { Typography, useTheme } from '@material-ui/core';
+import { Icon } from 'litmus-ui';
 import * as React from 'react';
 import useStyles from './styles';
 
@@ -19,9 +19,10 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
   const handleClose = () => {
     setDisplay(false);
   };
-  const docs = 'https://docs.litmuschaos.io/docs/getstarted/';
+  const docs = 'https://docs.litmuschaos.io/';
 
   const classes = useStyles();
+  const theme = useTheme();
   return (
     <>
       {display ? (
@@ -33,8 +34,12 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
                 {description}
               </Typography>
               {expAvailable ? (
-                <div className={classes.imgDiv}>
-                  <img src="./icons/guide.svg" alt="dev_guide" />
+                <div>
+                  <Icon
+                    name="document"
+                    size="lg"
+                    color={theme.palette.primary.main}
+                  />
                   <a href={docs} className={classes.guideLink} target="_">
                     Developer&#39;s guide
                   </a>
@@ -43,15 +48,14 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
                 <></>
               )}
             </div>
-            <div className={classes.iconDiv}>
-              <IconButton
-                aria-label="upload picture"
-                component="span"
-                onClick={handleClose}
-                className={classes.closeIcon}
-              >
-                <CloseIcon />
-              </IconButton>
+            <div
+              onClick={handleClose}
+              role="button"
+              onKeyDown={handleClose}
+              className={classes.iconDiv}
+              tabIndex={0}
+            >
+              <Icon name="close" size="lg" color={theme.palette.common.black} />
             </div>
           </div>
         </div>

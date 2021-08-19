@@ -29,7 +29,7 @@ const TargetCopy: React.FC = () => {
     setTimeout(() => setCopying(false), 3000);
   }
 
-  const command = 'litmusctl agent connect';
+  const command = 'litmusctl create agent';
 
   return (
     <div className={classes.root}>

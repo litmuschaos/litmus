@@ -157,7 +157,7 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 			if duplicateEventOffset != 0 {
 				numberOfEvents := len(annotations[annotationIndex].Legends)
 				for i := 0; i < numberOfEvents; i++ {
-					if offset, ok := duplicateEventIndices[i]; ok {
+					if offset, ok := duplicateEventIndices[i]; ok && i-offset >= 0 {
 						annotations[annotationIndex].Legends = append(annotations[annotationIndex].Legends[:i-offset], annotations[annotationIndex].Legends[i-offset+1:]...)
 						annotations[annotationIndex].Tsvs = append(annotations[annotationIndex].Tsvs[:i-offset], annotations[annotationIndex].Tsvs[i-offset+1:]...)
 						annotations[annotationIndex].SubDataArray = append(annotations[annotationIndex].SubDataArray[:i-offset], annotations[annotationIndex].SubDataArray[i-offset+1:]...)
