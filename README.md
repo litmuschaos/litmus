@@ -102,6 +102,8 @@ The Litmus community meets on the third wednesday of every month at 10:00PM IST/
 - [Litmus - Chaos Engineering for Kubernetes (CNCFMinutes 9)](https://youtu.be/rDQ9XKbSJIc) @ [Saiyam Pathak](https://www.youtube.com/channel/UCi-1nnN0eC9nRleXdZA6ncg)
 - [Chaos Engineering with Litmus Chaos by Prithvi Raj || HACKODISHA Workshop](https://youtu.be/eyAG0svCsQA) @ [Webwiz](https://www.youtube.com/channel/UC9yM_PkV0QIIsPA3qPrp)
 
+[And More....](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
+
 ### Blogs
 
 - CNCF: [Introduction to LitmusChaos](https://www.cncf.io/blog/2020/08/28/introduction-to-litmuschaos/)
