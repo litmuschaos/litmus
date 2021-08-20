@@ -1,4 +1,4 @@
-## contains the azure instance details
+## contains the azure instance details for scale set instances or AKS nodes
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -17,6 +17,9 @@ spec:
           value: 'instance-01,instance-02'
         # name of the resource group
         - name: RESOURCE_GROUP
-          value: '<resource group of AZURE_INSTANCE_NAME>'
+          value: '<resource group of Scale set>'
+        # accepts enable/disable value. default is disable
+        - name: SCALE_SET
+          value: 'enable'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

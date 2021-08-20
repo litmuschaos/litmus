@@ -92,6 +92,10 @@ The Litmus community meets on the third wednesday of every month at 10:00PM IST/
 - [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
 - [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
 
+### Videos
+
+- [Litmus 2 - Chaos Engineering Meets Argo Workflows](https://youtu.be/B8DfYnDh2F4) @ [DevOps Toolkit](https://youtube.com/c/devopstoolkit)
+
 ### Blogs
 
 - CNCF: [Introduction to LitmusChaos](https://www.cncf.io/blog/2020/08/28/introduction-to-litmuschaos/)

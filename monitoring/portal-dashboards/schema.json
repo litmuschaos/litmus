@@ -27,13 +27,13 @@
       "type": "string",
       "title": "The chaosEventQueryTemplate schema",
       "description": "Chaos event query for Prometheus metrics.",
-      "default": "litmuschaos_awaited_experiments{job=\"chaos-exporter\", chaos_injection_time!=\"\"}"
+      "default": "litmuschaos_awaited_experiments{job=\"chaos-exporter\", chaos_injection_time!=\"\", instance=\"chaos-exporter-service\"}"
     },
     "chaosVerdictQueryTemplate": {
       "type": "string",
       "title": "The chaosVerdictQueryTemplate schema",
       "description": "Chaos verdict query for Prometheus metrics.",
-      "default": "litmuschaos_experiment_verdict{job=\"chaos-exporter\", chaosresult_verdict!=\"Awaited\"}"
+      "default": "litmuschaos_experiment_verdict{job=\"chaos-exporter\", chaosresult_verdict!=\"Awaited\", instance=\"chaos-exporter-service\"}"
     },
     "applicationMetadataMap": {
       "type": "array",

@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import config from '../../config';
-import Center from '../../containers/layouts/Center';
 import { CREATE_PROJECT, CREATE_USER, GET_USER_INFO } from '../../graphql';
 import {
   CreateUserData,
@@ -22,6 +21,7 @@ import {
   logout,
 } from '../../utils/auth';
 import { validateConfirmPassword } from '../../utils/validate';
+import LoginWrapper from '../../views/Login';
 import useStyles from './styles';
 
 interface PasswordReset {
@@ -163,102 +163,90 @@ const GetStarted: React.FC = () => {
   const loaderSize = 20;
 
   return (
-    <div className={classes.rootContainer}>
-      <Center>
-        <div className={classes.rootDiv}>
-          <Typography className={classes.heading}>
-            {t('getStarted.password.info')}
-          </Typography>
-          <Typography className={classes.subheading}>
-            {t('getStarted.password.desc')}
-          </Typography>
-          <form
-            id="login-form"
-            className={classes.inputDiv}
-            onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
-              if (ValidateUser()) {
-                handleSubmit(event);
-              }
-            }}
-          >
-            <InputField
-              data-cy="inputPassword"
-              className={classes.inputValue}
-              label={t('getStarted.password.label')}
-              type="password"
-              filled
-              required
-              value={values.password}
-              onChange={(event) => {
-                setValues({
-                  password: event.target.value,
-                  confirmPassword: values.confirmPassword,
-                });
-              }}
-            />
-            <InputField
-              data-cy="confirmInputPassword"
-              className={classes.inputValue}
-              label={t('getStarted.password.cnfLabel')}
-              type="password"
-              required
-              value={values.confirmPassword}
-              helperText={
-                validateConfirmPassword(values.password, values.confirmPassword)
-                  ? t('settings.accountsTab.accountsSettings.passwordNotSame')
-                  : ''
-              }
-              filled
-              onChange={(event) =>
-                setValues({
-                  password: values.password,
-                  confirmPassword: event.target.value,
-                })
-              }
-            />
-            <div className={classes.buttonGroup}>
-              <div data-cy="skipButton">
-                <TextButton
-                  className={classes.skipButton}
-                  title="Skip for now"
-                  variant="highlight"
-                  onClick={() => {
-                    if (ValidateUser()) {
-                      setIsLoading(true);
-                      getUserInfo();
-                    }
-                  }}
-                >
-                  {loading ? (
-                    <Loader size={loaderSize} />
-                  ) : (
-                    <Typography>{t('getStarted.button.skip')}</Typography>
-                  )}
-                </TextButton>
-              </div>
-              <div data-cy="finishButton">
-                <ButtonFilled
-                  className={classes.submitButton}
-                  type="submit"
-                  disabled={isError.current}
-                >
-                  {loading ? (
-                    <Loader size={loaderSize} />
-                  ) : (
-                    <>{t('getStarted.button.finish')}</>
-                  )}
-                </ButtonFilled>
-              </div>
-            </div>
-          </form>
-        </div>
-        <img
-          className={classes.logo}
-          src="./icons/LitmusLogoLight.svg"
-          alt="Litmus Logo"
+    <LoginWrapper
+      title={t('getStarted.password.info')}
+      subtitle={t('getStarted.password.desc')}
+    >
+      <form
+        id="login-form"
+        className={classes.inputDiv}
+        onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+          if (ValidateUser()) {
+            handleSubmit(event);
+          }
+        }}
+      >
+        <InputField
+          data-cy="inputPassword"
+          className={classes.inputValue}
+          label={t('getStarted.password.label')}
+          type="password"
+          filled
+          required
+          value={values.password}
+          onChange={(event) => {
+            setValues({
+              password: event.target.value,
+              confirmPassword: values.confirmPassword,
+            });
+          }}
         />
-      </Center>
-    </div>
+        <InputField
+          data-cy="confirmInputPassword"
+          className={classes.inputValue}
+          label={t('getStarted.password.cnfLabel')}
+          type="password"
+          required
+          value={values.confirmPassword}
+          helperText={
+            validateConfirmPassword(values.password, values.confirmPassword)
+              ? t('settings.accountsTab.accountsSettings.passwordNotSame')
+              : ''
+          }
+          filled
+          onChange={(event) =>
+            setValues({
+              password: values.password,
+              confirmPassword: event.target.value,
+            })
+          }
+        />
+        <div className={classes.buttonGroup}>
+          <div data-cy="skipButton">
+            <TextButton
+              className={classes.skipButton}
+              title="Skip for now"
+              variant="highlight"
+              onClick={() => {
+                if (ValidateUser()) {
+                  setIsLoading(true);
+                  getUserInfo();
+                }
+              }}
+            >
+              {loading ? (
+                <Loader size={loaderSize} />
+              ) : (
+                <Typography>{t('getStarted.button.skip')}</Typography>
+              )}
+            </TextButton>
+          </div>
+          <div data-cy="finishButton">
+            <ButtonFilled
+              className={classes.submitButton}
+              type="submit"
+              disabled={isError.current}
+            >
+              {loading ? (
+                <Loader size={loaderSize} />
+              ) : (
+                <>{t('getStarted.button.finish')}</>
+              )}
+            </ButtonFilled>
+          </div>
+        </div>
+      </form>
+    </LoginWrapper>
   );
 };
 

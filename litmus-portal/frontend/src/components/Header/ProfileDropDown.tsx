@@ -1,6 +1,12 @@
 import { useQuery } from '@apollo/client';
-import { Avatar, IconButton, Popover, Typography } from '@material-ui/core';
-import { ButtonFilled, TextButton } from 'litmus-ui';
+import {
+  Avatar,
+  IconButton,
+  Popover,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
+import { ButtonFilled, Icon, TextButton } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -16,6 +22,7 @@ import useStyles from './styles';
 
 const ProfileDropdown: React.FC = () => {
   const classes = useStyles();
+  const theme = useTheme();
   const { t } = useTranslation();
   const tabs = useActions(TabActions);
 
@@ -117,7 +124,12 @@ const ProfileDropdown: React.FC = () => {
                 onClick={() => logout()}
               >
                 {t('header.profileDropdown.logout')}
-                <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
+                <Icon
+                  id="logoutIcon"
+                  name="logout"
+                  size="lg"
+                  color={theme.palette.background.paper}
+                />
               </ButtonFilled>
             </div>
 
