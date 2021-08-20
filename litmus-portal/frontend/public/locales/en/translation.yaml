@@ -950,7 +950,8 @@ createWorkflow:
     continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
     pleaseAddExp: Please add experiments to see the data
-    revertSchedule: Revert Schedule
+    revertSchedule: Cleanup Chaos Resources
+    retainLogs: To retain experiment logs, set this as False.
     noTemplates: No template available.
     addTemplate: You can add a template from the scheduled workflows table.
     trueValue: 'True'
