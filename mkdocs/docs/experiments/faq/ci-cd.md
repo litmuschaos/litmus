@@ -32,8 +32,9 @@ Yes, with the help of GitHub-chaos-action we can automate the chaos execution on
 ### How can users integrate Litmuschaos in their environment with Gitops?
 
 Gitops feature in Litmus enables users to sync workflows from a configured git repo, any workflow inserts/updates made to the repo will be monitored and picked up by the litmus portal and will be executed on the target cluster. Litmus portal gitops also includes an event-driven chaos injection feature where users can annotate an application to be watched for changes and if and when the change happens chaos workflows can be triggered automatically. This integrates with other gitops tools like flux/argo cd and enables users to automatically run chaos workflows whenever a new release happens or a particular change occurs in the application. To configure a git repo the user must provide the Git URL of the repository and the branch name and the authentication credentials which are of two types:
-    1. Access Token
-    2. SSH Key
+
+  1. Access Token
+  1. SSH Key
 Once GitOps is enabled, any new workflows created will be stored in the configured repo in the path `litmus/<project-id>/<workflow-name>.yaml`
 
 ### How can we use litmus in our DevOps pipeline/cycle?

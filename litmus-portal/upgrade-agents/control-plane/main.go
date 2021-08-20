@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	// logging level, dev mode enables debug logs
 	dev := os.Getenv("DEV_MODE")
 	var logger *zap.Logger
 	var err error
