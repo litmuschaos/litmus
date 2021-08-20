@@ -1982,12 +1982,14 @@
 It can be provided at <code>.spec.experiments[].spec.probe</code> inside chaosengine. 
 It supports four types: <code>cmdProbe</code>, <code>k8sProbe</code>, <code>httpProbe</code>, and <code>promProbe</code>.</p>
 <h3 id="probe-modes">Probe Modes<a class="headerlink" href="#probe-modes" title="Permanent link">&para;</a></h3>
-<p>The probes can be set up to run in five different modes. Which can be tuned via <code>mode</code> ENV. 
-- <code>SOT</code>: Executed at the Start of the Test as a pre-chaos check
-- <code>EOT</code>: Executed at the End of the Test as a post-chaos check
-- <code>Edge</code>: Executed both, before and after the chaos
-- <code>Continuous</code>: The probe is executed continuously, with a specified polling interval during the chaos injection.
-- <code>OnChaos</code>: The probe is executed continuously, with a specified polling interval strictly for chaos duration of chaos</p>
+<p>The probes can be set up to run in five different modes. Which can be tuned via <code>mode</code> ENV.</p>
+<ul>
+<li><code>SOT</code>: Executed at the Start of the Test as a pre-chaos check</li>
+<li><code>EOT</code>: Executed at the End of the Test as a post-chaos check</li>
+<li><code>Edge</code>: Executed both, before and after the chaos</li>
+<li><code>Continuous</code>: The probe is executed continuously, with a specified polling interval during the chaos injection.</li>
+<li><code>OnChaos</code>: The probe is executed continuously, with a specified polling interval strictly for chaos duration of chaos</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains the common attributes or run properties</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
@@ -2025,11 +2027,13 @@ It supports four types: <code>cmdProbe</code>, <code>k8sProbe</code>, <code>http
           <span class="nt">probePollingInterval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
 </code></pre></div>
 <h3 id="run-properties">Run Properties<a class="headerlink" href="#run-properties" title="Permanent link">&para;</a></h3>
-<p>All probes share some common attributes. Which can be tuned via <code>runProperties</code> ENV.
-- <code>probeTimeout</code>: Represents the time limit for the probe to execute the check specified and return the expected data.
-- <code>retry</code>: The number of times a check is re-run upon failure in the first attempt before declaring the probe status as failed.
-- <code>interval</code>: The period between subsequent retries
-- <code>probePollingInterval</code>: The time interval for which continuous/onchaos probes should be sleep after each iteration.</p>
+<p>All probes share some common attributes. Which can be tuned via <code>runProperties</code> ENV.</p>
+<ul>
+<li><code>probeTimeout</code>: Represents the time limit for the probe to execute the check specified and return the expected data.</li>
+<li><code>retry</code>: The number of times a check is re-run upon failure in the first attempt before declaring the probe status as failed.</li>
+<li><code>interval</code>: The period between subsequent retries</li>
+<li><code>probePollingInterval</code>: The time interval for which continuous/onchaos probes should be sleep after each iteration.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains the common attributes or run properties</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
@@ -2152,7 +2156,7 @@ It supports boolean values. The default value is <code>false</code>.</p>
           <span class="nt">stopOnFailure</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 <h3 id="probe-chaining">Probe Chaining<a class="headerlink" href="#probe-chaining" title="Permanent link">&para;</a></h3>
-<p>Probe chaining enables reuse of probe a result (represented by the template function <code>{{ .&amp;gt;probeName&amp;lt;.probeArtifact.Register}})</code> in subsequent "downstream" probes defined in the ChaosEngine. 
+<p>Probe chaining enables reuse of probe a result (represented by the template function <code>{{ .&lt;probeName&gt;.probeArtifact.Register}})</code> in subsequent "downstream" probes defined in the ChaosEngine. 
 <code>Note</code>: The order of execution of probes in the experiment depends purely on the order in which they are defined in the ChaosEngine.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># chaining enables reuse of probe&#39;s result (represented by the template function {{ &lt;probeName&gt;.probeArtifact.Register}}) </span>
@@ -2240,7 +2244,7 @@ It supports boolean values. The default value is <code>false</code>.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.709b4209.min.js", "version": {"provider": "mike"}}</script>
     
     
   

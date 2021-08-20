@@ -2186,22 +2186,26 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-scheduler/m
 <h3 id="how-to-schedule-the-chaos-using-chaosscheduler">How to schedule the chaos using ChaosScheduler?<a class="headerlink" href="#how-to-schedule-the-chaos-using-chaosscheduler" title="Permanent link">&para;</a></h3>
 <p>This depends on which type of schedule we want to use for injecting chaos. For basic understanding refer <a href="https://docs.litmuschaos.io/docs/scheduling/">constructing schedule</a></p>
 <h3 id="what-are-the-different-techniques-of-scheduling-the-chaos">What are the different techniques of scheduling the chaos?<a class="headerlink" href="#what-are-the-different-techniques-of-scheduling-the-chaos" title="Permanent link">&para;</a></h3>
-<p>As of now, there are 3 scheduling techniques which can be selected based on the parameter passed to spec.schedule.type
-    - type=now
-    - type=once
-    - type=repeat</p>
+<p>As of now, there are 3 scheduling techniques which can be selected based on the parameter passed to spec.schedule.type</p>
+<ul>
+<li>type=now</li>
+<li>type=once</li>
+<li>type=repeat</li>
+</ul>
 <h3 id="what-fields-of-specschedule-are-to-be-specified-with-specscheduletypenow">What fields of spec.schedule are to be specified with spec.schedule.type=now?<a class="headerlink" href="#what-fields-of-specschedule-are-to-be-specified-with-specscheduletypenow" title="Permanent link">&para;</a></h3>
 <p>No fields are needed to be specified for this as it launches the desired chaosengine immediately.</p>
 <h3 id="what-fields-of-specschedule-are-to-be-specified-with-specscheduletypeonce">What fields of spec.schedule are to be specified with spec.schedule.type=once?<a class="headerlink" href="#what-fields-of-specschedule-are-to-be-specified-with-specscheduletypeonce" title="Permanent link">&para;</a></h3>
 <p>We just need to pass spec.executionTime. Scheduler will launch the chaosengine exactly at the point of time mentioned in this parameter.</p>
 <h3 id="what-fields-of-specschedule-are-to-be-specified-with-specscheduletyperepeat">What fields of spec.schedule are to be specified with spec.schedule.type=repeat?<a class="headerlink" href="#what-fields-of-specschedule-are-to-be-specified-with-specscheduletyperepeat" title="Permanent link">&para;</a></h3>
-<p>All the fields of spec.schedule except spec.schedule.executionTime are needed to be specified.
-    - startTime
-    - endTime
-    - minChaosInterval
-    - instanceCount
-    - includedDays
-It schedules chaosengines to be launched according to the parameters passed. It works just as a cronjob does, having superior functionalities such as we can control when the schedule will start and end.</p>
+<p>All the fields of spec.schedule except spec.schedule.executionTime are needed to be specified.</p>
+<ul>
+<li>startTime</li>
+<li>endTime</li>
+<li>minChaosInterval</li>
+<li>includedHours</li>
+<li>includedDays</li>
+</ul>
+<p>It schedules chaosengines to be launched according to the parameters passed. It works just as a cronjob does, having superior functionalities such as we can control when the schedule will start and end.</p>
                 
                   
                 
@@ -2290,7 +2294,7 @@ It schedules chaosengines to be launched according to the parameters passed. It 
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": {"provider": "mike"}}</script>
     
     
   

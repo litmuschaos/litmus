@@ -2723,9 +2723,11 @@ Mitigation (in this case keep the timeout i.e., access latency low) could be via
 Another utility of the test would be to see what the extent of impact caused to the end-user OR the last point in the app stack on account of degradation in access to a downstream/dependent microservice. Whether it is acceptable OR breaks the system to an unacceptable degree.</p>
 <p>The args passed to the tc netem command run against the target container changes depending on the type of n/w fault</p>
 <h3 id="whats-the-difference-between-pod-memorycpu-hog-vs-pod-memorycpu-hog-exec">What's the difference between pod-memory/cpu-hog vs pod-memory/cpu-hog-exec?<a class="headerlink" href="#whats-the-difference-between-pod-memorycpu-hog-vs-pod-memorycpu-hog-exec" title="Permanent link">&para;</a></h3>
-<p>The pod cpu and memory chaos experiment till now (version 1.13.7) was using an exec mode of execution which means - we were execing inside the specified target container and launching process like <code>md5sum</code> and <code>dd</code> to consume the cpu and memory respectively. This is done by providing <code>CHAOS_INJECT_COMMAND</code> and <code>CHAOS-KILL-COMMAND</code> in chaosengine CR. But we have some limitations of using this method. Those were:
-    - The chaos inject and kill command are highly dependent on the base image of the target container and may work for some and for others you may have to derive it manually and use it.
-    - For scratch images that don't expose shells we couldn't execute the chaos.</p>
+<p>The pod cpu and memory chaos experiment till now (version 1.13.7) was using an exec mode of execution which means - we were execing inside the specified target container and launching process like <code>md5sum</code> and <code>dd</code> to consume the cpu and memory respectively. This is done by providing <code>CHAOS_INJECT_COMMAND</code> and <code>CHAOS-KILL-COMMAND</code> in chaosengine CR. But we have some limitations of using this method. Those were:</p>
+<ul>
+<li>The chaos inject and kill command are highly dependent on the base image of the target container and may work for some and for others you may have to derive it manually and use it.</li>
+<li>For scratch images that don't expose shells we couldn't execute the chaos.</li>
+</ul>
 <p>To overcome this - The stress-chaos experiments (cpu, memory and io) are enhanced to use a non exec mode of chaos execution. It makes use of target container cgroup for the resource allocation and container pid namespace for showing the stress-ng process in target container. This <code>stress-ng</code> process will consume the resources on the target container without doing an exec. The new enhanced experiments are available from litmus 1.13.8 version.</p>
 <h3 id="what-are-the-typical-probes-used-for-pod-network-related-experiments">What are the typical probes used for pod-network related experiments?<a class="headerlink" href="#what-are-the-typical-probes-used-for-pod-network-related-experiments" title="Permanent link">&para;</a></h3>
 <p>Precisely the role of the experiment. Cause n/w degradation w/o the pod being marked unhealthy/unworthy of traffic by kube-proxy (unless you have a liveness probe of sorts that measures latency and restarts/crashes the container)
@@ -2775,12 +2777,16 @@ Yes, you can provide service B details inside <code>DESTINATION_IPS</code> or <c
 In addition to this if container-runtime is different then provide the name of container runtime inside <code>CONTAINER_RUNTIME</code> ENV. It supports <code>docker</code>, <code>containerd</code>, and <code>crio</code> runtimes.    </p>
 <h3 id="what-are-the-different-ways-to-target-the-pods-and-nodes-for-chaos">What are the different ways to target the pods and nodes for chaos?<a class="headerlink" href="#what-are-the-different-ways-to-target-the-pods-and-nodes-for-chaos" title="Permanent link">&para;</a></h3>
 <p>The different ways are: </p>
-<p>Pod Chaos: 
-    - <code>Appinfo</code>: Provide the target pod labels in the chaos engine appinfo section.
-    - <code>TARGET_PODS</code>: You can provide the target pod names as a Comma Separated Variable. Like pod1,pod2.</p>
-<p>Node Chaos:
-    - <code>TARGET_NODE</code> or <code>TARGET_NODES</code>: Provide the target node or nodes in these envs.
-    - <code>NODE_LABEL</code>: Provide the label of the target nodes.</p>
+<p>Pod Chaos: </p>
+<ul>
+<li><code>Appinfo</code>: Provide the target pod labels in the chaos engine appinfo section.</li>
+<li><code>TARGET_PODS</code>: You can provide the target pod names as a Comma Separated Variable. Like pod1,pod2.</li>
+</ul>
+<p>Node Chaos:</p>
+<ul>
+<li><code>TARGET_NODE</code> or <code>TARGET_NODES</code>: Provide the target node or nodes in these envs.</li>
+<li><code>NODE_LABEL</code>: Provide the label of the target nodes.</li>
+</ul>
 <h3 id="does-the-pod-affected-percentage-select-the-random-set-of-pods-from-the-total-pods-under-chaos">Does the pod affected percentage select the random set of pods from the total pods under chaos?<a class="headerlink" href="#does-the-pod-affected-percentage-select-the-random-set-of-pods-from-the-total-pods-under-chaos" title="Permanent link">&para;</a></h3>
 <p>Yes, it selects the random pods based on the <code>POD_AFFACTED_PERC</code> ENV. In pod-delete experiment it selects random pods for each iterations of chaos. But for rest of the experiments(if it supports iterations) then it will select random pods once and use the same set of pods for remaining iterations.</p>
 <h3 id="how-to-extract-the-chaos-start-time-and-end-time">How to extract the chaos start time and end time?<a class="headerlink" href="#how-to-extract-the-chaos-start-time-and-end-time" title="Permanent link">&para;</a></h3>
@@ -2791,10 +2797,12 @@ In addition to this if container-runtime is different then provide the name of c
 <p>The ramp time is the time duration to wait before and after injection of chaos in seconds. While the chaos interval is the time interval (in second) between successive chaos iterations.</p>
 <h3 id="can-the-appkind-be-a-pod">Can the appkind be a pod?<a class="headerlink" href="#can-the-appkind-be-a-pod" title="Permanent link">&para;</a></h3>
 <p>The appkind as pod is not supported explicitly. The supported appkind are <code>deployment</code>, <code>statefulset</code>, <code>replicaset</code>, <code>daemonset</code>, <code>rollout</code>, and <code>deploymentconfig</code>. 
-But we can target the pods by following ways:
-    - provide labels and namespace at <code>spec.appinfo.applabel</code> and <code>spec.appinfo.appns</code> respectively and provide <code>spec.appinfo.appkind</code> as empty. 
-    - provide pod names at <code>TARGET_PODS</code> ENV and provide <code>spec.appinfo</code> as nil
-<code>NOTE</code>: The <code>annotationCheck</code> should be provided as false</p>
+But we can target the pods by following ways:</p>
+<ul>
+<li>provide labels and namespace at <code>spec.appinfo.applabel</code> and <code>spec.appinfo.appns</code> respectively and provide <code>spec.appinfo.appkind</code> as empty. </li>
+<li>provide pod names at <code>TARGET_PODS</code> ENV and provide <code>spec.appinfo</code> as nil</li>
+</ul>
+<p><code>NOTE</code>: The <code>annotationCheck</code> should be provided as false</p>
 <h3 id="what-type-of-chaos-experiments-are-supported-by-litmus">What type of chaos experiments are supported by Litmus?<a class="headerlink" href="#what-type-of-chaos-experiments-are-supported-by-litmus" title="Permanent link">&para;</a></h3>
 <p>Litmus broadly defines Kubernetes chaos experiments into two categories: application or pod-level chaos experiments and platform or infra-level chaos experiments. The former includes pod-delete, container-kill, pod-cpu-hog, pod-network-loss etc., while the latter includes node-drain, disk-loss, node-cpu-hog etc., The infra chaos experiments typically have a higher blast radius and impacts more than one application deployed on the Kubernetes cluster. Litmus also categorizes experiments on the basis of the applications, with the experiments consisting of app-specific health checks. For example, OpenEBS, Kafka, CoreDNS.
 For a full list of supported chaos experiments, visit: <a href="https://hub.litmuschaos.io">https://hub.litmuschaos.io</a></p>
@@ -2983,7 +2991,7 @@ The same effect will be caused by deleting the respective chaosengine resource.<
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": {"provider": "mike"}}</script>
     
     
   

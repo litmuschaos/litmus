@@ -1968,6 +1968,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#experiment-failed-for-the-istio-enabled-namespaces" class="md-nav__link">
+    Experiment failed for the istio enabled namespaces
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2264,6 +2271,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#experiment-failed-for-the-istio-enabled-namespaces" class="md-nav__link">
+    Experiment failed for the istio enabled namespaces
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2330,6 +2344,9 @@
 </li>
 <li>
 <p><a href="#in-pod-level-stress-chaos-experiments-like-pod-memory-hog-or-pod-io-stress-after-the-chaos-is-injected-successfully-the-helper-fails-with-an-error-message">In pod level stress chaos experiments like pod memory hog or pod io stress after the chaos is injected successfully the helper fails with an error message</a></p>
+</li>
+<li>
+<p><a href="#experiment-failed-for-the-istio-enabled-namespaces">Experiment failed for the istio enabled namespaces</a></p>
 </li>
 </ol>
 <h3 id="when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error">When I’m executing an experiment the experiment's pod failed with the exec format error<a class="headerlink" href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error" title="Permanent link">&para;</a></h3>
@@ -2531,6 +2548,41 @@ If you are running the experiment in an EKS cluster then you have one more optio
 <details class="info"><summary>View the error message</summary><p>Error: process exited before the actual cleanup</p>
 </details>
 <p>The error message indicates that the stress process inside the target container is somehow removed before the actual cleanup. There could be multiple reasons for this: the target container might have just got restarted due to excessive load on the container which it can’t handle and the kubelet terminated that replica and launches a new one (if applicable) and reports an OOM event on the older one.</p>
+<h3 id="experiment-failed-for-the-istio-enabled-namespaces">Experiment failed for the istio enabled namespaces<a class="headerlink" href="#experiment-failed-for-the-istio-enabled-namespaces" title="Permanent link">&para;</a></h3>
+<details class="info"><summary>View the error message</summary><p>W0817 06:32:26.531145       1 client_config.go:541] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
+time="2021-08-17T06:32:26Z" level=error msg="unable to get ChaosEngineUID, error: unable to get ChaosEngine name: pod-delete-chaos, in namespace: default, error: Get \"<a href="https://10.100.0.1:443/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/pod-delete-chaos">https://10.100.0.1:443/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/pod-delete-chaos</a>\": dial tcp 10.100.0.1:443: connect: connection refused"</p>
+</details>
+<p>If istio is enabled for the <code>chaos-namespace</code>, it will launch the chaos-runner and chaos-experiment pods with the istio sidecar. Which may block/delay the external traffic of those pods for the intial few seconds. Which can fail the experiment.</p>
+<p>We can fix the above failure by avoiding istio sidecar for the chaos pods. Refer the following manifest:</p>
+<details class="note"><summary>View the ChaosEngine manifest with the required annotations</summary><div class="highlight"><pre><span></span><code>apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  components:
+    runner:
+      # annotation for the chaos-runner
+      runnerAnnotations:
+        sidecar.istio.io/inject: &quot;false&quot;
+  engineState: &quot;active&quot;
+  annotationCheck: &quot;false&quot;
+  appinfo:
+    appns: &quot;default&quot;
+    applabel: &quot;app=nginx&quot;
+    appkind: &quot;deployment&quot;
+  chaosServiceAccount: container-kill-sa
+  experiments:
+  - name: container-kill
+    spec:
+      components:
+        #annotations for the experiment pod 
+        experimentAnnotations:
+          sidecar.istio.io/inject: &quot;false&quot;
+        env:
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: &#39;60&#39;
+</code></pre></div>
+</details>
                 
                   
                 
@@ -2619,7 +2671,7 @@ If you are running the experiment in an EKS cluster then you have one more optio
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": {"provider": "mike"}}</script>
     
     
   

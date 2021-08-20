@@ -2039,10 +2039,12 @@
           <span class="nt">VALUE</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="sequence-of-chaos-execution">Sequence of chaos execution<a class="headerlink" href="#sequence-of-chaos-execution" title="Permanent link">&para;</a></h3>
-<p>It defines the sequence of the chaos execution in the case of multiple targets. It can be tuned with the <code>SEQUENCE</code> ENV. It supports the following modes:
-- <code>parallel</code>: The chaos is injected in all the targets at once.
-- <code>serial</code>: The chaos is injected in all the targets one by one.
-The default value of <code>SEQUENCE</code> is <code>parallel</code>.</p>
+<p>It defines the sequence of the chaos execution in the case of multiple targets. It can be tuned with the <code>SEQUENCE</code> ENV. It supports the following modes:</p>
+<ul>
+<li><code>parallel</code>: The chaos is injected in all the targets at once.</li>
+<li><code>serial</code>: The chaos is injected in all the targets one by one.
+The default value of <code>SEQUENCE</code> is <code>parallel</code>.</li>
+</ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># define the order of execution of chaos in case of multiple targets</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
@@ -2191,7 +2193,7 @@ It is supported by [container-kill, network-experiments, stress-experiments, dns
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.709b4209.min.js", "version": {"provider": "mike"}}</script>
     
     
   
