@@ -31,6 +31,8 @@ jobs:
               - 'litmus-portal/graphql-server/**'
             authentication:
               - 'litmus-portal/authentication/**'
+            event-tracker:
+              - 'litmus-portal/cluster-agents/event-tracker/**'
             upgrade-agent-cp:
               - 'litmus-portal/upgrade-agents/control-plane/**'
             subscriber:
