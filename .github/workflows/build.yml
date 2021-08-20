@@ -17,6 +17,7 @@ jobs:
       graphql-server: ${{ steps.filter.outputs.graphql-server }}
       authentication: ${{ steps.filter.outputs.authentication }}
       event-tracker: ${{ steps.filter.outputs.event-tracker }}
+      upgrade-agent-cp: ${{ steps.filter.outputs.upgrade-agent-cp }}
       subscriber: ${{ steps.filter.outputs.subscriber }}
     steps:
       # For pull requests it's not necessary to checkout the code
@@ -30,8 +31,8 @@ jobs:
               - 'litmus-portal/graphql-server/**'
             authentication:
               - 'litmus-portal/authentication/**'
-            event-tracker:
-              - 'litmus-portal/cluster-agents/event-tracker/**'
+            upgrade-agent-cp:
+              - 'litmus-portal/upgrade-agents/control-plane/**'
             subscriber:
               - 'litmus-portal/cluster-agents/subscriber/**'
 
@@ -125,6 +126,21 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/cluster-agents/event-tracker
+          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+
+  docker-build-upgrade-agent-cp:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+    if: ${{ needs.changes.outputs.upgrade-agent-cp == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build control plane upgrade agent docker image
+        shell: bash
+        run: |
+          cd litmus-portal/upgrade-agents/control-plane
           docker build . -f Dockerfile --build-arg TARGETARCH=amd64
 
   docker-build-frontend:
