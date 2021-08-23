@@ -612,6 +612,9 @@ chaosWorkflows:
     experiments: Experiments
     schedule: Schedule
     nextRun: Next Run
+    nonCron: Non cron workflow
+    runs: Runs
+    wfRuns: Workflow Runs
     regularity: Regularity
     startingDate: Starting Date
     lastRun: Last Run

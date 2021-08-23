@@ -20,6 +20,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import EditIcon from '@material-ui/icons/Edit';
 import Row from '../../../containers/layouts/Row';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { experimentMap } from '../../../models/redux/workflow';
@@ -356,7 +357,8 @@ const WorkflowTable = forwardRef(
                     <TableCell align="left">
                       {t('createWorkflow.chooseWorkflow.table.head5')}
                     </TableCell>
-                    <TableCell />
+                    <TableCell className={classes.emptyCell} />
+                    <TableCell className={classes.emptyCell} />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -388,6 +390,19 @@ const WorkflowTable = forwardRef(
                         <TableCell align="left">{experiment.Probes}</TableCell>
                         <TableCell>
                           <IconButton
+                            onClick={() => {
+                              setDisplayStepper(true);
+                              setEngineIndex(experiment.StepIndex);
+                              workflow.setWorkflowManifest({
+                                engineYAML: experiment.ChaosEngine,
+                              });
+                            }}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
                             onClick={() =>
                               deleteExperiment(experiment.StepIndex)
                             }
@@ -395,6 +410,7 @@ const WorkflowTable = forwardRef(
                             <img
                               src="./icons/bin-red.svg"
                               alt="delete experiment"
+                              height="18px"
                             />
                           </IconButton>
                         </TableCell>
@@ -402,7 +418,7 @@ const WorkflowTable = forwardRef(
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5}>
+                      <TableCell colSpan={7}>
                         <Typography align="center">
                           {t('createWorkflow.chooseWorkflow.pleaseAddExp')}
                         </Typography>

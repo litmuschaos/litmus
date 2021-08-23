@@ -21,6 +21,7 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
+import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduledWorkflow } from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
@@ -38,12 +39,14 @@ interface TableDataProps {
   data: ScheduledWorkflow;
   deleteRow: (wfid: string) => void;
   handleToggleSchedule: (schedule: ScheduledWorkflow) => void;
+  setWorkflowName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const TableData: React.FC<TableDataProps> = ({
   data,
   deleteRow,
   handleToggleSchedule,
+  setWorkflowName,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -335,15 +338,37 @@ const TableData: React.FC<TableDataProps> = ({
             <Typography>
               {t('chaosWorkflows.browseSchedules.scheduleIsDisabled')}
             </Typography>
+          ) : data.cronSyntax !== '' ? (
+            <Typography>
+              {moment(
+                parser.parseExpression(data.cronSyntax).next().toString()
+              ).format('MMMM Do YYYY, h:mm:ss a')}
+            </Typography>
           ) : (
-            data.cronSyntax !== '' && (
-              <Typography>
-                {parser.parseExpression(data.cronSyntax).next().toString()}
-              </Typography>
-            )
+            <Typography>
+              {t('chaosWorkflows.browseSchedules.nonCron')}
+            </Typography>
           )}
         </span>
       </TableCell>
+
+      <TableCell>
+        <IconButton
+          onClick={() => {
+            tabs.changeWorkflowsTabs(0);
+            setWorkflowName(data.workflow_name);
+          }}
+          data-cy="showSchedules"
+        >
+          <div>
+            <FormatListBulletedIcon />
+            <Typography className={classes.runs}>
+              {t('chaosWorkflows.browseSchedules.runs')}
+            </Typography>
+          </div>
+        </IconButton>
+      </TableCell>
+
       <TableCell className={classes.menuCell}>
         <IconButton
           aria-label="more"
