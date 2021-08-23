@@ -100,8 +100,9 @@ The args passed to the tc netem command run against the target container changes
 ### What's the difference between pod-memory/cpu-hog vs pod-memory/cpu-hog-exec?
 
 The pod cpu and memory chaos experiment till now (version 1.13.7) was using an exec mode of execution which means - we were execing inside the specified target container and launching process like `md5sum` and `dd` to consume the cpu and memory respectively. This is done by providing `CHAOS_INJECT_COMMAND` and `CHAOS-KILL-COMMAND` in chaosengine CR. But we have some limitations of using this method. Those were:
-    - The chaos inject and kill command are highly dependent on the base image of the target container and may work for some and for others you may have to derive it manually and use it.
-    - For scratch images that don't expose shells we couldn't execute the chaos.
+    
+- The chaos inject and kill command are highly dependent on the base image of the target container and may work for some and for others you may have to derive it manually and use it.
+- For scratch images that don't expose shells we couldn't execute the chaos.
 
 To overcome this - The stress-chaos experiments (cpu, memory and io) are enhanced to use a non exec mode of chaos execution. It makes use of target container cgroup for the resource allocation and container pid namespace for showing the stress-ng process in target container. This `stress-ng` process will consume the resources on the target container without doing an exec. The new enhanced experiments are available from litmus 1.13.8 version.
 
@@ -195,12 +196,14 @@ In addition to this if container-runtime is different then provide the name of c
 The different ways are: 
 
 Pod Chaos: 
-    - `Appinfo`: Provide the target pod labels in the chaos engine appinfo section.
-    - `TARGET_PODS`: You can provide the target pod names as a Comma Separated Variable. Like pod1,pod2.
+
+- `Appinfo`: Provide the target pod labels in the chaos engine appinfo section.
+- `TARGET_PODS`: You can provide the target pod names as a Comma Separated Variable. Like pod1,pod2.
 
 Node Chaos:
-    - `TARGET_NODE` or `TARGET_NODES`: Provide the target node or nodes in these envs.
-    - `NODE_LABEL`: Provide the label of the target nodes.
+
+- `TARGET_NODE` or `TARGET_NODES`: Provide the target node or nodes in these envs.
+- `NODE_LABEL`: Provide the label of the target nodes.
 
 ### Does the pod affected percentage select the random set of pods from the total pods under chaos?
 
@@ -222,8 +225,10 @@ The ramp time is the time duration to wait before and after injection of chaos i
 
 The appkind as pod is not supported explicitly. The supported appkind are `deployment`, `statefulset`, `replicaset`, `daemonset`, `rollout`, and `deploymentconfig`. 
 But we can target the pods by following ways:
-    - provide labels and namespace at `spec.appinfo.applabel` and `spec.appinfo.appns` respectively and provide `spec.appinfo.appkind` as empty. 
-    - provide pod names at `TARGET_PODS` ENV and provide `spec.appinfo` as nil
+
+- provide labels and namespace at `spec.appinfo.applabel` and `spec.appinfo.appns` respectively and provide `spec.appinfo.appkind` as empty. 
+- provide pod names at `TARGET_PODS` ENV and provide `spec.appinfo` as nil
+
 `NOTE`: The `annotationCheck` should be provided as false
 
 ### What type of chaos experiments are supported by Litmus?

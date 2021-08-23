@@ -4,7 +4,8 @@ It supports four types: `cmdProbe`, `k8sProbe`, `httpProbe`, and `promProbe`.
 
 ### Probe Modes
 
-The probes can be set up to run in five different modes. Which can be tuned via `mode` ENV. 
+The probes can be set up to run in five different modes. Which can be tuned via `mode` ENV.
+
 - `SOT`: Executed at the Start of the Test as a pre-chaos check
 - `EOT`: Executed at the End of the Test as a post-chaos check
 - `Edge`: Executed both, before and after the chaos
@@ -55,6 +56,7 @@ spec:
 ### Run Properties
 
 All probes share some common attributes. Which can be tuned via `runProperties` ENV.
+
 - `probeTimeout`: Represents the time limit for the probe to execute the check specified and return the expected data.
 - `retry`: The number of times a check is re-run upon failure in the first attempt before declaring the probe status as failed.
 - `interval`: The period between subsequent retries
@@ -202,7 +204,7 @@ spec:
 
 ### Probe Chaining
 
-Probe chaining enables reuse of probe a result (represented by the template function `{{ .&gt;probeName&lt;.probeArtifact.Register}})` in subsequent "downstream" probes defined in the ChaosEngine. 
+Probe chaining enables reuse of probe a result (represented by the template function `{{ .<probeName>.probeArtifact.Register}})` in subsequent "downstream" probes defined in the ChaosEngine. 
 `Note`: The order of execution of probes in the experiment depends purely on the order in which they are defined in the ChaosEngine.
 
 Use the following example to tune this:

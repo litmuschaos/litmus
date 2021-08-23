@@ -56,9 +56,10 @@ This depends on which type of schedule we want to use for injecting chaos. For b
 ### What are the different techniques of scheduling the chaos?
 
 As of now, there are 3 scheduling techniques which can be selected based on the parameter passed to spec.schedule.type
-    - type=now
-    - type=once
-    - type=repeat
+  
+  - type=now
+  - type=once
+  - type=repeat
 
 ### What fields of spec.schedule are to be specified with spec.schedule.type=now?
 
@@ -71,9 +72,11 @@ We just need to pass spec.executionTime. Scheduler will launch the chaosengine e
 ### What fields of spec.schedule are to be specified with spec.schedule.type=repeat?
 
 All the fields of spec.schedule except spec.schedule.executionTime are needed to be specified.
-    - startTime
-    - endTime
-    - minChaosInterval
-    - instanceCount
-    - includedDays
+ 
+  - startTime
+  - endTime
+  - minChaosInterval
+  - includedHours
+  - includedDays
+  
 It schedules chaosengines to be launched according to the parameters passed. It works just as a cronjob does, having superior functionalities such as we can control when the schedule will start and end.

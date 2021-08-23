@@ -95,6 +95,14 @@ The Litmus community meets on the third wednesday of every month at 10:00PM IST/
 ### Videos
 
 - [Litmus 2 - Chaos Engineering Meets Argo Workflows](https://youtu.be/B8DfYnDh2F4) @ [DevOps Toolkit](https://youtube.com/c/devopstoolkit)
+- [Hands-on with Litmus 2.0 | Rawkode Live](https://youtu.be/D0t3emVLLko) @ [Rawkode Academy](https://www.youtube.com/channel/UCrber_mFvp_FEF7D9u8PDEA)
+- [Introducing LitmusChaos 2.0 / Dok Talks #74](https://youtu.be/97BiCNtJbDw) @ [DoK.community](https://www.youtube.com/channel/UCUnXJbHQ89R2uSfKsqQwGvQ)
+- [Introduction to Cloud Native Chaos Engineering](https://youtu.be/LK0oDLQE4S8) @ [Kunal Kushwaha](https://www.youtube.com/channel/UCBGOUQHNNtNGcGzVq5rIXjw)
+- [#EveryoneCanContribute cafe: Litmus - Chaos Engineering for your Kubernetes](https://youtu.be/IiyrEiK4stQ) @ [GitLab Unfiltered](https://www.youtube.com/channel/UCMtZ0sc1HHNtGGWZFDRTh5A)
+- [Litmus - Chaos Engineering for Kubernetes (CNCFMinutes 9)](https://youtu.be/rDQ9XKbSJIc) @ [Saiyam Pathak](https://www.youtube.com/channel/UCi-1nnN0eC9nRleXdZA6ncg)
+- [Chaos Engineering with Litmus Chaos by Prithvi Raj || HACKODISHA Workshop](https://youtu.be/eyAG0svCsQA) @ [Webwiz](https://www.youtube.com/channel/UC9yM_PkV0QIIsPA3qPrp)
+
+[And More....](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 
 ### Blogs
 
