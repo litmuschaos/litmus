@@ -667,6 +667,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
         isOpen={isConfigurationAlertOpen}
         setOpen={setIsConfigurationAlertOpen}
         message="Please Save Changes made in the Configuration Wizard"
+        type="error"
       />
       <AlertBox
         isOpen={isAlertOpen}
