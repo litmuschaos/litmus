@@ -192,7 +192,13 @@ const Overview: React.FC = () => {
   let filteredDashboardListData;
   // Select the latest 3 dashboards
   if (monitoringDashboardCount > 0) {
-    filteredDashboardListData = dashboardListData?.ListDashboard.slice(-3);
+    filteredDashboardListData = dashboardListData?.ListDashboard.slice()
+      .sort(
+        (a, b) =>
+          (b.viewed_at as unknown as number) -
+          (a.viewed_at as unknown as number)
+      )
+      .slice(0, 3);
   }
 
   // Generic Apollo error:
