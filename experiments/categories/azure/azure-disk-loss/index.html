@@ -11,21 +11,21 @@
       
       
       
-        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-scheduler/engine-specification/">
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/azure/azure-disk-loss/">
       
-      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
     
     
       
-        <title>Engine Specifications - Litmus Experiments</title>
+        <title>Azure Disk Loss - Litmus Experiments</title>
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.f7f47774.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.f7f47774.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.3f5d1f46.min.css">
         
       
     
@@ -59,7 +59,7 @@
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
-    <script>function __prefix(e){return new URL("../../../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("../../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
       <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#engine-specification" class="md-skip">
+        <a href="#introduction" class="md-skip">
           Skip to content
         </a>
       
@@ -80,9 +80,9 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../../.." title="Litmus Experiments" class="md-header__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
+    <a href="../../../.." title="Litmus Experiments" class="md-header__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
       
-  <img src="../../../../../images/litmus.png" alt="logo">
+  <img src="../../../../images/litmus.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Engine Specifications
+              Azure Disk Loss
             
           </span>
         </div>
@@ -201,7 +201,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../../.." class="md-tabs__link">
+    <a href="../../../.." class="md-tabs__link">
       Home
     </a>
   </li>
@@ -210,13 +210,15 @@
         
   
   
+    
+  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href="../../../../categories/contents/" class="md-tabs__link">
+      <a href="../../contents/" class="md-tabs__link md-tabs__link--active">
         Experiments
       </a>
     </li>
@@ -226,8 +228,6 @@
         
   
   
-    
-  
 
 
   
@@ -239,7 +239,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../contents/" class="md-tabs__link md-tabs__link--active">
+      <a href="../../../concepts/chaos-resources/contents/" class="md-tabs__link">
         Concepts
       </a>
     </li>
@@ -257,7 +257,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../faq/content/" class="md-tabs__link">
+      <a href="../../../faq/content/" class="md-tabs__link">
         Litmus FAQ
       </a>
     </li>
@@ -306,7 +306,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../../../ROADMAP/" class="md-tabs__link">
+    <a href="../../../../ROADMAP/" class="md-tabs__link">
       Roadmap
     </a>
   </li>
@@ -318,7 +318,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../../api/contents/" class="md-tabs__link">
+    <a href="../../../api/contents/" class="md-tabs__link">
       API Docs
     </a>
   </li>
@@ -344,9 +344,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
+    <a href="../../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
       
-  <img src="../../../../../images/litmus.png" alt="logo">
+  <img src="../../../../images/litmus.png" alt="logo">
 
     </a>
     Litmus Experiments
@@ -375,7 +375,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../.." class="md-nav__link">
+      <a href="../../../.." class="md-nav__link">
         Home
       </a>
     </li>
@@ -388,12 +388,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       <label class="md-nav__link" for="__nav_2">
         Experiments
@@ -411,7 +413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/contents/" class="md-nav__link">
+      <a href="../../contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -486,7 +488,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/container-kill/" class="md-nav__link">
+      <a href="../../pods/container-kill/" class="md-nav__link">
         Container Kill
       </a>
     </li>
@@ -498,7 +500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/disk-fill/" class="md-nav__link">
+      <a href="../../pods/disk-fill/" class="md-nav__link">
         Disk Fill
       </a>
     </li>
@@ -510,7 +512,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-autoscaler/" class="md-nav__link">
+      <a href="../../pods/pod-autoscaler/" class="md-nav__link">
         Pod Autoscaler
       </a>
     </li>
@@ -522,7 +524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-cpu-hog-exec/" class="md-nav__link">
+      <a href="../../pods/pod-cpu-hog-exec/" class="md-nav__link">
         Pod CPU Hog Exec
       </a>
     </li>
@@ -534,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-cpu-hog/" class="md-nav__link">
+      <a href="../../pods/pod-cpu-hog/" class="md-nav__link">
         Pod CPU Hog
       </a>
     </li>
@@ -546,7 +548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-delete/" class="md-nav__link">
+      <a href="../../pods/pod-delete/" class="md-nav__link">
         Pod Delete
       </a>
     </li>
@@ -558,7 +560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-dns-error/" class="md-nav__link">
+      <a href="../../pods/pod-dns-error/" class="md-nav__link">
         Pod Dns Error
       </a>
     </li>
@@ -570,7 +572,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-dns-spoof/" class="md-nav__link">
+      <a href="../../pods/pod-dns-spoof/" class="md-nav__link">
         Pod Dns Spoof
       </a>
     </li>
@@ -582,7 +584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-io-stress/" class="md-nav__link">
+      <a href="../../pods/pod-io-stress/" class="md-nav__link">
         Pod IO Stress
       </a>
     </li>
@@ -594,7 +596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-memory-hog-exec/" class="md-nav__link">
+      <a href="../../pods/pod-memory-hog-exec/" class="md-nav__link">
         Pod Memory Hog Exec
       </a>
     </li>
@@ -606,7 +608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-memory-hog/" class="md-nav__link">
+      <a href="../../pods/pod-memory-hog/" class="md-nav__link">
         Pod Memory Hog
       </a>
     </li>
@@ -618,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-corruption/" class="md-nav__link">
+      <a href="../../pods/pod-network-corruption/" class="md-nav__link">
         Pod Network Corruption
       </a>
     </li>
@@ -630,7 +632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-duplication/" class="md-nav__link">
+      <a href="../../pods/pod-network-duplication/" class="md-nav__link">
         Pod Network Duplication
       </a>
     </li>
@@ -642,7 +644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-latency/" class="md-nav__link">
+      <a href="../../pods/pod-network-latency/" class="md-nav__link">
         Pod Network Latency
       </a>
     </li>
@@ -654,7 +656,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-loss/" class="md-nav__link">
+      <a href="../../pods/pod-network-loss/" class="md-nav__link">
         Pod Network Loss
       </a>
     </li>
@@ -693,7 +695,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/docker-service-kill/" class="md-nav__link">
+      <a href="../../nodes/docker-service-kill/" class="md-nav__link">
         Docker Service Kill
       </a>
     </li>
@@ -705,7 +707,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/kubelet-service-kill/" class="md-nav__link">
+      <a href="../../nodes/kubelet-service-kill/" class="md-nav__link">
         Kubelet Service Kill
       </a>
     </li>
@@ -717,7 +719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-cpu-hog/" class="md-nav__link">
+      <a href="../../nodes/node-cpu-hog/" class="md-nav__link">
         Node CPU Hog
       </a>
     </li>
@@ -729,7 +731,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-drain/" class="md-nav__link">
+      <a href="../../nodes/node-drain/" class="md-nav__link">
         Node Drain
       </a>
     </li>
@@ -741,7 +743,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-io-stress/" class="md-nav__link">
+      <a href="../../nodes/node-io-stress/" class="md-nav__link">
         Node IO Stress
       </a>
     </li>
@@ -753,7 +755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-memory-hog/" class="md-nav__link">
+      <a href="../../nodes/node-memory-hog/" class="md-nav__link">
         Node Memory Hog
       </a>
     </li>
@@ -765,7 +767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-restart/" class="md-nav__link">
+      <a href="../../nodes/node-restart/" class="md-nav__link">
         Node Restart
       </a>
     </li>
@@ -777,7 +779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-taint/" class="md-nav__link">
+      <a href="../../nodes/node-taint/" class="md-nav__link">
         Node Taint
       </a>
     </li>
@@ -822,7 +824,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/kafka/kafka-broker-pod-failure/" class="md-nav__link">
+      <a href="../../kafka/kafka-broker-pod-failure/" class="md-nav__link">
         Kafka Broker Pod Failure
       </a>
     </li>
@@ -861,7 +863,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/cassandra/cassandra-pod-delete/" class="md-nav__link">
+      <a href="../../cassandra/cassandra-pod-delete/" class="md-nav__link">
         Cassandra Pod Delete
       </a>
     </li>
@@ -883,12 +885,14 @@
             
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" checked>
       
       <label class="md-nav__link" for="__nav_2_3">
         Cloud Infrastructure
@@ -948,7 +952,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws/ec2-terminate-by-id/" class="md-nav__link">
+      <a href="../../aws/ec2-terminate-by-id/" class="md-nav__link">
         EC2 Terminate By ID
       </a>
     </li>
@@ -960,7 +964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws/ec2-terminate-by-tag/" class="md-nav__link">
+      <a href="../../aws/ec2-terminate-by-tag/" class="md-nav__link">
         EC2 Terminate By Tag
       </a>
     </li>
@@ -999,7 +1003,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws/ebs-loss-by-id/" class="md-nav__link">
+      <a href="../../aws/ebs-loss-by-id/" class="md-nav__link">
         EBS Loss By ID
       </a>
     </li>
@@ -1011,7 +1015,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws/ebs-loss-by-tag/" class="md-nav__link">
+      <a href="../../aws/ebs-loss-by-tag/" class="md-nav__link">
         EBS Loss By Tag
       </a>
     </li>
@@ -1050,7 +1054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws-ssm/aws-ssm-chaos-by-id/" class="md-nav__link">
+      <a href="../../aws-ssm/aws-ssm-chaos-by-id/" class="md-nav__link">
         AWS SSM Chaos By ID
       </a>
     </li>
@@ -1062,7 +1066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws-ssm/aws-ssm-chaos-by-tag/" class="md-nav__link">
+      <a href="../../aws-ssm/aws-ssm-chaos-by-tag/" class="md-nav__link">
         AWS SSM Chaos By Tag
       </a>
     </li>
@@ -1107,7 +1111,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/vmware/vm-poweroff/" class="md-nav__link">
+      <a href="../../vmware/vm-poweroff/" class="md-nav__link">
         VM Poweroff
       </a>
     </li>
@@ -1123,12 +1127,14 @@
             
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_3" type="checkbox" id="__nav_2_3_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_3" type="checkbox" id="__nav_2_3_3" checked>
       
       <label class="md-nav__link" for="__nav_2_3_3">
         Azure
@@ -1146,7 +1152,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/azure/azure-instance-stop/" class="md-nav__link">
+      <a href="../azure-instance-stop/" class="md-nav__link">
         Azure Instance Stop
       </a>
     </li>
@@ -1156,11 +1162,123 @@
             
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../../../categories/azure/azure-disk-loss/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Azure Disk Loss
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Azure Disk Loss
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-validations" class="md-nav__link">
+    Default Validations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
+    Minimal RBAC configuration example (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-tunables" class="md-nav__link">
+    Experiment tunables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-examples" class="md-nav__link">
+    Experiment Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiment Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-experiment-tunables" class="md-nav__link">
+    Common Experiment Tunables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detach-virtual-disks-by-name" class="md-nav__link">
+    Detach Virtual Disks By Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detach-virtual-disks-attached-to-scale-set-instances-by-name" class="md-nav__link">
+    Detach Virtual Disks Attached to Scale Set Instances By Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-iterations-of-chaos" class="md-nav__link">
+    Multiple Iterations Of Chaos
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1197,7 +1315,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/gcp/gcp-vm-instance-stop/" class="md-nav__link">
+      <a href="../../gcp/gcp-vm-instance-stop/" class="md-nav__link">
         GCP Instance Stop
       </a>
     </li>
@@ -1209,7 +1327,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/gcp/gcp-vm-disk-loss/" class="md-nav__link">
+      <a href="../../gcp/gcp-vm-disk-loss/" class="md-nav__link">
         GCP Disk Loss
       </a>
     </li>
@@ -1240,14 +1358,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
       
       <label class="md-nav__link" for="__nav_3">
         Concepts
@@ -1263,14 +1379,12 @@
             
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
       
       <label class="md-nav__link" for="__nav_3_1">
         Chaos Resources
@@ -1288,7 +1402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contents/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1321,7 +1435,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/contents/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-engine/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1333,7 +1447,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/engine-state/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-engine/engine-state/" class="md-nav__link">
         State Specifications
       </a>
     </li>
@@ -1345,7 +1459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/application-details/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-engine/application-details/" class="md-nav__link">
         Application Specifications
       </a>
     </li>
@@ -1357,7 +1471,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/rbac-details/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-engine/rbac-details/" class="md-nav__link">
         RBAC Specifications
       </a>
     </li>
@@ -1369,7 +1483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/runtime-details/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-engine/runtime-details/" class="md-nav__link">
         Runtime Specifications
       </a>
     </li>
@@ -1381,7 +1495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/runner-components/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-engine/runner-components/" class="md-nav__link">
         Runner Specifications
       </a>
     </li>
@@ -1393,7 +1507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/experiment-components/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-engine/experiment-components/" class="md-nav__link">
         Experiment Specifications
       </a>
     </li>
@@ -1411,7 +1525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-experiment/contents/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-experiment/contents/" class="md-nav__link">
         ChaosExperiment
       </a>
     </li>
@@ -1423,7 +1537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-result/contents/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-result/contents/" class="md-nav__link">
         ChaosResult
       </a>
     </li>
@@ -1433,14 +1547,12 @@
             
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_5" type="checkbox" id="__nav_3_1_5" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_5" type="checkbox" id="__nav_3_1_5" >
       
       <label class="md-nav__link" for="__nav_3_1_5">
         ChaosScheduler
@@ -1458,7 +1570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contents/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-scheduler/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1470,7 +1582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../schedule-once/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-scheduler/schedule-once/" class="md-nav__link">
         Schedule Once
       </a>
     </li>
@@ -1482,7 +1594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../schedule-repeat/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-scheduler/schedule-repeat/" class="md-nav__link">
         Schedule Repeat
       </a>
     </li>
@@ -1494,7 +1606,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../state/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/chaos-scheduler/state/" class="md-nav__link">
         Schedule State
       </a>
     </li>
@@ -1504,51 +1616,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Engine Specifications
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../concepts/chaos-resources/chaos-scheduler/engine-specification/" class="md-nav__link">
         Engine Specifications
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#engine-specification_1" class="md-nav__link">
-    Engine Specification
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1585,7 +1657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/contents/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/probes/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1597,7 +1669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/cmdProbe/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/probes/cmdProbe/" class="md-nav__link">
         Command Probe
       </a>
     </li>
@@ -1609,7 +1681,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/httpProbe/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/probes/httpProbe/" class="md-nav__link">
         HTTP Probe
       </a>
     </li>
@@ -1621,7 +1693,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/k8sProbe/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/probes/k8sProbe/" class="md-nav__link">
         K8S Probe
       </a>
     </li>
@@ -1633,7 +1705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/promProbe/" class="md-nav__link">
+      <a href="../../../concepts/chaos-resources/probes/promProbe/" class="md-nav__link">
         Prometheus Probe
       </a>
     </li>
@@ -1657,7 +1729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../psp/" class="md-nav__link">
+      <a href="../../../concepts/psp/" class="md-nav__link">
         Security
       </a>
     </li>
@@ -1699,7 +1771,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/content/" class="md-nav__link">
+      <a href="../../../faq/content/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1732,7 +1804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/install/" class="md-nav__link">
+      <a href="../../../faq/install/" class="md-nav__link">
         Install
       </a>
     </li>
@@ -1744,7 +1816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/experiments/" class="md-nav__link">
+      <a href="../../../faq/experiments/" class="md-nav__link">
         Experiments
       </a>
     </li>
@@ -1756,7 +1828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/portal/" class="md-nav__link">
+      <a href="../../../faq/portal/" class="md-nav__link">
         Portal
       </a>
     </li>
@@ -1768,7 +1840,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/scheduler/" class="md-nav__link">
+      <a href="../../../faq/scheduler/" class="md-nav__link">
         Scheduler
       </a>
     </li>
@@ -1780,7 +1852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/security/" class="md-nav__link">
+      <a href="../../../faq/security/" class="md-nav__link">
         Security
       </a>
     </li>
@@ -1792,7 +1864,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/ci-cd/" class="md-nav__link">
+      <a href="../../../faq/ci-cd/" class="md-nav__link">
         CI/CD
       </a>
     </li>
@@ -1831,7 +1903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/install/" class="md-nav__link">
+      <a href="../../../troubleshooting/install/" class="md-nav__link">
         Install
       </a>
     </li>
@@ -1843,7 +1915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/experiments/" class="md-nav__link">
+      <a href="../../../troubleshooting/experiments/" class="md-nav__link">
         Experiments
       </a>
     </li>
@@ -1855,7 +1927,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/portal/" class="md-nav__link">
+      <a href="../../../troubleshooting/portal/" class="md-nav__link">
         Portal
       </a>
     </li>
@@ -1867,7 +1939,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/scheduler/" class="md-nav__link">
+      <a href="../../../troubleshooting/scheduler/" class="md-nav__link">
         Scheduler
       </a>
     </li>
@@ -1939,7 +2011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../ROADMAP/" class="md-nav__link">
+      <a href="../../../../ROADMAP/" class="md-nav__link">
         Roadmap
       </a>
     </li>
@@ -1954,7 +2026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../api/contents/" class="md-nav__link">
+      <a href="../../../api/contents/" class="md-nav__link">
         API Docs
       </a>
     </li>
@@ -1977,8 +2049,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1987,9 +2057,85 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#engine-specification_1" class="md-nav__link">
-    Engine Specification
+  <a href="#introduction" class="md-nav__link">
+    Introduction
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-validations" class="md-nav__link">
+    Default Validations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
+    Minimal RBAC configuration example (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-tunables" class="md-nav__link">
+    Experiment tunables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-examples" class="md-nav__link">
+    Experiment Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiment Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-experiment-tunables" class="md-nav__link">
+    Common Experiment Tunables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detach-virtual-disks-by-name" class="md-nav__link">
+    Detach Virtual Disks By Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detach-virtual-disks-attached-to-scale-set-instances-by-name" class="md-nav__link">
+    Detach Virtual Disks Attached to Scale Set Instances By Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-iterations-of-chaos" class="md-nav__link">
+    Multiple Iterations Of Chaos
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2005,77 +2151,249 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/concepts/chaos-resources/chaos-scheduler/engine-specification.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/categories/azure/azure-disk-loss.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="engine-specification">Engine Specification<a class="headerlink" href="#engine-specification" title="Permanent link">&para;</a></h1>
-<p>It embeds the ChaosEngine as a template inside schedule CR. Which contains the chaosexperiment and target application details.</p>
-<details class="info"><summary>View the engine details</summary><p><table>
-<tr>
-<th>Field</th>
-<td><code>.spec.engineTemplateSpec</code></td>
-</tr>
-<tr>
-<th>Description</th>
-<td>Flag to control chaosengine to be formed </td>
-</tr>
-<tr>
-<th>Type</th>
-<td>Mandatory</td>
-</tr>
-<tr>
-<th>Range</th>
-<td><i>n/a</i></td>
-</tr>
-<tr>
-<th>Default</th>
-<td><i>n/a</i></td>
-</tr>
-<tr>
-<th>Notes</th>
-<td>The <code>engineTemplateSpec</code> is the ChaosEngineSpec of ChaosEngine that is to be formed.</td>
-</tr>
+                  <h1>Azure Disk Loss</h1>
+                
+                <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<ul>
+<li>It causes detachment of virtual disk from an Azure instance before re-attaching it back to the instance after the specified chaos duration.</li>
+<li>It helps to check the performance of the application/process running on the instance.</li>
+</ul>
+<!-- TODO: Add image -->
+<div class="admonition tip">
+<p class="admonition-title">Scenario: Detach the virtual disk from instance</p>
+<p><img alt="Azure Disk Loss" src="../../../images/azure-disk-loss.png" /></p>
+</div>
+<h2 id="uses">Uses<a class="headerlink" href="#uses" title="Permanent link">&para;</a></h2>
+<details class="info"><summary>View the uses of the experiment</summary><p>coming soon</p>
+</details>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<details class="info"><summary>Verify the prerequisites</summary><ul>
+<li>Ensure that Kubernetes Version &gt; 1.16 </li>
+<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
+<li>Ensure that the <code>azure-disk-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/experiment.yaml">here</a></li>
+<li>Ensure that you have sufficient Azure access to detach and attach a disk. </li>
+<li>We will use azure <a href="https://docs.microsoft.com/en-us/azure/developer/go/azure-sdk-authorization#use-file-based-authentication"> file-based authentication </a> to connect with the instance using azure GO SDK in the experiment. For generating auth file run <code>az ad sp create-for-rbac --sdk-auth &gt; azure.auth</code> Azure CLI command.</li>
+<li>
+<p>Ensure to create a Kubernetes secret having the auth file created in the step in <code>CHAOS_NAMESPACE</code>. A sample secret file looks like:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cloud-secret</span>
+<span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+<span class="nt">stringData</span><span class="p">:</span>
+  <span class="nt">azure.auth</span><span class="p">:</span> <span class="p p-Indicator">|-</span>
+    <span class="no">{</span>
+      <span class="no">&quot;clientId&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;clientSecret&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;subscriptionId&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;tenantId&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;activeDirectoryEndpointUrl&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;resourceManagerEndpointUrl&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;activeDirectoryGraphResourceId&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;sqlManagementEndpointUrl&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;galleryEndpointUrl&quot;: &quot;XXXXXXXXX&quot;,</span>
+      <span class="no">&quot;managementEndpointUrl&quot;: &quot;XXXXXXXXX&quot;</span>
+    <span class="no">}</span>
+</code></pre></div>
+</li>
+<li>
+<p>If you change the secret key name (from <code>azure.auth</code>) please also update the <code>AZURE_AUTH_LOCATION</code> 
+ENV value on <code>experiment.yaml</code>with the same name.</p>
+</li>
+</ul>
+</details>
+<h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
+<details class="info"><summary>View the default validations</summary><ul>
+<li>Azure Disk should be connected to an instance.</li>
+</ul>
+</details>
+<h2 id="minimal-rbac-configuration-example-optional">Minimal RBAC configuration example (optional)<a class="headerlink" href="#minimal-rbac-configuration-example-optional" title="Permanent link">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">NOTE</p>
+<p>If you are using this experiment as part of a litmus workflow scheduled constructed &amp; executed from chaos-center, then you may be making use of the <a href="https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml">litmus-admin</a> RBAC, which is pre installed in the cluster as part of the agent setup.</p>
+<details class="note"><summary>View the Minimal RBAC permissions</summary><div class="highlight"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+<span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">labels</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+    <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+<span class="nt">labels</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+    <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">apiGroups</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;litmuschaos.io&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;batch&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">resources</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;pods&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;jobs&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;secrets&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;events&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;pods/log&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;pods/exec&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;chaosengines&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;chaosexperiments&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;chaosresults&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">verbs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;patch&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;update&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;delete&quot;</span><span class="p p-Indicator">]</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ClusterRoleBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+<span class="nt">labels</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+    <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
+<span class="nt">roleRef</span><span class="p">:</span>
+<span class="nt">apiGroup</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+<span class="nt">subjects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+<span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+</code></pre></div>
+</details>
+</div>
+<h2 id="experiment-tunables">Experiment tunables<a class="headerlink" href="#experiment-tunables" title="Permanent link">&para;</a></h2>
+<details class="info"><summary>check the experiment tunables</summary><p><h2>Mandatory Fields</h2></p>
+<p><table>
+    <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+    </tr>
+    <tr> 
+        <td> VIRTUAL_DISK_NAMES </td>
+        <td> Name of virtual disks to target.</td>
+        <td> Provide comma separated names for multiple disks</td>
+    </tr>
+    <tr>
+        <td> RESOURCE_GROUP </td>
+        <td> The resource group of the target disk(s)</td>
+        <td> </td>
+    </tr> 
+</table></p>
+<p><h2>Optional Fields</h2></p>
+<p><table>
+    <tr>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
+    </tr>
+    <tr>
+        <td> SCALE_SET </td>
+        <td> Whether disk is connected to Scale set instance</td>
+        <td> Accepts "enable"/"disable". Default is "disable"</td>
+    </tr>
+    <tr> 
+        <td> TOTAL_CHAOS_DURATION </td>
+        <td> The total time duration for chaos insertion (sec) </td>
+        <td> Defaults to 30s </td>
+    </tr>
+    <tr> 
+        <td> CHAOS_INTERVAL </td>
+        <td> The interval (in sec) between successive instance poweroff.</td>
+        <td> Defaults to 30s </td>
+    </tr>
+    <tr>
+        <td> SEQUENCE </td>
+        <td> It defines sequence of chaos execution for multiple instance</td>
+        <td> Default value: parallel. Supported: serial, parallel </td>
+    </tr>
+    <tr>
+        <td> RAMP_TIME </td>
+        <td> Period to wait before and after injection of chaos in sec </td>
+        <td> </td>
+    </tr>
 </table></p>
 </details>
-<h3 id="engine-specification_1">Engine Specification<a class="headerlink" href="#engine-specification_1" title="Permanent link">&para;</a></h3>
-<p>Specify the chaosengine details at <code>spec.engineTemplateSpec</code> inside schedule CR</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
+<h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
+<h3 id="common-experiment-tunables">Common Experiment Tunables<a class="headerlink" href="#common-experiment-tunables" title="Permanent link">&para;</a></h3>
+<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> to tune the common tunables for all the experiments.</p>
+<h3 id="detach-virtual-disks-by-name">Detach Virtual Disks By Name<a class="headerlink" href="#detach-virtual-disks-by-name" title="Permanent link">&para;</a></h3>
+<p>It contains comma separated list of disk names subjected to disk loss chaos. It can be tuned via <code>VIRTUAL_DISK_NAMES</code> ENV.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># detach multiple azure disks by their names </span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
 <span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
 <span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">properties</span><span class="p">:</span>
-         <span class="c1">#format should be like &quot;10m&quot; or &quot;2h&quot; accordingly for minutes or hours</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span> <span class="s">&quot;2m&quot;</span>  
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
-
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
-
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
+  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
+  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+  <span class="nt">experiments</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss</span>
+    <span class="nt">spec</span><span class="p">:</span>
+      <span class="nt">components</span><span class="p">:</span>
+        <span class="nt">env</span><span class="p">:</span>
+        <span class="c1"># comma separated names of the azure disks attached to VMs</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">VIRTUAL_DISK_NAMES</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;disk-01,disk-02&#39;</span>
+        <span class="c1"># name of the resource group</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RESOURCE_GROUP</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&lt;resource</span><span class="nv"> </span><span class="s">group</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">VIRTUAL_DISK_NAMES&gt;&#39;</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
+          <span class="nt">VALUE</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
+</code></pre></div>
+<h3 id="detach-virtual-disks-attached-to-scale-set-instances-by-name">Detach Virtual Disks Attached to Scale Set Instances By Name<a class="headerlink" href="#detach-virtual-disks-attached-to-scale-set-instances-by-name" title="Permanent link">&para;</a></h3>
+<p>It contains comma separated list of disk names attached to scale set instances subjected to disk loss chaos. It can be tuned via <code>VIRTUAL_DISK_NAMES</code> and <code>SCALE_SET</code> ENV.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># detach multiple azure disks attached to scale set VMs by their names</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
+  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
+  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+  <span class="nt">experiments</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss</span>
+    <span class="nt">spec</span><span class="p">:</span>
+      <span class="nt">components</span><span class="p">:</span>
+        <span class="nt">env</span><span class="p">:</span>
+        <span class="c1"># comma separated names of the azure disks attached to scale set VMs</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">VIRTUAL_DISK_NAMES</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;disk-01,disk-02&#39;</span>
+        <span class="c1"># name of the resource group</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RESOURCE_GROUP</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&lt;resource</span><span class="nv"> </span><span class="s">group</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">VIRTUAL_DISK_NAMES&gt;&#39;</span>
+        <span class="c1"># VM belongs to scale set or not</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SCALE_SET</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;enable&#39;</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
+          <span class="nt">VALUE</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
+</code></pre></div>
+<h3 id="multiple-iterations-of-chaos">Multiple Iterations Of Chaos<a class="headerlink" href="#multiple-iterations-of-chaos" title="Permanent link">&para;</a></h3>
+<p>The multiple iterations of chaos can be tuned via setting <code>CHAOS_INTERVAL</code> ENV. Which defines the delay between each iteration of chaos.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># defines delay between each successive iteration of the chaos</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
+  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
+  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss-sa</span>
+  <span class="nt">experiments</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure-disk-loss</span>
+    <span class="nt">spec</span><span class="p">:</span>
+      <span class="nt">components</span><span class="p">:</span>
+        <span class="nt">env</span><span class="p">:</span>
+        <span class="c1"># delay between each iteration of chaos</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+         <span class="c1"># time duration for the chaos execution</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
+          <span class="nt">VALUE</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">VIRTUAL_DISK_NAMES</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;disk-01,disk-02&#39;</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RESOURCE_GROUP</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&lt;resource</span><span class="nv"> </span><span class="s">group</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">VIRTUAL_DISK_NAMES&gt;&#39;</span>
 </code></pre></div>
                 
               
@@ -2106,7 +2424,7 @@
         <!-- Link to previous page -->
         
         <a
-            href="../state/"
+            href="../azure-instance-stop/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -2118,7 +2436,7 @@
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Schedule State
+                Azure Instance Stop
             </div>
             </div>
         </a>
@@ -2127,7 +2445,7 @@
         <!-- Link to next page -->
         
         <a
-            href="../../probes/contents/"
+            href="../../gcp/gcp-vm-instance-stop/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -2136,7 +2454,7 @@
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Contents
+                GCP Instance Stop
             </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2163,11 +2481,11 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.709b4209.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.709b4209.min.js", "version": {"provider": "mike"}}</script>
     
     
   
-      <script src="../../../../../assets/javascripts/bundle.febc23d1.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.febc23d1.min.js"></script>
       
     
 
