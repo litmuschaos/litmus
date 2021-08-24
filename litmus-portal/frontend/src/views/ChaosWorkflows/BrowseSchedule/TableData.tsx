@@ -16,12 +16,11 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplayIcon from '@material-ui/icons/Replay';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Icon, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import YAML from 'yaml';
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduledWorkflow } from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
@@ -361,7 +360,7 @@ const TableData: React.FC<TableDataProps> = ({
           data-cy="showSchedules"
         >
           <div>
-            <FormatListBulletedIcon />
+            <Icon name="workflow" />
             <Typography className={classes.runs}>
               {t('chaosWorkflows.browseSchedules.runs')}
             </Typography>

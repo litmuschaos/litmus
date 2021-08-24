@@ -20,7 +20,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import EditIcon from '@material-ui/icons/Edit';
+import { Icon } from 'litmus-ui';
 import Row from '../../../containers/layouts/Row';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { experimentMap } from '../../../models/redux/workflow';
@@ -397,8 +397,13 @@ const WorkflowTable = forwardRef(
                                 engineYAML: experiment.ChaosEngine,
                               });
                             }}
+                            size="medium"
                           >
-                            <EditIcon />
+                            <Icon
+                              name="edit"
+                              size="md"
+                              color={theme.palette.text.hint}
+                            />
                           </IconButton>
                         </TableCell>
                         <TableCell>
@@ -406,11 +411,12 @@ const WorkflowTable = forwardRef(
                             onClick={() =>
                               deleteExperiment(experiment.StepIndex)
                             }
+                            size="medium"
                           >
-                            <img
-                              src="./icons/bin-red.svg"
-                              alt="delete experiment"
-                              height="18px"
+                            <Icon
+                              name="delete"
+                              size="md"
+                              color={theme.palette.error.main}
                             />
                           </IconButton>
                         </TableCell>
