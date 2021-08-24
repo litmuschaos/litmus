@@ -23,11 +23,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   rowDiv: {
     display: 'flex',
-    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  copyBtnImg: {
-    paddingRight: '0.625rem',
+  spacing: {
+    padding: theme.spacing(0, 1),
   },
 
   linkBox: {

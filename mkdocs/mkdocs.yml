@@ -35,6 +35,9 @@ theme:
     - navigation.tracking
     - search.share
     - search.suggest
+extra:
+  version:
+    provider: mike
 markdown_extensions:
   - codehilite
   - admonition
