@@ -4,9 +4,9 @@ import { Alert, Color } from '@material-ui/lab';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
-  lazy,
   Dispatch,
   forwardRef,
+  lazy,
   SetStateAction,
   useEffect,
   useImperativeHandle,
@@ -78,6 +78,7 @@ interface ChartName {
 
 interface ChildRef {
   onNext: () => void;
+  configurationStepperRef: () => void;
 }
 
 interface WorkflowExperiment {
@@ -109,6 +110,8 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isEditorSaveAlertOpen, setIsEditorSaveAlertOpen] = useState(false);
+  const [isConfigurationAlertOpen, setIsConfigurationAlertOpen] =
+    useState(false);
   const [yamlValid, setYamlValid] = useState(true);
   const [editSequence, setEditSequence] = useState(false);
   const [isVisualizationComplete, setIsVisualizationComplete] =
@@ -622,6 +625,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
         alert.changeAlertState(true); // Custom Workflow has no experiments
         return false;
       }
+      if ((childRef.current.configurationStepperRef() as unknown) === false) {
+        // The Configuration stepper is open
+        setIsConfigurationAlertOpen(true); // Set Alert to True
+        return false; // Disable Next
+      }
     }
     return true;
   }
@@ -654,6 +662,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
         setOpen={setIsEditorSaveAlertOpen}
         message="Please Save the changes in the editor to proceed forward"
         type="error"
+      />
+      <AlertBox
+        isOpen={isConfigurationAlertOpen}
+        setOpen={setIsConfigurationAlertOpen}
+        message="Please Save Changes made in the Configuration Wizard"
       />
       <AlertBox
         isOpen={isAlertOpen}
