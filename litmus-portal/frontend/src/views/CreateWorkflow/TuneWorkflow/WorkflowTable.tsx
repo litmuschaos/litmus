@@ -11,8 +11,8 @@ import InfoIcon from '@material-ui/icons/Info';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import localforage from 'localforage';
 import React, {
-  lazy,
   forwardRef,
+  lazy,
   useEffect,
   useImperativeHandle,
   useState,
@@ -329,8 +329,16 @@ const WorkflowTable = forwardRef(
       return true; // Should not show any alert
     }
 
+    function configurationStepperRef() {
+      if (displayStepper) {
+        return false; // Should show alert
+      }
+      return true;
+    }
+
     useImperativeHandle(ref, () => ({
       onNext,
+      configurationStepperRef,
     }));
 
     return (
