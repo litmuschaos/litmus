@@ -530,6 +530,14 @@ spec:
       labels:
         component: litmusportal-server
     spec:
+      initContainers:
+        - name: wait-for-mongodb
+          image: curlimages/curl:7.78.0
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+            ]
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci

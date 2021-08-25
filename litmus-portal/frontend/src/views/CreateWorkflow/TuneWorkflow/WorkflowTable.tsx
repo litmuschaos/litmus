@@ -1,5 +1,5 @@
 /* eslint-disable no-const-assign */
-import { IconButton, Typography, useTheme } from '@material-ui/core';
+import { IconButton, Popover, Typography, useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -7,11 +7,12 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import InfoIcon from '@material-ui/icons/Info';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import localforage from 'localforage';
 import React, {
-  lazy,
   forwardRef,
+  lazy,
   useEffect,
   useImperativeHandle,
   useState,
@@ -64,6 +65,25 @@ const WorkflowTable = forwardRef(
     const imageRegistryData = useSelector(
       (state: RootState) => state.selectedImageRegistry
     );
+
+    /**
+     * State variables to manage popover actions
+     */
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+      null
+    );
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
     const addWeights = (manifest: string) => {
       const arr: experimentMap[] = [];
       const hashMap = new Map();
@@ -309,8 +329,16 @@ const WorkflowTable = forwardRef(
       return true; // Should not show any alert
     }
 
+    function configurationStepperRef() {
+      if (displayStepper) {
+        return false; // Should show alert
+      }
+      return true;
+    }
+
     useImperativeHandle(ref, () => ({
       onNext,
+      configurationStepperRef,
     }));
 
     return (
@@ -399,6 +427,31 @@ const WorkflowTable = forwardRef(
                     <Typography>
                       {t('createWorkflow.chooseWorkflow.revertSchedule')}
                     </Typography>
+                    <IconButton
+                      className={classes.iconBtn}
+                      onClick={handleClick}
+                      aria-label="info"
+                    >
+                      <InfoIcon />
+                    </IconButton>
+                    <Popover
+                      id={id}
+                      open={open}
+                      anchorEl={anchorEl}
+                      onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                      }}
+                    >
+                      <Typography className={classes.infoText}>
+                        {t('createWorkflow.chooseWorkflow.retainLogs')}
+                      </Typography>
+                    </Popover>
                   </div>
                   <div>
                     <ToggleButtonGroup

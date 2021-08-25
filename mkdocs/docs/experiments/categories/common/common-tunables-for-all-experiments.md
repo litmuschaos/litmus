@@ -67,6 +67,7 @@ spec:
 ### Sequence of chaos execution
 
 It defines the sequence of the chaos execution in the case of multiple targets. It can be tuned with the `SEQUENCE` ENV. It supports the following modes:
+
 - `parallel`: The chaos is injected in all the targets at once.
 - `serial`: The chaos is injected in all the targets one by one.
 The default value of `SEQUENCE` is `parallel`.

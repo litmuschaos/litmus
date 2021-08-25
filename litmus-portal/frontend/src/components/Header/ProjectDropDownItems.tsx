@@ -6,8 +6,10 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  useTheme,
 } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
+import { Icon } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LIST_PROJECTS } from '../../graphql';
@@ -37,6 +39,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
   selected,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const [copying, setCopying] = useState<boolean>(false);
 
   function fallbackCopyTextToClipboard(text: string) {
@@ -66,9 +69,17 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
     >
       <ListItemIcon>
         {selected ? (
-          <img src="./icons/selectedProject.svg" alt="Selected Project" />
+          <div className={classes.selectedWrapper}>
+            <Icon name="check" size="md" color={theme.palette.success.main} />
+          </div>
         ) : (
-          <img src="./icons/nonSelectedproject.svg" alt="Un-selected Project" />
+          <div className={classes.notSelectedWrapper}>
+            <Icon
+              name="project"
+              size="md"
+              color={theme.palette.background.paper}
+            />
+          </div>
         )}
       </ListItemIcon>
       <ListItemText
@@ -82,7 +93,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
           aria-label="copyProject"
         >
           {!copying ? (
-            <img src="./icons/copyProjectID.svg" alt="Copy project ID" />
+            <Icon name="copy" size="lg" color={theme.palette.primary.main} />
           ) : (
             <DoneIcon />
           )}
