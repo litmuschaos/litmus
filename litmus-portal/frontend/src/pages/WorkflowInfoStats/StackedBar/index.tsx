@@ -146,7 +146,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
           Click on a bar to see the details of the workflow run
         </Typography>
         <Typography className={classes.resiliencyScore}>
-          Resiliency score: {averageResiliency}%
+          Resiliency score: {Math.round(averageResiliency)}%
         </Typography>
       </div>
       {/* Border Starts */}
