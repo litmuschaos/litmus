@@ -5,15 +5,18 @@ import {
   MenuItem,
   Select,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import {
   ButtonFilled,
   CalendarHeatmap,
   CalendarHeatmapTooltipProps,
+  Icon,
   Modal,
 } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
@@ -70,6 +73,8 @@ const valueThreshold = [13, 26, 39, 49, 59, 69, 79, 89, 100];
 const WorkflowInfoStats: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
+  const { t } = useTranslation();
+  const theme = useTheme();
 
   const { workflowId }: URLParams = useParams();
 
@@ -191,15 +196,17 @@ const WorkflowInfoStats: React.FC = () => {
       >
         <div className={classes.noRunsModal}>
           <div className={classes.noRunsModalErrorMessage}>
-            <img src="./icons/errorYaml.svg" alt="Error icon" />
-            <Typography>No completed runs yet.</Typography>
+            <Icon name="info" size="3xl" color={theme.palette.border.error} />
+            <Typography>
+              {t('observability.workflowInfoStats.noRuns')}
+            </Typography>
           </div>
           <ButtonFilled
             onClick={() => {
               history.goBack();
             }}
           >
-            Back to Observability
+            {t('observability.workflowInfoStats.back')}
           </ButtonFilled>
         </div>
       </Modal>
