@@ -163,7 +163,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
           ) : (
             <div
               style={{
-                width: `62rem`,
+                width: '62rem',
                 height: '20rem',
               }}
             >
