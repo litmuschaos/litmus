@@ -88,28 +88,7 @@ View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
 ### **Uninstallation**
 
-> Litmus-2.0.0 (Stable)
-```bash
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0/docs/2.0.0/litmus-2.0.0.yaml
-```
-
-Or
-
-> Master (Latest) Cluster scope. Uninstall in litmus namespace by default. (Only deleting litmus portal components)
-```bash
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
-```
-
-Or
-
-> Master (Latest) Namespaced scope. Replace `<namespace>` with the desired namespace.
-```bash
-export LITMUS_PORTAL_NAMESPACE="<namespace>"
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
-kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
-```
-
-##### **Additional information**
+You can uninstall using the steps from [section here](https://litmusdocs-beta.netlify.app/docs/user-guides/uninstall-litmus)
 
 -   <a href="https://github.com/litmuschaos/litmus/wiki/portal-design-spec" target="_blank">Litmus Portal Design Specification</a><br>
 -   <a href="https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide" target="_blank">Litmus Portal Development Guide</a>
