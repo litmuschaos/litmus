@@ -88,7 +88,7 @@ View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
 ### **Uninstallation**
 
-You can uninstall the steps using from [section here](https://litmusdocs-beta.netlify.app/docs/user-guides/uninstall-litmus)
+You can uninstall using the steps from [section here](https://litmusdocs-beta.netlify.app/docs/user-guides/uninstall-litmus)
 
 -   <a href="https://github.com/litmuschaos/litmus/wiki/portal-design-spec" target="_blank">Litmus Portal Design Specification</a><br>
 -   <a href="https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide" target="_blank">Litmus Portal Development Guide</a>
