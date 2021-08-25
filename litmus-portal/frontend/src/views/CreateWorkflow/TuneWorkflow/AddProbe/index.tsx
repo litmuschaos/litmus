@@ -77,22 +77,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
       ...runProperties,
       [e.target.name]: parseInt(e.target.value, 10),
     });
-    setProbeData({
-      ...probeData,
-      runProperties: {
-        ...runProperties,
-      },
-    });
   };
-
-  // React.useEffect(() => {
-  //   setProbeData({
-  //     ...probeData,
-  //     runProperties: {
-  //       ...runProperties,
-  //     },
-  //   });
-  // }, [runProperties]);
 
   // const renameKey = (object: any, key: string) => {
   //   const clonedObj = { ...object };
@@ -150,6 +135,8 @@ const AddProbe: React.FC<AddProbeProps> = ({
     if (Number.isNaN(parseInt(properties.probePollingInterval, 10))) {
       delete properties.probePollingInterval;
     }
+    probeData['runProperties'] = runProperties;
+    setProbeData(probeData);
     if (isEdit) {
       allProbes[editIndex] = probeData;
     } else {
