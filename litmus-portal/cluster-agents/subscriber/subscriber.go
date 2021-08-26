@@ -65,13 +65,13 @@ func init() {
 	} else if isConfirmed == false {
 		clusterConfirmByte, err := k8s.ClusterConfirm(clusterData)
 		if err != nil {
-			logrus.WithError(err).WithField("data",string(clusterConfirmByte)).Fatal("failed to confirm cluster")
+			logrus.WithError(err).WithField("data", string(clusterConfirmByte)).Fatal("failed to confirm cluster")
 		}
 
 		var clusterConfirmInterface types.Payload
 		err = json.Unmarshal(clusterConfirmByte, &clusterConfirmInterface)
 		if err != nil {
-			logrus.WithError(err).WithField("data",string(clusterConfirmByte)).Fatal("failed to parse cluster confirm data")
+			logrus.WithError(err).WithField("data", string(clusterConfirmByte)).Fatal("failed to parse cluster confirm data")
 		}
 
 		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
