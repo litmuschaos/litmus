@@ -67,32 +67,34 @@ const AddProbe: React.FC<AddProbeProps> = ({
   });
 
   React.useEffect(() => {
-    setProbeData(probesValue);
-    setRunProperties(probesValue.runProperties);
-    setProbeType(probesValue.type);
-    if (addButtonState) {
-      setProbeData({
-        name: '',
-        type: 'httpProbe',
-        mode: 'Continuous',
-        runProperties: {
+    if (allProbes.length !== 0) {
+      setProbeData(probesValue);
+      setRunProperties(probesValue.runProperties);
+      setProbeType(probesValue.type);
+      if (addButtonState) {
+        setProbeData({
+          name: '',
+          type: 'httpProbe',
+          mode: 'Continuous',
+          runProperties: {
+            probeTimeout: '',
+            retry: '',
+            interval: '',
+            probePollingInterval: '',
+            initialDelaySeconds: '',
+            stopOnFailure: false,
+          },
+          'httpProbe/inputs': {},
+        });
+        setRunProperties({
           probeTimeout: '',
           retry: '',
           interval: '',
           probePollingInterval: '',
           initialDelaySeconds: '',
           stopOnFailure: false,
-        },
-        'httpProbe/inputs': {},
-      });
-      setRunProperties({
-        probeTimeout: '',
-        retry: '',
-        interval: '',
-        probePollingInterval: '',
-        initialDelaySeconds: '',
-        stopOnFailure: false,
-      });
+        });
+      }
     }
   }, [addButtonState, probesValue]);
 
