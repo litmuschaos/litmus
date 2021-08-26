@@ -45,10 +45,13 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
       : []
   );
 
+  const [isAddButtonClicked, setIsAddButtonClicked] = useState<boolean>(false);
+
   // State varible to handle the Probe Modal
   const [addProbe, setAddProbe] = useState<boolean>(false);
   const [selectedProbeIndex, setSelectedProbeIndex] = useState<number>(0);
   const handleClose = () => {
+    setIsAddButtonClicked(false);
     setAddProbe(false);
   };
 
@@ -93,6 +96,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
   // Function to handle add probes operation
   const handleAddProbe = (probes: any) => {
     setProbesData(probes);
+    setIsAddButtonClicked(false);
     setAddProbe(false);
   };
 
@@ -257,7 +261,9 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
       <br />
       <ButtonOutlined
         onClick={() => {
+          setEdit(false);
           setAddProbe(true);
+          setIsAddButtonClicked(true);
         }}
         className={classes.btn1}
       >
@@ -267,6 +273,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
       </ButtonOutlined>
       <AddProbe
         isEdit={edit}
+        addButtonState={isAddButtonClicked}
         editIndex={selectedProbeIndex}
         allProbesData={probesData}
         probesValue={

@@ -9,6 +9,7 @@ import useStyles from './styles';
 interface AddProbeProps {
   isEdit: boolean;
   editIndex: number;
+  addButtonState: boolean;
   allProbesData: any;
   probesValue: any;
   addProbe: (probes: any) => void;
@@ -20,8 +21,8 @@ interface RunProperties {
   probeTimeout: string;
   retry: string;
   interval: string;
-  probePollingInterval?: string;
-  initialDelaySeconds?: string;
+  probePollingInterval: string;
+  initialDelaySeconds: string;
   stopOnFailure: boolean;
 }
 
@@ -30,6 +31,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
   editIndex,
   allProbesData,
   probesValue,
+  addButtonState,
   addProbe,
   handleClose,
   open,
@@ -38,19 +40,17 @@ const AddProbe: React.FC<AddProbeProps> = ({
   const { t } = useTranslation();
 
   const [allProbes, setAllProbes] = React.useState<any>(allProbesData ?? []); // Used for validation
-  // const [probeType, setProbeType] = React.useState(
-  //   probesValue.type ?? 'httpProbe/inputs'
-  // );
-  const [runProperties, setRunProperties] = React.useState<any>(
-    probesValue.runProperties ?? {
-      probeTimeout: '',
-      retry: '',
-      interval: '',
-      probePollingInterval: '',
-      initialDelaySeconds: '',
-      stopOnFailure: false,
-    }
-  );
+  const [probeType, setProbeType] = React.useState('httpProbe/inputs');
+
+  const [runProperties, setRunProperties] = React.useState<any>({
+    probeTimeout: '',
+    retry: '',
+    interval: '',
+    probePollingInterval: '',
+    initialDelaySeconds: '',
+    stopOnFailure: false,
+  });
+
   const [probeData, setProbeData] = React.useState({
     name: '',
     type: 'httpProbe',
@@ -67,8 +67,34 @@ const AddProbe: React.FC<AddProbeProps> = ({
   });
 
   React.useEffect(() => {
-    if (probesValue) setProbeData(probesValue);
-  }, [probesValue]);
+    setProbeData(probesValue);
+    setRunProperties(probesValue.runProperties);
+    setProbeType(probesValue.type);
+    if (addButtonState) {
+      setProbeData({
+        name: '',
+        type: 'httpProbe',
+        mode: 'Continuous',
+        runProperties: {
+          probeTimeout: '',
+          retry: '',
+          interval: '',
+          probePollingInterval: '',
+          initialDelaySeconds: '',
+          stopOnFailure: false,
+        },
+        'httpProbe/inputs': {},
+      });
+      setRunProperties({
+        probeTimeout: '',
+        retry: '',
+        interval: '',
+        probePollingInterval: '',
+        initialDelaySeconds: '',
+        stopOnFailure: false,
+      });
+    }
+  }, [addButtonState, probesValue]);
 
   const handleRunProps = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -79,11 +105,11 @@ const AddProbe: React.FC<AddProbeProps> = ({
     });
   };
 
-  // const renameKey = (object: any, key: string) => {
-  //   const clonedObj = { ...object };
-  //   delete clonedObj[key];
-  //   return clonedObj;
-  // };
+  const renameKey = (object: any, key: string) => {
+    const clonedObj = { ...object };
+    delete clonedObj[key];
+    return clonedObj;
+  };
 
   const onTypeChange = (
     e: React.ChangeEvent<{
@@ -91,11 +117,13 @@ const AddProbe: React.FC<AddProbeProps> = ({
       value: unknown;
     }>
   ) => {
-    const newType = `${e.target.value}/inputs`;
+    const newProbe = `${e.target.value}/inputs`;
+    const a = renameKey(probeData, probeType);
     setProbeData({
-      ...probeData,
-      type: newType,
+      ...a,
+      type: e.target.value as string,
     });
+    setProbeType(newProbe);
   };
 
   // Reset all input data on clicking close button or cancel button
@@ -122,7 +150,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
       initialDelaySeconds: '',
       stopOnFailure: false,
     });
-    // setProbeType('httpProbe/inputs');
+    setProbeType('httpProbe/inputs');
     (document.getElementById('probes-form') as HTMLFormElement).reset();
   };
 
@@ -135,7 +163,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
     if (Number.isNaN(parseInt(properties.probePollingInterval, 10))) {
       delete properties.probePollingInterval;
     }
-    probeData['runProperties'] = runProperties;
+    probeData['runProperties'] = runProperties as RunProperties;
     setProbeData(probeData);
     if (isEdit) {
       allProbes[editIndex] = probeData;
@@ -167,7 +195,9 @@ const AddProbe: React.FC<AddProbeProps> = ({
           id="probes-form"
         >
           <div className={classes.heading}>
-            {t('createWorkflow.tuneWorkflow.addProbe.heading')}
+            {!addButtonState
+              ? 'Edit'
+              : t('createWorkflow.tuneWorkflow.addProbe.heading')}
             <strong>
               {' '}
               {t('createWorkflow.tuneWorkflow.addProbe.headingStrong')}
@@ -399,6 +429,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
           </div>
 
           <ProbeDetails
+            isEdit={isEdit}
             setProbeData={(probes) => setProbeData(probes)}
             probeData={probeData}
           />
@@ -419,7 +450,9 @@ const AddProbe: React.FC<AddProbeProps> = ({
                 probeData.name.trim().length === 0
               }
             >
-              {t('createWorkflow.tuneWorkflow.addProbe.button.addProbe')}
+              {!addButtonState
+                ? 'Edit Probe'
+                : t('createWorkflow.tuneWorkflow.addProbe.button.addProbe')}
             </ButtonFilled>
           </div>
         </form>

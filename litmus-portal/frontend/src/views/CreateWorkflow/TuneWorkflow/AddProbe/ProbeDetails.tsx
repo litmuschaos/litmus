@@ -1,6 +1,6 @@
 import { InputLabel, MenuItem, Select } from '@material-ui/core';
 import { InputField } from 'litmus-ui';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   comparatorType,
@@ -13,30 +13,32 @@ import ProbesMenu from './ProbesMenu';
 import useStyles from './styles';
 
 interface ProbeDetailsProps {
+  isEdit: boolean;
   setProbeData: (probeData: any) => void;
   probeData: any;
 }
 
-// interface HTTPDataType {
-//   criteria: string;
-//   responseCode: string;
-//   body: string;
-//   contentType: string;
-// }
+interface HTTPDataType {
+  criteria: string;
+  responseCode: string;
+  body: string;
+  contentType: string;
+}
 
 const ProbeDetails: React.FC<ProbeDetailsProps> = ({
+  isEdit,
   setProbeData,
   probeData,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  // const [httpData, setHttpData] = useState<HTTPDataType>({
-  //   criteria: '',
-  //   responseCode: '',
-  //   body: '',
-  //   contentType: '',
-  // });
+  const [httpData, setHttpData] = useState<HTTPDataType>({
+    criteria: '',
+    responseCode: '',
+    body: '',
+    contentType: '',
+  });
   const [httpMethod, setHttpMethod] = React.useState('get');
 
   const handleHttp = (
@@ -245,7 +247,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="body"
                   name="body"
                   type="text"
-                  value={probeData['httpProbe/inputs'].method.post.body}
+                  value={
+                    isEdit
+                      ? probeData['httpProbe/inputs']?.method.post.body
+                      : httpData.body
+                  }
                   onChange={(e) => {
                     setProbeData({
                       ...probeData,
@@ -253,24 +259,27 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                         ...probeData['httpProbe/inputs'],
                         method: {
                           post: {
-                            criteria:
-                              probeData['httpProbe/inputs'].method.post
-                                .criteria,
-                            responseCode:
-                              probeData['httpProbe/inputs'].method.post
-                                .responseCode,
+                            criteria: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .criteria
+                              : httpData.criteria,
+                            responseCode: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .responseCode
+                              : httpData.responseCode,
                             body: e.target.value,
-                            contentType:
-                              probeData['httpProbe/inputs'].method.post
-                                .contentType,
+                            contentType: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .contentType
+                              : httpData.contentType,
                           },
                         },
                       },
                     });
-                    // setHttpData({
-                    //   ...httpData,
-                    //   body: e.target.value,
-                    // });
+                    setHttpData({
+                      ...httpData,
+                      body: e.target.value,
+                    });
                   }}
                 />
               </div>
@@ -286,7 +295,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="contentType"
                   name="contentType"
                   type="text"
-                  value={probeData['httpProbe/inputs'].method.post.contentType}
+                  value={
+                    isEdit
+                      ? probeData['httpProbe/inputs']?.method.post.contentType
+                      : httpData.contentType
+                  }
                   onChange={(e) => {
                     setProbeData({
                       ...probeData,
@@ -294,23 +307,26 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                         ...probeData['httpProbe/inputs'],
                         method: {
                           post: {
-                            criteria:
-                              probeData['httpProbe/inputs'].method.post
-                                .criteria,
-                            responseCode:
-                              probeData['httpProbe/inputs'].method.post
-                                .responseCode,
-                            body: probeData['httpProbe/inputs'].method.post
-                              .body,
+                            criteria: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .criteria
+                              : httpData.criteria,
+                            responseCode: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .responseCode
+                              : httpData.responseCode,
+                            body: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post.body
+                              : httpData.body,
                             contentType: e.target.value,
                           },
                         },
                       },
                     });
-                    // setHttpData({
-                    //   ...httpData,
-                    //   contentType: e.target.value,
-                    // });
+                    setHttpData({
+                      ...httpData,
+                      contentType: e.target.value,
+                    });
                   }}
                 />
               </div>
@@ -322,9 +338,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               'createWorkflow.tuneWorkflow.addProbe.inputLabels.criteria'
             )}
             value={
-              httpMethod === 'get'
-                ? probeData['httpProbe/inputs'].method.get.criteria
-                : probeData['httpProbe/inputs'].method.post.criteria
+              isEdit
+                ? httpMethod === 'get'
+                  ? probeData['httpProbe/inputs']?.method.get.criteria
+                  : probeData['httpProbe/inputs']?.method.post.criteria
+                : httpData.criteria
             }
             handleChange={(e) => {
               if (httpMethod === 'get') {
@@ -335,8 +353,10 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                     method: {
                       get: {
                         criteria: e.target.value,
-                        responseCode:
-                          probeData['httpProbe/inputs'].method.get.responseCode,
+                        responseCode: isEdit
+                          ? probeData['httpProbe/inputs']?.method.get
+                              .responseCode
+                          : httpData.responseCode,
                       },
                     },
                   },
@@ -350,21 +370,26 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                     method: {
                       post: {
                         criteria: e.target.value,
-                        responseCode:
-                          probeData['httpProbe/inputs'].method.post
-                            .responseCode,
-                        body: probeData['httpProbe/inputs'].method.post.body,
-                        contentType:
-                          probeData['httpProbe/inputs'].method.post.contentType,
+                        responseCode: isEdit
+                          ? probeData['httpProbe/inputs']?.method.post
+                              .responseCode
+                          : httpData.responseCode,
+                        body: isEdit
+                          ? probeData['httpProbe/inputs']?.method.post.body
+                          : httpData.body,
+                        contentType: isEdit
+                          ? probeData['httpProbe/inputs']?.method.post
+                              .contentType
+                          : httpData.contentType,
                       },
                     },
                   },
                 });
               }
-              // setHttpData({
-              //   ...httpData,
-              //   criteria: e.target.value as string,
-              // });
+              setHttpData({
+                ...httpData,
+                criteria: e.target.value as string,
+              });
             }}
             valueList={httpCiteria}
           />
@@ -381,9 +406,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               name="responseCode"
               type="text"
               value={
-                httpMethod === 'get'
-                  ? probeData['httpProbe/inputs'].method.get.responseCode
-                  : probeData['httpProbe/inputs'].method.post.responseCode
+                isEdit
+                  ? httpMethod === 'get'
+                    ? probeData['httpProbe/inputs']?.method.get.responseCode
+                    : probeData['httpProbe/inputs']?.method.post.responseCode
+                  : httpData.responseCode
               }
               onChange={(e) => {
                 if (httpMethod === 'get') {
@@ -393,8 +420,9 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                       ...probeData['httpProbe/inputs'],
                       method: {
                         get: {
-                          criteria:
-                            probeData['httpProbe/inputs'].method.get.criteria,
+                          criteria: isEdit
+                            ? probeData['httpProbe/inputs']?.method.get.criteria
+                            : httpData.criteria,
                           responseCode: e.target.value,
                         },
                       },
@@ -408,22 +436,27 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                       ...probeData['httpProbe/inputs'],
                       method: {
                         post: {
-                          criteria:
-                            probeData['httpProbe/inputs'].method.post.criteria,
+                          criteria: isEdit
+                            ? probeData['httpProbe/inputs']?.method.post
+                                .criteria
+                            : httpData.criteria,
                           responseCode: e.target.value,
-                          body: probeData['httpProbe/inputs'].method.post.body,
-                          contentType:
-                            probeData['httpProbe/inputs'].method.post
-                              .contentType,
+                          body: isEdit
+                            ? probeData['httpProbe/inputs']?.method.post.body
+                            : httpData.body,
+                          contentType: isEdit
+                            ? probeData['httpProbe/inputs']?.method.post
+                                .contentType
+                            : httpData.contentType,
                         },
                       },
                     },
                   });
                 }
-                // setHttpData({
-                //   ...httpData,
-                //   responseCode: e.target.value,
-                // });
+                setHttpData({
+                  ...httpData,
+                  responseCode: e.target.value,
+                });
               }}
             />
           </div>
@@ -471,7 +504,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 'cmdProbe/inputs': {
                   ...probeData['cmdProbe/inputs'],
                   comparator: {
-                    ...probeData['cmdProbe/inputs'].comparator,
+                    ...probeData['cmdProbe/inputs']?.comparator,
                     type: e.target.value,
                   },
                 },
@@ -492,7 +525,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 'cmdProbe/inputs': {
                   ...probeData['cmdProbe/inputs'],
                   comparator: {
-                    ...probeData['cmdProbe/inputs'].comparator,
+                    ...probeData['cmdProbe/inputs']?.comparator,
                     criteria: e.target.value,
                   },
                 },
