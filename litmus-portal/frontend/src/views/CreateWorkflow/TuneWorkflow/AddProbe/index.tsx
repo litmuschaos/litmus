@@ -70,7 +70,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
     if (allProbes.length !== 0) {
       setProbeData(probesValue);
       setRunProperties(probesValue.runProperties);
-      setProbeType(probesValue.type);
+      setProbeType(`${probesValue.type}/inputs`);
       if (addButtonState) {
         setProbeData({
           name: '',
@@ -109,7 +109,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
 
   const renameKey = (object: any, key: string) => {
     const clonedObj = { ...object };
-    delete clonedObj[`${key}/inputs`];
+    delete clonedObj[key];
     return clonedObj;
   };
 
