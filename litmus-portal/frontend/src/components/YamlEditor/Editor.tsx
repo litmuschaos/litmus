@@ -46,6 +46,7 @@ interface YamlEditorProps {
   content: string;
   filename?: string;
   readOnly: boolean;
+  enableDownloadCopy?: boolean;
   setButtonState?: (btnState: boolean) => void;
   saveWorkflowChange?: (updatedManifest: string) => void;
 }
@@ -54,6 +55,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   content,
   filename,
   readOnly,
+  enableDownloadCopy,
   setButtonState,
   saveWorkflowChange,
 }) => {
@@ -203,6 +205,32 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
 
   return (
     <div id="editor" data-cy="WorkflowEditor">
+      {enableDownloadCopy && (
+        <div className={classes.downloadCopyButtonGrid}>
+          <Tooltip
+            title="Copy"
+            placement="top"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={copycontent}>
+              <FileCopyTwoToneIcon />
+            </div>
+          </Tooltip>
+          <Tooltip
+            title="Full Screen (Press Escape to End)"
+            placement="bottom"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+            arrow
+          >
+            <div className={classes.editorButtons} onClick={fullScreenTrigger}>
+              <FullscreenIcon />
+            </div>
+          </Tooltip>
+        </div>
+      )}
       {!readOnly && (
         <div className={classes.editorButtonGrid}>
           <Tooltip
