@@ -227,7 +227,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
                       <Icon
                         name="edit"
                         size="lg"
-                        color={theme.palette.border.main}
+                        color={theme.palette.text.hint}
                       />
                     </IconButton>
                   </TableCell>

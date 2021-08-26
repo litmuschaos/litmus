@@ -109,7 +109,7 @@ const AddProbe: React.FC<AddProbeProps> = ({
 
   const renameKey = (object: any, key: string) => {
     const clonedObj = { ...object };
-    delete clonedObj[key];
+    delete clonedObj[`${key}/inputs`];
     return clonedObj;
   };
 
