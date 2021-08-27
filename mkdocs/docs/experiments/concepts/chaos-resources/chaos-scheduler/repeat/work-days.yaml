@@ -6,8 +6,9 @@ spec:
   schedule:
     repeat:
       properties:
-        #format should be like "10m" or "2h" accordingly for minutes and hours
-        minChaosInterval: "2m"   
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5 
       workDays:
         includedDays: "Mon,Tue,Wed,Sat,Sun"
   engineTemplateSpec:

@@ -5,13 +5,11 @@ metadata:
 spec:
   schedule:
     repeat:
-      timeRange:
-        #should be modified according to current UTC Time
-        endTime: "2020-09-13T02:58:00Z"   
       properties:
         minChaosInterval:
+          # schedule the chaos at every 5 minutes
           minute:
-            everyNthMinute: 5 
+            everyNthMinute: 5  
   engineTemplateSpec:
     engineState: 'active'
     appinfo:
