@@ -461,10 +461,10 @@ metadata:
   name: litmus-portal-admin-config
   namespace: litmus
 data:
-  AgentScope: cluster
-  AgentNamespace: litmus
-  DataBaseServer: "mongodb://mongo-service:27017"
-  JWTSecret: "litmus-portal@123"
+  AGENT_SCOPE: cluster
+  AGENT_NAMESPACE: litmus
+  DB_SERVER: "mongodb://mongo-service:27017"
+  JWT_SECRET: "litmus-portal@123"
   DB_USER: "admin"
   DB_PASSWORD: "1234"
   VERSION: "ci"
@@ -497,7 +497,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: AgentScope
+                  key: AGENT_SCOPE
 ---
 apiVersion: v1
 kind: Service
@@ -541,48 +541,16 @@ spec:
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
+          envFrom:
+            - configMapRef:
+                name: litmus-portal-admin-config
           env:
-            - name: VERSION
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: VERSION
-            - name: DB_SERVER
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: DataBaseServer
-            - name: JWT_SECRET
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: JWTSecret
             - name: SELF_CLUSTER
               value: "true"
-            - name: AGENT_SCOPE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: AgentScope
-            - name: AGENT_NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: AgentNamespace
             - name: LITMUS_PORTAL_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: DB_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: DB_PASSWORD
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
@@ -620,29 +588,12 @@ spec:
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
+          envFrom:
+            - configMapRef:
+                name: litmus-portal-admin-config
           env:
             - name: STRICT_PASSWORD_POLICY
               value: "false"
-            - name: DB_SERVER
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: DataBaseServer
-            - name: JWT_SECRET
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: JWTSecret
-            - name: DB_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: DB_PASSWORD
             - name: ADMIN_USERNAME
               value: "admin"
             - name: ADMIN_PASSWORD
