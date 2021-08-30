@@ -39,6 +39,7 @@ import 'ace-builds/src-min-noconflict/ext-whitespace';
 import 'brace/mode/yaml';
 import 'brace/theme/solarized_dark';
 import React, { useEffect, useState } from 'react';
+import { Icon } from 'litmus-ui';
 import useStyles from './styles';
 import { AceValidations, parseYamlValidations } from './Validations';
 
@@ -215,7 +216,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             arrow
           >
             <div className={classes.editorButtons} onClick={copycontent}>
-              <FileCopyTwoToneIcon />
+              <Icon name="copy" />
             </div>
           </Tooltip>
           <Tooltip

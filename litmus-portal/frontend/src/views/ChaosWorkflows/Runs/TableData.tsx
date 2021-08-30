@@ -7,6 +7,7 @@ import {
   Popover,
   TableCell,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -51,6 +52,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const { t } = useTranslation();
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const nodeSelection = useActions(NodeSelectionActions);
@@ -458,7 +460,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             }}
           >
             <div className={classes.expDiv} data-cy="viewWorkflow">
-              <Icon name="document" />
+              <Icon name="document" color={`${theme.palette.common.black}`} />
               <Typography className={classes.btnText}>
                 {t('chaosWorkflows.browseWorkflows.tableData.viewManifest')}
               </Typography>
