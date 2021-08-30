@@ -132,7 +132,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {probesData?.length ? (
+            {probesData && probesData.length ? (
               probesData.map((probe: any, index: number) => (
                 <TableRow key={probe.name}>
                   <TableCell component="th" scope="row">
