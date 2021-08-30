@@ -656,12 +656,14 @@ chaosWorkflows:
     sync: Sync Workflow
     terminate: Terminate Workflow
     delete: Delete Workflow
+    workflowManifest: Workflow Manifest
     tableData:
       overallRR: 'Overall RR : '
       experimentsPassed: 'Experiments Passed : '
       showExperiments: Show Experiments
       showTheWorkflow: Show the workflow
       showTheStatistics: Show the statistics
+      viewManifest: View Manifest
       na: NA
 
 settings:

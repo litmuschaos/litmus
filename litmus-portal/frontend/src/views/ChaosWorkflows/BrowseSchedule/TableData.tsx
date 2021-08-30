@@ -5,6 +5,7 @@ import {
   Menu,
   MenuItem,
   Popover,
+  Snackbar,
   TableCell,
   Typography,
 } from '@material-ui/core';
@@ -14,6 +15,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplayIcon from '@material-ui/icons/Replay';
+import { Alert } from '@material-ui/lab';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, Icon, Modal } from 'litmus-ui';
@@ -85,6 +87,13 @@ const TableData: React.FC<TableDataProps> = ({
     setIsModalOpen(false);
   };
 
+  const [displayReRunAlert, setDisplayReRunAlert] = React.useState(false);
+  const [reRunMessage, setReRunMessage] = React.useState('');
+  const handleAlertOnClose = () => {
+    setReRunMessage('');
+    setDisplayReRunAlert(false);
+  };
+
   // States for PopOver to display schedule details
   const [popAnchorElSchedule, setPopAnchorElSchedule] =
     React.useState<null | HTMLElement>(null);
@@ -133,6 +142,10 @@ const TableData: React.FC<TableDataProps> = ({
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {
       tabs.changeWorkflowsTabs(0);
+    },
+    onError: (error) => {
+      setReRunMessage(error.message);
+      setDisplayReRunAlert(true);
     },
   });
 
@@ -415,6 +428,16 @@ const TableData: React.FC<TableDataProps> = ({
           ) : (
             <></>
           )}
+          <Snackbar
+            open={displayReRunAlert}
+            autoHideDuration={6000}
+            onClose={handleAlertOnClose}
+            data-cy="templateAlert"
+          >
+            <Alert onClose={handleAlertOnClose} severity="error">
+              {reRunMessage}
+            </Alert>
+          </Snackbar>
           {projectRole !== 'Viewer' &&
             data.cronSyntax !== '' &&
             YAML.parse(data.workflow_manifest).spec.suspend !== true && (

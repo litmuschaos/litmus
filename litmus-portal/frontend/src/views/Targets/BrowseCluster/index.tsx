@@ -298,15 +298,14 @@ const BrowseCluster: React.FC = () => {
 
                 {/* No of Workflows */}
                 <TableCell>
-                  <Typography>
-                    {t('workflowCluster.header.formControl.noWorkflows')}
-                  </Typography>
+                  {t('workflowCluster.header.formControl.noSchedules')}
+                  <Typography />
                 </TableCell>
 
                 {/* No of Schedules */}
                 <TableCell>
                   <Typography>
-                    {t('workflowCluster.header.formControl.noSchedules')}
+                    {t('workflowCluster.header.formControl.noWorkflows')}
                   </Typography>
                 </TableCell>
 

@@ -10,6 +10,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '0 auto',
   },
 
+  downloadCopyButtonGrid: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    width: 'fit-content',
+    marginLeft: 'auto',
+  },
+
   editor: {
     width: '100%',
     height: '50vh',
