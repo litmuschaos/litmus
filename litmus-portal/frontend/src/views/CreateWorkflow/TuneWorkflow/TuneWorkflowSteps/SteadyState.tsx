@@ -277,7 +277,9 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
         editIndex={selectedProbeIndex}
         allProbesData={probesData}
         probesValue={
-          probesData.length ? probesData[selectedProbeIndex] : probesData
+          probesData && probesData.length
+            ? probesData[selectedProbeIndex]
+            : probesData
         }
         addProbe={(probes: any) => handleAddProbe(probes)}
         handleClose={handleClose}
