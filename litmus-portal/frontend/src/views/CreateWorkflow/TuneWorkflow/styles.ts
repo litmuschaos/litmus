@@ -233,6 +233,9 @@ const useStyles = makeStyles((theme) => ({
   iconBtn: {
     marginTop: theme.spacing(-1.5),
   },
+  emptyCell: {
+    width: '1.5rem',
+  },
 }));
 
 export default useStyles;

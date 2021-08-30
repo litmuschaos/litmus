@@ -13,6 +13,6 @@ spec:
           image: litmuschaos/upgrade-agent-cp:ci
           envFrom:
             - configMapRef:
-                name: chaos-litmus-admin-config
+                name: litmus-portal-admin-config
           imagePullPolicy: Always
       restartPolicy: Never
