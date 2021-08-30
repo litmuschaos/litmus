@@ -24,9 +24,14 @@ const InstallChaos: React.FC<InstallProps> = ({
   const [copying, setCopying] = useState(false);
   const yaml = isPredefined ? yamlLink : `kubectl apply -f ${yamlLink}`;
 
+  function fallbackCopyTextToClipboard(text: string) {
+    // eslint-disable-next-line no-alert
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', text);
+  }
+
   function copyTextToClipboard(text: string) {
     if (!navigator.clipboard) {
-      console.error('Oops Could not copy text: ');
+      fallbackCopyTextToClipboard(text);
       return;
     }
     setCopying(true);
