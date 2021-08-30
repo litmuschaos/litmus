@@ -126,6 +126,7 @@ nav:
             - VM Poweroff: experiments/categories/vmware/vm-poweroff.md
         - Azure:
             - Azure Instance Stop: experiments/categories/azure/azure-instance-stop.md
+            - Azure Disk Loss: experiments/categories/azure/azure-disk-loss.md
         - GCP:
             - GCP Instance Stop: experiments/categories/gcp/gcp-vm-instance-stop.md
             - GCP Disk Loss: experiments/categories/gcp/gcp-vm-disk-loss.md
