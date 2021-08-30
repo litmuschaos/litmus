@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { Snackbar, Typography } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { Alert, Color } from '@material-ui/lab';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
@@ -90,6 +90,7 @@ interface AlertBoxProps {
   message: string;
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  type: string;
 }
 
 const TuneWorkflow = forwardRef((_, ref) => {
@@ -394,17 +395,21 @@ const TuneWorkflow = forwardRef((_, ref) => {
         },
       },
     });
-
     setAddExpModal(false);
   };
 
-  const AlertBox: React.FC<AlertBoxProps> = ({ message, isOpen, setOpen }) => (
+  const AlertBox: React.FC<AlertBoxProps> = ({
+    message,
+    isOpen,
+    setOpen,
+    type,
+  }) => (
     <Snackbar
       open={isOpen}
       autoHideDuration={6000}
       onClose={() => setOpen(false)}
     >
-      <Alert onClose={() => setOpen(false)} severity="error">
+      <Alert onClose={() => setOpen(false)} severity={type as Color}>
         {message}
       </Alert>
     </Snackbar>
@@ -656,16 +661,19 @@ const TuneWorkflow = forwardRef((_, ref) => {
         isOpen={isEditorSaveAlertOpen}
         setOpen={setIsEditorSaveAlertOpen}
         message="Please Save the changes in the editor to proceed forward"
+        type="error"
       />
       <AlertBox
         isOpen={isConfigurationAlertOpen}
         setOpen={setIsConfigurationAlertOpen}
         message="Please Save Changes made in the Configuration Wizard"
+        type="error"
       />
       <AlertBox
         isOpen={isAlertOpen}
         setOpen={setIsAlertOpen}
         message="The YAML contains errors, resolve them first to proceed"
+        type="error"
       />
       {YAMLModal ? (
         <>
