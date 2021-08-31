@@ -179,6 +179,9 @@ observability:
   tableHead2: Starting Date
   tableHead3: Regularity
   tableHead4: Agent
+  workflowInfoStats:
+    noRuns: No completed runs yet
+    back: Back to Observability
   workflowRunDetailsTable:
     tableHead0: Test Name
     tableHead1: Experiment Name
@@ -593,6 +596,9 @@ chaosWorkflows:
     experiments: Experiments
     schedule: Schedule
     nextRun: Next Run
+    nonCron: Non cron workflow
+    runs: Runs
+    wfRuns: Workflow Runs
     regularity: Regularity
     startingDate: Starting Date
     lastRun: Last Run
@@ -631,12 +637,14 @@ chaosWorkflows:
     sync: Sync Workflow
     terminate: Terminate Workflow
     delete: Delete Workflow
+    workflowManifest: Workflow Manifest
     tableData:
       overallRR: 'Overall RR : '
       experimentsPassed: 'Experiments Passed : '
       showExperiments: Show Experiments
       showTheWorkflow: Show the workflow
       showTheStatistics: Show the statistics
+      viewManifest: View Manifest
       na: NA
 
 settings:

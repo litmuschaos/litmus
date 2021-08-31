@@ -28,7 +28,7 @@ func ClusterConnect(clusterData map[string]string) {
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		logrus.Fatal("dial:", err)
+		logrus.WithError(err).Fatal("failed to open websocket connection")
 	}
 	defer c.Close()
 
@@ -39,12 +39,12 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 		data, err := json.Marshal(payload)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to marshal message")
 		}
 
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to write message after init")
 			return
 		}
 
@@ -56,7 +56,7 @@ func ClusterConnect(clusterData map[string]string) {
 		data, err = json.Marshal(payload)
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to write message after start")
 			return
 		}
 	}()

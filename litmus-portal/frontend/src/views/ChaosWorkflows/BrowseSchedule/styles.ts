@@ -295,6 +295,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
     marginRight: theme.spacing(1),
   },
+  runs: {
+    fontSize: '0.75rem',
+  },
 }));
 
 export default useStyles;
