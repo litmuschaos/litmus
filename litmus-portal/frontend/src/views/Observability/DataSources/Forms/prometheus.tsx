@@ -302,6 +302,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
                 control={
                   <RadioButton
                     color="primary"
+                    disabled
                     checked={dataSourceDetails.basicAuth}
                     onChange={handleAuthChange}
                     name="basicAuth"

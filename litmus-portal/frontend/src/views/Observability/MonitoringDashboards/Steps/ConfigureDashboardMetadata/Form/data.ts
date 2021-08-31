@@ -11,11 +11,11 @@ export default [
     version: constants.v1,
     resource: constants.services,
   },
-  {
-    group: '',
-    version: constants.v1,
-    resource: constants.nodes,
-  },
+  // {
+  //   group: '',
+  //   version: constants.v1,
+  //   resource: constants.nodes,
+  // },
   {
     group: constants.apps,
     version: constants.v1,

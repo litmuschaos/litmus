@@ -268,27 +268,6 @@ monitoringDashboard:
       clone: Clone
       json: JSON
       pdf: PDF
-  workflowClusterDashboard:
-    title: Dashboard
-    tab1: Hourly
-    tab2: Daily
-    tab3: Monthly
-    tab4: Yearly
-    worflowSchedulesTitle: Workflow Schedules
-    clusterCountTitle: Agents
-    timeSelectionMessage: Overview of latest
-    timeSelection0: Hour
-    timeSelection1: Day
-    timeSelection2: Month
-    scheduleWorkflowMessage: Schedule my first workflow
-  seeAll: See All
-  seeDetails: See Details
-  seeStatistics: See Statistics
-  workflowStats:
-    title: Workflow stats
-    workflowPassed: Passed
-    workflowRunning: Running
-    workflowFailed: Failed
   workflowScheduleTable:
     title: Workflow Schedules
     noRecordMessage: No workflow has been schedule
@@ -600,12 +579,14 @@ chaosWorkflows:
     workFlowComparisonTable:
       unableToFetch: Unable to fetch data
       noRecords: No records available
+      loadingRuns: Loading workflow runs ...
+      errorFetchingRuns: Error while fetching workflow runs !
       noRuns: No workflow runs available for selected workflows
       showSelectedWorkflows: Show all selected workflows
       resilienceScoreComparison: Resilience score comparison
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
-      seeStatistics: See statistics
+      statistics: Statistics
   browseSchedules:
     name: Name
     agent: Agent
