@@ -3,11 +3,13 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  OutlinedInput,
   Paper,
   Select,
   Tabs,
   useTheme,
 } from '@material-ui/core';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { GraphMetric, LineAreaGraph } from 'litmus-ui';
 import React, { useState } from 'react';
 import Loader from '../../../../../components/Loader';
@@ -20,7 +22,7 @@ import {
   WorkflowStatsVars,
 } from '../../../../../models/graphql/workflowStats';
 import { getProjectID } from '../../../../../utils/getSearchParams';
-import useStyles from './style';
+import useStyles, { useOutlinedInputStyles } from './style';
 
 // tabProps returns 'id' and 'aria-control' props of Tab
 function tabProps(index: any) {
@@ -32,6 +34,7 @@ function tabProps(index: any) {
 
 const ScheduleAndRunStats: React.FC = () => {
   const classes = useStyles();
+  const outlinedInputClasses = useOutlinedInputStyles();
   const projectID = getProjectID();
   const theme = useTheme();
   const [activeTab, setActiveTab] = React.useState(0);
@@ -77,17 +80,38 @@ const ScheduleAndRunStats: React.FC = () => {
   return (
     <Paper elevation={0} className={classes.workflowGraphs}>
       <FormControl variant="outlined" className={classes.formControl}>
-        <InputLabel className={classes.selectText} />
+        <InputLabel className={classes.selectText}> Granularity </InputLabel>
         <Select
+          label="Granularity"
           value={filters}
           onChange={(event) => {
             setFilters(event.target.value as Filter);
           }}
           className={classes.selectText}
+          input={<OutlinedInput classes={outlinedInputClasses} />}
+          IconComponent={KeyboardArrowDownIcon}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            getContentAnchorEl: null,
+            classes: { paper: classes.menuList },
+          }}
         >
-          <MenuItem value={Filter.Monthly}>Monthly</MenuItem>
-          <MenuItem value={Filter.Daily}>Daily</MenuItem>
-          <MenuItem value={Filter.Hourly}>Hourly</MenuItem>
+          <MenuItem value={Filter.Monthly} className={classes.menuListItem}>
+            Monthly
+          </MenuItem>
+          <MenuItem value={Filter.Daily} className={classes.menuListItem}>
+            Daily
+          </MenuItem>
+          <MenuItem value={Filter.Hourly} className={classes.menuListItem}>
+            Hourly
+          </MenuItem>
         </Select>
       </FormControl>
       <Tabs

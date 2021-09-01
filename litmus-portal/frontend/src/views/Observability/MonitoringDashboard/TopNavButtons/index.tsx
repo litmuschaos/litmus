@@ -316,7 +316,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
           </div>
         </MenuItem>
 
-        <MenuItem
+        {/* <MenuItem
           value="Export pdf"
           onClick={() => {}}
           className={classes.menuItem}
@@ -335,7 +335,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
               {t('monitoringDashboard.monitoringDashboardPage.options.pdf')}
             </Typography>
           </div>
-        </MenuItem>
+        </MenuItem> */}
       </StyledMenu>
       {cloneModalOpen ? (
         <DashboardCloneModal
