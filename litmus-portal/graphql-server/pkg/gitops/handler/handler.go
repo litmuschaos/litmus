@@ -363,16 +363,20 @@ func GitOpsSyncHandler(singleRun bool) {
 	const syncGroupSize = 10
 	const syncInterval = 2 * time.Minute
 	for {
+
 		ctx, cancel := context.WithTimeout(backgroundContext, timeout)
-		log.Print("Running GitOps DB Sync...")
+
 		configs, err := dbOperationsGitOps.GetAllGitConfig(ctx)
+
 		cancel()
 		if err != nil {
-			log.Print("Failed to get git configs from db : ", err)
+			log.Print("Failed to get git configs from db : ", err) //condition
 		}
-		log.Print("Updating : ", configs)
+
 		count := len(configs)
 		if count > 0 {
+			log.Print("Updating : ", configs) // condition
+
 			count = count - 1
 			for count >= 0 {
 				min := count - (syncGroupSize - 1)
@@ -387,8 +391,9 @@ func GitOpsSyncHandler(singleRun bool) {
 				}
 				wg.Wait()
 			}
+
+			log.Print("GitOps DB Sync Complete") //condition
 		}
-		log.Print("GitOps DB Sync Complete")
 		if singleRun {
 			break
 		}
