@@ -365,7 +365,7 @@ func GitOpsSyncHandler(singleRun bool) {
 	for {
 
 		ctx, cancel := context.WithTimeout(backgroundContext, timeout)
-
+		log.Print("Running GitOps DB Sync...")
 		configs, err := dbOperationsGitOps.GetAllGitConfig(ctx)
 
 		cancel()
