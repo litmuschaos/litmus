@@ -532,6 +532,14 @@ spec:
       labels:
         component: litmusportal-server
     spec:
+      initContainers:
+        - name: wait-for-mongodb
+          image: litmuschaos/curl:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+            ]
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
@@ -539,6 +547,9 @@ spec:
             limits:
               cpu: 200m
               memory: 400Mi
+          envFrom:
+            - configMapRef:
+                name: litmus-portal-admin-config
           env:
             - name: LITMUS_PORTAL_NAMESPACE
               value: ${OKTETO_NAMESPACE}
@@ -638,9 +649,6 @@ spec:
           volumeMounts:
             - name: mongo-persistent-storage
               mountPath: /data/db
-          envFrom:
-            - configMapRef:
-                name: litmus-portal-admin-config
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
