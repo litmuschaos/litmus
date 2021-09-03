@@ -1519,6 +1519,33 @@
     Basic Schema to Execute Repeat Strategy
   </a>
   
+    <nav class="md-nav" aria-label="Basic Schema to Execute Repeat Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schedule-chaosengine-at-every-nth-minute" class="md-nav__link">
+    Schedule ChaosEngine at every nth minute
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-chaosengine-at-every-nth-hour" class="md-nav__link">
+    Schedule ChaosEngine at every nth hour
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-chaosengine-at-nth-minute-of-every-nth-hour" class="md-nav__link">
+    Schedule ChaosEngine at nth minute of every nth hour
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2026,6 +2053,33 @@
     Basic Schema to Execute Repeat Strategy
   </a>
   
+    <nav class="md-nav" aria-label="Basic Schema to Execute Repeat Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schedule-chaosengine-at-every-nth-minute" class="md-nav__link">
+    Schedule ChaosEngine at every nth minute
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-chaosengine-at-every-nth-hour" class="md-nav__link">
+    Schedule ChaosEngine at every nth hour
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-chaosengine-at-nth-minute-of-every-nth-hour" class="md-nav__link">
+    Schedule ChaosEngine at nth minute of every nth hour
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2138,11 +2192,11 @@
 <p><table>
 <tr>
 <th>Field</th>
-<td><code>.spec.schedule.repeat.properties.minChaosInterval</code></td>
+<td><code>.spec.schedule.repeat.properties.minChaosInterval.hour.everyNthHour</code></td>
 </tr>
 <tr>
 <th>Description</th>
-<td>Flag to specify the minimum interval between two chaosengines to be formed. </td>
+<td>Flag to specify the hours between each successive schedule </td>
 </tr>
 <tr>
 <th>Type</th>
@@ -2150,7 +2204,7 @@
 </tr>
 <tr>
 <th>Range</th>
-<td><i>user-defined</i> (type: string)(pattern: "{number}m", "{number}h").</td>
+<td>integer</td>
 </tr>
 <tr>
 <th>Default</th>
@@ -2158,7 +2212,59 @@
 </tr>
 <tr>
 <th>Notes</th>
-<td>The <code>minChaosInterval</code> in the spec specifies a time interval that must be taken care of while repeatedly forming the chaosengines i.e. This much duration of time should be there as interval between the formation of two chaosengines. </td>
+<td>The <code>minChaosInterval.hour.everyNthHour</code> in the spec specifies the time interval in hours between each schedule</td>
+</tr>
+</table></p>
+<p><table>
+<tr>
+<th>Field</th>
+<td><code>.spec.schedule.repeat.properties.minChaosInterval.hour.minuteOfTheHour</code></td>
+</tr>
+<tr>
+<th>Description</th>
+<td>Flag to specify minute of hour for each successive schedule </td>
+</tr>
+<tr>
+<th>Type</th>
+<td>Mandatory</td>
+</tr>
+<tr>
+<th>Range</th>
+<td>integer</td>
+</tr>
+<tr>
+<th>Default</th>
+<td><i>0</i></td>
+</tr>
+<tr>
+<th>Notes</th>
+<td>The <code>minChaosInterval.hour.minuteOfTheHour</code> in the spec specifies the minute of the hour between each schedule</td>
+</tr>
+</table></p>
+<p><table>
+<tr>
+<th>Field</th>
+<td><code>.spec.schedule.repeat.properties.minChaosInterval.minute.everyNthMinute</code></td>
+</tr>
+<tr>
+<th>Description</th>
+<td>Flag to specify the minutes for each successive schedule </td>
+</tr>
+<tr>
+<th>Type</th>
+<td>Mandatory</td>
+</tr>
+<tr>
+<th>Range</th>
+<td>integer</td>
+</tr>
+<tr>
+<th>Default</th>
+<td><i>n/a</i></td>
+</tr>
+<tr>
+<th>Notes</th>
+<td>The <code>minChaosInterval.hour.everyNthMinute</code> in the spec specifies the time interval in minutes between each schedule</td>
 </tr>
 </table></p>
 <p><table>
@@ -2215,7 +2321,8 @@
 </table></p>
 </details>
 <h3 id="basic-schema-to-execute-repeat-strategy">Basic Schema to Execute Repeat Strategy<a class="headerlink" href="#basic-schema-to-execute-repeat-strategy" title="Permanent link">&para;</a></h3>
-<p>This will keep on executing the schedule and creating engines for an indefinite amount of time.</p>
+<p>This will keep executing the schedule and creating engines for an indefinite amount of time.</p>
+<h4 id="schedule-chaosengine-at-every-nth-minute">Schedule ChaosEngine at every nth minute<a class="headerlink" href="#schedule-chaosengine-at-every-nth-minute" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -2224,8 +2331,89 @@
   <span class="nt">schedule</span><span class="p">:</span>
     <span class="nt">repeat</span><span class="p">:</span>
       <span class="nt">properties</span><span class="p">:</span>
-         <span class="c1">#format should be like &quot;10m&quot; or &quot;2h&quot; accordingly for minutes or hours</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span> <span class="s">&quot;2m&quot;</span>  
+        <span class="nt">minChaosInterval</span><span class="p">:</span>
+          <span class="c1"># schedule the chaos at every 5 minutes</span>
+          <span class="nt">minute</span><span class="p">:</span>
+            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
+  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
+    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
+    <span class="nt">appinfo</span><span class="p">:</span>
+      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
+      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
+      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
+    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
+    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
+    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
+    <span class="nt">experiments</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+        <span class="nt">spec</span><span class="p">:</span>
+          <span class="nt">components</span><span class="p">:</span>
+            <span class="nt">env</span><span class="p">:</span>
+              <span class="c1"># set chaos duration (in sec) as desired</span>
+              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+
+              <span class="c1"># set chaos interval (in sec) as desired</span>
+              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+
+              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
+              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+</code></pre></div>
+<h4 id="schedule-chaosengine-at-every-nth-hour">Schedule ChaosEngine at every nth hour<a class="headerlink" href="#schedule-chaosengine-at-every-nth-hour" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+  <span class="nt">schedule</span><span class="p">:</span>
+    <span class="nt">repeat</span><span class="p">:</span>
+      <span class="nt">properties</span><span class="p">:</span>
+        <span class="nt">minChaosInterval</span><span class="p">:</span>
+          <span class="c1"># schedule the chaos every hour at 0th minute</span>
+          <span class="nt">hour</span><span class="p">:</span>
+            <span class="nt">everyNthHour</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
+    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
+    <span class="nt">appinfo</span><span class="p">:</span>
+      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
+      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
+      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
+    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
+    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
+    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
+    <span class="nt">experiments</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+        <span class="nt">spec</span><span class="p">:</span>
+          <span class="nt">components</span><span class="p">:</span>
+            <span class="nt">env</span><span class="p">:</span>
+              <span class="c1"># set chaos duration (in sec) as desired</span>
+              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+
+              <span class="c1"># set chaos interval (in sec) as desired</span>
+              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+
+              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
+              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+</code></pre></div>
+<h4 id="schedule-chaosengine-at-nth-minute-of-every-nth-hour">Schedule ChaosEngine at nth minute of every nth hour<a class="headerlink" href="#schedule-chaosengine-at-nth-minute-of-every-nth-hour" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+  <span class="nt">schedule</span><span class="p">:</span>
+    <span class="nt">repeat</span><span class="p">:</span>
+      <span class="nt">properties</span><span class="p">:</span>
+        <span class="nt">minChaosInterval</span><span class="p">:</span>
+          <span class="c1"># schedule the chaos every hour at 30th minute</span>
+          <span class="nt">hour</span><span class="p">:</span>
+            <span class="nt">everyNthHour</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+            <span class="nt">minuteOfTheHour</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">30</span>
   <span class="nt">engineTemplateSpec</span><span class="p">:</span>
     <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
     <span class="nt">appinfo</span><span class="p">:</span>
@@ -2266,8 +2454,9 @@
         <span class="nt">startTime</span><span class="p">:</span> <span class="s">&quot;2020-05-12T05:47:00Z&quot;</span>   
         <span class="nt">endTime</span><span class="p">:</span> <span class="s">&quot;2020-09-13T02:58:00Z&quot;</span>   
       <span class="nt">properties</span><span class="p">:</span>
-        <span class="c1">#format should be like &quot;10m&quot; or &quot;2h&quot; accordingly for minutes and hours</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span> <span class="s">&quot;2m&quot;</span>   
+        <span class="nt">minChaosInterval</span><span class="p">:</span>
+          <span class="nt">minute</span><span class="p">:</span>
+            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
   <span class="nt">engineTemplateSpec</span><span class="p">:</span>
     <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
     <span class="nt">appinfo</span><span class="p">:</span>
@@ -2307,8 +2496,9 @@
         <span class="c1">#should be modified according to current UTC Time</span>
         <span class="nt">endTime</span><span class="p">:</span> <span class="s">&quot;2020-09-13T02:58:00Z&quot;</span>   
       <span class="nt">properties</span><span class="p">:</span>
-        <span class="c1">#format should be like &quot;10m&quot; or &quot;2h&quot; accordingly for minutes and hours</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span> <span class="s">&quot;2m&quot;</span>   
+        <span class="nt">minChaosInterval</span><span class="p">:</span>
+          <span class="nt">minute</span><span class="p">:</span>
+            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
   <span class="nt">engineTemplateSpec</span><span class="p">:</span>
     <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
     <span class="nt">appinfo</span><span class="p">:</span>
@@ -2348,8 +2538,9 @@
         <span class="c1">#should be modified according to current UTC Time</span>
         <span class="nt">startTime</span><span class="p">:</span> <span class="s">&quot;2020-05-12T05:47:00Z&quot;</span>   
       <span class="nt">properties</span><span class="p">:</span>
-         <span class="c1">#format should be like &quot;10m&quot; or &quot;2h&quot; accordingly for minutes and hours</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span> <span class="s">&quot;2m&quot;</span>  
+        <span class="nt">minChaosInterval</span><span class="p">:</span>
+          <span class="nt">minute</span><span class="p">:</span>
+            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
   <span class="nt">engineTemplateSpec</span><span class="p">:</span>
     <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
     <span class="nt">appinfo</span><span class="p">:</span>
@@ -2387,8 +2578,9 @@
   <span class="nt">schedule</span><span class="p">:</span>
     <span class="nt">repeat</span><span class="p">:</span>
       <span class="nt">properties</span><span class="p">:</span>
-        <span class="c1">#format should be like &quot;10m&quot; or &quot;2h&quot; accordingly for minutes and hours</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span> <span class="s">&quot;2m&quot;</span>   
+        <span class="nt">minChaosInterval</span><span class="p">:</span>
+          <span class="nt">minute</span><span class="p">:</span>
+            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>   
       <span class="nt">workHours</span><span class="p">:</span>
         <span class="c1"># format should be &lt;starting-hour-number&gt;-&lt;ending-hour-number&gt;(inclusive)</span>
         <span class="nt">includedHours</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0-12</span>
@@ -2432,8 +2624,9 @@
   <span class="nt">schedule</span><span class="p">:</span>
     <span class="nt">repeat</span><span class="p">:</span>
       <span class="nt">properties</span><span class="p">:</span>
-        <span class="c1">#format should be like &quot;10m&quot; or &quot;2h&quot; accordingly for minutes and hours</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span> <span class="s">&quot;2m&quot;</span>   
+        <span class="nt">minChaosInterval</span><span class="p">:</span>
+          <span class="nt">minute</span><span class="p">:</span>
+            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
       <span class="nt">workDays</span><span class="p">:</span>
         <span class="nt">includedDays</span><span class="p">:</span> <span class="s">&quot;Mon,Tue,Wed,Sat,Sun&quot;</span>
   <span class="nt">engineTemplateSpec</span><span class="p">:</span>

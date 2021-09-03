@@ -6,8 +6,9 @@ spec:
   schedule:
     repeat:
       properties:
-        #format should be like "10m" or "2h" accordingly for minutes and hours
-        minChaosInterval: "2m"   
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5 
       workHours:
         # format should be <starting-hour-number>-<ending-hour-number>(inclusive)
         includedHours: 0-12
