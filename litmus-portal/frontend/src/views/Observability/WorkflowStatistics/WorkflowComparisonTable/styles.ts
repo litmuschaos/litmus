@@ -19,13 +19,6 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(3.75),
   },
 
-  input: {
-    '&:-webkit-autofill': {
-      WebkitTextFillColor: theme.palette.text.primary,
-      WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
-    },
-  },
-
   heading: {
     fontSize: '1.5rem',
     color: theme.palette.text.primary,
@@ -33,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
   description: {
     width: '50rem',
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(2),
     fontSize: '1rem',
     color: theme.palette.text.primary,
   },
@@ -57,8 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
   search: {
     marginRight: 'auto',
-    marginLeft: theme.spacing(6.25),
-    borderBottom: `1px solid ${theme.palette.border.main}`,
+    marginLeft: theme.spacing(6),
   },
 
   calIcon: {
@@ -74,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   tableMain: {
     marginTop: theme.spacing(4.25),
     backgroundColor: theme.palette.background.paper,
-    minHeight: '30.15rem',
+    height: '29.85rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -93,10 +85,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableMainCompare: {
-    marginTop: theme.spacing(-0.25),
     borderTop: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.background.paper,
-    height: '15rem',
+    height: '17.5rem',
     overflow: 'hidden',
     '&:not(:last-child)': {
       borderBottom: 0,
@@ -106,32 +97,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
-  tableBody: {
-    backgroundColor: theme.palette.background.paper,
-    overflowY: 'auto',
-  },
-  tableMainShowAll: {
-    marginTop: theme.spacing(4.25),
-    backgroundColor: theme.palette.background.paper,
-    maxHeight: '30.15rem',
-    '&::-webkit-scrollbar': {
-      width: '0.2em',
-    },
-    '&::-webkit-scrollbar-track': {
-      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.primary.main,
-    },
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
-    '& td': {
-      borderBottom: `1px solid ${theme.palette.border.main}`,
-    },
-  },
-
-  pagination: {
+  tablePagination: {
+    marginTop: theme.spacing(-0.25),
+    height: '3.5rem',
     borderTop: `1px solid ${theme.palette.border.main}`,
   },
 
@@ -168,10 +136,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   nameContent: {
-    color: theme.palette.text.primary,
     display: 'flex',
     flexDirection: 'row',
-    fontSize: '0.8rem',
+    fontWeight: 500,
+    fontSize: '0.75rem',
+    lineHeight: '150%',
+    color: theme.palette.text.hint,
   },
 
   nameContentIcons: {
@@ -208,14 +178,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.secondary.main,
   },
 
-  markerIconDown: {
-    color: theme.palette.text.primary,
-    paddingTop: theme.spacing(0.5),
-    margin: 0,
-  },
-
-  markerIconUp: {
-    color: theme.palette.text.primary,
+  markerIcon: {
+    color: theme.palette.text.hint,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
@@ -229,13 +193,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     width: '100%',
-    height: '46rem',
-    marginBottom: theme.spacing(-3),
+    height: '40rem',
     borderTop: `1px solid ${theme.palette.border.main}`,
   },
 
   comparisonHeadingFix: {
-    marginLeft: theme.spacing(8),
+    paddingTop: theme.spacing(3),
     backgroundColor: theme.palette.background.paper,
   },
 
@@ -247,7 +210,7 @@ const useStyles = makeStyles((theme) => ({
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
-    marginRight: theme.spacing(1.5),
+    height: '2.6rem',
     minWidth: '9rem',
   },
 
@@ -257,20 +220,28 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.4),
   },
 
-  selectDate: {
-    display: 'flex',
-    height: '2.8rem',
-    minWidth: '9rem',
-    border: `0.1px solid ${theme.palette.border.main}`,
-    borderRadius: 4,
-    marginRight: theme.spacing(3.75),
-    textTransform: 'none',
-  },
-
   displayDate: {
     marginLeft: theme.spacing(1),
     width: '100%',
     color: theme.palette.text.primary,
+  },
+
+  selectDate: {
+    display: 'flex',
+    height: '2.75rem',
+    minWidth: '9rem',
+    border: `0.1px solid ${theme.palette.border.main}`,
+    borderRadius: '0.25rem',
+    marginTop: theme.spacing(0.5),
+    marginRight: theme.spacing(2),
+    textTransform: 'none',
+    '&:hover': {
+      borderColor: theme.palette.highlight,
+    },
+  },
+
+  selectDateFocused: {
+    border: `2px solid ${theme.palette.highlight}`,
   },
 
   headerDiv: {
@@ -302,7 +273,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     width: '100%',
-    height: '25rem',
+    height: '40rem',
     marginBottom: theme.spacing(-2),
     paddingTop: theme.spacing(22.5),
   },
@@ -333,12 +304,30 @@ const useStyles = makeStyles((theme) => ({
   },
 
   featureButtons: {
+    marginTop: theme.spacing(0.25),
     marginRight: theme.spacing(3),
     marginLeft: theme.spacing(2),
   },
 
   tableRowSelected: {
     backgroundColor: `${theme.palette.background.paper} !important`,
+  },
+
+  // select
+  menuList: {
+    boxShadow: '0 5px 9px rgba(0, 0, 0, 0.1)',
+  },
+  menuListItem: {
+    background: `${theme.palette.background.paper} !important`,
+    fontSize: '0.875rem',
+    lineHeight: '150%',
+    height: '1.875rem',
+    '&:hover': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
+    '&.Mui-selected': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
   },
 }));
 
@@ -348,12 +337,12 @@ export const useOutlinedInputStyles = makeStyles((theme) => ({
       borderColor: theme.palette.border.main,
     },
     '&:hover $notchedOutline': {
-      borderColor: theme.palette.border.main,
+      borderColor: theme.palette.highlight,
     },
     '&$focused $notchedOutline': {
-      borderColor: theme.palette.border.main,
+      borderColor: theme.palette.highlight,
     },
-    height: '2.8rem',
+    height: '2.75rem',
   },
   focused: {},
   notchedOutline: {},

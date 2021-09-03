@@ -17,6 +17,21 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(0.4),
   },
+  menuList: {
+    boxShadow: '0 5px 9px rgba(0, 0, 0, 0.1)',
+  },
+  menuListItem: {
+    background: `${theme.palette.background.paper} !important`,
+    fontSize: '0.875rem',
+    lineHeight: '150%',
+    height: '1.875rem',
+    '&:hover': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
+    '&.Mui-selected': {
+      background: `${theme.palette.cards.highlight} !important`,
+    },
+  },
 
   flexDisplay: {
     display: 'flex',
@@ -92,12 +107,12 @@ export const useOutlinedInputStyles = makeStyles((theme) => ({
       borderColor: theme.palette.border.main,
     },
     '&:hover $notchedOutline': {
-      borderColor: theme.palette.border.main,
+      borderColor: theme.palette.highlight,
     },
     '&$focused $notchedOutline': {
-      borderColor: theme.palette.border.main,
+      borderColor: theme.palette.highlight,
     },
-    height: '2.8rem',
+    height: '2.75rem',
   },
   focused: {},
   notchedOutline: {},

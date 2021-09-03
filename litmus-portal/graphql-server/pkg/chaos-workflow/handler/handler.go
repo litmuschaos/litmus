@@ -790,6 +790,15 @@ func ReRunWorkflow(workflowID string) (string, error) {
 		return "", errors.New("cronworkflows cannot be re-run")
 	}
 
+	cluster, err := dbOperationsCluster.GetCluster(workflows[0].ClusterID)
+	if err != nil {
+		return "", errors.New(err.Error())
+	}
+	if cluster.IsActive != true {
+		log.Print("Agent not active to re-run the workflow")
+		return "", errors.New("Agent not active to re-run the selected workflow.")
+	}
+
 	workflows[0].WorkflowManifest, err = sjson.Set(workflows[0].WorkflowManifest, "metadata.name", workflows[0].WorkflowName+"-"+strconv.FormatInt(time.Now().Unix(), 10))
 	if err != nil {
 		log.Print("Failed to updated workflow name [re-run] :", err)

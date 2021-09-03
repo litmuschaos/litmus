@@ -10,8 +10,9 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useTheme,
 } from '@material-ui/core';
-import { ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Icon } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -29,6 +30,7 @@ interface SteadyStateProps {
 
 const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const { t } = useTranslation();
   const workflow = useActions(WorkflowActions);
 
@@ -43,9 +45,13 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
       : []
   );
 
+  const [isAddButtonClicked, setIsAddButtonClicked] = useState<boolean>(false);
+
   // State varible to handle the Probe Modal
   const [addProbe, setAddProbe] = useState<boolean>(false);
+  const [selectedProbeIndex, setSelectedProbeIndex] = useState<number>(0);
   const handleClose = () => {
+    setIsAddButtonClicked(false);
     setAddProbe(false);
   };
 
@@ -59,6 +65,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
   // State variable to store Probe Data
   const [probeDetails, setProbeDetails] = useState<object>();
   const [probeProperties, setProbeProperties] = useState({});
+  const [edit, setEdit] = useState<boolean>(false);
 
   // State variable to handle the Probe Details Popover
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
@@ -89,6 +96,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
   // Function to handle add probes operation
   const handleAddProbe = (probes: any) => {
     setProbesData(probes);
+    setIsAddButtonClicked(false);
     setAddProbe(false);
   };
 
@@ -120,10 +128,11 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
                 {t('createWorkflow.tuneWorkflow.steadyState.properties')}
               </TableCell>
               <TableCell align="left" />
+              <TableCell align="left" />
             </TableRow>
           </TableHead>
           <TableBody>
-            {probesData?.length ? (
+            {probesData && probesData.length ? (
               probesData.map((probe: any, index: number) => (
                 <TableRow key={probe.name}>
                   <TableCell component="th" scope="row">
@@ -210,13 +219,28 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
                   <TableCell>
                     <IconButton
                       onClick={() => {
+                        setEdit(true);
+                        setSelectedProbeIndex(index);
+                        setAddProbe(true);
+                      }}
+                    >
+                      <Icon
+                        name="edit"
+                        size="lg"
+                        color={theme.palette.text.hint}
+                      />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => {
                         deleteProbe(index);
                       }}
                     >
-                      <img
-                        src="./icons/bin-red-delete.svg"
-                        alt="delete"
-                        className={classes.deleteIcon}
+                      <Icon
+                        name="delete"
+                        size="lg"
+                        color={theme.palette.error.main}
                       />
                     </IconButton>
                   </TableCell>
@@ -224,7 +248,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5}>
+                <TableCell colSpan={6}>
                   <Typography align="center">
                     {t('createWorkflow.tuneWorkflow.steadyState.addProbe')}
                   </Typography>
@@ -237,7 +261,9 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
       <br />
       <ButtonOutlined
         onClick={() => {
+          setEdit(false);
           setAddProbe(true);
+          setIsAddButtonClicked(true);
         }}
         className={classes.btn1}
       >
@@ -246,7 +272,15 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
         </Typography>
       </ButtonOutlined>
       <AddProbe
-        probesValue={probesData}
+        isEdit={edit}
+        addButtonState={isAddButtonClicked}
+        editIndex={selectedProbeIndex}
+        allProbesData={probesData}
+        probesValue={
+          probesData && probesData.length
+            ? probesData[selectedProbeIndex]
+            : probesData
+        }
         addProbe={(probes: any) => handleAddProbe(probes)}
         handleClose={handleClose}
         open={addProbe}

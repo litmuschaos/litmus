@@ -7,6 +7,7 @@ import {
   Select,
 } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import moment from 'moment';
 import Plotly from 'plotly.js';
 import React, { useEffect } from 'react';
@@ -387,10 +388,29 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
               }}
               className={classes.selectText}
               input={<OutlinedInput classes={outlinedInputClasses} />}
+              IconComponent={KeyboardArrowDownIcon}
+              MenuProps={{
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                },
+                transformOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                getContentAnchorEl: null,
+                classes: { paper: classes.menuList },
+              }}
             >
-              <MenuItem value="Hourly">Hourly</MenuItem>
-              <MenuItem value="Daily">Daily</MenuItem>
-              <MenuItem value="Monthly">Monthly</MenuItem>
+              <MenuItem value="Hourly" className={classes.menuListItem}>
+                Hourly
+              </MenuItem>
+              <MenuItem value="Daily" className={classes.menuListItem}>
+                Daily
+              </MenuItem>
+              <MenuItem value="Monthly" className={classes.menuListItem}>
+                Monthly
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -400,7 +420,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             layout={plotLayout}
             useResizeHandler
             style={{
-              width: '166.55%',
+              width: '165%',
               height: 720,
               margin: 'auto',
             }}
