@@ -547,6 +547,9 @@ spec:
             limits:
               cpu: 200m
               memory: 400Mi
+          envFrom:
+            - configMapRef:
+                name: litmus-portal-admin-config
           env:
             - name: LITMUS_PORTAL_NAMESPACE
               value: ${OKTETO_NAMESPACE}
@@ -646,9 +649,6 @@ spec:
           volumeMounts:
             - name: mongo-persistent-storage
               mountPath: /data/db
-          envFrom:
-            - configMapRef:
-                name: litmus-portal-admin-config
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
