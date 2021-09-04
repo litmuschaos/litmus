@@ -19,11 +19,7 @@ rules:
   resources: ["replicasets","deployments"]
   verbs: ["get","list"]
 - apiGroups: ["litmuschaos.io"]
-<<<<<<< HEAD
   resources: ["chaosengines","chaosschedules","chaosengines/finalizers","chaosschedules/finalizers"]
-=======
-  resources: ["chaosengines","chaosschedules"]
->>>>>>> da9c7d2a (Created Namespaced Mode Deploy Definitions for Chaos Scheduler.  Validated.)
   verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
