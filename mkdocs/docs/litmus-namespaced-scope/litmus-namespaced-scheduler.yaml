@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chaos-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: chaos-scheduler
+  template:
+    metadata:
+      labels:
+        name: chaos-scheduler
+    spec:
+      serviceAccountName: scheduler
+      containers:
+        - name: chaos-scheduler
+          # Replace this with the built image name
+          image: litmuschaos/chaos-scheduler:ci 
+          command:
+          - chaos-scheduler
+          imagePullPolicy: IfNotPresent
+          env: 
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: OPERATOR_NAME
+              value: "chaos-scheduler"
