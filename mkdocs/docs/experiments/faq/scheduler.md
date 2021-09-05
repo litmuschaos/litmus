@@ -85,10 +85,14 @@ It schedules chaosengines to be launched according to the parameters passed. It 
 
 ### How to run ChaosScheduler in Namespaced mode?
 
-Firstly install the rbac and crd -
+Firstly install the crd -
 ```
-kubectl apply -f https://github.com/litmuschaos/litmus/tree/master/mkdocs/docs/litmus-namespaced-scope/litmus-scheduler-ns-rbac.yaml
 kubectl apply -f https://github.com/litmuschaos/litmus/tree/master/mkdocs/docs/litmus-namespaced-scope/litmus-scheduler-namespaced-crd.yaml
+```
+
+Secondly install the rbac in the desired Namespace -
+```
+kubectl apply -f https://github.com/litmuschaos/litmus/tree/master/mkdocs/docs/litmus-namespaced-scope/litmus-scheduler-ns-rbac.yaml -n <namespace>
 ```
 
 Install ChaosScheduler operator in the desired Namespace afterwards -
