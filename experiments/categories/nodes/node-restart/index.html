@@ -667,6 +667,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-partition/" class="md-nav__link">
+        Pod Network Partition
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -2175,8 +2187,8 @@
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <details class="info"><summary>Verify the prerequisites</summary><ul>
 <li>Ensure that Kubernetes Version &gt; 1.16 </li>
-<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>node-restart</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-restart/experiment.yaml">here</a></li>
+<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
+<li>Ensure that the <code>node-restart</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-restart/experiment.yaml">here</a></li>
 <li>
 <p>Create a Kubernetes secret named <code>id-rsa</code> where the experiment will run, where its contents will be the private SSH key for <code>SSH_USER</code> used to connect to the node that hosts the target pod in the secret field <code>ssh-privatekey</code>. A sample secret is shown below:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>

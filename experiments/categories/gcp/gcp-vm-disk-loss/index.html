@@ -663,6 +663,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-partition/" class="md-nav__link">
+        Pod Network Partition
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -2158,8 +2170,8 @@
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <details class="info"><summary>Verify the prerequisites</summary><ul>
 <li>Ensure that Kubernetes Version &gt; 1.16 </li>
-<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>gcp-vm-disk-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml">here</a></li>
+<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
+<li>Ensure that the <code>gcp-vm-disk-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml">here</a></li>
 <li>Ensure that your service account has an editor access or owner access for the GCP project.</li>
 <li>Ensure the target disk volume to be detached should not be the root volume its instance. </li>
 <li>

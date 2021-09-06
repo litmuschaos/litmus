@@ -1,0 +1,23 @@
+# it inject the chaos for specified ports
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-partition-sa
+  experiments:
+  - name: pod-network-partition
+    spec:
+      components:
+        env:
+        # comma separated list of ports
+        - name: PORTS
+          value: '8080,8088'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

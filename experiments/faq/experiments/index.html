@@ -663,6 +663,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../categories/pods/pod-network-partition/" class="md-nav__link">
+        Pod Network Partition
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -2823,7 +2835,7 @@ For a full list of supported chaos experiments, visit: <a href="https://hub.litm
 <h3 id="what-is-the-scope-of-a-litmus-chaos-experiment">What is the scope of a Litmus Chaos Experiment?<a class="headerlink" href="#what-is-the-scope-of-a-litmus-chaos-experiment" title="Permanent link">&para;</a></h3>
 <p>The chaos CRs (chaosexperiment, chaosengine, chaosresults) themselves are namespace scoped and are installed in the same namespace as that of the target application. While most of the experiments can be executed with service accounts mapped to namespaced roles, some infra chaos experiments typically perform health checks of applications across namespaces &amp; therefore need their serviceaccounts mapped to ClusterRoles.</p>
 <h3 id="to-get-started-with-running-chaos-experiments-using-litmus">To get started with running chaos experiments using Litmus?<a class="headerlink" href="#to-get-started-with-running-chaos-experiments-using-litmus" title="Permanent link">&para;</a></h3>
-<p>Litmus has a low entry barrier and is easy to install/use. Typically, it involves installing the chaos-operator, chaos experiment CRs from the <a href="https://hub.litmuschaos.io/">charthub</a>, annotating an application for chaos and creating a chaosengine CR to map your application instance with a desired chaos experiment. Refer to the <a href="https://docs.litmuschaos.io/docs/getstarted/">getting started</a> documentation to learn more on how to run a simple chaos experiment.</p>
+<p>Litmus has a low entry barrier and is easy to install/use. Typically, it involves installing the chaos-operator, chaos experiment CRs from the <a href="https://hub.litmuschaos.io/">charthub</a>, annotating an application for chaos and creating a chaosengine CR to map your application instance with a desired chaos experiment. Refer to the <a href="https://v1-docs.litmuschaos.io/docs/getstarted/">getting started</a> documentation to learn more on how to run a simple chaos experiment.</p>
 <h3 id="how-to-view-and-interpret-the-results-of-a-chaos-experiment">How to view and interpret the results of a chaos experiment?<a class="headerlink" href="#how-to-view-and-interpret-the-results-of-a-chaos-experiment" title="Permanent link">&para;</a></h3>
 <p>The results of a chaos experiment can be obtained from the verdict property of the chaosresult custom resource. If the verdict is Pass, it means that the application under test is resilient to the chaos injected. Alternatively, Fail reflects that the application is not resilient enough to the injected chaos, and indicates the need for a relook into the deployment sanity or possible application bugs/issues.</p>
 <p><div class="highlight"><pre><span></span><code>kubectl describe chaosresult &lt;chaosengine-name&gt;-&lt;chaos-experiment&gt; -n &lt;namespace&gt;

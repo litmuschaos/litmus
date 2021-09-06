@@ -667,6 +667,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-partition/" class="md-nav__link">
+        Pod Network Partition
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -2148,8 +2160,8 @@
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <details class="info"><summary>Verify the prerequisites</summary><ul>
 <li>Ensure that Kubernetes Version &gt; 1.16 </li>
-<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>docker-service-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/docker-service-kill/experiment.yaml">here</a></li>
+<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
+<li>Ensure that the <code>docker-service-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/docker-service-kill/experiment.yaml">here</a></li>
 <li>Ensure that the node specified in the experiment ENV variable <code>TARGET_NODE</code> (the node for which docker service need to be killed) should be cordoned before execution of the chaos experiment (before applying the chaosengine manifest) to ensure that the litmus experiment runner pods are not scheduled on it / subjected to eviction. This can be achieved with the following steps:<ul>
 <li>Get node names against the applications pods: <code>kubectl get pods -o wide</code></li>
 <li>Cordon the node <code>kubectl cordon &lt;nodename&gt;</code></li>
@@ -2306,7 +2318,7 @@
         <!-- Link to previous page -->
         
         <a
-            href="../../pods/pod-network-loss/"
+            href="../../pods/pod-network-partition/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -2318,7 +2330,7 @@
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Pod Network Loss
+                Pod Network Partition
             </div>
             </div>
         </a>

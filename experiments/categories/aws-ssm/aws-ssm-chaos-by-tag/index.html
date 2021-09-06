@@ -663,6 +663,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-network-partition/" class="md-nav__link">
+        Pod Network Partition
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -2163,8 +2175,8 @@
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <details class="info"><summary>Verify the prerequisites</summary><ul>
 <li>Ensure that Kubernetes Version &gt; 1.16 </li>
-<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>aws-ssm-chaos-by-tag</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/aws-ssm/aws-ssm-chaos-by-tag/experiment.yaml">here</a></li>
+<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
+<li>Ensure that the <code>aws-ssm-chaos-by-tag</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/aws-ssm/aws-ssm-chaos-by-tag/experiment.yaml">here</a></li>
 <li>Ensure that you have the required AWS access and your target EC2 instances have attached an IAM instance profile. To know more checkout <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-launch-managed-instance.html">Systems Manager Docs</a>.</li>
 <li>
 <p>Ensure to create a Kubernetes secret having the AWS access configuration(key) in the <code>CHAOS_NAMESPACE</code>. A sample secret file looks like:</p>

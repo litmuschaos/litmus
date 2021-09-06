@@ -795,6 +795,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pod-network-partition/" class="md-nav__link">
+        Pod Network Partition
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -2190,7 +2202,7 @@
                 
                 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <ul>
-<li>It injects latency on the specified container by starting a traffic control (tc) process with netem rules to add egress delays</li>
+<li>It injects packet loss on the specified container by starting a traffic control (tc) process with netem rules to add egress/ingress loss</li>
 <li>It can test the application's resilience to lossy/flaky network</li>
 </ul>
 <div class="admonition tip">
@@ -2203,8 +2215,8 @@
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <details class="info"><summary>Verify the prerequisites</summary><ul>
 <li>Ensure that Kubernetes Version &gt; 1.16 </li>
-<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>pod-network-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-loss/experiment.yaml">here</a> </li>
+<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
+<li>Ensure that the <code>pod-network-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-loss/experiment.yaml">here</a> </li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
@@ -2570,7 +2582,7 @@ Provide the traffic control image via <code>TC_IMAGE</code> ENV for the pumba li
         <!-- Link to next page -->
         
         <a
-            href="../../nodes/docker-service-kill/"
+            href="../pod-network-partition/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -2579,7 +2591,7 @@ Provide the traffic control image via <code>TC_IMAGE</code> ENV for the pumba li
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Docker Service Kill
+                Pod Network Partition
             </div>
             </div>
             <div class="md-footer__button md-icon">
