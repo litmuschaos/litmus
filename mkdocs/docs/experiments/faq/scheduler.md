@@ -100,8 +100,10 @@ Install ChaosScheduler operator in the desired Namespace afterwards -
 kubectl apply -f https://github.com/litmuschaos/litmus/tree/master/mkdocs/docs/litmus-namespaced-scope/litmus-namespaced-scheduler.yaml -n <namespace>
 ```
 
-Execute ChaosScheduler with an experiment in the desired Namespace afterwards. Note: The ChaosServiceAccount used within the embedded ChaosEngine template needs to be chosen appropriately depending the experiment scope. - 
-```
+Execute ChaosScheduler with an experiment in the desired Namespace afterward.
+
+` Note`: The ChaosServiceAccount used within the embedded ChaosEngine template needs to be chosen appropriately depending on the experiment scope. - 
+```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
 metadata:
@@ -149,6 +151,5 @@ spec:
               # pod failures without '--force' & default terminationGracePeriodSeconds
               - name: FORCE
                 value: 'false'
-```
 
 
