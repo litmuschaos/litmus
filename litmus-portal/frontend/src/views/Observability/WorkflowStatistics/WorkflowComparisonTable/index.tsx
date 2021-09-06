@@ -121,7 +121,7 @@ const WorkflowComparisonTable = () => {
   const isSelected = (name: string) => selectedWorkflows.indexOf(name) !== -1;
   const [compare, setCompare] = React.useState<Boolean>(false);
   const [isDataAvailable, setIsDataAvailable] = React.useState<Boolean>(true);
-  const [showAll, setShowAll] = React.useState<Boolean>(true);
+  const [showAll, setShowAll] = React.useState<Boolean>(false);
   const [plotDataForComparison, setPlotDataForComparison] =
     React.useState<ResilienceScoreComparisonPlotProps>();
   const [totalValidWorkflowRuns, setTotalValidWorkflowRuns] = React.useState<
@@ -152,6 +152,7 @@ const WorkflowComparisonTable = () => {
     variables: {
       workflowInput: {
         project_id: projectID,
+        workflow_ids: compare ? selectedWorkflows : [],
         pagination: {
           page: paginationData.page,
           limit: paginationData.limit,
@@ -161,9 +162,8 @@ const WorkflowComparisonTable = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  const [getWorkflowRun] = useLazyQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_RUN_DETAILS,
-    {
+  const [getWorkflowRun, { loading: loadingRuns, error: errorFetchingRuns }] =
+    useLazyQuery<Workflow, WorkflowDataVars>(WORKFLOW_RUN_DETAILS, {
       variables: {
         workflowRunsInput: {
           project_id: projectID,
@@ -189,9 +189,9 @@ const WorkflowComparisonTable = () => {
         const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
         const timeSeriesArray: DatedResilienceScore[][] = [];
         const runs = data?.getWorkflowRuns?.workflow_runs;
-        const workflowTimeSeriesData: DatedResilienceScore[] = [];
-        let isWorkflowValid: boolean = false;
         selectedWorkflows.forEach((workflowID) => {
+          let isWorkflowValid: boolean = false;
+          const workflowTimeSeriesData: DatedResilienceScore[] = [];
           const selectedRuns =
             runs?.filter(
               (workflowRun) => workflowRun.workflow_id === workflowID
@@ -363,8 +363,7 @@ const WorkflowComparisonTable = () => {
         setTotalValidWorkflowRuns(totalValidWorkflowRuns);
         setTotalValidWorkflowRunsCount(totalValidRuns);
       },
-    }
-  );
+    });
 
   const getClusters = (searchingData: ScheduledWorkflow[]) => {
     const uniqueList: string[] = [];
@@ -717,16 +716,10 @@ const WorkflowComparisonTable = () => {
             />
           </section>
           <section className="table section">
-            <Paper className={classes.tableBody}>
+            <Paper>
               <TableContainer
                 className={
-                  compare === false && selectedWorkflows.length <= 2
-                    ? classes.tableMain
-                    : compare === false && selectedWorkflows.length > 2
-                    ? classes.tableMainShowAll
-                    : showAll === true && selectedWorkflows.length <= 3
-                    ? classes.tableMainShowAll
-                    : showAll === true && selectedWorkflows.length > 3
+                  !compare || showAll
                     ? classes.tableMain
                     : classes.tableMainCompare
                 }
@@ -821,7 +814,22 @@ const WorkflowComparisonTable = () => {
                       limit: parseInt(event.target.value, 10),
                     });
                   }}
-                  className={classes.pagination}
+                  className={classes.tablePagination}
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                      },
+                      transformOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right',
+                      },
+                      getContentAnchorEl: null,
+                      classes: { paper: classes.menuList },
+                    },
+                  }}
+                  classes={{ menuItem: classes.menuListItem }}
                 />
               ) : (
                 <Paper
@@ -857,13 +865,38 @@ const WorkflowComparisonTable = () => {
                 'chaosWorkflows.browseStatistics.workFlowComparisonTable.comparativeResults'
               )}
             </Typography>
-            {plotDataForComparison && (
+            {plotDataForComparison && !loadingRuns && !errorFetchingRuns ? (
               <ResilienceScoreComparisonPlot
                 xData={plotDataForComparison.xData}
                 yData={plotDataForComparison.yData}
                 labels={plotDataForComparison.labels}
                 colors={plotDataForComparison.colors}
               />
+            ) : loadingRuns ? (
+              <Paper variant="outlined" className={classes.noData}>
+                <Loader />
+                <Typography
+                  variant="h5"
+                  align="center"
+                  className={classes.error}
+                >
+                  {t(
+                    'chaosWorkflows.browseStatistics.workFlowComparisonTable.loadingRuns'
+                  )}
+                </Typography>
+              </Paper>
+            ) : (
+              <Paper variant="outlined" className={classes.noData}>
+                <Typography
+                  variant="h5"
+                  align="center"
+                  className={classes.error}
+                >
+                  {t(
+                    'chaosWorkflows.browseStatistics.workFlowComparisonTable.errorFetchingRuns'
+                  )}
+                </Typography>
+              </Paper>
             )}
           </div>
         </Paper>

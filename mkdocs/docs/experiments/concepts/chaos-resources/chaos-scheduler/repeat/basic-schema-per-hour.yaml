@@ -6,8 +6,10 @@ spec:
   schedule:
     repeat:
       properties:
-         #format should be like "10m" or "2h" accordingly for minutes or hours
-        minChaosInterval: "2m"  
+        minChaosInterval:
+          # schedule the chaos every hour at 0th minute
+          hour:
+            everyNthHour: 1
   engineTemplateSpec:
     engineState: 'active'
     appinfo:

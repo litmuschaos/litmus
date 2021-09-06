@@ -50,6 +50,7 @@ func validateVersion() error {
 		if err != nil {
 			return fmt.Errorf("failed to insert current version in db, error = %w", err)
 		}
+		return nil
 	}
 	if dbVersion.Value.(string) != currentVersion {
 		return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)

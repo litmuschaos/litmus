@@ -134,7 +134,7 @@
       <tr>
         <td> LIB </td>
         <td> The chaos lib used to inject the chaos </td>
-        <td> Default value: litmus, supported values: pumba and litmus </td>
+        <td> supported value: litmus </td>
       </tr>
       <tr>
         <td> RAMP_TIME </td>

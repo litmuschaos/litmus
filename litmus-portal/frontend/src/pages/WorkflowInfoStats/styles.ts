@@ -1,6 +1,21 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
+  noRunsModal: {
+    padding: theme.spacing(4.5),
+    '& button': {
+      float: 'right',
+      marginTop: theme.spacing(12.5),
+    },
+  },
+  noRunsModalErrorMessage: {
+    display: 'flex',
+    alignItems: 'center',
+    '& p': {
+      marginLeft: theme.spacing(2.5),
+      fontSize: '1.25rem',
+    },
+  },
   headingSection: {
     display: 'flex',
   },
@@ -27,8 +42,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(4),
     overflow: 'hidden',
-    display: 'grid',
-    placeContent: 'center',
   },
   heatmapAreaHeading: {
     display: 'flex',
@@ -47,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
   heatmapBorder: {
     minHeight: '20rem',
     border: `1px solid ${theme.palette.border.main}`,
+    overflow: 'hidden',
     borderRadius: '0.1875rem',
     padding: theme.spacing(1.5, 3.5, 2.5, 2.5),
   },
@@ -54,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
     width: '60rem',
     height: '10rem',
     position: 'relative',
+    margin: '0 auto',
   },
   heatmapLegend: {
     display: 'flex',

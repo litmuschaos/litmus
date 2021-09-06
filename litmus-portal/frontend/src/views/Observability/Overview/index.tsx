@@ -32,6 +32,7 @@ import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
+import { sortNumAsc } from '../../../utils/sort';
 import { MonitoringDashboardCard } from './MonitoringDashboardCard';
 import useStyles from './styles';
 import { WorkflowStatisticsCard } from './WorkflowStatisticsCard';
@@ -192,7 +193,13 @@ const Overview: React.FC = () => {
   let filteredDashboardListData;
   // Select the latest 3 dashboards
   if (monitoringDashboardCount > 0) {
-    filteredDashboardListData = dashboardListData?.ListDashboard.slice(-3);
+    filteredDashboardListData = dashboardListData?.ListDashboard.slice()
+      .sort((a, b) => {
+        const x = b.viewed_at as unknown as number;
+        const y = a.viewed_at as unknown as number;
+        return sortNumAsc(x, y);
+      })
+      .slice(0, 3);
   }
 
   // Generic Apollo error:

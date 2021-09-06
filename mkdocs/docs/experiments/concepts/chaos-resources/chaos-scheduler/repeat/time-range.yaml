@@ -10,8 +10,9 @@ spec:
         startTime: "2020-05-12T05:47:00Z"   
         endTime: "2020-09-13T02:58:00Z"   
       properties:
-        #format should be like "10m" or "2h" accordingly for minutes and hours
-        minChaosInterval: "2m"   
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5 
   engineTemplateSpec:
     engineState: 'active'
     appinfo:
