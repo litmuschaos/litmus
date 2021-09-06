@@ -1831,6 +1831,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#how-to-run-chaosscheduler-in-namespaced-mode" class="md-nav__link">
+    How to run ChaosScheduler in Namespaced mode?
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2128,6 +2135,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#how-to-run-chaosscheduler-in-namespaced-mode" class="md-nav__link">
+    How to run ChaosScheduler in Namespaced mode?
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2180,6 +2194,9 @@
 <li>
 <p><a href="#what-fields-of-specschedule-are-to-be-specified-with-specscheduletyperepeat">What fields of spec.schedule are to be specified with spec.schedule.type=repeat?</a></p>
 </li>
+<li>
+<p><a href="#how-to-run-chaosscheduler-in-namespaced-mode">How to run ChaosScheduler in Namespaced mode?</a></p>
+</li>
 </ol>
 <h3 id="what-is-chaosscheduler">What is ChaosScheduler?<a class="headerlink" href="#what-is-chaosscheduler" title="Permanent link">&para;</a></h3>
 <p>ChaosScheduler is an operator built on top of the operator-sdk framework. It keeps on watching resources of kind ChaosSchedule and based on the scheduling parameters automates the formation of ChaosEngines, to be observed by ChaosOperator, instead of manually forming the ChaosEngine every time we wish to inject chaos in the cluster.</p>
@@ -2218,6 +2235,66 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-scheduler/m
 <li>includedDays</li>
 </ul>
 <p>It schedules chaosengines to be launched according to the parameters passed. It works just as a cronjob does, having superior functionalities such as we can control when the schedule will start and end.</p>
+<h3 id="how-to-run-chaosscheduler-in-namespaced-mode">How to run ChaosScheduler in Namespaced mode?<a class="headerlink" href="#how-to-run-chaosscheduler-in-namespaced-mode" title="Permanent link">&para;</a></h3>
+<p>Firstly install the crd -
+<div class="highlight"><pre><span></span><code>kubectl apply -f https://github.com/litmuschaos/litmus/tree/master/mkdocs/docs/litmus-namespaced-scope/litmus-scheduler-namespaced-crd.yaml
+</code></pre></div></p>
+<p>Secondly install the rbac in the desired Namespace -
+<div class="highlight"><pre><span></span><code>kubectl apply -f https://github.com/litmuschaos/litmus/tree/master/mkdocs/docs/litmus-namespaced-scope/litmus-scheduler-ns-rbac.yaml -n &lt;namespace&gt;
+</code></pre></div></p>
+<p>Install ChaosScheduler operator in the desired Namespace afterwards -
+<div class="highlight"><pre><span></span><code>kubectl apply -f https://github.com/litmuschaos/litmus/tree/master/mkdocs/docs/litmus-namespaced-scope/litmus-namespaced-scheduler.yaml -n &lt;namespace&gt;
+</code></pre></div></p>
+<p>Execute ChaosScheduler with an experiment in the desired Namespace afterward.</p>
+<p><code>Note</code>: The ChaosServiceAccount used within the embedded ChaosEngine template needs to be chosen appropriately depending on the experiment scope. - 
+```yaml
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosSchedule
+metadata:
+  name: schedule-nginx
+  namespace: <namespace>
+spec:
+  schedule:
+    repeat:
+      timeRange:
+        startTime: "2020-05-12T05:47:00Z"   #should be modified according to current UTC Time, for type=repeat
+        endTime: "2020-09-13T02:58:00Z"   #should be modified according to current UTC Time, for type=repeat
+      properties:
+        minChaosInterval: "2m"   #format should be like "10m" or "2h" accordingly for minutes and hours, for type=repeat
+      workHours:
+        includedHours: 0-12
+      workDays:
+        includedDays: "Mon,Tue,Wed,Sat,Sun" #should be set for type=repeat
+  engineTemplateSpec:
+    appinfo:
+      appns: 'default'
+      applabel: 'app=nginx'
+      appkind: 'deployment'
+    # It can be true/false
+    annotationCheck: 'false'
+    # It can be active/stop
+    engineState: 'active'
+    #ex. values: ns1:name=percona,ns2:run=nginx
+    auxiliaryAppInfo: ''
+    chaosServiceAccount: pod-delete-sa
+    # It can be delete/retain
+    jobCleanUpPolicy: 'delete'
+    experiments:
+      - name: pod-delete
+        spec:
+          components:
+            env:
+              # set chaos duration (in sec) as desired
+              - name: TOTAL_CHAOS_DURATION
+                value: '30'</p>
+<div class="codehilite"><pre><span></span><code>          # set chaos interval (in sec) as desired
+          - name: CHAOS_INTERVAL
+            value: &#39;10&#39;
+
+          # pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds
+          - name: FORCE
+            value: &#39;false&#39;
+</code></pre></div>
                 
                   
                 
