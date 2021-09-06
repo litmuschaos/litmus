@@ -1,6 +1,6 @@
 ## Introduction
 
-- It injects latency on the specified container by starting a traffic control (tc) process with netem rules to add egress delays
+- It injects packet loss on the specified container by starting a traffic control (tc) process with netem rules to add egress/ingress loss
 - It can test the application's resilience to lossy/flaky network
 
 !!! tip "Scenario: Induce network loss of the target pod"    
@@ -15,8 +15,8 @@
 
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
-    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-network-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-loss/experiment.yaml">here</a> 
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    - Ensure that the <code>pod-network-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-loss/experiment.yaml">here</a> 
     
 ## Default Validations
 

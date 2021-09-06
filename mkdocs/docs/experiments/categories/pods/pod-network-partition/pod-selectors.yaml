@@ -1,0 +1,23 @@
+# it inject the chaos for specified pods, matched by labels
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-partition-sa
+  experiments:
+  - name: pod-network-partition
+    spec:
+      components:
+        env:
+        # labels of the destination pods
+        - name: POD_SELECTOR
+          value: 'key=value'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
