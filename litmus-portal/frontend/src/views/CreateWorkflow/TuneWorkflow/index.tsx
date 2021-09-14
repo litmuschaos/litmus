@@ -155,7 +155,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       });
       setAllExperiments([...allExp]);
     },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   });
 
   /**
@@ -180,6 +180,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           manifest: YAML.stringify(updatedManifest),
         });
       },
+      fetchPolicy: 'network-only',
     }
   );
 

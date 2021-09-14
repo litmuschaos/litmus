@@ -532,7 +532,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: curlimages/curl:7.78.0
+          image: litmuschaos/curl:latest
           command: ["/bin/sh", "-c"]
           args:
             [
