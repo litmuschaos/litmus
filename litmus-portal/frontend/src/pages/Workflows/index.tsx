@@ -2,7 +2,7 @@ import { AppBar, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import { ButtonFilled } from 'litmus-ui';
-import React, { lazy } from 'react';
+import React, { lazy, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { SuspenseLoader } from '../../components/SuspenseLoader';
@@ -32,6 +32,7 @@ const Workflows = () => {
   const workflowTabValue = useSelector(
     (state: RootState) => state.tabNumber.workflows
   );
+  const [searchWorkflow, setSearchWorkflow] = useState('');
   const tabs = useActions(TabActions);
 
   const theme = useTheme();
@@ -84,12 +85,15 @@ const Workflows = () => {
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
         <SuspenseLoader style={{ height: '50vh' }}>
-          <BrowseWorkflow />
+          <BrowseWorkflow
+            workflowName={searchWorkflow}
+            setWorkflowName={setSearchWorkflow}
+          />
         </SuspenseLoader>
       </TabPanel>
       <TabPanel value={workflowTabValue} index={1}>
         <SuspenseLoader style={{ height: '50vh' }}>
-          <BrowseSchedule />
+          <BrowseSchedule setWorkflowName={setSearchWorkflow} />
         </SuspenseLoader>
       </TabPanel>
     </Wrapper>

@@ -77,11 +77,11 @@ const TableData: React.FC<TableDataProps> = ({
           &nbsp;{data.cluster_name}
         </Typography>
       </StyledTableCell>
-      <StyledTableCell>
+      <StyledTableCell style={{ width: '10rem' }}>
         <Typography className={classes.tableObjects}>
           <strong>
             {t(
-              'chaosWorkflows.browseStatistics.workFlowComparisonTable.seeStatistics'
+              'chaosWorkflows.browseStatistics.workFlowComparisonTable.statistics'
             )}
           </strong>
           <IconButton

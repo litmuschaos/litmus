@@ -34,6 +34,8 @@ hide:
 
 1. [In pod level stress chaos experiments like pod memory hog or pod io stress after the chaos is injected successfully the helper fails with an error message](#in-pod-level-stress-chaos-experiments-like-pod-memory-hog-or-pod-io-stress-after-the-chaos-is-injected-successfully-the-helper-fails-with-an-error-message)
 
+1. [Experiment failed for the istio enabled namespaces](#experiment-failed-for-the-istio-enabled-namespaces)
+
 ### When I’m executing an experiment the experiment's pod failed with the exec format error
 
 ??? info "View the error message" 
@@ -257,3 +259,44 @@ The GCP VM Disk Loss experiment requires a GCP Service Account having a Project 
     Error: process exited before the actual cleanup
 
 The error message indicates that the stress process inside the target container is somehow removed before the actual cleanup. There could be multiple reasons for this: the target container might have just got restarted due to excessive load on the container which it can’t handle and the kubelet terminated that replica and launches a new one (if applicable) and reports an OOM event on the older one.
+
+### Experiment failed for the istio enabled namespaces
+
+??? info "View the error message"
+    W0817 06:32:26.531145       1 client_config.go:541] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
+    time="2021-08-17T06:32:26Z" level=error msg="unable to get ChaosEngineUID, error: unable to get ChaosEngine name: pod-delete-chaos, in namespace: default, error: Get \"https://10.100.0.1:443/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/pod-delete-chaos\": dial tcp 10.100.0.1:443: connect: connection refused"
+
+If istio is enabled for the `chaos-namespace`, it will launch the chaos-runner and chaos-experiment pods with the istio sidecar. Which may block/delay the external traffic of those pods for the intial few seconds. Which can fail the experiment.
+
+We can fix the above failure by avoiding istio sidecar for the chaos pods. Refer the following manifest:
+
+??? note "View the ChaosEngine manifest with the required annotations"
+    ```
+    apiVersion: litmuschaos.io/v1alpha1
+    kind: ChaosEngine
+    metadata:
+      name: engine-nginx
+    spec:
+      components:
+        runner:
+          # annotation for the chaos-runner
+          runnerAnnotations:
+            sidecar.istio.io/inject: "false"
+      engineState: "active"
+      annotationCheck: "false"
+      appinfo:
+        appns: "default"
+        applabel: "app=nginx"
+        appkind: "deployment"
+      chaosServiceAccount: container-kill-sa
+      experiments:
+      - name: container-kill
+        spec:
+          components:
+            #annotations for the experiment pod 
+            experimentAnnotations:
+              sidecar.istio.io/inject: "false"
+            env:
+            - name: TOTAL_CHAOS_DURATION
+              VALUE: '60'
+    ```

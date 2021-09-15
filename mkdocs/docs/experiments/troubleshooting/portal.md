@@ -33,10 +33,12 @@ First, try to clear the browser cache and cookies and refresh the page, this mig
 ### Subscriber is crashing with the error dial:websocket: bad handshake
 
 It is a network issue. It seems your subscriber is unable to access the server. While installing the agent, It creates a config called agent-config to store some metadata like server endpoint, accesskey, etc. That server endpoint can be generated in many ways:
+  
   - Ingress (If INGRESS=true in server deployment envs)
   - Loadbalancer (it generates lb type of IP based on the server svc type)
   - NodePort (it generates nodeport type of IP based on the server svc type)
   - ClusterIP (it generates clusterip type of IP based on the server svc type)
+
 So, you can edit the agent-config and update the node IP. Once edited, restart the subscriber. We suggest using ingress, so that if the endpoint IP changes, then it won't affect your agent.
 
 ### Not able to connect to the LitmusChaos Control Plane hosted on GKE cluster.
@@ -65,6 +67,7 @@ It seems the directory somehow existed before litmus installation and might be u
 
 Bank of anthos is using PostgreSQL and wouldn't fall back properly to not using huge pages. 
 With given possible solution if same scenario occur can be resolve.
+
  - Modify the docker image to be able to set huge_pages = off in /usr/share/postgresql/postgresql.conf.sample before initdb was ran (this is what I did).
  - Turn off huge page support on the system (vm.nr_hugepages = 0 in /etc/sysctl.conf).
  - Fix Postgres's fallback mechanism when huge_pages = try is set (the default).

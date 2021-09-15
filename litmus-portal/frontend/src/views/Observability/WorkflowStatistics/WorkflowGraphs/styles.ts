@@ -30,9 +30,9 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(2.5),
   },
   radialChartContainer: {
-    width: '24rem',
+    width: 'calc(21.5vw)',
     borderRadius: '0.1875rem',
-    padding: theme.spacing(1.25, 4.125, 1.25, 4.125),
+    padding: theme.spacing(1.25, 2.5, 1.25, 2.5),
     filter: `drop-shadow(0px 0.3px 0.9px rgba(0, 0, 0, 0.1)) drop-shadow(0px 1.6px 3.6px rgba(0, 0, 0, 0.13))`,
     display: 'grid',
     placeContent: 'center',
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1.875, 0),
   },
   radialChart: {
-    width: '18rem',
+    width: 'calc(19.5vw)',
     height: '23rem',
   },
 }));
