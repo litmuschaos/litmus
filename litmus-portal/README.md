@@ -22,10 +22,10 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 
 #### Applying k8s manifest
 
-> Litmus-2.0.0 (Stable)
+> Litmus-2.1.0 (Stable)
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.0.0/docs/2.0.0/litmus-2.0.0.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.1.0/docs/2.1.0/litmus-2.1.0.yaml
 ```
 
 Or
