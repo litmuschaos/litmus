@@ -520,7 +520,7 @@ data:
             proxy_pass "http://litmusportal-server-service:9002/";
         }
 
-        location /ws/{
+        location /ws/ {
             proxy_set_header   Upgrade              $http_upgrade;
             proxy_set_header   Connection           "Upgrade";
             proxy_set_header   Host                 $host;
