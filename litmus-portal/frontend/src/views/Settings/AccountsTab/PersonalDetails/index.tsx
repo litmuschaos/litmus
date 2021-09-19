@@ -11,9 +11,9 @@ import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
-import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
 import useStyles from './styles';
+import { UpdateUser, CurrentUserData } from '../../../../models/userData';
 
 interface personaData {
   email: string;
@@ -29,10 +29,28 @@ const PersonalDetails: React.FC = () => {
   const username = getUsername();
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
+  const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
+  // const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
+  //   GET_USER,
+  //   { variables: { username } }
+  // );
+
   const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username } }
+    {
+      variables: { username },
+      onCompleted: (data) => {
+        setMemberDetails({
+          name: data.getUser.name,
+          uid: data.getUser.id,
+          username: data.getUser.username,
+          role: data.getUser.role,
+          email: data.getUser.email,
+        });
+      },
+    }
   );
+
   const [error, setError] = useState<string>('');
   const name: string = dataA?.getUser.name ?? ''; // TODO: Check if can be replaced with JWT based data.
   const email: string = dataA?.getUser.email ?? '';
@@ -54,18 +72,46 @@ const PersonalDetails: React.FC = () => {
     });
   };
   const handleNameChange = (e: any) => {
-    setPersonaData({
-      fullName: e.target.value,
-      userName: personaData.userName,
-      email: personaData.email,
-    });
+    const { value } = e.target;
+    if (value !== '') {
+      // if(e.target.value.charAt(0)===' ' ?e.target.value.substr(1):e.target.value){
+      const str =
+        e.target.value.charAt(0) === ' '
+          ? e.target.value.substr(1)
+          : e.target.value;
+      // }
+      setPersonaData({
+        fullName: str,
+        userName: personaData.userName,
+        email: personaData.email,
+      });
+    } else
+      setPersonaData({
+        fullName: ' ',
+        userName: personaData.userName,
+        email: personaData.email,
+      });
   };
   const handleEmailChange = (e: any) => {
-    setPersonaData({
-      fullName: personaData.fullName,
-      userName: personaData.userName,
-      email: e.target.value,
-    });
+    const { value } = e.target;
+    if (value !== '') {
+      // if(e.target.value.charAt(0)===' ' ?e.target.value.substr(1):e.target.value){
+      const str =
+        e.target.value.charAt(0) === ' '
+          ? e.target.value.substr(1)
+          : e.target.value;
+      // }
+      setPersonaData({
+        fullName: personaData.fullName,
+        userName: personaData.userName,
+        email: str,
+      });
+    } else
+      setPersonaData({
+        fullName: personaData.fullName,
+        userName: personaData.userName,
+        email: ' ',
+      });
   };
   const [updateDetails] = useMutation<UpdateUser>(UPDATE_DETAILS, {
     onCompleted: () => {
@@ -122,10 +168,24 @@ const PersonalDetails: React.FC = () => {
     <div>
       <form>
         <UserDetails
-          nameValue={personaData.fullName}
+          nameValue={
+            personaData.fullName
+              ? personaData.fullName
+              : memberDetails
+              ? memberDetails.name.charAt(0) === ' '
+                ? memberDetails.name.substr(1)
+                : memberDetails.name
+              : ''
+          }
           isUsernameDisabled
           handleNameChange={handleNameChange}
-          emailValue={personaData.email}
+          emailValue={
+            personaData.email
+              ? personaData.email
+              : memberDetails
+              ? memberDetails.email
+              : ''
+          }
           handleEmailChange={handleEmailChange}
           userValue={personaData.userName}
           handleUserChange={handleUserChange}
@@ -135,7 +195,13 @@ const PersonalDetails: React.FC = () => {
         <div className={classes.saveButton}>
           <div data-cy="save">
             <ButtonFilled
-              disabled={!(personaData.fullName.length && !loading)}
+              disabled={
+                !(
+                  personaData.email.length &&
+                  personaData.fullName.length &&
+                  !loading
+                )
+              }
               onClick={handleSubmit}
             >
               {loading ? (
