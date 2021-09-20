@@ -11,9 +11,9 @@ import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
+import { UpdateUser } from '../../../../models/userData';
 import { getToken, getUsername } from '../../../../utils/auth';
 import useStyles from './styles';
-import { UpdateUser, CurrentUserData } from '../../../../models/userData';
 
 interface personaData {
   email: string;
@@ -29,32 +29,30 @@ const PersonalDetails: React.FC = () => {
   const username = getUsername();
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
-  const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
+
+  const [error, setError] = useState<string>('');
+
+  const [personaData, setPersonaData] = React.useState<personaData>({
+    email: '',
+    userName: '',
+    fullName: '',
+  });
 
   const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
     {
       variables: { username },
+      fetchPolicy: 'cache-and-network',
       onCompleted: (data) => {
-        setMemberDetails({
-          name: data.getUser.name,
-          uid: data.getUser.id,
-          username: data.getUser.username,
-          role: data.getUser.role,
+        setPersonaData({
+          fullName: data.getUser.name,
+          userName: data.getUser.username,
           email: data.getUser.email,
         });
       },
     }
   );
 
-  const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? ''; // TODO: Check if can be replaced with JWT based data.
-  const email: string = dataA?.getUser.email ?? '';
-  const [personaData, setPersonaData] = React.useState<personaData>({
-    email,
-    userName: username,
-    fullName: name,
-  });
   // For closing and opening of the modal
   const [open, setOpen] = React.useState(false);
   const handleClose = () => {
@@ -68,44 +66,18 @@ const PersonalDetails: React.FC = () => {
     });
   };
   const handleNameChange = (e: any) => {
-    const { value } = e.target;
-    if (value !== '') {
-      const str =
-        e.target.value.charAt(0) === ' '
-          ? e.target.value.substr(1)
-          : e.target.value;
-
-      setPersonaData({
-        fullName: str,
-        userName: personaData.userName,
-        email: personaData.email,
-      });
-    } else
-      setPersonaData({
-        fullName: ' ',
-        userName: personaData.userName,
-        email: personaData.email,
-      });
+    setPersonaData({
+      fullName: e.target.value,
+      userName: personaData.userName,
+      email: personaData.email,
+    });
   };
   const handleEmailChange = (e: any) => {
-    const { value } = e.target;
-    if (value !== '') {
-      const str =
-        e.target.value.charAt(0) === ' '
-          ? e.target.value.substr(1)
-          : e.target.value;
-
-      setPersonaData({
-        fullName: personaData.fullName,
-        userName: personaData.userName,
-        email: str,
-      });
-    } else
-      setPersonaData({
-        fullName: personaData.fullName,
-        userName: personaData.userName,
-        email: ' ',
-      });
+    setPersonaData({
+      fullName: personaData.fullName,
+      userName: personaData.userName,
+      email: e.target.value,
+    });
   };
   const [updateDetails] = useMutation<UpdateUser>(UPDATE_DETAILS, {
     onCompleted: () => {
@@ -162,24 +134,10 @@ const PersonalDetails: React.FC = () => {
     <div>
       <form>
         <UserDetails
-          nameValue={
-            personaData.fullName
-              ? personaData.fullName
-              : memberDetails
-              ? memberDetails.name.charAt(0) === ' '
-                ? memberDetails.name.substr(1)
-                : memberDetails.name
-              : ''
-          }
+          nameValue={personaData.fullName}
           isUsernameDisabled
           handleNameChange={handleNameChange}
-          emailValue={
-            personaData.email
-              ? personaData.email
-              : memberDetails
-              ? memberDetails.email
-              : ''
-          }
+          emailValue={personaData.email}
           handleEmailChange={handleEmailChange}
           userValue={personaData.userName}
           handleUserChange={handleUserChange}
@@ -189,13 +147,7 @@ const PersonalDetails: React.FC = () => {
         <div className={classes.saveButton}>
           <div data-cy="save">
             <ButtonFilled
-              disabled={
-                !(
-                  personaData.email.length &&
-                  personaData.fullName.length &&
-                  !loading
-                )
-              }
+              disabled={!(personaData.fullName.length && !loading)}
               onClick={handleSubmit}
             >
               {loading ? (
