@@ -30,10 +30,6 @@ const PersonalDetails: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
-  // const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
-  //   GET_USER,
-  //   { variables: { username } }
-  // );
 
   const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
@@ -74,12 +70,11 @@ const PersonalDetails: React.FC = () => {
   const handleNameChange = (e: any) => {
     const { value } = e.target;
     if (value !== '') {
-      // if(e.target.value.charAt(0)===' ' ?e.target.value.substr(1):e.target.value){
       const str =
         e.target.value.charAt(0) === ' '
           ? e.target.value.substr(1)
           : e.target.value;
-      // }
+
       setPersonaData({
         fullName: str,
         userName: personaData.userName,
@@ -95,12 +90,11 @@ const PersonalDetails: React.FC = () => {
   const handleEmailChange = (e: any) => {
     const { value } = e.target;
     if (value !== '') {
-      // if(e.target.value.charAt(0)===' ' ?e.target.value.substr(1):e.target.value){
       const str =
         e.target.value.charAt(0) === ' '
           ? e.target.value.substr(1)
           : e.target.value;
-      // }
+
       setPersonaData({
         fullName: personaData.fullName,
         userName: personaData.userName,
