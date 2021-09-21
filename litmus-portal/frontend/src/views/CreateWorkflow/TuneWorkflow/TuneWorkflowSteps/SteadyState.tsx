@@ -225,7 +225,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
                       }}
                     >
                       <Icon
-                        name="edit"
+                        name="pencil"
                         size="lg"
                         color={theme.palette.text.hint}
                       />
@@ -238,7 +238,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
                       }}
                     >
                       <Icon
-                        name="delete"
+                        name="trash"
                         size="lg"
                         color={theme.palette.error.main}
                       />

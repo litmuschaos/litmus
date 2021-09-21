@@ -29,18 +29,30 @@ const PersonalDetails: React.FC = () => {
   const username = getUsername();
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
+
+  const [error, setError] = useState<string>('');
+
+  const [personaData, setPersonaData] = React.useState<personaData>({
+    email: '',
+    userName: '',
+    fullName: '',
+  });
+
   const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username } }
+    {
+      variables: { username },
+      fetchPolicy: 'cache-and-network',
+      onCompleted: (data) => {
+        setPersonaData({
+          fullName: data.getUser.name,
+          userName: data.getUser.username,
+          email: data.getUser.email,
+        });
+      },
+    }
   );
-  const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? ''; // TODO: Check if can be replaced with JWT based data.
-  const email: string = dataA?.getUser.email ?? '';
-  const [personaData, setPersonaData] = React.useState<personaData>({
-    email,
-    userName: username,
-    fullName: name,
-  });
+
   // For closing and opening of the modal
   const [open, setOpen] = React.useState(false);
   const handleClose = () => {
