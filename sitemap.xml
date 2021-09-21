@@ -231,6 +231,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/awsIamIntegration/</loc>
+         <lastmod>2021-09-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/concepts/psp/</loc>
          <lastmod>2021-09-21</lastmod>
          <changefreq>daily</changefreq>
