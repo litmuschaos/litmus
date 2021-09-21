@@ -157,6 +157,7 @@ nav:
           - K8S Probe: experiments/concepts/chaos-resources/probes/k8sProbe.md
           - Prometheus Probe: experiments/concepts/chaos-resources/probes/promProbe.md
       - Security:  experiments/concepts/psp.md
+      - AWS IAM Integration: experiments/concepts/awsIamIntegration.md
     - Litmus FAQ:
       - Contents: experiments/faq/content.md
       - FAQ: 
