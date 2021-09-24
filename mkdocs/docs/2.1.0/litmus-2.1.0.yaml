@@ -9,9 +9,9 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
   name: argo-aggregate-to-admin-for-litmusportal-server
 rules:
-- apiGroups: [argoproj.io] 
-  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
-  verbs: [create, delete, deletecollection, get, list, patch, update, watch]
+  - apiGroups: [argoproj.io]
+    resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
+    verbs: [create, delete, deletecollection, get, list, patch, update, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -20,9 +20,9 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
   name: argo-aggregate-to-edit-for-litmusportal-server
 rules:
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
-  verbs: [create, delete, deletecollection, get, list, patch, update, watch]
+  - apiGroups: [argoproj.io]
+    resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
+    verbs: [create, delete, deletecollection, get, list, patch, update, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -31,42 +31,42 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-view: "true"
   name: argo-aggregate-to-view-for-litmusportal-server
 rules:
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
-  verbs: [get, list, watch]
+  - apiGroups: [argoproj.io]
+    resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
+    verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: argo-cr-for-litmusportal-server
 rules:
-- apiGroups: [""]
-  resources: [pods, pods/exec]
-  verbs: [create, get, list, watch, update, patch, delete]
-- apiGroups: [""]
-  resources: [configmaps]
-  verbs: [get, watch, list]
-- apiGroups: [""]
-  resources: [persistentvolumeclaims]
-  verbs: [create, delete]
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers]
-  verbs: [get, list, watch, update, patch, delete, create]
-- apiGroups: [argoproj.io]
-  resources: [workflowtemplates, workflowtemplates/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
-  verbs: [get, list, watch]
-- apiGroups: [""]
-  resources: [serviceaccounts]
-  verbs: [get, list]
-- apiGroups: [argoproj.io]
-  resources: [cronworkflows, cronworkflows/finalizers]
-  verbs: [get, list, watch, update, patch, delete]
-- apiGroups: [""]
-  resources: [events]
-  verbs: [create, patch]
-- apiGroups: [policy]
-  resources: [poddisruptionbudgets]
-  verbs: [create, get, delete]
+  - apiGroups: [""]
+    resources: [pods, pods/exec]
+    verbs: [create, get, list, watch, update, patch, delete]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, watch, list]
+  - apiGroups: [""]
+    resources: [persistentvolumeclaims]
+    verbs: [create, delete]
+  - apiGroups: [argoproj.io]
+    resources: [workflows, workflows/finalizers]
+    verbs: [get, list, watch, update, patch, delete, create]
+  - apiGroups: [argoproj.io]
+    resources: [workflowtemplates, workflowtemplates/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [serviceaccounts]
+    verbs: [get, list]
+  - apiGroups: [argoproj.io]
+    resources: [cronworkflows, cronworkflows/finalizers]
+    verbs: [get, list, watch, update, patch, delete]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create, patch]
+  - apiGroups: [policy]
+    resources: [poddisruptionbudgets]
+    verbs: [create, get, delete]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -185,96 +185,96 @@ rules:
   ## .. by creating the chaos-runner
 
   # for creating and monitoring the chaos-runner pods
-- apiGroups: [""]
-  resources: [pods,events]
-  verbs: [create, delete, get, list, patch, update, deletecollection]
+  - apiGroups: [""]
+    resources: [pods,events]
+    verbs: [create, delete, get, list, patch, update, deletecollection]
 
-  # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
-- apiGroups: [""]
-  resources: [secrets, configmaps]
-  verbs: [get, list]
+    # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
+  - apiGroups: [""]
+    resources: [secrets, configmaps]
+    verbs: [get, list]
 
-  # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
-- apiGroups: [""]
-  resources: [pods/log]
-  verbs: [get, list, watch]  
+    # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
+  - apiGroups: [""]
+    resources: [pods/log]
+    verbs: [get, list, watch]
 
-  # for configuring and monitor the experiment job by chaos-runner pod
-- apiGroups: [batch]
-  resources: [jobs]
-  verbs: [create, list, get, delete, deletecollection]
+    # for configuring and monitor the experiment job by chaos-runner pod
+  - apiGroups: [batch]
+    resources: [jobs]
+    verbs: [create, list, get, delete, deletecollection]
 
-  # ********************************************************************
-  # Permissions needed for creation and discovery of chaos experiments 
-  # ********************************************************************
+    # ********************************************************************
+    # Permissions needed for creation and discovery of chaos experiments
+    # ********************************************************************
 
-  # The helper pods are created by experiment to perform the actual chaos injection ...
-  # ... for a period of chaos duration
+    # The helper pods are created by experiment to perform the actual chaos injection ...
+    # ... for a period of chaos duration
 
-  # for creating and deleting the helper or target app pod and events by experiment
-- apiGroups: [""]
-  resources: [pods]
-  verbs: [create, delete, deletecollection]
+    # for creating and deleting the helper or target app pod and events by experiment
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [create, delete, deletecollection]
 
-  # for creating and monitoring the events for chaos operations
-- apiGroups: [""]
-  resources: [events]
-  verbs: [create, delete, get, list, patch, update, deletecollection]
+    # for creating and monitoring the events for chaos operations
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create, delete, get, list, patch, update, deletecollection]
 
-  # for monitoring the helper and target app pod
-- apiGroups: [""]
-  resources: [pods]
-  verbs: [get, list, patch, update]
+    # for monitoring the helper and target app pod
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, patch, update]
 
-  # for creating and managing to execute comands inside target container
-- apiGroups: [""]
-  resources: [pods/exec, pods/eviction, replicationcontrollers]
-  verbs: [get,list,create]
+    # for creating and managing to execute comands inside target container
+  - apiGroups: [""]
+    resources: [pods/exec, pods/eviction, replicationcontrollers]
+    verbs: [get,list,create]
 
-  # for tracking & getting logs of the pods created by experiment pod to implement individual steps in the experiment
-- apiGroups: [""]
-  resources: [pods/log]
-  verbs: [get, list, watch]
+    # for tracking & getting logs of the pods created by experiment pod to implement individual steps in the experiment
+  - apiGroups: [""]
+    resources: [pods/log]
+    verbs: [get, list, watch]
 
-  # for creating and monitoring liveness services or monitoring target app services during chaos injection
-- apiGroups: [""]
-  resources: [services]
-  verbs: [create, delete, get, list, delete, deletecollection]
+    # for creating and monitoring liveness services or monitoring target app services during chaos injection
+  - apiGroups: [""]
+    resources: [services]
+    verbs: [create, delete, get, list, delete, deletecollection]
 
-  # for checking the app parent resources as deployments or sts and are eligible chaos candidates  
-- apiGroups: [apps]
-  resources: [deployments, statefulsets]
-  verbs: [list, get, patch, update]
+    # for checking the app parent resources as deployments or sts and are eligible chaos candidates
+  - apiGroups: [apps]
+    resources: [deployments, statefulsets]
+    verbs: [list, get, patch, update]
 
-  # for checking the app parent resources as replicasets and are eligible chaos candidates  
-- apiGroups: [apps]
-  resources: [replicasets]
-  verbs: [list, get]
+    # for checking the app parent resources as replicasets and are eligible chaos candidates
+  - apiGroups: [apps]
+    resources: [replicasets]
+    verbs: [list, get]
 
-  # for checking the app parent resources as deamonsets and are eligible chaos candidates  
-- apiGroups: [apps]
-  resources: [daemonsets]
-  verbs: [list, get, delete]
+    # for checking the app parent resources as deamonsets and are eligible chaos candidates
+  - apiGroups: [apps]
+    resources: [daemonsets]
+    verbs: [list, get, delete]
 
-  # for checking (openshift) app parent resources if they are eligible chaos candidates  
-- apiGroups: [apps.openshift.io]
-  resources: [deploymentconfigs]
-  verbs: [list, get]
+    # for checking (openshift) app parent resources if they are eligible chaos candidates
+  - apiGroups: [apps.openshift.io]
+    resources: [deploymentconfigs]
+    verbs: [list, get]
 
-  # for checking (argo) app parent resources if they are eligible chaos candidates  
-- apiGroups: [argoproj.io]
-  resources: [rollouts]
-  verbs: [list, get]
+    # for checking (argo) app parent resources if they are eligible chaos candidates
+  - apiGroups: [argoproj.io]
+    resources: [rollouts]
+    verbs: [list, get]
 
-  # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
-- apiGroups: [litmuschaos.io]
-  resources: [chaosengines, chaosexperiments, chaosresults]
-  verbs: [create, list, get, patch, update, delete]
+    # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+  - apiGroups: [litmuschaos.io]
+    resources: [chaosengines, chaosexperiments, chaosresults]
+    verbs: [create, list, get, patch, update, delete]
 
-  # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
-- apiGroups: [""]
-  resources: [nodes]
-  verbs: [patch, get, list, update]
+    # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
+  - apiGroups: [""]
+    resources: [nodes]
+    verbs: [patch, get, list, update]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -310,7 +310,7 @@ rules:
   - apiGroups: [apps]
     resources: [deployments, statefulsets]
     verbs: [get, watch, patch, create, delete]
-    
+
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults, chaosschedules]
@@ -337,27 +337,27 @@ metadata:
   labels:
     name: subscriber-cr-for-litmusportal-server
 rules:
-- apiGroups: [""]
-  resources: [configmaps]
-  verbs: [get, create, delete, update]
-- apiGroups: [""]
-  resources: [pods/log]
-  verbs: [get, list, watch]
-- apiGroups: [""]
-  resources: [pods, namespaces, nodes, services]
-  verbs: [get, list, watch]
-- apiGroups: [litmuschaos.io]
-  resources: [chaosengines, chaosschedules, chaosresults]
-  verbs: [get, list, create, delete, update, watch]
-- apiGroups: [apps.openshift.io]
-  resources: [deploymentconfigs]
-  verbs: [get, list]
-- apiGroups: [apps]
-  resources: [deployments, daemonsets, replicasets, statefulsets]
-  verbs: [get, list, delete]
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, rollouts]
-  verbs: [get, list, create, delete, update, watch]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, create, delete, update]
+  - apiGroups: [""]
+    resources: [pods/log]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [pods, namespaces, nodes, services]
+    verbs: [get, list, watch]
+  - apiGroups: [litmuschaos.io]
+    resources: [chaosengines, chaosschedules, chaosresults]
+    verbs: [get, list, create, delete, update, watch]
+  - apiGroups: [apps.openshift.io]
+    resources: [deploymentconfigs]
+    verbs: [get, list]
+  - apiGroups: [apps]
+    resources: [deployments, daemonsets, replicasets, statefulsets]
+    verbs: [get, list, delete]
+  - apiGroups: [argoproj.io]
+    resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, rollouts]
+    verbs: [get, list, create, delete, update, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -378,15 +378,15 @@ kind: ClusterRole
 metadata:
   name: event-tracker-cr-for-litmusportal-server
 rules:
-- apiGroups: [eventtracker.litmuschaos.io]
-  resources: [eventtrackerpolicies]
-  verbs: [create, delete, get, list, patch, update, watch]
-- apiGroups: [eventtracker.litmuschaos.io]
-  resources: [eventtrackerpolicies/status]
-  verbs: [get, patch, update]
-- apiGroups: ["", extensions, apps]
-  resources: [deployments, daemonsets, statefulsets, pods, configmaps]
-  verbs: [get, list, watch]
+  - apiGroups: [eventtracker.litmuschaos.io]
+    resources: [eventtrackerpolicies]
+    verbs: [create, delete, get, list, patch, update, watch]
+  - apiGroups: [eventtracker.litmuschaos.io]
+    resources: [eventtrackerpolicies/status]
+    verbs: [get, patch, update]
+  - apiGroups: ["", extensions, apps]
+    resources: [deployments, daemonsets, statefulsets, pods, configmaps]
+    verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -467,69 +467,7 @@ data:
   JWT_SECRET: "litmus-portal@123"
   DB_USER: "admin"
   DB_PASSWORD: "1234"
-  VERSION: "ci"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: litmusportal-frontend-nginx-configuration
-  namespace: litmus
-data:
-  default.conf: |
-    server {
-        listen       8080;
-        server_name  localhost;
-        #charset koi8-r;
-        #access_log  /var/log/nginx/host.access.log  main;
-
-        location / {
-            root   /usr/share/nginx/html;
-            index  index.html index.htm;
-            try_files $uri /index.html;
-        }
-
-        #error_page  404              /404.html;
-
-        # redirect server error pages to the static page /50x.html
-        #
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   /usr/share/nginx/html;
-        }
-
-        # deny access to .htaccess files, if Apache's document root
-        # concurs with nginx's one
-        #
-        #location ~ /\.ht {
-        #    deny  all;
-        #}
-
-        location /auth/ {
-            proxy_set_header   Host                 $host;
-            proxy_set_header   X-Real-IP            $remote_addr;
-            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
-            proxy_set_header   X-Forwarded-Proto    $scheme;
-            proxy_pass "http://litmusportal-server-service:9003/";
-        }
-
-        location /api/ {
-            proxy_set_header   Host                 $host;
-            proxy_set_header   X-Real-IP            $remote_addr;
-            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
-            proxy_set_header   X-Forwarded-Proto    $scheme;
-            proxy_pass "http://litmusportal-server-service:9002/";
-        }
-
-        location /ws/ {
-            proxy_set_header   Upgrade              $http_upgrade;
-            proxy_set_header   Connection           "Upgrade";
-            proxy_set_header   Host                 $host;
-            proxy_set_header   X-Real-IP            $remote_addr;
-            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
-            proxy_set_header   X-Forwarded-Proto    $scheme;
-            proxy_pass "http://litmusportal-server-service:9002/";
-        }
-    }
+  VERSION: "2.1.0"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -550,7 +488,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:2.1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -560,14 +498,6 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: AGENT_SCOPE
-          volumeMounts:
-          - name: nginx-config
-            mountPath: /etc/nginx/conf.d/default.conf
-            subPath: default.conf
-      volumes:
-        - name: nginx-config
-          configMap:
-            name: litmusportal-frontend-nginx-configuration
 ---
 apiVersion: v1
 kind: Service
@@ -606,11 +536,11 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             [
-              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+                "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:2.1.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -624,9 +554,9 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:2.1.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:2.1.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v2.11.0"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
@@ -657,7 +587,7 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:2.1.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config

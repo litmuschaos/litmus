@@ -9,6 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import InfoIcon from '@material-ui/icons/Info';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { Icon } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
   forwardRef,
@@ -20,7 +21,6 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import { Icon } from 'litmus-ui';
 import Row from '../../../containers/layouts/Row';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { experimentMap } from '../../../models/redux/workflow';
@@ -408,7 +408,7 @@ const WorkflowTable = forwardRef(
                             size="medium"
                           >
                             <Icon
-                              name="edit"
+                              name="pencil"
                               size="md"
                               color={theme.palette.text.hint}
                             />
@@ -422,7 +422,7 @@ const WorkflowTable = forwardRef(
                             size="medium"
                           >
                             <Icon
-                              name="delete"
+                              name="trash"
                               size="md"
                               color={theme.palette.error.main}
                             />

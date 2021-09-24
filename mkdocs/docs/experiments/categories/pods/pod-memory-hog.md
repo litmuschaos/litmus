@@ -108,7 +108,7 @@
       <tr>
         <td> MEMORY_CONSUMPTION </td>
         <td>  The amount of memory used of hogging a Kubernetes pod (megabytes)</td>
-        <td> Defaults to 500MB (Up to 2000MB)</td>
+        <td> Defaults to 500MB </td>
       </tr>
       <tr>
         <td> NUMBER_OF_WORKERS </td>

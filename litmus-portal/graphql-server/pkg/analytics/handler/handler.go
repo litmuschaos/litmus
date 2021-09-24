@@ -250,12 +250,11 @@ func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (stri
 
 	if !chaosQueryUpdate {
 		var (
-			newPanelGroups                = make([]dbSchemaAnalytics.PanelGroup, len(dashboard.PanelGroups))
-			panelsToCreate                []*dbSchemaAnalytics.Panel
-			panelsToUpdate                []*dbSchemaAnalytics.Panel
-			newApplicationMetadataMap     []dbSchemaAnalytics.ApplicationMetadata
-			updatedDashboardPanelIDs      []string
-			updatedDashboardPanelGroupIDs []string
+			newPanelGroups            = make([]dbSchemaAnalytics.PanelGroup, len(dashboard.PanelGroups))
+			panelsToCreate            []*dbSchemaAnalytics.Panel
+			panelsToUpdate            []*dbSchemaAnalytics.Panel
+			newApplicationMetadataMap []dbSchemaAnalytics.ApplicationMetadata
+			updatedDashboardPanelIDs  []string
 		)
 
 		for _, applicationMetadata := range dashboard.ApplicationMetadataMap {
@@ -283,7 +282,6 @@ func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (stri
 				panelGroupID = uuid.New().String()
 			} else {
 				panelGroupID = panelGroup.PanelGroupID
-				updatedDashboardPanelGroupIDs = append(updatedDashboardPanelGroupIDs, panelGroup.PanelGroupID)
 			}
 
 			newPanelGroups[i].PanelGroupID = panelGroupID
@@ -366,7 +364,7 @@ func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (stri
 
 			for _, panel := range tempPanels {
 
-				if !utils.ContainsString(updatedDashboardPanelIDs, panel.PanelID) || !utils.ContainsString(updatedDashboardPanelGroupIDs, panelGroup.PanelGroupID) {
+				if !utils.ContainsString(updatedDashboardPanelIDs, panel.PanelID) {
 
 					var promQueriesInPanelToBeDeleted []*dbSchemaAnalytics.PromQuery
 					err := copier.Copy(&promQueriesInPanelToBeDeleted, &panel.PromQueries)
