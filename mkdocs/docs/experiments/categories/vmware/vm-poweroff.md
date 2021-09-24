@@ -1,8 +1,7 @@
 ## Introduction
 
-- It causes Stops/PowerOff a VM before bringing it back to running state after a specified chaos duration
-Experiment uses vmware api's to start/stop the target vm.
-- It helps to check the performance of the application/process running on the vmware server.
+- It causes VMWare VMs to Stop/Power-off before bringing them back to Powered-on state after a specified chaos duration using the VMWare APIs to start/stop the target VM.
+- It helps to check the performance of the application/process running on the VMWare VMs.
 
 !!! tip "Scenario: poweroff the vm"    
     ![VM Poweroff](../../images/vm-poweroff.png)
@@ -16,9 +15,9 @@ Experiment uses vmware api's to start/stop the target vm.
 
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
-    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>vm-poweroff</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/experiment.yaml">here</a>
-    - Ensure that you have sufficient Vcenter access to stop and start the vm.
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    - Ensure that the <code>vm-poweroff</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/experiment.yaml">here</a>
+    - Ensure that you have sufficient Vcenter access to stop and start the VM.
     - (Optional) Ensure to create a Kubernetes secret having the Vcenter credentials in the `CHAOS_NAMESPACE`. A sample secret file looks like:
 
         ```yaml
@@ -39,7 +38,7 @@ Experiment uses vmware api's to start/stop the target vm.
 ## Default Validations
 
 ??? info "View the default validations" 
-    - VM instance should be in healthy state.
+    - VM should be in healthy state.
 
 ## Minimal RBAC configuration example (optional)
 
@@ -111,9 +110,9 @@ Experiment uses vmware api's to start/stop the target vm.
         <th> Notes </th>
       </tr>
       <tr>
-        <td> APP_VM_MOID </td>
-        <td> Moid of the vmware instance</td>
-        <td> Once you open VM in vCenter WebClient, you can find MOID in address field (VirtualMachine:vm-5365). Eg: vm-5365 </td>
+        <td> APP_VM_MOIDS </td>
+        <td> MOIDs of the vmware instance</td>
+        <td> Once you open VM in vCenter WebClient, you can find MOID in address field (VirtualMachine:vm-5365). Alternatively you can use the CLI to fetch the MOID. Eg: vm-5365 </td>
       </tr>
     </table>
     
@@ -130,6 +129,16 @@ Experiment uses vmware api's to start/stop the target vm.
         <td> The total time duration for chaos insertion (sec) </td>
         <td> Defaults to 30s </td>
       </tr>
+      <tr> 
+        <td> CHAOS_INTERVAL </td>
+        <td> The interval (in sec) between successive instance termination </td>
+        <td> Defaults to 30s </td>
+      </tr>
+      <tr>
+        <td> SEQUENCE </td>
+        <td> It defines sequence of chaos execution for multiple instance </td>
+        <td> Default value: parallel. Supported: serial, parallel </td>
+      </tr>
       <tr>
         <td> RAMP_TIME </td>
         <td> Period to wait before and after injection of chaos in sec </td>
@@ -145,13 +154,13 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Stop/Poweroff VM By MOID
 
-It contains moid of the vm instance. It can be tuned via `APP_VM_MOID` ENV.
+It contains MOID of the vm instance. It can be tuned via `APP_VM_MOIDS` ENV.
 
 Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/vmware/vm-poweroff/app-vm-moid.yaml yaml)
 ```yaml
-# power-off the vmware vm
+# power-off the VMWare VM
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -165,9 +174,10 @@ spec:
     spec:
       components:
         env:
-        # moid of the vm instance
-        - name: APP_VM_MOID
-          value: 'vm-5365'
+        # MOID of the VM
+        - name: APP_VM_MOIDS
+          value: 'vm-53,vm-65'
+
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
