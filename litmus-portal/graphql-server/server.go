@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -28,14 +29,41 @@ import (
 	"github.com/rs/cors"
 )
 
+type Config struct {
+	Port                        string `required:"true"`
+	Version                     string `required:"true"`
+	AgentDeployments            string `required:"true" split_words:"true"`
+	DbServer                    string `required:"true" split_words:"true"`
+	JwtSecret                   string `required:"true" split_words:"true"`
+	SelfCluster                 string `required:"true" split_words:"true"`
+	AgentScope                  string `required:"true" split_words:"true"`
+	AgentNamespace              string `required:"true" split_words:"true"`
+	LitmusPortalNamespace       string `required:"true" split_words:"true"`
+	DbUser                      string `required:"true" split_words:"true"`
+	DbPassword                  string `required:"true" split_words:"true"`
+	PortalScope                 string `required:"true" split_words:"true"`
+	SubscriberImage             string `required:"true" split_words:"true"`
+	EventTrackerImage           string `required:"true" split_words:"true"`
+	ArgoWorkfloWControllerImage string `required:"true" split_words:"true"`
+	ArgoWorkflowExecutorImage   string `required:"true" split_words:"true"`
+	LitmusChaosOperatorImage    string `required:"true" split_words:"true"`
+	LitmusChaosRunnerImage      string `required:"true" split_words:"true"`
+	LitmusChaosExporterImage    string `required:"true" split_words:"true"`
+	ContainerRuntimeExecutor    string `required:"true" split_words:"true"`
+	HubBranchName               string `required:"true" split_words:"true"`
+}
+
 const defaultPort = "8080"
 
 func init() {
 	logrus.Printf("Go Version: %s", runtime.Version())
 	logrus.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
-	if os.Getenv("VERSION") == "" || os.Getenv("AGENT_DEPLOYMENTS") == "" || os.Getenv("DB_SERVER") == "" || os.Getenv("JWT_SECRET") == "" || os.Getenv("SELF_CLUSTER") == "" || os.Getenv("AGENT_SCOPE") == "" || os.Getenv("AGENT_NAMESPACE") == "" || os.Getenv("LITMUS_PORTAL_NAMESPACE") == "" || os.Getenv("DB_USER") == "" || os.Getenv("DB_PASSWORD") == "" || os.Getenv("PORTAL_SCOPE") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("EVENT_TRACKER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE") == "" || os.Getenv("CONTAINER_RUNTIME_EXECUTOR") == "" || os.Getenv("HUB_BRANCH_NAME") == "" {
-		logrus.Fatal("Some environment variable are not setup")
+	var c Config
+
+	err := envconfig.Process("", &c)
+	if err != nil {
+		logrus.Fatal(err)
 	}
 }
 
