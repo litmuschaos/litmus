@@ -519,6 +519,7 @@ spec:
                   env:
                     type: array
                     items:
+                      type: object
                       description: EnvVar represents an environment variable
                         present in a Container.
                       properties:
