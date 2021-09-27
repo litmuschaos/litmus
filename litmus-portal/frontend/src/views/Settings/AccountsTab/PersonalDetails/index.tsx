@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
 import UserDetails from '../../../../components/UserDetails';
@@ -22,34 +22,35 @@ interface personaData {
 }
 
 // Displays the personals details on the "accounts" tab
-const PersonalDetails: React.FC = () => {
+const PersonalDetails: FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 
   const username = getUsername();
-  const [loading, setLoading] = React.useState(false);
-  // Query to get user details
+  const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState<string>('');
 
-  const [personaData, setPersonaData] = React.useState<personaData>({
+  // Set Default values
+  const [personaData, setPersonaData] = useState<personaData>({
     email: '',
-    userName: '',
+    userName: username,
     fullName: '',
   });
 
+  // Get user details
   const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
     {
       variables: { username },
-      fetchPolicy: 'cache-and-network',
       onCompleted: (data) => {
         setPersonaData({
-          fullName: data.getUser.name,
-          userName: data.getUser.username,
+          userName: username,
           email: data.getUser.email,
+          fullName: data.getUser.name,
         });
       },
+      fetchPolicy: 'cache-and-network',
     }
   );
 
