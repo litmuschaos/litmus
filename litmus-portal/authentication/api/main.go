@@ -14,9 +14,31 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type Config struct {
+	JwtSecret     string `required:"true" split_words:"true"`
+	AdminUsername string `required:"true" split_words:"true"`
+	AdminPassword string `required:"true" split_words:"true"`
+	DbServer      string `required:"true" split_words:"true"`
+	DbUser        string `required:"true" split_words:"true"`
+	DbPassword    string `required:"true" split_words:"true"`
+}
+
+func init() {
+	log.Printf("Go Version: %s", runtime.Version())
+	log.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+
+	var c Config
+
+	err := envconfig.Process("", &c)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func main() {
 	// send logs to stderr so we can use 'kubectl logs'
