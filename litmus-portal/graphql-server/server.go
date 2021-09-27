@@ -23,8 +23,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	"github.com/rs/cors"
 )
 
@@ -100,8 +100,8 @@ func main() {
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
-	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
-	router.HandleFunc("/status", handlers.StatusHandler)
+	router.HandleFunc("/file/{key}{path:.yaml}", rest_handlers.FileHandler)
+	router.HandleFunc("/status", rest_handlers.StatusHandler)
 
 	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
