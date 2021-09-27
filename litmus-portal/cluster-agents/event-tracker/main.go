@@ -53,7 +53,7 @@ type Config struct {
 	AgentScope         string `required:"true" split_words:"true"`
 	IsClusterConfirmed string `required:"true" split_words:"true"`
 	AccessKey          string `required:"true" split_words:"true"`
-	CluserId           string `required:"true" split_words:"true"`
+	ClusterId          string `required:"true" split_words:"true"`
 	ServerAddr         string `required:"true" split_words:"true"`
 	AgentNamespace     string `required:"true" split_words:"true"`
 }
