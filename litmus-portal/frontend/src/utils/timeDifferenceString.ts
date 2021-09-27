@@ -11,28 +11,28 @@ const GetTimeDiff = (startTime: number, endTime: number, t: TFunction) => {
   if (days > 0) {
     timeDiffString = timeDiffString.concat(
       days === 1
-        ? `${days} ${t('analyticsDashboard.timeText.day')} `
-        : `${days} ${t('analyticsDashboard.timeText.days')} `
+        ? `${days} ${t('monitoringDashboard.timeText.day')} `
+        : `${days} ${t('monitoringDashboard.timeText.days')} `
     );
   }
   if (hours > 0) {
     timeDiffString = timeDiffString.concat(
       hours === 1
-        ? `${hours} ${t('analyticsDashboard.timeText.hour')} `
-        : `${hours} ${t('analyticsDashboard.timeText.hours')} `
+        ? `${hours} ${t('monitoringDashboard.timeText.hour')} `
+        : `${hours} ${t('monitoringDashboard.timeText.hours')} `
     );
   }
   if (minutes > 0) {
     timeDiffString = timeDiffString.concat(
       minutes === 1
-        ? `${minutes} ${t('analyticsDashboard.timeText.minute')} `
-        : `${minutes} ${t('analyticsDashboard.timeText.minutes')} `
+        ? `${minutes} ${t('monitoringDashboard.timeText.minute')} `
+        : `${minutes} ${t('monitoringDashboard.timeText.minutes')} `
     );
   }
   if (timeDiffString === '') {
     timeDiffString = timeDiffString.concat(
-      ` ${t('analyticsDashboard.timeText.few')}  ${t(
-        'analyticsDashboard.timeText.seconds'
+      ` ${t('monitoringDashboard.timeText.few')}  ${t(
+        'monitoringDashboard.timeText.seconds'
       )}`
     );
   }

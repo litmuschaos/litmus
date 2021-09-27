@@ -237,6 +237,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'transparent !important',
     color: theme.palette.primary.main,
   },
+  workflowModalRoot: {
+    margin: theme.spacing(8, 5, 5, 5),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  editor: {
+    width: '100%',
+    marginTop: theme.spacing(2),
+  },
 }));
 
 export default useStyles;

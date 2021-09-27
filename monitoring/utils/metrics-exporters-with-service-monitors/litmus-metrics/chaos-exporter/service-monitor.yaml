@@ -17,3 +17,6 @@ spec:
   endpoints:
     - port: tcp
       interval: 1s
+      metricRelabelings:
+        - targetLabel: instance
+          replacement: 'chaos-exporter-service'

@@ -31,13 +31,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(1.5),
     paddingTop: theme.spacing(-1.25),
   },
-  closeIcon: {
-    color: theme.palette.common.black,
-  },
-  imgDiv: {
-    display: 'block',
-  },
   iconDiv: {
+    padding: theme.spacing(1),
+    cursor: 'pointer',
     marginLeft: 'auto',
   },
 }));

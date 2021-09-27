@@ -5,10 +5,18 @@ import {
   MenuItem,
   Select,
   Typography,
+  useTheme,
 } from '@material-ui/core';
-import { CalendarHeatmap, CalendarHeatmapTooltipProps } from 'litmus-ui';
+import {
+  ButtonFilled,
+  CalendarHeatmap,
+  CalendarHeatmapTooltipProps,
+  Icon,
+  Modal,
+} from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
@@ -25,6 +33,7 @@ import {
   ListWorkflowsInput,
   ScheduledWorkflows,
 } from '../../models/graphql/workflowListData';
+import { history } from '../../redux/configureStore';
 import { getProjectID } from '../../utils/getSearchParams';
 import { InfoSection } from './InfoSection';
 import StackedBarGraph from './StackedBar';
@@ -64,8 +73,13 @@ const valueThreshold = [13, 26, 39, 49, 59, 69, 79, 89, 100];
 const WorkflowInfoStats: React.FC = () => {
   const classes = useStyles();
   const projectID = getProjectID();
+  const { t } = useTranslation();
+  const theme = useTheme();
 
   const { workflowId }: URLParams = useParams();
+
+  // Keep track of whether workflow has run or not
+  const [hasWorkflowRun, setHasWorkflowRun] = useState<boolean>(true);
 
   // Apollo query to get the scheduled workflow data
   const { data } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
@@ -95,6 +109,12 @@ const WorkflowInfoStats: React.FC = () => {
           project_id: projectID,
           workflow_ids: [workflowId],
         },
+      },
+      onCompleted: () => {
+        setHasWorkflowRun(
+          workflowRunData !== undefined &&
+            workflowRunData.getWorkflowRuns.total_no_of_workflow_runs > 0
+        );
       },
       fetchPolicy: 'cache-and-network',
     }
@@ -159,9 +179,38 @@ const WorkflowInfoStats: React.FC = () => {
 
   const [workflowRunDate, setWorkflowRunDate] = useState<number>(0);
 
+  // Used to pass down the average resiliency score to the stackbar
+  const [binResiliencyScore, setBinResiliencyScore] = useState<number>(0);
+
   return (
     <Wrapper>
       <BackButton />
+      {/* If no runs yet */}
+      <Modal
+        width="28.9375rem"
+        height="17.25rem"
+        open={!hasWorkflowRun}
+        onClose={() => {
+          history.goBack();
+        }}
+      >
+        <div className={classes.noRunsModal}>
+          <div className={classes.noRunsModalErrorMessage}>
+            <Icon name="info" size="3xl" color={theme.palette.border.error} />
+            <Typography>
+              {t('observability.workflowInfoStats.noRuns')}
+            </Typography>
+          </div>
+          <ButtonFilled
+            onClick={() => {
+              history.goBack();
+            }}
+          >
+            {t('observability.workflowInfoStats.back')}
+          </ButtonFilled>
+        </div>
+      </Modal>
+
       {/* Heading of the Page */}
       <div className={classes.headingSection}>
         <div className={classes.pageHeading}>
@@ -169,7 +218,7 @@ const WorkflowInfoStats: React.FC = () => {
             {data?.ListWorkflow.workflows[0].workflow_name}
           </Typography>
           <Typography className={classes.subHeading}>
-            Here’s the analytics of the selected workflow
+            Here’s the statistics of the selected workflow
           </Typography>
         </div>
         {/* For later: */}
@@ -179,16 +228,14 @@ const WorkflowInfoStats: React.FC = () => {
       </div>
 
       {/* Information and stats */}
-      {data &&
-        workflowRunData &&
-        workflowRunData.getWorkflowRuns.total_no_of_workflow_runs > 0 && (
-          <InfoSection
-            data={data}
-            workflowRunLength={
-              workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
-            }
-          />
-        )}
+      {data && workflowRunData && (
+        <InfoSection
+          data={data}
+          workflowRunLength={
+            workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
+          }
+        />
+      )}
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
@@ -198,7 +245,7 @@ const WorkflowInfoStats: React.FC = () => {
         <div className={classes.heatmapArea}>
           <div className={classes.heatmapAreaHeading}>
             <Typography className={classes.sectionHeading}>
-              Analytics
+              Statistics
             </Typography>
             {/* Year selection filter */}
           </div>
@@ -249,6 +296,7 @@ const WorkflowInfoStats: React.FC = () => {
                       } else {
                         setShowStackBar(true);
                         handleTableClose();
+                        setBinResiliencyScore(bin.bin.value);
                         setWorkflowRunDate(
                           bin.bin.workflowRunDetail.date_stamp
                         );
@@ -258,6 +306,7 @@ const WorkflowInfoStats: React.FC = () => {
                       setDataCheck(false);
                       handleTableClose();
                       setWorkflowRunDate(0);
+                      setBinResiliencyScore(0);
                     }
                   }}
                 />
@@ -276,8 +325,9 @@ const WorkflowInfoStats: React.FC = () => {
           </div>
           {showStackBar && (
             <StackedBarGraph
-              workflowID={workflowId}
               date={workflowRunDate}
+              averageResiliency={binResiliencyScore}
+              workflowID={workflowId}
               handleTableOpen={handleTableOpen}
               handleTableClose={handleTableClose}
               showTable={showTable}

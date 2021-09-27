@@ -1,0 +1,43 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosSchedule
+metadata:
+  name: schedule-nginx
+spec:
+  schedule:
+    repeat:
+      properties:
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5 
+      workHours:
+        # format should be <starting-hour-number>-<ending-hour-number>(inclusive)
+        includedHours: 0-12
+  engineTemplateSpec:
+    engineState: 'active'
+    appinfo:
+      appns: 'default'
+      applabel: 'app=nginx'
+      appkind: 'deployment'
+    # It can be true/false
+    annotationCheck: 'true'
+    #ex. values: ns1:name=percona,ns2:run=nginx
+    auxiliaryAppInfo: ''
+    chaosServiceAccount: pod-delete-sa
+    # It can be delete/retain
+    jobCleanUpPolicy: 'delete'
+    experiments:
+      - name: pod-delete
+        spec:
+          components:
+            env:
+              # set chaos duration (in sec) as desired
+              - name: TOTAL_CHAOS_DURATION
+                value: '30'
+
+              # set chaos interval (in sec) as desired
+              - name: CHAOS_INTERVAL
+                value: '10'
+
+              # pod failures without '--force' & default terminationGracePeriodSeconds
+              - name: FORCE
+                value: 'false'

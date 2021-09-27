@@ -390,8 +390,6 @@ const EditSchedule: React.FC = () => {
                                   'createWorkflow.verifyCommit.test'
                                 )}`}
                                 testValue={Test.weight}
-                                spacing={false}
-                                icon={false}
                               />
                             ))}
                           </div>

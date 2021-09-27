@@ -7,11 +7,18 @@ import {
   Popover,
   TableCell,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled, OutlinedPills } from 'litmus-ui';
+import {
+  ButtonFilled,
+  ButtonOutlined,
+  Icon,
+  Modal,
+  OutlinedPills,
+} from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -33,6 +40,7 @@ import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
 import useStyles from './styles';
+import ManifestModal from './ManifestModal';
 
 interface TableDataProps {
   data: Partial<WorkflowRun>;
@@ -44,6 +52,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const { t } = useTranslation();
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const nodeSelection = useActions(NodeSelectionActions);
@@ -53,6 +62,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [manifestModal, setManifestModal] = React.useState(false);
 
   // Function to capitalize the first letter of the word
   // eg: internal to Internal
@@ -164,6 +174,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
       default:
         return 'pending';
     }
+  };
+
+  const handleCloseManifest = () => {
+    setManifestModal(false);
   };
 
   return (
@@ -421,22 +435,53 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             value="Analysis"
             onClick={() => {
               history.push({
-                pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
+                pathname: `/observability/workflowStatistics/${data.workflow_id}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
           >
-            <div className={classes.expDiv} data-cy="workflowAnalytics">
+            <div className={classes.expDiv} data-cy="workflowStatistics">
               <img
-                src="./icons/show-analytics.svg"
-                alt="Display Analytics"
+                src="./icons/show-statistics.svg"
+                alt="Display Statistics"
                 className={classes.btnImg}
               />
               <Typography className={classes.btnText}>
-                {t('chaosWorkflows.browseWorkflows.tableData.showTheAnalytics')}
+                {t(
+                  'chaosWorkflows.browseWorkflows.tableData.showTheStatistics'
+                )}
               </Typography>
             </div>
           </MenuItem>
+          <MenuItem
+            value="ViewWorkflow"
+            onClick={() => {
+              setManifestModal(true);
+            }}
+          >
+            <div className={classes.expDiv} data-cy="viewWorkflow">
+              <Icon name="document" color={`${theme.palette.common.black}`} />
+              <Typography className={classes.btnText}>
+                {t('chaosWorkflows.browseWorkflows.tableData.viewManifest')}
+              </Typography>
+            </div>
+          </MenuItem>
+          <Modal
+            width="60%"
+            open={manifestModal}
+            onClose={handleCloseManifest}
+            disableBackdropClick
+            modalActions={
+              <ButtonOutlined onClick={handleCloseManifest}>
+                &#x2715;
+              </ButtonOutlined>
+            }
+          >
+            <ManifestModal
+              project_id={projectID}
+              workflow_id={data.workflow_id}
+            />
+          </Modal>
           {data.phase?.toLowerCase() === 'running' && (
             <MenuItem
               value="Terminate"
