@@ -1,4 +1,4 @@
-package file_handlers
+package handlers
 
 import (
 	"log"

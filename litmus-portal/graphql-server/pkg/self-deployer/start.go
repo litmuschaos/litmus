@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/file_handlers"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -35,7 +35,7 @@ func StartDeployer(projectID string) {
 		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
 	}
 
-	response, statusCode, err := file_handlers.GetManifest(resp.Token)
+	response, statusCode, err := handlers.GetManifest(resp.Token)
 	if err != nil {
 		log.Print("ERROR", err)
 	}
