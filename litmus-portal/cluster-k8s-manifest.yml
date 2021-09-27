@@ -5,39 +5,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    rbac.authorization.k8s.io/aggregate-to-admin: "true"
-  name: argo-aggregate-to-admin-for-litmusportal-server
-rules:
-- apiGroups: [argoproj.io] 
-  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
-  verbs: [create, delete, deletecollection, get, list, patch, update, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    rbac.authorization.k8s.io/aggregate-to-edit: "true"
-  name: argo-aggregate-to-edit-for-litmusportal-server
-rules:
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
-  verbs: [create, delete, deletecollection, get, list, patch, update, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    rbac.authorization.k8s.io/aggregate-to-view: "true"
-  name: argo-aggregate-to-view-for-litmusportal-server
-rules:
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
-  verbs: [get, list, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
   name: argo-cr-for-litmusportal-server
 rules:
 - apiGroups: [""]
@@ -76,32 +43,6 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: argo-cr-for-litmusportal-server
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: argo-aggregate-to-view-crb-for-litmusportal-server
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: argo-aggregate-to-view-for-litmusportal-server
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: argo-aggregate-to-admin-crb-for-litmusportal-server
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: argo-aggregate-to-admin-for-litmusportal-server
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
