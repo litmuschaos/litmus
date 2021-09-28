@@ -30,7 +30,7 @@ import (
 )
 
 type Config struct {
-	Port                        string `required:"true"`
+	Port                        string 
 	Version                     string `required:"true"`
 	AgentDeployments            string `required:"true" split_words:"true"`
 	DbServer                    string `required:"true" split_words:"true"`
