@@ -7,17 +7,26 @@ import {
   Popover,
   TableCell,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled, OutlinedPills } from 'litmus-ui';
+import {
+  ButtonFilled,
+  ButtonOutlined,
+  Icon,
+  Modal,
+  OutlinedPills,
+} from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import TimePopOver from '../../../components/TimePopOver';
 import {
   DELETE_WORKFLOW,
   SYNC_WORKFLOW,
+  TERMINATE_WORKFLOW,
   WORKFLOW_LIST_DETAILS,
 } from '../../../graphql';
 import { WorkflowRun } from '../../../models/graphql/workflowData';
@@ -31,6 +40,7 @@ import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
 import useStyles from './styles';
+import ManifestModal from './ManifestModal';
 
 interface TableDataProps {
   data: Partial<WorkflowRun>;
@@ -42,6 +52,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const { t } = useTranslation();
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const nodeSelection = useActions(NodeSelectionActions);
@@ -51,6 +62,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [manifestModal, setManifestModal] = React.useState(false);
 
   // Function to capitalize the first letter of the word
   // eg: internal to Internal
@@ -103,7 +115,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
    */
   const [syncWorkflow] = useMutation(SYNC_WORKFLOW, {
     onCompleted: (data) => {
-      if (data.syncWorkflow) {
+      if (data?.syncWorkflow) {
         handleWarningPopOverClose();
         refetchQuery();
       }
@@ -115,8 +127,19 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
    */
   const [deleteWorkflow] = useMutation(DELETE_WORKFLOW, {
     onCompleted: (data) => {
-      if (data.deleteChaosWorkflow) {
+      if (data?.deleteChaosWorkflow) {
         handleWarningPopOverClose();
+        refetchQuery();
+      }
+    },
+  });
+
+  /**
+   * Terminate workflow terminates the workflow from the cluster
+   */
+  const [terminateWorkflow] = useMutation(TERMINATE_WORKFLOW, {
+    onCompleted: (data) => {
+      if (data?.terminateChaosWorkflow) {
         refetchQuery();
       }
     },
@@ -151,6 +174,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
       default:
         return 'pending';
     }
+  };
+
+  const handleCloseManifest = () => {
+    setManifestModal(false);
   };
 
   return (
@@ -227,9 +254,9 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 }}
                 className={classes.terminateText}
               >
-                <img src="./icons/terminate-wf.svg" alt="terminate" />
+                <DeleteForeverIcon className={classes.deleteIcon} />
                 <Typography className={classes.waitingBtnText}>
-                  {t('chaosWorkflows.browseWorkflows.terminate')}
+                  {t('chaosWorkflows.browseWorkflows.delete')}
                 </Typography>
               </ButtonFilled>
             </div>
@@ -250,11 +277,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           nodeSelection.selectNode({
             pod_name: '',
           });
-          if (data.phase?.toLowerCase() !== 'notavailable')
-            history.push({
-              pathname: `/workflows/${data.workflow_run_id}`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
+          history.push({
+            pathname: `/workflows/${data.workflow_run_id}`,
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
+          });
         }}
       >
         <Typography className={classes.boldText} data-cy="workflowName">
@@ -292,6 +318,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           data.experiments_passed === null ||
           data.total_experiments === undefined ||
           data.total_experiments === null ||
+          data.total_experiments === 0 ||
           data.resiliency_score === undefined ||
           data.resiliency_score === null ? (
             <span className={classes.less}>
@@ -387,11 +414,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               nodeSelection.selectNode({
                 pod_name: '',
               });
-              if (data.phase?.toLowerCase() !== 'notavailable')
-                history.push({
-                  pathname: `/workflows/${data.workflow_run_id}`,
-                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                });
+              history.push({
+                pathname: `/workflows/${data.workflow_run_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
           >
             <div className={classes.expDiv} data-cy="workflowDetails">
@@ -408,27 +434,78 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           <MenuItem
             value="Analysis"
             onClick={() => {
-              if (data.phase?.toLowerCase() !== 'notavailable')
-                history.push({
-                  pathname: `/analytics/workflowdashboard/${data.workflow_id}`,
-                  search: `?projectID=${projectID}&projectRole=${projectRole}`,
-                });
+              history.push({
+                pathname: `/observability/workflowStatistics/${data.workflow_id}`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
             }}
           >
-            <div className={classes.expDiv} data-cy="workflowAnalytics">
+            <div className={classes.expDiv} data-cy="workflowStatistics">
               <img
-                src="./icons/show-analytics.svg"
-                alt="Display Analytics"
+                src="./icons/show-statistics.svg"
+                alt="Display Statistics"
                 className={classes.btnImg}
               />
               <Typography className={classes.btnText}>
-                {t('chaosWorkflows.browseWorkflows.tableData.showTheAnalytics')}
+                {t(
+                  'chaosWorkflows.browseWorkflows.tableData.showTheStatistics'
+                )}
               </Typography>
             </div>
           </MenuItem>
-          {/* <MenuItem value="Scheduler" onClick={handleMenu}>
-            Show the scheduler
-          </MenuItem> */}
+          <MenuItem
+            value="ViewWorkflow"
+            onClick={() => {
+              setManifestModal(true);
+            }}
+          >
+            <div className={classes.expDiv} data-cy="viewWorkflow">
+              <Icon name="document" color={`${theme.palette.common.black}`} />
+              <Typography className={classes.btnText}>
+                {t('chaosWorkflows.browseWorkflows.tableData.viewManifest')}
+              </Typography>
+            </div>
+          </MenuItem>
+          <Modal
+            width="60%"
+            open={manifestModal}
+            onClose={handleCloseManifest}
+            disableBackdropClick
+            modalActions={
+              <ButtonOutlined onClick={handleCloseManifest}>
+                &#x2715;
+              </ButtonOutlined>
+            }
+          >
+            <ManifestModal
+              project_id={projectID}
+              workflow_id={data.workflow_id}
+            />
+          </Modal>
+          {data.phase?.toLowerCase() === 'running' && (
+            <MenuItem
+              value="Terminate"
+              onClick={() => {
+                terminateWorkflow({
+                  variables: {
+                    workflowid: data.workflow_id,
+                    workflow_run_id: data.workflow_run_id,
+                  },
+                });
+              }}
+            >
+              <div className={classes.expDiv} data-cy="terminateWorkflow">
+                <img
+                  src="./icons/terminate-wf-dark.svg"
+                  alt="Terminate Workflow"
+                  className={classes.terminateImg}
+                />
+                <Typography className={classes.btnText}>
+                  {t('chaosWorkflows.browseWorkflows.terminate')}
+                </Typography>
+              </div>
+            </MenuItem>
+          )}
         </Menu>
       </TableCell>
     </>

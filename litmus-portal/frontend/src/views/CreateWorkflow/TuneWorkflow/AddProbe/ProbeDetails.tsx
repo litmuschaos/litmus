@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import { InputLabel, MenuItem, Select } from '@material-ui/core';
 import { InputField } from 'litmus-ui';
-import { MenuItem, Select, InputLabel } from '@material-ui/core';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useStyles from './styles';
 import {
-  stringType,
-  intFloatType,
-  k8sOperation,
   comparatorType,
   httpCiteria,
+  intFloatType,
+  k8sOperation,
+  stringType,
 } from './comparatorTypes';
 import ProbesMenu from './ProbesMenu';
+import useStyles from './styles';
 
 interface ProbeDetailsProps {
+  isEdit: boolean;
   setProbeData: (probeData: any) => void;
   probeData: any;
 }
@@ -25,6 +26,7 @@ interface HTTPDataType {
 }
 
 const ProbeDetails: React.FC<ProbeDetailsProps> = ({
+  isEdit,
   setProbeData,
   probeData,
 }) => {
@@ -121,10 +123,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
         ...probeData,
         'k8sProbe/inputs': {
           ...probeData['k8sProbe/inputs'],
-          command: {
-            ...probeData['k8sProbe/inputs'].command,
-            [e.target.name]: e.target.value,
-          },
+          [e.target.name]: e.target.value,
         },
       });
     }
@@ -248,7 +247,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="body"
                   name="body"
                   type="text"
-                  value={httpData.body}
+                  value={
+                    isEdit
+                      ? probeData['httpProbe/inputs']?.method.post.body
+                      : httpData.body
+                  }
                   onChange={(e) => {
                     setProbeData({
                       ...probeData,
@@ -256,10 +259,19 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                         ...probeData['httpProbe/inputs'],
                         method: {
                           post: {
-                            criteria: httpData.criteria,
-                            responseCode: httpData.responseCode,
+                            criteria: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .criteria
+                              : httpData.criteria,
+                            responseCode: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .responseCode
+                              : httpData.responseCode,
                             body: e.target.value,
-                            contentType: httpData.contentType,
+                            contentType: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .contentType
+                              : httpData.contentType,
                           },
                         },
                       },
@@ -283,7 +295,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="contentType"
                   name="contentType"
                   type="text"
-                  value={httpData.contentType}
+                  value={
+                    isEdit
+                      ? probeData['httpProbe/inputs']?.method.post.contentType
+                      : httpData.contentType
+                  }
                   onChange={(e) => {
                     setProbeData({
                       ...probeData,
@@ -291,9 +307,17 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                         ...probeData['httpProbe/inputs'],
                         method: {
                           post: {
-                            criteria: httpData.criteria,
-                            responseCode: httpData.responseCode,
-                            body: httpData.body,
+                            criteria: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .criteria
+                              : httpData.criteria,
+                            responseCode: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post
+                                  .responseCode
+                              : httpData.responseCode,
+                            body: isEdit
+                              ? probeData['httpProbe/inputs']?.method.post.body
+                              : httpData.body,
                             contentType: e.target.value,
                           },
                         },
@@ -313,7 +337,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
             label={t(
               'createWorkflow.tuneWorkflow.addProbe.inputLabels.criteria'
             )}
-            value={httpData.criteria}
+            value={
+              isEdit
+                ? httpMethod === 'get'
+                  ? probeData['httpProbe/inputs']?.method.get.criteria
+                  : probeData['httpProbe/inputs']?.method.post.criteria
+                : httpData.criteria
+            }
             handleChange={(e) => {
               if (httpMethod === 'get') {
                 setProbeData({
@@ -323,7 +353,10 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                     method: {
                       get: {
                         criteria: e.target.value,
-                        responseCode: httpData.responseCode,
+                        responseCode: isEdit
+                          ? probeData['httpProbe/inputs']?.method.get
+                              .responseCode
+                          : httpData.responseCode,
                       },
                     },
                   },
@@ -337,9 +370,17 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                     method: {
                       post: {
                         criteria: e.target.value,
-                        responseCode: httpData.responseCode,
-                        body: httpData.body,
-                        contentType: httpData.contentType,
+                        responseCode: isEdit
+                          ? probeData['httpProbe/inputs']?.method.post
+                              .responseCode
+                          : httpData.responseCode,
+                        body: isEdit
+                          ? probeData['httpProbe/inputs']?.method.post.body
+                          : httpData.body,
+                        contentType: isEdit
+                          ? probeData['httpProbe/inputs']?.method.post
+                              .contentType
+                          : httpData.contentType,
                       },
                     },
                   },
@@ -364,7 +405,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="response-code"
               name="responseCode"
               type="text"
-              value={httpData.responseCode}
+              value={
+                isEdit
+                  ? httpMethod === 'get'
+                    ? probeData['httpProbe/inputs']?.method.get.responseCode
+                    : probeData['httpProbe/inputs']?.method.post.responseCode
+                  : httpData.responseCode
+              }
               onChange={(e) => {
                 if (httpMethod === 'get') {
                   setProbeData({
@@ -373,7 +420,9 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                       ...probeData['httpProbe/inputs'],
                       method: {
                         get: {
-                          criteria: httpData.criteria,
+                          criteria: isEdit
+                            ? probeData['httpProbe/inputs']?.method.get.criteria
+                            : httpData.criteria,
                           responseCode: e.target.value,
                         },
                       },
@@ -387,10 +436,18 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                       ...probeData['httpProbe/inputs'],
                       method: {
                         post: {
-                          criteria: httpData.criteria,
+                          criteria: isEdit
+                            ? probeData['httpProbe/inputs']?.method.post
+                                .criteria
+                            : httpData.criteria,
                           responseCode: e.target.value,
-                          body: httpData.body,
-                          contentType: httpData.contentType,
+                          body: isEdit
+                            ? probeData['httpProbe/inputs']?.method.post.body
+                            : httpData.body,
+                          contentType: isEdit
+                            ? probeData['httpProbe/inputs']?.method.post
+                                .contentType
+                            : httpData.contentType,
                         },
                       },
                     },
@@ -447,7 +504,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 'cmdProbe/inputs': {
                   ...probeData['cmdProbe/inputs'],
                   comparator: {
-                    ...probeData['cmdProbe/inputs'].comparator,
+                    ...probeData['cmdProbe/inputs']?.comparator,
                     type: e.target.value,
                   },
                 },
@@ -468,7 +525,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 'cmdProbe/inputs': {
                   ...probeData['cmdProbe/inputs'],
                   comparator: {
-                    ...probeData['cmdProbe/inputs'].comparator,
+                    ...probeData['cmdProbe/inputs']?.comparator,
                     criteria: e.target.value,
                   },
                 },
@@ -542,6 +599,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 id="data"
                 name="data"
                 type="text"
+                multiline
                 value={probeData['k8sProbe/inputs']?.data}
                 onChange={handleK8s}
               />
@@ -561,7 +619,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="group"
               name="group"
               type="text"
-              value={probeData['k8sProbe/inputs']?.command?.group}
+              value={probeData['k8sProbe/inputs']?.group}
               onChange={handleK8s}
             />
           </div>
@@ -575,7 +633,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="version"
               name="version"
               type="text"
-              value={probeData['k8sProbe/inputs']?.command?.version}
+              value={probeData['k8sProbe/inputs']?.version}
               onChange={handleK8s}
             />
           </div>
@@ -589,7 +647,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="resource"
               name="resource"
               type="text"
-              value={probeData['k8sProbe/inputs']?.command?.resource}
+              value={probeData['k8sProbe/inputs']?.resource}
               onChange={handleK8s}
             />
           </div>
@@ -603,7 +661,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="namespace"
               name="namespace"
               type="text"
-              value={probeData['k8sProbe/inputs']?.command?.namespace}
+              value={probeData['k8sProbe/inputs']?.namespace}
               onChange={handleK8s}
             />
           </div>
@@ -624,7 +682,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="field-selector"
                   name="fieldSelector"
                   type="text"
-                  value={probeData['k8sProbe/inputs']?.command?.fieldSelector}
+                  value={probeData['k8sProbe/inputs']?.fieldSelector}
                   onChange={handleK8s}
                 />
               </div>
@@ -643,7 +701,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="label-selector"
                   name="labelSelector"
                   type="text"
-                  value={probeData['k8sProbe/inputs']?.command?.labelSelector}
+                  value={probeData['k8sProbe/inputs']?.labelSelector}
                   onChange={handleK8s}
                 />
               </div>

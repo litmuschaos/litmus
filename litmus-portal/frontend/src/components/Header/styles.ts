@@ -25,18 +25,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'flex-end',
   },
   // Logo
-  litmusDiv: {
-    display: 'flex',
-  },
   homeLink: {
     textDecoration: 'none',
   },
-  logo: {
-    left: theme.spacing(4.375),
-  },
-  litmusHome: {
+  chaosText: {
     fontSize: '1.625rem',
-    marginLeft: theme.spacing(1.75),
+    color: theme.palette.text.secondary,
+    fontWeight: 600,
   },
   projectDropdown: {
     display: 'flex',
@@ -64,6 +59,24 @@ const useStyles = makeStyles((theme: Theme) => ({
     '&:hover': {
       background: `${theme.palette.cards.highlight} !important`,
     },
+  },
+  selectedWrapper: {
+    width: '2rem',
+    height: '2rem',
+    borderRadius: '1rem',
+    backgroundColor: theme.palette.background.paper,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notSelectedWrapper: {
+    width: '2rem',
+    height: '2rem',
+    borderRadius: '1rem',
+    backgroundColor: theme.palette.success.main,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   active: {
     background: `${theme.palette.cards.highlight} !important`,

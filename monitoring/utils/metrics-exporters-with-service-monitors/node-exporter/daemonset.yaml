@@ -4,6 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/name: node-exporter
     app.kubernetes.io/version: latest
+    release: prometheus-stack
   name: node-exporter
   namespace: monitoring
 spec:
@@ -15,6 +16,7 @@ spec:
       labels:
         app.kubernetes.io/name: node-exporter
         app.kubernetes.io/version: latest
+        release: prometheus-stack
     spec:
       containers:
         - args:

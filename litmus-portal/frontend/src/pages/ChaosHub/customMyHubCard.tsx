@@ -183,7 +183,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
         <div className={classes.cardContent}>
           <img
             src={`./icons/${
-              hub.HubName === 'Chaos Hub'
+              hub.HubName === 'Litmus ChaosHub'
                 ? 'myhub-litmus.svg'
                 : 'my-hub-charts.svg'
             }`}

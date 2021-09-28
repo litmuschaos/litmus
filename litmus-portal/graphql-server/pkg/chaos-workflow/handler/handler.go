@@ -108,6 +108,32 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 	return false, err
 }
 
+func TerminateWorkflow(ctx context.Context, workflow_id *string, workflowRunID *string, r *store.StateData) (bool, error) {
+	query := bson.D{{"workflow_id", workflow_id}}
+	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	if err != nil {
+		return false, err
+	}
+
+	if *workflow_id != "" && *workflowRunID != "" {
+		for _, workflow_run := range workflow.WorkflowRuns {
+			if workflow_run.WorkflowRunID == *workflowRunID {
+				workflow_run.Completed = true
+				workflow_run.Phase = "Terminated"
+			}
+		}
+
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, r)
+		if err != nil {
+			return false, err
+		}
+
+		return true, nil
+
+	}
+	return false, errors.New("invalid input, workflow and workflow run id cannot be empty")
+}
+
 func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
 	input, wfType, err := ops.ProcessWorkflow(input)
 	if err != nil {
@@ -762,6 +788,15 @@ func ReRunWorkflow(workflowID string) (string, error) {
 	resKind := gjson.Get(workflows[0].WorkflowManifest, "kind").String()
 	if strings.ToLower(resKind) == "cronworkflow" { // no op
 		return "", errors.New("cronworkflows cannot be re-run")
+	}
+
+	cluster, err := dbOperationsCluster.GetCluster(workflows[0].ClusterID)
+	if err != nil {
+		return "", errors.New(err.Error())
+	}
+	if cluster.IsActive != true {
+		log.Print("Agent not active to re-run the workflow")
+		return "", errors.New("Agent not active to re-run the selected workflow.")
 	}
 
 	workflows[0].WorkflowManifest, err = sjson.Set(workflows[0].WorkflowManifest, "metadata.name", workflows[0].WorkflowName+"-"+strconv.FormatInt(time.Now().Unix(), 10))

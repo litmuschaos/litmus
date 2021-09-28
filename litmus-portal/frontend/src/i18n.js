@@ -16,8 +16,16 @@ i18n
   // init i18next
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
-    fallbackLng: 'en',
+    lng: 'en',
+    fallbackLng: {
+      'en-US': ['en'],
+      'en-GB': ['en'],
+      'en-UK': ['en'],
+      default: ['en'],
+    },
     debug: true,
+    ns: ['translation'],
+    defaultNS: 'translation',
     backend: {
       loadPath: `${process.env.PUBLIC_URL}/locales/{{lng}}/{{ns}}.yaml`,
       parse(data) {

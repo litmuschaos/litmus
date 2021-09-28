@@ -1,21 +1,31 @@
 import { useQuery } from '@apollo/client';
-import { Avatar, IconButton, Popover, Typography } from '@material-ui/core';
-import { ButtonFilled, TextButton } from 'litmus-ui';
+import {
+  Avatar,
+  IconButton,
+  Popover,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
+import { ButtonFilled, Icon, TextButton } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { GET_USER_INFO } from '../../graphql';
-import { CurrentUserDetails } from '../../models/graphql/user';
+import { GET_USER } from '../../graphql';
+import {
+  CurrentUserDetails,
+  CurrentUserDedtailsVars,
+} from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
-import { getUserEmail, getUsername, logout } from '../../utils/auth';
+import { getUsername, logout } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { userInitials } from '../../utils/userInitials';
 import useStyles from './styles';
 
 const ProfileDropdown: React.FC = () => {
   const classes = useStyles();
+  const theme = useTheme();
   const { t } = useTranslation();
   const tabs = useActions(TabActions);
 
@@ -24,18 +34,15 @@ const ProfileDropdown: React.FC = () => {
   // Get username from JWT
   const username = getUsername();
 
-  // Get the userEmail from JWT
-  const userEmailToken = getUserEmail();
-
   const projectID = getProjectID();
   const projectRole = getProjectRole();
 
-  const [userEmail, setuserEmail] = useState<string>(userEmailToken);
+  const [userEmail, setuserEmail] = useState<string>('');
 
   // Run query to get the data in case it is not present in the JWT
-  useQuery<CurrentUserDetails>(GET_USER_INFO, {
-    skip: userEmail !== undefined && userEmail !== '',
+  useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
     variables: { username },
+    fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       setuserEmail(data.getUser.email);
     },
@@ -117,7 +124,12 @@ const ProfileDropdown: React.FC = () => {
                 onClick={() => logout()}
               >
                 {t('header.profileDropdown.logout')}
-                <img id="logoutIcon" src="./icons/logout.svg" alt="logout" />
+                <Icon
+                  id="logoutIcon"
+                  name="logout"
+                  size="lg"
+                  color={theme.palette.background.paper}
+                />
               </ButtonFilled>
             </div>
 

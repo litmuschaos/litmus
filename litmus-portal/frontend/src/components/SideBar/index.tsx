@@ -6,10 +6,12 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
-import { ReactComponent as AnalyticsIcon } from '../../svg/analytics-sidebar.svg';
+import { ReactComponent as ObservabilityIcon } from '../../svg/observability-sidebar.svg';
+import { ReactComponent as CodeIcon } from '../../svg/code.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
@@ -49,6 +51,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 };
 
 const SideBar: React.FC = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const projectID = getProjectID();
   const projectRole = getProjectRole();
@@ -92,12 +95,25 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="Workflows"
+            label="Litmus Workflows"
             selected={['workflows', 'create-workflow'].includes(pathName)}
           >
             <WorkflowsIcon />
           </CustomisedListItem>
         </div>
+        <CustomisedListItem
+          key="targets"
+          handleClick={() => {
+            history.push({
+              pathname: `/targets`,
+              search: `?projectID=${projectID}&projectRole=${projectRole}`,
+            });
+          }}
+          label="ChaosAgents"
+          selected={['targets', 'target-connect'].includes(pathName)}
+        >
+          <TargetsIcon />
+        </CustomisedListItem>
         <div data-cy="myHub">
           <CustomisedListItem
             key="myhub"
@@ -114,30 +130,17 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         </div>
         <CustomisedListItem
-          key="targets"
+          key="observability"
           handleClick={() => {
             history.push({
-              pathname: `/targets`,
+              pathname: `/observability`,
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
-          label="Agents"
-          selected={['targets', 'target-connect'].includes(pathName)}
+          label="Observability"
+          selected={pathName === 'observability'}
         >
-          <TargetsIcon />
-        </CustomisedListItem>
-        <CustomisedListItem
-          key="analytics"
-          handleClick={() => {
-            history.push({
-              pathname: `/analytics`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
-          label="Analytics"
-          selected={pathName === 'analytics'}
-        >
-          <AnalyticsIcon />
+          <ObservabilityIcon />
         </CustomisedListItem>
 
         {projectRole === 'Owner' && (
@@ -156,7 +159,7 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         )}
 
-        {role === UserRole.admin && (
+        {role === UserRole.admin && projectRole === 'Owner' && (
           <CustomisedListItem
             key="usage-statistics"
             handleClick={() => {
@@ -175,12 +178,24 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="litmusDocs"
           handleClick={() => {
-            window.open('https://docs.litmuschaos.io/docs/getstarted');
+            window.open('https://docs.litmuschaos.io/');
           }}
           label="Litmus Docs"
           selected={pathName === 'docs'}
         >
           <DocsIcon />
+        </CustomisedListItem>
+        <CustomisedListItem
+          key="litmusAPIDocs"
+          handleClick={() => {
+            window.open(
+              'https://litmuschaos.github.io/litmus/graphql/v2.0.0/api.html'
+            );
+          }}
+          label="Litmus API Docs"
+          selected={pathName === 'docs'}
+        >
+          <CodeIcon />
         </CustomisedListItem>
         <CustomisedListItem
           key="community"
@@ -197,8 +212,8 @@ const SideBar: React.FC = () => {
         </CustomisedListItem>
       </List>
       <Typography className={classes.versionDiv}>
-        <b>Version: </b> {version} <br />
-        <b>Build Time: </b> {buildTime}
+        <b>{t('sidebar.version')}: </b> {version} <br />
+        <b>{t('sidebar.time')}: </b> {buildTime}
       </Typography>
     </Drawer>
   );

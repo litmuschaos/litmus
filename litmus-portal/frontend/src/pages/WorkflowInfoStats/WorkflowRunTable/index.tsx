@@ -56,7 +56,7 @@ interface WorkFlowTests {
   context: string;
   test_weight: number;
   resulting_points: number;
-  last_run: string;
+  last_updated: string;
 }
 
 interface WorkflowRunTableProps {
@@ -172,36 +172,38 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
         );
         const { nodes } = executionData;
         let index: number = 1;
-        for (const key of Object.keys(nodes)) {
-          const node = nodes[key];
-          if (node.chaosData) {
-            const { chaosData } = node;
-            const weightageMap: WeightageMap[] = weightageDetail
-              ? weightageDetail?.ListWorkflow.workflows[0]?.weightages
-              : [];
-            /* eslint-disable no-loop-func */
-            weightageMap.forEach((weightage) => {
-              if (weightage.experiment_name === node.name) {
-                workflowTestsArray.push({
-                  test_id: index,
-                  test_name: node.name,
-                  exp_name: chaosData.experimentName,
-                  test_result: chaosData.experimentVerdict,
-                  test_weight: weightage.weightage,
-                  resulting_points:
-                    chaosData.experimentVerdict === 'Pass' ||
-                    chaosData.experimentVerdict === 'Fail'
-                      ? (weightage.weightage *
-                          parseInt(chaosData.probeSuccessPercentage, 10)) /
-                        100
-                      : 0,
-                  last_run: chaosData.lastUpdatedAt,
-                  context: chaosData.engineContext,
-                });
-              }
-            });
+        if (executionData.finishedAt !== '') {
+          for (const key of Object.keys(nodes)) {
+            const node = nodes[key];
+            if (node.chaosData) {
+              const { chaosData } = node;
+              const weightageMap: WeightageMap[] = weightageDetail
+                ? weightageDetail?.ListWorkflow.workflows[0]?.weightages
+                : [];
+              /* eslint-disable no-loop-func */
+              weightageMap.forEach((weightage) => {
+                if (weightage.experiment_name === node.name) {
+                  workflowTestsArray.push({
+                    test_id: index,
+                    test_name: node.name,
+                    exp_name: chaosData.experimentName,
+                    test_result: chaosData.experimentVerdict,
+                    test_weight: weightage.weightage,
+                    resulting_points:
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                        ? (weightage.weightage *
+                            parseInt(chaosData.probeSuccessPercentage, 10)) /
+                          100
+                        : 0,
+                    last_updated: chaosData.lastUpdatedAt,
+                    context: chaosData.engineContext,
+                  });
+                }
+              });
+            }
+            index += 1;
           }
-          index += 1;
         }
       }
       setWfRunData(workflowTestsArray);
@@ -247,9 +249,9 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
               : sortNumDesc(x, y);
           }
           if (filter.sortData.lastRun.sort) {
-            const x = parseInt(a.last_run, 10);
+            const x = parseInt(a.last_updated, 10);
 
-            const y = parseInt(b.last_run, 10);
+            const y = parseInt(b.last_updated, 10);
 
             return filter.sortData.lastRun.ascending
               ? sortNumAsc(y, x)

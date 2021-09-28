@@ -1,0 +1,22 @@
+# contains the node-selector for the chaos-runner
+# it will schedule the chaos-runner on the coresponding node with matching labels
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  components:
+    runner:
+      # nodeselector for the runner pod
+      nodeSelector:
+        context: chaos
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+  

@@ -14,6 +14,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Status will request users list and return, if successful,
+// an http code 200
+func Status(service user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, err := service.GetUsers()
+		if err != nil {
+			log.Error(err)
+			c.JSON(500, entities.APIStatus{"down"})
+			return
+		}
+		c.JSON(200, entities.APIStatus{"up"})
+	}
+}
+
 func CreateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -44,7 +58,7 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 		// Generating password hash
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
 		if err != nil {
-			log.Println("Error generating password for admin")
+			log.Println("Error generating password")
 		}
 		password := string(hashedPassword)
 		userRequest.Password = password
@@ -69,22 +83,48 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 }
 func UpdateUser(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var userRequest entities.User
+		var userRequest entities.UserDetails
 		err := c.BindJSON(&userRequest)
 		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+
 		uid := c.MustGet("uid").(string)
 		userRequest.ID = uid
-		userResponse, err := service.UpdateUser(&userRequest)
+
+		// Checking if password is updated
+		if userRequest.Password != "" {
+			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
+			if err != nil {
+				return
+			}
+			userRequest.Password = string(hashedPassword)
+		}
+
+		err = service.UpdateUser(&userRequest)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 		}
-		c.JSON(200, userResponse)
+		c.JSON(200, gin.H{"message": "User details updated successfully"})
 	}
 }
+
+// GetUser returns the user that matches the uid passed in parameter
+func GetUser(service user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid := c.Param("uid")
+		user, err := service.GetUser(uid)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
+			return
+		}
+		c.JSON(200, user)
+	}
+}
+
 func FetchUsers(service user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		users, err := service.GetUsers()

@@ -4,6 +4,7 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cluster } from '../../../models/graphql/clusterData';
+import capitalize from '../../../utils/capitalize';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
@@ -61,9 +62,10 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       <TableCell className={classes.workflowNameData}>
         <Typography>{data.cluster_name}</Typography>
       </TableCell>
-      <TableCell className={classes.stepsDataTime}>
-        {formatDate(data.updated_at)}
+      <TableCell>
+        <Typography>{capitalize(data.agent_scope)}</Typography>
       </TableCell>
+      <TableCell>{formatDate(data.updated_at)}</TableCell>
       <TableCell>
         <Typography className={classes.stepsData}>
           {data.no_of_workflows}
@@ -72,7 +74,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       <TableCell className={classes.stepsDataschedule}>
         <Typography>{data.no_of_schedules}</Typography>
       </TableCell>
-      <TableCell className={classes.stepsData}>
+      <TableCell>
         {data.last_workflow_timestamp === '0' ? (
           <Typography>Not Yet</Typography>
         ) : (

@@ -89,9 +89,6 @@ const useStyles = makeStyles((theme) => ({
   targetsIcon: {
     paddingLeft: theme.spacing(1.5),
   },
-  headData: {
-    color: theme.palette.text.primary,
-  },
   tableDataStatus: {
     paddingLeft: theme.spacing(5),
   },
@@ -104,11 +101,6 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     borderRight: `1px solid ${theme.palette.border.main}`,
-    paddingLeft: theme.spacing(4),
-  },
-  targetCluster: {
-    paddingLeft: theme.spacing(3.75),
-    color: theme.palette.text.primary,
   },
   clusterName: {
     marginLeft: theme.spacing(4),
@@ -118,9 +110,6 @@ const useStyles = makeStyles((theme) => ({
   },
   stepsData: {
     paddingLeft: theme.spacing(5),
-  },
-  stepsDataTime: {
-    paddingLeft: theme.spacing(7),
   },
   stepsDataschedule: {
     paddingLeft: theme.spacing(8),

@@ -1,0 +1,263 @@
+{
+  "$schema": "https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/portal-dashboards/schema.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "properties": {
+    "dashboardID": {
+      "type": "string",
+      "title": "The dashboardID schema",
+      "description": "Used to uniquely identify the type of dashboard.",
+      "default": ""
+    },
+    "name": {
+      "type": "string",
+      "title": "The name schema",
+      "description": "Name of the dashboard.",
+      "default": ""
+    },
+    "information": {
+      "type": "string",
+      "title": "The information schema",
+      "description": "Metadata about the dashboard and it's metrics.",
+      "default": ""
+    },
+    "chaosEventQueryTemplate": {
+      "type": "string",
+      "title": "The chaosEventQueryTemplate schema",
+      "description": "Chaos event query for Prometheus metrics.",
+      "default": "litmuschaos_awaited_experiments{job=\"chaos-exporter\", chaos_injection_time!=\"\", instance=\"chaos-exporter-service\"}"
+    },
+    "chaosVerdictQueryTemplate": {
+      "type": "string",
+      "title": "The chaosVerdictQueryTemplate schema",
+      "description": "Chaos verdict query for Prometheus metrics.",
+      "default": "litmuschaos_experiment_verdict{job=\"chaos-exporter\", chaosresult_verdict!=\"Awaited\", instance=\"chaos-exporter-service\"}"
+    },
+    "applicationMetadataMap": {
+      "type": "array",
+      "title": "The applicationMetadataMap schema",
+      "description": "Used for storing the names of selected application and infra resources by namespaces.",
+      "default": [],
+      "items": {
+        "type": "object",
+        "title": "The items schema",
+        "description": "Array of namespaced resources.",
+        "default": {},
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "title": "The namespace schema",
+            "description": "Namespace of the resource.",
+            "default": ""
+          },
+          "applications": {
+            "type": "array",
+            "title": "The applications schema",
+            "description": "Array of resources.",
+            "default": [],
+            "items": {
+              "type": "object",
+              "title": "The items schema",
+              "description": "Array of Resources by kind.",
+              "default": {},
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "title": "The kind schema",
+                  "description": "Resource kind.",
+                  "default": ""
+                },
+                "names": {
+                  "type": "array",
+                  "title": "The names schema",
+                  "description": "Array of names of the resources.",
+                  "default": [],
+                  "items": {
+                    "type": "string",
+                    "title": "The items schema",
+                    "description": "Resource name.",
+                    "default": ""
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "panelGroupMap": {
+      "type": "array",
+      "title": "The panelGroupMap schema",
+      "description": "Metadata about dashboard's graph panels and their groupings.",
+      "default": [],
+      "items": {
+        "type": "object",
+        "title": "The items schema",
+        "description": "Panel names by panel groups.",
+        "default": {},
+        "properties": {
+          "groupName": {
+            "type": "string",
+            "title": "The groupName schema",
+            "description": "Panel group name.",
+            "default": ""
+          },
+          "panels": {
+            "type": "array",
+            "title": "The panels schema",
+            "description": "Array of panel names.",
+            "default": [],
+            "items": {
+              "type": "string",
+              "title": "The items schema",
+              "description": "Panel name.",
+              "default": ""
+            }
+          }
+        }
+      }
+    },
+    "panelGroups": {
+      "type": "array",
+      "title": "The panelGroups schema",
+      "description": "Array of panel groups with panel information and queries.",
+      "default": [],
+      "items": {
+        "type": "object",
+        "title": "The items schema",
+        "description": "Panel information and queries by panel group.",
+        "default": {},
+        "properties": {
+          "panel_group_name": {
+            "type": "string",
+            "title": "The panel_group_name schema",
+            "description": "Panel group name.",
+            "default": ""
+          },
+          "panels": {
+            "type": "array",
+            "title": "The panels schema",
+            "description": "Array of panels.",
+            "default": [],
+            "items": {
+              "type": "object",
+              "title": "The items schema",
+              "description": "Panel information with queries.",
+              "default": {},
+              "properties": {
+                "prom_queries": {
+                  "type": "array",
+                  "title": "The prom_queries schema",
+                  "description": "Array of prometheus queries.",
+                  "default": [],
+                  "items": {
+                    "type": "object",
+                    "title": "The items schema",
+                    "description": "Prometheus query information.",
+                    "default": {},
+                    "properties": {
+                      "prom_query_name": {
+                        "type": "string",
+                        "title": "The prom_query_name schema",
+                        "description": "Prometheus metric query.",
+                        "default": ""
+                      },
+                      "legend": {
+                        "type": "string",
+                        "title": "The legend schema",
+                        "description": "Metric legend.",
+                        "default": ""
+                      },
+                      "resolution": {
+                        "type": "string",
+                        "title": "The resolution schema",
+                        "description": "Resolution for the query on graph panel.",
+                        "default": ""
+                      },
+                      "minstep": {
+                        "type": "string",
+                        "title": "The minstep schema",
+                        "description": "Min-step interval over a time range for the prometheus query.",
+                        "default": ""
+                      },
+                      "line": {
+                        "type": "boolean",
+                        "title": "The line schema",
+                        "description": "Line graph type of metric visualization for the query's response.",
+                        "default": true
+                      },
+                      "close_area": {
+                        "type": "boolean",
+                        "title": "The close_area schema",
+                        "description": "Closed area graph type of metric visualization for the query's response.",
+                        "default": false
+                      }
+                    }
+                  }
+                },
+                "panel_options": {
+                  "type": "object",
+                  "title": "The panel_options schema",
+                  "description": "Set of options to configure visualization settings at a panel level.",
+                  "default": {},
+                  "properties": {
+                    "points": {
+                      "type": "boolean",
+                      "title": "The points schema",
+                      "description": "Encircle data points on graph panel.",
+                      "default": false
+                    },
+                    "grids": {
+                      "type": "boolean",
+                      "title": "The grids schema",
+                      "description": "Enable or disable grid behind the graph plot.",
+                      "default": true
+                    },
+                    "left_axis": {
+                      "type": "boolean",
+                      "title": "The left_axis schema",
+                      "description": "Enable or disable the y-axis label.",
+                      "default": true
+                    }
+                  }
+                },
+                "panel_name": {
+                  "type": "string",
+                  "title": "The panel_name schema",
+                  "description": "Panel name.",
+                  "default": ""
+                },
+                "y_axis_left": {
+                  "type": "string",
+                  "title": "The y_axis_left schema",
+                  "description": "Y-axis label.",
+                  "default": ""
+                },
+                "y_axis_right": {
+                  "type": "string",
+                  "title": "The y_axis_right schema",
+                  "description": "2nd Y-axis label.",
+                  "default": ""
+                },
+                "x_axis_down": {
+                  "type": "string",
+                  "title": "The x_axis_down schema",
+                  "description": "X-axis label.",
+                  "default": ""
+                },
+                "unit": {
+                  "type": "string",
+                  "title": "The unit schema",
+                  "description": "Unit of the data on Y-axis.",
+                  "default": ""
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

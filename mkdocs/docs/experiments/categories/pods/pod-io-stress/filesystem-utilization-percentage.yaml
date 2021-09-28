@@ -1,0 +1,25 @@
+# stress the i/o of the targeted pod with FILESYSTEM_UTILIZATION_PERCENTAGE of total free space 
+# it is mutually exclusive with the FILESYSTEM_UTILIZATION_BYTES.
+# if both are provided then it will use FILESYSTEM_UTILIZATION_PERCENTAGE for stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-io-stress-sa
+  experiments:
+  - name: pod-io-stress
+    spec:
+      components:
+        env:
+        # percentage of free space of file system, need to be stressed
+        - name: FILESYSTEM_UTILIZATION_PERCENTAGE
+          value: '10' #in GB
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

@@ -101,7 +101,9 @@ const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
                 type="CARD"
                 direction="horizontal"
                 isCombineEnabled={false}
-                isDropDisabled={key === 'stepname0'}
+                isDropDisabled={value[0]?.name
+                  .toLowerCase()
+                  .includes('install' || 'load' || 'add')}
               >
                 {(dropProvided) => (
                   <div {...dropProvided.droppableProps}>
@@ -118,7 +120,9 @@ const WorkflowSequence: React.FC<ExperimentSequenceProps> = ({
                                   key={step.name}
                                   draggableId={step.name}
                                   index={index}
-                                  isDragDisabled={key === 'stepname0'}
+                                  isDragDisabled={step.name
+                                    .toLowerCase()
+                                    .includes('install' || 'load' || 'add')}
                                 >
                                   {(dragProvided: DraggableProvided) => (
                                     <div

@@ -156,8 +156,9 @@ const WorkflowDetails: React.FC = () => {
 
   // Setting NodeId of first Node in redux for selection of first node in Argo graph by default
   useEffect(() => {
-    if (workflowRun && pod_name === '') {
+    if (workflowRun !== undefined && pod_name === '') {
       if (
+        JSON.parse(workflowRun.execution_data as string).nodes !== null &&
         Object.keys(JSON.parse(workflowRun.execution_data as string).nodes)
           .length
       ) {
@@ -175,7 +176,7 @@ const WorkflowDetails: React.FC = () => {
         setWorkflowFailed(true);
       }
     }
-  }, [data]);
+  }, [workflowRun]);
 
   return (
     <Wrapper>
@@ -252,6 +253,7 @@ const WorkflowDetails: React.FC = () => {
                         <WorkflowInfo
                           tab={1}
                           setIsInfoToggled={setIsInfoToggled}
+                          workflow_phase={workflowRun.phase}
                           cluster_name={workflowRun.cluster_name}
                           data={
                             JSON.parse(
@@ -271,6 +273,7 @@ const WorkflowDetails: React.FC = () => {
                 {/* Workflow Info */}
                 <WorkflowInfo
                   tab={2}
+                  workflow_phase={workflowRun.phase}
                   cluster_name={workflowRun.cluster_name}
                   data={JSON.parse(workflowRun.execution_data) as ExecutionData}
                   resiliency_score={workflowRun.resiliency_score}

@@ -113,6 +113,7 @@ export type WorkflowStatus =
   | 'Failed'
   | 'Running'
   | 'Succeeded'
+  | 'Terminated'
   | undefined;
 
 export interface WorkflowRunFilterInput {

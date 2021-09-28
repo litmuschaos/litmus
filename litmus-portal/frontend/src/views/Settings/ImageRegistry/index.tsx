@@ -11,10 +11,10 @@ import {
   Select,
   Typography,
 } from '@material-ui/core';
+import InfoIcon from '@material-ui/icons/Info';
 import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import InfoIcon from '@material-ui/icons/Info';
 import Loader from '../../../components/Loader';
 import { constants } from '../../../constants';
 import {
@@ -361,7 +361,7 @@ const ImageRegistry = () => {
                   <>
                     <div className={classes.customDiv}>
                       <InputField
-                        label="Custom Image Registry"
+                        label="Custom Registry Server"
                         value={registryInfo.registry_name}
                         className={classes.inputDiv}
                         onChange={(event) => {
@@ -373,7 +373,7 @@ const ImageRegistry = () => {
                       />
 
                       <InputField
-                        label="Custom Image Repository"
+                        label="Custom Image Registry"
                         value={registryInfo.repo_name}
                         onChange={(event) => {
                           setRegistryInfo({

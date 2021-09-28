@@ -4,6 +4,7 @@ metadata:
   name: mysql-exporter
   labels:
     k8s-app: mysql-exporter
+    release: prometheus-stack
   namespace: monitoring
 spec:
   jobLabel: k8s-app

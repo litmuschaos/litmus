@@ -1,33 +1,9 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  rootContainer: {
-    position: 'fixed',
-    width: '100%',
-    height: '100%',
-    background: theme.palette.loginBackground,
-  },
-  rootDiv: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(2),
-    maxWidth: '49rem',
-  },
-  HeaderText: {
-    maxWidth: '23.56rem',
-    fontWeight: 500,
-    fontSize: '2rem',
-    color: theme.palette.text.secondary,
-    margin: theme.spacing(1.5, 0, 2.5, 0),
-  },
-  litmusText: {
-    maxWidth: '23.56rem',
-    fontSize: '1rem',
-    color: theme.palette.text.secondary,
-  },
   inputDiv: {
     maxWidth: '23.75rem',
-    margin: theme.spacing(6, 0, 0, 7.5),
+    margin: '2rem auto',
   },
   inputValue: {
     marginBottom: theme.spacing(1.75),
@@ -74,7 +50,9 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.background.paper,
   },
   forgetPwdText: {
-    textDecoration: 'underline',
+    textDecoration: 'none',
+    color: theme.palette.text.secondary,
+    cursor: 'pointer',
   },
 }));
 export default useStyles;

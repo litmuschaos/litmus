@@ -5,6 +5,7 @@ import {
   Menu,
   MenuItem,
   Popover,
+  Snackbar,
   TableCell,
   Typography,
 } from '@material-ui/core';
@@ -14,9 +15,10 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplayIcon from '@material-ui/icons/Replay';
+import { Alert } from '@material-ui/lab';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Icon, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,12 +40,14 @@ interface TableDataProps {
   data: ScheduledWorkflow;
   deleteRow: (wfid: string) => void;
   handleToggleSchedule: (schedule: ScheduledWorkflow) => void;
+  setWorkflowName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const TableData: React.FC<TableDataProps> = ({
   data,
   deleteRow,
   handleToggleSchedule,
+  setWorkflowName,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -81,6 +85,13 @@ const TableData: React.FC<TableDataProps> = ({
   const handleClose = () => {
     setAnchorEl(null);
     setIsModalOpen(false);
+  };
+
+  const [displayReRunAlert, setDisplayReRunAlert] = React.useState(false);
+  const [reRunMessage, setReRunMessage] = React.useState('');
+  const handleAlertOnClose = () => {
+    setReRunMessage('');
+    setDisplayReRunAlert(false);
   };
 
   // States for PopOver to display schedule details
@@ -131,6 +142,10 @@ const TableData: React.FC<TableDataProps> = ({
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {
       tabs.changeWorkflowsTabs(0);
+    },
+    onError: (error) => {
+      setReRunMessage(error.message);
+      setDisplayReRunAlert(true);
     },
   });
 
@@ -304,7 +319,7 @@ const TableData: React.FC<TableDataProps> = ({
             </Typography>
             <Typography className={classes.scheduleDetailsFlex}>
               <span className={classes.boldText}>
-                {t('chaosWorkflows.browseSchedules.lastRun')} :
+                {t('chaosWorkflows.browseSchedules.lastUpdated')} :
               </span>
               <span className={classes.scheduleDetailsValue}>
                 {timeDifferenceForDate(data.updated_at)}
@@ -335,15 +350,37 @@ const TableData: React.FC<TableDataProps> = ({
             <Typography>
               {t('chaosWorkflows.browseSchedules.scheduleIsDisabled')}
             </Typography>
+          ) : data.cronSyntax !== '' ? (
+            <Typography>
+              {moment(
+                parser.parseExpression(data.cronSyntax).next().toString()
+              ).format('MMMM Do YYYY, h:mm:ss a')}
+            </Typography>
           ) : (
-            data.cronSyntax !== '' && (
-              <Typography>
-                {parser.parseExpression(data.cronSyntax).next().toString()}
-              </Typography>
-            )
+            <Typography>
+              {t('chaosWorkflows.browseSchedules.nonCron')}
+            </Typography>
           )}
         </span>
       </TableCell>
+
+      <TableCell>
+        <IconButton
+          onClick={() => {
+            tabs.changeWorkflowsTabs(0);
+            setWorkflowName(data.workflow_name);
+          }}
+          data-cy="showSchedules"
+        >
+          <div>
+            <Icon name="workflow" />
+            <Typography className={classes.runs}>
+              {t('chaosWorkflows.browseSchedules.runs')}
+            </Typography>
+          </div>
+        </IconButton>
+      </TableCell>
+
       <TableCell className={classes.menuCell}>
         <IconButton
           aria-label="more"
@@ -391,6 +428,16 @@ const TableData: React.FC<TableDataProps> = ({
           ) : (
             <></>
           )}
+          <Snackbar
+            open={displayReRunAlert}
+            autoHideDuration={6000}
+            onClose={handleAlertOnClose}
+            data-cy="templateAlert"
+          >
+            <Alert onClose={handleAlertOnClose} severity="error">
+              {reRunMessage}
+            </Alert>
+          </Snackbar>
           {projectRole !== 'Viewer' &&
             data.cronSyntax !== '' &&
             YAML.parse(data.workflow_manifest).spec.suspend !== true && (

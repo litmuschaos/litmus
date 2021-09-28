@@ -56,9 +56,9 @@ const SelectMyHub = () => {
         });
         setAvailableHubs(hubDetails);
         data.getHubStatus.forEach((hubData) => {
-          if (hubData.HubName.toLowerCase() === 'chaos hub') {
-            setSelectedHub('Chaos Hub');
-            localforage.setItem('selectedHub', 'Chaos Hub');
+          if (hubData.HubName.toLowerCase() === 'litmus chaoshub') {
+            setSelectedHub('Litmus ChaosHub');
+            localforage.setItem('selectedHub', 'Litmus ChaosHub');
             localforage.setItem('hasSetWorkflowData', false);
           }
         });
@@ -80,7 +80,7 @@ const SelectMyHub = () => {
             onChange={(e) => {
               handleMyHubChange(e);
             }}
-            label="Cluster Status"
+            label="Select ChaosHub"
             MenuProps={MenuProps}
           >
             {availableHubs.map((hubs) => (

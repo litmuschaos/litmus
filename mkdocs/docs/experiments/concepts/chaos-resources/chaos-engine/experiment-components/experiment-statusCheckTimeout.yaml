@@ -1,0 +1,23 @@
+# contains status check timeout for the experiment pod
+# it will set this timeout as upper bound while checking application status, node status in experiments
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"   
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        # status check timeout for the experiment pod
+        statusCheckTimeouts:
+          delay: 2
+          timeout: 180
+  

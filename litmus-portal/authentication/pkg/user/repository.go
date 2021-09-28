@@ -18,8 +18,9 @@ type Repository interface {
 	CheckPasswordHash(hash, password string) error
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
-	UpdateUser(user *entities.User) (*entities.User, error)
+	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
+	GetUser(uid string) (*entities.User, error)
 	GetUsers() (*[]entities.User, error)
 	UpdateUserState(username string, isDeactivate bool) error
 }
@@ -93,21 +94,27 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 }
 
 // UpdateUser updates user details in the database
-func (r repository) UpdateUser(user *entities.User) (*entities.User, error) {
-	if user.Password != "" {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
-		if err != nil {
-			return nil, err
-		}
-		user.Password = string(hashedPassword)
-	}
+func (r repository) UpdateUser(user *entities.UserDetails) error {
 	data, _ := toDoc(user)
 	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return user.SanitizedUser(), nil
+	return nil
+}
+
+// GetUser fetches the user from database that matches the passed uid
+func (r repository) GetUser(uid string) (*entities.User, error) {
+	var result = entities.User{}
+	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
+		"_id": uid,
+	}).Decode(&result)
+
+	if findOneErr != nil {
+		return nil, findOneErr
+	}
+	return &(*result.SanitizedUser()), nil
 }
 
 // GetUsers fetches all the users from the database

@@ -1,0 +1,23 @@
+# cpu cores for the stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-cpu-hog-sa
+  experiments:
+  - name: pod-cpu-hog
+    spec:
+      components:
+        env:
+        # cpu cores for stress
+        - name: CPU_CORES
+          value: '1'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

@@ -74,33 +74,33 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Succeeded': {
         '& circle': {
-          fill: theme.palette.success.main,
+          fill: theme.palette.status.experiment.completed,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: theme.palette.success.main,
+          stroke: theme.palette.status.experiment.completed,
           fill: 'none',
           strokeWidth: '1.5',
         },
       },
       '& g.Running': {
         '& circle': {
-          fill: theme.palette.highlight,
+          fill: theme.palette.status.experiment.running,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: theme.palette.highlight,
+          stroke: theme.palette.status.experiment.running,
           fill: 'none',
           strokeWidth: '1.5',
         },
       },
       '& g.Pending': {
         '& circle': {
-          fill: theme.palette.horizontalStepper.completed,
+          fill: theme.palette.status.experiment.pending,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: theme.palette.horizontalStepper.completed,
+          stroke: theme.palette.status.experiment.pending,
           fill: 'none',
           strokeWidth: '1.5',
         },
@@ -118,33 +118,33 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Omitted': {
         '& circle': {
-          fill: '#A93DDB',
+          fill: theme.palette.status.experiment.omitted,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: '#A93DDB',
+          stroke: theme.palette.status.experiment.omitted,
           fill: 'none',
           strokeWidth: '1.5',
         },
       },
       '& g.Skipped': {
         '& circle': {
-          fill: '#0098DD',
+          fill: theme.palette.status.experiment.skipped,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: '#0098DD',
+          stroke: theme.palette.status.experiment.skipped,
           fill: 'none',
           strokeWidth: '1.5',
         },
       },
       '& g.Error': {
         '& circle': {
-          fill: '#FFA600',
+          fill: theme.palette.status.experiment.error,
         },
         '& circle.selected': {
           strokeDasharray: '5,2',
-          stroke: '#FFA600',
+          stroke: theme.palette.status.experiment.error,
           fill: 'none',
           strokeWidth: '1.5',
         },

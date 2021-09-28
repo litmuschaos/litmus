@@ -87,6 +87,15 @@ backend-services-checks:
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
 		&& exit 1; \
 	fi
+	@echo "------------------"
+	@echo "--> Check litmusportal upgrade agent [go mod tidy]"
+	@echo "------------------"
+	@tidyRes=$$(cd upgrade-agents/control-plane && go mod tidy); \
+	if [ -n "$${tidyRes}" ]; then \
+		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
+		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
+		&& exit 1; \
+	fi
 
 .PHONY: docker.buildx
 docker.buildx:

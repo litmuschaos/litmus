@@ -45,11 +45,15 @@ import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 import TableData from './TableData';
 
+interface BrowseScheduleProps {
+  setWorkflowName: React.Dispatch<React.SetStateAction<string>>;
+}
+
 interface FilterOption extends WorkflowFilterInput {
   suspended?: string;
 }
 
-const BrowseSchedule: React.FC = () => {
+const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const { t } = useTranslation();
@@ -312,7 +316,12 @@ const BrowseSchedule: React.FC = () => {
                     {t('chaosWorkflows.browseSchedules.nextRun')}
                   </Typography>
                 </TableCell>
-
+                {/* List Experiments */}
+                <TableCell>
+                  <Typography>
+                    {t('chaosWorkflows.browseSchedules.wfRuns')}
+                  </Typography>
+                </TableCell>
                 <TableCell />
               </TableRow>
             </TableHead>
@@ -338,6 +347,7 @@ const BrowseSchedule: React.FC = () => {
                     <TableData
                       data={data}
                       deleteRow={deleteRow}
+                      setWorkflowName={setWorkflowName}
                       handleToggleSchedule={handleToggleSchedule}
                     />
                   </TableRow>

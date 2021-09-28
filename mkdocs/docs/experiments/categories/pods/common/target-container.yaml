@@ -1,0 +1,24 @@
+## name of the target container
+## it will use first container as target container if TARGET_CONTAINER is provided as empty
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        # name of the target container
+        - name: TARGET_CONTAINER
+          value: 'nginx'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

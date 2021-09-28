@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import { Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-min-noconflict/ext-beautify';
 import 'ace-builds/src-min-noconflict/ext-code_lens';
@@ -22,6 +21,7 @@ import 'ace-builds/src-min-noconflict/ext-statusbar';
 import 'ace-builds/src-min-noconflict/ext-textarea';
 import 'ace-builds/src-min-noconflict/ext-themelist';
 import 'ace-builds/src-min-noconflict/ext-whitespace';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './prometheus';
 import useStyles from './styles';
@@ -75,7 +75,7 @@ const PrometheusQueryEditor: React.FC<PrometheusQueryEditorProps> = ({
     <div id={`editor-${index}`} data-cy="WorkflowEditor">
       <div className={classes.editor}>
         <Typography className={classes.heading}>
-          {t('analyticsDashboard.applicationDashboards.tuneTheQueries.query')}
+          {t('monitoringDashboard.monitoringDashboards.tuneTheQueries.query')}
         </Typography>
         <pre id="prom-query-editor">
           <AceEditor

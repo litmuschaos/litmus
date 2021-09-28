@@ -5,8 +5,8 @@ import (
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/utils"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"github.com/sirupsen/logrus"
 )
 

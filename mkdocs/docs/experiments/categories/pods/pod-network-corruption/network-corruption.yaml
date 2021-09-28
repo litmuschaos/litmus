@@ -1,0 +1,23 @@
+# it inject the network-corruption for the ingrees and egress traffic
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-corruption-sa
+  experiments:
+  - name: pod-network-corruption
+    spec:
+      components:
+        env:
+        # network packet corruption percentage
+        - name: NETWORK_PACKET_CORRUPTION_PERCENTAGE
+          value: '100' #in percentage
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

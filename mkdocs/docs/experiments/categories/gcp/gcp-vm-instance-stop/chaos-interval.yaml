@@ -1,0 +1,27 @@
+# defines delay between each successive iteration of the chaos
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: gcp-vm-instance-stop-sa
+  experiments:
+  - name: gcp-vm-instance-stop
+    spec:
+      components:
+        env:
+        # delay between each iteration of chaos
+        - name: CHAOS_INTERVAL
+          value: '15'
+        # time duration for the chaos execution
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+        - name: VM_INSTANCE_NAMES
+          value: 'instance-01,instance-02'
+        - name: INSTANCE_ZONES
+          value: 'zone-01,zone-02'
+        - name: GCP_PROJECT_ID
+          value: 'project-id'
+       

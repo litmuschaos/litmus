@@ -27,7 +27,7 @@ import {
   DEFAULT_TSDB_SCRAPE_INTERVAL,
   PROMETHEUS_QUERY_RESOLUTION_LIMIT,
   TIME_THRESHOLD_FOR_TSDB,
-} from '../pages/ApplicationDashboard/constants';
+} from '../pages/MonitoringDashboard/constants';
 
 const labelMatchOperators = ['==', '!=', '<=', '<', '>=', '>', '=~', '!~', '='];
 
@@ -147,8 +147,8 @@ export const generatePromQueries = (
       : DEFAULT_RELATIVE_TIME_RANGE;
   const promQueries: promQueryInput[] = getPromQueryInput(
     dashboardMetaPanelGroups
-      .flatMap((panelGroup) => panelGroup.panels)
-      .flatMap((panel) => panel.prom_queries),
+      .flatMap((panelGroup) => (panelGroup ? panelGroup.panels ?? [] : []))
+      .flatMap((panel) => (panel ? panel.prom_queries ?? [] : [])),
     timeRangeDiff,
     true,
     chaosEventQueryTemplate,

@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { experimentMap } from '../../../models/redux/workflow';
 import WeightSlider from '../WeightSlider';
 import useStyles from './styles';
@@ -14,7 +15,7 @@ import useStyles from './styles';
 const ReliablityScore = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
-
+  const [workflowName, setWorkflowName] = useState('');
   const [weights, setWeights] = useState<experimentMap[]>([
     {
       experimentName: '',
@@ -39,6 +40,11 @@ const ReliablityScore = forwardRef((_, ref) => {
       .then((value) =>
         value !== null ? setWeights(value as experimentMap[]) : setWeights([])
       );
+    localforage.getItem('workflow').then((wfDetails) => {
+      if (wfDetails) {
+        setWorkflowName((wfDetails as WorkflowDetailsProps).name);
+      }
+    });
   }, []);
 
   function onNext() {
@@ -60,6 +66,7 @@ const ReliablityScore = forwardRef((_, ref) => {
             </Typography>
             <Typography className={classes.description}>
               {t('createWorkflow.reliabilityScore.info')} {weights.length}{' '}
+              {t('createWorkflow.reliabilityScore.tests')} {`"${workflowName}"`}{' '}
               {t('createWorkflow.reliabilityScore.infoNext')}{' '}
               <strong>
                 {t('createWorkflow.reliabilityScore.infoNextStrong')}

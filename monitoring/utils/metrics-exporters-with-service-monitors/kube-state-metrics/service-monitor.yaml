@@ -5,6 +5,7 @@ metadata:
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/version: latest
     k8s-app: kube-state-metrics
+    release: prometheus-stack
   name: kube-state-metrics
   namespace: monitoring
 spec:

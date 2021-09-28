@@ -16,7 +16,7 @@ import (
 )
 
 func ClusterConnect(clusterData map[string]string) {
-	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     namespace\n     }\n  }\n}\n"}`
+	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
 	scheme := "ws"
 	if serverURL.Scheme == "https" {
@@ -28,7 +28,7 @@ func ClusterConnect(clusterData map[string]string) {
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		logrus.Fatal("dial:", err)
+		logrus.WithError(err).Fatal("failed to open websocket connection")
 	}
 	defer c.Close()
 
@@ -39,12 +39,12 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 		data, err := json.Marshal(payload)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to marshal message")
 		}
 
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to write message after init")
 			return
 		}
 
@@ -56,7 +56,7 @@ func ClusterConnect(clusterData map[string]string) {
 		data, err = json.Marshal(payload)
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to write message after start")
 			return
 		}
 	}()
