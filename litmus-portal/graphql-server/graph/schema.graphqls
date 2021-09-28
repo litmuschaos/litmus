@@ -224,12 +224,15 @@ input KubeGVRRequest {
   resource: String!
 }
 
+
 type Query {
   getWorkflowRuns(
     workflowRunsInput: GetWorkflowRunsInput!
   ): GetWorkflowsOutput! @authorized
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
+
+  getManifest(projectID: String!, clusterID: String!, accessKey: String!): String! @authorized
 
   getUser(username: String!): User! @authorized
 

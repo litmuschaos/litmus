@@ -1,6 +1,7 @@
 package rest_handlers
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -85,4 +86,42 @@ func GetManifest(token string) ([]byte, int, error) {
 	} else {
 		return []byte("Cluster is already registered"), 409, nil
 	}
+}
+
+// Returns manifest for a given cluster
+func GetManifestWithClusterID(id string, key string) ([]byte, error) {
+
+	reqCluster, err := dbOperationsCluster.GetCluster(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Checking if cluster with given clusterID and accesskey is present
+	if reqCluster.AccessKey != key {
+		return nil, errors.New("Invalid access key")
+	}
+
+	if os.Getenv("PORTAL_SCOPE") == "cluster" {
+		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
+		if err != nil {
+			return nil, err
+		}
+	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
+		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
+	}
+
+	var respData []byte
+
+	if reqCluster.AgentScope == "cluster" {
+		respData, err = utils.ManifestParser(reqCluster, "manifests/cluster", subscriberConfiguration)
+	} else if reqCluster.AgentScope == "namespace" {
+		respData, err = utils.ManifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
+	} else {
+		log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return respData, nil
 }

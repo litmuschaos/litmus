@@ -28,6 +28,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
@@ -347,6 +348,20 @@ func (r *queryResolver) GetCluster(ctx context.Context, projectID string, cluste
 		return nil, err
 	}
 	return clusterHandler.QueryGetClusters(projectID, clusterType)
+}
+
+func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error) {
+	err := authorization.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return "", err
+	}
+
+	response, err := rest_handlers.GetManifestWithClusterID(clusterID, accessKey)
+	if err != nil {
+		return "", err
+	}
+
+	return string(response), nil
 }
 
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
