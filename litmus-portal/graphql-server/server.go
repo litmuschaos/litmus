@@ -30,7 +30,7 @@ import (
 )
 
 type Config struct {
-	Port                        string `required:"true"`
+	Port                        string
 	Version                     string `required:"true"`
 	AgentDeployments            string `required:"true" split_words:"true"`
 	DbServer                    string `required:"true" split_words:"true"`
@@ -44,7 +44,7 @@ type Config struct {
 	PortalScope                 string `required:"true" split_words:"true"`
 	SubscriberImage             string `required:"true" split_words:"true"`
 	EventTrackerImage           string `required:"true" split_words:"true"`
-	ArgoWorkfloWControllerImage string `required:"true" split_words:"true"`
+	ArgoWorkflowControllerImage string `required:"true" split_words:"true"`
 	ArgoWorkflowExecutorImage   string `required:"true" split_words:"true"`
 	LitmusChaosOperatorImage    string `required:"true" split_words:"true"`
 	LitmusChaosRunnerImage      string `required:"true" split_words:"true"`
