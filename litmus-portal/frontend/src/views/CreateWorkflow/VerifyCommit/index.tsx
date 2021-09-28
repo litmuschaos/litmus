@@ -1,9 +1,21 @@
 import { useMutation } from '@apollo/client';
-import { Divider, Tooltip, Typography } from '@material-ui/core';
+import {
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import InfoIcon from '@material-ui/icons/Info';
 import cronstrue from 'cronstrue';
-import { ButtonFilled, ButtonOutlined, EditableText, Modal } from 'litmus-ui';
+import {
+  ButtonFilled,
+  ButtonOutlined,
+  EditableText,
+  InputField,
+  Modal,
+} from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
   forwardRef,
@@ -18,6 +30,7 @@ import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../../components/YamlEditor/Validations';
+import { constants } from '../../../constants';
 import { CREATE_WORKFLOW } from '../../../graphql';
 import {
   CreateWorkFlowInput,
@@ -94,6 +107,15 @@ const VerifyCommit = forwardRef(
 
     const { manifest, isCustomWorkflow } = useSelector(
       (state: RootState) => state.workflowManifest
+    );
+
+    const [addNodeSelector, setAddNodeSelector] = useState<boolean>(
+      !!YAML.parse(manifest).spec.nodeSelector
+    );
+    const [nodeSelector, setNodeSelector] = useState(
+      YAML.parse(manifest).spec.nodeSelector
+        ? YAML.parse(manifest).spec.nodeSelector['kubernetes.io/hostname']
+        : ''
     );
 
     useEffect(() => {
@@ -258,6 +280,19 @@ const VerifyCommit = forwardRef(
           yml,
           fetchWorkflowNameFromManifest(manifest)
         );
+
+        /**
+         * If addNodeSelector is true, the value of nodeselector is added
+         * else if the addNodeSelector is false and it exists, the value is removed
+         */
+        if (addNodeSelector) {
+          updatedYaml.spec['nodeSelector'] = {
+            'kubernetes.io/hostname': nodeSelector,
+          };
+        } else if (!addNodeSelector && updatedYaml.spec['nodeSelector']) {
+          delete updatedYaml.spec['nodeSelector'];
+        }
+
         const yamlJson = JSON.stringify(updatedYaml, null, 2); // Converted to Stringified JSON
 
         const chaosWorkFlowInputs = {
@@ -558,6 +593,51 @@ const VerifyCommit = forwardRef(
                     >
                       {t('createWorkflow.verifyCommit.button.viewYaml')}
                     </ButtonFilled>
+                  </div>
+                </div>
+
+                <div className={classes.itemWrapper}>
+                  <Typography className={classes.left}>
+                    NodeSelector:
+                  </Typography>
+                  <div className={classes.rightColumn}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={addNodeSelector}
+                          onChange={(event) => {
+                            return setAddNodeSelector(event.target.checked);
+                          }}
+                          className={classes.checkBoxDefault}
+                          name="checkedB"
+                          color="primary"
+                        />
+                      }
+                      label={
+                        <Typography className={classes.checkBoxText}>
+                          {t(
+                            'createWorkflow.tuneWorkflow.verticalStepper.nodeselector'
+                          )}
+                        </Typography>
+                      }
+                    />
+                    {addNodeSelector && (
+                      <div className={classes.flexDisplay}>
+                        <Typography className={classes.nodeSelectorText}>
+                          {t(
+                            'createWorkflow.tuneWorkflow.verticalStepper.selector'
+                          )}
+                        </Typography>
+                        <InputField
+                          label={constants.nodeselector}
+                          width="40%"
+                          value={nodeSelector}
+                          onChange={(event) => {
+                            setNodeSelector(event.target.value);
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

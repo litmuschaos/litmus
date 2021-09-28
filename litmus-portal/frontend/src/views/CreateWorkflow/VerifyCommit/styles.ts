@@ -195,5 +195,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: '0.2rem',
     fontSize: '1rem',
   },
+  checkBoxDefault: {
+    color: theme.palette.primary.main,
+  },
+  checkBoxText: {
+    fontSize: '0.9rem',
+    fontWeight: 400,
+  },
+  nodeSelectorText: {
+    margin: theme.spacing(1.875, 0.625, 0, 0),
+  },
+  flexDisplay: {
+    display: 'flex',
+  },
 }));
 export default useStyles;

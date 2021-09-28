@@ -1056,6 +1056,7 @@ createWorkflow:
       labelError: Label not available in the resource or namespace
       deleteExp: Delete the experiment
       editExp: Edit the experiment
+      runnerSelector: Runner Node Selector
     steadyState:
       name: Probe Name
       type: Type

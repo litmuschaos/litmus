@@ -114,6 +114,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   flexDisplay: {
     display: 'flex',
   },
+  runnerFlexDisplay: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   appKind: {
     color: theme.palette.text.hint,
   },

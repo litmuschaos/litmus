@@ -47,7 +47,6 @@ interface TargetApplicationData {
   appkind: string;
   applabel: string;
   annotationCheck: boolean;
-  jobCleanUpPolicy: string;
 }
 
 interface TargetApplicationProp {
@@ -86,7 +85,6 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
       typeof engineManifest.spec.annotationCheck === 'boolean'
         ? engineManifest.spec.annotationCheck
         : engineManifest.spec.annotationCheck === 'true',
-    jobCleanUpPolicy: engineManifest.spec.jobCleanUpPolicy ?? 'retain',
   });
   const [addNodeSelector, setAddNodeSelector] = useState<boolean>(
     !!engineManifest.spec.experiments[0].spec.components['nodeSelector']
@@ -98,6 +96,17 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
         ]
       : ''
   );
+  const [addRunnerSelector, setAddRunnerSelector] = useState<boolean>(
+    !!engineManifest.spec.components?.runner['nodeSelector']
+  );
+  const [runnerSelector, setRunnerSelector] = useState(
+    engineManifest.spec.components?.runner.nodeSelector
+      ? engineManifest.spec.components?.runner.nodeSelector[
+          'kubernetes.io/hostname'
+        ]
+      : ''
+  );
+
   const [appinfoData, setAppInfoData] = useState<AppInfoData[]>([]);
   const [GVRObj, setGVRObj] = useState<GVRRequest>({
     group: '',
@@ -151,7 +160,26 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
     ) {
       delete engineManifest.spec.experiments[0].spec.components['nodeSelector'];
     }
-    engineManifest.spec.jobCleanUpPolicy = targetApp.jobCleanUpPolicy;
+    /**
+     * If addRunnerSelector is true, the value of nodeselector is added to runner
+     * else if the addRunnerSelector is false and it exists, the value is removed
+     */
+    if (addRunnerSelector) {
+      Object.assign(engineManifest.spec, {
+        components: {
+          runner: {
+            nodeSelector: {
+              'kubernetes.io/hostname': runnerSelector,
+            },
+          },
+        },
+      });
+    } else if (
+      !addRunnerSelector &&
+      engineManifest.spec['components'].runner['nodeSelector']
+    ) {
+      delete engineManifest.spec['components'];
+    }
 
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(engineManifest),
@@ -454,18 +482,42 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
             </>
           )}
 
-          {/* JobCleanUpPolicy textfield */}
-          <InputField
-            label={constants.jobCleanUp}
-            width="auto"
-            value={targetApp.jobCleanUpPolicy}
-            onChange={(event) => {
-              setTargetApp({
-                ...targetApp,
-                jobCleanUpPolicy: event.target.value,
-              });
-            }}
+          {/* RunnerNodeSelector textfield */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={addRunnerSelector}
+                onChange={(event) => {
+                  return setAddRunnerSelector(event.target.checked);
+                }}
+                className={classes.checkBoxDefault}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label={
+              <Typography className={classes.checkBoxText}>
+                {t(
+                  'createWorkflow.tuneWorkflow.verticalStepper.runnerSelector'
+                )}
+              </Typography>
+            }
           />
+          {addRunnerSelector && (
+            <div className={classes.flexDisplay}>
+              <Typography className={classes.nodeSelectorText}>
+                {t('createWorkflow.tuneWorkflow.verticalStepper.selector')}
+              </Typography>
+              <InputField
+                label={constants.nodeselector}
+                width="50%"
+                value={runnerSelector}
+                onChange={(event) => {
+                  setRunnerSelector(event.target.value);
+                }}
+              />
+            </div>
+          )}
           <br />
 
           {/* Checkbox for adding NodeSelector */}
