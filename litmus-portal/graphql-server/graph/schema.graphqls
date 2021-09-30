@@ -224,7 +224,6 @@ input KubeGVRRequest {
   resource: String!
 }
 
-
 type Query {
   getWorkflowRuns(
     workflowRunsInput: GetWorkflowRunsInput!
@@ -232,7 +231,13 @@ type Query {
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-  getManifest(projectID: String!, clusterID: String!, accessKey: String!): String! @authorized
+  getManifest(
+    projectID: String!
+    clusterID: String!
+    accessKey: String!
+  ): String! @authorized
+
+  getAgentDetails(agentName: String!, projectID: String!): Cluster! @authorized
 
   getUser(username: String!): User! @authorized
 
@@ -288,11 +293,13 @@ type Query {
   ListDashboard(
     project_id: String!
     cluster_id: String
-    db_id: String): [listDashboardResponse] @authorized
+    db_id: String
+  ): [listDashboardResponse] @authorized
 
-  PortalDashboardData (
+  PortalDashboardData(
     project_id: String!
-    hub_name: String!) : [PortalDashboardData!]! @authorized
+    hub_name: String!
+  ): [PortalDashboardData!]! @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -321,8 +328,7 @@ type Mutation {
   createUser(user: CreateUserInput!): User! @authorized
 
   # Used to disable a user
-  updateUserState(uid: String!, isDeactivate: Boolean!): String!
-    @authorized
+  updateUserState(uid: String!, isDeactivate: Boolean!): String! @authorized
 
   # It is used to create a project
   createProject(projectName: String!): Project! @authorized
@@ -341,7 +347,8 @@ type Mutation {
     @authorized
 
   # removes workflow run from the cluster only
-  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
+  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
+    @authorized
 
   syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
     @authorized
@@ -412,7 +419,8 @@ type Mutation {
 
   updateDashboard(
     dashboard: updateDBInput!
-    chaosQueryUpdate: Boolean!): String! @authorized
+    chaosQueryUpdate: Boolean!
+  ): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
@@ -460,5 +468,6 @@ type Subscription {
     dashboardID: String
     promQueries: [promQueryInput!]!
     dashboardQueryMap: [queryMapForPanelGroup!]!
-    dataVariables: dataVars!): dashboardPromResponse! @authorized
+    dataVariables: dataVars!
+  ): dashboardPromResponse! @authorized
 }

@@ -266,3 +266,15 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 
 	r.Mutex.Unlock()
 }
+
+func GetAgentDetails(agentName string, projectID string) (*model.Cluster, error) {
+
+	cluster, err := dbOperationsCluster.GetAgentDetails(agentName, projectID)
+	if err != nil {
+		return nil, err
+	}
+	newCluster := model.Cluster{}
+	copier.Copy(&newCluster, &cluster)
+	return &newCluster, nil
+
+}

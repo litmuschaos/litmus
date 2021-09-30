@@ -364,6 +364,14 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 	return string(response), nil
 }
 
+func (r *queryResolver) GetAgentDetails(ctx context.Context, agentName string, projectID string) (*model.Cluster, error) {
+	err := authorization.ValidateRole(ctx, projectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return clusterHandler.GetAgentDetails(agentName, projectID)
+}
+
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
 	return usermanagement.GetUser(ctx, username)
 }
