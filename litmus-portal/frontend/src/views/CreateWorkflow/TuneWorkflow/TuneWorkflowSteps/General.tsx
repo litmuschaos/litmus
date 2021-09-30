@@ -75,7 +75,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
   };
 
   return (
-    <div>
+    <div data-cy="General">
       <Typography>
         {t('createWorkflow.tuneWorkflow.verticalStepper.myHubInfo')}
       </Typography>

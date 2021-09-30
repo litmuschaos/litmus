@@ -90,7 +90,7 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
   };
 
   return (
-    <div>
+    <div data-cy="TuneExperiment">
       <Typography>{t('createWorkflow.tuneWorkflow.env.envHeading')}</Typography>
       <br />
       <div className={classes.inputDiv}>
