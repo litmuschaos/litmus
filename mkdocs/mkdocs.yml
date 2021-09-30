@@ -161,10 +161,12 @@ nav:
           - Engine Specifications: experiments/concepts/chaos-resources/chaos-scheduler/engine-specification.md
         - Probes:
           - Contents: experiments/concepts/chaos-resources/probes/contents.md
+          - Introduction:  experiments/concepts/chaos-resources/probes/litmus-probes.md
           - Command Probe: experiments/concepts/chaos-resources/probes/cmdProbe.md
           - HTTP Probe: experiments/concepts/chaos-resources/probes/httpProbe.md
           - K8S Probe: experiments/concepts/chaos-resources/probes/k8sProbe.md
           - Prometheus Probe: experiments/concepts/chaos-resources/probes/promProbe.md
+          - Probe Chaining: experiments/concepts/chaos-resources/probes/probe-chaining.md
       - Security:  experiments/concepts/psp.md
       - AWS IAM Integration: experiments/concepts/awsIamIntegration.md
     - Litmus FAQ:
