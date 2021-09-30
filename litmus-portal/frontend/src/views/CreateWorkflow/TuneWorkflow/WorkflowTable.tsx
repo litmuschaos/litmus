@@ -9,10 +9,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import InfoIcon from '@material-ui/icons/Info';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { Icon } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
-  lazy,
   forwardRef,
+  lazy,
   useEffect,
   useImperativeHandle,
   useState,
@@ -329,8 +330,16 @@ const WorkflowTable = forwardRef(
       return true; // Should not show any alert
     }
 
+    function configurationStepperRef() {
+      if (displayStepper) {
+        return false; // Should show alert
+      }
+      return true;
+    }
+
     useImperativeHandle(ref, () => ({
       onNext,
+      configurationStepperRef,
     }));
 
     return (
@@ -356,7 +365,8 @@ const WorkflowTable = forwardRef(
                     <TableCell align="left">
                       {t('createWorkflow.chooseWorkflow.table.head5')}
                     </TableCell>
-                    <TableCell />
+                    <TableCell className={classes.emptyCell} />
+                    <TableCell className={classes.emptyCell} />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -388,13 +398,33 @@ const WorkflowTable = forwardRef(
                         <TableCell align="left">{experiment.Probes}</TableCell>
                         <TableCell>
                           <IconButton
+                            onClick={() => {
+                              setDisplayStepper(true);
+                              setEngineIndex(experiment.StepIndex);
+                              workflow.setWorkflowManifest({
+                                engineYAML: experiment.ChaosEngine,
+                              });
+                            }}
+                            size="medium"
+                          >
+                            <Icon
+                              name="pencil"
+                              size="md"
+                              color={theme.palette.text.hint}
+                            />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
                             onClick={() =>
                               deleteExperiment(experiment.StepIndex)
                             }
+                            size="medium"
                           >
-                            <img
-                              src="./icons/bin-red.svg"
-                              alt="delete experiment"
+                            <Icon
+                              name="trash"
+                              size="md"
+                              color={theme.palette.error.main}
                             />
                           </IconButton>
                         </TableCell>
@@ -402,7 +432,7 @@ const WorkflowTable = forwardRef(
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5}>
+                      <TableCell colSpan={7}>
                         <Typography align="center">
                           {t('createWorkflow.chooseWorkflow.pleaseAddExp')}
                         </Typography>

@@ -14,8 +14,8 @@
 
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
-    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>gcp-vm-disk-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml">here</a>
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code>gcp-vm-disk-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml">here</a>
     - Ensure that your service account has an editor access or owner access for the GCP project.
     - Ensure the target disk volume to be detached should not be the root volume its instance. 
     - Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:

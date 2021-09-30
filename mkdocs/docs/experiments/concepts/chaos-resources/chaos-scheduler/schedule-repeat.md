@@ -64,11 +64,11 @@ It schedule the chaos in the repeat mode. There are various ways we can set up t
     <table>
     <tr>
     <th>Field</th>
-    <td><code>.spec.schedule.repeat.properties.minChaosInterval</code></td>
+    <td><code>.spec.schedule.repeat.properties.minChaosInterval.hour.everyNthHour</code></td>
     </tr>
     <tr>
     <th>Description</th>
-    <td>Flag to specify the minimum interval between two chaosengines to be formed. </td>
+    <td>Flag to specify the hours between each successive schedule </td>
     </tr>
     <tr>
     <th>Type</th>
@@ -76,7 +76,7 @@ It schedule the chaos in the repeat mode. There are various ways we can set up t
     </tr>
     <tr>
     <th>Range</th>
-    <td><i>user-defined</i> (type: string)(pattern: "{number}m", "{number}h").</td>
+    <td>integer</td>
     </tr>
     <tr>
     <th>Default</th>
@@ -84,7 +84,61 @@ It schedule the chaos in the repeat mode. There are various ways we can set up t
     </tr>
     <tr>
     <th>Notes</th>
-    <td>The <code>minChaosInterval</code> in the spec specifies a time interval that must be taken care of while repeatedly forming the chaosengines i.e. This much duration of time should be there as interval between the formation of two chaosengines. </td>
+    <td>The <code>minChaosInterval.hour.everyNthHour</code> in the spec specifies the time interval in hours between each schedule</td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.spec.schedule.repeat.properties.minChaosInterval.hour.minuteOfTheHour</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to specify minute of hour for each successive schedule </td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Mandatory</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>integer</td>
+    </tr>
+    <tr>
+    <th>Default</th>
+    <td><i>0</i></td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>minChaosInterval.hour.minuteOfTheHour</code> in the spec specifies the minute of the hour between each schedule</td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.spec.schedule.repeat.properties.minChaosInterval.minute.everyNthMinute</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to specify the minutes for each successive schedule </td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Mandatory</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>integer</td>
+    </tr>
+    <tr>
+    <th>Default</th>
+    <td><i>n/a</i></td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>minChaosInterval.hour.everyNthMinute</code> in the spec specifies the time interval in minutes between each schedule</td>
     </tr>
     </table>
 
@@ -144,9 +198,11 @@ It schedule the chaos in the repeat mode. There are various ways we can set up t
 
 ### Basic Schema to Execute Repeat Strategy
 
-This will keep on executing the schedule and creating engines for an indefinite amount of time.
+This will keep executing the schedule and creating engines for an indefinite amount of time.
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/basic-schema.yaml yaml)
+#### Schedule ChaosEngine at every nth minute
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/basic-schema-per-mins.yaml yaml)
 ```yaml
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosSchedule
@@ -156,8 +212,97 @@ spec:
   schedule:
     repeat:
       properties:
-         #format should be like "10m" or "2h" accordingly for minutes or hours
-        minChaosInterval: "2m"  
+        minChaosInterval:
+          # schedule the chaos at every 5 minutes
+          minute:
+            everyNthMinute: 5  
+  engineTemplateSpec:
+    engineState: 'active'
+    appinfo:
+      appns: 'default'
+      applabel: 'app=nginx'
+      appkind: 'deployment'
+    annotationCheck: 'true'
+    chaosServiceAccount: pod-delete-sa
+    jobCleanUpPolicy: 'delete'
+    experiments:
+      - name: pod-delete
+        spec:
+          components:
+            env:
+              # set chaos duration (in sec) as desired
+              - name: TOTAL_CHAOS_DURATION
+                value: '30'
+
+              # set chaos interval (in sec) as desired
+              - name: CHAOS_INTERVAL
+                value: '10'
+
+              # pod failures without '--force' & default terminationGracePeriodSeconds
+              - name: FORCE
+                value: 'false'
+```
+
+#### Schedule ChaosEngine at every nth hour
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/basic-schema-per-hour.yaml yaml)
+```yaml
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosSchedule
+metadata:
+  name: schedule-nginx
+spec:
+  schedule:
+    repeat:
+      properties:
+        minChaosInterval:
+          # schedule the chaos every hour at 0th minute
+          hour:
+            everyNthHour: 1
+  engineTemplateSpec:
+    engineState: 'active'
+    appinfo:
+      appns: 'default'
+      applabel: 'app=nginx'
+      appkind: 'deployment'
+    annotationCheck: 'true'
+    chaosServiceAccount: pod-delete-sa
+    jobCleanUpPolicy: 'delete'
+    experiments:
+      - name: pod-delete
+        spec:
+          components:
+            env:
+              # set chaos duration (in sec) as desired
+              - name: TOTAL_CHAOS_DURATION
+                value: '30'
+
+              # set chaos interval (in sec) as desired
+              - name: CHAOS_INTERVAL
+                value: '10'
+
+              # pod failures without '--force' & default terminationGracePeriodSeconds
+              - name: FORCE
+                value: 'false'
+```
+
+#### Schedule ChaosEngine at nth minute of every nth hour
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-scheduler/repeat/basic-schema-per-hour-at-specific-minute.yaml yaml)
+```yaml
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosSchedule
+metadata:
+  name: schedule-nginx
+spec:
+  schedule:
+    repeat:
+      properties:
+        minChaosInterval:
+          # schedule the chaos every hour at 30th minute
+          hour:
+            everyNthHour: 1
+            minuteOfTheHour: 30
   engineTemplateSpec:
     engineState: 'active'
     appinfo:
@@ -203,8 +348,9 @@ spec:
         startTime: "2020-05-12T05:47:00Z"   
         endTime: "2020-09-13T02:58:00Z"   
       properties:
-        #format should be like "10m" or "2h" accordingly for minutes and hours
-        minChaosInterval: "2m"   
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5  
   engineTemplateSpec:
     engineState: 'active'
     appinfo:
@@ -249,8 +395,9 @@ spec:
         #should be modified according to current UTC Time
         endTime: "2020-09-13T02:58:00Z"   
       properties:
-        #format should be like "10m" or "2h" accordingly for minutes and hours
-        minChaosInterval: "2m"   
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5  
   engineTemplateSpec:
     engineState: 'active'
     appinfo:
@@ -295,8 +442,9 @@ spec:
         #should be modified according to current UTC Time
         startTime: "2020-05-12T05:47:00Z"   
       properties:
-         #format should be like "10m" or "2h" accordingly for minutes and hours
-        minChaosInterval: "2m"  
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5  
   engineTemplateSpec:
     engineState: 'active'
     appinfo:
@@ -338,8 +486,9 @@ spec:
   schedule:
     repeat:
       properties:
-        #format should be like "10m" or "2h" accordingly for minutes and hours
-        minChaosInterval: "2m"   
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5   
       workHours:
         # format should be <starting-hour-number>-<ending-hour-number>(inclusive)
         includedHours: 0-12
@@ -387,8 +536,9 @@ spec:
   schedule:
     repeat:
       properties:
-        #format should be like "10m" or "2h" accordingly for minutes and hours
-        minChaosInterval: "2m"   
+        minChaosInterval:
+          minute:
+            everyNthMinute: 5  
       workDays:
         includedDays: "Mon,Tue,Wed,Sat,Sun"
   engineTemplateSpec:

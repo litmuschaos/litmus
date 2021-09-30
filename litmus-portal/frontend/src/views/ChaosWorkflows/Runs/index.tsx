@@ -38,7 +38,15 @@ import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
 
-const BrowseWorkflow: React.FC = () => {
+interface BrowseWorkflowProps {
+  workflowName: string;
+  setWorkflowName: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
+  workflowName,
+  setWorkflowName,
+}) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const { t } = useTranslation();
@@ -51,7 +59,7 @@ const BrowseWorkflow: React.FC = () => {
 
   // States for filters
   const [filters, setFilters] = useState<WorkflowRunFilterInput>({
-    workflow_name: '',
+    workflow_name: workflowName,
     cluster_name: 'All',
     workflow_status: 'All',
     date_range: {
@@ -190,6 +198,7 @@ const BrowseWorkflow: React.FC = () => {
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     setFilters({ ...filters, workflow_name: event.target.value as string });
+    setWorkflowName(event.target.value as string);
     setPaginationData({ ...paginationData, page: 0 });
   };
 

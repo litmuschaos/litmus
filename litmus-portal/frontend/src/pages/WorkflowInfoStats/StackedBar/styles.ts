@@ -16,12 +16,25 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(10),
     color: theme.palette.border.main,
   },
+  stackbarBorder: {
+    border: `1px solid ${theme.palette.border.main}`,
+    overflow: 'hidden',
+  },
   stackbarParent: {
     width: '64rem',
     padding: theme.spacing(2.5, 3.5, 2.5, 0),
+    margin: '0 auto',
+  },
+  stackbarHelperTextArea: {
+    display: 'flex',
+    alignItems: 'center',
   },
   stackbarHelperText: {
     margin: theme.spacing(3, 0),
+    color: theme.palette.text.hint,
+    flexGrow: 1,
+  },
+  resiliencyScore: {
     color: theme.palette.text.hint,
   },
   stackbarLegend: {
