@@ -1,4 +1,4 @@
-It contains scope and permission details provided at `spec.definition.scope` and `spec.definition.permissions` respectively inside chaosexperiment.
+It contains scope and permissions details provided at `spec.definition.scope` and `spec.definition.permissions` respectively inside chaosexperiment.
 
 ??? info "View the scope specification schema" 
 

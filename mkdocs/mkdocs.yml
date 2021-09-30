@@ -148,7 +148,11 @@ nav:
           - Component Specification: experiments/concepts/chaos-resources/chaos-experiment/component-specification.md
           - Experiment Tunables Specification: experiments/concepts/chaos-resources/chaos-experiment/experiment-tunable-specification.md
           - Configuration Specification: experiments/concepts/chaos-resources/chaos-experiment/configuration-specification.md
-        - ChaosResult: experiments/concepts/chaos-resources/chaos-result/contents.md
+        - ChaosResult: 
+          - Contents: experiments/concepts/chaos-resources/chaos-result/contents.md
+          - Spec Specification: experiments/concepts/chaos-resources/chaos-result/spec-specification.md
+          - Status Specification: experiments/concepts/chaos-resources/chaos-result/status-specification.md
+          - Probe Status: experiments/concepts/chaos-resources/chaos-result/probe-specification.md
         - ChaosScheduler:
           - Contents: experiments/concepts/chaos-resources/chaos-scheduler/contents.md
           - Schedule Once: experiments/concepts/chaos-resources/chaos-scheduler/schedule-once.md
