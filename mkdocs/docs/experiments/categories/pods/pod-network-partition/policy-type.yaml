@@ -1,0 +1,25 @@
+# inject network loss for only ingress or only engress or all traffics
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-partition-sa
+  experiments:
+  - name: pod-network-partition
+    spec:
+      components:
+        env:
+        # provide the network policy type
+        # it supports `ingress`, `egress`, and `all` values
+        # default value is `all`
+        - name: POLICY_TYPES
+          value: 'all'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

@@ -241,6 +241,11 @@ Following Platform Chaos experiments are available:
     <td>Stop the azure instance</td>
     <td><a href="/litmus/experiments/categories/azure/azure-instance-stop">azure-instance-stop</a></td>
   </tr>
+  <tr>
+    <td>Azure Disk Loss</td>
+    <td>Detach azure disk from instance</td>
+    <td><a href="/litmus/experiments/categories/azure/azure-disk-loss">azure-disk-loss</a></td>
+  </tr>
 </table>
 
 ### VMWare

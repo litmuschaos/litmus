@@ -146,9 +146,9 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 
   ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
 
-- (optional) Import the grafana dashboard "MySQL Overview" provided [here](https://raw.githubusercontent.com/ishangupta-ds/litmus/percona/monitoring/grafana-dashboards/percona-sql/MySQL-Overview-Interleaved.json)
+- (optional) Import the grafana dashboard "MySQL Overview" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/grafana-dashboards/percona-sql/MySQL-Overview-Interleaved.json)
 
-- (optional) Import the grafana dashboard "PXC Galera Node summary Performance" provided [here](https://raw.githubusercontent.com/ishangupta-ds/litmus/percona/monitoring/grafana-dashboards/percona-sql/PXC_Galera_Node_Summary_Interleaved.json)
+- (optional) Import the grafana dashboard "PXC Galera Node summary Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/grafana-dashboards/percona-sql/PXC_Galera_Node_Summary_Interleaved.json)
 
 - (optional) Use PMM for monitoring.
 

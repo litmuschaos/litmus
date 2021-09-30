@@ -22,6 +22,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
 	"github.com/sirupsen/logrus"
@@ -47,13 +48,26 @@ var (
 	setupLog = ctrl.Log.WithName("setup")
 )
 
+type Config struct {
+	Version            string `required:"true"`
+	AgentScope         string `required:"true" split_words:"true"`
+	IsClusterConfirmed string `required:"true" split_words:"true"`
+	AccessKey          string `required:"true" split_words:"true"`
+	ClusterId          string `required:"true" split_words:"true"`
+	ServerAddr         string `required:"true" split_words:"true"`
+	AgentNamespace     string `required:"true" split_words:"true"`
+}
+
 func init() {
 
 	logrus.Info("Go Version: ", rt.Version())
 	logrus.Info("Go OS/Arch: ", rt.GOOS, "/", rt.GOARCH)
 
-	if os.Getenv("VERSION") == "" || os.Getenv("AGENT_SCOPE") == "" || os.Getenv("IS_CLUSTER_CONFIRMED") == "" || os.Getenv("ACCESS_KEY") == "" || os.Getenv("CLUSTER_ID") == "" || os.Getenv("SERVER_ADDR") == "" || os.Getenv("AGENT_NAMESPACE") == "" {
-		logrus.Fatal("Some environment variable are not setup")
+	var c Config
+
+	err := envconfig.Process("", &c)
+	if err != nil {
+		logrus.Fatal(err)
 	}
 
 	_ = clientgoscheme.AddToScheme(scheme)
