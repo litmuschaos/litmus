@@ -281,12 +281,47 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-experiment/component-specification/</loc>
+         <lastmod>2021-10-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-experiment/configuration-specification/</loc>
+         <lastmod>2021-10-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-experiment/contents/</loc>
          <lastmod>2021-10-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-experiment/experiment-tunable-specification/</loc>
+         <lastmod>2021-10-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-experiment/scope-specification/</loc>
+         <lastmod>2021-10-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-result/contents/</loc>
+         <lastmod>2021-10-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-result/probe-specification/</loc>
+         <lastmod>2021-10-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-result/spec-specification/</loc>
+         <lastmod>2021-10-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-result/status-specification/</loc>
          <lastmod>2021-10-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -337,6 +372,11 @@
     </url>
     <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/litmus-probes/</loc>
+         <lastmod>2021-10-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/probe-chaining/</loc>
          <lastmod>2021-10-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
