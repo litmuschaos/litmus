@@ -7,6 +7,7 @@ require (
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/gorilla/websocket v1.4.2
 	github.com/imdario/mergo v0.3.10 // indirect
+	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/litmuschaos/chaos-operator v0.0.0-20210415155750-e4081aec0e41
 	github.com/sirupsen/logrus v1.6.0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect

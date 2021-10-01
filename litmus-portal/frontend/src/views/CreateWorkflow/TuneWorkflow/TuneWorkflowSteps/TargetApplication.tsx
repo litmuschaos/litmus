@@ -282,7 +282,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   }, []);
 
   return (
-    <div>
+    <div data-cy="TargetApplication">
       <Typography className={classes.annotationInfo}>
         {t('createWorkflow.tuneWorkflow.verticalStepper.annotationInfo')}
       </Typography>
