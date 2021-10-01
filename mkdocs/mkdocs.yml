@@ -142,8 +142,17 @@ nav:
           - Runtime Specifications: experiments/concepts/chaos-resources/chaos-engine/runtime-details.md
           - Runner Specifications: experiments/concepts/chaos-resources/chaos-engine/runner-components.md
           - Experiment Specifications: experiments/concepts/chaos-resources/chaos-engine/experiment-components.md
-        - ChaosExperiment: experiments/concepts/chaos-resources/chaos-experiment/contents.md
-        - ChaosResult: experiments/concepts/chaos-resources/chaos-result/contents.md
+        - ChaosExperiment: 
+          - Contents: experiments/concepts/chaos-resources/chaos-experiment/contents.md
+          - Scope Specification: experiments/concepts/chaos-resources/chaos-experiment/scope-specification.md
+          - Component Specification: experiments/concepts/chaos-resources/chaos-experiment/component-specification.md
+          - Experiment Tunables Specification: experiments/concepts/chaos-resources/chaos-experiment/experiment-tunable-specification.md
+          - Configuration Specification: experiments/concepts/chaos-resources/chaos-experiment/configuration-specification.md
+        - ChaosResult: 
+          - Contents: experiments/concepts/chaos-resources/chaos-result/contents.md
+          - Spec Specification: experiments/concepts/chaos-resources/chaos-result/spec-specification.md
+          - Status Specification: experiments/concepts/chaos-resources/chaos-result/status-specification.md
+          - Probe Status: experiments/concepts/chaos-resources/chaos-result/probe-specification.md
         - ChaosScheduler:
           - Contents: experiments/concepts/chaos-resources/chaos-scheduler/contents.md
           - Schedule Once: experiments/concepts/chaos-resources/chaos-scheduler/schedule-once.md
@@ -152,10 +161,12 @@ nav:
           - Engine Specifications: experiments/concepts/chaos-resources/chaos-scheduler/engine-specification.md
         - Probes:
           - Contents: experiments/concepts/chaos-resources/probes/contents.md
+          - Introduction:  experiments/concepts/chaos-resources/probes/litmus-probes.md
           - Command Probe: experiments/concepts/chaos-resources/probes/cmdProbe.md
           - HTTP Probe: experiments/concepts/chaos-resources/probes/httpProbe.md
           - K8S Probe: experiments/concepts/chaos-resources/probes/k8sProbe.md
           - Prometheus Probe: experiments/concepts/chaos-resources/probes/promProbe.md
+          - Probe Chaining: experiments/concepts/chaos-resources/probes/probe-chaining.md
       - Security:  experiments/concepts/psp.md
       - AWS IAM Integration: experiments/concepts/awsIamIntegration.md
     - Litmus FAQ:
