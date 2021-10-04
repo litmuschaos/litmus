@@ -30,6 +30,7 @@ spec:
       labels:
         app: subscriber
     spec:
+      #{tolerations}
       #{nodeselector}
       serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
       containers:
@@ -66,6 +67,7 @@ spec:
       labels:
         app: event-tracker
     spec:
+      #{tolerations}
       #{nodeselector}
       serviceAccountName: event-tracker-sa
       containers:

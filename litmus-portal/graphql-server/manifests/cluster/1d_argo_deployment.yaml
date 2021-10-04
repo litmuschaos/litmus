@@ -27,6 +27,7 @@ spec:
       labels:
         app: workflow-controller
     spec:
+      #{tolerations}
       #{nodeselector}
       containers:
         - args:
