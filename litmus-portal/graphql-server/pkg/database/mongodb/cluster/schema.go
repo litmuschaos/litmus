@@ -24,10 +24,3 @@ type Cluster struct {
 	NodeSelector       *string `bson:"node_selector"`
 	Tolerations        *string `bson:"tolerations"`
 }
-
-type Toleration struct {
-	Key               *string `yaml:"key"`
-	Operator          *string `yaml:"operator"`
-	Effect            *string `yaml:"effect"`
-	TolerationSeconds *string `yaml:"tolerationSeconds"`
-}

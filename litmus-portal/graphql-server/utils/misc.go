@@ -10,6 +10,7 @@ import (
 	"strings"
 	"unicode"
 
+	clusterSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 	"gopkg.in/yaml.v2"
@@ -115,14 +116,14 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 	if cluster.Tolerations != nil {
 		fmt.Print(*cluster.Tolerations)
 
-		var tol []dbSchemaCluster.Toleration
+		var tol []clusterSchema.Toleration
 		err := yaml.Unmarshal([]byte(*cluster.Tolerations), &tol)
 		if err != nil {
 			return nil, err
 		}
 
 		byt, err := yaml.Marshal(struct {
-			Tolerations []dbSchemaCluster.Toleration `yaml:"tolerations"`
+			Tolerations []clusterSchema.Toleration `yaml:"tolerations"`
 		}{
 			Tolerations: tol,
 		})
