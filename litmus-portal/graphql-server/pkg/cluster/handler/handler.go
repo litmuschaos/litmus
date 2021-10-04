@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -65,6 +66,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:          token,
 		IsRemoved:      false,
 		NodeSelector:   input.NodeSelector,
+		StartTime:      strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
@@ -267,14 +269,15 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 	r.Mutex.Unlock()
 }
 
-func GetAgentDetails(agentName string, projectID string) (*model.Cluster, error) {
-
-	cluster, err := dbOperationsCluster.GetAgentDetails(agentName, projectID)
+// GetAgentDetails fetches agent details from the DB
+func GetAgentDetails(ctx context.Context, agentName string, projectID string) (*model.Cluster, error) {
+	cluster, err := dbOperationsCluster.GetAgentDetails(ctx, agentName, projectID)
 	if err != nil {
 		return nil, err
 	}
+
 	newCluster := model.Cluster{}
 	copier.Copy(&newCluster, &cluster)
-	return &newCluster, nil
 
+	return &newCluster, nil
 }

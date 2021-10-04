@@ -26,6 +26,7 @@ type Cluster {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   last_workflow_timestamp: String!
+  start_time: String!
 }
 
 input ClusterInput {
@@ -231,17 +232,19 @@ type Query {
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
+  # Query to fetch manifest
   getManifest(
     projectID: String!
     clusterID: String!
     accessKey: String!
   ): String! @authorized
 
+  # Query to fetch agent details based on project_id and agent_name
   getAgentDetails(agentName: String!, projectID: String!): Cluster! @authorized
 
   getUser(username: String!): User! @authorized
 
-  #It is used to get projects by projectID
+  # It is used to get projects by projectID
   getProject(projectID: String!): Project! @authorized
 
   #It is used to get projects by userID

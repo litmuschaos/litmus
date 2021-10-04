@@ -39,8 +39,7 @@ func GetCluster(clusterID string) (Cluster, error) {
 }
 
 // GetAgentDetails takes a agentName and projectID to retrieve the cluster details from the database
-func GetAgentDetails(agentName string, projectID string) (Cluster, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+func GetAgentDetails(ctx context.Context, agentName string, projectID string) (Cluster, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"cluster_name", agentName},

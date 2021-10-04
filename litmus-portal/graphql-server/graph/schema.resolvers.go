@@ -369,7 +369,7 @@ func (r *queryResolver) GetAgentDetails(ctx context.Context, agentName string, p
 	if err != nil {
 		return nil, err
 	}
-	return clusterHandler.GetAgentDetails(agentName, projectID)
+	return clusterHandler.GetAgentDetails(ctx, agentName, projectID)
 }
 
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {

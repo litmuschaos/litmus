@@ -110,6 +110,7 @@ type ComplexityRoot struct {
 		PlatformName          func(childComplexity int) int
 		ProjectID             func(childComplexity int) int
 		Serviceaccount        func(childComplexity int) int
+		StartTime             func(childComplexity int) int
 		Token                 func(childComplexity int) int
 		UpdatedAt             func(childComplexity int) int
 	}
@@ -1107,6 +1108,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.Serviceaccount(childComplexity), true
+
+	case "Cluster.start_time":
+		if e.complexity.Cluster.StartTime == nil {
+			break
+		}
+
+		return e.complexity.Cluster.StartTime(childComplexity), true
 
 	case "Cluster.token":
 		if e.complexity.Cluster.Token == nil {
@@ -4941,6 +4949,7 @@ type Cluster {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   last_workflow_timestamp: String!
+  start_time: String!
 }
 
 input ClusterInput {
@@ -8520,6 +8529,40 @@ func (ec *executionContext) _Cluster_last_workflow_timestamp(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.LastWorkflowTimestamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_start_time(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartTime, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27115,6 +27158,11 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Cluster_agent_sa_exists(ctx, field, obj)
 		case "last_workflow_timestamp":
 			out.Values[i] = ec._Cluster_last_workflow_timestamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "start_time":
+			out.Values[i] = ec._Cluster_start_time(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

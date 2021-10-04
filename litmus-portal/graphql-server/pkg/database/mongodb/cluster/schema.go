@@ -22,4 +22,5 @@ type Cluster struct {
 	Token              string  `bson:"token"`
 	IsRemoved          bool    `bson:"is_removed"`
 	NodeSelector       *string `json:"node_selector"`
+	StartTime          string  `json:"start_time"`
 }

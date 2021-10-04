@@ -98,6 +98,7 @@ type Cluster struct {
 	AgentNsExists         *bool   `json:"agent_ns_exists"`
 	AgentSaExists         *bool   `json:"agent_sa_exists"`
 	LastWorkflowTimestamp string  `json:"last_workflow_timestamp"`
+	StartTime             string  `json:"start_time"`
 }
 
 type ClusterAction struct {
