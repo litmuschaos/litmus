@@ -1,0 +1,40 @@
+Name:         engine-nginx-pod-delete
+Namespace:    default
+Labels:       app.kubernetes.io/component=experiment-job
+              app.kubernetes.io/part-of=litmus
+              app.kubernetes.io/version=1.13.8
+              chaosUID=aa0a0084-f20f-4294-a879-d6df9aba6f9b
+              controller-uid=6943c955-0154-4542-8745-de991eb47c61
+              job-name=pod-delete-w4p5op
+              name=engine-nginx-pod-delete
+Annotations:  <none>
+API Version:  litmuschaos.io/v1alpha1
+Kind:         ChaosResult
+Metadata:
+  Creation Timestamp:  2021-09-29T13:28:59Z
+  Generation:          6
+  Resource Version:    66788
+  Self Link:           /apis/litmuschaos.io/v1alpha1/namespaces/default/chaosresults/engine-nginx-pod-delete
+  UID:                 fe7f01c8-8118-4761-8ff9-0a87824d863f
+Spec:
+  Engine:      engine-nginx
+  Experiment:  pod-delete
+Status:
+  Experiment Status:
+    # step on which experiment fails
+    Fail Step:                 N/A
+    # phase of the chaos result
+    Phase:                     Completed
+    # Success Percentage of the litmus probes
+    Probe Success Percentage:  100
+    # Verdict of the chaos result
+    Verdict:                   Pass
+  History:
+    Failed Runs:   1
+    Passed Runs:   1
+    Stopped Runs:  0
+    Targets:
+      Chaos Status:  targeted
+      Kind:          deployment
+      Name:          hello
+Events:              <none>

@@ -107,7 +107,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
   };
 
   return (
-    <div>
+    <div data-cy="SteadyState">
       <TableContainer className={classes.table} component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
