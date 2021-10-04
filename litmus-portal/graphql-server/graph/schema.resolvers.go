@@ -35,6 +35,11 @@ import (
 )
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
+	err := authorization.ValidateRole(ctx, clusterInput.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+
 	return clusterHandler.ClusterRegister(clusterInput)
 }
 
@@ -273,14 +278,29 @@ func (r *mutationResolver) UpdateGitOps(ctx context.Context, config model.GitCon
 }
 
 func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error) {
+	err := authorization.ValidateRole(ctx, *datasource.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+
 	return analyticsHandler.CreateDataSource(datasource)
 }
 
 func (r *mutationResolver) CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error) {
+	err := authorization.ValidateRole(ctx, dashboard.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+
 	return analyticsHandler.CreateDashboard(dashboard)
 }
 
 func (r *mutationResolver) UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error) {
+	err := authorization.ValidateRole(ctx, *datasource.ProjectID, []model.MemberRole{model.MemberRoleOwner, model.MemberRoleEditor}, usermanagement.AcceptedInvitation)
+	if err != nil {
+		return nil, err
+	}
+
 	return analyticsHandler.UpdateDataSource(datasource)
 }
 
