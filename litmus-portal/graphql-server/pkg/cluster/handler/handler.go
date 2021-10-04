@@ -283,7 +283,11 @@ func GetAgentDetails(ctx context.Context, agentName string, projectID string) (*
 	}
 
 	newCluster := model.Cluster{}
-	copier.Copy(&newCluster, &cluster)
+
+	err = copier.Copy(&newCluster, &cluster)
+	if err != nil {
+		return nil, err
+	}
 
 	return &newCluster, nil
 }
