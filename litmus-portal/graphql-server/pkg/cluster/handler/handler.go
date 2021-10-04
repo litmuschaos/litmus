@@ -65,6 +65,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:          token,
 		IsRemoved:      false,
 		NodeSelector:   input.NodeSelector,
+		Tolerations:    input.Tolerations,
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
@@ -79,6 +80,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:       token,
 		ClusterName: newCluster.ClusterName,
 	}, nil
+
 }
 
 // ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key

@@ -30,6 +30,7 @@ spec:
         name: chaos-operator
     spec:
       serviceAccountName: litmus-namespace-scope
+      #{tolerations}
       #{nodeselector}
       containers:
         - name: chaos-operator
@@ -78,6 +79,7 @@ spec:
         app: chaos-exporter
         release: prometheus-stack
     spec:
+      #{tolerations}
       #{nodeselector}
       containers:
         - image: #{LITMUS-CHAOS-EXPORTER}

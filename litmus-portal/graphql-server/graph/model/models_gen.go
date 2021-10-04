@@ -149,6 +149,7 @@ type ClusterInput struct {
 	AgentNsExists  *bool   `json:"agent_ns_exists"`
 	AgentSaExists  *bool   `json:"agent_sa_exists"`
 	NodeSelector   *string `json:"node_selector"`
+	Tolerations    *string `json:"tolerations"`
 }
 
 type CreateMyHub struct {

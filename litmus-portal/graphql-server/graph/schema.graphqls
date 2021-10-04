@@ -40,6 +40,7 @@ input ClusterInput {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   node_selector: String
+  tolerations: String
 }
 
 type ClusterEvent {

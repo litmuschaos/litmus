@@ -111,6 +111,28 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		nodeselector = string(addRootIndent(byt, 6))
 	}
 
+	var tolerations string
+	if cluster.Tolerations != nil {
+		fmt.Print(*cluster.Tolerations)
+
+		var tol []dbSchemaCluster.Toleration
+		err := yaml.Unmarshal([]byte(*cluster.Tolerations), &tol)
+		if err != nil {
+			return nil, err
+		}
+
+		byt, err := yaml.Marshal(struct {
+			Tolerations []dbSchemaCluster.Toleration `yaml:"tolerations"`
+		}{
+			Tolerations: tol,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		tolerations = string(addRootIndent(byt, 6))
+	}
+
 	for _, fileName := range list {
 		fileContent, err := ioutil.ReadFile(rootPath + "/" + fileName)
 		if err != nil {
@@ -119,6 +141,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 
 		var newContent = string(fileContent)
 
+		newContent = strings.Replace(newContent, "#{tolerations}", tolerations, -1)
 		newContent = strings.Replace(newContent, "#{CLUSTER_ID}", cluster.ClusterID, -1)
 		newContent = strings.Replace(newContent, "#{ACCESS_KEY}", cluster.AccessKey, -1)
 		newContent = strings.Replace(newContent, "#{SERVER_ADDR}", subscriberConfig.GQLServerURI, -1)
