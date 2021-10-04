@@ -138,18 +138,18 @@ type ClusterIdentity struct {
 }
 
 type ClusterInput struct {
-	ClusterName    string  `json:"cluster_name"`
-	Description    *string `json:"description"`
-	PlatformName   string  `json:"platform_name"`
-	ProjectID      string  `json:"project_id"`
-	ClusterType    string  `json:"cluster_type"`
-	AgentNamespace *string `json:"agent_namespace"`
-	Serviceaccount *string `json:"serviceaccount"`
-	AgentScope     string  `json:"agent_scope"`
-	AgentNsExists  *bool   `json:"agent_ns_exists"`
-	AgentSaExists  *bool   `json:"agent_sa_exists"`
-	NodeSelector   *string `json:"node_selector"`
-	Tolerations    *string `json:"tolerations"`
+	ClusterName    string        `json:"cluster_name"`
+	Description    *string       `json:"description"`
+	PlatformName   string        `json:"platform_name"`
+	ProjectID      string        `json:"project_id"`
+	ClusterType    string        `json:"cluster_type"`
+	AgentNamespace *string       `json:"agent_namespace"`
+	Serviceaccount *string       `json:"serviceaccount"`
+	AgentScope     string        `json:"agent_scope"`
+	AgentNsExists  *bool         `json:"agent_ns_exists"`
+	AgentSaExists  *bool         `json:"agent_sa_exists"`
+	NodeSelector   *string       `json:"node_selector"`
+	Tolerations    []*Toleration `json:"tolerations"`
 }
 
 type CreateMyHub struct {
@@ -495,6 +495,13 @@ type TemplateInput struct {
 	TemplateDescription string `json:"template_description"`
 	ProjectID           string `json:"project_id"`
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+}
+
+type Toleration struct {
+	TolerationSeconds *string `json:"tolerationSeconds"`
+	Key               *string `json:"key"`
+	Operator          *string `json:"operator"`
+	Effect            *string `json:"effect"`
 }
 
 type TotalCount struct {

@@ -4927,7 +4927,14 @@ input ClusterInput {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   node_selector: String
-  tolerations: String
+  tolerations: [Toleration]
+}
+
+input Toleration{
+  tolerationSeconds: String
+  key: String
+  operator: String
+  effect: String
 }
 
 type ClusterEvent {
@@ -24702,7 +24709,7 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 			}
 		case "tolerations":
 			var err error
-			it.Tolerations, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Tolerations, err = ec.unmarshalOToleration2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25417,6 +25424,42 @@ func (ec *executionContext) unmarshalInputTemplateInput(ctx context.Context, obj
 		case "isCustomWorkflow":
 			var err error
 			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputToleration(ctx context.Context, obj interface{}) (model.Toleration, error) {
+	var it model.Toleration
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "tolerationSeconds":
+			var err error
+			it.TolerationSeconds, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "key":
+			var err error
+			it.Key, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+			it.Operator, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "effect":
+			var err error
+			it.Effect, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32869,6 +32912,38 @@ func (ec *executionContext) unmarshalOTemplateInput2ᚖgithubᚗcomᚋlitmuschao
 		return nil, nil
 	}
 	res, err := ec.unmarshalOTemplateInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTemplateInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOToleration2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) (model.Toleration, error) {
+	return ec.unmarshalInputToleration(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOToleration2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) ([]*model.Toleration, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.Toleration, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOToleration2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOToleration2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) (*model.Toleration, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOToleration2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, v)
 	return &res, err
 }
 

@@ -47,6 +47,12 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		}
 	}
 
+	var tolerations []*dbSchemaCluster.Toleration
+	err = copier.Copy(&tolerations, input.Tolerations)
+	if err != nil {
+		return &model.ClusterRegResponse{}, err
+	}
+
 	newCluster := dbSchemaCluster.Cluster{
 		ClusterID:      clusterID,
 		ClusterName:    input.ClusterName,
@@ -65,7 +71,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:          token,
 		IsRemoved:      false,
 		NodeSelector:   input.NodeSelector,
-		Tolerations:    input.Tolerations,
+		Tolerations:    tolerations,
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)

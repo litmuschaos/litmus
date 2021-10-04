@@ -9,10 +9,3 @@ type SubscriberRequests struct {
 	ClusterID    string  `json:"cluster_id"`
 	Namespace    string  `json:"namespace"`
 }
-
-type Toleration struct {
-	Key               *string `yaml:"key"`
-	Operator          *string `yaml:"operator"`
-	Effect            *string `yaml:"effect"`
-	TolerationSeconds *string `yaml:"tolerationSeconds"`
-}
