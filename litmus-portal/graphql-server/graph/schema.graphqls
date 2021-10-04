@@ -40,6 +40,14 @@ input ClusterInput {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   node_selector: String
+  tolerations: [Toleration]
+}
+
+input Toleration{
+  tolerationSeconds: String
+  key: String
+  operator: String
+  effect: String
 }
 
 type ClusterEvent {

@@ -47,6 +47,12 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		}
 	}
 
+	var tolerations []*dbSchemaCluster.Toleration
+	err = copier.Copy(&tolerations, input.Tolerations)
+	if err != nil {
+		return &model.ClusterRegResponse{}, err
+	}
+
 	newCluster := dbSchemaCluster.Cluster{
 		ClusterID:      clusterID,
 		ClusterName:    input.ClusterName,
@@ -65,6 +71,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:          token,
 		IsRemoved:      false,
 		NodeSelector:   input.NodeSelector,
+		Tolerations:    tolerations,
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
@@ -79,6 +86,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:       token,
 		ClusterName: newCluster.ClusterName,
 	}, nil
+
 }
 
 // ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
