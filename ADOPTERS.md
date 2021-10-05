@@ -20,6 +20,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[Mercedes](https://www.mercedes-benz.com/)|Resiliency validation for applications|[Our Story](adopters/organizations/mercedes.md)|
 |[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
 |[Klanik](https://www.klanik.com)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/klanik.md)|
+|[Pôle Emploi](https://www.pole-emploi.fr)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/pole_emploi.md)|
 
 ### Cloud-Native Vendors
 
