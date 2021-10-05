@@ -1,6 +1,7 @@
 package rest_handlers
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +13,11 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+)
+
+const (
+	clusterScope   string = "cluster"
+	namespaceScope string = "namespace"
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
@@ -85,4 +91,42 @@ func GetManifest(token string) ([]byte, int, error) {
 	} else {
 		return []byte("Cluster is already registered"), 409, nil
 	}
+}
+
+// Returns manifest for a given cluster
+func GetManifestWithClusterID(id string, key string) ([]byte, error) {
+
+	reqCluster, err := dbOperationsCluster.GetCluster(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Checking if cluster with given clusterID and accesskey is present
+	if reqCluster.AccessKey != key {
+		return nil, errors.New("Invalid access key")
+	}
+
+	if os.Getenv("PORTAL_SCOPE") == clusterScope {
+		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
+		if err != nil {
+			return nil, err
+		}
+	} else if os.Getenv("PORTAL_SCOPE") == namespaceScope {
+		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
+	}
+
+	var respData []byte
+
+	if reqCluster.AgentScope == clusterScope {
+		respData, err = utils.ManifestParser(reqCluster, "manifests/cluster", subscriberConfiguration)
+	} else if reqCluster.AgentScope == namespaceScope {
+		respData, err = utils.ManifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
+	} else {
+		log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return respData, nil
 }
