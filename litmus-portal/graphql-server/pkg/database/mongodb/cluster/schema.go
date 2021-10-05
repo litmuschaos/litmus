@@ -23,6 +23,7 @@ type Cluster struct {
 	IsRemoved          bool          `bson:"is_removed"`
 	NodeSelector       *string       `bson:"node_selector"`
 	Tolerations        []*Toleration `bson:"tolerations"`
+	StartTime          string        `json:"start_time"`
 }
 
 type Toleration struct {

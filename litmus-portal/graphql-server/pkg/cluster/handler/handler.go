@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -46,7 +47,6 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 			}
 		}
 	}
-
 	var tolerations []*dbSchemaCluster.Toleration
 	err = copier.Copy(&tolerations, input.Tolerations)
 	if err != nil {
@@ -72,6 +72,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		IsRemoved:      false,
 		NodeSelector:   input.NodeSelector,
 		Tolerations:    tolerations,
+		StartTime:      strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
@@ -86,7 +87,6 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:       token,
 		ClusterName: newCluster.ClusterName,
 	}, nil
-
 }
 
 // ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
@@ -273,4 +273,21 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 	}
 
 	r.Mutex.Unlock()
+}
+
+// GetAgentDetails fetches agent details from the DB
+func GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
+	cluster, err := dbOperationsCluster.GetAgentDetails(ctx, clusterID, projectID)
+	if err != nil {
+		return nil, err
+	}
+
+	newCluster := model.Cluster{}
+
+	err = copier.Copy(&newCluster, &cluster)
+	if err != nil {
+		return nil, err
+	}
+
+	return &newCluster, nil
 }
