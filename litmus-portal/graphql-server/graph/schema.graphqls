@@ -44,7 +44,7 @@ input ClusterInput {
   tolerations: [Toleration]
 }
 
-input Toleration{
+input Toleration {
   tolerationSeconds: String
   key: String
   operator: String
@@ -248,7 +248,7 @@ type Query {
   ): String! @authorized
 
   # Query to fetch agent details based on project_id and agent_name
-  getAgentDetails(agentName: String!, projectID: String!): Cluster! @authorized
+  getAgentDetails(cluster_id: String!, projectID: String!): Cluster! @authorized
 
   getUser(username: String!): User! @authorized
 

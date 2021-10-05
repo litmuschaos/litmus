@@ -276,8 +276,8 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 }
 
 // GetAgentDetails fetches agent details from the DB
-func GetAgentDetails(ctx context.Context, agentName string, projectID string) (*model.Cluster, error) {
-	cluster, err := dbOperationsCluster.GetAgentDetails(ctx, agentName, projectID)
+func GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
+	cluster, err := dbOperationsCluster.GetAgentDetails(ctx, clusterID, projectID)
 	if err != nil {
 		return nil, err
 	}

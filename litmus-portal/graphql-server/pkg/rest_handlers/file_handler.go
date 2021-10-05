@@ -15,6 +15,11 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
+const (
+	clusterScope   string = "cluster"
+	namespaceScope string = "namespace"
+)
+
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	AgentNamespace:           os.Getenv("AGENT_NAMESPACE"),
 	AgentScope:               os.Getenv("AGENT_SCOPE"),
@@ -101,20 +106,20 @@ func GetManifestWithClusterID(id string, key string) ([]byte, error) {
 		return nil, errors.New("Invalid access key")
 	}
 
-	if os.Getenv("PORTAL_SCOPE") == "cluster" {
+	if os.Getenv("PORTAL_SCOPE") == clusterScope {
 		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
 		if err != nil {
 			return nil, err
 		}
-	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
+	} else if os.Getenv("PORTAL_SCOPE") == namespaceScope {
 		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
 	}
 
 	var respData []byte
 
-	if reqCluster.AgentScope == "cluster" {
+	if reqCluster.AgentScope == clusterScope {
 		respData, err = utils.ManifestParser(reqCluster, "manifests/cluster", subscriberConfiguration)
-	} else if reqCluster.AgentScope == "namespace" {
+	} else if reqCluster.AgentScope == namespaceScope {
 		respData, err = utils.ManifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
 	} else {
 		log.Print("ERROR- AGENT SCOPE NOT SELECTED!")

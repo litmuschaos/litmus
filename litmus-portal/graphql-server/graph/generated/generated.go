@@ -373,7 +373,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetAgentDetails             func(childComplexity int, agentName string, projectID string) int
+		GetAgentDetails             func(childComplexity int, clusterID string, projectID string) int
 		GetCharts                   func(childComplexity int, hubName string, projectID string) int
 		GetCluster                  func(childComplexity int, projectID string, clusterType *string) int
 		GetGitOpsDetails            func(childComplexity int, projectID string) int
@@ -749,7 +749,7 @@ type QueryResolver interface {
 	GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error)
 	GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
 	GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error)
-	GetAgentDetails(ctx context.Context, agentName string, projectID string) (*model.Cluster, error)
+	GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error)
 	GetUser(ctx context.Context, username string) (*model.User, error)
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	ListProjects(ctx context.Context) ([]*model.Project, error)
@@ -2592,7 +2592,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetAgentDetails(childComplexity, args["agentName"].(string), args["projectID"].(string)), true
+		return e.complexity.Query.GetAgentDetails(childComplexity, args["cluster_id"].(string), args["projectID"].(string)), true
 
 	case "Query.getCharts":
 		if e.complexity.Query.GetCharts == nil {
@@ -4967,7 +4967,7 @@ input ClusterInput {
   tolerations: [Toleration]
 }
 
-input Toleration{
+input Toleration {
   tolerationSeconds: String
   key: String
   operator: String
@@ -5163,17 +5163,19 @@ type Query {
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
+  # Query to fetch manifest
   getManifest(
     projectID: String!
     clusterID: String!
     accessKey: String!
   ): String! @authorized
 
-  getAgentDetails(agentName: String!, projectID: String!): Cluster! @authorized
+  # Query to fetch agent details based on project_id and agent_name
+  getAgentDetails(cluster_id: String!, projectID: String!): Cluster! @authorized
 
   getUser(username: String!): User! @authorized
 
-  #It is used to get projects by projectID
+  # It is used to get projects by projectID
   getProject(projectID: String!): Project! @authorized
 
   #It is used to get projects by userID
@@ -6605,13 +6607,13 @@ func (ec *executionContext) field_Query_getAgentDetails_args(ctx context.Context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["agentName"]; ok {
+	if tmp, ok := rawArgs["cluster_id"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["agentName"] = arg0
+	args["cluster_id"] = arg0
 	var arg1 string
 	if tmp, ok := rawArgs["projectID"]; ok {
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
@@ -15753,7 +15755,7 @@ func (ec *executionContext) _Query_getAgentDetails(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetAgentDetails(rctx, args["agentName"].(string), args["projectID"].(string))
+			return ec.resolvers.Query().GetAgentDetails(rctx, args["cluster_id"].(string), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
