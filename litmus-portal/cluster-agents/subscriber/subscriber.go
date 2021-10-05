@@ -41,7 +41,7 @@ type Config struct {
 	Components         string `required:"true"`
 	AgentNamespace     string `required:"true" split_words:"true"`
 	Version            string `required:"true"`
-	StartTime          string `required:"true"`
+	StartTime          string `required:"true" split_words:"true"`
 }
 
 func init() {
