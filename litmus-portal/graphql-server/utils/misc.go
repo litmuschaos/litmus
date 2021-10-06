@@ -155,7 +155,8 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		if cluster.IsClusterConfirmed == true {
 			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"true"+"\"", -1)
 		} else {
-			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "false", -1)
+			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"false"+"\"", -1)
+
 		}
 
 		if cluster.NodeSelector != nil {
