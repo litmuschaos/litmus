@@ -45,10 +45,11 @@ input ClusterInput {
 }
 
 input Toleration {
-  tolerationSeconds: String
+  tolerationSeconds: Int
   key: String
   operator: String
   effect: String
+  value: String
 }
 
 type ClusterEvent {

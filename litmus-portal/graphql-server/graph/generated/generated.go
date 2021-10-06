@@ -4968,10 +4968,11 @@ input ClusterInput {
 }
 
 input Toleration {
-  tolerationSeconds: String
+  tolerationSeconds: Int
   key: String
   operator: String
   effect: String
+  value: String
 }
 
 type ClusterEvent {
@@ -25700,7 +25701,7 @@ func (ec *executionContext) unmarshalInputToleration(ctx context.Context, obj in
 		switch k {
 		case "tolerationSeconds":
 			var err error
-			it.TolerationSeconds, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.TolerationSeconds, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25719,6 +25720,12 @@ func (ec *executionContext) unmarshalInputToleration(ctx context.Context, obj in
 		case "effect":
 			var err error
 			it.Effect, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "value":
+			var err error
+			it.Value, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
