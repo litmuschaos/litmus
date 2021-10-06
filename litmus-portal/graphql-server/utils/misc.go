@@ -113,7 +113,6 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 
 	var tolerations string
 	if cluster.Tolerations != nil {
-
 		byt, err := yaml.Marshal(struct {
 			Tolerations []*dbSchemaCluster.Toleration `yaml:"tolerations"`
 		}{

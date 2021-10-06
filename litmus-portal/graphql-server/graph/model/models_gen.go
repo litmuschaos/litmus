@@ -499,10 +499,11 @@ type TemplateInput struct {
 }
 
 type Toleration struct {
-	TolerationSeconds *string `json:"tolerationSeconds"`
+	TolerationSeconds *int    `json:"tolerationSeconds"`
 	Key               *string `json:"key"`
 	Operator          *string `json:"operator"`
 	Effect            *string `json:"effect"`
+	Value             *string `json:"value"`
 }
 
 type TotalCount struct {
