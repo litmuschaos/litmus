@@ -83,7 +83,17 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/graphql-server
-          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+          docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-server:${{ github.sha }} --build-arg TARGETARCH=amd64
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/litmuschaos/litmusportal-server:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'          
 
   docker-build-authentication-server:
     runs-on: ubuntu-latest
@@ -143,7 +153,17 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/upgrade-agents/control-plane
-          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+          docker build . -f Dockerfile -t docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }} --build-arg TARGETARCH=amd64
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'             
 
   docker-build-frontend:
     runs-on: ubuntu-latest
