@@ -391,6 +391,19 @@ metadata:
   name: litmus-server-account
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: litmus-portal-admin-secret
+  namespace: litmus
+data:
+  # base 64 encode of litmus-portal@123
+  JWT_SECRET: "bGl0bXVzLXBvcnRhbEAxMjM="
+  # base 64 encode of admin
+  DB_USER: "YWRtaW4="
+  # base 64 encode 1234
+  DB_PASSWORD: "MTIzNA=="
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: litmus-portal-admin-config
@@ -398,9 +411,6 @@ data:
   AGENT_SCOPE: namespace
   AGENT_NAMESPACE: ${LITMUS_PORTAL_NAMESPACE}
   DB_SERVER: "mongodb://mongo-service:27017"
-  JWT_SECRET: "litmus-portal@123"
-  DB_USER: "admin"
-  DB_PASSWORD: "1234"
   VERSION: "ci"
 ---
 apiVersion: v1
@@ -544,6 +554,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
+            - secretRef:
+                name: litmus-portal-admin-secret
           env:
             - name: LITMUS_PORTAL_NAMESPACE
               valueFrom:
@@ -583,6 +595,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
+            - secretRef:
+                name: litmus-portal-admin-secret
           env:
             - name: STRICT_PASSWORD_POLICY
               value: "false"
@@ -640,13 +654,13 @@ spec:
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
+                secretKeyRef:
+                  name: litmus-portal-admin-secret
                   key: DB_USER
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
+                secretKeyRef:
+                  name: litmus-portal-admin-secret
                   key: DB_PASSWORD
   volumeClaimTemplates:
     - metadata:
