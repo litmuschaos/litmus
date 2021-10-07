@@ -24,6 +24,7 @@ type Cluster struct {
 	NodeSelector       *string       `bson:"node_selector"`
 	Tolerations        []*Toleration `bson:"tolerations,omitempty"`
 	StartTime          string        `bson:"start_time"`
+	version            string        `bson:"version"`
 }
 
 type Toleration struct {
