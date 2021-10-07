@@ -84,6 +84,43 @@ subjects:
     name: litmus-server-account
     namespace: litmus
 ---
+# Deployment for DexServer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-dex-server
+  namespace: litmus
+  labels:
+    component: litmusportal-dex-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-dex-server
+  template:
+    metadata:
+      labels:
+        component: litmusportal-dex-server
+    spec:
+      serviceAccountName: litmus-server-account
+      containers:
+        - name: litmuschaos/litmusportal-dex-server:ci
+          imagePullPolicy: Never
+          image: litmus-dex
+          command: ["/usr/local/bin/dex", "serve", "/etc/dex/cfg/config.yaml"]
+          ports:
+            - containerPort: 5556
+          volumeMounts:
+            - name: config
+              mountPath: /etc/dex/cfg
+      volumes:
+        - name: config
+          configMap:
+            name: litmus-portal-admin-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+---
 # Exposed service for DexServer
 apiVersion: v1
 kind: Service
@@ -100,4 +137,3 @@ spec:
       nodePort: 32000
   selector:
     component: litmusportal-dex-server
-
