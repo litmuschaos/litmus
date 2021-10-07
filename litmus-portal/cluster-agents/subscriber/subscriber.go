@@ -6,8 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
-	"strconv"
-	"time"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/events"
@@ -28,6 +26,7 @@ var (
 		"COMPONENTS":           os.Getenv("COMPONENTS"),
 		"AGENT_NAMESPACE":      os.Getenv("AGENT_NAMESPACE"),
 		"VERSION":              os.Getenv("VERSION"),
+		"START_TIME":           os.Getenv("START_TIME"),
 	}
 
 	err error
@@ -42,6 +41,7 @@ type Config struct {
 	Components         string `required:"true"`
 	AgentNamespace     string `required:"true" split_words:"true"`
 	Version            string `required:"true"`
+	StartTime          string `required:"true" split_words:"true"`
 }
 
 func init() {
@@ -54,9 +54,6 @@ func init() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-
-	// Retrieving START_TIME
-	clusterData["START_TIME"] = os.Getenv("START_TIME")
 
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()
@@ -90,7 +87,6 @@ func init() {
 		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
 			clusterData["ACCESS_KEY"] = clusterConfirmInterface.Data.ClusterConfirm.NewAccessKey
 			clusterData["IS_CLUSTER_CONFIRMED"] = "true"
-			clusterData["START_TIME"] = strconv.FormatInt(time.Now().Unix(), 10)
 			_, err = k8s.ClusterRegister(clusterData)
 			if err != nil {
 				logrus.Fatal(err)

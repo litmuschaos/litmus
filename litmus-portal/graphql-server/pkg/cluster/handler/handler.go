@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -38,13 +39,19 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		for _, el := range selectors {
 			kv := strings.Split(el, "=")
 			if len(kv) != 2 {
-				return nil, errors.New("nodeselector environment variable is not correct. Correct format: \"key1=value2,key2=value2\"")
+				return nil, errors.New("node selector environment variable is not correct. Correct format: \"key1=value2,key2=value2\"")
 			}
 
 			if strings.Contains(kv[0], "\"") || strings.Contains(kv[1], "\"") {
-				return nil, errors.New("nodeselector environment variable contains escape character(s). Correct format: \"key1=value2,key2=value2\"")
+				return nil, errors.New("node selector environment variable contains escape character(s). Correct format: \"key1=value2,key2=value2\"")
 			}
 		}
+	}
+
+	var tolerations []*dbSchemaCluster.Toleration
+	err = copier.Copy(&tolerations, input.Tolerations)
+	if err != nil {
+		return &model.ClusterRegResponse{}, err
 	}
 
 	newCluster := dbSchemaCluster.Cluster{
@@ -65,6 +72,8 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:          token,
 		IsRemoved:      false,
 		NodeSelector:   input.NodeSelector,
+		Tolerations:    tolerations,
+		StartTime:      strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
@@ -265,4 +274,21 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 	}
 
 	r.Mutex.Unlock()
+}
+
+// GetAgentDetails fetches agent details from the DB
+func GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
+	cluster, err := dbOperationsCluster.GetAgentDetails(ctx, clusterID, projectID)
+	if err != nil {
+		return nil, err
+	}
+
+	newCluster := model.Cluster{}
+
+	err = copier.Copy(&newCluster, &cluster)
+	if err != nil {
+		return nil, err
+	}
+
+	return &newCluster, nil
 }

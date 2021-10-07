@@ -39,7 +39,10 @@ const WorkflowStatusText: React.FC<WorkflowStatusProps> = ({ phase }) => {
   }
   return (
     <div>
-      <Typography className={`${classes.statusText} ${getStatus(phase)}`}>
+      <Typography
+        className={`${classes.statusText} ${getStatus(phase)}`}
+        data-cy="workflowStatus"
+      >
         {phase}
       </Typography>
     </div>
