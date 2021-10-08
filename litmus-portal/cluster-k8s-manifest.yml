@@ -409,6 +409,13 @@ data:
   DB_USER: "admin"
   DB_PASSWORD: "1234"
   VERSION: "ci"
+  # Configurations if you are using dex for OAuth
+  DEX_ENABLED: "false"
+  OIDC_ISSUER: "http://<Your Domain>:32000"
+  DEX_OAUTH_CALLBACK_URL: "http://<litmus-portal frontend exposed URL>:8080/auth/dex/callback"
+  DEX_OAUTH_CLIENT_ID: "LitmusPortalAuthBackend"
+  DEX_OAUTH_CLIENT_SECRET: "ZXhhbXBsZS1hcHAtc2VjcmV0"
+  OAuthJwtSecret: "litmus-oauth@123"
 ---
 apiVersion: v1
 kind: ConfigMap

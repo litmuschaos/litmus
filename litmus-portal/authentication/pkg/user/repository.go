@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
@@ -14,6 +16,7 @@ import (
 
 //Repository holds the mongo database implementation of the Service
 type Repository interface {
+	LoginUser(user *entities.User) (*entities.User, error)
 	FindUser(username string) (*entities.User, error)
 	CheckPasswordHash(hash, password string) error
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
@@ -27,6 +30,31 @@ type Repository interface {
 
 type repository struct {
 	Collection *mongo.Collection
+}
+
+// LoginUser helps to Login the user via OAuth, if user does not exists, creates a new user
+func (r repository) LoginUser(user *entities.User) (*entities.User, error) {
+	user.ID = uuid.Must(uuid.NewRandom()).String()
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = string(hashedPassword)
+	_, err = r.Collection.InsertOne(context.Background(), user)
+	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			var result = entities.User{}
+			findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
+				"username": user.UserName,
+			}).Decode(&result)
+			if findOneErr != nil {
+				return nil, findOneErr
+			}
+			return &result, nil
+		}
+		return nil, err
+	}
+	return user.SanitizedUser(), nil
 }
 
 // FindUser finds and returns a user if it exists
