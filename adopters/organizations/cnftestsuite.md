@@ -1,7 +1,7 @@
 CNF Test Suite
 ---
 
-The CNF Test Suite is an open source test suite for Cloud Native Network Function (CNF) developers and network operators to evaluate how well a telecom service (a platform or network application, aka CNF) follows cloud native principles and best practices, like resilience.
+The [CNF Test Suite](https://github.com/cncf/cnf-testsuite) is an open source test suite for Cloud Native Network Function (CNF) developers and network operators to evaluate how well a telecom service (a platform or network application, aka CNF) follows cloud native principles and best practices, like resilience.
 
 ## Why do we use Litmus  
 Subjecting the telecom services to chaos testing is useful in finding failure points and suggesting remediation steps toward improving resilience. Therefore, we chose LitmusChaos to create resilience tests in the CNF Test Suite. 
