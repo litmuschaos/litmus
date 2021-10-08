@@ -1163,6 +1163,10 @@ createWorkflow:
 ######################################
 
 targets:
+  options:
+    upgrade: Upgrade
+    copyTargetID: Copy target ID
+    disconnect: Disconnect
   connectHome:
     head: ChaosAgents
     connectText: Connect the Agent
@@ -1175,6 +1179,10 @@ targets:
     head1: Open the cluster console
     head2: Download litmusctl
     head3: Paste and Run the following command into the cluster console
+  modalUpgrade:
+    head1: Upgrade Agent
+    copyUpgradeCommand: Copy & Paste this command to your cluster console to upgrade the agent.
+    done: Done
   modalDelete:
     head1: Are you sure to
     head2: disconnect the current

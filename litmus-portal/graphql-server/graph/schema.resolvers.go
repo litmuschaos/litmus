@@ -6,7 +6,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -608,7 +607,6 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		log.Print("VALIDATION FAILED: ", clusterInfo.ClusterID)
 		return clusterAction, err
 	}
-	fmt.Println("here")
 	data_store.Store.Mutex.Lock()
 	if _, ok := data_store.Store.ConnectedCluster[clusterInfo.ClusterID]; ok {
 		data_store.Store.Mutex.Unlock()
