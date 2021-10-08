@@ -13,7 +13,7 @@
     "test:coverage": "npm test --coverage --colors --maxWorkers=2"
   },
   "dependencies": {
-    "@apollo/client": "^3.1.2",
+    "@apollo/client": "^3.4.11",
     "@date-io/date-fns": "^1.3.13",
     "@material-ui/core": "4.11.4",
     "@material-ui/icons": "^4.9.1",
