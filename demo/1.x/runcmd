@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Wrapper script to run commands inside container
+echo "running $@ inside container"
+
+docker run --rm  --name litmus-demo-instance \
+    -v /var/run/docker.sock:/var/run/docker.sock --net="host" \
+	-it litmuschaos/litmus-demo $@

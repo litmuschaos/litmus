@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  alert.rules: |
+    # Alert for high error rate in the Sock Shop.
+
+    ALERT HighErrorRate
+      IF rate(request_duration_seconds_count{status_code="500"}[5m]) > 1
+      FOR 5m
+      LABELS { severity = "slack" }
+      ANNOTATIONS {
+        summary = "High HTTP 500 error rates",
+        description = "Rate of HTTP 500 errors per 5 minutes: {{ $value }}",
+      }
+kind: ConfigMap
+metadata:
+  name: prometheus-alertrules
+  namespace: monitoring

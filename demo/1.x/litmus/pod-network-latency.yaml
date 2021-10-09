@@ -1,0 +1,38 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: sock-chaos
+  namespace: sock-shop
+spec:
+  engineState: 'active'
+  appinfo:
+    appns: sock-shop
+    # FYI, To see app label, apply kubectl get pods --show-labels
+    # unique-label of the application under test (AUT)
+    applabel: "name=carts-db"
+    appkind: deployment
+  chaosServiceAccount: sock-shop-chaos-engine
+  experiments:
+    - name: pod-network-latency
+      spec:
+        components:
+          env:
+            #Container name where chaos has to be injected
+            - name: TARGET_CONTAINER
+              value: 'carts-db' 
+
+            #Network interface inside target container
+            - name: NETWORK_INTERFACE
+              value: 'eth0'     
+
+            - name: NETWORK_LATENCY
+              value: '60000'
+
+            - name: TOTAL_CHAOS_DURATION
+              value: '60' # in seconds
+
+            - name: CONTAINER_RUNTIME
+              value: 'containerd'
+              
+            - name: SOCKET_PATH
+              value: '/run/containerd/containerd.sock'              
