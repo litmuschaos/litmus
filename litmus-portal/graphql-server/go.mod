@@ -7,12 +7,14 @@ require (
 	github.com/argoproj/argo v0.0.0-20200806220847-5759a0e198d3
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-git/go-git/v5 v5.2.0
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/websocket v1.4.1
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/litmuschaos/chaos-operator v0.0.0-20210224131102-ca6a465ed348
 	github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -25,7 +27,7 @@ require (
 	github.com/tidwall/sjson v1.1.1
 	github.com/vektah/gqlparser/v2 v2.0.1
 	go.mongodb.org/mongo-driver v1.5.3
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/apimachinery v0.18.6

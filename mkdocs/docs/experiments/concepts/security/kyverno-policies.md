@@ -22,3 +22,61 @@ These Kyverno policies are based on the [Kubernetes Pod Security Standards](http
 ```bash
 kustomize build https://github.com/ispeakc0de/chaos-charts/kyverno-policies/security/kyverno | kubectl apply -f -
 ```
+
+## Pod Security Policies in restricted setup
+
+If setup contains restricted policies which doesn't allow litmus to perform some actions. Following steps can be used to allow litmus to perform actions:
+
+- For Example: [deny-privilege-escalation](https://kyverno.io/policies/pod-security/restricted/deny-privilege-escalation/deny-privilege-escalation/) policy doesn't allow privileged escalation. It deny all the pods to use privileged escalation.
+
+- To allow litmus pods to use the privileged escalation. Add the litmus serviceAcccount or ClusterRole/Role inside the exclude block as provided in the below example:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/security/restricted-policies.yaml yaml)
+```yaml
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: deny-privilege-escalation
+  annotations:
+    policies.kyverno.io/category: Pod Security Standards (Restricted)
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Privilege escalation, such as via set-user-ID or set-group-ID file mode, should not be allowed.
+      This policy ensures the `allowPrivilegeEscalation` fields are either undefined
+      or set to `false`.      
+spec:
+  background: true
+  validationFailureAction: enforce
+  rules:
+  - name: deny-privilege-escalation
+    match:
+      resources:
+        kinds:
+        - Pod
+    exclude:
+      clusterRoles:
+      # add litmus cluster roles here
+      - litmus-admin
+      roles:
+      # add litmus roles here
+      - litmus-roles
+      subjects:
+      # add serviceAccount name here
+      - kind: ServiceAccount
+        name: pod-network-loss-sa
+    validate:
+      message: >-
+        Privilege escalation is disallowed. The fields
+        spec.containers[*].securityContext.allowPrivilegeEscalation, and
+        spec.initContainers[*].securityContext.allowPrivilegeEscalation must
+        be undefined or set to `false`.        
+      pattern:
+        spec:
+          =(initContainers):
+          - =(securityContext):
+              =(allowPrivilegeEscalation): "false"
+          containers:
+          - =(securityContext):
+              =(allowPrivilegeEscalation): "false"
+```

@@ -10,4 +10,8 @@ function getProjectRole(): string {
   return getSearchParams('projectRole');
 }
 
-export { getProjectID, getProjectRole };
+function getJwtTokenFromURL(): string {
+  return getSearchParams('jwtToken');
+}
+
+export { getProjectID, getProjectRole, getJwtTokenFromURL };

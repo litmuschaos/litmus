@@ -110,6 +110,7 @@ type ComplexityRoot struct {
 		PlatformName          func(childComplexity int) int
 		ProjectID             func(childComplexity int) int
 		Serviceaccount        func(childComplexity int) int
+		StartTime             func(childComplexity int) int
 		Token                 func(childComplexity int) int
 		UpdatedAt             func(childComplexity int) int
 	}
@@ -372,6 +373,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetAgentDetails             func(childComplexity int, clusterID string, projectID string) int
 		GetCharts                   func(childComplexity int, hubName string, projectID string) int
 		GetCluster                  func(childComplexity int, projectID string, clusterType *string) int
 		GetGitOpsDetails            func(childComplexity int, projectID string) int
@@ -379,6 +381,7 @@ type ComplexityRoot struct {
 		GetHubExperiment            func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetHubStatus                func(childComplexity int, projectID string) int
 		GetImageRegistry            func(childComplexity int, imageRegistryID string, projectID string) int
+		GetManifest                 func(childComplexity int, projectID string, clusterID string, accessKey string) int
 		GetPredefinedExperimentYaml func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetPredefinedWorkflowList   func(childComplexity int, hubName string, projectID string) int
 		GetProject                  func(childComplexity int, projectID string) int
@@ -745,6 +748,8 @@ type MutationResolver interface {
 type QueryResolver interface {
 	GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error)
 	GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
+	GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error)
+	GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error)
 	GetUser(ctx context.Context, username string) (*model.User, error)
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	ListProjects(ctx context.Context) ([]*model.Project, error)
@@ -1103,6 +1108,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.Serviceaccount(childComplexity), true
+
+	case "Cluster.start_time":
+		if e.complexity.Cluster.StartTime == nil {
+			break
+		}
+
+		return e.complexity.Cluster.StartTime(childComplexity), true
 
 	case "Cluster.token":
 		if e.complexity.Cluster.Token == nil {
@@ -2570,6 +2582,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Provider.Name(childComplexity), true
 
+	case "Query.getAgentDetails":
+		if e.complexity.Query.GetAgentDetails == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getAgentDetails_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetAgentDetails(childComplexity, args["cluster_id"].(string), args["projectID"].(string)), true
+
 	case "Query.getCharts":
 		if e.complexity.Query.GetCharts == nil {
 			break
@@ -2653,6 +2677,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetImageRegistry(childComplexity, args["image_registry_id"].(string), args["project_id"].(string)), true
+
+	case "Query.getManifest":
+		if e.complexity.Query.GetManifest == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getManifest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetManifest(childComplexity, args["projectID"].(string), args["clusterID"].(string), args["accessKey"].(string)), true
 
 	case "Query.GetPredefinedExperimentYAML":
 		if e.complexity.Query.GetPredefinedExperimentYaml == nil {
@@ -4295,7 +4331,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
   ds_id: String
   ds_name: String!
   ds_type: String!
@@ -4648,7 +4684,7 @@ type PortalDashboardData {
     name: String!
     dashboard_data: String!
 }`, BuiltIn: false},
-	{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     is_default: Boolean
     image_registry_name: String!
     image_repo_name: String!
@@ -4678,7 +4714,7 @@ type ImageRegistryResponse {
     is_removed: Boolean
 }
 `, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -4852,7 +4888,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -4885,7 +4921,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -4913,6 +4949,7 @@ type Cluster {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   last_workflow_timestamp: String!
+  start_time: String!
 }
 
 input ClusterInput {
@@ -4927,6 +4964,15 @@ input ClusterInput {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   node_selector: String
+  tolerations: [Toleration]
+}
+
+input Toleration {
+  tolerationSeconds: Int
+  key: String
+  operator: String
+  effect: String
+  value: String
 }
 
 type ClusterEvent {
@@ -5118,9 +5164,19 @@ type Query {
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
+  # Query to fetch manifest
+  getManifest(
+    projectID: String!
+    clusterID: String!
+    accessKey: String!
+  ): String! @authorized
+
+  # Query to fetch agent details based on project_id and agent_name
+  getAgentDetails(cluster_id: String!, projectID: String!): Cluster! @authorized
+
   getUser(username: String!): User! @authorized
 
-  #It is used to get projects by projectID
+  # It is used to get projects by projectID
   getProject(projectID: String!): Project! @authorized
 
   #It is used to get projects by userID
@@ -5172,11 +5228,13 @@ type Query {
   ListDashboard(
     project_id: String!
     cluster_id: String
-    db_id: String): [listDashboardResponse] @authorized
+    db_id: String
+  ): [listDashboardResponse] @authorized
 
-  PortalDashboardData (
+  PortalDashboardData(
     project_id: String!
-    hub_name: String!) : [PortalDashboardData!]! @authorized
+    hub_name: String!
+  ): [PortalDashboardData!]! @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -5205,8 +5263,7 @@ type Mutation {
   createUser(user: CreateUserInput!): User! @authorized
 
   # Used to disable a user
-  updateUserState(uid: String!, isDeactivate: Boolean!): String!
-    @authorized
+  updateUserState(uid: String!, isDeactivate: Boolean!): String! @authorized
 
   # It is used to create a project
   createProject(projectName: String!): Project! @authorized
@@ -5225,7 +5282,8 @@ type Mutation {
     @authorized
 
   # removes workflow run from the cluster only
-  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
+  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
+    @authorized
 
   syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
     @authorized
@@ -5296,7 +5354,8 @@ type Mutation {
 
   updateDashboard(
     dashboard: updateDBInput!
-    chaosQueryUpdate: Boolean!): String! @authorized
+    chaosQueryUpdate: Boolean!
+  ): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
@@ -5344,10 +5403,11 @@ type Subscription {
     dashboardID: String
     promQueries: [promQueryInput!]!
     dashboardQueryMap: [queryMapForPanelGroup!]!
-    dataVariables: dataVars!): dashboardPromResponse! @authorized
+    dataVariables: dataVars!
+  ): dashboardPromResponse! @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
+	&ast.Source{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
     Schedules : Int!
     Runs      : Int!
     ExpRuns   : Int!
@@ -5413,7 +5473,7 @@ input UsageQuery{
     Sort: UsageSortInput
     SearchProject: String
 }`, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -5443,7 +5503,7 @@ input UpdateUserInput {
   company_name: String
 }
 `, BuiltIn: false},
-	{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
+	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
   Running
@@ -6544,6 +6604,28 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_getAgentDetails_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["cluster_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cluster_id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_getCharts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6657,6 +6739,36 @@ func (ec *executionContext) field_Query_getHubStatus_args(ctx context.Context, r
 		}
 	}
 	args["projectID"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getManifest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["clusterID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["clusterID"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["accessKey"]; ok {
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["accessKey"] = arg2
 	return args, nil
 }
 
@@ -8428,6 +8540,40 @@ func (ec *executionContext) _Cluster_last_workflow_timestamp(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.LastWorkflowTimestamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_start_time(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartTime, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15522,6 +15668,128 @@ func (ec *executionContext) _Query_getCluster(ctx context.Context, field graphql
 	res := resTmp.([]*model.Cluster)
 	fc.Result = res
 	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getManifest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getManifest_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetManifest(rctx, args["projectID"].(string), args["clusterID"].(string), args["accessKey"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getAgentDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getAgentDetails_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetAgentDetails(rctx, args["cluster_id"].(string), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Cluster); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Cluster`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Cluster)
+	fc.Result = res
+	return ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -24699,6 +24967,12 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
+		case "tolerations":
+			var err error
+			it.Tolerations, err = ec.unmarshalOToleration2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -25410,6 +25684,48 @@ func (ec *executionContext) unmarshalInputTemplateInput(ctx context.Context, obj
 		case "isCustomWorkflow":
 			var err error
 			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputToleration(ctx context.Context, obj interface{}) (model.Toleration, error) {
+	var it model.Toleration
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "tolerationSeconds":
+			var err error
+			it.TolerationSeconds, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "key":
+			var err error
+			it.Key, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+			it.Operator, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "effect":
+			var err error
+			it.Effect, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "value":
+			var err error
+			it.Value, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26904,6 +27220,11 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "start_time":
+			out.Values[i] = ec._Cluster_start_time(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -28317,6 +28638,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getCluster(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getManifest":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getManifest(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getAgentDetails":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAgentDetails(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -32862,6 +33211,38 @@ func (ec *executionContext) unmarshalOTemplateInput2ᚖgithubᚗcomᚋlitmuschao
 		return nil, nil
 	}
 	res, err := ec.unmarshalOTemplateInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTemplateInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOToleration2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) (model.Toleration, error) {
+	return ec.unmarshalInputToleration(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOToleration2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) ([]*model.Toleration, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.Toleration, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOToleration2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOToleration2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) (*model.Toleration, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOToleration2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, v)
 	return &res, err
 }
 
