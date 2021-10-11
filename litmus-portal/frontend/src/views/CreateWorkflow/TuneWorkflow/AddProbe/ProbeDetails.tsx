@@ -80,7 +80,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
   const handleCmd = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (e.target.name === 'command' || e.target.name === 'source') {
+    if (e.target.name === 'command') {
       setProbeData({
         ...probeData,
         'cmdProbe/inputs': {
@@ -161,6 +161,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="url">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.url')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
@@ -168,6 +169,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="url"
               name="url"
               type="text"
+              required
               value={probeData['httpProbe/inputs']?.url}
               onChange={handleHttp}
             />
@@ -245,11 +247,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   variant="primary"
                   width="50%"
                   id="body"
+                  autoComplete="off"
                   name="body"
+                  required
                   type="text"
                   value={
                     isEdit
-                      ? probeData['httpProbe/inputs']?.method.post.body
+                      ? probeData['httpProbe/inputs']?.method.post?.body
                       : httpData.body
                   }
                   onChange={(e) => {
@@ -261,16 +265,16 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                           post: {
                             criteria: isEdit
                               ? probeData['httpProbe/inputs']?.method.post
-                                  .criteria
+                                  ?.criteria
                               : httpData.criteria,
                             responseCode: isEdit
                               ? probeData['httpProbe/inputs']?.method.post
-                                  .responseCode
+                                  ?.responseCode
                               : httpData.responseCode,
                             body: e.target.value,
                             contentType: isEdit
                               ? probeData['httpProbe/inputs']?.method.post
-                                  .contentType
+                                  ?.contentType
                               : httpData.contentType,
                           },
                         },
@@ -288,6 +292,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   {t(
                     'createWorkflow.tuneWorkflow.addProbe.inputLabels.contentType'
                   )}
+                  <span className={classes.required}>*</span>
                 </InputLabel>
                 <InputField
                   variant="primary"
@@ -295,9 +300,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   id="contentType"
                   name="contentType"
                   type="text"
+                  required
+                  autoComplete="off"
                   value={
                     isEdit
-                      ? probeData['httpProbe/inputs']?.method.post.contentType
+                      ? probeData['httpProbe/inputs']?.method.post?.contentType
                       : httpData.contentType
                   }
                   onChange={(e) => {
@@ -309,14 +316,14 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                           post: {
                             criteria: isEdit
                               ? probeData['httpProbe/inputs']?.method.post
-                                  .criteria
+                                  ?.criteria
                               : httpData.criteria,
                             responseCode: isEdit
                               ? probeData['httpProbe/inputs']?.method.post
-                                  .responseCode
+                                  ?.responseCode
                               : httpData.responseCode,
                             body: isEdit
-                              ? probeData['httpProbe/inputs']?.method.post.body
+                              ? probeData['httpProbe/inputs']?.method.post?.body
                               : httpData.body,
                             contentType: e.target.value,
                           },
@@ -340,8 +347,8 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
             value={
               isEdit
                 ? httpMethod === 'get'
-                  ? probeData['httpProbe/inputs']?.method.get.criteria
-                  : probeData['httpProbe/inputs']?.method.post.criteria
+                  ? probeData['httpProbe/inputs']?.method.get?.criteria
+                  : probeData['httpProbe/inputs']?.method.post?.criteria
                 : httpData.criteria
             }
             handleChange={(e) => {
@@ -355,7 +362,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                         criteria: e.target.value,
                         responseCode: isEdit
                           ? probeData['httpProbe/inputs']?.method.get
-                              .responseCode
+                              ?.responseCode
                           : httpData.responseCode,
                       },
                     },
@@ -372,14 +379,14 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                         criteria: e.target.value,
                         responseCode: isEdit
                           ? probeData['httpProbe/inputs']?.method.post
-                              .responseCode
+                              ?.responseCode
                           : httpData.responseCode,
                         body: isEdit
-                          ? probeData['httpProbe/inputs']?.method.post.body
+                          ? probeData['httpProbe/inputs']?.method.post?.body
                           : httpData.body,
                         contentType: isEdit
                           ? probeData['httpProbe/inputs']?.method.post
-                              .contentType
+                              ?.contentType
                           : httpData.contentType,
                       },
                     },
@@ -398,6 +405,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               {t(
                 'createWorkflow.tuneWorkflow.addProbe.inputLabels.responseCode'
               )}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
@@ -405,11 +413,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="response-code"
               name="responseCode"
               type="text"
+              required
+              autoComplete="off"
               value={
                 isEdit
                   ? httpMethod === 'get'
-                    ? probeData['httpProbe/inputs']?.method.get.responseCode
-                    : probeData['httpProbe/inputs']?.method.post.responseCode
+                    ? probeData['httpProbe/inputs']?.method.get?.responseCode
+                    : probeData['httpProbe/inputs']?.method.post?.responseCode
                   : httpData.responseCode
               }
               onChange={(e) => {
@@ -468,28 +478,77 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="command">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.command')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               id="command"
               name="command"
               type="text"
+              required
               value={probeData['cmdProbe/inputs']?.command}
               onChange={handleCmd}
             />
           </div>
-          <div className={classes.formField}>
-            <InputLabel className={classes.formLabel} htmlFor="source">
-              {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.source')}
+          <div className={classes.inputSub}>
+            {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.source')}
+          </div>
+          <div className={classes.inputFormField}>
+            <InputLabel className={classes.formLabel} htmlFor="image">
+              {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.image')}
             </InputLabel>
             <InputField
               variant="primary"
-              id="source"
-              name="source"
+              id="image"
+              name="image"
+              width="50%"
               type="text"
-              value={probeData['cmdProbe/inputs']?.source}
-              onChange={handleCmd}
+              value={probeData['cmdProbe/inputs']?.source?.image}
+              onChange={(event) => {
+                setProbeData({
+                  ...probeData,
+                  'cmdProbe/inputs': {
+                    ...probeData['cmdProbe/inputs'],
+                    source: {
+                      ...probeData['cmdProbe/inputs'].source,
+                      image: event.target.value,
+                    },
+                  },
+                });
+              }}
             />
+          </div>
+          <div className={classes.inputFormField}>
+            <InputLabel className={classes.formLabel} htmlFor="hostNetwork">
+              {t(
+                'createWorkflow.tuneWorkflow.addProbe.inputLabels.hostNetwork'
+              )}
+            </InputLabel>
+            <Select
+              style={{ width: '50%' }}
+              value={probeData['cmdProbe/inputs']?.source?.hostNetwork}
+              className={classes.select}
+              variant="outlined"
+              onChange={(event) => {
+                setProbeData({
+                  ...probeData,
+                  'cmdProbe/inputs': {
+                    ...probeData['cmdProbe/inputs'],
+                    source: {
+                      ...probeData['cmdProbe/inputs'].source,
+                      hostNetwork: event.target.value === 'true',
+                    },
+                  },
+                });
+              }}
+              inputProps={{
+                id: 'hostNetwork',
+                name: 'hostNetwork',
+              }}
+            >
+              <MenuItem value="true">true</MenuItem>
+              <MenuItem value="false">false</MenuItem>
+            </Select>
           </div>
           <div className={classes.inputSub}>
             {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.comparator')}
@@ -498,6 +557,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
             id="comparator-type"
             label={t('createWorkflow.tuneWorkflow.addProbe.inputLabels.type')}
             value={probeData['cmdProbe/inputs']?.comparator?.type}
+            required
             handleChange={(e) =>
               setProbeData({
                 ...probeData,
@@ -518,6 +578,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
             label={t(
               'createWorkflow.tuneWorkflow.addProbe.inputLabels.criteria'
             )}
+            required
             value={probeData['cmdProbe/inputs']?.comparator?.criteria}
             handleChange={(e) =>
               setProbeData({
@@ -541,11 +602,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.inputFormField}>
             <InputLabel className={classes.formLabel} htmlFor="value">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.value')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               id="response-code"
               name="value"
+              required
               width="50%"
               type="text"
               value={probeData['cmdProbe/inputs']?.comparator?.value}
@@ -560,11 +623,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="operation">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.operation')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <Select
               value={probeData['k8sProbe/inputs']?.operation}
               className={classes.select}
               variant="outlined"
+              required
               onChange={(e) =>
                 setProbeData({
                   ...probeData,
@@ -612,11 +677,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.inputFormField}>
             <InputLabel className={classes.formLabel} htmlFor="group">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.group')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               width="50%"
               id="group"
+              required
               name="group"
               type="text"
               value={probeData['k8sProbe/inputs']?.group}
@@ -626,11 +693,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.inputFormField}>
             <InputLabel className={classes.formLabel} htmlFor="version">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.version')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               width="50%"
               id="version"
+              required
               name="version"
               type="text"
               value={probeData['k8sProbe/inputs']?.version}
@@ -640,12 +709,14 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.inputFormField}>
             <InputLabel className={classes.formLabel} htmlFor="resource">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.resource')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               width="50%"
               id="resource"
               name="resource"
+              required
               type="text"
               value={probeData['k8sProbe/inputs']?.resource}
               onChange={handleK8s}
@@ -654,11 +725,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.inputFormField}>
             <InputLabel className={classes.formLabel} htmlFor="namespace">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.namespace')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               width="50%"
               id="namespace"
+              required
               name="namespace"
               type="text"
               value={probeData['k8sProbe/inputs']?.namespace}
@@ -715,11 +788,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="endpoint">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.endpoint')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               width="50%"
               id="endpoint"
+              required
               name="endpoint"
               type="text"
               value={probeData['promProbe/inputs']?.endpoint}
@@ -729,11 +804,13 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="query">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.query')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               width="50%"
               id="query"
+              required
               name="query"
               type="text"
               value={probeData['promProbe/inputs']?.query}
@@ -766,6 +843,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
             label={t(
               'createWorkflow.tuneWorkflow.addProbe.inputLabels.criteria'
             )}
+            required
             value={probeData['promProbe/inputs']?.comparator?.criteria}
             handleChange={(e) =>
               setProbeData({
@@ -788,6 +866,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.inputFormField}>
             <InputLabel className={classes.formLabel} htmlFor="value">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.value')}
+              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
@@ -795,6 +874,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               id="value"
               name="value"
               type="text"
+              required
               value={probeData['promProbe/inputs']?.comparator?.value}
               onChange={handleProm}
             />

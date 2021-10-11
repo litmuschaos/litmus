@@ -1119,6 +1119,8 @@ createWorkflow:
         labelSel: LabelSelector
         endpoint: Endpoint
         query: Query
+        image: Image
+        hostNetwork: hostNetwork
       select:
         http: http
         cmd: cmd
