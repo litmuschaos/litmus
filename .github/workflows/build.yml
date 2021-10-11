@@ -188,7 +188,7 @@ jobs:
     needs:
       - backend-checks
       - changes
-    if: ${{ needs.changes.outputs.dex-server == 'true' }}
+    if: needs.changes.outputs.dex-server == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
