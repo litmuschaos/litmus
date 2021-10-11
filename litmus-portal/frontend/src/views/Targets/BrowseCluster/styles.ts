@@ -224,6 +224,29 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     fontSize: '0.775rem',
   },
+  menuCell: {
+    width: '3.125rem',
+  },
+  upgradeModalBody: {
+    margin: theme.spacing(7.5),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  bodyText: {
+    margin: theme.spacing(4, 0),
+    fontSize: '1.125rem',
+  },
+  editorText: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    borderRadius: '0.3125rem',
+    border: `0.8px solid ${theme.palette.grey[300]}`,
+    alignItems: 'center',
+    padding: theme.spacing(2.5),
+    background: theme.palette.background.default,
+    marginBottom: theme.spacing(3.5),
+  },
 }));
 
 export default useStyles;
