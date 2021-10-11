@@ -63,5 +63,6 @@ existing functions.
 |[Pravega](https://pravega.io/)|To inject faults while exercising quality tests on our product|[Our Story](adopters/organizations/pravega.md)|
 |[Red Hat](https://www.redhat.com/en)|[Chaos Engineering with Kraken](https://github.com/cloud-bulldozer/kraken)|[Our Story](adopters/organizations/redhat_kraken.md)|
 |[Iter8](https://iter8.tools)|[SLO validation with chaos injection](https://iter8.tools/0.7/tutorials/deployments/slo-validation-chaos/)|To Be Added|
+|[CNF Test Suite](https://github.com/cncf/cnf-testsuite)|To validate the resilience of Cloud Native Network Functions (CNFs)|[Our Story](adopters/organizations/cnftestsuite.md)|
 
 
