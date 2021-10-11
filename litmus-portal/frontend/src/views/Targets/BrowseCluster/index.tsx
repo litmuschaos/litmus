@@ -315,13 +315,7 @@ const BrowseCluster: React.FC = () => {
                     {t('workflowCluster.header.formControl.run')}
                   </Typography>
                 </TableCell>
-
-                {/* Delete Cluster */}
-                <TableCell>
-                  <Typography>
-                    {t('workflowCluster.header.formControl.disconnect')}
-                  </Typography>
-                </TableCell>
+                <TableCell />
               </TableRow>
             </TableHead>
 
