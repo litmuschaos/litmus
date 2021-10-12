@@ -32,6 +32,7 @@ spec:
         app: subscriber
     spec:
       serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
+      #{tolerations}
       #{nodeselector}
       containers:
         - name: subscriber
@@ -64,6 +65,7 @@ spec:
         app: event-tracker
     spec:
       serviceAccountName: event-tracker-sa
+      #{tolerations}
       #{nodeselector}
       containers:
         - image: #{EVENT-TRACKER-IMAGE}
