@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
   },
   hrDiv: {
-    border: `1px solid ${theme.palette.text.hint}`,
+    border: `1px solid ${theme.palette.border.main}`,
     margin: theme.spacing(2.5, 0),
     width: '90%',
   },
