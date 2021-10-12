@@ -242,6 +242,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               <div className={classes.inputFormField}>
                 <InputLabel className={classes.formLabel} htmlFor="body">
                   {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.body')}
+                  <span className={classes.required}>*</span>
                 </InputLabel>
                 <InputField
                   variant="primary"
