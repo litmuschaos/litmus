@@ -27,6 +27,7 @@ type Cluster {
   agent_sa_exists: Boolean
   last_workflow_timestamp: String!
   start_time: String!
+  version: String!
 }
 
 input ClusterInput {
@@ -45,10 +46,11 @@ input ClusterInput {
 }
 
 input Toleration {
-  tolerationSeconds: String
+  tolerationSeconds: Int
   key: String
   operator: String
   effect: String
+  value: String
 }
 
 type ClusterEvent {

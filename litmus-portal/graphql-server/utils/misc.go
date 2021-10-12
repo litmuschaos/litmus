@@ -113,7 +113,6 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 
 	var tolerations string
 	if cluster.Tolerations != nil {
-
 		byt, err := yaml.Marshal(struct {
 			Tolerations []*dbSchemaCluster.Toleration `yaml:"tolerations"`
 		}{
@@ -152,11 +151,15 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		newContent = strings.Replace(newContent, "#{AGENT-DEPLOYMENTS}", subscriberConfig.AgentDeployments, -1)
 		newContent = strings.Replace(newContent, "#{VERSION}", subscriberConfig.Version, -1)
 		newContent = strings.Replace(newContent, "#{START_TIME}", "\""+cluster.StartTime+"\"", -1)
+		if cluster.IsClusterConfirmed == true {
+			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"true"+"\"", -1)
+		} else {
+			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"false"+"\"", -1)
+		}
 
 		if cluster.NodeSelector != nil {
 			newContent = strings.Replace(newContent, "#{nodeselector}", nodeselector, -1)
 		}
-
 		generatedYAML = append(generatedYAML, newContent)
 	}
 
