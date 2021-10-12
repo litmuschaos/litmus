@@ -141,6 +141,35 @@ export const updateWorkflowNameLabel = (
   }
 };
 
+export const getInstanceID = (parsedYaml: any) => {
+  let instance_id: string = '';
+  try {
+    if (parsedYaml.spec !== undefined) {
+      const yamlData =
+        parsedYaml.kind === constants.workflow
+          ? parsedYaml.spec
+          : parsedYaml.spec.workflowSpec;
+      yamlData.templates.forEach((template: any) => {
+        if (template.inputs && template.inputs.artifacts) {
+          template.inputs.artifacts.forEach((artifact: any) => {
+            const chaosEngine = YAML.parse(artifact.raw.data);
+            // Condition to check for the kind as ChaosEngine
+            if (chaosEngine.kind === 'ChaosEngine') {
+              if (chaosEngine.metadata.labels !== undefined) {
+                instance_id += `${chaosEngine.metadata.labels['instance_id']}, `;
+              }
+            }
+          });
+        }
+      });
+    }
+    return instance_id;
+  } catch (err) {
+    console.error(err);
+    return '';
+  }
+};
+
 const parsed = (yaml: string) => {
   const file = yaml;
   if (file === 'error') {
@@ -342,4 +371,14 @@ export const updateManifestImage = (
     }
   }
   return YAML.stringify(parsedYaml);
+};
+
+export const isCronWorkflow = (manifest: any): boolean => {
+  if (manifest.kind.toLowerCase() === 'workflow') {
+    return false;
+  }
+  if (manifest.kind.toLowerCase() === 'cronworkflow') {
+    return true;
+  }
+  return false;
 };
