@@ -7,7 +7,6 @@ require (
 	github.com/argoproj/argo v0.0.0-20200806220847-5759a0e198d3
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-git/go-git/v5 v5.2.0
-	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4
@@ -15,14 +14,14 @@ require (
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/litmuschaos/chaos-operator v0.0.0-20210224131102-ca6a465ed348
+	github.com/litmuschaos/chaos-operator v0.0.0-20210906054553-064706497fb6
 	github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.10.0
 	github.com/prometheus/common v0.24.0
 	github.com/rs/cors v1.6.0
-	github.com/sirupsen/logrus v1.6.0
+	github.com/sirupsen/logrus v1.7.0
 	github.com/tidwall/gjson v1.8.1
 	github.com/tidwall/sjson v1.1.1
 	github.com/vektah/gqlparser/v2 v2.0.1
