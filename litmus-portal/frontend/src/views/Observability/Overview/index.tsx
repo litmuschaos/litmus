@@ -165,7 +165,7 @@ const Overview: React.FC = () => {
             onClick={() => {
               tabs.changeHubTabs(0);
               history.push({
-                pathname: '/myhub/Chaos%20Hub',
+                pathname: '/myhub/Litmus%20ChaosHub',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
