@@ -15,14 +15,13 @@ ENV GOOS=${TARGETOS} \
 RUN go env
 RUN CGO_ENABLED=0 go build -o /output/subscriber -v
 
-# DEPLOY STAGE
-FROM alpine:3.12.0
+# Packaging stage
+# Image source: https://github.com/litmuschaos/test-tools/blob/master/custom/hardened-alpine/infra/Dockerfile
+# The base image is non-root (have litmus user) with default litmus directory.
+FROM litmuschaos/infra-alpine
 
 LABEL maintainer="LitmusChaos"
 
-COPY --from=builder /output/subscriber /
-
-RUN addgroup -S litmus && adduser -S -G litmus 1001 
-USER 1001
+COPY --from=builder /output/subscriber /litmus
 
 CMD ["./subscriber"]
