@@ -98,6 +98,8 @@ type Cluster struct {
 	AgentNsExists         *bool   `json:"agent_ns_exists"`
 	AgentSaExists         *bool   `json:"agent_sa_exists"`
 	LastWorkflowTimestamp string  `json:"last_workflow_timestamp"`
+	StartTime             string  `json:"start_time"`
+	Version               string  `json:"version"`
 }
 
 type ClusterAction struct {
@@ -138,17 +140,18 @@ type ClusterIdentity struct {
 }
 
 type ClusterInput struct {
-	ClusterName    string  `json:"cluster_name"`
-	Description    *string `json:"description"`
-	PlatformName   string  `json:"platform_name"`
-	ProjectID      string  `json:"project_id"`
-	ClusterType    string  `json:"cluster_type"`
-	AgentNamespace *string `json:"agent_namespace"`
-	Serviceaccount *string `json:"serviceaccount"`
-	AgentScope     string  `json:"agent_scope"`
-	AgentNsExists  *bool   `json:"agent_ns_exists"`
-	AgentSaExists  *bool   `json:"agent_sa_exists"`
-	NodeSelector   *string `json:"node_selector"`
+	ClusterName    string        `json:"cluster_name"`
+	Description    *string       `json:"description"`
+	PlatformName   string        `json:"platform_name"`
+	ProjectID      string        `json:"project_id"`
+	ClusterType    string        `json:"cluster_type"`
+	AgentNamespace *string       `json:"agent_namespace"`
+	Serviceaccount *string       `json:"serviceaccount"`
+	AgentScope     string        `json:"agent_scope"`
+	AgentNsExists  *bool         `json:"agent_ns_exists"`
+	AgentSaExists  *bool         `json:"agent_sa_exists"`
+	NodeSelector   *string       `json:"node_selector"`
+	Tolerations    []*Toleration `json:"tolerations"`
 }
 
 type CreateMyHub struct {
@@ -494,6 +497,14 @@ type TemplateInput struct {
 	TemplateDescription string `json:"template_description"`
 	ProjectID           string `json:"project_id"`
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+}
+
+type Toleration struct {
+	TolerationSeconds *int    `json:"tolerationSeconds"`
+	Key               *string `json:"key"`
+	Operator          *string `json:"operator"`
+	Effect            *string `json:"effect"`
+	Value             *string `json:"value"`
 }
 
 type TotalCount struct {

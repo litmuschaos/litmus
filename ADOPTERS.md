@@ -19,7 +19,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[Lenskart](https://www.lenskart.com/)|Chaos Engineering for better Resiliency | [Our Story](adopters/organizations/lenskart.md)|
 |[Mercedes](https://www.mercedes-benz.com/)|Resiliency validation for applications|[Our Story](adopters/organizations/mercedes.md)|
 |[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
-|[Klanik](https://www.klanik.com)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/klanik.md)|
+|[Pôle Emploi](https://www.pole-emploi.fr)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/pole_emploi.md)|
 
 ### Cloud-Native Vendors
 
@@ -44,6 +44,7 @@ They use LitmusChaos as the tool of choice for carrying out chaos experiments in
 
 | Organization | Usecase | Details |
 | :---         | :---    | :---    |
+|[Klanik](https://www.klanik.com)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/klanik.md)|
 | [Neudesic](https://www.neudesic.com/) | Chaos Engineering | [Our Story](adopters/organizations/neudesic.md) |
 |[WeScale](https://www.wescale.fr)|[Chaos Engineering](https://blog.wescale.fr/2020/03/19/le-guide-de-chaos-engineering-partie-2/)|[Our Story](adopters/organizations/wescale.md)|
 |[Wipro](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Wipro AppAnywhere](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Our Story](adopters/organizations/wipro.md)|
@@ -62,5 +63,6 @@ existing functions.
 |[Pravega](https://pravega.io/)|To inject faults while exercising quality tests on our product|[Our Story](adopters/organizations/pravega.md)|
 |[Red Hat](https://www.redhat.com/en)|[Chaos Engineering with Kraken](https://github.com/cloud-bulldozer/kraken)|[Our Story](adopters/organizations/redhat_kraken.md)|
 |[Iter8](https://iter8.tools)|[SLO validation with chaos injection](https://iter8.tools/0.7/tutorials/deployments/slo-validation-chaos/)|To Be Added|
+|[CNF Test Suite](https://github.com/cncf/cnf-testsuite)|To validate the resilience of Cloud Native Network Functions (CNFs)|[Our Story](adopters/organizations/cnftestsuite.md)|
 
 
