@@ -395,13 +395,10 @@ kind: Secret
 metadata:
   name: litmus-portal-admin-secret
   namespace: litmus
-data:
-  # base 64 encode of litmus-portal@123
-  JWT_SECRET: "bGl0bXVzLXBvcnRhbEAxMjM="
-  # base 64 encode of admin
-  DB_USER: "YWRtaW4="
-  # base 64 encode 1234
-  DB_PASSWORD: "MTIzNA=="
+stringData:
+  JWT_SECRET: "litmus-portal@123"
+  DB_USER: "admin"
+  DB_PASSWORD: "1234"
 ---
 apiVersion: v1
 kind: ConfigMap
