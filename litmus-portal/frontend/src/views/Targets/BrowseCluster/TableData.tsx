@@ -175,7 +175,12 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 setUpgradeModal(true);
                 setAnchorEl(null);
               }}
-              disabled={userRole === 'Viewer' || data.version === version}
+              disabled={
+                userRole === 'Viewer' ||
+                data.version === version ||
+                !data.is_active ||
+                data.version === ''
+              }
             >
               <div className={classes.expDiv}>
                 <Typography data-cy="upgrade" className={classes.btnText}>

@@ -61,7 +61,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
               row.deactivated_at ? classes.darkBg : classes.avatarBackground
             } `}
           >
-            {userInitials(memberDetails ? memberDetails.username : '')}
+            {memberDetails?.username && userInitials(memberDetails.username)}
           </Avatar>
           {memberDetails ? memberDetails.username : ''}
         </div>
